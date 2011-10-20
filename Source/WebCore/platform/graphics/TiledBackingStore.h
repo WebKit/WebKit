@@ -105,6 +105,7 @@ private:
     IntRect contentsRect() const;
     
     void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
+    IntRect visibleContentsRect();
 
 private:
     TiledBackingStoreClient* m_client;

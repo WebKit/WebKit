@@ -49,6 +49,7 @@ private slots:
 #endif
     void renderHints();
 #if defined(WTF_USE_TILED_BACKING_STORE) && WTF_USE_TILED_BACKING_STORE
+    void bug57798();
     void bug56929();
 #endif
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
@@ -201,6 +202,35 @@ void tst_QGraphicsWebView::widgetsRenderingThroughCache()
 }
 
 #if defined(WTF_USE_TILED_BACKING_STORE) && WTF_USE_TILED_BACKING_STORE
+void tst_QGraphicsWebView::bug57798()
+{
+    // When content size grows from less than viewport size to more than that, tiles may need to be regenerated.
+
+    QGraphicsWebView* webView = new QGraphicsWebView();
+    webView->setGeometry(QRectF(0.0, 0.0, 100.0, 100.0));
+    QGraphicsView view(new QGraphicsScene());
+    view.scene()->setParent(&view);
+    view.scene()->addItem(webView);
+    webView->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, true);
+    QStyleOptionGraphicsItem option;
+    option.exposedRect = view.sceneRect();
+    QImage img(view.width(), view.height(),
+    QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&img);
+    // This will not paint anything as the tiles are not ready, but will trigger tile creation with size (0, 0).
+    webView->paint(&painter, &option);
+    QApplication::processEvents();
+    QUrl url("qrc:///resources/greendiv.html");
+    webView->load(url);
+    QVERIFY(waitForSignal(webView, SIGNAL(loadFinished(bool))));
+    // This should trigger the recreation of the tiles.
+    webView->paint(&painter, &option);
+    QApplication::processEvents();
+    painter.fillRect(option.exposedRect, Qt::red); // This is here to ensure failure if paint does not paint anything
+    webView->paint(&painter, &option);
+    QCOMPARE(img.pixel(option.exposedRect.width() / 4, option.exposedRect.height() / 4), qRgba(0, 128, 0, 255));
+}
+
 void tst_QGraphicsWebView::bug56929()
 {
     // When rendering from tiles sychronous layout should not be triggered
@@ -212,7 +242,7 @@ void tst_QGraphicsWebView::bug56929()
     view.scene()->setParent(&view);
     view.scene()->addItem(webView);
     webView->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, true);
-    QUrl url("qrc:///resources/56929.html");
+    QUrl url("qrc:///resources/greendiv.html");
     webView->load(url);
     QVERIFY(waitForSignal(webView, SIGNAL(loadFinished(bool))));
     QStyleOptionGraphicsItem option;

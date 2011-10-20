@@ -173,12 +173,17 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
 
 void TiledBackingStore::adjustVisibleRect()
 {
-    IntRect visibleRect = mapFromContents(m_client->tiledBackingStoreVisibleRect());
+    IntRect visibleRect = visibleContentsRect();
     if (m_previousVisibleRect == visibleRect)
         return;
     m_previousVisibleRect = visibleRect;
 
     startTileCreationTimer();
+}
+
+IntRect TiledBackingStore::visibleContentsRect()
+{
+    return mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
 }
 
 void TiledBackingStore::setContentsScale(float scale)
@@ -242,7 +247,7 @@ void TiledBackingStore::createTiles()
     if (m_contentsFrozen)
         return;
     
-    IntRect visibleRect = mapFromContents(m_client->tiledBackingStoreVisibleRect());
+    IntRect visibleRect = visibleContentsRect();
     m_previousVisibleRect = visibleRect;
 
     if (visibleRect.isEmpty())

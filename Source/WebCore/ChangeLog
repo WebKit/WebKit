@@ -1,3 +1,29 @@
+2011-10-20  Carol Szabo  <carol@webkit.org>
+
+        Tiled Backing Store does not regenerate tiles when it should
+        https://bugs.webkit.org/show_bug.cgi?id=57798
+
+        Reviewed by Darin Adler.
+
+        Changed TiledBackingStore::adjustVisibleRect to take into account
+        contentsSize, the same way as it is done when tiles are generated.
+
+        This is an issue that requires a certain sequence of API calls which
+        may not be easily simulated from DumpRenderTree, but which is 
+        easily reproduced with QtTest. This is why I have provided only
+        a Qt specific test despite this being a generic problem.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::adjustVisibleRect):
+        Changed to take into account ContentsSize.
+        (WebCore::TiledBackingStore::visibleContentsRect):
+        Added to return the intersection of the viewport's visible rect with
+        the ContentsRect.
+        (WebCore::TiledBackingStore::createTiles):
+        Changed to take into account the ContentsSize when calculating the
+        previously visible rect.
+        * platform/graphics/TiledBackingStore.h:
+
 2011-10-19  Jer Noble  <jer.noble@apple.com>
 
         compositing/video tests time out on Lion

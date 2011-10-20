@@ -1,3 +1,19 @@
+2011-10-20  Carol Szabo  <carol@webkit.org>
+
+        Tiled Backing Store does not regenerate tiles when it should
+        https://bugs.webkit.org/show_bug.cgi?id=57798
+
+        Reviewed by Darin Adler.
+
+        Provided test for this bug. Changed the name of the resource I added
+        for a previous test so that the name is descriptive such that it can
+        be shared across several tests.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::bug57798):
+        (tst_QGraphicsWebView::bug56929):
+        * tests/qgraphicswebview/tst_qgraphicswebview.qrc:
+
 2011-10-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Merge QML plugin for WebKit2 with the original WebKit1 plugin
