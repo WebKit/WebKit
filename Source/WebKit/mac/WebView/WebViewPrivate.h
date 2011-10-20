@@ -700,7 +700,7 @@ Could be worth adding to the API.
 - (JSValueRef)_nodesFromRect:(JSContextRef)context forDocument:(JSValueRef)value x:(int)x  y:(int)y top:(unsigned)top right:(unsigned)right bottom:(unsigned)bottom left:(unsigned)left ignoreClipping:(BOOL)ignoreClipping;
 @end
 
-@interface NSObject (WebFrameLoadDelegatePrivate)
+@interface NSObject (WebViewFrameLoadDelegatePrivate)
 - (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;
 
 // didFinishDocumentLoadForFrame is sent when the document has finished loading, though not necessarily all
@@ -718,7 +718,7 @@ Could be worth adding to the API.
 
 @end
 
-@interface NSObject (WebResourceLoadDelegatePrivate)
+@interface NSObject (WebViewResourceLoadDelegatePrivate)
 // Addresses <rdar://problem/5008925> - SPI for now
 - (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 @end
