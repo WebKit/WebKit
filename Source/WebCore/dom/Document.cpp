@@ -31,7 +31,6 @@
 #include "AnimationController.h"
 #include "Attr.h"
 #include "Attribute.h"
-#include "BeforeLoadEvent.h"
 #include "CDATASection.h"
 #include "CSSPrimitiveValueCache.h"
 #include "CSSStyleSelector.h"
@@ -42,16 +41,12 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
-#include "CompositionEvent.h"
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
-#include "CustomEvent.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
-#include "DeviceMotionEvent.h"
-#include "DeviceOrientationEvent.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -60,8 +55,8 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EntityReference.h"
-#include "ErrorEvent.h"
 #include "Event.h"
+#include "EventFactory.h"
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -75,6 +70,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HashChangeEvent.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
@@ -94,33 +90,26 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
-#include "HashChangeEvent.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
-#include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
-#include "MessageEvent.h"
-#include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
-#include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
 #include "NewXMLDocumentParser.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
 #include "NodeWithIndex.h"
-#include "OverflowEvent.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
-#include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
 #include "RenderLayer.h"
@@ -139,21 +128,14 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StaticHashSetNodeList.h"
-#include "StorageEvent.h"
 #include "StyleSheetList.h"
-#include "TextEvent.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
-#include "UIEvent.h"
 #include "UserContentURLPattern.h"
-#include "WebKitAnimationEvent.h"
-#include "WebKitTransitionEvent.h"
-#include "WheelEvent.h"
 #include "XMLDocumentParser.h"
 #include "XMLHttpRequest.h"
-#include "XMLHttpRequestProgressEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "XPathEvaluator.h"
@@ -181,14 +163,9 @@
 #include "SVGElementFactory.h"
 #include "SVGNames.h"
 #include "SVGStyleElement.h"
-#include "SVGZoomEvent.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-#if USE(V8)
-#include "RuntimeEnabledFeatures.h"
-#endif
-#include "TouchEvent.h"
 #include "TouchList.h"
 #endif
 
@@ -205,27 +182,6 @@
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "RequestAnimationFrameCallback.h"
 #include "ScriptedAnimationController.h"
-#endif
-
-#if ENABLE(WEB_AUDIO)
-#include "AudioProcessingEvent.h"
-#include "OfflineAudioCompletionEvent.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "MediaStreamEvent.h"
-#endif
-
-#if ENABLE(INPUT_SPEECH)
-#include "SpeechInputEvent.h"
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-#include "CloseEvent.h"
-#endif
-
-#if ENABLE(WEBGL)
-#include "WebGLContextEvent.h"
 #endif
 
 #if ENABLE(MICRODATA)
@@ -3487,95 +3443,7 @@ void Document::enqueueDocumentEvent(PassRefPtr<Event> event)
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
-    RefPtr<Event> event;
-    if (eventType == "Event" || eventType == "Events" || eventType == "HTMLEvents")
-        event = Event::create();
-    else if (eventType == "BeforeLoadEvent")
-        event = BeforeLoadEvent::create();
-    else if (eventType == "CompositionEvent")
-        event = CompositionEvent::create();
-    else if (eventType == "CustomEvent")
-        event = CustomEvent::create();
-    else if (eventType == "ErrorEvent")
-        event = ErrorEvent::create();
-    else if (eventType == "HashChangeEvent")
-        event = HashChangeEvent::create();
-    else if (eventType == "KeyboardEvent" || eventType == "KeyboardEvents")
-        event = KeyboardEvent::create();
-    else if (eventType == "MessageEvent")
-        event = MessageEvent::create();
-    else if (eventType == "MouseEvent" || eventType == "MouseEvents")
-        event = MouseEvent::create();
-    else if (eventType == "MutationEvent" || eventType == "MutationEvents")
-        event = MutationEvent::create();
-    else if (eventType == "OverflowEvent")
-        event = OverflowEvent::create();
-    else if (eventType == "PageTransitionEvent")
-        event = PageTransitionEvent::create();
-    else if (eventType == "PopStateEvent")
-        event = PopStateEvent::create(); 
-    else if (eventType == "ProgressEvent")
-        event = ProgressEvent::create();
-    else if (eventType == "TextEvent")
-        event = TextEvent::create();
-    else if (eventType == "UIEvent" || eventType == "UIEvents")
-        event = UIEvent::create();
-    else if (eventType == "WebKitAnimationEvent")
-        event = WebKitAnimationEvent::create();
-    else if (eventType == "WebKitTransitionEvent")
-        event = WebKitTransitionEvent::create();
-    else if (eventType == "WheelEvent")
-        event = WheelEvent::create();
-    else if (eventType == "XMLHttpRequestProgressEvent")
-        event = XMLHttpRequestProgressEvent::create();
-#if ENABLE(WEB_AUDIO)
-    else if (eventType == "AudioProcessingEvent")
-        event = AudioProcessingEvent::create();
-    else if (eventType == "OfflineAudioCompletionEvent")
-        event = OfflineAudioCompletionEvent::create();
-#endif
-#if ENABLE(MEDIA_STREAM)
-    else if (eventType == "MediaStreamEvent")
-        event = MediaStreamEvent::create();
-#endif
-#if ENABLE(INPUT_SPEECH)
-    else if (eventType == "SpeechInputEvent")
-        event = SpeechInputEvent::create();
-#endif
-#if ENABLE(WEB_SOCKETS)
-    else if (eventType == "CloseEvent")
-        event = CloseEvent::create();
-#endif
-#if ENABLE(WEBGL)
-    else if (eventType == "WebGLContextEvent")
-        event = WebGLContextEvent::create();
-#endif
-    else if (eventType == "StorageEvent")
-        event = StorageEvent::create();
-#if ENABLE(SVG)
-    else if (eventType == "SVGEvents")
-        event = Event::create();
-    else if (eventType == "SVGZoomEvent" || eventType == "SVGZoomEvents")
-        event = SVGZoomEvent::create();
-#endif
-#if ENABLE(TOUCH_EVENTS)
-#if USE(V8)
-    else if (eventType == "TouchEvent" && RuntimeEnabledFeatures::touchEnabled())
-#else
-    else if (eventType == "TouchEvent")
-#endif
-        event = TouchEvent::create();
-#endif
-#if ENABLE(DEVICE_ORIENTATION)
-    else if (eventType == "DeviceMotionEvent")
-        event = DeviceMotionEvent::create();
-    else if (eventType == "DeviceOrientationEvent")
-        event = DeviceOrientationEvent::create();
-#endif
-#if ENABLE(ORIENTATION_EVENTS)
-    else if (eventType == "OrientationEvent")
-        event = Event::create();
-#endif
+    RefPtr<Event> event = EventFactory::create(eventType);
     if (event)
         return event.release();
 

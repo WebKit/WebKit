@@ -1,3 +1,33 @@
+2011-10-19  Adam Barth  <abarth@webkit.org>
+
+        Document.cpp shouldn't need to know about every event for every feature
+        https://bugs.webkit.org/show_bug.cgi?id=70469
+
+        Reviewed by Eric Seidel.
+
+        make_event_factory.pl generates the implementation of EventFactory
+        based on a simple ".in" file.
+
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_makenames.py:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/EventFactory.h: Added.
+        * dom/EventFactory.in: Added.
+        * dom/make_event_factory.pl: Added.
+        (defaultEventPropertyHash):
+        (eventHandler):
+        (parametersHandler):
+        (readNames):
+        (readEvents):
+        (interfaceForEvent):
+        (printCppFile):
+        (printLicenseHeader):
+
 2011-10-19  Kentaro Hara  <haraken@chromium.org>
 
         Added a ConstructorMode check to all existing custom V8 constructors.

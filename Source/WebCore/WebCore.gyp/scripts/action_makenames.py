@@ -109,6 +109,7 @@ def main(args):
     makeNamesInput = None
     tagInput = None
     attrInput = None
+    eventsInput = None
     for input in inputs:
         # Make input pathnames absolute so they can be accessed after changing
         # directory. On Windows, convert \ to / for inputs to the perl script to
@@ -116,7 +117,8 @@ def main(args):
         inputAbs = os.path.abspath(input)
         inputAbsPosix = inputAbs.replace(os.path.sep, posixpath.sep)
         inputBasename = os.path.basename(input)
-        if inputBasename == 'make_names.pl':
+        if inputBasename == 'make_names.pl' \
+            or inputBasename == 'make_event_factory.pl':
             assert makeNamesInput == None
             makeNamesInput = inputAbs
         elif inputBasename.endswith('TagNames.in') \
@@ -127,13 +129,15 @@ def main(args):
              or inputBasename.endswith('attrs.in'):
             assert attrInput == None
             attrInput = inputAbsPosix
+        elif inputBasename.endswith('EventFactory.in'):
+            eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):
             options.append(inputAbsPosix)
         else:
             assert False
 
     assert makeNamesInput != None
-    assert tagInput != None or attrInput != None or ('--fonts' in options)
+    assert tagInput != None or attrInput != None or eventsInput != None or ('--fonts' in options)
 
     # scriptsPath is a Perl include directory, located relative to
     # makeNamesInput.
@@ -150,6 +154,8 @@ def main(args):
         command.extend(['--tags', tagInput])
     if attrInput != None:
         command.extend(['--attrs', attrInput])
+    if eventsInput != None:
+        command.extend(['--events', eventsInput])
     command.extend(options)
 
     # Do it. check_call is new in 2.5, so simulate its behavior with call and

@@ -599,6 +599,7 @@ all : \
     CSSPropertyNames.h \
     CSSValueKeywords.h \
     ColorData.cpp \
+    EventFactory.cpp \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
@@ -856,6 +857,13 @@ JSSVGElementWrapperFactory.cpp : SVGNames.cpp
 
 XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in
+
+# --------
+ 
+# Register event constructors
+
+EventFactory.cpp : dom/make_event_factory.pl dom/EventFactory.in
+	perl -I $(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventFactory.in
 
 # --------
  

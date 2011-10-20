@@ -3234,6 +3234,8 @@
 		975CA28B130365F800E99AD9 /* Crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 975CA288130365F800E99AD9 /* Crypto.h */; };
 		975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 975CA29F1303679D00E99AD9 /* JSCrypto.cpp */; };
 		975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 975CA2A01303679D00E99AD9 /* JSCrypto.h */; };
+		97665013144FAA4200F6BB51 /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 97665011144FAA4200F6BB51 /* EventFactory.h */; };
+		9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9766504E144FBFFE00F6BB51 /* EventFactory.cpp */; };
 		976D6C77122B8A3D001FD1F7 /* AsyncFileWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C58122B8A3D001FD1F7 /* AsyncFileWriter.h */; };
 		976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C59122B8A3D001FD1F7 /* Blob.cpp */; };
 		976D6C79122B8A3D001FD1F7 /* Blob.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C5A122B8A3D001FD1F7 /* Blob.h */; };
@@ -10421,6 +10423,8 @@
 		975CA289130365F800E99AD9 /* Crypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Crypto.idl; sourceTree = "<group>"; };
 		975CA29F1303679D00E99AD9 /* JSCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCrypto.cpp; sourceTree = "<group>"; };
 		975CA2A01303679D00E99AD9 /* JSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCrypto.h; sourceTree = "<group>"; };
+		97665011144FAA4200F6BB51 /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
+		9766504E144FBFFE00F6BB51 /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		976D6C58122B8A3D001FD1F7 /* AsyncFileWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFileWriter.h; path = fileapi/AsyncFileWriter.h; sourceTree = "<group>"; };
 		976D6C59122B8A3D001FD1F7 /* Blob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Blob.cpp; path = fileapi/Blob.cpp; sourceTree = "<group>"; };
 		976D6C5A122B8A3D001FD1F7 /* Blob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Blob.h; path = fileapi/Blob.h; sourceTree = "<group>"; };
@@ -15271,6 +15275,7 @@
 				E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
+				9766504E144FBFFE00F6BB51 /* EventFactory.cpp */,
 				A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */,
 				A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */,
 				A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */,
@@ -21119,6 +21124,7 @@
 				418A06CE133C04D500CD379C /* EventDispatcher.h */,
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
+				97665011144FAA4200F6BB51 /* EventFactory.h */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				85AFA7410AAF298400E84305 /* EventListener.idl */,
 				AD4495F1141FC08900541EDF /* EventListenerMap.cpp */,
@@ -24687,6 +24693,7 @@
 				71CCB49D144824AC00C676D6 /* ImageBySizeCache.h in Headers */,
 				0753860314489E9800B78452 /* CachedCues.h in Headers */,
 				8AA61D00144D595B00F37350 /* CSSRegionStyleRule.h in Headers */,
+				97665013144FAA4200F6BB51 /* EventFactory.h in Headers */,
 				A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */,
 				A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */,
 			);
@@ -27549,6 +27556,7 @@
 				71CCB49C144824AC00C676D6 /* ImageBySizeCache.cpp in Sources */,
 				0753860214489E9800B78452 /* CachedCues.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* CSSRegionStyleRule.cpp in Sources */,
+				9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */,
 				A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */,
 				A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */,
 			);

@@ -700,6 +700,23 @@
           ],
         },
         {
+          'action_name': 'EventFactory',
+          'inputs': [
+            '../dom/make_event_factory.pl',
+            '../dom/EventFactory.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/EventFactory.cpp',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'MathMLNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -1014,6 +1031,7 @@
         # Additional .cpp files from webcore_bindings_sources actions.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/EventFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',

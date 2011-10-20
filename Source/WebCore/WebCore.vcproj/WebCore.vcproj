@@ -542,6 +542,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\EventFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HTMLElementFactory.h"
 				>
 			</File>

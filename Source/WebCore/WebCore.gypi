@@ -7045,6 +7045,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathResultInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DebuggerScriptSource.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DocTypeStrings.cpp',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/EventFactory.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLElementFactory.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLElementFactory.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLEntityTable.cpp',

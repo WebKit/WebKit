@@ -32,6 +32,8 @@ XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
 
 HTML_ENTITIES = $$PWD/html/parser/HTMLEntityNames.in
 
+EVENT_FACTORY = $$PWD/dom/EventFactory.in
+
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
 WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
@@ -778,6 +780,14 @@ fontnames.wkScript = $$PWD/dom/make_names.pl
 fontnames.commands = perl -I$$PWD/bindings/scripts $$fontnames.wkScript --fonts $$FONT_NAMES --outputDir $$WC_GENERATED_SOURCES_DIR
 entities.depends = $$PWD/dom/make_names.pl $$FONT_NAMES
 addExtraCompiler(fontnames)
+
+# GENERATOR 5-E:
+eventfactory.output = $${WC_GENERATED_SOURCES_DIR}/EventFactory.cpp
+xmlnsnames.input = EVENT_FACTORY
+eventfactory.wkScript = $$PWD/dom/make_event_factory.pl
+eventfactory.commands = perl -I$$PWD/bindings/scripts $$fontnames.wkScript --events $$EVENT_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
+entities.depends = $$PWD/dom/make_event_factory.pl $$EVENT_FACTORY
+addExtraCompiler(eventfactory)
 
 # GENERATOR 8-A:
 entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityTable.cpp

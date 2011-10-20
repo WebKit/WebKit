@@ -37,6 +37,19 @@ MACRO (GENERATE_FONT_NAMES _infile)
 ENDMACRO ()
 
 
+MACRO (GENERATE_EVENT_FACTORY _infile)
+    SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_event_factory.pl)
+    SET(_arguments  --events ${_infile})
+    SET(_outputfiles ${DERIVED_SOURCES_WEBCORE_DIR}/EventFactory.cpp)
+
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  ${_outputfiles}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
+        VERBATIM)
+ENDMACRO ()
+
+
 MACRO (GENERATE_DOM_NAMES _namespace _attrs)
     SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     SET(_arguments  --attrs ${_attrs})

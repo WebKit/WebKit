@@ -9,6 +9,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/CSSValueKeywords.h \
 	DerivedSources/WebCore/CSSValueKeywords.cpp \
 	DerivedSources/WebCore/ColorData.cpp \
+	DerivedSources/WebCore/EventFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.h \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \
