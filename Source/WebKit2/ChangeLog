@@ -1,3 +1,14 @@
+2011-10-20  Sam Weinig  <sam@webkit.org>
+
+        Put the WebKit2 C SPI in PrivateHeaders
+        https://bugs.webkit.org/show_bug.cgi?id=70549
+
+        Reviewed by Dan Bernstein.
+
+        No change in behavior.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-10-20  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/9412849> and https://bugs.webkit.org/show_bug.cgi?id=70535
