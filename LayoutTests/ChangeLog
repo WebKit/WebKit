@@ -1,3 +1,10 @@
+2011-10-19  Erik Arvidsson  <arv@chromium.org>
+
+        Fix test breakage after r97881
+
+        * fast/forms/file/file-input-change-event-expected.txt:
+        * fast/forms/file/file-input-change-event.html:
+
 2011-10-19  Dirk Pranke  <dpranke@chromium.org>
 
         Add win baseline for new test.
