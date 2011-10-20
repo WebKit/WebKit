@@ -1,3 +1,21 @@
+2011-10-20  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] FontCache::createFontPlatformData() is broken, a default font is returned
+        even if the family does not match.
+        https://bugs.webkit.org/show_bug.cgi?id=55036
+
+        The problem here was that a FontPlatformData
+        object is always created, regardless of whether
+        the request for a given font family can be
+        satisfied or not.
+
+        Reviewed by Andreas Kling.
+
+        Covered by existing tests.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         When user is panning with the tiled backing store, the page
