@@ -31,6 +31,9 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "LayoutRepainter.h"
+#include "RenderView.h"
+
 #if ENABLE(CSS3_FLEXBOX)
 
 namespace WebCore {
@@ -166,6 +169,9 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+
     IntSize previousSize = size();
 
     // FIXME: In theory we should only have to call one of these.
@@ -187,7 +193,11 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
+    statePusher.pop();
+
     updateLayerTransform();
+
+    repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
 }
@@ -672,7 +682,6 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         bool shouldFlipInlineDirection = isColumnFlow() ? true : isLeftToRightFlow();
         LayoutUnit logicalLeft = shouldFlipInlineDirection ? startEdge : totalLogicalWidth - startEdge - childLogicalWidth;
 
-        // FIXME: Do repaintDuringLayoutIfMoved.
         // FIXME: Supporting layout deltas.
         setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop + flowAwareMarginBeforeForChild(child)));
         startEdge += childLogicalWidth + flowAwareMarginEndForChild(child);
@@ -686,7 +695,15 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
 
 void RenderFlexibleBox::adjustLocationLogicalTopForChild(RenderBox* child, LayoutUnit delta)
 {
+    LayoutRect oldRect = child->frameRect();
+
     setFlowAwareLogicalLocationForChild(child, flowAwareLogicalLocationForChild(child) + LayoutSize(0, delta));
+
+    // If the child moved, we have to repaint it as well as any floating/positioned
+    // descendants. An exception is if we need a layout. In this case, we know we're going to
+    // repaint ourselves (and the child) anyway.
+    if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+        child->repaintDuringLayoutIfMoved(oldRect);
 }
 
 void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator, LayoutUnit maxAscent)
