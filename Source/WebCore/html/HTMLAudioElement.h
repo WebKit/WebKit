@@ -40,6 +40,8 @@ public:
     static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document*);
     static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document*, const String& src);
 
+    virtual bool hasPendingActivity() const { return isPlaying() || HTMLMediaElement::hasPendingActivity(); }
+
 private:
     HTMLAudioElement(const QualifiedName&, Document*);
 

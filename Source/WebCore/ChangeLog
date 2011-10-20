@@ -1,3 +1,27 @@
+2011-10-20  Eugene Nalimov  <enal@chromium.org>
+
+        Playing HTMLAudioElement can be garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=66878
+
+        Reviewed by Adam Barth.
+
+        Make HTMLAudioElement an 'active' one, meaning that it cannot be
+        garbage collected if it has panding activity. Had to make
+        HTMLMediaElement::hasPendingActivity() and
+        HTMLAudioElement::hasPendingActivity() public, otherwise automatically
+        generated code would not compile. 
+
+        Test: no test, as automatic test is blocked by
+        https://bugs.webkit.org/show_bug.cgi?id=70421
+        You don't want to sit down and listen if audio stream played completely,
+        and cannot rely on 'ended' event because events are lost when events
+        listener is collected. 
+
+        * html/HTMLAudioElement.idl:
+        * html/HTMLAudioElement.h:
+        (WebCore::HTMLAudioElement::hasPendingActivity):
+        * html/HTMLMediaElement.h:
+
 2011-10-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static deleteProperty to deletePropertyByIndex

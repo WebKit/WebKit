@@ -65,7 +65,7 @@ class MutableTextTrack;
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
 // no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
 
-class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, private ActiveDOMObject
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, public ActiveDOMObject
 #if ENABLE(VIDEO_TRACK)
     , private TextTrackClient
 #endif
@@ -220,6 +220,8 @@ public:
 
     bool isPlaying() const { return m_playing; }
 
+    virtual bool hasPendingActivity() const;
+
 #if ENABLE(WEB_AUDIO)
     MediaElementAudioSourceNode* audioSourceNode() { return m_audioSourceNode; }
     void setAudioSourceNode(MediaElementAudioSourceNode*);
@@ -283,7 +285,6 @@ private:
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
     virtual void stop();
-    virtual bool hasPendingActivity() const;
     
     virtual void mediaVolumeDidChange();
 
