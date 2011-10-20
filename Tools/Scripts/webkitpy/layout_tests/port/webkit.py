@@ -177,35 +177,39 @@ class WebKitPort(Port):
         return process
 
     def _read_image_diff(self, sp):
-        timeout = 2.0
-        deadline = time.time() + timeout
-        output = sp.read_stdout_line(timeout)
+        deadline = time.time() + 2.0
+        output = None
         output_image = ""
-        diff_percent = 0
-        while not sp.timed_out and not sp.crashed and output:
+
+        while True:
+            output = sp.read_stdout_line(deadline)
+            if sp.timed_out or sp.crashed or not output:
+                break
+
+            if output.startswith('diff'):  # This is the last line ImageDiff prints.
+                break
+
             if output.startswith('Content-Length'):
                 m = re.match('Content-Length: (\d+)', output)
                 content_length = int(m.group(1))
-                timeout = deadline - time.time()
-                output_image = sp.read_stdout(timeout, content_length)
-                output = sp.read_stdout_line(timeout)
-                break
-            elif output.startswith('diff'):
-                break
-            else:
-                timeout = deadline - time.time()
+                output_image = sp.read_stdout(deadline, content_length)
                 output = sp.read_stdout_line(deadline)
+                break
 
         if sp.timed_out:
             _log.error("ImageDiff timed out")
         if sp.crashed:
             _log.error("ImageDiff crashed")
+        # FIXME: There is no need to shut down the ImageDiff server after every diff.
         sp.stop()
-        if output.startswith('diff'):
+
+        diff_percent = 0
+        if output and output.startswith('diff'):
             m = re.match('diff: (.+)% (passed|failed)', output)
             if m.group(2) == 'passed':
                 return [None, 0]
             diff_percent = float(m.group(1))
+
         return (output_image, diff_percent)
 
     def default_results_directory(self):
@@ -550,6 +554,7 @@ class WebKitDriver(Driver):
             or self._read_header(block, line, 'Content-Length: ', '_content_length', int)
             or self._read_header(block, line, 'ActualHash: ', 'content_hash')):
             return
+        # Note, we're not reading ExpectedHash: here, but we could.
         # If the line wasn't a header, we just append it to the content.
         block.content += line
 
@@ -566,19 +571,17 @@ class WebKitDriver(Driver):
             if out_seen_eof and (self.err_seen_eof or not wait_for_stderr_eof):
                 break
 
-            if self._server_process.timed_out or self._detected_crash():
-                break
-
-            timeout = deadline - time.time()
-
             if self.err_seen_eof:
-                out_line = self._server_process.read_stdout_line(timeout)
+                out_line = self._server_process.read_stdout_line(deadline)
                 err_line = None
             elif out_seen_eof:
                 out_line = None
-                err_line = self._server_process.read_stderr_line(timeout)
+                err_line = self._server_process.read_stderr_line(deadline)
             else:
-                out_line, err_line = self._server_process.read_either_stdout_or_stderr_line(timeout)
+                out_line, err_line = self._server_process.read_either_stdout_or_stderr_line(deadline)
+
+            if self._server_process.timed_out or self._detected_crash():
+                break
 
             if out_line:
                 assert not out_seen_eof
@@ -588,11 +591,13 @@ class WebKitDriver(Driver):
                 err_line, self.err_seen_eof = self._strip_eof(err_line)
 
             if out_line:
+                assert out_line[-1] == "\n", "Missing newline"
+                content_length_before_header_check = block._content_length
                 self._process_stdout_line(block, out_line)
                 # FIXME: Unlike HTTP, DRT dumps the content right after printing a Content-Length header.
                 # Don't wait until we're done with headers, just read the binary blob right now.
-                if block._content_length is not None and not block.content:
-                    block.content = self._server_process.read_stdout(deadline - time.time(), block._content_length)
+                if content_length_before_header_check != block._content_length:
+                    block.content = self._server_process.read_stdout(deadline, block._content_length)
 
             if err_line:
                 if self._check_for_driver_crash(err_line):

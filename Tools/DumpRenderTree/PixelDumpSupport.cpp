@@ -57,21 +57,21 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
     // Compute the hash of the bitmap context pixels
     char actualHash[33];
     computeMD5HashStringForBitmapContext(context.get(), actualHash);
-    printf("\nActualHash: %s\n", actualHash);
-    
+    printf("\nActualHash: %s\n", actualHash); // FIXME: No need for the leading newline.
+
     // Check the computed hash against the expected one and dump image on mismatch
     bool dumpImage = true;
     if (expectedHash.length() > 0) {
         ASSERT(expectedHash.length() == 32);
+
+        printf("\nExpectedHash: %s\n", expectedHash.c_str()); // FIXME: No need for the leading newline.
         
-        printf("\nExpectedHash: %s\n", expectedHash.c_str());
-        
-        if (expectedHash == actualHash)     // FIXME: do case insensitive compare
+        if (expectedHash == actualHash) // FIXME: do case insensitive compare
             dumpImage = false;
     }
-    
+
     if (dumpImage)
-      dumpBitmap(context.get(), actualHash);
+        dumpBitmap(context.get(), actualHash);
 }
 
 static void appendIntToVector(unsigned number, Vector<unsigned char>& vector)

@@ -205,12 +205,18 @@ class MockServerProcess(object):
         self.crashed = False
         self.lines = lines or []
 
-    def read_stdout_line(self, timeout):
+    def read_stdout_line(self, deadline):
         return self.lines.pop(0) + "\n"
 
-    def read_either_stdout_or_stderr_line(self, timeout):
+    def read_stdout(self, deadline, size):
+        # read_stdout doesn't actually function on lines, but this is sufficient for our testing.
+        line = self.lines.pop(0)
+        assert len(line) == size
+        return line
+
+    def read_either_stdout_or_stderr_line(self, deadline):
         # FIXME: We should have tests which intermix stderr and stdout lines.
-        return self.read_stdout_line(timeout), None
+        return self.read_stdout_line(deadline), None
 
 
 class WebKitDriverTest(unittest.TestCase):
@@ -227,3 +233,20 @@ class WebKitDriverTest(unittest.TestCase):
         self.assertEquals(content_block.content_type, 'my_type')
         self.assertEquals(content_block.encoding, 'none')
         self.assertEquals(content_block.content_hash, 'foobar')
+
+    def test_read_binary_block(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0)
+        driver._server_process = MockServerProcess([
+            'ActualHash: actual',
+            'ExpectedHash: expected',
+            'Content-Type: image/png',
+            'Content-Length: 8',
+            "12345678",
+            "#EOF",
+        ])
+        content_block = driver._read_block(0)
+        self.assertEquals(content_block.content_type, 'image/png')
+        self.assertEquals(content_block.content_hash, 'actual')
+        self.assertEquals(content_block.content, '12345678')
+        self.assertEquals(content_block.decoded_content, '12345678')

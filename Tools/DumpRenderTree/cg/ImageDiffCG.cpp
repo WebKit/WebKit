@@ -211,13 +211,13 @@ int main(int argc, const char* argv[])
             else if (imageSize > 0 && !baselineImage)
                 baselineImage = createImageFromStdin(imageSize);
             else
-                fputs("error, image size must be specified.\n", stdout);
+                fputs("error, image size must be specified.\n", stderr);
         }
 
         if (actualImage && baselineImage) {
             RetainPtr<CGImageRef> diffImage;
             float difference = 100.0f;
-            
+
             if ((CGImageGetWidth(actualImage.get()) == CGImageGetWidth(baselineImage.get())) && (CGImageGetHeight(actualImage.get()) == CGImageGetHeight(baselineImage.get())) && (imageHasAlpha(actualImage.get()) == imageHasAlpha(baselineImage.get()))) {
                 diffImage = createDifferenceImage(actualImage.get(), baselineImage.get(), difference); // difference is passed by reference
                 if (difference <= tolerance)
@@ -228,7 +228,7 @@ int main(int argc, const char* argv[])
                 }
             } else
                 fputs("error, test and reference image have different properties.\n", stderr);
-                
+
             if (difference > 0.0f) {
                 if (diffImage) {
                     RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
@@ -238,7 +238,7 @@ int main(int argc, const char* argv[])
                     printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
                     fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
                 }
-                
+
                 fprintf(stdout, "diff: %01.2f%% failed\n", difference);
             } else
                 fprintf(stdout, "diff: %01.2f%% passed\n", difference);

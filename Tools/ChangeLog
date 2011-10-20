@@ -1,3 +1,35 @@
+2011-10-20  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION(97879): Pixel tests no longer work with NRWT on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=70492
+
+        Reviewed by Adam Barth.
+
+        The bug turned out to be that I was assuming the block.content
+        would be empty before the binary content following Content-Length
+        was read inside _read_block.  Turns out its not, due to extra newlines
+        and "ExpectedHash" header.
+
+        In the process of trying to figure out what was going wrong I ended up
+        cleaning up our newline usage in DumpRenderTree a little.  Moved
+        two error messages from stdout to stderr, and fixed a little code indent/whitespace.
+
+        I also fixed ServerProcess to use "deadline" everywhere instead of timeout
+        per Adam's request in the original bug.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (main):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (restoreMainDisplayColorProfile):
+        (setupMainDisplayColorProfile):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-10-20  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove <stdint.h> from ImageDiff and use

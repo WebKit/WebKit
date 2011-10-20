@@ -62,7 +62,7 @@ void restoreMainDisplayColorProfile(int ignored)
         const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
         int error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &sInitialProfileLocation);
         if (error)
-            fprintf(stderr, "Failed to restore initial color profile for main display! Open System Preferences > Displays > Color and manually re-select the profile.  (Error: %i)", error);
+            fprintf(stderr, "Failed to restore initial color profile for main display! Open System Preferences > Displays > Color and manually re-select the profile.  (Error: %i)\n", error);
         sInitialProfileLocation.locType = cmNoProfileBase;
     }
 }
@@ -80,7 +80,7 @@ void setupMainDisplayColorProfile()
         CMCloseProfile(profile);
     }
     if (error) {
-        fprintf(stderr, "Failed to retrieve current color profile for main display, thus it won't be changed.  Many pixel tests may fail as a result.  (Error: %i)", error);
+        fprintf(stderr, "Failed to retrieve current color profile for main display, thus it won't be changed.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
         sInitialProfileLocation.locType = cmNoProfileBase;
         return;
     }
@@ -90,7 +90,7 @@ void setupMainDisplayColorProfile()
     strcpy(location.u.pathLoc.path, PROFILE_PATH);
     error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
     if (error) {
-        fprintf(stderr, "Failed to set color profile for main display!  Many pixel tests may fail as a result.  (Error: %i)", error);
+        fprintf(stderr, "Failed to set color profile for main display!  Many pixel tests may fail as a result.  (Error: %i)\n", error);
         sInitialProfileLocation.locType = cmNoProfileBase;
         return;
     }

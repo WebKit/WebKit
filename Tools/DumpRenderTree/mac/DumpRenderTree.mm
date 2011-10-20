@@ -1083,8 +1083,8 @@ void dump()
         printf("Content-Type: %s\n", [resultMimeType UTF8String]);
 
         if (gLayoutTestController->dumpAsAudio())
-            printf("Content-Transfer-Encoding: base64\n");            
-        
+            printf("Content-Transfer-Encoding: base64\n");
+
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);
 

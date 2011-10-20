@@ -48,7 +48,7 @@ _log = logging.getLogger(__name__)
 class ServerProcess:
     """This class provides a wrapper around a subprocess that
     implements a simple request/response usage model. The primary benefit
-    is that reading responses takes a timeout, so that we don't ever block
+    is that reading responses takes a deadline, so that we don't ever block
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
@@ -118,13 +118,13 @@ class ServerProcess:
             return self._proc.poll()
         return None
 
-    def write(self, input):
+    def write(self, bytes):
         """Write a request to the subprocess. The subprocess is (re-)start()'ed
         if is not already running."""
         if not self._proc:
             self._start()
         try:
-            self._proc.stdin.write(input)
+            self._proc.stdin.write(bytes)
         except IOError, e:
             self.stop()
             # stop() calls _reset(), so we have to set crashed to True after calling stop().
@@ -142,13 +142,13 @@ class ServerProcess:
             return self._pop_error_bytes(index_after_newline)
         return None
 
-    def read_stdout_line(self, timeout_seconds):
-        return self._read(timeout_seconds, self._pop_stdout_line_if_ready)
+    def read_stdout_line(self, deadline):
+        return self._read(deadline, self._pop_stdout_line_if_ready)
 
-    def read_stderr_line(self, timeout_seconds):
-        return self._read(timeout_seconds, self._pop_stderr_line_if_ready)
+    def read_stderr_line(self, deadline):
+        return self._read(deadline, self._pop_stderr_line_if_ready)
 
-    def read_either_stdout_or_stderr_line(self, timeout_seconds):
+    def read_either_stdout_or_stderr_line(self, deadline):
         def retrieve_bytes_from_buffers():
             stdout_line = self._pop_stdout_line_if_ready()
             if stdout_line:
@@ -158,13 +158,13 @@ class ServerProcess:
                 return None, stderr_line
             return None  # Instructs the caller to keep waiting.
 
-        return_value = self._read(timeout_seconds, retrieve_bytes_from_buffers)
+        return_value = self._read(deadline, retrieve_bytes_from_buffers)
         # FIXME: This is a bit of a hack around the fact that _read normally only returns one value, but this caller wants it to return two.
         if return_value is None:
             return None, None
         return return_value
 
-    def read_stdout(self, timeout_seconds, size):
+    def read_stdout(self, deadline, size):
         if size <= 0:
             raise ValueError('ServerProcess.read() called with a non-positive size: %d ' % size)
 
@@ -173,7 +173,7 @@ class ServerProcess:
                 return self._pop_output_bytes(size)
             return None
 
-        return self._read(timeout_seconds, retrieve_bytes_from_stdout_buffer)
+        return self._read(deadline, retrieve_bytes_from_stdout_buffer)
 
     def _check_for_crash(self):
         if self._proc.poll() != None:
@@ -211,7 +211,7 @@ class ServerProcess:
             self._sample()
 
     def _split_string_after_index(self, string, index):
-        return string[0:index], string[index:]
+        return string[:index], string[index:]
 
     def _pop_output_bytes(self, bytes_count):
         output, self._output = self._split_string_after_index(self._output, bytes_count)
@@ -221,11 +221,11 @@ class ServerProcess:
         output, self._error = self._split_string_after_index(self._error, bytes_count)
         return output
 
-    def _wait_for_data_and_update_buffers(self, ms_to_wait):
+    def _wait_for_data_and_update_buffers(self, deadline):
         out_fd = self._proc.stdout.fileno()
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
-        read_fds, _, _ = select.select(select_fds, [], select_fds, ms_to_wait)
+        read_fds, _, _ = select.select(select_fds, [], select_fds, deadline - time.time())
         try:
             if out_fd in read_fds:
                 self._output += self._proc.stdout.read()
@@ -246,8 +246,7 @@ class ServerProcess:
     # This read function is a bit oddly-designed, as it polls both stdout and stderr, yet
     # only reads/returns from one of them (buffering both in local self._output/self._error).
     # It might be cleaner to pass in the file descriptor to poll instead.
-    def _read(self, timeout, fetch_bytes_from_buffers_callback):
-        deadline = time.time() + timeout
+    def _read(self, deadline, fetch_bytes_from_buffers_callback):
         while True:
             if self._check_for_abort(deadline):
                 return None
@@ -256,7 +255,7 @@ class ServerProcess:
             if bytes is not None:
                 return bytes
 
-            self._wait_for_data_and_update_buffers(deadline - time.time())
+            self._wait_for_data_and_update_buffers(deadline)
 
     def stop(self):
         if not self._proc:
