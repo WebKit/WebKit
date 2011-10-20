@@ -39,16 +39,24 @@
 #include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
 #include <iterator>
+#include <limits.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/Vector.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
 #define PATH_MAX MAX_PATH
 #endif
+
+// Define macro here to make ImageDiff independent of JavaScriptCore.
+#define ASSERT(assertion) do \
+    if (!(assertion)) { \
+        fprintf(stderr, "ASSERT failed at %s:%s: " #assertion ".", __FILE__, __LINE__); \
+        exit(1); \
+    } \
+while (0)
 
 using namespace std;
 
@@ -97,14 +105,18 @@ public:
         if (!byteLength)
             return false;
 
-        OwnArrayPtr<unsigned char> source = adoptArrayPtr(new unsigned char[byteLength]);
-        if (fread(source.get(), 1, byteLength, stdin) != byteLength)
+        unsigned char* source = new unsigned char[byteLength];
+        if (fread(source, 1, byteLength, stdin) != byteLength) {
+            delete [] source;
             return false;
+        }
 
-        if (!webkit_support::DecodePNG(source.get(), byteLength, &m_data, &m_width, &m_height)) {
+        if (!webkit_support::DecodePNG(source, byteLength, &m_data, &m_width, &m_height)) {
+            delete [] source;
             clear();
             return false;
         }
+        delete [] source;
         return true;
     }
 
@@ -449,7 +461,7 @@ int diffImages(const char* file1, const char* file2, const char* outFile,
 
 int main(int argc, const char* argv[])
 {
-    Vector<const char*> values;
+    std::vector<const char*> values;
     bool pollStdin = false;
     bool generateDiff = false;
     bool shouldWritePercentages = false;
@@ -464,7 +476,7 @@ int main(int argc, const char* argv[])
         else if (!strcmp(argv[i], optionWeightedIntensity))
             comparator = weightedPercentageDifferent;
         else
-            values.append(argv[i]);
+            values.push_back(argv[i]);
     }
 
     if (pollStdin) {

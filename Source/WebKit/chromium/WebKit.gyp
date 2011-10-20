@@ -1024,9 +1024,7 @@
             'target_name': 'ImageDiff',
             'type': 'executable',
             'dependencies': [
-                'webkit',
-                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
             ],
             'include_dirs': [
                 '../../JavaScriptCore',
@@ -1035,13 +1033,17 @@
             'sources': [
                 '../../../Tools/DumpRenderTree/chromium/ImageDiff.cpp',
             ],
+            'conditions': [
+                ['OS=="android"', {
+                    'toolsets': ['host'],
+                }],
+            ],
         },
         {
             'target_name': 'DumpRenderTree',
             'type': 'executable',
             'mac_bundle': 1,
             'dependencies': [
-                'ImageDiff',
                 'inspector_resources',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
@@ -1190,11 +1192,16 @@
                         ['exclude', 'Gtk\\.cpp$']
                     ]
                 }],
-                ['OS!="android"', {
+                ['OS=="android"', {
+                    'dependencies': [
+                        'ImageDiff#host',
+                    ],
+                },{ # OS!="android"
                     'sources/': [
                         ['exclude', '(Android)\\.cpp$']
                     ],
                     'dependencies': [
+                        'ImageDiff',
                         'copy_TestNetscapePlugIn',
                         '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                     ],

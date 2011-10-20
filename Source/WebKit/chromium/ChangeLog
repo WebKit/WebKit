@@ -1,3 +1,20 @@
+2011-10-20  Hao Zheng  <zhenghao@chromium.org>
+
+        [Chromium] Reduce dependencies of ImageDiff to compile it for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=69997
+
+        Reviewed by Tony Chang.
+
+        This change is required to make ImageDiff for Android, and can benefit
+        other platforms, too. On Android, most targets are built as
+        toolsets:target. while ImageDiff needs to be built as toolsets:host.
+        Currently, building the standalone target of ImageDiff depends on about
+        85 other targets (try  make ImageDiff'), which is inefficient. After the
+        change, ImageDiff only depends on webkit_support_gfx, which in turn
+        depends on libpng and zlib.
+
+        * WebKit.gyp:
+
 2011-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r97917.
