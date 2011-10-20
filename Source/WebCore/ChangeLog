@@ -1,3 +1,23 @@
+2011-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to print the Frame tree from the debugger.
+
+        Reviewed by Sam Weinig.
+        
+        Add a showFrameTree(frame) method, callable from gdb,
+        which dumps the Frame tree, including the frame's view,
+        document, owner element and URI.
+
+        * page/FrameTree.cpp:
+        (printIndent):
+        (printFrames):
+        (showFrameTree):
+        * page/FrameTree.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateClipRects):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+
 2011-10-20  Andreas Kling  <kling@webkit.org>
 
         Remove StyleBase::cssText().

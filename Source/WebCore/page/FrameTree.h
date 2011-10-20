@@ -90,4 +90,9 @@ namespace WebCore {
 
 } // namespace WebCore
 
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showFrameTree(const WebCore::Frame*);
+#endif
+
 #endif // FrameTree_h
