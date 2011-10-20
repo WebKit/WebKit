@@ -1,3 +1,20 @@
+2011-10-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Remove <stdint.h> from ImageDiff and use
+        unsigned int instead of uint32_t.
+
+        Unreviewed, fixing the chromium win build.
+
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (Image::pixelAt):
+        (Image::setPixelAt):
+        (maxOf3):
+        (getRedComponent):
+        (getGreenComponent):
+        (getBlueComponent):
+        (weightedPercentageDifferent):
+        (createImageDiff):
+
 2011-10-20  Hao Zheng  <zhenghao@chromium.org>
 
         [Chromium] Reduce dependencies of ImageDiff to compile it for Android.
