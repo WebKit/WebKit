@@ -44,6 +44,7 @@ public:
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
     }
 
+    virtual void onSwapBuffersCompleteOnImplThread() { }
     virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
 

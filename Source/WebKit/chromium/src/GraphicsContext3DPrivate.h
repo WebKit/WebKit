@@ -51,7 +51,7 @@ class Extensions3DChromium;
 class WebGLLayerChromium;
 #endif
 class GraphicsContextLostCallbackAdapter;
-class SwapBuffersCompleteCallbackAdapter;
+class GraphicsContext3DSwapBuffersCompleteCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
@@ -312,7 +312,7 @@ private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
-    OwnPtr<SwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
+    OwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;

@@ -35,7 +35,7 @@ class CCThread;
 class CCSchedulerClient {
 public:
     virtual void scheduleBeginFrameAndCommit() = 0;
-    virtual void scheduleDrawAndPresent() = 0;
+    virtual void scheduleDrawAndSwap() = 0;
 
 protected:
     virtual ~CCSchedulerClient() { }
@@ -54,7 +54,9 @@ public:
     void requestRedraw();
 
     void didCommit();
-    void didDraw();
+    void didDrawAndSwap();
+    void didSwapBuffersComplete();
+    void didSwapBuffersAbort();
 
     bool commitPending() const { return m_commitPending; }
     bool redrawPending() const { return m_redrawPending; }

@@ -56,6 +56,7 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMainThreadTask.h"
+#include "cc/CCThreadProxy.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
 #include "GrContext.h"
@@ -130,6 +131,29 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 
 } // anonymous namespace
 
+class LayerRendererSwapBuffersCompleteCallbackAdapter : public Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM {
+public:
+    static PassOwnPtr<LayerRendererSwapBuffersCompleteCallbackAdapter> create(LayerRendererChromium* layerRenderer)
+    {
+        return adoptPtr(new LayerRendererSwapBuffersCompleteCallbackAdapter(layerRenderer));
+    }
+    virtual ~LayerRendererSwapBuffersCompleteCallbackAdapter() { }
+
+    virtual void onSwapBuffersComplete()
+    {
+        m_layerRenderer->onSwapBuffersComplete();
+    }
+
+private:
+    explicit LayerRendererSwapBuffersCompleteCallbackAdapter(LayerRendererChromium* layerRenderer)
+    {
+        m_layerRenderer = layerRenderer;
+    }
+
+    LayerRendererChromium* m_layerRenderer;
+};
+
+
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
 {
 #if USE(SKIA)
@@ -165,6 +189,18 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.usingMapSub)
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");
 
+    // Use the swapBuffers callback only with the threaded proxy.
+    if (settings().enableCompositorThread)
+        m_capabilities.usingSwapCompleteCallback = extensions->supports("GL_CHROMIUM_swapbuffers_complete_callback");
+    if (m_capabilities.usingSwapCompleteCallback) {
+        extensions->ensureEnabled("GL_CHROMIUM_swapbuffers_complete_callback");
+        Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
+        extensions3DChromium->setSwapBuffersCompleteCallbackCHROMIUM(LayerRendererSwapBuffersCompleteCallbackAdapter::create(this));
+    }
+
+    if (extensions->supports("GL_EXT_texture_format_BGRA8888"))
+        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
+
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
@@ -180,8 +216,9 @@ bool LayerRendererChromium::initialize()
 
 LayerRendererChromium::~LayerRendererChromium()
 {
-    ASSERT(CCProxy::isImplThread
-());
+    ASSERT(CCProxy::isImplThread());
+    Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+    extensions3DChromium->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
     m_headsUpDisplay.clear(); // Explicitly destroy the HUD before the TextureManager dies.
     cleanupSharedObjects();
 }
@@ -411,16 +448,21 @@ void LayerRendererChromium::finish()
     m_context->finish();
 }
 
-void LayerRendererChromium::present()
+void LayerRendererChromium::swapBuffers()
 {
-    TRACE_EVENT("LayerRendererChromium::present", this, 0);
+    TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
     // We're done! Time to swapbuffers!
 
     // Note that currently this has the same effect as swapBuffers; we should
     // consider exposing a different entry point on GraphicsContext3D.
     m_context->prepareTexture();
 
-    m_headsUpDisplay->onPresent();
+    m_headsUpDisplay->onSwapBuffers();
+}
+
+void LayerRendererChromium::onSwapBuffersComplete()
+{
+    m_owner->onSwapBuffersComplete();
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)

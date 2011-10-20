@@ -58,7 +58,7 @@ void CCScheduler::requestRedraw()
 
     m_redrawPending = true;
 
-    m_client->scheduleDrawAndPresent();
+    m_client->scheduleDrawAndSwap();
 }
 
 void CCScheduler::didCommit()
@@ -66,9 +66,17 @@ void CCScheduler::didCommit()
     m_commitPending = false;
 }
 
-void CCScheduler::didDraw()
+void CCScheduler::didDrawAndSwap()
 {
     m_redrawPending = false;
+}
+
+void CCScheduler::didSwapBuffersComplete()
+{
+}
+
+void CCScheduler::didSwapBuffersAbort()
+{
 }
 
 }

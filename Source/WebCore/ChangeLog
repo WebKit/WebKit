@@ -1,3 +1,47 @@
+2011-10-20  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route onSwapBuffersComplete from LayerRenderer to CCScheduler.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererSwapBuffersCompleteCallbackAdapter::create):
+        (WebCore::LayerRendererSwapBuffersCompleteCallbackAdapter::~LayerRendererSwapBuffersCompleteCallbackAdapter):
+        (WebCore::LayerRendererSwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete):
+        (WebCore::LayerRendererSwapBuffersCompleteCallbackAdapter::LayerRendererSwapBuffersCompleteCallbackAdapter):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::onSwapBuffersComplete):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::onSwapBuffers):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::swapBuffers):
+        (WebCore::CCLayerTreeHostImpl::onSwapBuffersComplete):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::requestRedraw):
+        (WebCore::CCScheduler::didDrawAndSwap):
+        (WebCore::CCScheduler::didSwapBuffersComplete):
+        (WebCore::CCScheduler::didSwapBuffersAbort):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::compositeImmediately):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::CCSingleThreadProxy::onSwapBuffersCompleteOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxySchedulerClient::scheduleDrawAndSwap):
+        (WebCore::CCThreadProxy::drawLayersAndReadbackOnImplThread):
+        (WebCore::CCThreadProxy::onSwapBuffersCompleteOnImplThread):
+        (WebCore::CCThreadProxy::finishAllRenderingOnImplThread):
+        (WebCore::CCThreadProxy::drawLayersAndSwapOnImplThread):
+        (WebCore::CCThreadProxy::drawLayersOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderDeprecatedFlexibleBox does not call its children's layout method

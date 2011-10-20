@@ -70,6 +70,7 @@ class GeometryBinding;
 class GraphicsContext3D;
 class NonCompositedContentHost;
 class TrackingTextureAllocator;
+class LayerRendererSwapBuffersCompleteCallbackAdapter;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium {
@@ -103,7 +104,7 @@ public:
     void finish();
 
     // puts backbuffer onscreen
-    void present();
+    void swapBuffers();
 
     void setZoomAnimatorTransform(const TransformationMatrix& t) { m_zoomAnimatorTransform = t; }
 
@@ -181,6 +182,9 @@ private:
     void cleanupSharedObjects();
 
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
+
+    friend class LayerRendererSwapBuffersCompleteCallbackAdapter;
+    void onSwapBuffersComplete();
 
     CCLayerTreeHostImpl* m_owner;
 

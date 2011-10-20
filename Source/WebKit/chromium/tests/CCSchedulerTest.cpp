@@ -38,7 +38,7 @@ namespace {
 class MockCCSchedulerClient : public CCSchedulerClient {
 public:
     MOCK_METHOD0(scheduleBeginFrameAndCommit, void());
-    MOCK_METHOD0(scheduleDrawAndPresent, void());
+    MOCK_METHOD0(scheduleDrawAndSwap, void());
 };
 
 class CCSchedulerTest : public testing::Test {
@@ -48,7 +48,7 @@ public:
         , m_scheduler(CCScheduler::create(m_client.get()))
     {
         EXPECT_CALL(*m_client, scheduleBeginFrameAndCommit()).Times(0);
-        EXPECT_CALL(*m_client, scheduleDrawAndPresent()).Times(0);
+        EXPECT_CALL(*m_client, scheduleDrawAndSwap()).Times(0);
     }
 
 protected:
@@ -75,9 +75,8 @@ TEST_F(CCSchedulerTest, RequestCommitTwiceBeforeCommit)
 
 TEST_F(CCSchedulerTest, RequestRedraw)
 {
-    EXPECT_CALL(*m_client, scheduleDrawAndPresent()).Times(1);
+    EXPECT_CALL(*m_client, scheduleDrawAndSwap()).Times(1);
     m_scheduler->requestRedraw();
 }
 
 }
-

@@ -56,6 +56,7 @@ public:
     virtual void stop();
 
     // CCLayerTreeHostImplClient implementation
+    virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }
     virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
     virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
 

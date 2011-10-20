@@ -1275,30 +1275,31 @@ bool GraphicsContext3D::isGLES2Compliant() const
     return m_private->isGLES2Compliant();
 }
 
-class SwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
+class GraphicsContext3DSwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
 public:
     virtual void onSwapBuffersComplete();
-    static PassOwnPtr<SwapBuffersCompleteCallbackAdapter> create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
-    virtual ~SwapBuffersCompleteCallbackAdapter() { }
+    static PassOwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
+    virtual ~GraphicsContext3DSwapBuffersCompleteCallbackAdapter() { }
+
 private:
-    SwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb) : m_swapBuffersCompleteCallback(cb) { }
+    GraphicsContext3DSwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb) : m_swapBuffersCompleteCallback(cb) { }
     OwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> m_swapBuffersCompleteCallback;
 };
 
-void SwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete()
+void GraphicsContext3DSwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete()
 {
     if (m_swapBuffersCompleteCallback)
         m_swapBuffersCompleteCallback->onSwapBuffersComplete();
 }
 
-PassOwnPtr<SwapBuffersCompleteCallbackAdapter> SwapBuffersCompleteCallbackAdapter::create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
+PassOwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
 {
-    return adoptPtr(cb.get() ? new SwapBuffersCompleteCallbackAdapter(cb) : 0);
+    return adoptPtr(cb.get() ? new GraphicsContext3DSwapBuffersCompleteCallbackAdapter(cb) : 0);
 }
 
 void GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
 {
-    m_swapBuffersCompleteCallbackAdapter = SwapBuffersCompleteCallbackAdapter::create(cb);
+    m_swapBuffersCompleteCallbackAdapter = GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create(cb);
     m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
 }
 

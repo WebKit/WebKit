@@ -104,10 +104,15 @@ TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
     return m_layerRenderer ? m_layerRenderer->contentsTextureAllocator() : 0;
 }
 
-void CCLayerTreeHostImpl::present()
+void CCLayerTreeHostImpl::swapBuffers()
 {
     ASSERT(m_layerRenderer && !isContextLost());
-    m_layerRenderer->present();
+    m_layerRenderer->swapBuffers();
+}
+
+void CCLayerTreeHostImpl::onSwapBuffersComplete()
+{
+    m_client->onSwapBuffersCompleteOnImplThread();
 }
 
 void CCLayerTreeHostImpl::readback(void* pixels, const IntRect& rect)

@@ -46,6 +46,7 @@ class TransformationMatrix;
 // CCLayerTreeHost->CCProxy callback interface.
 class CCLayerTreeHostImplClient {
 public:
+    virtual void onSwapBuffersCompleteOnImplThread() = 0;
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
 };
@@ -76,7 +77,8 @@ public:
     const LayerRendererCapabilities& layerRendererCapabilities() const;
     TextureAllocator* contentsTextureAllocator() const;
 
-    void present();
+    void swapBuffers();
+    void onSwapBuffersComplete();
 
     void readback(void* pixels, const IntRect&);
 

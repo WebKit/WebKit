@@ -83,11 +83,13 @@ struct LayerRendererCapabilities {
         : bestTextureFormat(0)
         , usingMapSub(false)
         , usingAcceleratedPainting(false)
+        , usingSwapCompleteCallback(false)
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
     bool usingMapSub;
     bool usingAcceleratedPainting;
+    bool usingSwapCompleteCallback;
     int maxTextureSize;
 };
 

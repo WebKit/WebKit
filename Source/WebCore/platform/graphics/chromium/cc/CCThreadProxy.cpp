@@ -65,9 +65,9 @@ public:
         m_proxy->postBeginFrameAndCommitOnImplThread();
     }
 
-    virtual void scheduleDrawAndPresent()
+    virtual void scheduleDrawAndSwap()
     {
-        m_proxy->drawLayersAndPresentOnImplThread();
+        m_proxy->drawLayersAndSwapOnImplThread();
     }
 
 private:
@@ -146,7 +146,10 @@ void CCThreadProxy::drawLayersAndReadbackOnImplThread(CCCompletionEvent* complet
     }
     drawLayersOnImplThread();
     m_layerTreeHostImpl->readback(pixels, rect);
-    *success = m_layerTreeHostImpl->isContextLost();
+    bool lost = m_layerTreeHostImpl->isContextLost();
+    if (lost)
+        m_schedulerOnImplThread->didSwapBuffersAbort();
+    *success = !lost;
     completion->signal();
 }
 
@@ -252,6 +255,13 @@ void CCThreadProxy::setNeedsAnimateOnImplThread()
     m_schedulerOnImplThread->requestAnimate();
 }
 
+void CCThreadProxy::onSwapBuffersCompleteOnImplThread()
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT("CCThreadProxy::onSwapBuffersCompleteOnImplThread", this, 0);
+    m_schedulerOnImplThread->didSwapBuffersComplete();
+}
+
 void CCThreadProxy::setNeedsCommitOnImplThread()
 {
     ASSERT(isImplThread());
@@ -309,8 +319,8 @@ void CCThreadProxy::finishAllRenderingOnImplThread(CCCompletionEvent* completion
     ASSERT(isImplThread());
     if (m_schedulerOnImplThread->redrawPending()) {
         drawLayersOnImplThread();
-        m_layerTreeHostImpl->present();
-        m_schedulerOnImplThread->didDraw();
+        m_layerTreeHostImpl->swapBuffers();
+        m_schedulerOnImplThread->didDrawAndSwap();
     }
     m_layerTreeHostImpl->finishAllRendering();
     completion->signal();
@@ -417,16 +427,16 @@ void CCThreadProxy::commitOnImplThread(CCCompletionEvent* completion)
     m_schedulerOnImplThread->didCommit();
 }
 
-void CCThreadProxy::drawLayersAndPresentOnImplThread()
+void CCThreadProxy::drawLayersAndSwapOnImplThread()
 {
-    TRACE_EVENT("CCThreadProxy::drawLayersOnImplThread", this, 0);
+    TRACE_EVENT("CCThreadProxy::drawLayersAndSwapOnImplThread", this, 0);
     ASSERT(isImplThread());
     if (!m_layerTreeHostImpl)
         return;
 
     drawLayersOnImplThread();
-    m_layerTreeHostImpl->present();
-    m_schedulerOnImplThread->didDraw();
+    m_layerTreeHostImpl->swapBuffers();
+    m_schedulerOnImplThread->didDrawAndSwap();
 }
 
 void CCThreadProxy::drawLayersOnImplThread()
@@ -436,6 +446,8 @@ void CCThreadProxy::drawLayersOnImplThread()
     ASSERT(m_layerTreeHostImpl);
 
     m_layerTreeHostImpl->drawLayers();
+    // FIXME: handle case where m_layerTreeHostImpl->isContextLost.
+    // FIXME: pass didSwapBuffersAbort if m_layerTreeHostImpl->isContextLost.
     ASSERT(!m_layerTreeHostImpl->isContextLost());
 }
 

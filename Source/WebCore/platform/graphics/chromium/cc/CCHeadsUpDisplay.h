@@ -53,7 +53,7 @@ public:
     int currentFrameNumber() const { return m_currentFrameNumber; }
 
     void onFrameBegin(double timestamp);
-    void onPresent();
+    void onSwapBuffers();
 
     bool enabled() const;
     void draw();

@@ -66,6 +66,7 @@ public:
     virtual void stop();
 
     // CCLayerTreeHostImplClient implementation
+    virtual void onSwapBuffersCompleteOnImplThread();
     virtual void setNeedsRedrawOnImplThread();
     virtual void setNeedsCommitOnImplThread();
 
@@ -80,7 +81,7 @@ private:
     PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
     void commitOnImplThread(CCCompletionEvent*);
-    void drawLayersAndPresentOnImplThread();
+    void drawLayersAndSwapOnImplThread();
     void drawLayersOnImplThread();
     void drawLayersAndReadbackOnImplThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);

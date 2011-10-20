@@ -1,3 +1,22 @@
+2011-10-20  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route onSwapBuffersComplete from LayerRenderer to CCScheduler.
+
+        Reviewed by James Robinson.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::~GraphicsContext3DSwapBuffersCompleteCallbackAdapter):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::GraphicsContext3DSwapBuffersCompleteCallbackAdapter):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create):
+        (WebCore::GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM):
+        * src/GraphicsContext3DPrivate.h:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebCore::CCLayerTreeHostImplTest::onSwapBuffersCompleteOnImplThread):
+        * tests/CCSchedulerTest.cpp:
+        (WebCore::CCSchedulerTest::CCSchedulerTest):
+        (WebCore::TEST_F):
+
 2011-10-20  Michal Mocny  <mmocny@google.com>
 
         [chromium] Add a setVisibility method to WebGraphicsContext3D.

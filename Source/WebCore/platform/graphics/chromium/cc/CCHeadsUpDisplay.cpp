@@ -82,7 +82,7 @@ void CCHeadsUpDisplay::onFrameBegin(double timestamp)
     m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
 }
 
-void CCHeadsUpDisplay::onPresent()
+void CCHeadsUpDisplay::onSwapBuffers()
 {
     m_currentFrameNumber += 1;
 }

@@ -198,7 +198,7 @@ void CCSingleThreadProxy::compositeImmediately()
     commitIfNeeded();
 
     if (doComposite())
-        m_layerTreeHostImpl->present();
+        m_layerTreeHostImpl->swapBuffers();
 }
 
 bool CCSingleThreadProxy::recreateContextIfNeeded()
