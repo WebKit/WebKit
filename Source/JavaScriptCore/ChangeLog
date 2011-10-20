@@ -1,3 +1,12 @@
+2011-10-20  Vincent Scheib  <scheib@chromium.org>
+
+        MouseLock compile and run time flags.
+        https://bugs.webkit.org/show_bug.cgi?id=70530
+
+        Reviewed by Darin Fisher.
+
+        * wtf/Platform.h:
+
 2011-10-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static deleteProperty to deletePropertyByIndex

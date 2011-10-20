@@ -68,6 +68,7 @@
       'ENABLE_METER_TAG=1',
       'ENABLE_MHTML=1',
       'ENABLE_MICRODATA=0',
+      'ENABLE_MOUSE_LOCK_API=1',
       'ENABLE_MUTATION_OBSERVERS=<(enable_mutation_observers)',
       'ENABLE_NOTIFICATIONS=1',
       'ENABLE_ORIENTATION_EVENTS=0',

@@ -155,6 +155,10 @@ bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 #endif
 
+#if ENABLE(MOUSE_LOCK_API)
+bool RuntimeEnabledFeatures::isMouseLockAPIEnabled = false;
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif

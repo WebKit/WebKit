@@ -360,6 +360,24 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableMouseLockAPI(bool enable)
+{
+#if ENABLE(MOUSE_LOCK_API)
+    RuntimeEnabledFeatures::setWebkitMouseLockAPIEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isMouseLockAPIEnabled()
+{
+#if ENABLE(MOUSE_LOCK_API)
+    return RuntimeEnabledFeatures::webkitMouseLockAPIEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableMediaSource(bool enable)
 {
 #if ENABLE(MEDIA_SOURCE)

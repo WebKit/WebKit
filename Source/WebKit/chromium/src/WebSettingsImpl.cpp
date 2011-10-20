@@ -413,6 +413,15 @@ void WebSettingsImpl::setFullScreenEnabled(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setMouseLockEnabled(bool enabled)
+{
+#if ENABLE(MOUSE_LOCK_API)
+    m_settings->setMouseLockEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 void WebSettingsImpl::setAllowDisplayOfInsecureContent(bool enabled)
 {
     m_settings->setAllowDisplayOfInsecureContent(enabled);
