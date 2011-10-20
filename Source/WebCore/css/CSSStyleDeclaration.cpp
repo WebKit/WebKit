@@ -40,7 +40,8 @@ using namespace WTF;
 namespace WebCore {
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
-    : StyleBase(parent)
+    : m_parentIsRule(true)
+    , m_parentRule(parent)
 {
 }
 
@@ -142,11 +143,6 @@ String CSSStyleDeclaration::removeProperty(const String& propertyName, Exception
 bool CSSStyleDeclaration::isPropertyName(const String& propertyName)
 {
     return cssPropertyID(propertyName);
-}
-
-CSSRule* CSSStyleDeclaration::parentRule() const
-{
-    return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
 bool CSSStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const

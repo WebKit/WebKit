@@ -519,7 +519,10 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
         return;
     }
 
-    StyleBase* root = this;
+    if (!parentStyleSheet())
+        return;
+
+    StyleBase* root = parentStyleSheet();
     while (StyleBase* parent = root->parent())
         root = parent;
     if (root->isCSSStyleSheet()) {
@@ -779,7 +782,7 @@ void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, 
 
 void CSSMutableStyleDeclaration::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
 {
-    CSSStyleSheet* sheet = static_cast<CSSStyleSheet*>(stylesheet());
+    CSSStyleSheet* sheet = parentStyleSheet();
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i)
         m_properties[i].value()->addSubresourceStyleURLs(urls, sheet);

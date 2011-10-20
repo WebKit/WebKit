@@ -40,7 +40,7 @@ CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine)
 CSSStyleRule::~CSSStyleRule()
 {
     if (m_style)
-        m_style->setParent(0);
+        m_style->setParentRule(0);
 }
 
 String CSSStyleRule::selectorText() const
@@ -57,7 +57,7 @@ String CSSStyleRule::selectorText() const
 void CSSStyleRule::setSelectorText(const String& selectorText)
 {
     Document* doc = 0;
-    StyleSheet* ownerStyleSheet = m_style->stylesheet();
+    StyleSheet* ownerStyleSheet = m_style->parentStyleSheet();
     if (ownerStyleSheet) {
         if (ownerStyleSheet->isCSSStyleSheet())
             doc = static_cast<CSSStyleSheet*>(ownerStyleSheet)->document();

@@ -1,3 +1,83 @@
+2011-10-20  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleDeclaration: Remove inheritance from StyleBase.
+        https://bugs.webkit.org/show_bug.cgi?id=70411
+
+        Reviewed by Antti Koivisto.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+
+            Specialized root() for CSSStyleDeclaration and CSSMutableStyleDeclaration.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+
+            Start the parent chain traversal from the parentStyleSheet().
+
+        (WebCore::CSSMutableStyleDeclaration::addSubresourceStyleURLs):
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+
+            Remove now-unnecessary assertions and casts.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::~CSSStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::parentRule):
+        (WebCore::CSSStyleDeclaration::setParentRule):
+        (WebCore::CSSStyleDeclaration::setParentStyleSheet):
+        (WebCore::CSSStyleDeclaration::parentStyleSheet):
+
+            Make CSSStyleDeclaration inherit directly from RefCounted, and have either
+            a CSSRule or CSSStyleSheet parent. Eventually it should only need to have
+            rules as parents, but CSSParser depends on having style sheet parents for
+            URL completion and primitive value cache.
+
+        * css/StyleBase.h:
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::isMutableStyleDeclaration):
+
+            Moved from StyleBase down to CSSStyleDeclaration.
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::setDeclaration):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::append):
+        (WebCore::WebKitCSSKeyframesRule::deleteRule):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::createMappedDecl):
+        (WebCore::StyledElement::didMoveToNewOwnerDocument):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForCSSDeclaration):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+
+            Use the new parenting methods of CSSStyleDeclaration.
+
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::node):
+
+            Remove the isMutableStyleDeclaration() code path.
+
 2011-10-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: detach should call hide so that overrides are processed.

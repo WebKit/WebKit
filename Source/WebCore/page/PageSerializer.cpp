@@ -311,10 +311,8 @@ void PageSerializer::retrieveResourcesForCSSDeclaration(CSSStyleDeclaration* sty
     if (!styleDeclaration)
         return;
 
-    if (!styleDeclaration->stylesheet()->isCSSStyleSheet())
-        return;
-
-    CSSStyleSheet* cssStyleSheet = static_cast<CSSStyleSheet*>(styleDeclaration->stylesheet());
+    CSSStyleSheet* cssStyleSheet = styleDeclaration->parentStyleSheet();
+    ASSERT(cssStyleSheet);
 
     // The background-image and list-style-image (for ul or ol) are the CSS properties
     // that make use of images. We iterate to make sure we include any other

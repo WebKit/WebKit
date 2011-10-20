@@ -46,9 +46,6 @@ Node* StyleBase::node()
     if (isStyleSheet())
         return static_cast<StyleSheet*>(this)->ownerNode();
 
-    if (isMutableStyleDeclaration())
-        return static_cast<CSSMutableStyleDeclaration*>(this)->node();
-
     return 0;
 }
 

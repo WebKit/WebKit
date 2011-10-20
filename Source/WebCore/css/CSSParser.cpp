@@ -340,18 +340,18 @@ static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propert
         validPrimitive = true;
     }
 
-    CSSStyleSheet* stylesheet = static_cast<CSSStyleSheet*>(declaration->stylesheet());
-    if (!stylesheet || !stylesheet->document())
+    CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
+    if (!styleSheet || !styleSheet->document())
         return false;
     if (validPrimitive) {
-        CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createIdentifierValue(valueID), important);
+        CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createIdentifierValue(valueID), important);
         declaration->addParsedProperty(property);
         return true;
     }
     RGBA32 color;
     if (!CSSParser::parseColor(string, color, strict && string[0] != '#'))
         return false;
-    CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createColorValue(color), important);
+    CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createColorValue(color), important);
     declaration->addParsedProperty(property);
     return true;
 }
@@ -432,10 +432,10 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
 
-    CSSStyleSheet* stylesheet = static_cast<CSSStyleSheet*>(declaration->stylesheet());
-    if (!stylesheet || !stylesheet->document())
+    CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
+    if (!styleSheet || !styleSheet->document())
         return false;
-    CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createValue(number, unit), important);
+    CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createValue(number, unit), important);
     declaration->addParsedProperty(property);
     return true;
 }
@@ -452,8 +452,7 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int property
 
 bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important)
 {
-    ASSERT(!declaration->stylesheet() || declaration->stylesheet()->isCSSStyleSheet());
-    setStyleSheet(static_cast<CSSStyleSheet*>(declaration->stylesheet()));
+    setStyleSheet(declaration->parentStyleSheet());
 
     setupParser("@-webkit-value{", string, "} ");
 
@@ -505,8 +504,7 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
 
 bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String& string)
 {
-    ASSERT(!declaration->stylesheet() || declaration->stylesheet()->isCSSStyleSheet());
-    setStyleSheet(static_cast<CSSStyleSheet*>(declaration->stylesheet()));
+    setStyleSheet(declaration->parentStyleSheet());
 
     setupParser("@-webkit-decls{color:", string, "} ");
     cssyyparse(this);
@@ -553,8 +551,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const 
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
 
-    ASSERT(!declaration->stylesheet() || declaration->stylesheet()->isCSSStyleSheet());
-    setStyleSheet(static_cast<CSSStyleSheet*>(declaration->stylesheet()));
+    setStyleSheet(declaration->parentStyleSheet());
     if (styleSourceData) {
         m_currentRuleData = CSSRuleSourceData::create();
         m_currentRuleData->styleSourceData = CSSStyleSourceData::create();

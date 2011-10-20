@@ -21,6 +21,7 @@
 #ifndef CSSStyleDeclaration_h
 #define CSSStyleDeclaration_h
 
+#include "CSSRule.h"
 #include "StyleBase.h"
 #include <wtf/Forward.h>
 
@@ -28,16 +29,42 @@ namespace WebCore {
 
 class CSSMutableStyleDeclaration;
 class CSSProperty;
-class CSSRule;
+class CSSStyleSheet;
 class CSSValue;
 
 typedef int ExceptionCode;
 
-class CSSStyleDeclaration : public StyleBase {
+class CSSStyleDeclaration : public RefCounted<CSSStyleDeclaration> {
 public:
+    virtual ~CSSStyleDeclaration() { }
+
     static bool isPropertyName(const String&);
 
-    CSSRule* parentRule() const;
+    // FIXME: Refactor so CSSStyleDeclaration never needs to have a style sheet parent.
+
+    CSSRule* parentRule() const
+    {
+        return m_parentIsRule ? m_parentRule : 0;
+    }
+
+    void setParentRule(CSSRule* rule)
+    {
+        m_parentIsRule = true;
+        m_parentRule = rule;
+    }
+
+    void setParentStyleSheet(CSSStyleSheet* styleSheet)
+    {
+        m_parentIsRule = false;
+        m_parentStyleSheet = styleSheet;
+    }
+
+    CSSStyleSheet* parentStyleSheet() const
+    {
+        if (!m_parentIsRule)
+            return m_parentStyleSheet;
+        return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
+    }
 
     virtual String cssText() const = 0;
     virtual void setCssText(const String&, ExceptionCode&) = 0;
@@ -76,11 +103,19 @@ public:
     void showStyle();
 #endif
 
+    virtual bool isMutableStyleDeclaration() const { return false; }
+
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
+private:
+    bool m_parentIsRule;
+    union {
+        CSSRule* m_parentRule;
+        CSSStyleSheet* m_parentStyleSheet;
+    };
 };
 
 } // namespace WebCore

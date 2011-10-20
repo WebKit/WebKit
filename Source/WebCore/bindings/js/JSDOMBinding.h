@@ -22,6 +22,7 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
+#include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
@@ -184,6 +185,26 @@ namespace WebCore {
         if (Node* node = styleBase->node())
             return root(node);
         return styleBase;
+    }
+
+    inline void* root(CSSStyleDeclaration* style)
+    {
+        if (CSSRule* parentRule = style->parentRule())
+            return root(parentRule);
+        if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
+            return root(styleSheet);
+        return style;
+    }
+
+    inline void* root(CSSMutableStyleDeclaration* style)
+    {
+        if (CSSRule* parentRule = style->parentRule())
+            return root(parentRule);
+        if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
+            return root(styleSheet);
+        if (Node* node = style->node())
+            return root(node);
+        return style;
     }
 
     inline void* root(MediaList* mediaList)

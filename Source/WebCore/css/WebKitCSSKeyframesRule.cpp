@@ -45,7 +45,7 @@ WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
     for (unsigned i = 0; i < length(); ++i) {
         WebKitCSSKeyframeRule* rule = item(i);
         if (CSSMutableStyleDeclaration* style = rule->style())
-            style->setParent(0);
+            style->setParentRule(0);
         rule->setParent(0);
     }
 }
@@ -93,7 +93,7 @@ void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
     rule->setParent(this);
 
     if (CSSMutableStyleDeclaration* style = rule->style())
-        style->setParent(this);
+        style->setParentRule(this);
 }
 
 void WebKitCSSKeyframesRule::insertRule(const String& rule)
@@ -112,7 +112,7 @@ void WebKitCSSKeyframesRule::deleteRule(const String& s)
 
     WebKitCSSKeyframeRule* rule = item(i);
     if (CSSMutableStyleDeclaration* style = rule->style())
-        style->setParent(0);
+        style->setParentRule(0);
 
     m_lstCSSRules->deleteRule(i);
 }
