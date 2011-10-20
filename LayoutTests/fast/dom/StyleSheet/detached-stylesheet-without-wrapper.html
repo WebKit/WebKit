@@ -1,15 +1,20 @@
 <html>
 <head>
-<link rel="stylesheet" href="../../js/resources/js-test-style.css" type="text/css" title="js-test-style">
+<style>
+#test-element {
+    text-decoration: line-through;
+}
+</style>
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
+<span id="test-element"></div>
 <script>
 description("Test that CSS stylesheets lacking wrappers are pruned from detached CSSOM subtrees. " + 
 "This is surprising behavior, but it's a very rare situation, and the behavior actually matches " +
 "what both WebKit and Gecko do for DOM nodes in detached subtrees.");
 
-rule = getMatchedCSSRules(document.getElementsByTagName("div")[0]).item(0);
+var rule = getMatchedCSSRules(document.getElementById("test-element")).item(0);
 document.documentElement.removeChild(document.head);
 shouldBe("rule.parentStyleSheet", "null");
 

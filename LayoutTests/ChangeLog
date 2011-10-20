@@ -1,3 +1,40 @@
+2011-10-19  Erik Arvidsson  <arv@chromium.org>
+
+        Clean up tests to not depend on js-test-style.css
+        https://bugs.webkit.org/show_bug.cgi?id=70462
+
+        Reviewed by Ojan Vafai.
+
+        * fast/css/limited-vendor-prefix-behavior.html-disabled:
+        * fast/css/link-disabled-attr-expected.txt:
+        * fast/css/link-disabled-attr.html:
+        * fast/dom/Geolocation/page-reload-cancel-permission-requests.html:
+        * fast/dom/SelectorAPI/caseTagX.xhtml:
+        * fast/dom/StyleSheet/detached-parent-rule-without-wrapper.html:
+        * fast/dom/StyleSheet/detached-style-pi.xhtml:
+        * fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html:
+        * fast/dom/StyleSheet/gc-declaration-parent-rule.html:
+        * fast/dom/StyleSheet/gc-parent-rule.html:
+        * fast/dom/StyleSheet/gc-parent-stylesheet.html:
+        * fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml:
+        * fast/dom/Window/window-resize-nan.html-disabled:
+        * fast/dom/dataset-xhtml.xhtml:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/domListEnumeration.html:
+        * fast/dom/script-tests/domListEnumeration.js:
+        * fast/dom/script-tests/webtiming-document-open.js:
+        (testTimingWithDocumentOpen):
+        * fast/dom/title-content-set-innerText-get.xhtml:
+        * fast/forms/focus-selection-input.html:
+        * fast/forms/focus-selection-textarea.html:
+        * fast/forms/option-value-trim-html-spaces.html:
+        * fast/js/garbage-collect-after-string-appends.html-disabled:
+        * fast/js/kde/Date.html-disabled:
+        * fast/js/string-concatenate-outofmemory.html-disabled:
+        * fast/mutation/observe-attributes.html:
+        * fast/mutation/observe-characterdata.html:
+        * platform/chromium/fast/dom/domListEnumeration-expected.txt: Removed.
+
 2011-10-19  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Test expectation change.

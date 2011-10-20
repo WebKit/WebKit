@@ -150,7 +150,7 @@ shouldBe("resultArray[2].item", "document.getElementsByTagName('option')[2]");
 // StyleSheetList
 var styleSheetList = document.styleSheets;
 resultArray = iterateList(styleSheetList);
-shouldBe("resultArray.length", "5");
+shouldBe("resultArray.length", "6");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "styleSheetList.item(0)");
 shouldBe("resultArray[1].i", "'1'");

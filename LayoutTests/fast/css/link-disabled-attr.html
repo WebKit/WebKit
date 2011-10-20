@@ -1,18 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<link id="sheet" rel="stylesheet" href="../js/resources/js-test-style.css">
+<link id="sheet" rel="stylesheet" href="data:tex/css,#test-element{text-decoration:line-through}">
 <link id="notsheet" rel="author" href="mailto:nosuch@webkit.org">
 <link id="alt" rel="alternate stylesheet" title="altset" href="resources/green.css">
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description">
-Series of tests to validate behavior of getting/setting link.disabled and link.sheet.disabled.<br>
-Test for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=61400">61400</a>: REGRESSION(84329): Stylesheets on some pages do not load
-</p>
-<div id="console"></div>
+
+<span id="test-element"></span>
+
 <script>
+
+description("Series of tests to validate behavior of getting/setting link.disabled and link.sheet.disabled.<br>" +
+            'Test for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=61400">61400</a>: REGRESSION(84329): Stylesheets on some pages do not load');
 
 window.jsTestIsAsync = true;
 
@@ -27,8 +28,8 @@ function onSheetLoaded(f, elem, maxtime) {
 
 // With a non-stylesheet <link>, 'disabled' is always false.
 
-var console = document.getElementById("console");
-var originalBG = getComputedStyle(console).backgroundColor;
+var testElement = document.getElementById("test-element");
+var originalBG = getComputedStyle(testElement).backgroundColor;
 var link;
 
 debug("notsheet");
@@ -50,12 +51,12 @@ shouldBeNonNull("link.sheet");
 link.sheet.disabled = true;
 shouldBeTrue("link.disabled");
 shouldBeTrue("link.sheet.disabled");
-shouldBe("getComputedStyle(console).whiteSpace", "'normal'");
+shouldBeEqualToString("getComputedStyle(testElement).textDecoration", "none");
 
 link.disabled = false;
 shouldBeFalse("link.disabled");
 shouldBeFalse("link.sheet.disabled");
-shouldBe("getComputedStyle(console).whiteSpace", "'pre-wrap'");
+shouldBeEqualToString("getComputedStyle(testElement).textDecoration", "line-through");
 
 link.sheet.disabled = false;
 
@@ -72,23 +73,23 @@ shouldBeTrue("link.disabled");
 function altSheetLoaded(e) {
     link = e;
     shouldBeNonNull("link.sheet");
-    shouldBe("getComputedStyle(console).backgroundColor", "'rgb(0, 128, 0)'");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 128, 0)'");
 
     // Enabling a stylsheet set modifies disabled status of style sheets.
 
     document.selectedStyleSheetSet = "nosuchset";
     shouldBeTrue("link.disabled");
-    shouldBe("getComputedStyle(console).backgroundColor", "originalBG");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "originalBG");
 
     document.selectedStyleSheetSet = "altset";
     shouldBeFalse("link.disabled");
-    shouldBe("getComputedStyle(console).backgroundColor", "'rgb(0, 128, 0)'");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 128, 0)'");
 
     // Disabling a stylesheet *after* its stylesheet set has been selected
     // de-activates it.
 
     link.disabled = true;
-    shouldBe("getComputedStyle(console).backgroundColor", "originalBG");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "originalBG");
 
     finishJSTest();
 }

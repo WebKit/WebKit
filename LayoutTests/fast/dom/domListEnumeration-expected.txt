@@ -48,7 +48,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is document.getElementsByTagName('option')[2]
 
 [object StyleSheetList]
-PASS resultArray.length is 5
+PASS resultArray.length is 6
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is styleSheetList.item(0)
 PASS resultArray[1].i is '1'
