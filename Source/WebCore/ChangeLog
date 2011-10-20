@@ -1,3 +1,10 @@
+2011-10-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for Date.prototype.toISO8601Compact.
+        It was generated wrong string for the dates with no leading zeros like 2011.11.11.
+
+        * inspector/front-end/utilities.js:
+
 2011-10-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: minor CPU profiling UX improvements

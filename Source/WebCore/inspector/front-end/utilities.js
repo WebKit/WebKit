@@ -540,7 +540,7 @@ Date.prototype.toISO8601Compact = function()
 {
     function leadZero(x)
     {
-        return x > 9 ? x : '0' + x
+        return x > 9 ? '' + x : '0' + x
     }
     return this.getFullYear() +
            leadZero(this.getMonth() + 1) +
