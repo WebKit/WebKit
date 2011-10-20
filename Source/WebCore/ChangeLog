@@ -1,5 +1,11 @@
 2011-10-19  Adam Barth  <abarth@webkit.org>
 
+        Another attempted build fix.  I managed to screw up every line of this file.
+
+        * CodeGenerators.pri:
+
+2011-10-19  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Qt build.
 
         * CodeGenerators.pri:
