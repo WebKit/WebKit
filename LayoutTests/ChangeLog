@@ -1,3 +1,11 @@
+2011-10-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Add win baseline for new test.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-win/fast/multicol/flipped-blocks-border-after-expected.png: Added.
+
 2011-10-19  Shinya Kawanaka  <shinyak@google.com>
 
         ArrayBuffer should have slice method.
