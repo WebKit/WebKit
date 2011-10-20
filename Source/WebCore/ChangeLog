@@ -1,3 +1,34 @@
+2011-10-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderDeprecatedFlexibleBox does not call its children's layout method
+        https://bugs.webkit.org/show_bug.cgi?id=64842
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/flexbox/021-vertical.html
+               fast/flexbox/crash-flexbox-no-layout-child.html
+
+        The FlexBoxIterator would skip any child with visibility: collapsed. However those child
+        would need layout but their layout() function would never be called.
+
+        This change refactors the way flexible box handles visibility: collapsed child and mark sure
+        their layout() function is called but makes sure that they don't participate in the flex box
+        dimensions.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::next): Do not skip visibility: collapsed child.
+        (WebCore::childDoesNotAffectWidthOrFlexing): Helper function.
+
+        (WebCore::RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        Updated to skip the now seen visibility: collapsed child during the
+        iteration.
+
 2011-10-20  Raymond Toy  <rtoy@google.com>
 
         Implement SSE denormal disabler for windows.
