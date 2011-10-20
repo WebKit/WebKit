@@ -1,3 +1,10 @@
+2011-10-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/flipped-blocks-border-after-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/flipped-blocks-border-after-expected.txt: Added.
+
 2011-10-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderDeprecatedFlexibleBox does not call its children's layout method
