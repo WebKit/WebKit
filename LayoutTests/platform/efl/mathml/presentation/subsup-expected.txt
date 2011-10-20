@@ -1,0 +1,147 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x256
+  RenderBlock {html} at (0,0) size 800x256
+    RenderBody {body} at (8,16) size 784x224
+      RenderBlock {p} at (0,0) size 784x32
+        RenderText {#text} at (0,4) size 36x19
+          text run at (0,4) width 36: "both: "
+        RenderMathMLMath {math} at (36,0) size 16x32
+          RenderMathMLSubSup {msubsup} at (1,0) size 14x32
+            RenderMathMLBlock {msubsup} at (0,3) size 7x19
+              RenderInline {mi} at (0,0) size 7x25
+                RenderText {#text} at (0,-1) size 7x25
+                  text run at (0,-1) width 7: "x"
+            RenderMathMLBlock {msubsup} at (8,0) size 6x32
+              RenderMathMLBlock {msubsup} at (0,0) size 6x16
+                RenderInline {mi} at (0,0) size 5x19
+                  RenderText {#text} at (0,0) size 5x19
+                    text run at (0,0) width 5: "k"
+              RenderMathMLBlock {msubsup} at (0,16) size 6x16
+                RenderInline {mn} at (0,0) size 6x19
+                  RenderText {#text} at (0,0) size 6x19
+                    text run at (0,0) width 6: "1"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,48) size 784x32
+        RenderText {#text} at (0,4) size 148x19
+          text run at (0,4) width 148: "long subscript w/ both: "
+        RenderMathMLMath {math} at (148,0) size 46x32
+          RenderMathMLSubSup {msubsup} at (1,0) size 44x32
+            RenderMathMLBlock {msubsup} at (0,3) size 9x19
+              RenderInline {mi} at (0,0) size 9x25
+                RenderText {#text} at (0,-1) size 9x25
+                  text run at (0,-1) width 9: "Z"
+            RenderMathMLBlock {msubsup} at (10,0) size 34x32
+              RenderMathMLBlock {msubsup} at (0,0) size 34x16
+                RenderInline {mi} at (0,0) size 3x19
+                  RenderText {#text} at (0,0) size 3x19
+                    text run at (0,0) width 3: "j"
+              RenderMathMLBlock {msubsup} at (0,16) size 34x16
+                RenderMathMLRow {mrow} at (1,3) size 33x12
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (0,-3) size 5x19
+                      text run at (0,-3) width 5: "x"
+                  RenderMathMLOperator {mo} at (5,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (14,-3) size 5x19
+                      text run at (14,-3) width 5: "y"
+                  RenderMathMLOperator {mo} at (19,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (28,-3) size 5x19
+                      text run at (28,-3) width 5: "z"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,96) size 784x32
+        RenderText {#text} at (0,4) size 160x19
+          text run at (0,4) width 160: "long superscript w/ both: "
+        RenderMathMLMath {math} at (160,0) size 30x32
+          RenderMathMLSubSup {msubsup} at (1,0) size 28x32
+            RenderMathMLBlock {msubsup} at (0,3) size 9x19
+              RenderInline {mi} at (0,0) size 9x25
+                RenderText {#text} at (0,-1) size 9x25
+                  text run at (0,-1) width 9: "Z"
+            RenderMathMLBlock {msubsup} at (10,0) size 18x32
+              RenderMathMLBlock {msubsup} at (0,0) size 18x16
+                RenderMathMLRow {mrow} at (1,3) size 17x12
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (0,-3) size 5x19
+                      text run at (0,-3) width 5: "k"
+                  RenderMathMLOperator {mo} at (5,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 3x19
+                    RenderText {#text} at (14,-3) size 3x19
+                      text run at (14,-3) width 3: "j"
+              RenderMathMLBlock {msubsup} at (0,16) size 18x16
+                RenderInline {mi} at (0,0) size 5x19
+                  RenderText {#text} at (0,0) size 5x19
+                    text run at (0,0) width 5: "x"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,144) size 784x32
+        RenderText {#text} at (0,4) size 88x19
+          text run at (0,4) width 88: "long w/ both: "
+        RenderMathMLMath {math} at (88,0) size 46x32
+          RenderMathMLSubSup {msubsup} at (1,0) size 44x32
+            RenderMathMLBlock {msubsup} at (0,3) size 9x19
+              RenderInline {mi} at (0,0) size 9x25
+                RenderText {#text} at (0,-1) size 9x25
+                  text run at (0,-1) width 9: "Z"
+            RenderMathMLBlock {msubsup} at (10,0) size 34x32
+              RenderMathMLBlock {msubsup} at (0,0) size 34x16
+                RenderMathMLRow {mrow} at (0,3) size 17x12
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (0,-3) size 5x19
+                      text run at (0,-3) width 5: "k"
+                  RenderMathMLOperator {mo} at (5,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 3x19
+                    RenderText {#text} at (14,-3) size 3x19
+                      text run at (14,-3) width 3: "j"
+              RenderMathMLBlock {msubsup} at (0,16) size 34x16
+                RenderMathMLRow {mrow} at (1,3) size 33x12
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (0,-3) size 5x19
+                      text run at (0,-3) width 5: "x"
+                  RenderMathMLOperator {mo} at (5,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (14,-3) size 5x19
+                      text run at (14,-3) width 5: "y"
+                  RenderMathMLOperator {mo} at (19,0) size 9x12
+                    RenderMathMLBlock {mo} at (0,0) size 8x12
+                      RenderText {mo} at (0,-3) size 8x19
+                        text run at (0,-3) width 8: "+"
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (28,-3) size 5x19
+                      text run at (28,-3) width 5: "z"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,192) size 784x32
+        RenderText {#text} at (0,4) size 123x19
+          text run at (0,4) width 123: "Wrapped in mrow: "
+        RenderMathMLMath {math} at (123,0) size 16x32
+          RenderMathMLRow {mrow} at (1,0) size 14x32
+            RenderMathMLSubSup {msubsup} at (0,0) size 14x32
+              RenderMathMLBlock {msubsup} at (0,3) size 7x19
+                RenderInline {mi} at (0,0) size 7x25
+                  RenderText {#text} at (0,-1) size 7x25
+                    text run at (0,-1) width 7: "x"
+              RenderMathMLBlock {msubsup} at (8,0) size 6x32
+                RenderMathMLBlock {msubsup} at (0,0) size 6x16
+                  RenderInline {mi} at (0,0) size 5x19
+                    RenderText {#text} at (0,0) size 5x19
+                      text run at (0,0) width 5: "k"
+                RenderMathMLBlock {msubsup} at (0,16) size 6x16
+                  RenderInline {mn} at (0,0) size 6x19
+                    RenderText {#text} at (0,0) size 6x19
+                      text run at (0,0) width 6: "1"
+        RenderText {#text} at (0,0) size 0x0

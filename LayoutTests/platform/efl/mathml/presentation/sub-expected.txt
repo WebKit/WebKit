@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x131
+  RenderBlock {html} at (0,0) size 800x131
+    RenderBody {body} at (8,16) size 784x99
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "text "
+        RenderMathMLMath {math} at (27,2) size 15x19
+          RenderMathMLSubSup {msub} at (1,0) size 13x19
+            RenderMathMLBlock {msub} at (0,0) size 7x16
+              RenderInline {mi} at (0,0) size 7x25
+                RenderText {#text} at (0,-4) size 7x25
+                  text run at (0,-4) width 7: "x"
+            RenderInline {mn} at (0,0) size 6x19
+              RenderText {#text} at (7,4) size 6x19
+                text run at (7,4) width 6: "1"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "text "
+        RenderMathMLMath {math} at (27,2) size 18x19
+          RenderMathMLSubSup {msub} at (1,0) size 16x19
+            RenderMathMLBlock {msub} at (0,0) size 11x16
+              RenderMathMLOperator {mo} at (0,0) size 11x16
+                RenderMathMLBlock {mo} at (0,0) size 11x16
+                  RenderText {mo} at (0,-4) size 11x25
+                    text run at (0,-4) width 11: "+"
+            RenderInline {mi} at (0,0) size 5x19
+              RenderText {#text} at (11,4) size 5x19
+                text run at (11,4) width 5: "x"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,74) size 784x25
+        RenderText {#text} at (0,4) size 27x19
+          text run at (0,4) width 27: "text "
+        RenderMathMLMath {math} at (27,0) size 15x25
+          RenderMathMLSubSup {msub} at (1,0) size 13x25
+            RenderMathMLBlock {msub} at (0,0) size 6x22
+              RenderMathMLOperator {mo} at (0,0) size 6x22
+                RenderMathMLBlock {mo} at (0,0) size 6x22
+                  RenderText {mo} at (0,-1) size 6x25
+                    text run at (0,-1) width 6: "\x{222B}"
+            RenderInline {mi} at (0,0) size 7x19
+              RenderText {#text} at (6,10) size 7x19
+                text run at (6,10) width 7: "Y"
+        RenderText {#text} at (0,0) size 0x0

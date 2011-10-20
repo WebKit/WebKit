@@ -1,3 +1,16 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add EFL baselines for dom, editing, fonts, mathml, media, printing, scrollbars and security.
+
+        * platform/efl/dom: [...]
+        * platform/efl/editing: [...]
+        * platform/efl/fonts: [...]
+        * platform/efl/mathml: [...]
+        * platform/efl/media: [...]
+        * platform/efl/printing: [...]
+        * platform/efl/scrollbars: [...]
+        * platform/efl/security: [...]
+
 2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Move qt-4.8 platform to qt platform.

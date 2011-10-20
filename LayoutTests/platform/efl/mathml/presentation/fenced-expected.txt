@@ -1,0 +1,78 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x105
+  RenderBlock {html} at (0,0) size 800x105
+    RenderBody {body} at (8,16) size 784x73
+      RenderBlock {p} at (0,0) size 784x73
+        RenderMathMLMath {math} at (0,0) size 174x73
+          RenderMathMLFenced {mfenced} at (1,0) size 172x73
+            RenderMathMLOperator {mfenced} at (1,15) size 8x58
+            RenderBlock {div} at (9,20) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (57,35) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-4) size 4x25
+                  text run at (0,-4) width 4: ","
+            RenderBlock {div} at (62,20) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (110,35) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-4) size 4x25
+                  text run at (0,-4) width 4: ","
+            RenderBlock {div} at (115,20) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (163,15) size 8x58
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,31) size 7x10 scrollHeight 15
+  RenderMathMLBlock {mfenced} at (0,0) size 7x10
+layer at (10,41) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,51) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,20) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,61) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,30) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,71) size 7x7 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,40) size 7x7
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239C}"
+layer at (10,78) size 7x11 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,47) size 7x11
+layer at (172,31) size 7x10 scrollHeight 15
+  RenderMathMLBlock {mfenced} at (0,0) size 7x10
+layer at (172,41) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,10) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (172,51) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,20) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (172,61) size 7x10 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,30) size 7x10
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (172,71) size 7x7 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,40) size 7x7
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239F}"
+layer at (172,78) size 7x11 scrollHeight 14
+  RenderMathMLBlock {mfenced} at (0,47) size 7x11
+layer at (10,32) size 7x11 backgroundClip at (10,31) size 7x10 clip at (10,31) size 7x10 outlineClip at (10,31) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239B}"
+layer at (10,75) size 7x11 backgroundClip at (10,78) size 7x11 clip at (10,78) size 7x11 outlineClip at (10,78) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239D}"
+layer at (172,32) size 7x11 backgroundClip at (172,31) size 7x10 clip at (172,31) size 7x10 outlineClip at (172,31) size 7x10
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{239E}"
+layer at (172,75) size 7x11 backgroundClip at (172,78) size 7x11 clip at (172,78) size 7x11 outlineClip at (172,78) size 7x11
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 7x11
+    RenderText {mfenced} at (0,-3) size 7x17
+      text run at (0,-3) width 7: "\x{23A0}"
