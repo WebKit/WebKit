@@ -1,3 +1,13 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Plug ImageDiff/DumpRenderTree on CMake build system
+        https://bugs.webkit.org/show_bug.cgi?id=70142
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeListsEfl.txt: Include DRT CMakeLists.
+        * DumpRenderTree/efl/CMakeLists.txt: Added.
+
 2011-10-20  Philippe Normand  <pnormand@igalia.com>
 
         [style] Allow usage of NULL in gst_*

@@ -57,3 +57,5 @@ INCLUDE_DIRECTORIES(${EWebLauncher_INCLUDE_DIRECTORIES})
 ADD_EXECUTABLE(Programs/EWebLauncher ${EWebLauncher_SOURCES})
 TARGET_LINK_LIBRARIES(Programs/EWebLauncher ${EWebLauncher_LIBRARIES})
 ADD_TARGET_PROPERTIES(Programs/EWebLauncher LINK_FLAGS "${EWebLauncher_LINK_FLAGS}")
+
+INCLUDE(${TOOLS_DIR}/DumpRenderTree/efl/CMakeLists.txt)
