@@ -48,6 +48,7 @@ public:
     virtual int compositorIdentifier() const { return m_compositorIdentifier; }
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
+    virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
     virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();

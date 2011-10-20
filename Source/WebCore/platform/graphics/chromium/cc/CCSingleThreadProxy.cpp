@@ -138,6 +138,12 @@ void CCSingleThreadProxy::loseCompositorContext(int numTimes)
     m_timesRecreateShouldFail = numTimes - 1;
 }
 
+void CCSingleThreadProxy::setNeedsAnimate()
+{
+    // CCThread-only feature
+    ASSERT_NOT_REACHED();
+}
+
 void CCSingleThreadProxy::setNeedsCommit()
 {
     ASSERT(CCProxy::isMainThread());

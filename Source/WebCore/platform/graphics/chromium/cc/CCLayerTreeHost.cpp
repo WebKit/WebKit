@@ -195,6 +195,12 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
         setNeedsCommitThenRedraw();
 }
 
+void CCLayerTreeHost::setNeedsAnimate()
+{
+    ASSERT(m_settings.enableCompositorThread);
+    m_proxy->setNeedsAnimate();
+}
+
 void CCLayerTreeHost::setNeedsCommitThenRedraw()
 {
     if (m_settings.enableCompositorThread) {

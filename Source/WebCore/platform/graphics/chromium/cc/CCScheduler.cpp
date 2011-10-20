@@ -36,6 +36,12 @@ CCScheduler::CCScheduler(CCSchedulerClient* client)
     ASSERT(m_client);
 }
 
+void CCScheduler::requestAnimate()
+{
+    // Stub through to requestCommit for now.
+    requestCommit();
+}
+
 void CCScheduler::requestCommit()
 {
     if (m_commitPending)
@@ -66,4 +72,3 @@ void CCScheduler::didDraw()
 }
 
 }
-

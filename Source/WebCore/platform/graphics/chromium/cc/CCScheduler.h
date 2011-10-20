@@ -49,6 +49,7 @@ public:
         return adoptPtr(new CCScheduler(client));
     }
 
+    void requestAnimate();
     void requestCommit();
     void requestRedraw();
 

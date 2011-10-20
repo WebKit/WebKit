@@ -64,6 +64,7 @@ public:
 
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 
+    virtual void setNeedsAnimate() = 0;
     virtual void setNeedsCommit() = 0;
     virtual void setNeedsCommitThenRedraw() = 0;
     virtual void setNeedsRedraw() = 0;

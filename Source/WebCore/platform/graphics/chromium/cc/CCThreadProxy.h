@@ -60,6 +60,7 @@ public:
     virtual int compositorIdentifier() const;
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
+    virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
     virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();
@@ -83,12 +84,14 @@ private:
     void finishAllRenderingOnCCThread(CCCompletionEvent*);
     void initializeImplOnCCThread(CCCompletionEvent*);
     void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
+    void setNeedsAnimateOnCCThread();
     void setNeedsCommitOnCCThread();
     void setNeedsRedrawOnCCThread();
     void setNeedsCommitThenRedrawOnCCThread();
     void layerTreeHostClosedOnCCThread(CCCompletionEvent*);
 
     // Accessed on main thread only.
+    bool m_animationRequested;
     bool m_commitRequested;
     bool m_redrawAfterCommit;
     CCLayerTreeHost* m_layerTreeHost;

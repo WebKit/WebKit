@@ -239,6 +239,18 @@ void CCThreadProxy::loseCompositorContext(int numTimes)
     ASSERT_NOT_REACHED();
 }
 
+void CCThreadProxy::setNeedsAnimate()
+{
+    ASSERT(isMainThread());
+    if (m_commitRequested)
+        return;
+
+    TRACE_EVENT("CCThreadProxy::setNeedsAnimation", this, 0);
+    m_commitRequested = true;
+    s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsAnimateOnCCThread));
+}
+
+
 void CCThreadProxy::setNeedsCommit()
 {
     ASSERT(isMainThread());
@@ -255,6 +267,13 @@ void CCThreadProxy::setNeedsCommitThenRedraw()
     ASSERT(isMainThread());
     m_redrawAfterCommit = true;
     setNeedsCommit();
+}
+
+void CCThreadProxy::setNeedsAnimateOnCCThread()
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT("CCThreadProxy::setNeedsCommitOnCCThread", this, 0);
+    m_schedulerOnCCThread->requestAnimate();
 }
 
 void CCThreadProxy::setNeedsCommitOnCCThread()

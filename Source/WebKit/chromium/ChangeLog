@@ -1,3 +1,16 @@
+2011-10-19  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route requestAnimationFrame through CCProxy in threaded mode
+        https://bugs.webkit.org/show_bug.cgi?id=70160
+
+        Reviewed by James Robinson.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::scheduleAnimation):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scheduleAnimation):
+        * src/WebViewImpl.h:
+
 2011-10-19  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Use clang as compiler!

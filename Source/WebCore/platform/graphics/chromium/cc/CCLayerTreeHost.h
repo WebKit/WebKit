@@ -134,6 +134,7 @@ public:
     // Test-only hook
     void loseCompositorContext(int numTimes);
 
+    void setNeedsAnimate();
     void setNeedsCommitThenRedraw();
     void setNeedsRedraw();
 

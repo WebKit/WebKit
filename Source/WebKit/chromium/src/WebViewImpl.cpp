@@ -2608,6 +2608,19 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     m_nonCompositedContentHost->invalidateRect(dirtyRect);
     setRootLayerNeedsDisplay();
 }
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void WebViewImpl::scheduleAnimation()
+{
+    if (isAcceleratedCompositingActive()) {
+        if (settings()->useThreadedCompositor()) {
+            ASSERT(m_layerTreeHost);
+            m_layerTreeHost->setNeedsAnimate();
+        } else
+            m_client->scheduleAnimation();
+    } else
+            m_client->scheduleAnimation();
+}
+#endif
 
 class WebViewImplContentPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(WebViewImplContentPainter);

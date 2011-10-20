@@ -384,7 +384,9 @@ public:
     void setRootLayerNeedsDisplay();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
-    void doUpdateAndComposite();
+#endif
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void scheduleAnimation();
 #endif
 
     // Returns the onscreen 3D context used by the compositor. This is
