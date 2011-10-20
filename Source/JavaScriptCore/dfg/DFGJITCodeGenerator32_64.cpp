@@ -165,9 +165,10 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         JITCompiler::Jump hasUnboxedDouble;
 
         if (info.registerFormat() != DataFormatJSInteger) {
+            FPRTemporary scratch(this);
             JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
             m_jit.jitAssertIsJSDouble(tagGPR);
-            unboxDouble(tagGPR, payloadGPR, fpr, virtualRegister);
+            unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
             hasUnboxedDouble = m_jit.jump();
             isInteger.link(&m_jit);
         }
@@ -276,7 +277,7 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
         m_fprs.lock(oldFPR);
         tagGPR = allocate();
         payloadGPR = allocate();
-        boxDouble(oldFPR, tagGPR, payloadGPR, virtualRegister);
+        boxDouble(oldFPR, tagGPR, payloadGPR);
         m_fprs.unlock(oldFPR);
         m_fprs.release(oldFPR);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
@@ -348,7 +349,7 @@ void JITCodeGenerator::nonSpeculativeValueToNumber(Node& node)
     nonNumeric.link(&m_jit);
     silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
     callOperation(dfgConvertJSValueToNumber, FPRInfo::returnValueFPR, tagGPR, payloadGPR);
-    boxDouble(FPRInfo::returnValueFPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
+    boxDouble(FPRInfo::returnValueFPR, resultTagGPR, resultPayloadGPR);
     silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
     JITCompiler::Jump hasCalledToNumber = m_jit.jump();
     
@@ -433,7 +434,7 @@ void JITCodeGenerator::nonSpeculativeUInt32ToNumber(Node& node)
     m_jit.move(JITCompiler::TrustedImmPtr(&twoToThe32), resultPayload.gpr()); // reuse resultPayload register here.
     m_jit.addDouble(JITCompiler::Address(resultPayload.gpr(), 0), boxer.fpr());
         
-    boxDouble(boxer.fpr(), resultTag.gpr(), resultPayload.gpr(), at(m_compileIndex).virtualRegister());
+    boxDouble(boxer.fpr(), resultTag.gpr(), resultPayload.gpr());
         
     JITCompiler::Jump done = m_jit.jump();
         
@@ -553,7 +554,7 @@ void JITCodeGenerator::nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex
         failureCases.link(&m_jit);
     }
     
-    boxDouble(tmp2FPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
+    boxDouble(tmp2FPR, resultTagGPR, resultPayloadGPR);
         
     if (!isKnownNumeric(regChild)) {
         ASSERT(notInt.isSet());
@@ -635,7 +636,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
     if (arg1.isDouble()) {
         arg1TagGPR = tmpTag.gpr();
         arg1PayloadGPR = tmpPayload.gpr();
-        boxDouble(arg1.fpr(), arg1TagGPR, arg1PayloadGPR, at(arg1.index()).virtualRegister());
+        boxDouble(arg1.fpr(), arg1TagGPR, arg1PayloadGPR);
         arg2TagGPR = arg2.tagGPR();
         arg2PayloadGPR = arg2.payloadGPR();
     } else if (arg2.isDouble()) {
@@ -643,7 +644,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         arg1PayloadGPR = arg1.payloadGPR();
         arg2TagGPR = tmpTag.gpr();
         arg2PayloadGPR = tmpPayload.gpr();
-        boxDouble(arg2.fpr(), arg2TagGPR, arg2PayloadGPR, at(arg2.index()).virtualRegister());
+        boxDouble(arg2.fpr(), arg2TagGPR, arg2PayloadGPR);
     } else {
         arg1TagGPR = arg1.tagGPR();
         arg1PayloadGPR = arg1.payloadGPR();
@@ -705,6 +706,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
     JITCompiler::Jump child2NotInt2;
         
     if (!isKnownInteger(node.child1())) {
+        FPRTemporary scratch(this);
         child1NotInt.link(&m_jit);
             
         if (!isKnownNumeric(node.child1())) {
@@ -715,7 +717,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         if (arg1.isDouble())
             m_jit.moveDouble(arg1.fpr(), tmp1FPR);
         else
-            unboxDouble(arg1TagGPR, arg1PayloadGPR, tmp1FPR, at(arg1.index()).virtualRegister());
+            unboxDouble(arg1TagGPR, arg1PayloadGPR, tmp1FPR, scratch.fpr());
             
         // child1 is converted to a double; child2 may either be an int or
         // a boxed double
@@ -739,6 +741,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
     }
         
     if (!isKnownInteger(node.child2())) {
+        FPRTemporary scratch(this);
         child2NotInt.link(&m_jit);
             
         if (!isKnownNumeric(node.child2())) {
@@ -755,7 +758,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         if (arg2.isDouble())
             m_jit.moveDouble(arg2.fpr(), tmp2FPR);
         else
-            unboxDouble(arg2TagGPR, arg2PayloadGPR, tmp2FPR, at(arg2.index()).virtualRegister());
+            unboxDouble(arg2TagGPR, arg2PayloadGPR, tmp2FPR, scratch.fpr());
     }
         
     haveFPRArguments.link(&m_jit);
@@ -790,7 +793,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         failureCases.link(&m_jit);
     }
         
-    boxDouble(tmp1FPR, resultTagGPR, resultPayloadGPR, at(m_compileIndex).virtualRegister());
+    boxDouble(tmp1FPR, resultTagGPR, resultPayloadGPR);
         
     if (!notNumbers.empty()) {
         ASSERT(op == ValueAdd);

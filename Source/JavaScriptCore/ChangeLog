@@ -1,3 +1,45 @@
+2011-10-19  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT 32_64 - improve double boxing/unboxing
+        https://bugs.webkit.org/show_bug.cgi?id=70418
+
+        Reviewed by Gavin Barraclough.
+
+        Double boxing/unboxing in DFG JIT 32_64 is currently implemented inefficiently,
+        which tries to exchange data through memory.
+        On X86 some SSE instructions can help us on such operations with better performance.
+        This improves 32-bit DFG performance by 29% on Kraken, 7% on SunSpider,
+        and 2% on V8, tested on Linux X86 (Core i7 Nehalem).
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::lshiftPacked):
+        (JSC::MacroAssemblerX86Common::rshiftPacked):
+        (JSC::MacroAssemblerX86Common::orPacked):
+        (JSC::MacroAssemblerX86Common::moveInt32ToPacked):
+        (JSC::MacroAssemblerX86Common::movePackedToInt32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movd_rr):
+        (JSC::X86Assembler::psllq_i8r):
+        (JSC::X86Assembler::psrlq_i8r):
+        (JSC::X86Assembler::por_rr):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::boxDouble):
+        (JSC::DFG::JITCodeGenerator::unboxDouble):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeKnownConstantArithOp):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeBasicArithOp):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::boxDouble):
+        (JSC::DFG::JITCompiler::unboxDouble):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix DSO linkage of wtf_efl.

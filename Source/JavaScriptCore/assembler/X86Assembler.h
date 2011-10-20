@@ -183,6 +183,9 @@ private:
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVZX_GvEw      = 0xB7,
         OP2_PEXTRW_GdUdIb   = 0xC5,
+        OP2_PSLLQ_UdqIb     = 0x73,
+        OP2_PSRLQ_UdqIb     = 0x73,
+        OP2_POR_VdqWdq      = 0XEB,
     } TwoByteOpcodeID;
 
     TwoByteOpcodeID jccRel32(Condition cond)
@@ -220,6 +223,9 @@ private:
         GROUP5_OP_PUSH  = 6,
 
         GROUP11_MOV = 0,
+
+        GROUP14_OP_PSLLQ = 6,
+        GROUP14_OP_PSRLQ = 2,
 
         ESCAPE_DD_FSTP_doubleReal = 3,
     } GroupOpcodeID;
@@ -1436,6 +1442,12 @@ public:
         m_formatter.twoByteOp(OP2_MOVD_EdVd, (RegisterID)src, dst);
     }
 
+    void movd_rr(RegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVD_VdEd, (RegisterID)dst, src);
+    }
+
 #if CPU(X86_64)
     void movq_rr(XMMRegisterID src, RegisterID dst)
     {
@@ -1498,6 +1510,26 @@ public:
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_PEXTRW_GdUdIb, (RegisterID)dst, (RegisterID)src);
         m_formatter.immediate8(whichWord);
+    }
+
+    void psllq_i8r(int imm, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp8(OP2_PSLLQ_UdqIb, GROUP14_OP_PSLLQ, (RegisterID)dst);
+        m_formatter.immediate8(imm);
+    }
+
+    void psrlq_i8r(int imm, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp8(OP2_PSRLQ_UdqIb, GROUP14_OP_PSRLQ, (RegisterID)dst);
+        m_formatter.immediate8(imm);
+    }
+
+    void por_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_POR_VdqWdq, (RegisterID)dst, (RegisterID)src);
     }
 
     void subsd_rr(XMMRegisterID src, XMMRegisterID dst)

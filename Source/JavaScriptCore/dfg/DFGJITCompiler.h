@@ -345,20 +345,23 @@ public:
         return fpr;
     }
 #elif USE(JSVALUE32_64)
-    // FIXME: The box/unbox of doubles could be improved without exchanging data through memory,
-    // for example on x86 some SSE instructions can help do this.
-    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR, VirtualRegister virtualRegister)
+    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
-        storeDouble(fpr, addressFor(virtualRegister));
-        load32(tagFor(virtualRegister), tagGPR);
-        load32(payloadFor(virtualRegister), payloadGPR);
+#if CPU(X86)
+        movePackedToInt32(fpr, payloadGPR);
+        rshiftPacked(TrustedImm32(32), fpr);
+        movePackedToInt32(fpr, tagGPR);
+#endif
     }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, VirtualRegister virtualRegister)
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
         jitAssertIsJSDouble(tagGPR);
-        store32(tagGPR, tagFor(virtualRegister));
-        store32(payloadGPR, payloadFor(virtualRegister));
-        loadDouble(addressFor(virtualRegister), fpr);
+#if CPU(X86)
+        moveInt32ToPacked(payloadGPR, fpr);
+        moveInt32ToPacked(tagGPR, scratchFPR);
+        lshiftPacked(TrustedImm32(32), scratchFPR);
+        orPacked(scratchFPR, fpr);
+#endif
     }
 #endif
 

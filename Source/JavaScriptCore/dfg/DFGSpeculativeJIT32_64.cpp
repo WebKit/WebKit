@@ -218,9 +218,10 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         JITCompiler::Jump hasUnboxedDouble;
 
         if (info.registerFormat() != DataFormatJSInteger) {
+            FPRTemporary scratch(this);
             JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
             speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
-            unboxDouble(tagGPR, payloadGPR, fpr, virtualRegister);
+            unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
             hasUnboxedDouble = m_jit.jump();
             isInteger.link(&m_jit);
         }
@@ -348,10 +349,12 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 
 JITCompiler::Jump SpeculativeJIT::convertToDouble(JSValueOperand& op, FPRReg result)
 {
+    FPRTemporary scratch(this);
+
     JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, op.tagGPR(), TrustedImm32(JSValue::Int32Tag));
     JITCompiler::Jump notNumber = m_jit.branch32(MacroAssembler::AboveOrEqual, op.payloadGPR(), TrustedImm32(JSValue::LowestTag));
 
-    unboxDouble(op.tagGPR(), op.payloadGPR(), result, at(op.index()).virtualRegister());
+    unboxDouble(op.tagGPR(), op.payloadGPR(), result, scratch.fpr());
     JITCompiler::Jump done = m_jit.jump();
 
     isInteger.link(&m_jit);
@@ -1638,7 +1641,7 @@ void SpeculativeJIT::compile(Node& node)
         JSValueOperand op1(this, node.child1());
         op1.fill();
         if (op1.isDouble())
-            boxDouble(op1.fpr(), GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR, at(op1.index()).virtualRegister());
+            boxDouble(op1.fpr(), GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
         else {
             if (op1.payloadGPR() == GPRInfo::returnValueGPR2 && op1.tagGPR() == GPRInfo::returnValueGPR)
                 m_jit.swap(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);

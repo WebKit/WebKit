@@ -479,13 +479,13 @@ protected:
         return boxDouble(fpr, allocate());
     }
 #elif USE(JSVALUE32_64)
-    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR, VirtualRegister virtualRegister)
+    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
-        m_jit.boxDouble(fpr, tagGPR, payloadGPR, virtualRegister);
+        m_jit.boxDouble(fpr, tagGPR, payloadGPR);
     }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, VirtualRegister virtualRegister)
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
-        m_jit.unboxDouble(tagGPR, payloadGPR, fpr, virtualRegister);
+        m_jit.unboxDouble(tagGPR, payloadGPR, fpr, scratchFPR);
     }
 #endif
 

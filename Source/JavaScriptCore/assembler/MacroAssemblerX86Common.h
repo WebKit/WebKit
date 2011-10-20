@@ -40,6 +40,7 @@ class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 
 public:
     typedef X86Assembler::FPRegisterID FPRegisterID;
+    typedef X86Assembler::XMMRegisterID XMMRegisterID;
     
     static const int MaximumCompactPtrAlignedAddressOffset = 127;
 
@@ -733,6 +734,36 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.xorpd_rr(scratch, scratch);
         return branchDouble(DoubleEqualOrUnordered, reg, scratch);
+    }
+
+    void lshiftPacked(TrustedImm32 imm, XMMRegisterID reg)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.psllq_i8r(imm.m_value, reg);
+    }
+
+    void rshiftPacked(TrustedImm32 imm, XMMRegisterID reg)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.psrlq_i8r(imm.m_value, reg);
+    }
+
+    void orPacked(XMMRegisterID src, XMMRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.por_rr(src, dst);
+    }
+
+    void moveInt32ToPacked(RegisterID src, XMMRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movd_rr(src, dst);
+    }
+
+    void movePackedToInt32(XMMRegisterID src, RegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movd_rr(src, dst);
     }
 
     // Stack manipulation operations:
