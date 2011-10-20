@@ -1,3 +1,16 @@
+2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Add EFL baselines for the selectors, table, text,
+        tokenizer, transforms, writing-mode, xsl suites inside the "fast" suite.
+
+        * platform/efl/fast/selectors: [...]
+        * platform/efl/fast/table: [...]
+        * platform/efl/fast/text: [...]
+        * platform/efl/fast/tokenizer: [...]
+        * platform/efl/fast/transforms: [...]
+        * platform/efl/fast/writing-mode: [...]
+        * platform/efl/fast/xsl: [...]
+
 2011-10-20  Daniel Cheng  <dcheng@chromium.org>
 
         Update expectations after r97878.

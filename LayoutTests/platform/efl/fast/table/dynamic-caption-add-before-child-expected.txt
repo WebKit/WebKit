@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x92
+  RenderBlock {html} at (0,0) size 800x92
+    RenderBody {body} at (8,8) size 784x76
+      RenderTable {table} at (0,0) size 81x76
+        RenderBlock {caption} at (0,0) size 81x76
+          RenderText {#text} at (19,0) size 81x76
+            text run at (19,0) width 43: "PASS:"
+            text run at (0,19) width 81: "Dynamically"
+            text run at (21,38) width 39: "added"
+            text run at (17,57) width 47: "caption"

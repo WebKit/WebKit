@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 9: Opening and ending tag mismatch: p line 8 and body
+
+CONSOLE MESSAGE: line 10: Opening and ending tag mismatch: body line 6 and html
+
+CONSOLE MESSAGE: line 11: Opening and ending tag mismatch: html line 5 and xsl:template
+
+CONSOLE MESSAGE: line 12: Opening and ending tag mismatch: template line 4 and stylesheet
+
+CONSOLE MESSAGE: line 12: Premature end of data in tag stylesheet line 2
+
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
