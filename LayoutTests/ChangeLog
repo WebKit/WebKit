@@ -1,3 +1,16 @@
+2011-10-19  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Rebaseline layout test zoom-animator-scale-test2.html for win, mac
+        https://bugs.webkit.org/show_bug.cgi?id=69624
+
+        Mark test as SLOW and increase test's internal timeout value to attempt to
+        eliminate flakiness on WIN GPU.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium/compositing/zoom-animator-scale-test2.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-19  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] Update the test expectation file for fullscreen tests.

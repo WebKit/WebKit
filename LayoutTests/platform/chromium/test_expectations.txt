@@ -2648,7 +2648,7 @@ BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
 BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
 
 // Take new baselines from the bots when 68035 lands.
-BUGWK69624 WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
+BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
 BUGWK70046 MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = MISSING
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
