@@ -46,10 +46,9 @@ WebInspector.CompilerSourceMapping.prototype = {
     /**
      * @param {string} sourceURL
      * @param {number} lineNumber
-     * @param {number} columnNumber
      * @return {Object}
      */
-    sourceLocationToCompiledLocation: function(sourceURL, lineNumber, columnNumber) { },
+    sourceLocationToCompiledLocation: function(sourceURL, lineNumber) { },
 
     /**
      * @return {Array.<string>}

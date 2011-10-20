@@ -1,3 +1,12 @@
+2011-10-20  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Advanced search results should keep working after pretty print toggled.
+        https://bugs.webkit.org/show_bug.cgi?id=70347
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/raw-source-code.html:
+
 2011-10-20  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Add EFL baselines for dom, editing, fonts, mathml, media, printing, scrollbars and security.

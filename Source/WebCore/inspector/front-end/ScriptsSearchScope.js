@@ -125,23 +125,24 @@ WebInspector.ScriptsSearchScope.prototype.__proto__ = WebInspector.SearchScope.p
 WebInspector.ScriptsSearchResultsPane = function(searchConfig)
 {
     WebInspector.FileBasedSearchResultsPane.call(this, searchConfig)
+
+    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier(new WebInspector.ScriptsSearchResultsPane.LinkifierFormatter());
 }
 
 WebInspector.ScriptsSearchResultsPane.prototype = {
     /**
      * @param {Object} file
      * @param {number} lineNumber
+     * @param {number} columnNumber
      */
-    createAnchor: function(file, lineNumber)
+    createAnchor: function(file, lineNumber, columnNumber)
     {
+        
         var uiSourceCode = file;
-        
-        var anchor = WebInspector.linkifyURLAsNode(uiSourceCode.url, "");
-        anchor.setAttribute("preferred_panel", "scripts");
-        anchor.uiSourceCode = uiSourceCode;
-        anchor.lineNumber = lineNumber;
+        var rawSourceCode = uiSourceCode.rawSourceCode;
+        var rawLocation = rawSourceCode.sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+        var anchor = this._linkifier.linkifyRawSourceCode(uiSourceCode.rawSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
         anchor.removeChildren();
-        
         return anchor;
     },
     
@@ -157,3 +158,24 @@ WebInspector.ScriptsSearchResultsPane.prototype = {
 }
 
 WebInspector.ScriptsSearchResultsPane.prototype.__proto__ = WebInspector.FileBasedSearchResultsPane.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.DebuggerPresentationModel.LinkifierFormatter}
+ */
+WebInspector.ScriptsSearchResultsPane.LinkifierFormatter = function()
+{
+}
+
+WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype = {
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @param {Element} anchor
+     */
+    formatRawSourceCodeAnchor: function(rawSourceCode, anchor)
+    {
+        // Empty because we don't want to ever update anchor contents after creation.
+    }
+}
+
+WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.__proto__ = WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype;

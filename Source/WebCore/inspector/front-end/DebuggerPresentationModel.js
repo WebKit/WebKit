@@ -68,9 +68,12 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    createLinkifier: function()
+    /**
+     * @param {WebInspector.DebuggerPresentationModel.LinkifierFormatter=} formatter
+     */
+    createLinkifier: function(formatter)
     {
-        return new WebInspector.DebuggerPresentationModel.Linkifier(this);
+        return new WebInspector.DebuggerPresentationModel.Linkifier(this, formatter);
     },
 
     /**
@@ -362,7 +365,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     continueToLine: function(uiSourceCode, lineNumber)
     {
         // FIXME: use RawSourceCode.uiLocationToRawLocation.
-        var rawLocation = uiSourceCode.rawSourceCode.sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber);
+        var rawLocation = uiSourceCode.rawSourceCode.sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
@@ -768,12 +771,59 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
 }
 
 /**
+ * @interface
+ */
+WebInspector.DebuggerPresentationModel.LinkifierFormatter = function()
+{
+}
+
+WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype = {
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @param {Element} anchor
+     */
+    formatRawSourceCodeAnchor: function(rawSourceCode, anchor) { },
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.DebuggerPresentationModel.LinkifierFormatter}
+ * @param {number=} maxLength
+ */
+WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter = function(maxLength)
+{
+    this._maxLength = maxLength;
+}
+
+WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype = {
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @param {Element} anchor
+     */
+    formatRawSourceCodeAnchor: function(rawSourceCode, anchor)
+    {
+        var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(anchor.rawLocation);
+
+        anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
+            
+        var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
+        if (this._maxLength)
+            text = text.trimMiddle(this._maxLength);
+        anchor.textContent = text;
+    }
+}
+
+WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype.__proto__ = WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype;
+
+/**
  * @constructor
  * @param {WebInspector.DebuggerPresentationModel} model
+ * @param {WebInspector.DebuggerPresentationModel.LinkifierFormatter=} formatter
  */
-WebInspector.DebuggerPresentationModel.Linkifier = function(model)
+WebInspector.DebuggerPresentationModel.Linkifier = function(model, formatter)
 {
     this._model = model;
+    this._formatter = formatter || new WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter();
     this._anchorsForRawSourceCode = {};
 }
 
@@ -786,16 +836,37 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
     {
+        var rawSourceCode = this._model._rawSourceCodeForScriptWithURL(sourceURL);
+        if (!rawSourceCode)
+            return this.linkifyResource(sourceURL, lineNumber, classes);
+        
+        return this.linkifyRawSourceCode(rawSourceCode, lineNumber, columnNumber, classes);
+    },
+
+    /**
+     * @param {string} sourceURL
+     * @param {number=} lineNumber
+     * @param {string=} classes
+     */
+    linkifyResource: function(sourceURL, lineNumber, classes)
+    {
         var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
         var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
-        anchor.rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        anchor.setAttribute("preferred_panel", "resources");
+        anchor.setAttribute("line_number", lineNumber);
+        return anchor;
+    },
 
-        var rawSourceCode = this._model._rawSourceCodeForScriptWithURL(sourceURL);
-        if (!rawSourceCode) {
-            anchor.setAttribute("preferred_panel", "resources");
-            anchor.setAttribute("line_number", lineNumber);
-            return anchor;
-        }
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @param {number=} lineNumber
+     * @param {number=} columnNumber
+     * @param {string=} classes
+     */
+    linkifyRawSourceCode: function(rawSourceCode, lineNumber, columnNumber, classes)
+    {
+        var anchor = WebInspector.linkifyURLAsNode(rawSourceCode.url, "", classes, false);
+        anchor.rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
 
         var anchors = this._anchorsForRawSourceCode[rawSourceCode.id];
         if (!anchors) {
@@ -837,10 +908,11 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
     _updateAnchor: function(rawSourceCode, anchor)
     {
         var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(anchor.rawLocation);
-        anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
         anchor.setAttribute("preferred_panel", "scripts");
         anchor.uiSourceCode = uiLocation.uiSourceCode;
         anchor.lineNumber = uiLocation.lineNumber;
+        
+        this._formatter.formatRawSourceCodeAnchor(rawSourceCode, anchor);
     }
 }
 

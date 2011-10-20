@@ -127,7 +127,7 @@ WebInspector.BreakpointManager.prototype = {
             return;
 
         breakpoint._materialized = true;
-        var rawLocation = sourceMapping.uiLocationToRawLocation(uiSourceCode, breakpoint.lineNumber);
+        var rawLocation = sourceMapping.uiLocationToRawLocation(uiSourceCode, breakpoint.lineNumber, 0);
         this._setBreakpointInDebugger(breakpoint, rawLocation);
     },
 

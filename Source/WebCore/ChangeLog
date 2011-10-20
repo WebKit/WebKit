@@ -1,3 +1,44 @@
+2011-10-20  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Advanced search results should keep working after pretty print toggled.
+        https://bugs.webkit.org/show_bug.cgi?id=70347
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchScope.prototype.createSearchResultsPane):
+        (WebInspector.FileBasedSearchResultsPane.prototype.createAnchor):
+        (WebInspector.FileBasedSearchResultsPane.prototype.addSearchResult):
+        (WebInspector.FileBasedSearchResultsPane.prototype._regexMatchRanges):
+        (WebInspector.FileBasedSearchResultsPane.prototype._createContentSpan):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._materializeBreakpoint):
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.CompilerSourceMapping.prototype.sourceLocationToCompiledLocation):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.createLinkifier):
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.LinkifierFormatter):
+        (WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype.formatRawSourceCodeAnchor):
+        (WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter):
+        (WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype.formatRawSourceCodeAnchor):
+        (WebInspector.DebuggerPresentationModel.Linkifier):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.linkifyResource):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.linkifyRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype._updateAnchor):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.SourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.PlainSourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.FormattedSourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.CompilerSourceMapping.prototype.uiLocationToRawLocation):
+        * inspector/front-end/ScriptsSearchScope.js:
+        (WebInspector.ScriptsSearchResultsPane):
+        (WebInspector.ScriptsSearchResultsPane.prototype.createAnchor):
+        (WebInspector.ScriptsSearchResultsPane.LinkifierFormatter):
+        (WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.formatRawSourceCodeAnchor):
+        * inspector/front-end/inspector.html:
+
 2011-10-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         m_client in DeviceMotionController can never be 0, so no need to check for it

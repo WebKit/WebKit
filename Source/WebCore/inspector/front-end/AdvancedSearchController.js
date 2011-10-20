@@ -296,9 +296,10 @@ WebInspector.SearchScope.prototype = {
     stopSearch: function() { },
     
     /**
+     * @param {WebInspector.SearchConfig} searchConfig
      * @return WebInspector.SearchResultsPane}
      */
-    createSearchResultsPane: function() { }
+    createSearchResultsPane: function(searchConfig) { }
 }
 
 /**
@@ -349,9 +350,10 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
     /**
      * @param {Object} file
      * @param {number} lineNumber
+     * @param {number} columnNumber
      * @return {Element}
      */
-    createAnchor: function(file, lineNumber) { },
+    createAnchor: function(file, lineNumber, columnNumber) { },
     
     /**
      * @param {Object} file
@@ -372,11 +374,13 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         // Expand first file with matches only.
         var fileTreeElement = this._addFileTreeElement(fileName, searchMatches.length, this._searchResults.length === 1);
         
-        var regexObject = createSearchRegex(this._searchConfig.query, !this._searchConfig.ignoreCase, this._searchConfig.isRegex);
+        var regex = createSearchRegex(this._searchConfig.query, !this._searchConfig.ignoreCase, this._searchConfig.isRegex);
         for (var i = 0; i < searchMatches.length; i++) {
             var lineNumber = searchMatches[i].lineNumber;
+            var lineContent = searchMatches[i].lineContent;
+            var matchRanges = this._regexMatchRanges(lineContent, regex);
             
-            var anchor = this.createAnchor(file, lineNumber);
+            var anchor = this.createAnchor(file, lineNumber, matchRanges[0].offset);
             
             var numberString = numberToStringWithSpacesPadding(lineNumber + 1, 4);
             var lineNumberSpan = document.createElement("span");
@@ -385,7 +389,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
             lineNumberSpan.textContent = numberString;
             anchor.appendChild(lineNumberSpan);
             
-            var contentSpan = this._createContentSpan(searchMatches[i].lineContent, regexObject);
+            var contentSpan = this._createContentSpan(lineContent, matchRanges);
             anchor.appendChild(contentSpan);
             
             var searchMatchElement = new TreeElement("", null, false);
@@ -429,24 +433,31 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
 
     /**
      * @param {string} lineContent
-     * @param {RegExp} regexObject
+     * @param {RegExp} regex
+     * @return {Array.<Object>}
      */
-    _createContentSpan: function(lineContent, regexObject)
+    _regexMatchRanges: function(lineContent, regex)
+    {
+        regex.lastIndex = 0;
+        var match;
+        var offset = 0;
+        var matchRanges = [];
+        while (match = regex.exec(lineContent))
+            matchRanges.push({ offset: match.index, length: match[0].length });
+        
+        return matchRanges;
+    },
+    
+    /**
+     * @param {string} lineContent
+     * @param {Array.<Object>} matchRanges
+     */
+    _createContentSpan: function(lineContent, matchRanges)
     {
         var contentSpan = document.createElement("span");
         contentSpan.className = "search-match-content";
         contentSpan.textContent = lineContent;
-        
-        regexObject.lastIndex = 0;
-        var match = regexObject.exec(lineContent);
-        var offset = 0;
-        var matchRanges = [];
-        while (match) {
-            matchRanges.push({ offset: match.index, length: match[0].length });
-            match = regexObject.exec(lineContent);
-        }
         highlightRangesWithStyleClass(contentSpan, matchRanges, "highlighted-match");
-        
         return contentSpan;
     }
 }
