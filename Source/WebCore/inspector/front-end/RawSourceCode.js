@@ -404,7 +404,7 @@ WebInspector.RawSourceCode.CompilerSourceMapping.prototype = {
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
-    get uiSourceCodeList()
+    uiSourceCodeList: function()
     {
         return this._uiSourceCodeList;
     }

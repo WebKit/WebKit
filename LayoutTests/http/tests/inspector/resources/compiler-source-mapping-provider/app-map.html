@@ -3,7 +3,19 @@ window.addEventListener("message", handleMessage, false);
 
 function handleMessage(event)
 {
-    var url = event.data.params[0];
+    var requestId = event.data.id;
+    var method = event.data.method;
+    if (method === "loadSourceMap") {
+        var queryParameters = parseQueryString(window.location.toString());
+        sendRequest(event, queryParameters.sourceMap);
+    } else if (method === "loadSourceCode") {
+        var sourceCodeURL = event.data.params[0];
+        sendRequest(event, sourceCodeURL);
+    }
+}
+
+function sendRequest(event, url)
+{
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
     request.onreadystatechange = function()
@@ -16,5 +28,17 @@ function handleMessage(event)
             event.source.postMessage({ id: event.data.id, error: request.statusText }, event.origin);
     }
     request.send();
+}
+
+function parseQueryString(url)
+{
+    var query = url.split("?")[1];
+    var parameters = query.split("&");
+    var result = {};
+    for (var i = 0; i < parameters.length; ++i) {
+        var parameter = parameters[i].split("=");
+        result[parameter[0]] = parameter[1];
+    }
+    return result;
 }
 </script>

@@ -30,16 +30,15 @@
 
 /**
  * @constructor
- * @param {string} sourceMappingURL
+ * @param {string} sourceMappingPageURL
  */
-WebInspector.CompilerSourceMappingProvider = function(sourceMappingURL)
+WebInspector.CompilerSourceMappingProvider = function(sourceMappingPageURL)
 {
     if (!this._initialized) {
         window.addEventListener("message", this._onMessage, true);
         WebInspector.CompilerSourceMappingProvider.prototype._initialized = true;
     }
-    this._sourceMappingURL = sourceMappingURL;
-    this._frameURL = this._sourceMappingURL + ".html";
+    this._sourceMappingPageURL = sourceMappingPageURL;
 }
 
 WebInspector.CompilerSourceMappingProvider.prototype = {
@@ -49,7 +48,7 @@ WebInspector.CompilerSourceMappingProvider.prototype = {
     loadSourceMapping: function(callback)
     {
         this._frame = document.createElement("iframe");
-        this._frame.src = this._frameURL;
+        this._frame.src = this._sourceMappingPageURL;
         function frameLoaded()
         {
             function didLoadData(error, result)
@@ -72,7 +71,7 @@ WebInspector.CompilerSourceMappingProvider.prototype = {
                 else
                     callback(null);
             }
-            this._sendRequest("loadData", [this._sourceMappingURL], didLoadData);
+            this._sendRequest("loadSourceMap", [], didLoadData);
         }
         this._frame.addEventListener("load", frameLoaded.bind(this), true);
         // FIXME: remove iframe from the document when it is not needed anymore.
@@ -95,16 +94,16 @@ WebInspector.CompilerSourceMappingProvider.prototype = {
             }
             callback(result);
         }
-        this._sendRequest("loadData", [sourceURL], didSendRequest, timeout);
+        this._sendRequest("loadSourceCode", [sourceURL], didSendRequest, timeout);
     },
 
     _sendRequest: function(method, parameters, callback, timeout)
     {
         var requestId = this._requestId++;
-        var timerId = setTimeout(this._cancelRequest.bind(this, requestId), timeout || 50);
+        var timerId = setTimeout(this._cancelRequest.bind(this, requestId), timeout || 5000);
         this._requests[requestId] = { callback: callback, timerId: timerId };
         var requestData = { id: requestId, method: method, params: parameters };
-        this._frame.contentWindow.postMessage(requestData, this._frameURL);
+        this._frame.contentWindow.postMessage(requestData, this._sourceMappingPageURL);
     },
 
     _onMessage: function(event)

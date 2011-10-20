@@ -1,3 +1,19 @@
+2011-10-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: encode source map url as source map page url query parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=70327
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/CompilerSourceMappingProvider.js:
+        (WebInspector.CompilerSourceMappingProvider):
+        (WebInspector.CompilerSourceMappingProvider.prototype.loadSourceMapping.frameLoaded):
+        (WebInspector.CompilerSourceMappingProvider.prototype.loadSourceMapping):
+        (WebInspector.CompilerSourceMappingProvider.prototype.loadSourceCode):
+        (WebInspector.CompilerSourceMappingProvider.prototype._sendRequest):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.CompilerSourceMapping.prototype.uiSourceCodeList):
+
 2011-10-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: The "x" in "980px x 36px" looks weird in the inspector node callout

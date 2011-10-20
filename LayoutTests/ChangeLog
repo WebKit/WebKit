@@ -1,3 +1,13 @@
+2011-10-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: encode source map url as source map page url query parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=70327
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/compiler-source-mapping-provider.html:
+        * http/tests/inspector/resources/compiler-source-mapping-provider/app-map.html:
+
 2011-10-20  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Yet another test expectation change for platform/chromium/compositing/zoom-animator-scale-test2.html

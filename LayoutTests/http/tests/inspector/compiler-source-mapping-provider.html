@@ -9,7 +9,7 @@ function test()
     InspectorTest.runTestSuite([
         function testLoad(next)
         {
-            var provider = new WebInspector.CompilerSourceMappingProvider("http://localhost:8000/inspector/resources/compiler-source-mapping-provider/app-map");
+            var provider = new WebInspector.CompilerSourceMappingProvider("http://localhost:8000/inspector/resources/compiler-source-mapping-provider/app-map.html?sourceMap=app-map");
             var sourceMapping;
             provider.loadSourceMapping(didLoadSourceMapping);
             function didLoadSourceMapping(sourceMappingArg)

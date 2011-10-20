@@ -375,7 +375,7 @@ function test()
             function checkMapping()
             {
                 var sourceMapping = rawSourceCode.sourceMapping;
-                uiSourceCodeList = sourceMapping.uiSourceCodeList;
+                uiSourceCodeList = sourceMapping.uiSourceCodeList();
                 var uiSourceCodeByURL = {};
                 for (var i = 0; i < uiSourceCodeList.length; ++i)
                     uiSourceCodeByURL[uiSourceCodeList[i].url] = uiSourceCodeList[i];
