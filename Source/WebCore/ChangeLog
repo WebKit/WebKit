@@ -1,1 +1,7 @@
+2011-10-19  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix GTK build.
+
+        * GNUmakefile.am:
+
 == Rolled over to ChangeLog-2011-10-19 ==
