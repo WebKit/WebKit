@@ -1888,6 +1888,12 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ConvertThis: {
+        if (isObjectPrediction(m_state.forNode(node.child1()).m_type)) {
+            SpeculateCellOperand thisValue(this, node.child1());
+            cellResult(thisValue.gpr(), m_compileIndex);
+            break;
+        }
+        
         if (isOtherPrediction(at(node.child1()).prediction())) {
             JSValueOperand thisValue(this, node.child1());
             GPRTemporary scratch(this, thisValue);

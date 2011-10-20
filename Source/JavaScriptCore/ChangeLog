@@ -1,5 +1,20 @@
 2011-10-19  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG ConvertThis emits slow code when the source node is known to be,
+        but not predicted to be, a final object
+        https://bugs.webkit.org/show_bug.cgi?id=70466
+
+        Reviewed by Oliver Hunt.
+        
+        Added a new case in ConvertThis compilation.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-10-19  Filip Pizlo  <fpizlo@apple.com>
+
         Optimization triggers in the old JIT may sometimes fire repeatedly even
         though there is no optimization to be done
         https://bugs.webkit.org/show_bug.cgi?id=70467
