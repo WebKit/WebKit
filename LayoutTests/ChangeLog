@@ -1,3 +1,15 @@
+2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        fast/frames/frame-element-name.html fails intermittently after r97881
+        https://bugs.webkit.org/show_bug.cgi?id=70487
+
+        Reviewed by Zoltán Herczeg.
+
+        r97881 made js/resources/js-test-pre.js (used in fast/frames/resource/frame-element-name.html)
+        slower with loading css dynamically. We have to wait for loading all frames to get correct results.
+
+        * fast/frames/frame-element-name.html:
+
 2011-10-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: get rid of manual view hierarchy management.

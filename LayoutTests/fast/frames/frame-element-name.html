@@ -1,11 +1,20 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function framesLoaded()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
 </script>
 </head>
- <frameset border="1" cols="150,150,150,150,150,*" style='border: solid 1px;'>
+ <frameset border="1" cols="150,150,150,150,150,*" style='border: solid 1px;' onload="framesLoaded()">
   <frame marginwidth="1" src="resources/frame-element-name.html?expectedName=left" name="left">
   <frame src="resources/frame-element-name.html?expectedName=">
   <frame src="resources/frame-element-name.html?expectedName=_blank" name="_blank">
