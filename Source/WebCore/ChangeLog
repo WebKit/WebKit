@@ -1,3 +1,27 @@
+2011-10-21  Raymond Toy  <rtoy@google.com>
+
+        Flush denormals in Biquad, ZeroPole, and DynamicsCompressor.
+
+        We only flush when saving the state variables instead of in the
+        loops so that we don't impact performance too much when there are
+        no denormals.  This will at least not propagate the denormals any
+        further within the class.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=70626
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::process):
+        Flush denormals when storing the filter state back in to class
+        filter state.  
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::process):
+        Ditto.
+        * platform/audio/ZeroPole.cpp:
+        (WebCore::ZeroPole::process):
+        Ditto.
+
 2011-10-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Advanced search results should be cleared on navigation.

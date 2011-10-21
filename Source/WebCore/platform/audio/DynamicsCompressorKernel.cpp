@@ -33,6 +33,7 @@
 #include "DynamicsCompressorKernel.h"
 
 #include "AudioUtilities.h"
+#include "DenormalDisabler.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -352,8 +353,8 @@ void DynamicsCompressorKernel::process(float* sourceL,
             // Locals back to member variables.
             m_preDelayReadIndex = preDelayReadIndex;
             m_preDelayWriteIndex = preDelayWriteIndex;
-            m_detectorAverage = detectorAverage;
-            m_compressorGain = compressorGain;
+            m_detectorAverage = DenormalDisabler::flushDenormalFloatToZero(detectorAverage);
+            m_compressorGain = DenormalDisabler::flushDenormalFloatToZero(compressorGain);
         }
     }
 }

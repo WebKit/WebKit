@@ -32,6 +32,8 @@
 
 #include "ZeroPole.h"
 
+#include "DenormalDisabler.h"
+
 namespace WebCore {
 
 void ZeroPole::process(float *source, float *destination, unsigned framesToProcess)
@@ -61,9 +63,10 @@ void ZeroPole::process(float *source, float *destination, unsigned framesToProce
         *destination++ = output2;
     }
     
-    // Locals to member variables.
-    m_lastX = lastX;
-    m_lastY = lastY;
+    // Locals to member variables. Flush denormals here so we don't
+    // slow down the inner loop above.
+    m_lastX = DenormalDisabler::flushDenormalFloatToZero(lastX);
+    m_lastY = DenormalDisabler::flushDenormalFloatToZero(lastY);
 }
 
 } // namespace WebCore

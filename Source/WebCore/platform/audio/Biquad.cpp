@@ -32,6 +32,7 @@
 
 #include "Biquad.h"
 
+#include "DenormalDisabler.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
@@ -96,11 +97,12 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
         y1 = y;
     }
 
-    // Local variables back to member
-    m_x1 = x1;
-    m_x2 = x2;
-    m_y1 = y1;
-    m_y2 = y2;
+    // Local variables back to member. Flush denormals here so we
+    // don't slow down the inner loop above.
+    m_x1 = DenormalDisabler::flushDenormalFloatToZero(x1);
+    m_x2 = DenormalDisabler::flushDenormalFloatToZero(x2);
+    m_y1 = DenormalDisabler::flushDenormalFloatToZero(y1);
+    m_y2 = DenormalDisabler::flushDenormalFloatToZero(y2);
 
     m_b0 = b0;
     m_b1 = b1;
