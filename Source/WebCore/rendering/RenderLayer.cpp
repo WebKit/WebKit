@@ -3788,13 +3788,17 @@ void RenderLayer::clearClipRects()
 #if USE(ACCELERATED_COMPOSITING)
 RenderLayerBacking* RenderLayer::ensureBacking()
 {
-    if (!m_backing)
+    if (!m_backing) {
         m_backing = adoptPtr(new RenderLayerBacking(this));
+        compositor()->layerBecameComposited(this);
+    }
     return m_backing.get();
 }
 
 void RenderLayer::clearBacking()
 {
+    if (m_backing && !renderer()->documentBeingDestroyed())
+        compositor()->layerBecameNonComposited(this);
     m_backing.clear();
 }
 

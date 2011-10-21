@@ -95,6 +95,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_updateCompositingLayersTimer(this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_hasAcceleratedCompositing(true)
     , m_compositingTriggers(static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers))
+    , m_compositedLayerCount(0)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
     , m_compositingConsultsOverlap(true)
@@ -241,6 +242,11 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerC
     updateCompositingLayers();
 }
 
+bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const
+{
+    return m_compositedLayerCount > rootLayer->isComposited();
+}
+
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     m_updateCompositingLayersTimer.stop();
@@ -309,7 +315,9 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         // Host the document layer in the RenderView's root layer.
         if (updateRoot == rootRenderLayer()) {
-            if (childList.isEmpty())
+            // Even when childList is empty, don't drop out of compositing mode if there are
+            // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
+            if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(updateRoot))
                 destroyRootLayer();
             else
                 m_rootContentLayer->setChildren(childList);
@@ -774,8 +782,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     }
 
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
-    // to be composited, then we can drop out of compositing mode altogether.
-    if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer) && !m_forceCompositingMode) {
+    // to be composited, then we can drop out of compositing mode altogether. However, don't drop out of compositing mode
+    // if there are composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
+    if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer) && !m_forceCompositingMode && !hasAnyAdditionalCompositedLayers(layer)) {
         enableCompositingMode(false);
         willBeComposited = false;
     }
