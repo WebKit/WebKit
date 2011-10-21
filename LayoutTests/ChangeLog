@@ -1,3 +1,17 @@
+2011-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Column rules positioned incorrectly in vertical-rl block with horizontal border or padding
+        https://bugs.webkit.org/show_bug.cgi?id=70622
+
+        Reviewed by Beth Dakin.
+
+        * fast/multicol/vertical-lr/rules-with-border-before-expected.png: Added.
+        * fast/multicol/vertical-lr/rules-with-border-before-expected.txt: Added.
+        * fast/multicol/vertical-lr/rules-with-border-before.html: Added.
+        * fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+        * fast/multicol/vertical-rl/rules-with-border-before-expected.txt: Added.
+        * fast/multicol/vertical-rl/rules-with-border-before.html: Added.
+
 2011-10-21  Elliot Poger  <epoger@google.com>
 
         re-enable layout tests against chromium-mac-snowleopard (Skia) baselines

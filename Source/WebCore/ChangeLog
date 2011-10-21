@@ -1,3 +1,17 @@
+2011-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Column rules positioned incorrectly in vertical-rl block with horizontal border or padding
+        https://bugs.webkit.org/show_bug.cgi?id=70622
+
+        Reviewed by Beth Dakin.
+
+        Tests: fast/multicol/vertical-lr/rules-with-border-before.html
+               fast/multicol/vertical-rl/rules-with-border-before.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules): Changed to use the physical left border and padding for the
+        left edge of the horizontal column rule.
+
 2011-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.
