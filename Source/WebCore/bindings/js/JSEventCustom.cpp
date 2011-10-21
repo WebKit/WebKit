@@ -48,16 +48,9 @@ JSValue JSEvent::clipboardData(ExecState* exec) const
     return impl()->isClipboardEvent() ? toJS(exec, globalObject(), impl()->clipboardData()) : jsUndefined();
 }
 
-#define DECLARE_EVENT_WRAPPER(interfaceName) \
-    static JSDOMWrapper* create##interfaceName##Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event) \
-    { \
-        return CREATE_DOM_WRAPPER(exec, globalObject, interfaceName, event); \
-    } \
-
-DOM_EVENT_INTERFACES_FOR_EACH(DECLARE_EVENT_WRAPPER)
-
-#define ADD_WRAPPER_TO_MAP(interfaceName) \
-    map.add(eventNames().interfaceFor##interfaceName.impl(), create##interfaceName##Wrapper);
+#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
+    if (eventNames().interfaceFor##interfaceName == desiredInterface) \
+        return CREATE_DOM_WRAPPER(exec, globalObject, interfaceName, event);
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 {
@@ -70,17 +63,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     if (wrapper)
         return wrapper;
 
-    typedef JSDOMWrapper* (*CreateEventWrapperFunction)(ExecState*, JSDOMGlobalObject*, Event*);
-    typedef HashMap<WTF::AtomicStringImpl*, CreateEventWrapperFunction> FunctionMap;
-
-    DEFINE_STATIC_LOCAL(FunctionMap, map, ());
-    if (map.isEmpty()) {
-        DOM_EVENT_INTERFACES_FOR_EACH(ADD_WRAPPER_TO_MAP)
-    }
-
-    CreateEventWrapperFunction createWrapperFunction = map.get(event->interfaceName().impl());
-    if (createWrapperFunction)
-        return createWrapperFunction(exec, globalObject, event);
+    String desiredInterface = event->interfaceName();
+    DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
     return CREATE_DOM_WRAPPER(exec, globalObject, Event, event);
 }

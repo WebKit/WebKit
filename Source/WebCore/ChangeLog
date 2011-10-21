@@ -1,3 +1,15 @@
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
+        Attemp to fix a bunch of tests PLATFORM(MAC).  We can't use a static
+        map because that's shared between threads (and events exist in worker
+        threads).  It migh be better to add a thread-specific map, but we can
+        do that in another patch.
+
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+
 2011-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Hidden composited iframes cause infinite loop

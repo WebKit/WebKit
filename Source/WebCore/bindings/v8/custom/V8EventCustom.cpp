@@ -69,36 +69,22 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     return v8::Undefined();
 }
 
-#define DECLARE_EVENT_WRAPPER(interfaceName) \
-    static v8::Handle<v8::Value> toV8##interfaceName(Event* event) \
-    { \
-        return toV8(static_cast<interfaceName*>(event)); \
-    } \
-
-DOM_EVENT_INTERFACES_FOR_EACH(DECLARE_EVENT_WRAPPER)
-
-#define ADD_WRAPPER_TO_MAP(interfaceName) \
-    map.add(eventNames().interfaceFor##interfaceName.impl(), toV8##interfaceName);
+#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
+    if (eventNames().interfaceFor##interfaceName == desiredInterface) \
+        return toV8(static_cast<interfaceName*>(event));
 
 v8::Handle<v8::Value> toV8(Event* event)
 {
     if (!event)
         return v8::Null();
 
-    if (event->interfaceName() == eventNames().interfaceForEvent)
+    String desiredInterface = event->interfaceName();
+
+    // We need to check Event first to avoid infinite recursion.
+    if (eventNames().interfaceForEvent == desiredInterface)
         return V8Event::wrap(event);
 
-    typedef v8::Handle<v8::Value> (*ToV8Function)(Event*);
-    typedef HashMap<WTF::AtomicStringImpl*, ToV8Function> FunctionMap;
-
-    DEFINE_STATIC_LOCAL(FunctionMap, map, ());
-    if (map.isEmpty()) {
-        DOM_EVENT_INTERFACES_FOR_EACH(ADD_WRAPPER_TO_MAP)
-    }
-
-    ToV8Function specializedToV8 = map.get(event->interfaceName().impl());
-    if (specializedToV8)
-        return specializedToV8(event);
+    DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
     return V8Event::wrap(event);
 }
