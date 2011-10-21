@@ -1,5 +1,11 @@
 2011-10-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Typo fix.
+
+        * tests/util.h:
+
+2011-10-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Buildfix for newer Qt5. Remove duplicated defines.
 
         Reviewed by Simon Hausmann.
