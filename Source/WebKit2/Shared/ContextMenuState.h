@@ -33,11 +33,13 @@ namespace WebKit {
 struct ContextMenuState {
     String absoluteLinkURLString;
     String absoluteImageURLString;
+    String absolutePDFURLString;
 
     void encode(CoreIPC::ArgumentEncoder* encoder) const
     {
         encoder->encode(absoluteLinkURLString);
         encoder->encode(absoluteImageURLString);
+        encoder->encode(absolutePDFURLString);
     }
 
     static bool decode(CoreIPC::ArgumentDecoder* decoder, ContextMenuState& result)
@@ -45,6 +47,8 @@ struct ContextMenuState {
         if (!decoder->decode(result.absoluteLinkURLString))
             return false;
         if (!decoder->decode(result.absoluteImageURLString))
+            return false;
+        if (!decoder->decode(result.absolutePDFURLString))
             return false;
     
         return true;

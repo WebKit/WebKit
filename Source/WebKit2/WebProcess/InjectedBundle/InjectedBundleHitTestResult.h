@@ -50,6 +50,7 @@ public:
     WebFrame* targetFrame() const;
 
     String absoluteImageURL() const;
+    String absolutePDFURL() const;
     String absoluteLinkURL() const;
     String absoluteMediaURL() const;
 

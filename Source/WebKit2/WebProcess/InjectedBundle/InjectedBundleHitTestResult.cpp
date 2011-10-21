@@ -80,6 +80,11 @@ String InjectedBundleHitTestResult::absoluteImageURL() const
     return m_hitTestResult.absoluteImageURL().string();
 }
 
+String InjectedBundleHitTestResult::absolutePDFURL() const
+{
+    return m_hitTestResult.absolutePDFURL().string();
+}
+
 String InjectedBundleHitTestResult::absoluteLinkURL() const
 {
     return m_hitTestResult.absoluteLinkURL().string();

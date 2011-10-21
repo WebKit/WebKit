@@ -1,5 +1,34 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97810
+
+    2011-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Expose PDF information in hit test result
+        https://bugs.webkit.org/show_bug.cgi?id=70353
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        * Shared/WebHitTestResult.h:
+        (WebKit::WebHitTestResult::absolutePDFURL):
+        * UIProcess/API/C/WKHitTestResult.cpp:
+        (WKHitTestResultCopyAbsolutePDFURL):
+        * UIProcess/API/C/WKHitTestResult.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyAbsolutePDFURL):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::absolutePDFURL):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        Pass through PDF URL from hit testing to injected bundle client.
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge <rdar://problem/10310999>
 
     2011-10-21  Alexey Proskuryakov  <ap@apple.com>

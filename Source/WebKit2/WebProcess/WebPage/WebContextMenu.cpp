@@ -81,6 +81,7 @@ void WebContextMenu::show()
 
     ContextMenuState contextMenuState;
     contextMenuState.absoluteImageURLString = controller->hitTestResult().absoluteImageURL().string();
+    contextMenuState.absolutePDFURLString = controller->hitTestResult().absolutePDFURL().string();
     contextMenuState.absoluteLinkURLString = controller->hitTestResult().absoluteLinkURL().string();
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.

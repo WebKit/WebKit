@@ -83,6 +83,7 @@ public:
     Image* image() const;
     IntRect imageRect() const;
     KURL absoluteImageURL() const;
+    KURL absolutePDFURL() const;
     KURL absoluteMediaURL() const;
     KURL absoluteLinkURL() const;
     String textContent() const;
