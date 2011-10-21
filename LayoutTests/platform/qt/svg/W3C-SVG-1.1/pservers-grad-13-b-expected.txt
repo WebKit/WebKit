@@ -2,9 +2,9 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (124,10) size 232x27 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 232x27
-        chunk 1 (middle anchor) text run 1 at (124.00,30.00) startOffset 0 endOffset 27 width 232.00: "Radial gradient focal point"
+    RenderSVGText {text} at (125,10) size 230x26 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 230x26
+        chunk 1 (middle anchor) text run 1 at (125.00,30.00) startOffset 0 endOffset 27 width 230.00: "Radial gradient focal point"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 100x60
         RenderSVGPath {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
@@ -274,7 +274,7 @@ layer at (0,0) size 480x360
             RenderSVGPath {rect} at (429,239) size 12x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFA500]}] [x=75.00] [y=0.00] [width=10.00] [height=60.00]
             RenderSVGPath {rect} at (444,239) size 12x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFD700]}] [x=90.00] [y=0.00] [width=10.00] [height=60.00]
             RenderSVGPath {rect} at (354,239) size 102x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=RADIAL-GRADIENT] [id="grad6d"]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
-    RenderSVGText {text} at (10,311) size 204x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 204x40
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 204.00: "$Revision: 1.7 $"
+    RenderSVGText {text} at (10,311) size 217x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 217x38
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 217.00: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

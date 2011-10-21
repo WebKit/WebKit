@@ -36,7 +36,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {circle} at (345,115) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=135.00] [r=20.00]
         RenderSVGPath {circle} at (305,155) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=325.00] [cy=175.00] [r=20.00]
         RenderSVGPath {circle} at (345,155) size 40x40 [fill={[type=SOLID] [color=#5577EE]}] [cx=365.00] [cy=175.00] [r=20.00]
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.5 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

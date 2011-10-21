@@ -2,42 +2,42 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,21) size 394x28
-      RenderSVGText {text} at (75,13) size 236x16 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 236x16
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 43 width 235.80: "Test that removal of 'tref' does not crash."
+    RenderSVGContainer {g} at (125,21) size 369x28
+      RenderSVGText {text} at (75,13) size 221x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 221x16
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 43 width 220.20: "Test that removal of 'tref' does not crash."
       RenderSVGText {text}
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (0,-95) size 181x122 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,77) size 12x24
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.40: "F"
-          RenderSVGTSpan {tspan} at (0,0) size 6x24
-            RenderSVGInlineText {#text} at (11,77) size 6x24
-              chunk 1 text run 1 at (11.40,0.00) startOffset 0 endOffset 1 width 5.40: "l"
-          RenderSVGTSpan {tspan} at (0,0) size 59x122
-            RenderSVGInlineText {#text} at (16,0) size 59x122
-              chunk 1 text run 1 at (16.80,0.00) startOffset 0 endOffset 1 width 58.20: "a"
-          RenderSVGTSpan {tspan} at (0,0) size 14x24
-            RenderSVGInlineText {#text} at (75,77) size 7x24
-              chunk 1 text run 1 at (75.00,0.00) startOffset 0 endOffset 1 width 6.60: "t"
-            RenderSVGTSpan {tspan} at (0,0) size 8x24
-              RenderSVGInlineText {#text} at (81,77) size 8x24
-                chunk 1 text run 1 at (81.60,0.00) startOffset 0 endOffset 1 width 6.60: "t"
-          RenderSVGTSpan {tspan} at (0,0) size 10x24
-            RenderSVGInlineText {#text} at (138,77) size 10x24
-              chunk 1 text run 1 at (138.20,0.00) startOffset 0 endOffset 1 width 9.60: "e"
-          RenderSVGTSpan {tspan} at (0,0) size 13x24
-            RenderSVGInlineText {#text} at (147,77) size 13x24
-              chunk 1 text run 1 at (147.80,0.00) startOffset 0 endOffset 1 width 12.00: "n"
+        RenderSVGText {text} at (0,-96) size 172x125 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,78) size 11x24
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 10.80: "F"
+          RenderSVGTSpan {tspan} at (0,0) size 5x24
+            RenderSVGInlineText {#text} at (10,78) size 5x24
+              chunk 1 text run 1 at (10.80,0.00) startOffset 0 endOffset 1 width 4.20: "l"
+          RenderSVGTSpan {tspan} at (0,0) size 56x125
+            RenderSVGInlineText {#text} at (15,0) size 56x125
+              chunk 1 text run 1 at (15.00,0.00) startOffset 0 endOffset 1 width 55.80: "a"
           RenderSVGTSpan {tspan} at (0,0) size 11x24
-            RenderSVGInlineText {#text} at (159,77) size 11x24
-              chunk 1 text run 1 at (159.80,0.00) startOffset 0 endOffset 1 width 9.60: "e"
-          RenderSVGTSpan {tspan} at (0,0) size 12x24
-            RenderSVGInlineText {#text} at (169,77) size 12x24
-              chunk 1 text run 1 at (169.40,0.00) startOffset 0 endOffset 1 width 11.40: "d"
-    RenderSVGContainer {g} at (16,516) size 421x66
-      RenderSVGText {text} at (10,310) size 252x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 252x39
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 251.40: "$Revision: 1.4 $"
+            RenderSVGInlineText {#text} at (70,78) size 6x24
+              chunk 1 text run 1 at (70.80,0.00) startOffset 0 endOffset 1 width 4.80: "t"
+            RenderSVGTSpan {tspan} at (0,0) size 6x24
+              RenderSVGInlineText {#text} at (75,78) size 6x24
+                chunk 1 text run 1 at (75.60,0.00) startOffset 0 endOffset 1 width 4.80: "t"
+          RenderSVGTSpan {tspan} at (0,0) size 11x24
+            RenderSVGInlineText {#text} at (130,78) size 11x24
+              chunk 1 text run 1 at (130.40,0.00) startOffset 0 endOffset 1 width 10.20: "e"
+          RenderSVGTSpan {tspan} at (0,0) size 11x24
+            RenderSVGInlineText {#text} at (140,78) size 11x24
+              chunk 1 text run 1 at (140.60,0.00) startOffset 0 endOffset 1 width 10.20: "n"
+          RenderSVGTSpan {tspan} at (0,0) size 11x24
+            RenderSVGInlineText {#text} at (150,78) size 11x24
+              chunk 1 text run 1 at (150.80,0.00) startOffset 0 endOffset 1 width 10.20: "e"
+          RenderSVGTSpan {tspan} at (0,0) size 11x24
+            RenderSVGInlineText {#text} at (161,78) size 11x24
+              chunk 1 text run 1 at (161.00,0.00) startOffset 0 endOffset 1 width 10.20: "d"
+    RenderSVGContainer {g} at (16,515) size 381x69
+      RenderSVGText {text} at (10,309) size 228x41 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x41
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
     RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

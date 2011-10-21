@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x262
-  RenderBlock {HTML} at (0,0) size 800x262
-    RenderBody {BODY} at (8,16) size 784x238
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 712x22
-          text run at (0,0) width 712: "You should continue see a full blue circle when part of the element is redrawn (hover to test interactively)."
-layer at (8,54) size 200x200
-  RenderBlock (relative positioned) {DIV} at (0,38) size 200x200 [border: (1px solid #000000)]
+layer at (0,0) size 800x261
+  RenderBlock {HTML} at (0,0) size 800x261
+    RenderBody {BODY} at (8,16) size 784x237
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 740x21
+          text run at (0,0) width 740: "You should continue see a full blue circle when part of the element is redrawn (hover to test interactively)."
+layer at (8,53) size 200x200
+  RenderBlock (relative positioned) {DIV} at (0,37) size 200x200 [border: (1px solid #000000)]

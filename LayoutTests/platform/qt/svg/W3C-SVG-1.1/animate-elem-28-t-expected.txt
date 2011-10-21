@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (257,100) size 61x62 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 260 131 C 260 116 272 103 288 103 C 303 103 315 116 315 131 C 315 146 303 159 288 159 C 272 159 260 146 260 131 Z"]
         RenderSVGPath {path} at (162,100) size 61x62 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 165 131 C 165 116 177 103 193 103 C 208 103 220 116 220 131 C 220 146 208 159 193 159 C 177 159 165 146 165 131 Z"]
       RenderSVGPath {path} at (149,225) size 188x54 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 151 227 C 197 279 289 279 335 227"]
-      RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 270x53
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.6 $"
+      RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 285x51
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.6 $"
       RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

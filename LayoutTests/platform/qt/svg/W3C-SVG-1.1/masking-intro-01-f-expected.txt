@@ -2,28 +2,28 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (47,17) size 386x25 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 386x25
-        chunk 1 (middle anchor) text run 1 at (47.00,35.00) startOffset 0 endOffset 51 width 386.00: "Testing stroke inclusion for 'clip-path' and 'mask'"
+    RenderSVGText {text} at (49,17) size 382x24 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 382x24
+        chunk 1 (middle anchor) text run 1 at (49.00,35.00) startOffset 0 endOffset 51 width 382.00: "Testing stroke inclusion for 'clip-path' and 'mask'"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="one"] [clipPathUnits=objectBoundingBox]
         RenderSVGPath {circle} at (0,0) size 1x1 [stroke={[type=SOLID] [color=#FF0000] [stroke width=0.15]}] [cx=0.30] [cy=0.50] [r=0.20]
         RenderSVGPath {circle} at (0,0) size 1x1 [cx=0.70] [cy=0.50] [r=0.20]
     RenderSVGPath {rect} at (155,45) size 175x110 [fill={[type=SOLID] [color=#00008B]}] [x=150.00] [y=0.00] [width=200.00] [height=200.00]
       [clipPath="one"] RenderSVGResourceClipper {clipPath} at (155,45) size 175x110
-    RenderSVGText {text} at (50,94) size 123x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 123x22
-        chunk 1 text run 1 at (50.00,110.00) startOffset 0 endOffset 19 width 123.00: "With a 'clip-path':"
+    RenderSVGText {text} at (50,94) size 120x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 120x21
+        chunk 1 text run 1 at (50.00,110.00) startOffset 0 endOffset 19 width 120.00: "With a 'clip-path':"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMasker {mask} [id="two"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
         RenderSVGPath {circle} at (0,0) size 1x1 [stroke={[type=SOLID] [color=#FF0000] [stroke width=0.15]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=0.30] [cy=0.50] [r=0.20]
         RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.70] [cy=0.50] [r=0.20]
     RenderSVGPath {rect} at (155,195) size 175x110 [fill={[type=SOLID] [color=#00008B]}] [x=150.00] [y=150.00] [width=200.00] [height=200.00]
       [masker="two"] RenderSVGResourceMasker {mask} at (155,195) size 175x110
-    RenderSVGText {text} at (50,244) size 99x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 99x22
-        chunk 1 text run 1 at (50.00,260.00) startOffset 0 endOffset 14 width 99.00: "With a 'mask':"
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.7 $"
+    RenderSVGText {text} at (50,244) size 97x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 97x21
+        chunk 1 text run 1 at (50.00,260.00) startOffset 0 endOffset 14 width 97.00: "With a 'mask':"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

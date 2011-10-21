@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (118,18) size 564x408
+    RenderSVGContainer {g} at (118,18) size 204x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      RenderSVGPath {rect} at (118,18) size 204x204 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGImage {image} at (120,20) size 200x200
+    RenderSVGContainer {g} at (80,0) size 720x420 [transform={m=((200.00,0.00)(0.00,200.00)) t=(190.00,10.00)}]
+      RenderSVGPath {rect} at (80,0) size 720x420 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=0.50] [height=0.50]
+      RenderSVGImage {image} at (480,20) size 320x400
+    RenderSVGContainer {g} at (120,222) size 376x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
+      RenderSVGText {text} at (0,-9) size 188x102 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 158x12
+          RenderSVGInlineText {#text} at (0,0) size 158x12
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 41 width 158.00: "For this test case to be successful, both"
+        RenderSVGInlineText {#text} at (158,0) size 3x12
+          chunk 1 text run 1 at (158.00,0.00) startOffset 0 endOffset 1 width 2.50: " "
+        RenderSVGTSpan {tspan} at (0,0) size 188x12
+          RenderSVGInlineText {#text} at (0,15) size 188x12
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 46 width 188.00: "square must include the same image. In Safari "
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGTSpan {tspan} at (0,0) size 136x12
+          RenderSVGInlineText {#text} at (0,30) size 44x12
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 11 width 43.50: "Beta 3, an "
+          RenderSVGInlineText {#cdata-section} at (43,30) size 36x12
+            chunk 1 text run 1 at (43.50,30.00) startOffset 0 endOffset 7 width 35.50: "<image>"
+          RenderSVGInlineText {#text} at (79,30) size 57x12
+            chunk 1 text run 1 at (79.00,30.00) startOffset 0 endOffset 15 width 57.00: " tag with width"
+        RenderSVGInlineText {#text} at (136,30) size 3x12
+          chunk 1 text run 1 at (136.00,30.00) startOffset 0 endOffset 1 width 2.50: " "
+        RenderSVGTSpan {tspan} at (0,0) size 171x12
+          RenderSVGInlineText {#text} at (0,45) size 171x12
+            chunk 1 text run 1 at (0.00,45.00) startOffset 0 endOffset 45 width 171.00: "or height less than one fails to paint image."
+        RenderSVGInlineText {#text} at (171,45) size 3x12
+          chunk 1 text run 1 at (171.00,45.00) startOffset 0 endOffset 1 width 2.50: " "
+        RenderSVGTSpan {tspan} at (0,0) size 133x12
+          RenderSVGInlineText {#text} at (0,60) size 18x12
+            chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 4 width 18.00: "The "
+          RenderSVGInlineText {#cdata-section} at (18,60) size 36x12
+            chunk 1 text run 1 at (18.00,60.00) startOffset 0 endOffset 7 width 35.50: "<image>"
+          RenderSVGInlineText {#text} at (53,60) size 80x12
+            chunk 1 text run 1 at (53.50,60.00) startOffset 0 endOffset 21 width 79.50: " tag on the right has"
+        RenderSVGInlineText {#text} at (133,60) size 3x12
+          chunk 1 text run 1 at (133.00,60.00) startOffset 0 endOffset 1 width 2.50: " "
+        RenderSVGTSpan {tspan} at (0,0) size 101x12
+          RenderSVGInlineText {#text} at (0,75) size 101x12
+            chunk 1 text run 1 at (0.00,75.00) startOffset 0 endOffset 26 width 100.50: "a width and height of 0.5."
+        RenderSVGInlineText {#text} at (100,75) size 3x12
+          chunk 1 text run 1 at (100.50,75.00) startOffset 0 endOffset 1 width 2.50: " "
+        RenderSVGTSpan {tspan} at (0,0) size 44x12
+          RenderSVGInlineText {#text} at (0,90) size 44x12
+            chunk 1 text run 1 at (0.00,90.00) startOffset 0 endOffset 9 width 43.50: "Bug 14241"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

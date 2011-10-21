@@ -23,19 +23,19 @@ layer at (0,0) size 480x360
         RenderSVGPath {circle} at (310,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=30.00] [r=20.00]
       RenderSVGContainer {g} at (310,115) size 70x70
         RenderSVGPath {circle} at (310,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
-    RenderSVGText {text} at (385,24) size 48x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 48x22
-        chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 48.00: "display"
-    RenderSVGText {text} at (385,132) size 66x25 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 66x25
-        chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 66.00: "visibility"
-    RenderSVGText {text} at (5,208) size 423x37 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 423x37
-        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 423.00: "Test of display attribute animation."
-    RenderSVGText {text} at (5,247) size 422x25 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 422x25
-        chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 422.00: "Circles with same color should be visible at same time."
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.6 $"
+    RenderSVGText {text} at (385,24) size 51x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 51x21
+        chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 51.00: "display"
+    RenderSVGText {text} at (385,132) size 62x24 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 62x24
+        chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 62.00: "visibility"
+    RenderSVGText {text} at (5,208) size 433x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 433x35
+        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 433.00: "Test of display attribute animation."
+    RenderSVGText {text} at (5,247) size 436x24 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 436x24
+        chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 436.00: "Circles with same color should be visible at same time."
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.6 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

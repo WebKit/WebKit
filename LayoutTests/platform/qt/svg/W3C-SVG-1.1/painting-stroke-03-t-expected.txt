@@ -2,19 +2,19 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (10,6) size 470x285
-      RenderSVGText {text} at (10,6) size 537x44 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 537x44
-          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 31 width 537.00: "Basic paint: stroke properties."
+    RenderSVGContainer {g} at (10,5) size 470x287
+      RenderSVGText {text} at (10,5) size 474x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 474x46
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 31 width 474.00: "Basic paint: stroke properties."
       RenderSVGPath {path} at (144,54) size 218x72 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [line cap=ROUND]}] [data="M 160 70 L 360 90 L 160 110"]
       RenderSVGPath {path} at (158,175) size 204x70 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [miter limit=1.00]}] [data="M 160 190 L 360 210 L 160 230"]
-      RenderSVGText {text} at (60,122) size 450x49 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 450x49
-          chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 22 width 450.00: "stroke-linecap=\"round\""
-      RenderSVGText {text} at (130,242) size 321x49 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 321x49
-          chunk 1 text run 1 at (130.00,280.00) startOffset 0 endOffset 16 width 321.00: "stroke-miter=\"1\""
-    RenderSVGText {text} at (10,301) size 290x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 290x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 290.00: "$Revision: 1.10 $"
+      RenderSVGText {text} at (60,121) size 399x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 399x51
+          chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 22 width 399.00: "stroke-linecap=\"round\""
+      RenderSVGText {text} at (130,241) size 282x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 282x51
+          chunk 1 text run 1 at (130.00,280.00) startOffset 0 endOffset 16 width 282.00: "stroke-miter=\"1\""
+    RenderSVGText {text} at (10,301) size 307x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 307x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 307.00: "$Revision: 1.10 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

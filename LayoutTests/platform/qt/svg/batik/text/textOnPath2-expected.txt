@@ -2,176 +2,176 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (29,24) size 421x457
-    RenderSVGText {text} at (90,24) size 270x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x21
-        chunk 1 (middle anchor) text run 1 at (90.50,40.00) startOffset 0 endOffset 34 width 269.00: "Text on Path with trailing <tspan>"
+    RenderSVGText {text} at (107,24) size 236x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 236x21
+        chunk 1 (middle anchor) text run 1 at (107.00,40.00) startOffset 0 endOffset 34 width 236.00: "Text on Path with trailing <tspan>"
     RenderSVGPath {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=50.00] [width=390.00] [height=20.00]
     RenderSVGPath {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=70.00] [width=390.00] [height=120.00]
-    RenderSVGText {text} at (40,50) size 348x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 348x19
-        chunk 1 text run 1 at (40.00,64.00) startOffset 0 endOffset 55 width 348.00: "Text with embedded textPath and multiple trailing tspan"
+    RenderSVGText {text} at (40,50) size 351x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 351x18
+        chunk 1 text run 1 at (40.00,64.00) startOffset 0 endOffset 55 width 351.00: "Text with embedded textPath and multiple trailing tspan"
     RenderSVGPath {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=195.00] [width=390.00] [height=20.00]
     RenderSVGPath {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=215.00] [width=390.00] [height=120.00]
-    RenderSVGText {text} at (40,195) size 197x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 197x19
-        chunk 1 text run 1 at (40.00,209.00) startOffset 0 endOffset 30 width 197.00: "textPath has startOffset=\"10%\""
+    RenderSVGText {text} at (40,195) size 195x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 195x18
+        chunk 1 text run 1 at (40.00,209.00) startOffset 0 endOffset 30 width 195.00: "textPath has startOffset=\"10%\""
     RenderSVGPath {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=340.00] [width=390.00] [height=20.00]
     RenderSVGPath {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=360.00] [width=390.00] [height=120.00]
-    RenderSVGText {text} at (40,340) size 253x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 253x19
-        chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 253.00: "textPath with startOffset and text-anchor"
+    RenderSVGText {text} at (40,340) size 255x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 255x18
+        chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 255.00: "textPath with startOffset and text-anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-    RenderSVGContainer {g} at (50,60) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
+    RenderSVGContainer {g} at (50,60) size 400x130 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
       RenderSVGContainer {use} at (139,60) size 142x125
         RenderSVGContainer {g} at (139,60) size 142x125
           RenderSVGPath {path} at (139,60) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (10,-120) size 423x126 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,104) size 91x22
-          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
-        RenderSVGTextPath {textPath} at (0,0) size 163x121
-          RenderSVGInlineText {#text} at (73,25) size 56x96
-            chunk 1 text run 1 at (100.02,-2.51) startOffset 0 endOffset 1 width 5.00: "t"
-            chunk 1 text run 2 at (100.22,-8.49) startOffset 1 endOffset 2 width 7.00: "e"
-            chunk 1 text run 3 at (100.81,-15.97) startOffset 2 endOffset 3 width 8.00: "x"
-            chunk 1 text run 4 at (101.64,-22.42) startOffset 3 endOffset 4 width 5.00: "t"
+      RenderSVGText {text} at (10,-120) size 426x125 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,104) size 98x21
+          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 98.00: "This is simple"
+        RenderSVGTextPath {textPath} at (0,0) size 166x121
+          RenderSVGInlineText {#text} at (73,23) size 57x98
+            chunk 1 text run 1 at (100.01,-2.00) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 1 text run 2 at (100.22,-8.49) startOffset 1 endOffset 2 width 9.00: "e"
+            chunk 1 text run 3 at (100.92,-16.96) startOffset 2 endOffset 3 width 8.00: "x"
+            chunk 1 text run 4 at (101.71,-22.90) startOffset 3 endOffset 4 width 4.00: "t"
             chunk 1 text run 5 at (102.40,-26.85) startOffset 4 endOffset 5 width 4.00: " "
-            chunk 1 text run 6 at (103.66,-32.71) startOffset 5 endOffset 6 width 8.00: "o"
-            chunk 1 text run 7 at (105.97,-40.88) startOffset 6 endOffset 7 width 9.00: "n"
-            chunk 1 text run 8 at (108.18,-47.00) startOffset 7 endOffset 8 width 4.00: " "
-            chunk 1 text run 9 at (110.57,-52.51) startOffset 8 endOffset 9 width 8.00: "a"
-            chunk 1 text run 10 at (113.31,-57.84) startOffset 9 endOffset 10 width 4.00: " "
-            chunk 1 text run 11 at (116.70,-63.39) startOffset 10 endOffset 11 width 9.00: "p"
-            chunk 1 text run 12 at (121.77,-70.19) startOffset 11 endOffset 12 width 8.00: "a"
-            chunk 1 text run 13 at (126.15,-74.98) startOffset 12 endOffset 13 width 5.00: "t"
-            chunk 1 text run 14 at (131.35,-79.68) startOffset 13 endOffset 14 width 9.00: "h"
-          RenderSVGTSpan {tspan} at (0,0) size 101x36
-            RenderSVGInlineText {#text} at (111,0) size 101x36
-              chunk 1 text run 1 at (139.99,-85.63) startOffset 0 endOffset 1 width 12.00: "w"
-              chunk 1 text run 2 at (147.16,-89.16) startOffset 1 endOffset 2 width 4.00: "i"
-              chunk 1 text run 3 at (151.36,-90.73) startOffset 2 endOffset 3 width 5.00: "t"
-              chunk 1 text run 4 at (158.11,-92.54) startOffset 3 endOffset 4 width 9.00: "h"
-              chunk 1 text run 5 at (164.52,-93.49) startOffset 4 endOffset 5 width 4.00: " "
-              chunk 1 text run 6 at (171.00,-93.74) startOffset 5 endOffset 6 width 9.00: "n"
-              chunk 1 text run 7 at (178.96,-93.06) startOffset 6 endOffset 7 width 7.00: "e"
-              chunk 1 text run 8 at (185.34,-91.72) startOffset 7 endOffset 8 width 6.00: "s"
-              chunk 1 text run 9 at (190.59,-90.05) startOffset 8 endOffset 9 width 5.00: "t"
-              chunk 1 text run 10 at (196.11,-87.69) startOffset 9 endOffset 10 width 7.00: "e"
-              chunk 1 text run 11 at (203.06,-83.76) startOffset 10 endOffset 11 width 9.00: "d"
-          RenderSVGTSpan {tspan} at (0,0) size 43x48
-            RenderSVGInlineText {#text} at (193,26) size 43x48
-              chunk 1 text run 1 at (208.32,-79.94) startOffset 0 endOffset 1 width 4.00: " "
-              chunk 1 text run 2 at (211.73,-77.01) startOffset 1 endOffset 2 width 5.00: "t"
-              chunk 1 text run 3 at (215.63,-73.13) startOffset 2 endOffset 3 width 6.00: "s"
-              chunk 1 text run 4 at (220.45,-67.40) startOffset 3 endOffset 4 width 9.00: "p"
-              chunk 1 text run 5 at (225.22,-60.37) startOffset 4 endOffset 5 width 8.00: "a"
-              chunk 1 text run 6 at (229.24,-52.90) startOffset 5 endOffset 6 width 9.00: "n"
-        RenderSVGInlineText {#text} at (228,51) size 33x23
-          chunk 1 text run 1 at (238.24,-52.90) startOffset 0 endOffset 5 width 32.00: " xxx "
-        RenderSVGTSpan {tspan} at (0,0) size 55x23
-          RenderSVGInlineText {#text} at (270,51) size 55x23
-            chunk 1 text run 1 at (280.24,-52.90) startOffset 0 endOffset 9 width 54.00: "all with "
-        RenderSVGInlineText {#text} at (324,51) size 99x23
-          chunk 1 text run 1 at (334.24,-52.90) startOffset 0 endOffset 16 width 98.00: "different links."
-    RenderSVGContainer {g} at (50,205) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
+            chunk 1 text run 6 at (103.78,-33.20) startOffset 5 endOffset 6 width 9.00: "o"
+            chunk 1 text run 7 at (106.29,-41.84) startOffset 6 endOffset 7 width 9.00: "n"
+            chunk 1 text run 8 at (108.55,-47.93) startOffset 7 endOffset 8 width 4.00: " "
+            chunk 1 text run 9 at (111.22,-53.85) startOffset 8 endOffset 9 width 9.00: "a"
+            chunk 1 text run 10 at (114.30,-59.57) startOffset 9 endOffset 10 width 4.00: " "
+            chunk 1 text run 11 at (117.82,-65.04) startOffset 10 endOffset 11 width 9.00: "p"
+            chunk 1 text run 12 at (123.40,-72.07) startOffset 11 endOffset 12 width 9.00: "a"
+            chunk 1 text run 13 at (127.95,-76.71) startOffset 12 endOffset 13 width 4.00: "t"
+            chunk 1 text run 14 at (132.92,-80.92) startOffset 13 endOffset 14 width 9.00: "h"
+          RenderSVGTSpan {tspan} at (0,0) size 104x39
+            RenderSVGInlineText {#text} at (114,0) size 104x39
+              chunk 1 text run 1 at (141.73,-86.59) startOffset 0 endOffset 1 width 12.00: "w"
+              chunk 1 text run 2 at (149.01,-89.90) startOffset 1 endOffset 2 width 4.00: "i"
+              chunk 1 text run 3 at (152.78,-91.18) startOffset 2 endOffset 3 width 4.00: "t"
+              chunk 1 text run 4 at (159.09,-92.73) startOffset 3 endOffset 4 width 9.00: "h"
+              chunk 1 text run 5 at (165.53,-93.58) startOffset 4 endOffset 5 width 4.00: " "
+              chunk 1 text run 6 at (172.01,-93.72) startOffset 5 endOffset 6 width 9.00: "n"
+              chunk 1 text run 7 at (180.93,-92.73) startOffset 6 endOffset 7 width 9.00: "e"
+              chunk 1 text run 8 at (189.18,-90.55) startOffset 7 endOffset 8 width 8.00: "s"
+              chunk 1 text run 9 at (194.75,-88.34) startOffset 8 endOffset 9 width 4.00: "t"
+              chunk 1 text run 10 at (200.53,-85.33) startOffset 9 endOffset 10 width 9.00: "e"
+              chunk 1 text run 11 at (207.92,-80.26) startOffset 10 endOffset 11 width 9.00: "d"
+          RenderSVGTSpan {tspan} at (0,0) size 42x50
+            RenderSVGInlineText {#text} at (197,31) size 42x50
+              chunk 1 text run 1 at (212.82,-75.99) startOffset 0 endOffset 1 width 4.00: " "
+              chunk 1 text run 2 at (215.63,-73.13) startOffset 1 endOffset 2 width 4.00: "t"
+              chunk 1 text run 3 at (219.53,-68.59) startOffset 2 endOffset 3 width 8.00: "s"
+              chunk 1 text run 4 at (224.42,-61.66) startOffset 3 endOffset 4 width 9.00: "p"
+              chunk 1 text run 5 at (228.80,-53.80) startOffset 4 endOffset 5 width 9.00: "a"
+              chunk 1 text run 6 at (232.38,-45.56) startOffset 5 endOffset 6 width 9.00: "n"
+        RenderSVGInlineText {#text} at (231,58) size 33x22
+          chunk 1 text run 1 at (241.38,-45.56) startOffset 0 endOffset 5 width 32.00: " xxx "
+        RenderSVGTSpan {tspan} at (0,0) size 55x22
+          RenderSVGInlineText {#text} at (273,58) size 55x22
+            chunk 1 text run 1 at (283.38,-45.56) startOffset 0 endOffset 9 width 54.00: "all with "
+        RenderSVGInlineText {#text} at (327,58) size 99x22
+          chunk 1 text run 1 at (337.38,-45.56) startOffset 0 endOffset 16 width 98.00: "different links."
+    RenderSVGContainer {g} at (50,205) size 400x130 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
       RenderSVGContainer {use} at (139,205) size 142x125
         RenderSVGContainer {g} at (139,205) size 142x125
           RenderSVGPath {path} at (139,205) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (10,-120) size 431x126 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,104) size 91x22
-          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
-        RenderSVGTextPath {textPath} at (0,0) size 168x98
-          RenderSVGInlineText {#text} at (76,11) size 75x85
-            chunk 1 text run 1 at (102.71,-28.41) startOffset 0 endOffset 1 width 5.00: "t"
-            chunk 1 text run 2 at (104.05,-34.27) startOffset 1 endOffset 2 width 7.00: "e"
-            chunk 1 text run 3 at (106.16,-41.45) startOffset 2 endOffset 3 width 8.00: "x"
-            chunk 1 text run 4 at (108.40,-47.55) startOffset 3 endOffset 4 width 5.00: "t"
+      RenderSVGText {text} at (10,-120) size 432x125 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,104) size 98x21
+          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 98.00: "This is simple"
+        RenderSVGTextPath {textPath} at (0,0) size 170x105
+          RenderSVGInlineText {#text} at (76,11) size 76x85
+            chunk 1 text run 1 at (102.61,-27.94) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 1 text run 2 at (104.05,-34.27) startOffset 1 endOffset 2 width 9.00: "e"
+            chunk 1 text run 3 at (106.48,-42.41) startOffset 2 endOffset 3 width 8.00: "x"
+            chunk 1 text run 4 at (108.58,-48.01) startOffset 3 endOffset 4 width 4.00: "t"
             chunk 1 text run 5 at (110.19,-51.69) startOffset 4 endOffset 5 width 4.00: " "
-            chunk 1 text run 6 at (112.87,-57.04) startOffset 5 endOffset 6 width 8.00: "o"
-            chunk 1 text run 7 at (117.31,-64.29) startOffset 6 endOffset 7 width 9.00: "n"
-            chunk 1 text run 8 at (121.19,-69.48) startOffset 7 endOffset 8 width 4.00: " "
-            chunk 1 text run 9 at (125.16,-73.97) startOffset 8 endOffset 9 width 8.00: "a"
-            chunk 1 text run 10 at (129.51,-78.12) startOffset 9 endOffset 10 width 4.00: " "
-            chunk 1 text run 11 at (134.61,-82.16) startOffset 10 endOffset 11 width 9.00: "p"
-            chunk 1 text run 12 at (141.82,-86.64) startOffset 11 endOffset 12 width 8.00: "a"
-            chunk 1 text run 13 at (147.70,-89.39) startOffset 12 endOffset 13 width 5.00: "t"
-            chunk 1 text run 14 at (154.33,-91.63) startOffset 13 endOffset 14 width 9.00: "h"
-          RenderSVGTSpan {tspan} at (0,0) size 90x56
-            RenderSVGInlineText {#text} at (146,0) size 90x56
-              chunk 1 text run 1 at (164.62,-93.50) startOffset 0 endOffset 1 width 12.00: "w"
-              chunk 1 text run 2 at (172.61,-93.69) startOffset 1 endOffset 2 width 4.00: "i"
-              chunk 1 text run 3 at (177.09,-93.32) startOffset 2 endOffset 3 width 5.00: "t"
-              chunk 1 text run 4 at (183.96,-92.07) startOffset 3 endOffset 4 width 9.00: "h"
-              chunk 1 text run 5 at (190.22,-90.18) startOffset 4 endOffset 5 width 4.00: " "
-              chunk 1 text run 6 at (196.20,-87.65) startOffset 5 endOffset 6 width 9.00: "n"
-              chunk 1 text run 7 at (203.15,-83.70) startOffset 6 endOffset 7 width 7.00: "e"
-              chunk 1 text run 8 at (208.40,-79.87) startOffset 7 endOffset 8 width 6.00: "s"
-              chunk 1 text run 9 at (212.53,-76.26) startOffset 8 endOffset 9 width 5.00: "t"
-              chunk 1 text run 10 at (216.70,-71.96) startOffset 9 endOffset 10 width 7.00: "e"
-              chunk 1 text run 11 at (221.69,-65.72) startOffset 10 endOffset 11 width 9.00: "d"
-          RenderSVGTSpan {tspan} at (0,0) size 35x49
-            RenderSVGInlineText {#text} at (209,49) size 35x49
-              chunk 1 text run 1 at (225.26,-60.29) startOffset 0 endOffset 1 width 4.00: " "
-              chunk 1 text run 2 at (227.48,-56.38) startOffset 1 endOffset 2 width 5.00: "t"
-              chunk 1 text run 3 at (229.92,-51.46) startOffset 2 endOffset 3 width 6.00: "s"
-              chunk 1 text run 4 at (232.77,-44.53) startOffset 3 endOffset 4 width 9.00: "p"
-              chunk 1 text run 5 at (235.36,-36.45) startOffset 4 endOffset 5 width 8.00: "a"
-              chunk 1 text run 6 at (237.34,-28.19) startOffset 5 endOffset 6 width 9.00: "n"
-        RenderSVGInlineText {#text} at (236,75) size 33x23
-          chunk 1 text run 1 at (246.34,-28.19) startOffset 0 endOffset 5 width 32.00: " xxx "
-        RenderSVGTSpan {tspan} at (0,0) size 55x23
-          RenderSVGInlineText {#text} at (278,75) size 55x23
-            chunk 1 text run 1 at (288.34,-28.19) startOffset 0 endOffset 9 width 54.00: "all with "
-        RenderSVGInlineText {#text} at (332,75) size 99x23
-          chunk 1 text run 1 at (342.34,-28.19) startOffset 0 endOffset 16 width 98.00: "different links."
-    RenderSVGContainer {g} at (50,350) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
+            chunk 1 text run 6 at (113.12,-57.49) startOffset 5 endOffset 6 width 9.00: "o"
+            chunk 1 text run 7 at (117.87,-65.11) startOffset 6 endOffset 7 width 9.00: "n"
+            chunk 1 text run 8 at (121.83,-70.26) startOffset 7 endOffset 8 width 4.00: " "
+            chunk 1 text run 9 at (126.22,-75.04) startOffset 8 endOffset 9 width 9.00: "a"
+            chunk 1 text run 10 at (131.03,-79.41) startOffset 9 endOffset 10 width 4.00: " "
+            chunk 1 text run 11 at (136.24,-83.30) startOffset 10 endOffset 11 width 9.00: "p"
+            chunk 1 text run 12 at (144.04,-87.77) startOffset 11 endOffset 12 width 9.00: "a"
+            chunk 1 text run 13 at (150.04,-90.28) startOffset 12 endOffset 13 width 4.00: "t"
+            chunk 1 text run 14 at (156.26,-92.13) startOffset 13 endOffset 14 width 9.00: "h"
+          RenderSVGTSpan {tspan} at (0,0) size 91x61
+            RenderSVGInlineText {#text} at (149,0) size 91x61
+              chunk 1 text run 1 at (166.62,-93.65) startOffset 0 endOffset 1 width 12.00: "w"
+              chunk 1 text run 2 at (174.61,-93.57) startOffset 1 endOffset 2 width 4.00: "i"
+              chunk 1 text run 3 at (178.56,-93.12) startOffset 2 endOffset 3 width 4.00: "t"
+              chunk 1 text run 4 at (184.95,-91.82) startOffset 3 endOffset 4 width 9.00: "h"
+              chunk 1 text run 5 at (191.15,-89.84) startOffset 4 endOffset 5 width 4.00: " "
+              chunk 1 text run 6 at (197.10,-87.21) startOffset 5 endOffset 6 width 9.00: "n"
+              chunk 1 text run 7 at (204.81,-82.58) startOffset 6 endOffset 7 width 9.00: "e"
+              chunk 1 text run 8 at (211.43,-77.29) startOffset 7 endOffset 8 width 8.00: "s"
+              chunk 1 text run 9 at (215.69,-73.07) startOffset 8 endOffset 9 width 4.00: "t"
+              chunk 1 text run 10 at (219.90,-68.12) startOffset 9 endOffset 10 width 9.00: "e"
+              chunk 1 text run 11 at (225.01,-60.72) startOffset 10 endOffset 11 width 9.00: "d"
+          RenderSVGTSpan {tspan} at (0,0) size 34x50
+            RenderSVGInlineText {#text} at (212,55) size 34x50
+              chunk 1 text run 1 at (228.18,-55.06) startOffset 0 endOffset 1 width 4.00: " "
+              chunk 1 text run 2 at (229.92,-51.46) startOffset 1 endOffset 2 width 4.00: "t"
+              chunk 1 text run 3 at (232.24,-45.92) startOffset 2 endOffset 3 width 8.00: "s"
+              chunk 1 text run 4 at (234.95,-37.89) startOffset 3 endOffset 4 width 9.00: "p"
+              chunk 1 text run 5 at (237.14,-29.16) startOffset 4 endOffset 5 width 9.00: "a"
+              chunk 1 text run 6 at (238.67,-20.29) startOffset 5 endOffset 6 width 9.00: "n"
+        RenderSVGInlineText {#text} at (237,83) size 33x22
+          chunk 1 text run 1 at (247.67,-20.29) startOffset 0 endOffset 5 width 32.00: " xxx "
+        RenderSVGTSpan {tspan} at (0,0) size 55x22
+          RenderSVGInlineText {#text} at (279,83) size 55x22
+            chunk 1 text run 1 at (289.67,-20.29) startOffset 0 endOffset 9 width 54.00: "all with "
+        RenderSVGInlineText {#text} at (333,83) size 99x22
+          chunk 1 text run 1 at (343.67,-20.29) startOffset 0 endOffset 16 width 98.00: "different links."
+    RenderSVGContainer {g} at (50,350) size 400x130 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
       RenderSVGContainer {use} at (139,350) size 142x125
         RenderSVGContainer {g} at (139,350) size 142x125
           RenderSVGPath {path} at (139,350) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (10,-120) size 431x126 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,104) size 91x22
-          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
-        RenderSVGTextPath {textPath} at (0,0) size 168x97
-          RenderSVGInlineText {#text} at (76,12) size 74x85
-            chunk 1 (middle anchor) text run 1 at (102.49,-27.33) startOffset 0 endOffset 1 width 5.00: "t"
-            chunk 1 (middle anchor) text run 2 at (103.78,-33.19) startOffset 1 endOffset 2 width 7.00: "e"
-            chunk 1 (middle anchor) text run 3 at (105.82,-40.40) startOffset 2 endOffset 3 width 8.00: "x"
-            chunk 1 (middle anchor) text run 4 at (107.99,-46.52) startOffset 3 endOffset 4 width 5.00: "t"
-            chunk 1 (middle anchor) text run 5 at (109.73,-50.68) startOffset 4 endOffset 5 width 4.00: " "
-            chunk 1 (middle anchor) text run 6 at (112.35,-56.08) startOffset 5 endOffset 6 width 8.00: "o"
-            chunk 1 (middle anchor) text run 7 at (116.68,-63.36) startOffset 6 endOffset 7 width 9.00: "n"
-            chunk 1 (middle anchor) text run 8 at (120.49,-68.62) startOffset 7 endOffset 8 width 4.00: " "
-            chunk 1 (middle anchor) text run 9 at (124.40,-73.17) startOffset 8 endOffset 9 width 8.00: "a"
-            chunk 1 (middle anchor) text run 10 at (128.68,-77.38) startOffset 9 endOffset 10 width 4.00: " "
-            chunk 1 (middle anchor) text run 11 at (133.71,-81.51) startOffset 10 endOffset 11 width 9.00: "p"
-            chunk 1 (middle anchor) text run 12 at (140.84,-86.11) startOffset 11 endOffset 12 width 8.00: "a"
-            chunk 1 (middle anchor) text run 13 at (146.68,-88.96) startOffset 12 endOffset 13 width 5.00: "t"
-            chunk 1 (middle anchor) text run 14 at (153.26,-91.33) startOffset 13 endOffset 14 width 9.00: "h"
-          RenderSVGTSpan {tspan} at (0,0) size 91x55
-            RenderSVGInlineText {#text} at (144,0) size 91x55
-              chunk 1 (middle anchor) text run 1 at (163.52,-93.39) startOffset 0 endOffset 1 width 12.00: "w"
-              chunk 1 (middle anchor) text run 2 at (171.50,-93.73) startOffset 1 endOffset 2 width 4.00: "i"
-              chunk 1 (middle anchor) text run 3 at (175.98,-93.44) startOffset 2 endOffset 3 width 5.00: "t"
-              chunk 1 (middle anchor) text run 4 at (182.87,-92.33) startOffset 3 endOffset 4 width 9.00: "h"
-              chunk 1 (middle anchor) text run 5 at (189.16,-90.56) startOffset 4 endOffset 5 width 4.00: " "
-              chunk 1 (middle anchor) text run 6 at (195.20,-88.13) startOffset 5 endOffset 6 width 9.00: "n"
-              chunk 1 (middle anchor) text run 7 at (202.21,-84.31) startOffset 6 endOffset 7 width 7.00: "e"
-              chunk 1 (middle anchor) text run 8 at (207.53,-80.57) startOffset 7 endOffset 8 width 6.00: "s"
-              chunk 1 (middle anchor) text run 9 at (211.71,-77.02) startOffset 8 endOffset 9 width 5.00: "t"
-              chunk 1 (middle anchor) text run 10 at (215.96,-72.78) startOffset 9 endOffset 10 width 7.00: "e"
-              chunk 1 (middle anchor) text run 11 at (221.05,-66.61) startOffset 10 endOffset 11 width 9.00: "d"
-          RenderSVGTSpan {tspan} at (0,0) size 36x49
-            RenderSVGInlineText {#text} at (208,48) size 36x49
-              chunk 1 (middle anchor) text run 1 at (224.68,-61.24) startOffset 0 endOffset 1 width 4.00: " "
-              chunk 1 (middle anchor) text run 2 at (226.95,-57.36) startOffset 1 endOffset 2 width 5.00: "t"
-              chunk 1 (middle anchor) text run 3 at (229.45,-52.46) startOffset 2 endOffset 3 width 6.00: "s"
-              chunk 1 (middle anchor) text run 4 at (232.38,-45.57) startOffset 3 endOffset 4 width 9.00: "p"
-              chunk 1 (middle anchor) text run 5 at (235.06,-37.51) startOffset 4 endOffset 5 width 8.00: "a"
-              chunk 1 (middle anchor) text run 6 at (237.11,-29.28) startOffset 5 endOffset 6 width 9.00: "n"
-        RenderSVGInlineText {#text} at (236,74) size 33x23
-          chunk 1 text run 1 at (246.11,-29.28) startOffset 0 endOffset 5 width 32.00: " xxx "
-        RenderSVGTSpan {tspan} at (0,0) size 55x23
-          RenderSVGInlineText {#text} at (278,74) size 55x23
-            chunk 1 text run 1 at (288.11,-29.28) startOffset 0 endOffset 9 width 54.00: "all with "
-        RenderSVGInlineText {#text} at (332,74) size 99x23
-          chunk 1 text run 1 at (342.11,-29.28) startOffset 0 endOffset 16 width 98.00: "different links."
+      RenderSVGText {text} at (10,-120) size 431x125 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,104) size 98x21
+          chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 98.00: "This is simple"
+        RenderSVGTextPath {textPath} at (0,0) size 170x100
+          RenderSVGInlineText {#text} at (75,12) size 73x88
+            chunk 1 (middle anchor) text run 1 at (101.71,-22.90) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 1 (middle anchor) text run 2 at (102.89,-29.30) startOffset 1 endOffset 2 width 9.00: "e"
+            chunk 1 (middle anchor) text run 3 at (104.94,-37.53) startOffset 2 endOffset 3 width 8.00: "x"
+            chunk 1 (middle anchor) text run 4 at (106.77,-43.24) startOffset 3 endOffset 4 width 4.00: "t"
+            chunk 1 (middle anchor) text run 5 at (108.17,-46.98) startOffset 4 endOffset 5 width 4.00: " "
+            chunk 1 (middle anchor) text run 6 at (110.78,-52.94) startOffset 5 endOffset 6 width 9.00: "o"
+            chunk 1 (middle anchor) text run 7 at (115.07,-60.84) startOffset 6 endOffset 7 width 9.00: "n"
+            chunk 1 (middle anchor) text run 8 at (118.68,-66.24) startOffset 7 endOffset 8 width 4.00: " "
+            chunk 1 (middle anchor) text run 9 at (122.74,-71.32) startOffset 8 endOffset 9 width 9.00: "a"
+            chunk 1 (middle anchor) text run 10 at (127.20,-76.01) startOffset 9 endOffset 10 width 4.00: " "
+            chunk 1 (middle anchor) text run 11 at (132.12,-80.29) startOffset 10 endOffset 11 width 9.00: "p"
+            chunk 1 (middle anchor) text run 12 at (139.55,-85.37) startOffset 11 endOffset 12 width 9.00: "a"
+            chunk 1 (middle anchor) text run 13 at (145.31,-88.36) startOffset 12 endOffset 13 width 4.00: "t"
+            chunk 1 (middle anchor) text run 14 at (151.34,-90.72) startOffset 13 endOffset 14 width 9.00: "h"
+          RenderSVGTSpan {tspan} at (0,0) size 96x56
+            RenderSVGInlineText {#text} at (141,0) size 96x56
+              chunk 1 (middle anchor) text run 1 at (161.54,-93.14) startOffset 0 endOffset 1 width 12.00: "w"
+              chunk 1 (middle anchor) text run 2 at (169.50,-93.75) startOffset 1 endOffset 2 width 4.00: "i"
+              chunk 1 (middle anchor) text run 3 at (173.49,-93.65) startOffset 2 endOffset 3 width 4.00: "t"
+              chunk 1 (middle anchor) text run 4 at (179.93,-92.91) startOffset 3 endOffset 4 width 9.00: "h"
+              chunk 1 (middle anchor) text run 5 at (186.30,-91.45) startOffset 4 endOffset 5 width 4.00: " "
+              chunk 1 (middle anchor) text run 6 at (192.44,-89.33) startOffset 5 endOffset 6 width 9.00: "n"
+              chunk 1 (middle anchor) text run 7 at (200.51,-85.34) startOffset 6 endOffset 7 width 9.00: "e"
+              chunk 1 (middle anchor) text run 8 at (207.53,-80.57) startOffset 7 endOffset 8 width 8.00: "s"
+              chunk 1 (middle anchor) text run 9 at (212.09,-76.68) startOffset 8 endOffset 9 width 4.00: "t"
+              chunk 1 (middle anchor) text run 10 at (216.63,-72.04) startOffset 9 endOffset 10 width 9.00: "e"
+              chunk 1 (middle anchor) text run 11 at (222.21,-64.99) startOffset 10 endOffset 11 width 9.00: "d"
+          RenderSVGTSpan {tspan} at (0,0) size 35x50
+            RenderSVGInlineText {#text} at (210,50) size 35x50
+              chunk 1 (middle anchor) text run 1 at (225.72,-59.53) startOffset 0 endOffset 1 width 4.00: " "
+              chunk 1 (middle anchor) text run 2 at (227.66,-56.04) startOffset 1 endOffset 2 width 4.00: "t"
+              chunk 1 (middle anchor) text run 3 at (230.29,-50.65) startOffset 2 endOffset 3 width 8.00: "s"
+              chunk 1 (middle anchor) text run 4 at (233.40,-42.74) startOffset 3 endOffset 4 width 9.00: "p"
+              chunk 1 (middle anchor) text run 5 at (235.98,-34.14) startOffset 4 endOffset 5 width 9.00: "a"
+              chunk 1 (middle anchor) text run 6 at (237.88,-25.34) startOffset 5 endOffset 6 width 9.00: "n"
+        RenderSVGInlineText {#text} at (236,78) size 33x22
+          chunk 1 text run 1 at (246.88,-25.34) startOffset 0 endOffset 5 width 32.00: " xxx "
+        RenderSVGTSpan {tspan} at (0,0) size 55x22
+          RenderSVGInlineText {#text} at (278,78) size 55x22
+            chunk 1 text run 1 at (288.88,-25.34) startOffset 0 endOffset 9 width 54.00: "all with "
+        RenderSVGInlineText {#text} at (332,78) size 99x22
+          chunk 1 text run 1 at (342.88,-25.34) startOffset 0 endOffset 16 width 98.00: "different links."

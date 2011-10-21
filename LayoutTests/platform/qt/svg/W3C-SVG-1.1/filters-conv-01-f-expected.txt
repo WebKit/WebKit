@@ -24,43 +24,43 @@ layer at (0,0) size 480x360
             [feConvolveMatrix order="width=1 height=3" kernelMatrix="[0.33, 0.33, 0.33]" divisor="1.00" bias="0.00" target="(0,1)" edgeMode="NONE" kernelUnitLength="(0,0)" preserveAlpha="0"]
               [SourceGraphic]
         RenderSVGContainer {g} at (30,44) size 425x182
-          RenderSVGText {text} at (10,4) size 69x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 69x22
+          RenderSVGText {text} at (10,4) size 69x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 69x21
               chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 10 width 69.00: "Blur (3x3)"
           RenderSVGContainer {g} at (30,70) size 50x63
             RenderSVGImage {image} at (30,70) size 50x63
               [filter="convolve1"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,4) size 141x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 141x22
-              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 20 width 141.00: "Edge Detection (3x3)"
+          RenderSVGText {text} at (10,4) size 150x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 150x21
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 20 width 150.00: "Edge Detection (3x3)"
           RenderSVGContainer {g} at (180,70) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
             RenderSVGImage {image} at (180,70) size 50x63
               [filter="convolve2"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,4) size 117x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 117x22
-              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 16 width 117.00: "Sharpening (3x3)"
+          RenderSVGText {text} at (10,4) size 123x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 123x21
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 16 width 123.00: "Sharpening (3x3)"
           RenderSVGContainer {g} at (330,70) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
             RenderSVGImage {image} at (330,70) size 50x63
               [filter="convolve3"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,4) size 112x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 112x22
-              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 15 width 112.00: "Embossing (3x3)"
+          RenderSVGText {text} at (10,4) size 120x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 120x21
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 15 width 120.00: "Embossing (3x3)"
           RenderSVGContainer {g} at (30,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,93.00)}]
             RenderSVGImage {image} at (30,163) size 50x63
               [filter="convolve4"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,4) size 143x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 143x22
-              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 143.00: "Horizontal blur (3x1)"
+          RenderSVGText {text} at (10,4) size 144x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 144x21
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 144.00: "Horizontal blur (3x1)"
           RenderSVGContainer {g} at (180,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,93.00)}]
             RenderSVGImage {image} at (180,163) size 50x63
               [filter="convolve5"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,4) size 125x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 125x22
+          RenderSVGText {text} at (10,4) size 125x21 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 125x21
               chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 125.00: "Vertical blur (1x3)"
           RenderSVGContainer {g} at (330,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
             RenderSVGImage {image} at (330,163) size 50x63
               [filter="convolve6"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.5 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

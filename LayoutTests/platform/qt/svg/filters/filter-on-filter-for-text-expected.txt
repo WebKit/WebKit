@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (8,7) size 261x33
+  RenderSVGRoot {svg} at (9,7) size 251x32
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feGaussianBlur stdDeviation="1.00, 1.00"]
           [SourceGraphic]
-    RenderSVGText {text} at (30,10) size 217x27 contains 1 chunk(s)
-      [filter="filter"] RenderSVGResourceFilter {filter} at (8.30,7.30) size 260.40x32.40
-      RenderSVGInlineText {#text} at (0,0) size 142x27
+    RenderSVGText {text} at (30,10) size 209x26 contains 1 chunk(s)
+      [filter="filter"] RenderSVGResourceFilter {filter} at (9.10,7.40) size 250.80x31.20
+      RenderSVGInlineText {#text} at (0,0) size 137x26
         [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-        chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 19 width 142.00: "This is for filter "
-      RenderSVGTSpan {tspan} at (0,0) size 70x27
-        RenderSVGInlineText {#text} at (142,0) size 70x27
+        chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 19 width 137.00: "This is for filter "
+      RenderSVGTSpan {tspan} at (0,0) size 66x26
+        RenderSVGInlineText {#text} at (137,0) size 66x26
           [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-          chunk 1 text run 1 at (172.00,30.00) startOffset 0 endOffset 9 width 70.00: "on filter"
-      RenderSVGInlineText {#text} at (212,0) size 5x27
+          chunk 1 text run 1 at (167.00,30.00) startOffset 0 endOffset 9 width 66.00: "on filter"
+      RenderSVGInlineText {#text} at (203,0) size 6x26
         [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-        chunk 1 text run 1 at (242.00,30.00) startOffset 0 endOffset 1 width 5.00: "."
+        chunk 1 text run 1 at (233.00,30.00) startOffset 0 endOffset 1 width 6.00: "."

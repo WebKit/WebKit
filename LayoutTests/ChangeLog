@@ -1,3 +1,14 @@
+2011-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] FontCache::createFontPlatformData() is broken, a default font is returned
+        even if the family does not match.
+        https://bugs.webkit.org/show_bug.cgi?id=55036
+
+        Unreviewed. Update tests after r97990, and unskip them. (part 5)
+
+        * platform/qt/svg/: [...]
+        * platform/qt/Skipped:
+
 2011-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Hidden composited iframes cause infinite loop

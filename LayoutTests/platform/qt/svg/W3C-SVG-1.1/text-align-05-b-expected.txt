@@ -2,12 +2,12 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (5,2) size 475x338
-      RenderSVGText {text} at (5,2) size 518x49 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 518x49
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 518.00: "Test 'text-anchor' (vertical)"
-      RenderSVGContainer {g} at (151,36) size 119x304
-        RenderSVGContainer {g} at (151,36) size 119x304 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
+    RenderSVGContainer {g} at (5,1) size 465x339
+      RenderSVGText {text} at (5,1) size 465x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 465x51
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 465.00: "Test 'text-anchor' (vertical)"
+      RenderSVGContainer {g} at (151,36) size 118x304
+        RenderSVGContainer {g} at (151,36) size 118x304 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
           RenderSVGContainer {g} at (151,147) size 18x193
             RenderSVGPath {circle} at (157,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
             RenderSVGText {text} at (-9,0) size 18x190 contains 1 chunk(s)
@@ -17,24 +17,24 @@ layer at (0,0) size 480x360
                 chunk 1 (vertical) text run 3 at (-10.00,76.00) startOffset 2 endOffset 3 height 38.00: "a"
                 chunk 1 (vertical) text run 4 at (-10.00,114.00) startOffset 3 endOffset 4 height 38.00: "r"
                 chunk 1 (vertical) text run 5 at (-10.00,152.00) startOffset 4 endOffset 5 height 38.00: "t"
-          RenderSVGContainer {g} at (196,36) size 28x228 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+          RenderSVGContainer {g} at (197,36) size 26x228 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGPath {circle} at (207,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-14,-114) size 28x228 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 28x228
+            RenderSVGText {text} at (-13,-114) size 26x228 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 26x228
                 chunk 1 (middle anchor, vertical) text run 1 at (-10.00,-114.00) startOffset 0 endOffset 1 height 38.00: "m"
                 chunk 1 (middle anchor, vertical) text run 2 at (-10.00,-76.00) startOffset 1 endOffset 2 height 38.00: "i"
                 chunk 1 (middle anchor, vertical) text run 3 at (-10.00,-38.00) startOffset 2 endOffset 3 height 38.00: "d"
                 chunk 1 (middle anchor, vertical) text run 4 at (-10.00,0.00) startOffset 3 endOffset 4 height 38.00: "d"
                 chunk 1 (middle anchor, vertical) text run 5 at (-10.00,38.00) startOffset 4 endOffset 5 height 38.00: "l"
                 chunk 1 (middle anchor, vertical) text run 6 at (-10.00,76.00) startOffset 5 endOffset 6 height 38.00: "e"
-          RenderSVGContainer {g} at (250,36) size 20x117 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+          RenderSVGContainer {g} at (251,36) size 18x117 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGPath {circle} at (257,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-10,-114) size 20x114 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 20x114
+            RenderSVGText {text} at (-9,-114) size 18x114 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 18x114
                 chunk 1 (end anchor, vertical) text run 1 at (-10.00,-114.00) startOffset 0 endOffset 1 height 38.00: "e"
                 chunk 1 (end anchor, vertical) text run 2 at (-10.00,-76.00) startOffset 1 endOffset 2 height 38.00: "n"
                 chunk 1 (end anchor, vertical) text run 3 at (-10.00,-38.00) startOffset 2 endOffset 3 height 38.00: "d"
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.5 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

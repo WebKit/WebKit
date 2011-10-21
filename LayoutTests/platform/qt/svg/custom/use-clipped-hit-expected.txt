@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (29,39) size 142x97
+  RenderSVGRoot {svg} at (29,39) size 142x96
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {use} at (29,39) size 142x22
       RenderSVGContainer {g} at (29,39) size 142x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
         RenderSVGViewportContainer {svg} at (29,39) size 142x22
           RenderSVGPath {rect} at (29,39) size 142x22 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
-    RenderSVGText {text} at (90,114) size 46x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 46x22
-        chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 46.00: "Passed"
+    RenderSVGText {text} at (90,114) size 54x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 54x21
+        chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 54.00: "Passed"
 caret: position 0 of child 7 {text} of child 1 {svg} of document

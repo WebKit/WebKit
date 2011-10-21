@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,0) size 400x70
-    RenderSVGContainer {g} at (195,0) size 110x70
-      RenderSVGPath {svg:line} at (195,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=0.40] [x2=40.00] [y2=13.40]
-      RenderSVGPath {svg:line} at (295,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=59.60] [y1=0.40] [x2=59.60] [y2=13.40]
-      RenderSVGPath {svg:rect} at (200,0) size 100x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=40.00] [y=0.40] [width=19.60] [height=12.40]
-    RenderSVGText {text} at (10,0) size 80x13 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 80x13
+  RenderSVGRoot {svg} at (50,0) size 375x70
+    RenderSVGContainer {g} at (195,0) size 95x70
+      RenderSVGPath {svg:line} at (195,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=0.40] [x2=40.00] [y2=13.60]
+      RenderSVGPath {svg:line} at (280,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=57.20] [y1=0.40] [x2=57.20] [y2=13.60]
+      RenderSVGPath {svg:rect} at (200,0) size 90x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=40.00] [y=0.40] [width=17.20] [height=12.60]
+    RenderSVGText {text} at (10,0) size 75x13 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 75x13
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
-        chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.60: "h"
-        chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 12 width 49.80: "is is a test"
+        chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 5.60: "h"
+        chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 12 width 44.60: "is is a test"
 selection start: position 2 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
 selection end:   position 7 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

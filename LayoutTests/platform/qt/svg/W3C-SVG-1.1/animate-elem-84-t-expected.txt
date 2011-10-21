@@ -11,17 +11,17 @@ layer at (0,0) size 480x360
           RenderSVGPath {rect} at (319,22) size 110x110 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=100.00] [height=100.00]
         RenderSVGContainer {g} at (319,187) size 110x110
           RenderSVGPath {rect} at (319,187) size 110x110 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=150.00] [width=100.00] [height=100.00]
-        RenderSVGContainer {g} at (66,67) size 330x105
-          RenderSVGText {text} at (10,116) size 80x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 80x20
-              chunk 1 (middle anchor) text run 1 at (10.45,130.00) startOffset 0 endOffset 12 width 79.09: "currentColor"
-          RenderSVGText {text} at (153,41) size 34x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 34x20
+        RenderSVGContainer {g} at (69,67) size 325x104
+          RenderSVGText {text} at (13,116) size 74x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 74x19
+              chunk 1 (middle anchor) text run 1 at (13.18,130.00) startOffset 0 endOffset 12 width 73.64: "currentColor"
+          RenderSVGText {text} at (153,41) size 34x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 34x19
               chunk 1 (middle anchor) text run 1 at (153.18,55.00) startOffset 0 endOffset 5 width 33.64: "green"
-          RenderSVGText {text} at (270,116) size 40x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 40x20
-              chunk 1 (middle anchor) text run 1 at (270.45,130.00) startOffset 0 endOffset 7 width 39.09: "inherit"
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.4 $"
+          RenderSVGText {text} at (272,116) size 36x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 36x19
+              chunk 1 (middle anchor) text run 1 at (272.27,130.00) startOffset 0 endOffset 7 width 35.45: "inherit"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.4 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

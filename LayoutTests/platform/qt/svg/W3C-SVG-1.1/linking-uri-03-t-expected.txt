@@ -2,44 +2,44 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (18,4) size 430x250
-      RenderSVGText {text} at (75,4) size 267x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 267x17
-          chunk 1 text run 1 at (75.00,16.00) startOffset 0 endOffset 55 width 267.00: "Simple exercise of xlink attributes on the 'a' element."
+    RenderSVGContainer {g} at (18,4) size 424x250
+      RenderSVGText {text} at (75,4) size 282x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 282x16
+          chunk 1 text run 1 at (75.00,16.00) startOffset 0 endOffset 55 width 282.00: "Simple exercise of xlink attributes on the 'a' element."
       RenderSVGContainer {a} at (134,121) size 132x133
         RenderSVGPath {path} at (134,121) size 132x133 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M 135 122 L 265 122 L 200 252 Z"]
-      RenderSVGText {text} at (160,104) size 74x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 74x17
-          chunk 1 text run 1 at (160.00,116.00) startOffset 0 endOffset 13 width 74.00: "Click for TOC"
-      RenderSVGText {text} at (25,160) size 82x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 82x17
-          chunk 1 text run 1 at (25.00,172.00) startOffset 0 endOffset 18 width 82.00: "Link to local file"
-      RenderSVGText {text} at (25,170) size 86x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 86x17
-          chunk 1 text run 1 at (25.00,182.00) startOffset 0 endOffset 17 width 86.00: "linkingToc-t.svg."
+      RenderSVGText {text} at (160,104) size 72x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 72x16
+          chunk 1 text run 1 at (160.00,116.00) startOffset 0 endOffset 13 width 72.00: "Click for TOC"
+      RenderSVGText {text} at (25,160) size 84x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 84x16
+          chunk 1 text run 1 at (25.00,172.00) startOffset 0 endOffset 18 width 84.00: "Link to local file"
+      RenderSVGText {text} at (25,170) size 88x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 88x16
+          chunk 1 text run 1 at (25.00,182.00) startOffset 0 endOffset 17 width 88.00: "linkingToc-t.svg."
       RenderSVGPath {rect} at (18,159) size 102x28 [stroke={[type=SOLID] [color=#000000]}] [x=19.00] [y=160.00] [width=100.00] [height=26.00]
-      RenderSVGText {text} at (275,134) size 90x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 90x14
-          chunk 1 text run 1 at (275.00,144.00) startOffset 0 endOffset 19 width 90.00: "xlink:type=\"simple\""
-      RenderSVGText {text} at (275,145) size 96x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 96x14
-          chunk 1 text run 1 at (275.00,155.00) startOffset 0 endOffset 20 width 96.00: "xlink:show=\"replace\""
-      RenderSVGText {text} at (275,156) size 119x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 119x14
-          chunk 1 text run 1 at (275.00,166.00) startOffset 0 endOffset 25 width 119.00: "xlink:actuate=\"onRequest\""
-      RenderSVGText {text} at (275,167) size 132x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 132x14
-          chunk 1 text run 1 at (275.00,177.00) startOffset 0 endOffset 29 width 132.00: "xlink:href=\"linkingToc-t.svg\""
-      RenderSVGText {text} at (275,178) size 129x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 129x14
-          chunk 1 text run 1 at (275.00,188.00) startOffset 0 endOffset 30 width 129.00: "xlink:role=\"figure-out-a-role\""
-      RenderSVGText {text} at (275,189) size 173x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 173x14
-          chunk 1 text run 1 at (275.00,199.00) startOffset 0 endOffset 38 width 173.00: "xlink:title=\"TOC of Linking BE tests.\""
-      RenderSVGText {text} at (275,200) size 61x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 61x14
-          chunk 1 text run 1 at (275.00,210.00) startOffset 0 endOffset 14 width 61.00: "target=\"_self\""
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.8 $"
+      RenderSVGText {text} at (275,134) size 86x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 86x13
+          chunk 1 text run 1 at (275.00,144.00) startOffset 0 endOffset 19 width 86.00: "xlink:type=\"simple\""
+      RenderSVGText {text} at (275,145) size 95x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 95x13
+          chunk 1 text run 1 at (275.00,155.00) startOffset 0 endOffset 20 width 95.00: "xlink:show=\"replace\""
+      RenderSVGText {text} at (275,156) size 123x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 123x13
+          chunk 1 text run 1 at (275.00,166.00) startOffset 0 endOffset 25 width 123.00: "xlink:actuate=\"onRequest\""
+      RenderSVGText {text} at (275,167) size 126x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 126x13
+          chunk 1 text run 1 at (275.00,177.00) startOffset 0 endOffset 29 width 126.00: "xlink:href=\"linkingToc-t.svg\""
+      RenderSVGText {text} at (275,178) size 127x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 127x13
+          chunk 1 text run 1 at (275.00,188.00) startOffset 0 endOffset 30 width 127.00: "xlink:role=\"figure-out-a-role\""
+      RenderSVGText {text} at (275,189) size 167x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 167x13
+          chunk 1 text run 1 at (275.00,199.00) startOffset 0 endOffset 38 width 167.00: "xlink:title=\"TOC of Linking BE tests.\""
+      RenderSVGText {text} at (275,200) size 63x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 63x13
+          chunk 1 text run 1 at (275.00,210.00) startOffset 0 endOffset 14 width 63.00: "target=\"_self\""
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.8 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

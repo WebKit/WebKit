@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (78,52) size 294x152 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
       RenderSVGContainer {a} at (78,52) size 294x152
         RenderSVGPath {path} at (78,52) size 294x152 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M 185 40 L 85 40 L 85 28 L 40 64 L 85 100 L 85 88 L 185 88 Z"]
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.2 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.2 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

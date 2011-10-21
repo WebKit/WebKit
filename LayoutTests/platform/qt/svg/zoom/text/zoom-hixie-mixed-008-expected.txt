@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x493
-  RenderBlock {html} at (0,0) size 800x493
-    RenderBody {body} at (8,23) size 784x462
-      RenderBlock {p} at (0,0) size 784x31 [color=#000080]
-        RenderText {#text} at (0,0) size 633x31
-          text run at (0,0) width 633: "There should be a blue circle with the word \"TEST\" in it below."
-      RenderBlock (anonymous) at (0,54) size 784x408
-        RenderSVGRoot {svg} at (8,77) size 400x400
-          RenderSVGPath {rect} at (8,77) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
-          RenderSVGPath {circle} at (8,77) size 400x400 [fill={[type=SOLID] [color=#000080]}] [cx=200.00] [cy=200.00] [r=200.00]
+layer at (0,0) size 800x490
+  RenderBlock {html} at (0,0) size 800x490
+    RenderBody {body} at (8,23) size 784x459
+      RenderBlock {p} at (0,0) size 784x29 [color=#000080]
+        RenderText {#text} at (0,0) size 634x29
+          text run at (0,0) width 634: "There should be a blue circle with the word \"TEST\" in it below."
+      RenderBlock (anonymous) at (0,52) size 784x407
+        RenderSVGRoot {svg} at (8,75) size 400x400
+          RenderSVGPath {rect} at (8,75) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
+          RenderSVGPath {circle} at (8,75) size 400x400 [fill={[type=SOLID] [color=#000080]}] [cx=200.00] [cy=200.00] [r=200.00]
           RenderSVGForeignObject {foreignObject} at (0,175) size 400x50 [color=#FFFFFF]
-            RenderBlock {div} at (0,0) size 400x66
-              RenderText {#text} at (136,0) size 128x66
+            RenderBlock {div} at (0,0) size 400x63
+              RenderText {#text} at (136,0) size 128x63
                 text run at (136,0) width 128: "TEST"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -4,10 +4,10 @@ layer at (0,0) size 800x385
   RenderBlock {HTML} at (0,0) size 800x385
     RenderBody {BODY} at (3,3) size 117x376 [border: (1px dashed #C0C0C0)]
       RenderBlock {P} at (1,8) size 115x21
-        RenderText {#text} at (0,-2) size 115x25
-          text run at (0,-2) width 113: "The following six blue boxes must"
-          text run at (0,5) width 115: "be of the same width. There must"
-          text run at (0,12) width 34: "be no red."
+        RenderText {#text} at (0,-2) size 114x25
+          text run at (0,-2) width 114: "The following six blue boxes must"
+          text run at (0,5) width 112: "be of the same width. There must"
+          text run at (0,12) width 33: "be no red."
       RenderBlock {P} at (8,36) size 101x21 [bgcolor=#008000] [border: (7px solid #0000FF)]
         RenderText {#text} at (7,5) size 2x11
           text run at (7,5) width 2: " "

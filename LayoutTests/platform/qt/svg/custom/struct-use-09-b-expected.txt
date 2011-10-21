@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
                     RenderSVGPath {rect} at (306,206) size 188x188 [stroke={[type=SOLID] [color=#FF0000]}] [x=-55.00] [y=-55.00] [width=110.00] [height=110.00]
                 RenderSVGPath {rect} at (303,203) size 194x194 [stroke={[type=SOLID] [color=#FF0000]}] [x=-57.50] [y=-57.50] [width=115.00] [height=115.00]
             RenderSVGPath {rect} at (298,198) size 204x204 [stroke={[type=SOLID] [color=#FF0000]}] [x=-60.00] [y=-60.00] [width=120.00] [height=120.00]
-    RenderSVGText {text} at (10,301) size 274x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 274x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 273.60: "$Revision: 1.1 $"
+    RenderSVGText {text} at (10,301) size 289x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 289x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 288.60: "$Revision: 1.1 $"
     RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 800x44
       RenderSVGPath {rect} at (0,0) size 800x37 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]

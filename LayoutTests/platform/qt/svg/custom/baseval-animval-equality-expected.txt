@@ -3,42 +3,42 @@ layer at (0,0) size 800x600
 layer at (0,0) size 600x400
   RenderSVGRoot {svg} at (0,0) size 600x400
     RenderSVGForeignObject {foreignObject} at (0,0) size 600x400
-      RenderBlock {html} at (0,0) size 600x286
-        RenderBlock {div} at (0,0) size 600x286
-          RenderBlock (anonymous) at (0,0) size 600x44
-            RenderText {#text} at (0,0) size 543x44
-              text run at (0,0) width 543: "This tests to make sure that baseVal and animVal are tied when animation is not"
-              text run at (0,22) width 58: "enabled:"
-          RenderBlock {div} at (0,44) size 600x22
-            RenderText {#text} at (0,0) size 157x22
-              text run at (0,0) width 157: "svg.x.baseVal.value = 0"
-          RenderBlock {div} at (0,66) size 600x22
-            RenderText {#text} at (0,0) size 161x22
-              text run at (0,0) width 161: "svg.x.animVal.value = 0"
-          RenderBlock {div} at (0,88) size 600x22
-            RenderText {#text} at (0,0) size 213x22
-              text run at (0,0) width 213: "setting svg.x.baseVal.value = 10"
-          RenderBlock {div} at (0,110) size 600x22
-            RenderText {#text} at (0,0) size 165x22
-              text run at (0,0) width 165: "svg.x.baseVal.value = 10"
-          RenderBlock {div} at (0,132) size 600x22
-            RenderText {#text} at (0,0) size 169x22
-              text run at (0,0) width 169: "svg.x.animVal.value = 10"
-          RenderBlock {div} at (0,154) size 600x22
-            RenderText {#text} at (0,0) size 125x22
-              text run at (0,0) width 125: "SUCCESS (1 of 2)"
-          RenderBlock {div} at (0,176) size 600x22
-            RenderText {#text} at (0,0) size 209x22
-              text run at (0,0) width 209: "setting svg.x.animVal.value = 5"
-          RenderBlock {div} at (0,198) size 600x22
-            RenderText {#text} at (0,0) size 549x22
-              text run at (0,0) width 549: "caught exception: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7"
-          RenderBlock {div} at (0,220) size 600x22
-            RenderText {#text} at (0,0) size 165x22
-              text run at (0,0) width 165: "svg.x.baseVal.value = 10"
-          RenderBlock {div} at (0,242) size 600x22
-            RenderText {#text} at (0,0) size 169x22
-              text run at (0,0) width 169: "svg.x.animVal.value = 10"
-          RenderBlock {div} at (0,264) size 600x22
-            RenderText {#text} at (0,0) size 125x22
-              text run at (0,0) width 125: "SUCCESS (2 of 2)"
+      RenderBlock {html} at (0,0) size 600x273
+        RenderBlock {div} at (0,0) size 600x273
+          RenderBlock (anonymous) at (0,0) size 600x42
+            RenderText {#text} at (0,0) size 566x42
+              text run at (0,0) width 566: "This tests to make sure that baseVal and animVal are tied when animation is not"
+              text run at (0,21) width 62: "enabled:"
+          RenderBlock {div} at (0,42) size 600x21
+            RenderText {#text} at (0,0) size 169x21
+              text run at (0,0) width 169: "svg.x.baseVal.value = 0"
+          RenderBlock {div} at (0,63) size 600x21
+            RenderText {#text} at (0,0) size 169x21
+              text run at (0,0) width 169: "svg.x.animVal.value = 0"
+          RenderBlock {div} at (0,84) size 600x21
+            RenderText {#text} at (0,0) size 229x21
+              text run at (0,0) width 229: "setting svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,105) size 600x21
+            RenderText {#text} at (0,0) size 178x21
+              text run at (0,0) width 178: "svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,126) size 600x21
+            RenderText {#text} at (0,0) size 178x21
+              text run at (0,0) width 178: "svg.x.animVal.value = 10"
+          RenderBlock {div} at (0,147) size 600x21
+            RenderText {#text} at (0,0) size 133x21
+              text run at (0,0) width 133: "SUCCESS (1 of 2)"
+          RenderBlock {div} at (0,168) size 600x21
+            RenderText {#text} at (0,0) size 220x21
+              text run at (0,0) width 220: "setting svg.x.animVal.value = 5"
+          RenderBlock {div} at (0,189) size 600x21
+            RenderText {#text} at (0,0) size 543x21
+              text run at (0,0) width 543: "caught exception: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7"
+          RenderBlock {div} at (0,210) size 600x21
+            RenderText {#text} at (0,0) size 178x21
+              text run at (0,0) width 178: "svg.x.baseVal.value = 10"
+          RenderBlock {div} at (0,231) size 600x21
+            RenderText {#text} at (0,0) size 178x21
+              text run at (0,0) width 178: "svg.x.animVal.value = 10"
+          RenderBlock {div} at (0,252) size 600x21
+            RenderText {#text} at (0,0) size 133x21
+              text run at (0,0) width 133: "SUCCESS (2 of 2)"

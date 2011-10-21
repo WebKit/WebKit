@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 342x281
+  RenderSVGRoot {svg} at (0,0) size 350x280
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=objectBoundingBox]
         RenderSVGPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.50]
@@ -36,9 +36,9 @@ layer at (0,0) size 800x600
       [masker="mask3"] RenderSVGResourceMasker {mask} at (100,100) size 100x100
       RenderSVGPath {circle} at (25,100) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=150.00] [cy=150.00] [r=50.00]
         [masker="mask2"] RenderSVGResourceMasker {mask} at (100,100) size 100x100
-    RenderSVGText {text} at (83,234) size 334x47 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 334x22
-        chunk 1 (middle anchor) text run 1 at (83.50,250.00) startOffset 0 endOffset 52 width 333.00: "The left shape should still be visible after panning"
-      RenderSVGTSpan {tspan} at (0,0) size 300x22
-        RenderSVGInlineText {#text} at (17,25) size 300x22
-          chunk 1 (middle anchor) text run 1 at (100.50,275.00) startOffset 0 endOffset 44 width 299.00: "And the right shape shouldn't look distorted"
+    RenderSVGText {text} at (75,234) size 350x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 350x21
+        chunk 1 (middle anchor) text run 1 at (75.00,250.00) startOffset 0 endOffset 52 width 350.00: "The left shape should still be visible after panning"
+      RenderSVGTSpan {tspan} at (0,0) size 306x21
+        RenderSVGInlineText {#text} at (22,25) size 306x21
+          chunk 1 (middle anchor) text run 1 at (97.50,275.00) startOffset 0 endOffset 44 width 305.00: "And the right shape shouldn't look distorted"

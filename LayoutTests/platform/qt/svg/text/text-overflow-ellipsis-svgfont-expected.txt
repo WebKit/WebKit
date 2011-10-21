@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x139
-  RenderBlock {HTML} at (0,0) size 800x139
-    RenderBody {BODY} at (8,8) size 784x111
-      RenderBlock (anonymous) at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 683x22
-          text run at (0,0) width 683: "This test checks that the text-overflow: ellipsis property is handled correctly when using an SVG font."
-        RenderBR {BR} at (683,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 538x22
-          text run at (0,44) width 538: "Pass if some text is shown followed by an ellipsis (NOT just the ellipsis by itself). "
-        RenderBR {BR} at (538,44) size 0x22
-        RenderBR {BR} at (0,66) size 0x22
-layer at (8,96) size 182x23 clip at (9,97) size 180x21 scrollWidth 315
-  RenderBlock {DIV} at (0,88) size 182x23 [border: (1px solid #000000)]
-    RenderText {#text} at (1,1) size 315x21
-      text run at (1,1) width 315: "abc abc abc abc abc abc abc abc abc abc"
+layer at (0,0) size 800x135
+  RenderBlock {HTML} at (0,0) size 800x135
+    RenderBody {BODY} at (8,8) size 784x107
+      RenderBlock (anonymous) at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 706x21
+          text run at (0,0) width 706: "This test checks that the text-overflow: ellipsis property is handled correctly when using an SVG font."
+        RenderBR {BR} at (706,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 571x21
+          text run at (0,42) width 571: "Pass if some text is shown followed by an ellipsis (NOT just the ellipsis by itself). "
+        RenderBR {BR} at (571,42) size 0x21
+        RenderBR {BR} at (0,63) size 0x21
+layer at (8,92) size 182x23 clip at (9,93) size 180x21 scrollWidth 296
+  RenderBlock {DIV} at (0,84) size 182x23 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 296x21
+      text run at (1,1) width 296: "abc abc abc abc abc abc abc abc abc abc"

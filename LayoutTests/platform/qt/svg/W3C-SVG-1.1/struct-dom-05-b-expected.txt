@@ -3,37 +3,37 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGText {text} at (10,311) size 204x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 204x40
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 204.00: "$Revision: 1.2 $"
+    RenderSVGText {text} at (10,311) size 217x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 217x38
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 217.00: "$Revision: 1.2 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (5,16) size 292x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 292x40
-        chunk 1 text run 1 at (5.00,45.00) startOffset 0 endOffset 22 width 292.00: "org.w3c.dom.svg.static"
-    RenderSVGText {text} at (385,16) size 58x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 58x40
-        chunk 1 text run 1 at (385.00,45.00) startOffset 0 endOffset 5 width 58.00: "false"
-    RenderSVGText {text} at (5,56) size 354x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 354x40
-        chunk 1 text run 1 at (5.00,85.00) startOffset 0 endOffset 25 width 354.00: "org.w3c.dom.svg.animation"
-    RenderSVGText {text} at (385,56) size 58x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 58x40
-        chunk 1 text run 1 at (385.00,85.00) startOffset 0 endOffset 5 width 58.00: "false"
-    RenderSVGText {text} at (5,96) size 334x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 334x40
-        chunk 1 text run 1 at (5.00,125.00) startOffset 0 endOffset 23 width 334.00: "org.w3c.dom.svg.dynamic"
-    RenderSVGText {text} at (385,96) size 58x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 58x40
-        chunk 1 text run 1 at (385.00,125.00) startOffset 0 endOffset 5 width 58.00: "false"
-    RenderSVGText {text} at (5,136) size 255x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 255x40
-        chunk 1 text run 1 at (5.00,165.00) startOffset 0 endOffset 19 width 255.00: "org.w3c.dom.svg.all"
-    RenderSVGText {text} at (385,136) size 58x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 58x40
-        chunk 1 text run 1 at (385.00,165.00) startOffset 0 endOffset 5 width 58.00: "false"
-    RenderSVGText {text} at (5,176) size 190x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 190x40
-        chunk 1 text run 1 at (5.00,205.00) startOffset 0 endOffset 15 width 190.00: "org.w3c.svg.all"
-    RenderSVGText {text} at (385,176) size 58x40 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 58x40
-        chunk 1 text run 1 at (385.00,205.00) startOffset 0 endOffset 5 width 58.00: "false"
+    RenderSVGText {text} at (5,16) size 306x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 306x38
+        chunk 1 text run 1 at (5.00,45.00) startOffset 0 endOffset 22 width 306.00: "org.w3c.dom.svg.static"
+    RenderSVGText {text} at (385,16) size 64x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x38
+        chunk 1 text run 1 at (385.00,45.00) startOffset 0 endOffset 5 width 64.00: "false"
+    RenderSVGText {text} at (5,56) size 368x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 368x38
+        chunk 1 text run 1 at (5.00,85.00) startOffset 0 endOffset 25 width 368.00: "org.w3c.dom.svg.animation"
+    RenderSVGText {text} at (385,56) size 64x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x38
+        chunk 1 text run 1 at (385.00,85.00) startOffset 0 endOffset 5 width 64.00: "false"
+    RenderSVGText {text} at (5,96) size 349x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 349x38
+        chunk 1 text run 1 at (5.00,125.00) startOffset 0 endOffset 23 width 349.00: "org.w3c.dom.svg.dynamic"
+    RenderSVGText {text} at (385,96) size 64x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x38
+        chunk 1 text run 1 at (385.00,125.00) startOffset 0 endOffset 5 width 64.00: "false"
+    RenderSVGText {text} at (5,136) size 267x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 267x38
+        chunk 1 text run 1 at (5.00,165.00) startOffset 0 endOffset 19 width 267.00: "org.w3c.dom.svg.all"
+    RenderSVGText {text} at (385,136) size 64x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x38
+        chunk 1 text run 1 at (385.00,165.00) startOffset 0 endOffset 5 width 64.00: "false"
+    RenderSVGText {text} at (5,176) size 200x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 200x38
+        chunk 1 text run 1 at (5.00,205.00) startOffset 0 endOffset 15 width 200.00: "org.w3c.svg.all"
+    RenderSVGText {text} at (385,176) size 64x38 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x38
+        chunk 1 text run 1 at (385.00,205.00) startOffset 0 endOffset 5 width 64.00: "false"

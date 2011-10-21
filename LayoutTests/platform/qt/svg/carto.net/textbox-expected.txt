@@ -19,37 +19,37 @@ layer at (0,0) size 800x600
               RenderSVGInlineText {#text} at (0,0) size 18x22
                 chunk 1 text run 1 at (105.00,52.00) startOffset 0 endOffset 2 width 17.92: "50"
             RenderSVGPath {line} at (77,29) size 2x14 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=55.00] [x2=100.00] [y2=38.50]
-    RenderSVGContainer {g} at (77,233) size 387x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,300.00)}]
-      RenderSVGContainer {g} at (77,233) size 387x26
+    RenderSVGContainer {g} at (77,233) size 350x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,300.00)}]
+      RenderSVGContainer {g} at (77,233) size 350x26
         RenderSVGPath {rect} at (77,233) size 182x26 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=230.00] [height=30.00]
-        RenderSVGViewportContainer {svg} at (77,239) size 387x18
-          RenderSVGContainer {g} at (77,239) size 387x18
-            RenderSVGText {text} at (5,6) size 488x22 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 488x22
-                chunk 1 text run 1 at (5.00,22.00) startOffset 0 endOffset 66 width 487.68: "This is a transformed textbox with a very, very, very long content"
+        RenderSVGViewportContainer {svg} at (77,239) size 350x18
+          RenderSVGContainer {g} at (77,239) size 350x18
+            RenderSVGText {text} at (5,6) size 441x22 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 441x22
+                chunk 1 text run 1 at (5.00,22.00) startOffset 0 endOffset 66 width 440.32: "This is a transformed textbox with a very, very, very long content"
             RenderSVGPath {line} at (77,240) size 2x14 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=25.00] [x2=0.00] [y2=8.50]
-    RenderSVGContainer {g} at (78,26) size 680x262
-      RenderSVGText {text} at (100,214) size 72x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 72x23
-          chunk 1 text run 1 at (100.00,230.00) startOffset 0 endOffset 10 width 71.68: "ResultText"
-      RenderSVGText {text} at (170,34) size 333x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 333x23
-          chunk 1 text run 1 at (170.00,50.00) startOffset 0 endOffset 53 width 332.80: "This textbox (textbox 2) only accepts up to 5 digits."
-      RenderSVGText {text} at (310,104) size 405x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 405x23
-          chunk 1 text run 1 at (310.00,120.00) startOffset 0 endOffset 63 width 404.48: "This textbox (textbox 1) accepts up to 25 characters [a-zA-Z ]."
-      RenderSVGText {text} at (350,299) size 256x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 256x23
-          chunk 1 text run 1 at (350.00,315.00) startOffset 0 endOffset 39 width 256.00: "This textbox (textbox 3) is transformed"
-        RenderSVGTSpan {tspan} at (0,0) size 244x23
-          RenderSVGInlineText {#text} at (0,23) size 244x23
-            chunk 1 text run 1 at (350.00,338.00) startOffset 0 endOffset 38 width 243.20: "and accepts all characters (up to 300)"
-      RenderSVGText {text} at (620,299) size 315x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 315x23
-          chunk 1 text run 1 at (620.00,315.00) startOffset 0 endOffset 51 width 314.88: "Click on this text to reset content of textbox nr 3"
-      RenderSVGText {text} at (620,322) size 349x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 349x23
-          chunk 1 text run 1 at (620.00,338.00) startOffset 0 endOffset 54 width 348.16: "Click on this text to randomly reposition textbox nr 3"
-      RenderSVGText {text} at (620,345) size 319x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 319x23
-          chunk 1 text run 1 at (620.00,361.00) startOffset 0 endOffset 50 width 318.72: "Click on this text to randomly resize textbox nr 3"
+    RenderSVGContainer {g} at (78,26) size 685x261
+      RenderSVGText {text} at (100,214) size 75x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 75x22
+          chunk 1 text run 1 at (100.00,230.00) startOffset 0 endOffset 10 width 74.24: "ResultText"
+      RenderSVGText {text} at (170,34) size 347x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 347x22
+          chunk 1 text run 1 at (170.00,50.00) startOffset 0 endOffset 53 width 346.88: "This textbox (textbox 2) only accepts up to 5 digits."
+      RenderSVGText {text} at (310,104) size 420x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 420x22
+          chunk 1 text run 1 at (310.00,120.00) startOffset 0 endOffset 63 width 419.84: "This textbox (textbox 1) accepts up to 25 characters [a-zA-Z ]."
+      RenderSVGText {text} at (350,299) size 263x45 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 263x22
+          chunk 1 text run 1 at (350.00,315.00) startOffset 0 endOffset 39 width 262.40: "This textbox (textbox 3) is transformed"
+        RenderSVGTSpan {tspan} at (0,0) size 262x22
+          RenderSVGInlineText {#text} at (0,23) size 262x22
+            chunk 1 text run 1 at (350.00,338.00) startOffset 0 endOffset 38 width 261.12: "and accepts all characters (up to 300)"
+      RenderSVGText {text} at (620,299) size 324x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 324x22
+          chunk 1 text run 1 at (620.00,315.00) startOffset 0 endOffset 51 width 323.84: "Click on this text to reset content of textbox nr 3"
+      RenderSVGText {text} at (620,322) size 356x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 356x22
+          chunk 1 text run 1 at (620.00,338.00) startOffset 0 endOffset 54 width 355.84: "Click on this text to randomly reposition textbox nr 3"
+      RenderSVGText {text} at (620,345) size 329x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 329x22
+          chunk 1 text run 1 at (620.00,361.00) startOffset 0 endOffset 50 width 328.96: "Click on this text to randomly resize textbox nr 3"

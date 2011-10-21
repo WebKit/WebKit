@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,72) size 211x66
-    RenderSVGText {text} at (20,72) size 211x66 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 91x66
-        chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 4 width 91.00: "Test"
-      RenderSVGTSpan {tspan} at (0,0) size 120x66
-        RenderSVGInlineText {#text} at (91,0) size 13x66
-          chunk 1 text run 1 at (111.00,120.00) startOffset 0 endOffset 1 width 13.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 81x66
-          RenderSVGInlineText {#text} at (130,0) size 81x66
+  RenderSVGRoot {svg} at (20,72) size 211x63
+    RenderSVGText {text} at (20,72) size 211x63 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 98x63
+        chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 4 width 98.00: "Test"
+      RenderSVGTSpan {tspan} at (0,0) size 113x63
+        RenderSVGInlineText {#text} at (98,0) size 14x63
+          chunk 1 text run 1 at (118.00,120.00) startOffset 0 endOffset 1 width 14.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 81x63
+          RenderSVGInlineText {#text} at (130,0) size 81x63
             chunk 1 text run 1 at (150.00,120.00) startOffset 0 endOffset 4 width 81.00: "text"

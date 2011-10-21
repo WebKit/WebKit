@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x412
-  RenderBlock {html} at (0,0) size 800x412
-    RenderBody {body} at (0,0) size 800x412
-      RenderSVGRoot {svg} at (83,31) size 240x225
+layer at (0,0) size 800x411
+  RenderBlock {html} at (0,0) size 800x411
+    RenderBody {body} at (0,0) size 800x411
+      RenderSVGRoot {svg} at (77,31) size 252x225
         RenderSVGPath {circle} at (150,150) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=197.00] [cy=197.00] [r=50.00]
-        RenderSVGText {text} at (86,34) size 228x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 228x22
-            chunk 1 (middle anchor) text run 1 at (86.00,50.00) startOffset 0 endOffset 34 width 228.00: "The circle should be in the middle"
+        RenderSVGText {text} at (80,34) size 240x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 240x21
+            chunk 1 (middle anchor) text run 1 at (80.50,50.00) startOffset 0 endOffset 34 width 239.00: "The circle should be in the middle"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 selection start: position 16 of child 0 {#text} of child 3 {text} of child 1 {svg} of body

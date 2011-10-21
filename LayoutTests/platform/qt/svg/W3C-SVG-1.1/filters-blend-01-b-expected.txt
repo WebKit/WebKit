@@ -39,29 +39,29 @@ layer at (0,0) size 480x360
         [filter="BlendDarken"] RenderSVGResourceFilter {filter} at (30,75) size 120x10
       RenderSVGPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
         [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
-      RenderSVGContainer {g} at (15,30) size 81x264
-        RenderSVGText {text} at (5,10) size 24x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 24x10
-            chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 23.33: "Normal"
-        RenderSVGText {text} at (5,23) size 27x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x10
-            chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 26.67: "Multiply"
-        RenderSVGText {text} at (5,36) size 27x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x10
-            chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 26.67: "Multiply"
-        RenderSVGText {text} at (5,49) size 27x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 27x10
-            chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 26.67: "Multiply"
-        RenderSVGText {text} at (5,62) size 20x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 20x10
-            chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 20.00: "Screen"
-        RenderSVGText {text} at (5,75) size 23x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 23x10
-            chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 22.67: "Darken"
-        RenderSVGText {text} at (5,88) size 24x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 24x10
+      RenderSVGContainer {g} at (15,30) size 75x261
+        RenderSVGText {text} at (5,10) size 23x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 23x9
+            chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 23.00: "Normal"
+        RenderSVGText {text} at (5,23) size 25x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x9
+            chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 24.67: "Multiply"
+        RenderSVGText {text} at (5,36) size 25x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x9
+            chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 24.67: "Multiply"
+        RenderSVGText {text} at (5,49) size 25x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x9
+            chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 24.67: "Multiply"
+        RenderSVGText {text} at (5,62) size 23x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 23x9
+            chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 22.67: "Screen"
+        RenderSVGText {text} at (5,75) size 23x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 23x9
+            chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 23.00: "Darken"
+        RenderSVGText {text} at (5,88) size 24x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 24x9
             chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 23.67: "Lighten"
-    RenderSVGText {text} at (3,100) size 81x17 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 81x17
-        chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 81.00: "$Revision: 1.8 $"
+    RenderSVGText {text} at (3,100) size 86x16 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 86x16
+        chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 86.00: "$Revision: 1.8 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 777x44
-          text run at (0,0) width 777: "Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically generated"
-          text run at (0,22) width 189: "path and the right, its clone."
-      RenderBlock {DIV} at (0,60) size 784x400
-        RenderSVGRoot {svg} at (26,196) size 374x164
-          RenderSVGPath {path} at (26,196) size 224x164 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]
-          RenderSVGPath {path} at (176,196) size 224x164 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 736x42
+          text run at (0,0) width 736: "Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically"
+          text run at (0,21) width 270: "generated path and the right, its clone."
+      RenderBlock {DIV} at (0,58) size 784x400
+        RenderSVGRoot {svg} at (26,194) size 374x164
+          RenderSVGPath {path} at (26,194) size 224x164 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]
+          RenderSVGPath {path} at (176,194) size 224x164 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z"]

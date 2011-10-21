@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (44,44) size 332x104
+  RenderSVGRoot {svg} at (44,44) size 344x102
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {use} at (44,44) size 132x32
       RenderSVGContainer {g} at (44,44) size 132x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (244,44) size 132x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
         RenderSVGViewportContainer {svg} at (244,44) size 132x32
           RenderSVGPath {rect} at (244,44) size 132x32 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
-    RenderSVGText {text} at (30,60) size 155x14 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 155x14
-        chunk 1 text run 1 at (30.00,70.00) startOffset 0 endOffset 35 width 154.50: "You should shapes _above_ this text"
+    RenderSVGText {text} at (30,60) size 164x13 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 164x13
+        chunk 1 text run 1 at (30.00,70.00) startOffset 0 endOffset 35 width 163.50: "You should shapes _above_ this text"
