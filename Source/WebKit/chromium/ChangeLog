@@ -1,3 +1,19 @@
+2011-10-20  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Add support for building with make
+        https://bugs.webkit.org/show_bug.cgi?id=70455
+
+        Reviewed by Adam Barth.
+
+        Depends on http://codereview.chromium.org/8352029/
+        `GYP_GENERATORS=make Tools/Scripts/update-webkit --chromium` will
+        create a toplevel Makefile.chromium.
+
+        If that file exists and is newer than Source/WebKit/chromium/WebKit.xcodeproj,
+        `Tools/Scripts/build-webkit --chromium` will build with make instead of
+        xcodebuild.
+
+        * gyp_webkit:
 2011-10-20  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route onSwapBuffersComplete from LayerRenderer to CCScheduler.

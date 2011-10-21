@@ -103,7 +103,10 @@ if __name__ == '__main__':
     args.append('--no-circular-check')
 
   # On linux, we want gyp to output a makefile (default is scons).
-  if sys.platform.startswith('linux') or 'WEBKIT_ANDROID_BUILD' in os.environ:
+  if (sys.platform.startswith('linux') or
+      'WEBKIT_ANDROID_BUILD' in os.environ or
+      (sys.platform == 'darwin' and
+          os.environ.get('GYP_GENERATORS', '').find('make') != -1)):
     args.extend(['-fmake',
                  '--suffix=.chromium',
                  '--toplevel-dir=../../..',
@@ -118,6 +121,7 @@ if __name__ == '__main__':
                '-Dmsvs_use_common_release=0',
 
                # WebKit doesn't use the chromium style checker.
+               '-Dmake_clang_dir=Source/WebKit/chromium/third_party/llvm-build/Release+Asserts',
                '-Dclang_use_chrome_plugins=0',
 
                # gyp hack: otherwise gyp assumes its in chromium's src/ dir.

@@ -35,6 +35,7 @@ use FindBin;
 use File::Basename;
 use File::Path qw(mkpath rmtree);
 use File::Spec;
+use File::stat;
 use POSIX;
 use VCSUtils;
 
@@ -89,6 +90,7 @@ my $isEfl;
 my @wxArgs;
 my $isChromium;
 my $isChromiumAndroid;
+my $isChromiumMacMake;
 my $isInspectorFrontend;
 my $isWK2;
 
@@ -169,7 +171,7 @@ sub determineBaseProductDir
         $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         undef $baseProductDir unless $baseProductDir =~ /^\//;
     } elsif (isChromium()) {
-        if (isLinux() || isChromiumAndroid()) {
+        if (isLinux() || isChromiumAndroid() || isChromiumMacMake()) {
             $baseProductDir = "$sourceDir/out";
         } elsif (isDarwin()) {
             $baseProductDir = "$sourceDir/Source/WebKit/chromium/xcodebuild";
@@ -279,7 +281,7 @@ sub determineNumberOfCPUs
             $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
         }
     } elsif (isDarwin()) {
-        $numberOfCPUs = `sysctl -n hw.ncpu`;
+        chomp($numberOfCPUs = `sysctl -n hw.ncpu`);
     }
 }
 
@@ -899,6 +901,28 @@ sub determineIsChromiumAndroid()
     return if defined($isChromiumAndroid);
     $isChromiumAndroid = checkForArgumentAndRemoveFromARGV("--chromium-android");
 }
+
+sub isChromiumMacMake()
+{
+    determineIsChromiumMacMake();
+    return $isChromiumMacMake;
+}
+
+sub determineIsChromiumMacMake()
+{
+    return if defined($isChromiumMacMake);
+
+    my $hasUpToDateMakefile = 0;
+    if (-e 'Makefile.chromium') {
+        unless (-e 'Source/WebKit/chromium/WebKit.xcodeproj') {
+            $hasUpToDateMakefile = 1;
+        } else {
+            $hasUpToDateMakefile = stat('Makefile.chromium')->mtime > stat('Source/WebKit/chromium/WebKit.xcodeproj')->mtime;
+        }
+    }
+    $isChromiumMacMake = isDarwin() && $hasUpToDateMakefile;
+}
+
 
 sub isWinCairo()
 {
@@ -1951,13 +1975,13 @@ sub buildChromium($@)
     }
 
     my $result = 1;
-    if (isDarwin() && !isChromiumAndroid()) {
+    if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake()) {
         # Mac build - builds the root xcode project.
         $result = buildXCodeProject("Source/WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/WebKit.sln", $clean);
-    } elsif (isLinux() || isChromiumAndroid()) {
+    } elsif (isLinux() || isChromiumAndroid() || isChromiumMacMake) {
         # Linux build - build using make.
         $result = buildChromiumMakefile("all", $clean, @options);
     } else {
