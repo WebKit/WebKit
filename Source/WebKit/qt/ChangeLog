@@ -1,3 +1,15 @@
+2011-10-21  Luiz Agostini  <luiz.agostini@palm.com>
+
+        [Qt] Wrong type conversion in InspectorServerQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=70639
+
+        Reviewed by Noam Rosenthal.
+
+        Wrong type conversion causes WebSocket handshake failures for the remote inspector.
+
+        * WebCoreSupport/InspectorServerQt.cpp:
+        (WebCore::parseWebSocketChallengeNumber):
+
 2011-10-21  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt] WebKit build does not respect QMAKE_MAC_SDK variable.

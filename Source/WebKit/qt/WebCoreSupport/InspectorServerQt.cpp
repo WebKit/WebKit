@@ -78,7 +78,7 @@ static quint32 parseWebSocketChallengeNumber(QString field)
         else if ((c >= QLatin1Char('0')) && (c <= QLatin1Char('9')))
             nString.append(c);
     }
-    quint32 num = nString.toLong();
+    quint32 num = nString.toULong();
     quint32 result = (numSpaces ? (num / numSpaces) : num);
     return result;
 }
