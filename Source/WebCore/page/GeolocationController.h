@@ -49,9 +49,6 @@ public:
     void addObserver(Geolocation*, bool enableHighAccuracy);
     void removeObserver(Geolocation*);
 
-    void suspend();
-    void resume();
-
     void requestPermission(Geolocation*);
     void cancelPermissionRequest(Geolocation*);
 

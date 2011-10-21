@@ -1,3 +1,27 @@
+2011-10-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Still lots of crashes in the chromium debug bots.
+
+        Unreviewed, rolling out r97982.
+        http://trac.webkit.org/changeset/97982
+        https://bugs.webkit.org/show_bug.cgi?id=70328
+
+        crashing in asserts in chromium debug builds
+
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::timerFired):
+        (WebCore::DeviceMotionController::addListener):
+        (WebCore::DeviceMotionController::removeListener):
+        (WebCore::DeviceMotionController::removeAllListeners):
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        * dom/DeviceOrientationController.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * page/GeolocationController.cpp:
+        * page/GeolocationController.h:
+
 2011-10-20  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the GTK build.

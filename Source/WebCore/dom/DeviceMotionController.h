@@ -44,9 +44,6 @@ public:
     void removeListener(DOMWindow*);
     void removeAllListeners(DOMWindow*);
 
-    void suspend();
-    void resume();
-
     void didChangeDeviceMotion(DeviceMotionData*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
