@@ -1,3 +1,15 @@
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening: rebaseline 2 tests (small color difference).
+
+        * platform/chromium-linux-x86/fast/multicol: Added.
+        * platform/chromium-linux-x86/fast/multicol/vertical-lr: Added.
+        * platform/chromium-linux-x86/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Added.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl: Added.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+
 2011-10-21  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: second chunk of baselines for Chromium-Skia
