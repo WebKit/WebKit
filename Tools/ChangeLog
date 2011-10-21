@@ -1,3 +1,16 @@
+2011-10-20  Eric Seidel  <eric@webkit.org>
+
+        NRWT is asserting on DRT due to lack of newline when processing line from DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=70585
+
+        Reviewed by Adam Barth.
+
+        This really should be an assert, as this inidicates a programming error in either DRT or NRWT.
+        However since DRT was functioning fine before in Qt, we'll make this an error log for now
+        and once we find the root cause flip this back to an assert.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-10-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r98064.

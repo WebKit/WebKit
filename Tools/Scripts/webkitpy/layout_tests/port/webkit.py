@@ -595,7 +595,8 @@ class WebKitDriver(Driver):
                 err_line, self.err_seen_eof = self._strip_eof(err_line)
 
             if out_line:
-                assert out_line[-1] == "\n", "Missing newline"
+                if out_line[-1] != "\n":
+                    _log.error("Last character read from DRT stdout line was not a newline!  This indicates either a NRWT or DRT bug.")
                 content_length_before_header_check = block._content_length
                 self._process_stdout_line(block, out_line)
                 # FIXME: Unlike HTTP, DRT dumps the content right after printing a Content-Length header.
