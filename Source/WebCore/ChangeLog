@@ -1,3 +1,10 @@
+2011-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers):
+
 2011-10-21  Devdatta Deshpande  <pwjd73@motorola.com>
 
         [Gtk] mousemove event always has metaKey == true
