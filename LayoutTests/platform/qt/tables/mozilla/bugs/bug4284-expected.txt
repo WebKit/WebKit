@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 233x22
-          text run at (0,0) width 233: "this table should be center aligned "
-        RenderBR {BR} at (233,16) size 0x0
-      RenderTable {TABLE} at (376,22) size 31x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 29x30
-          RenderTableRow {TR} at (0,2) size 29x26
-            RenderTableCell {TD} at (2,2) size 25x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-      RenderBlock (anonymous) at (0,54) size 784x22
-        RenderText {#text} at (0,0) size 491x22
-          text run at (0,0) width 491: "this div should be center aligned with an image and a table centered in it "
-        RenderBR {BR} at (491,16) size 0x0
-      RenderBlock {DIV} at (0,76) size 784x82
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 247x21
+          text run at (0,0) width 247: "this table should be center aligned "
+        RenderBR {BR} at (247,16) size 0x0
+      RenderTable {TABLE} at (376,21) size 32x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 30x29
+          RenderTableRow {TR} at (0,2) size 30x25
+            RenderTableCell {TD} at (2,2) size 26x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+      RenderBlock (anonymous) at (0,52) size 784x21
+        RenderText {#text} at (0,0) size 514x21
+          text run at (0,0) width 514: "this div should be center aligned with an image and a table centered in it "
+        RenderBR {BR} at (514,16) size 0x0
+      RenderBlock {DIV} at (0,73) size 784x81
         RenderBlock (anonymous) at (0,0) size 784x50
           RenderImage {IMG} at (367,0) size 50x50
           RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (92,50) size 600x32 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 598x30
-            RenderTableRow {TR} at (0,2) size 598x26
-              RenderTableCell {TD} at (2,2) size 594x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 21x22
-                  text run at (2,2) width 21: "foo"
+        RenderTable {TABLE} at (92,50) size 600x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 598x29
+            RenderTableRow {TR} at (0,2) size 598x25
+              RenderTableCell {TD} at (2,2) size 594x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 22x21
+                  text run at (2,2) width 22: "foo"

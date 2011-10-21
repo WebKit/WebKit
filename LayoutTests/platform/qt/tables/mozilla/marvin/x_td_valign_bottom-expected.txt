@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x278
-  RenderBlock {html} at (0,0) size 800x278
-    RenderBody {body} at (8,16) size 784x254
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 173x22
-          text run at (0,0) width 173: "TD VALIGN=BOTTOM"
-      RenderTable {table} at (0,38) size 784x216 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 782x214
-          RenderTableRow {tr} at (0,2) size 782x210
-            RenderTableCell {td} at (2,2) size 204x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x276
+  RenderBlock {html} at (0,0) size 800x276
+    RenderBody {body} at (8,16) size 784x252
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 162x21
+          text run at (0,0) width 162: "TD VALIGN=BOTTOM"
+      RenderTable {table} at (0,37) size 784x215 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 782x213
+          RenderTableRow {tr} at (0,2) size 782x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,142) size 572x70 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 559x66
-                text run at (2,2) width 292: "The bottom of this text should be vertically "
-                text run at (294,2) width 267: "aligned to the bottom of the image. x-fill"
-                text run at (2,24) width 102: "x-fill x-fill x-fill "
-                text run at (104,24) width 306: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
-                text run at (410,24) width 149: "x-fill x-fill x-fill x-fill x-"
-                text run at (2,46) width 157: "fill x-fill x-fill x-fill x-fill "
-                text run at (159,46) width 200: "x-fill x-fill x-fill x-fill x-fill x-fill"
+            RenderTableCell {td} at (208,144) size 572x67 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 561x63
+                text run at (2,2) width 300: "The bottom of this text should be vertically "
+                text run at (302,2) width 260: "aligned to the bottom of the image. x-"
+                text run at (2,23) width 119: "fill x-fill x-fill x-fill "
+                text run at (121,23) width 297: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
+                text run at (418,23) width 145: "x-fill x-fill x-fill x-fill x-"
+                text run at (2,44) width 152: "fill x-fill x-fill x-fill x-fill "
+                text run at (154,44) width 194: "x-fill x-fill x-fill x-fill x-fill x-fill"

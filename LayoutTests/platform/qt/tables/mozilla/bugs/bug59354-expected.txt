@@ -3,58 +3,58 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 489x165 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 487x163
-          RenderTableRow {TR} at (0,0) size 487x163
-            RenderTableCell {TD} at (0,0) size 487x163 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 485x161 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 483x159
-                  RenderTableRow {TR} at (0,1) size 483x32
-                    RenderTableCell {TD} at (1,1) size 147x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (5,5) size 137x22
-                        text run at (5,5) width 137: "General Preferences"
-                    RenderTableCell {TD} at (149,1) size 153x32 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderInline {A} at (0,0) size 143x22 [color=#0000EE]
-                        RenderText {#text} at (5,5) size 143x22
-                          text run at (5,5) width 143: "Groups / Permissions"
-                    RenderTableCell {TD} at (303,1) size 76x32 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                      RenderInline {A} at (0,0) size 66x22 [color=#0000EE]
-                        RenderText {#text} at (5,5) size 66x22
-                          text run at (5,5) width 66: "Password"
-                    RenderTableCell {TD} at (380,1) size 50x32 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                      RenderInline {A} at (0,0) size 40x22 [color=#0000EE]
-                        RenderText {#text} at (5,5) size 40x22
-                          text run at (5,5) width 40: "Email"
-                    RenderTableCell {TD} at (431,1) size 51x32 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                      RenderText {#text} at (5,5) size 41x22
-                        text run at (5,5) width 41: "Views"
-                  RenderTableRow {TR} at (0,34) size 483x124
-                    RenderTableCell {TD} at (1,34) size 481x124 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
-                      RenderBlock (anonymous) at (5,5) size 471x22
-                        RenderBR {BR} at (235,0) size 1x22
-                      RenderTable {TABLE} at (83,27) size 314x92
-                        RenderTableSection {TBODY} at (0,0) size 314x92
-                          RenderTableRow {TR} at (0,2) size 314x88
-                            RenderTableCell {TD} at (2,2) size 310x88 [r=0 c=0 rs=1 cs=1]
-                              RenderBlock {FORM} at (1,1) size 308x70
-                                RenderTable {TABLE} at (0,0) size 308x70 [border: (1px outset #808080)]
-                                  RenderTableSection {TBODY} at (1,1) size 306x68
-                                    RenderTableRow {TR} at (0,0) size 306x68
-                                      RenderTableCell {TD} at (0,0) size 306x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                                        RenderBlock (anonymous) at (1,1) size 304x22
-                                          RenderText {#text} at (94,0) size 116x22
-                                            text run at (94,0) width 116: "User Preferences"
-                                        RenderTable {TABLE} at (1,23) size 304x44 [border: (1px outset #808080)]
-                                          RenderTableSection {TBODY} at (1,1) size 302x42
-                                            RenderTableRow {TR} at (0,1) size 302x40
-                                              RenderTableCell {TH} at (1,5) size 119x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                                                RenderInline {NOBR} at (0,0) size 109x22
-                                                  RenderText {#text} at (5,5) size 109x22
-                                                    text run at (5,5) width 109: "Email Address :"
-                                              RenderTableCell {TD} at (121,1) size 180x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                                                RenderTextControl {INPUT} at (7,7) size 166x26
+      RenderTable {TABLE} at (0,0) size 517x161 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 515x159
+          RenderTableRow {TR} at (0,0) size 515x159
+            RenderTableCell {TD} at (0,0) size 515x159 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 513x157 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 511x155
+                  RenderTableRow {TR} at (0,1) size 511x31
+                    RenderTableCell {TD} at (1,1) size 157x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (5,5) size 147x21
+                        text run at (5,5) width 147: "General Preferences"
+                    RenderTableCell {TD} at (159,1) size 162x31 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderInline {A} at (0,0) size 152x21 [color=#0000EE]
+                        RenderText {#text} at (5,5) size 152x21
+                          text run at (5,5) width 152: "Groups / Permissions"
+                    RenderTableCell {TD} at (322,1) size 81x31 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                      RenderInline {A} at (0,0) size 71x21 [color=#0000EE]
+                        RenderText {#text} at (5,5) size 71x21
+                          text run at (5,5) width 71: "Password"
+                    RenderTableCell {TD} at (404,1) size 51x31 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                      RenderInline {A} at (0,0) size 41x21 [color=#0000EE]
+                        RenderText {#text} at (5,5) size 41x21
+                          text run at (5,5) width 41: "Email"
+                    RenderTableCell {TD} at (456,1) size 54x31 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                      RenderText {#text} at (5,5) size 44x21
+                        text run at (5,5) width 44: "Views"
+                  RenderTableRow {TR} at (0,33) size 511x121
+                    RenderTableCell {TD} at (1,33) size 509x121 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
+                      RenderBlock (anonymous) at (5,5) size 499x21
+                        RenderBR {BR} at (249,0) size 1x21
+                      RenderTable {TABLE} at (82,26) size 345x90
+                        RenderTableSection {TBODY} at (0,0) size 345x90
+                          RenderTableRow {TR} at (0,2) size 345x86
+                            RenderTableCell {TD} at (2,2) size 341x86 [r=0 c=0 rs=1 cs=1]
+                              RenderBlock {FORM} at (1,1) size 339x68
+                                RenderTable {TABLE} at (0,0) size 339x68 [border: (1px outset #808080)]
+                                  RenderTableSection {TBODY} at (1,1) size 337x66
+                                    RenderTableRow {TR} at (0,0) size 337x66
+                                      RenderTableCell {TD} at (0,0) size 337x66 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                                        RenderBlock (anonymous) at (1,1) size 335x21
+                                          RenderText {#text} at (105,0) size 125x21
+                                            text run at (105,0) width 125: "User Preferences"
+                                        RenderTable {TABLE} at (1,22) size 335x43 [border: (1px outset #808080)]
+                                          RenderTableSection {TBODY} at (1,1) size 333x41
+                                            RenderTableRow {TR} at (0,1) size 333x39
+                                              RenderTableCell {TH} at (1,5) size 130x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                                                RenderInline {NOBR} at (0,0) size 120x21
+                                                  RenderText {#text} at (5,5) size 120x21
+                                                    text run at (5,5) width 120: "Email Address :"
+                                              RenderTableCell {TD} at (132,1) size 200x39 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                                RenderTextControl {INPUT} at (7,7) size 186x25
                                                 RenderText {#text} at (0,0) size 0x0
-layer at (231,110) size 162x22 scrollWidth 251
-  RenderBlock {DIV} at (2,2) size 162x22
-    RenderText {#text} at (1,0) size 249x22
-      text run at (1,0) width 249: "simon.king@pipinghotnetworks.com"
+layer at (241,107) size 182x21 scrollWidth 259
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 257x21
+      text run at (1,0) width 257: "simon.king@pipinghotnetworks.com"

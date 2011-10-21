@@ -3,9 +3,9 @@ layer at (0,0) size 784x1150
 layer at (0,0) size 784x1150
   RenderBlock {HTML} at (0,0) size 784x1150
     RenderBody {BODY} at (0,150) size 784x1000
-      RenderBlock {P} at (0,250) size 784x22
-        RenderText {#text} at (0,0) size 579x22
-          text run at (0,0) width 579: "Tests fixed position elements combined with transforms. You should see no red above."
+      RenderBlock {P} at (0,250) size 784x21
+        RenderText {#text} at (0,0) size 611x21
+          text run at (0,0) width 611: "Tests fixed position elements combined with transforms. You should see no red above."
 layer at (50,200) size 100x100
   RenderBlock (positioned) {DIV} at (50,200) size 100x100 [bgcolor=#FF0000]
 layer at (250,200) size 100x100

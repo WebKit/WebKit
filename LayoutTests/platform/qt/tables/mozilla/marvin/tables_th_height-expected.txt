@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 497x22
-          text run at (0,0) width 497: "The TH tag uses the HEIGTH attribute. The TH has been set to 80 pixels."
-        RenderBR {BR} at (497,16) size 0x0
-      RenderTable {TABLE} at (0,22) size 304x114 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 302x112
-          RenderTableRow {TR} at (0,2) size 302x80
-            RenderTableCell {TH} at (2,29) size 298x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (65,2) size 168x22
-                text run at (65,2) width 168: "Netscape Communicator"
-          RenderTableRow {TR} at (0,84) size 302x26
-            RenderTableCell {TD} at (2,84) size 298x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 294x22
-                text run at (2,2) width 294: "Available on the Mac/PC/UNIX platforms !"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 516x21
+          text run at (0,0) width 516: "The TH tag uses the HEIGTH attribute. The TH has been set to 80 pixels."
+        RenderBR {BR} at (516,16) size 0x0
+      RenderTable {TABLE} at (0,21) size 306x113 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 304x111
+          RenderTableRow {TR} at (0,2) size 304x80
+            RenderTableCell {TH} at (2,29) size 300x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (55,2) size 190x21
+                text run at (55,2) width 190: "Netscape Communicator"
+          RenderTableRow {TR} at (0,84) size 304x25
+            RenderTableCell {TD} at (2,84) size 300x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 296x21
+                text run at (2,2) width 296: "Available on the Mac/PC/UNIX platforms !"

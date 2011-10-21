@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,114) size 0x0 [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (0,62) size 498x105 [r=0 c=1 rs=1 cs=1]
                       RenderBlock {H1} at (0,0) size 498x84
-                        RenderText {#text} at (0,0) size 479x84
-                          text run at (0,0) width 479: "Detonator Comparison In 3DMark"
-                          text run at (0,42) width 64: "2001"
+                        RenderText {#text} at (0,0) size 388x84
+                          text run at (0,0) width 388: "Detonator Comparison In"
+                          text run at (0,42) width 197: "3DMark 2001"
                     RenderTableCell {TD} at (498,114) size 0x0 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (639,114) size 5x2 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
             RenderTableCell {TD} at (644,57) size 134x117 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 128x111
                           RenderTableRow {TR} at (0,0) size 128x111
                             RenderTableCell {TD} at (0,0) size 128x111 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 112x22 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 112x21 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 112x111
           RenderTableRow {TR} at (0,231) size 778x184
             RenderTableCell {TD} at (0,322) size 134x2 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]

@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 600x54
-        RenderTableSection {TBODY} at (0,0) size 600x54
-          RenderTableRow {TR} at (0,0) size 600x22
-            RenderTableCell {TD} at (0,0) size 150x22 [bgcolor=#00EEEE] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 102x22
-                text run at (0,0) width 102: "150 pixels wide"
+      RenderTable {TABLE} at (0,0) size 600x52
+        RenderTableSection {TBODY} at (0,0) size 600x52
+          RenderTableRow {TR} at (0,0) size 600x21
+            RenderTableCell {TD} at (0,0) size 150x21 [bgcolor=#00EEEE] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 111x21
+                text run at (0,0) width 111: "150 pixels wide"
             RenderTableCell {TD} at (150,10) size 1x1 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x1
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (151,0) size 449x22 [bgcolor=#EEEE00] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 102x22
-                text run at (0,0) width 102: "449 pixels wide"
-          RenderTableRow {TR} at (0,22) size 600x32
-            RenderTableCell {TD} at (0,22) size 600x32 [bgcolor=#00FF00] [r=1 c=0 rs=1 cs=3]
-              RenderText {#text} at (0,0) size 186x22
-                text run at (0,0) width 186: "Bottom cell, 600 pixels wide"
-              RenderImage {IMG} at (0,22) size 600x10
+            RenderTableCell {TD} at (151,0) size 449x21 [bgcolor=#EEEE00] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 111x21
+                text run at (0,0) width 111: "449 pixels wide"
+          RenderTableRow {TR} at (0,21) size 600x31
+            RenderTableCell {TD} at (0,21) size 600x31 [bgcolor=#00FF00] [r=1 c=0 rs=1 cs=3]
+              RenderText {#text} at (0,0) size 198x21
+                text run at (0,0) width 198: "Bottom cell, 600 pixels wide"
+              RenderImage {IMG} at (0,21) size 600x10
               RenderText {#text} at (0,0) size 0x0

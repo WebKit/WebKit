@@ -6,25 +6,25 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x584 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x582
           RenderTableRow {TR} at (0,2) size 782x578
-            RenderTableCell {TD} at (2,267) size 365x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 88x22
+            RenderTableCell {TD} at (2,268) size 364x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 88x21
                 text run at (2,2) width 88: "Outer Table:"
               RenderBR {BR} at (90,18) size 0x0
-              RenderText {#text} at (2,24) size 360x22
-                text run at (2,24) width 360: "<table border=\"1\" width=\"100%\" height=\"100%\">"
-            RenderTableCell {TD} at (369,2) size 411x578 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 407x574 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 405x572
-                  RenderTableRow {TR} at (0,2) size 405x568
-                    RenderTableCell {TD} at (2,251) size 366x70 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 94x22
-                        text run at (2,2) width 94: "Nested Table:"
-                      RenderBR {BR} at (96,18) size 0x0
-                      RenderText {#text} at (2,24) size 360x22
-                        text run at (2,24) width 360: "<table border=\"1\" width=\"100%\" height=\"100%\">"
-                      RenderBR {BR} at (362,40) size 0x0
-                      RenderText {#text} at (2,46) size 145x22
-                        text run at (2,46) width 145: "<td height=\"100%\">"
-                    RenderTableCell {TD} at (370,273) size 33x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 28x22
-                        text run at (2,2) width 28: "asdf"
+              RenderText {#text} at (2,23) size 347x21
+                text run at (2,23) width 347: "<table border=\"1\" width=\"100%\" height=\"100%\">"
+            RenderTableCell {TD} at (368,2) size 412x578 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 408x574 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 406x572
+                  RenderTableRow {TR} at (0,2) size 406x568
+                    RenderTableCell {TD} at (2,252) size 364x67 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 100x21
+                        text run at (2,2) width 100: "Nested Table:"
+                      RenderBR {BR} at (102,18) size 0x0
+                      RenderText {#text} at (2,23) size 347x21
+                        text run at (2,23) width 347: "<table border=\"1\" width=\"100%\" height=\"100%\">"
+                      RenderBR {BR} at (349,39) size 0x0
+                      RenderText {#text} at (2,44) size 141x21
+                        text run at (2,44) width 141: "<td height=\"100%\">"
+                    RenderTableCell {TD} at (368,273) size 36x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 30x21
+                        text run at (2,2) width 30: "asdf"

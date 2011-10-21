@@ -3,36 +3,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderTable {TABLE} at (0,0) size 784x88 [bgcolor=#CCCCCC] [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 782x86
-          RenderTableRow {TR} at (0,2) size 782x26
-            RenderTableCell {TD} at (2,2) size 143x26 [border: (1px solid #FF0000)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+      RenderTable {TABLE} at (0,0) size 784x85 [bgcolor=#CCCCCC] [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 782x83
+          RenderTableRow {TR} at (0,2) size 782x25
+            RenderTableCell {TD} at (2,2) size 140x25 [border: (1px solid #FF0000)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (147,2) size 333x26 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=6]
-              RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (144,2) size 337x25 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=6]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (482,2) size 152x26 [border: (1px solid #FF0000)] [r=0 c=7 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (483,2) size 154x25 [border: (1px solid #FF0000)] [r=0 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (636,2) size 144x26 [border: (1px solid #FF0000)] [r=0 c=8 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (639,2) size 141x25 [border: (1px solid #FF0000)] [r=0 c=8 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-          RenderTableRow {TR} at (0,30) size 782x26
-            RenderTableCell {TD} at (147,30) size 177x26 [border: (1px solid #FF0000)] [r=1 c=1 rs=1 cs=3]
-              RenderText {#text} at (2,2) size 106x22
-                text run at (2,2) width 106: "Find a Business"
-            RenderTableCell {TD} at (326,30) size 154x26 [border: (1px solid #FF0000)] [r=1 c=4 rs=1 cs=3]
-              RenderText {#text} at (2,2) size 83x22
-                text run at (2,2) width 83: "What's New"
-            RenderTableCell {TD} at (482,30) size 152x26 [border: (1px solid #FF0000)] [r=1 c=7 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 81x22
-                text run at (2,2) width 81: "Search Tips"
-          RenderTableRow {TR} at (0,58) size 782x26
-            RenderTableCell {TD} at (2,58) size 778x26 [border: (1px solid #FF0000)] [r=2 c=0 rs=1 cs=9]
-              RenderText {#text} at (2,2) size 4x22
+          RenderTableRow {TR} at (0,29) size 782x25
+            RenderTableCell {TD} at (144,29) size 182x25 [border: (1px solid #FF0000)] [r=1 c=1 rs=1 cs=3]
+              RenderText {#text} at (2,2) size 115x21
+                text run at (2,2) width 115: "Find a Business"
+            RenderTableCell {TD} at (328,29) size 153x25 [border: (1px solid #FF0000)] [r=1 c=4 rs=1 cs=3]
+              RenderText {#text} at (2,2) size 85x21
+                text run at (2,2) width 85: "What's New"
+            RenderTableCell {TD} at (483,29) size 154x25 [border: (1px solid #FF0000)] [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 86x21
+                text run at (2,2) width 86: "Search Tips"
+          RenderTableRow {TR} at (0,56) size 782x25
+            RenderTableCell {TD} at (2,56) size 778x25 [border: (1px solid #FF0000)] [r=2 c=0 rs=1 cs=9]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-      RenderBlock {P} at (0,104) size 784x44
-        RenderText {#text} at (0,0) size 780x44
-          text run at (0,0) width 780: "bug #17826 : Drag the right edge of the window and either widen or narrow the window; the column widths should"
-          text run at (0,22) width 418: "oscillate as you resize the window (tested 1999122008 WinNT)"
+      RenderBlock {P} at (0,101) size 784x42
+        RenderText {#text} at (0,0) size 749x42
+          text run at (0,0) width 749: "bug #17826 : Drag the right edge of the window and either widen or narrow the window; the column widths"
+          text run at (0,21) width 499: "should oscillate as you resize the window (tested 1999122008 WinNT)"

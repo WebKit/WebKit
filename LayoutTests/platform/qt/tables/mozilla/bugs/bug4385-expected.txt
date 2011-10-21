@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x60 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x58
-          RenderTableRow {TR} at (0,2) size 782x26
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "A"
-          RenderTableRow {TR} at (0,30) size 782x26
-            RenderTableCell {TD} at (2,41) size 15x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (19,30) size 761x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 211x22
-                text run at (2,2) width 211: "This text is invariably wrapped"
+      RenderTable {TABLE} at (0,0) size 784x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x56
+          RenderTableRow {TR} at (0,2) size 782x25
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "A"
+          RenderTableRow {TR} at (0,29) size 782x25
+            RenderTableCell {TD} at (2,39) size 14x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (18,29) size 762x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 215x21
+                text run at (2,2) width 215: "This text is invariably wrapped"

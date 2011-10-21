@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x54 [bgcolor=#00FF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x52
-          RenderTableRow {TR} at (0,2) size 782x48
-            RenderTableCell {TD} at (2,2) size 388x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 348x44
-                text run at (2,2) width 348: "Here is a table with a lime background using the ID"
-                text run at (2,24) width 63: "attribute."
-            RenderTableCell {TD} at (392,2) size 388x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 348x44
-                text run at (2,2) width 348: "Here is a table with a lime background using the ID"
-                text run at (2,24) width 63: "attribute."
-      RenderBlock (anonymous) at (0,54) size 784x44
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-      RenderTable {TABLE} at (0,98) size 576x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 574x30
-          RenderTableRow {TR} at (0,2) size 574x26
-            RenderTableCell {TD} at (2,2) size 284x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 280x22
-                text run at (2,2) width 280: "Here is a table with no ID attribute value."
-            RenderTableCell {TD} at (288,2) size 284x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 280x22
-                text run at (2,2) width 280: "Here is a table with no ID attribute value."
+      RenderTable {TABLE} at (0,0) size 784x52 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x50
+          RenderTableRow {TR} at (0,2) size 782x46
+            RenderTableCell {TD} at (2,2) size 388x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 360x42
+                text run at (2,2) width 360: "Here is a table with a lime background using the ID"
+                text run at (2,23) width 61: "attribute."
+            RenderTableCell {TD} at (392,2) size 388x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 360x42
+                text run at (2,2) width 360: "Here is a table with a lime background using the ID"
+                text run at (2,23) width 61: "attribute."
+      RenderBlock (anonymous) at (0,52) size 784x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+      RenderTable {TABLE} at (0,94) size 588x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 586x29
+          RenderTableRow {TR} at (0,2) size 586x25
+            RenderTableCell {TD} at (2,2) size 290x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 286x21
+                text run at (2,2) width 286: "Here is a table with no ID attribute value."
+            RenderTableCell {TD} at (294,2) size 290x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 286x21
+                text run at (2,2) width 286: "Here is a table with no ID attribute value."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x278
-  RenderBlock {HTML} at (0,0) size 800x278
-    RenderBody {BODY} at (8,8) size 784x262
-      RenderTable {TABLE} at (0,0) size 705x262 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 703x260
-          RenderTableRow {TR} at (0,2) size 703x256
-            RenderTableCell {TD} at (2,2) size 699x256 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 117x42 [color=#0000EE]
-                RenderText {#text} at (2,2) size 117x42
-                  text run at (2,2) width 117: "Xandros"
-              RenderText {#text} at (119,2) size 652x252
-                text run at (119,2) width 8: " "
-                text run at (127,2) width 521: "in the news. text text text text text text"
-                text run at (2,44) width 360: "text text text text text text "
-                text run at (362,44) width 292: "text text text text text"
-                text run at (2,86) width 600: "text text text text text text text text text text "
-                text run at (602,86) width 52: "text"
-                text run at (2,128) width 652: "text text text text text text text text text text text"
-                text run at (2,170) width 180: "text text text "
-                text run at (182,170) width 472: "text text text text text text text text"
-                text run at (2,212) width 360: "text text text text text text."
+layer at (0,0) size 800x272
+  RenderBlock {HTML} at (0,0) size 800x272
+    RenderBody {BODY} at (8,8) size 784x256
+      RenderTable {TABLE} at (0,0) size 705x256 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 703x254
+          RenderTableRow {TR} at (0,2) size 703x250
+            RenderTableCell {TD} at (2,2) size 699x250 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 120x41 [color=#0000EE]
+                RenderText {#text} at (2,2) size 120x41
+                  text run at (2,2) width 120: "Xandros"
+              RenderText {#text} at (122,2) size 667x246
+                text run at (122,2) width 9: " "
+                text run at (131,2) width 538: "in the news. text text text text text text"
+                text run at (2,43) width 366: "text text text text text text "
+                text run at (368,43) width 296: "text text text text text"
+                text run at (2,84) width 610: "text text text text text text text text text text "
+                text run at (612,84) width 52: "text"
+                text run at (2,125) width 662: "text text text text text text text text text text text"
+                text run at (2,166) width 183: "text text text "
+                text run at (185,166) width 479: "text text text text text text text text"
+                text run at (2,207) width 366: "text text text text text text."

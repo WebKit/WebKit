@@ -6,40 +6,40 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x584 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x582
           RenderTableRow {TR} at (0,2) size 782x50
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {CENTER} at (2,2) size 774x22
-                RenderText {#text} at (364,0) size 46x22
-                  text run at (364,0) width 46: "abcdef"
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (2,2) size 774x21
+                RenderText {#text} at (363,0) size 48x21
+                  text run at (363,0) width 48: "abcdef"
           RenderTableRow {TR} at (0,54) size 782x526
             RenderTableCell {TD} at (2,54) size 778x526 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
 layer at (13,65) size 756x522 clip at (16,68) size 750x500 scrollWidth 900
   RenderBlock {DIV} at (2,2) size 756x522 [border: (3px solid #000000)]
-    RenderBlock {CENTER} at (3,3) size 750x182
-      RenderTable {TABLE} at (0,0) size 900x182
-        RenderTableSection {TBODY} at (0,0) size 900x182
-          RenderTableRow {TR} at (0,2) size 900x178
-            RenderTableCell {TD} at (2,2) size 896x178 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x22
-                text run at (1,1) width 43: "Line 1"
-              RenderBR {BR} at (44,17) size 0x0
-              RenderText {#text} at (1,23) size 43x22
-                text run at (1,23) width 43: "Line 2"
-              RenderBR {BR} at (44,39) size 0x0
-              RenderText {#text} at (1,45) size 43x22
-                text run at (1,45) width 43: "Line 3"
-              RenderBR {BR} at (44,61) size 0x0
-              RenderText {#text} at (1,67) size 43x22
-                text run at (1,67) width 43: "Line 4"
-              RenderBR {BR} at (44,83) size 0x0
-              RenderText {#text} at (1,89) size 43x22
-                text run at (1,89) width 43: "Line 5"
-              RenderBR {BR} at (44,105) size 0x0
-              RenderText {#text} at (1,111) size 43x22
-                text run at (1,111) width 43: "Line 6"
-              RenderBR {BR} at (44,127) size 0x0
-              RenderText {#text} at (1,133) size 43x22
-                text run at (1,133) width 43: "Line 7"
-              RenderBR {BR} at (44,149) size 0x0
-              RenderText {#text} at (1,155) size 43x22
-                text run at (1,155) width 43: "Line 8"
-              RenderBR {BR} at (44,171) size 0x0
+    RenderBlock {CENTER} at (3,3) size 750x174
+      RenderTable {TABLE} at (0,0) size 900x174
+        RenderTableSection {TBODY} at (0,0) size 900x174
+          RenderTableRow {TR} at (0,2) size 900x170
+            RenderTableCell {TD} at (2,2) size 896x170 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 44x21
+                text run at (1,1) width 44: "Line 1"
+              RenderBR {BR} at (45,17) size 0x0
+              RenderText {#text} at (1,22) size 44x21
+                text run at (1,22) width 44: "Line 2"
+              RenderBR {BR} at (45,38) size 0x0
+              RenderText {#text} at (1,43) size 44x21
+                text run at (1,43) width 44: "Line 3"
+              RenderBR {BR} at (45,59) size 0x0
+              RenderText {#text} at (1,64) size 44x21
+                text run at (1,64) width 44: "Line 4"
+              RenderBR {BR} at (45,80) size 0x0
+              RenderText {#text} at (1,85) size 44x21
+                text run at (1,85) width 44: "Line 5"
+              RenderBR {BR} at (45,101) size 0x0
+              RenderText {#text} at (1,106) size 44x21
+                text run at (1,106) width 44: "Line 6"
+              RenderBR {BR} at (45,122) size 0x0
+              RenderText {#text} at (1,127) size 44x21
+                text run at (1,127) width 44: "Line 7"
+              RenderBR {BR} at (45,143) size 0x0
+              RenderText {#text} at (1,148) size 44x21
+                text run at (1,148) width 44: "Line 8"
+              RenderBR {BR} at (45,164) size 0x0

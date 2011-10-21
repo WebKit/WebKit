@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x92
-  RenderBlock {HTML} at (0,0) size 800x92
-    RenderBody {BODY} at (8,8) size 784x76
-      RenderTable {TABLE} at (0,0) size 784x76
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,8) size 784x74
+      RenderTable {TABLE} at (0,0) size 784x74
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 784x76
-          RenderTableRow {TR} at (0,0) size 784x76
-            RenderTableCell {TD} at (0,38) size 26x0 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (26,0) size 758x76 [r=0 c=1 rs=1 cs=2]
-              RenderBlock {P} at (0,16) size 758x44
-                RenderText {#text} at (0,0) size 720x44
-                  text run at (0,0) width 720: "Nach der Pruefung der Daten, (Normalerweise benoetigen wir f\x{FC}r die Pruefung nur wenige Minuten, aber"
-                  text run at (0,22) width 507: "wenn einmal besonders viel los ist, kann es auch ein wenig laenger dauern.)"
+        RenderTableSection {TBODY} at (0,0) size 784x74
+          RenderTableRow {TR} at (0,0) size 784x74
+            RenderTableCell {TD} at (0,37) size 26x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (26,0) size 758x74 [r=0 c=1 rs=1 cs=2]
+              RenderBlock {P} at (0,16) size 758x42
+                RenderText {#text} at (0,0) size 739x42
+                  text run at (0,0) width 739: "Nach der Pruefung der Daten, (Normalerweise benoetigen wir f\x{FC}r die Pruefung nur wenige Minuten, aber"
+                  text run at (0,21) width 541: "wenn einmal besonders viel los ist, kann es auch ein wenig laenger dauern.)"

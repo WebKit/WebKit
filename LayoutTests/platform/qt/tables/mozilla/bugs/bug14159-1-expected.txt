@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x70
-        RenderTableSection {TBODY} at (0,0) size 784x70
+      RenderTable {TABLE} at (0,0) size 784x68
+        RenderTableSection {TBODY} at (0,0) size 784x68
           RenderTableRow {TR} at (0,2) size 784x2
             RenderTableCell {TD} at (2,2) size 780x2 [r=0 c=0 rs=1 cs=1]
-          RenderTableRow {TR} at (0,6) size 784x62
-            RenderTableCell {TD} at (2,6) size 780x62 [r=1 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 778x44
-                RenderText {#text} at (0,0) size 746x44
-                  text run at (0,0) width 746: "BlaBlaBla Bla BlaBla BlaBlaBlaBla Bla Bla Bla BlaBlaBla BlaBla Bla BlaBla BlaBlaBlaBla BlaBla Bla BlaBla"
-                  text run at (0,22) width 73: "BlaBla Bla"
-              RenderBlock {P} at (1,61) size 778x0
-      RenderBlock (anonymous) at (0,70) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,92) size 784x70
-        RenderTableSection {TBODY} at (0,0) size 784x70
-          RenderTableRow {TR} at (0,2) size 784x62
-            RenderTableCell {TD} at (2,2) size 780x62 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 778x44
-                RenderText {#text} at (0,0) size 746x44
-                  text run at (0,0) width 746: "BlaBlaBla Bla BlaBla BlaBlaBlaBla Bla Bla Bla BlaBlaBla BlaBla Bla BlaBla BlaBlaBlaBla BlaBla Bla BlaBla"
-                  text run at (0,22) width 73: "BlaBla Bla"
-              RenderBlock {P} at (1,61) size 778x0
-          RenderTableRow {TR} at (0,66) size 784x2
-            RenderTableCell {TD} at (2,66) size 780x2 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,6) size 784x60
+            RenderTableCell {TD} at (2,6) size 780x60 [r=1 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 778x42
+                RenderText {#text} at (0,0) size 776x42
+                  text run at (0,0) width 776: "BlaBlaBla Bla BlaBla BlaBlaBlaBla Bla Bla Bla BlaBlaBla BlaBla Bla BlaBla BlaBlaBlaBla BlaBla Bla BlaBla"
+                  text run at (0,21) width 76: "BlaBla Bla"
+              RenderBlock {P} at (1,59) size 778x0
+      RenderBlock (anonymous) at (0,68) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,89) size 784x68
+        RenderTableSection {TBODY} at (0,0) size 784x68
+          RenderTableRow {TR} at (0,2) size 784x60
+            RenderTableCell {TD} at (2,2) size 780x60 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 778x42
+                RenderText {#text} at (0,0) size 776x42
+                  text run at (0,0) width 776: "BlaBlaBla Bla BlaBla BlaBlaBlaBla Bla Bla Bla BlaBlaBla BlaBla Bla BlaBla BlaBlaBlaBla BlaBla Bla BlaBla"
+                  text run at (0,21) width 76: "BlaBla Bla"
+              RenderBlock {P} at (1,59) size 778x0
+          RenderTableRow {TR} at (0,64) size 784x2
+            RenderTableCell {TD} at (2,64) size 780x2 [r=1 c=0 rs=1 cs=1]

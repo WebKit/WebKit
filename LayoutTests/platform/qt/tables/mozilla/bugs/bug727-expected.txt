@@ -4,17 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {HR} at (296,0) size 192x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,10) size 350x82 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 348x80
-          RenderTableRow {TR} at (0,2) size 348x26
-            RenderTableCell {TD} at (2,2) size 344x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 212x22
-                text run at (2,2) width 212: "MozillaZine.org Is Now Active!"
-          RenderTableRow {TR} at (0,30) size 348x48
-            RenderTableCell {TD} at (2,41) size 194x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+      RenderTable {TABLE} at (0,10) size 350x100 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 348x98
+          RenderTableRow {TR} at (0,2) size 348x25
+            RenderTableCell {TD} at (2,2) size 344x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 215x21
+                text run at (2,2) width 215: "MozillaZine.org Is Now Active!"
+          RenderTableRow {TR} at (0,29) size 348x67
+            RenderTableCell {TD} at (2,50) size 194x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (198,30) size 148x48 [bgcolor=#FF9900] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 144x44
-                text run at (2,2) width 144: "Thursday September"
-                text run at (2,24) width 79: "17th, 1998>"
+            RenderTableCell {TD} at (198,29) size 148x67 [bgcolor=#FF9900] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 117x63
+                text run at (2,2) width 67: "Thursday"
+                text run at (2,23) width 117: "September 17th,"
+                text run at (2,44) width 45: "1998>"

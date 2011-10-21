@@ -3,44 +3,44 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 227x22
-          text run at (0,0) width 227: "The 2 tables should look the same"
-      RenderTable {TABLE} at (0,22) size 206x32 [bgcolor=#FFA500] [border: (1px outset #808080)]
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 243x21
+          text run at (0,0) width 243: "The 2 tables should look the same"
+      RenderTable {TABLE} at (0,21) size 216x31 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,1) size 204x30
-          RenderTableRow {TR} at (0,2) size 204x26
-            RenderTableCell {TD} at (2,2) size 100x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x22
-                text run at (2,2) width 48: "col-100"
-            RenderTableCell {TD} at (104,2) size 48x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x22
-                text run at (2,2) width 44: "cg-200"
-            RenderTableCell {TD} at (154,2) size 48x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x22
-                text run at (2,2) width 44: "cg-200"
-        RenderTableCol {COLGROUP} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,54) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,76) size 510x32 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableCol {COLGROUP} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 214x29
+          RenderTableRow {TR} at (0,2) size 214x25
+            RenderTableCell {TD} at (2,2) size 100x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x21
+                text run at (2,2) width 53: "col-100"
+            RenderTableCell {TD} at (104,2) size 53x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "cg-200"
+            RenderTableCell {TD} at (159,2) size 53x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "cg-200"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,1) size 508x30
-          RenderTableRow {TR} at (0,2) size 508x26
-            RenderTableCell {TD} at (2,2) size 100x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x22
-                text run at (2,2) width 48: "col-100"
-            RenderTableCell {TD} at (104,2) size 200x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x22
-                text run at (2,2) width 44: "cg-200"
-            RenderTableCell {TD} at (306,2) size 200x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x22
-                text run at (2,2) width 44: "cg-200"
-      RenderBlock (anonymous) at (0,108) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
+      RenderBlock (anonymous) at (0,52) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,73) size 510x31 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 508x29
+          RenderTableRow {TR} at (0,2) size 508x25
+            RenderTableCell {TD} at (2,2) size 100x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x21
+                text run at (2,2) width 53: "col-100"
+            RenderTableCell {TD} at (104,2) size 200x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "cg-200"
+            RenderTableCell {TD} at (306,2) size 200x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "cg-200"
+      RenderBlock (anonymous) at (0,104) size 784x21
+        RenderBR {BR} at (0,0) size 0x21

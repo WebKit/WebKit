@@ -1,50 +1,50 @@
-layer at (0,0) size 784x605
+layer at (0,0) size 784x603
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x605
-  RenderBlock {HTML} at (0,0) size 784x605
-    RenderBody {BODY} at (8,8) size 768x589
-      RenderBlock {P} at (0,0) size 768x44
-        RenderText {#text} at (0,0) size 535x22
-          text run at (0,0) width 454: "there's a table below this line with cellspacing=1 and border=2 and "
-          text run at (454,0) width 81: "several lines"
-        RenderBR {BR} at (535,16) size 0x0
-        RenderText {#text} at (0,22) size 440x22
-          text run at (0,22) width 440: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
-      RenderTable {TABLE} at (0,60) size 760x529 [border: (2px outset #808080)]
+layer at (0,0) size 784x603
+  RenderBlock {HTML} at (0,0) size 784x603
+    RenderBody {BODY} at (8,8) size 768x587
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 565x21
+          text run at (0,0) width 475: "there's a table below this line with cellspacing=1 and border=2 and "
+          text run at (475,0) width 90: "several lines"
+        RenderBR {BR} at (565,16) size 0x0
+        RenderText {#text} at (0,21) size 461x21
+          text run at (0,21) width 461: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
+      RenderTable {TABLE} at (0,58) size 760x529 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 756x525
-          RenderTableRow {TR} at (0,1) size 756x73
-            RenderTableCell {TD} at (1,1) size 754x228 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
-              RenderBlock {P} at (5,5) size 744x50
-                RenderInline {FONT} at (0,0) size 24x33 [color=#E91C05]
-                  RenderText {#text} at (0,0) size 24x33
-                    text run at (0,0) width 24: "W"
-                RenderInline {B} at (0,0) size 230x22
-                  RenderInline {FONT} at (0,0) size 230x22 [color=#E91C05]
-                    RenderText {#text} at (24,8) size 230x22
-                      text run at (24,8) width 230: "elcome to Pacific Shore Properties"
-                    RenderBR {BR} at (254,24) size 0x0
-                RenderInline {FONT} at (0,0) size 402x17
-                  RenderText {#text} at (0,33) size 402x17
-                    text run at (0,33) width 402: "Pacific Shore Properties is situated on beautiful Mayne Island."
-              RenderBlock {P} at (5,71) size 744x51
-                RenderInline {FONT} at (0,0) size 723x51
-                  RenderText {#text} at (0,0) size 723x34
-                    text run at (0,0) width 723: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver"
-                    text run at (0,17) width 146: "and Vancouver Island."
-                  RenderBR {BR} at (146,30) size 0x0
-                  RenderText {#text} at (0,34) size 91x17
-                    text run at (0,34) width 91: "(See map: left)"
-              RenderBlock {P} at (5,138) size 744x85
-                RenderInline {FONT} at (0,0) size 722x85
-                  RenderText {#text} at (0,0) size 722x34
-                    text run at (0,0) width 722: "Pacific Shore Properties specializes in the diverse properties of the Southern Gulf Islands; which include Beach,"
-                    text run at (0,17) width 386: "Business, View, Acreage, Home, Retirement and Recreation."
-                  RenderBR {BR} at (386,30) size 0x0
+          RenderTableRow {TR} at (0,1) size 756x74
+            RenderTableCell {TD} at (1,1) size 754x225 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
+              RenderBlock {P} at (5,5) size 744x47
+                RenderInline {FONT} at (0,0) size 23x30 [color=#E91C05]
+                  RenderText {#text} at (0,0) size 23x30
+                    text run at (0,0) width 23: "W"
+                RenderInline {B} at (0,0) size 262x21
+                  RenderInline {FONT} at (0,0) size 262x21 [color=#E91C05]
+                    RenderText {#text} at (23,7) size 262x21
+                      text run at (23,7) width 262: "elcome to Pacific Shore Properties"
+                    RenderBR {BR} at (285,23) size 0x0
+                RenderInline {FONT} at (0,0) size 362x17
+                  RenderText {#text} at (0,30) size 362x17
+                    text run at (0,30) width 362: "Pacific Shore Properties is situated on beautiful Mayne Island."
+              RenderBlock {P} at (5,68) size 744x51
+                RenderInline {FONT} at (0,0) size 742x51
+                  RenderText {#text} at (0,0) size 742x34
+                    text run at (0,0) width 742: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver"
+                    text run at (0,17) width 39: "Island."
+                  RenderBR {BR} at (39,30) size 0x0
+                  RenderText {#text} at (0,34) size 86x17
+                    text run at (0,34) width 86: "(See map: left)"
+              RenderBlock {P} at (5,135) size 744x85
+                RenderInline {FONT} at (0,0) size 720x85
+                  RenderText {#text} at (0,0) size 713x34
+                    text run at (0,0) width 713: "Pacific Shore Properties specializes in the diverse properties of the Southern Gulf Islands; which include Beach, Business,"
+                    text run at (0,17) width 292: "View, Acreage, Home, Retirement and Recreation."
+                  RenderBR {BR} at (292,30) size 0x0
                   RenderBR {BR} at (0,34) size 0x17
-                  RenderText {#text} at (0,51) size 692x34
-                    text run at (0,51) width 692: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties"
-                    text run at (0,68) width 382: "knowledge and expertise on the Gulf Islands is unmatched."
-              RenderBlock {P} at (5,239) size 744x0
-          RenderTableRow {TR} at (0,75) size 756x74
-          RenderTableRow {TR} at (0,150) size 756x74
-          RenderTableRow {TR} at (0,225) size 756x299
+                  RenderText {#text} at (0,51) size 720x34
+                    text run at (0,51) width 720: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties knowledge and"
+                    text run at (0,68) width 253: "expertise on the Gulf Islands is unmatched."
+              RenderBlock {P} at (5,236) size 744x0
+          RenderTableRow {TR} at (0,76) size 756x74
+          RenderTableRow {TR} at (0,151) size 756x75
+          RenderTableRow {TR} at (0,227) size 756x297

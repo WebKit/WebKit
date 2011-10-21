@@ -1,30 +1,30 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x122
-  RenderBlock {html} at (0,0) size 800x122
-    RenderBody {body} at (8,16) size 784x98
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 322x22
-          text run at (0,0) width 322: "TEST: Numbers should align by decimal points"
-      RenderTable {table} at (0,38) size 194x60 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 192x58
-          RenderTableRow {tr} at (0,2) size 192x26
-            RenderTableCell {th} at (2,2) size 56x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (10,2) size 36x22
-                text run at (10,2) width 36: "55.00"
-            RenderTableCell {th} at (60,2) size 64x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x22
-                text run at (2,2) width 60: "55555.00"
-            RenderTableCell {th} at (126,2) size 64x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (10,2) size 44x22
-                text run at (10,2) width 44: "555.00"
-          RenderTableRow {tr} at (0,30) size 192x26
-            RenderTableCell {th} at (2,30) size 56x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 52x22
-                text run at (2,2) width 52: "1234.56"
-            RenderTableCell {th} at (60,30) size 64x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (10,2) size 44x22
-                text run at (10,2) width 44: "123.45"
-            RenderTableCell {th} at (126,30) size 64x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x22
-                text run at (2,2) width 60: "12345.67"
+layer at (0,0) size 800x119
+  RenderBlock {html} at (0,0) size 800x119
+    RenderBody {body} at (8,16) size 784x95
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "TEST: Numbers should align by decimal points"
+      RenderTable {table} at (0,37) size 214x58 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 212x56
+          RenderTableRow {tr} at (0,2) size 212x25
+            RenderTableCell {th} at (2,2) size 62x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,2) size 40x21
+                text run at (11,2) width 40: "55.00"
+            RenderTableCell {th} at (66,2) size 71x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 67x21
+                text run at (2,2) width 67: "55555.00"
+            RenderTableCell {th} at (139,2) size 71x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (11,2) size 49x21
+                text run at (11,2) width 49: "555.00"
+          RenderTableRow {tr} at (0,29) size 212x25
+            RenderTableCell {th} at (2,29) size 62x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x21
+                text run at (2,2) width 58: "1234.56"
+            RenderTableCell {th} at (66,29) size 71x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,2) size 49x21
+                text run at (11,2) width 49: "123.45"
+            RenderTableCell {th} at (139,29) size 71x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 67x21
+                text run at (2,2) width 67: "12345.67"

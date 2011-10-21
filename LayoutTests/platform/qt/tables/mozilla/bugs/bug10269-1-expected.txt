@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x44
-  RenderBlock {HTML} at (0,0) size 800x44
-    RenderBody {BODY} at (8,8) size 784x28
-      RenderTable {TABLE} at (0,0) size 114x28
-        RenderTableSection {TBODY} at (0,0) size 114x28
-          RenderTableRow {TR} at (0,2) size 114x24
-            RenderTableCell {TD} at (2,2) size 30x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 28x22
-                text run at (1,1) width 28: "One"
-            RenderTableCell {TD} at (34,2) size 33x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 31x22
+layer at (0,0) size 800x43
+  RenderBlock {HTML} at (0,0) size 800x43
+    RenderBody {BODY} at (8,8) size 784x27
+      RenderTable {TABLE} at (0,0) size 117x27
+        RenderTableSection {TBODY} at (0,0) size 117x27
+          RenderTableRow {TR} at (0,2) size 117x23
+            RenderTableCell {TD} at (2,2) size 32x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 30x21
+                text run at (1,1) width 30: "One"
+            RenderTableCell {TD} at (36,2) size 33x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 31x21
                 text run at (1,1) width 31: "Two"
-            RenderTableCell {TD} at (69,2) size 43x24 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 41x22
-                text run at (1,1) width 41: "Three"
+            RenderTableCell {TD} at (71,2) size 44x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x21
+                text run at (1,1) width 42: "Three"

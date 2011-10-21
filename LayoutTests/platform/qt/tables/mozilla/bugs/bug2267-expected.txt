@@ -7,128 +7,128 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,0) size 239x100 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 237x98
-          RenderTableRow {TR} at (0,5) size 237x26
-            RenderTableCell {TD} at (5,5) size 122x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 118x22
-                text run at (2,2) width 118: "Click name to see"
-            RenderTableCell {TD} at (132,20) size 100x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 96x22
-                text run at (2,2) width 96: "Mac Clbr Opt"
-          RenderTableRow {TR} at (0,36) size 237x26
-            RenderTableCell {TD} at (5,36) size 122x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 42x22
-                text run at (2,2) width 42: "Guilty"
-          RenderTableRow {TR} at (0,67) size 237x26
-            RenderTableCell {TD} at (5,67) size 122x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 4x22
+      RenderTable {TABLE} at (0,0) size 245x97 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 243x95
+          RenderTableRow {TR} at (0,5) size 243x25
+            RenderTableCell {TD} at (5,5) size 131x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 127x21
+                text run at (2,2) width 127: "Click name to see"
+            RenderTableCell {TD} at (141,20) size 97x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 93x21
+                text run at (2,2) width 93: "Mac Clbr Opt"
+          RenderTableRow {TR} at (0,35) size 243x25
+            RenderTableCell {TD} at (5,35) size 131x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 41x21
+                text run at (2,2) width 41: "Guilty"
+          RenderTableRow {TR} at (0,65) size 243x25
+            RenderTableCell {TD} at (5,65) size 131x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 4x21
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (132,67) size 100x26 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x22
-                text run at (2,2) width 27: "L C"
-      RenderBlock (anonymous) at (0,100) size 784x22
-        RenderInline {B} at (0,0) size 0x22
+            RenderTableCell {TD} at (141,65) size 97x25 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x21
+                text run at (2,2) width 25: "L C"
+      RenderBlock (anonymous) at (0,97) size 784x21
+        RenderInline {B} at (0,0) size 0x21
           RenderText {#text} at (0,0) size 0x0
-          RenderBR {BR} at (0,0) size 0x22
+          RenderBR {BR} at (0,0) size 0x21
           RenderInline {B} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,122) size 784x131
-        RenderTable {TABLE} at (0,0) size 239x131 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 237x129
-            RenderTableRow {TR} at (0,5) size 237x26
-              RenderTableCell {TD} at (5,5) size 122x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 21x22
-                  text run at (2,2) width 21: "foo"
-              RenderTableCell {TD} at (132,5) size 100x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 24x22
-                  text run at (2,2) width 24: "bar"
-            RenderTableRow {TR} at (0,36) size 237x26
-              RenderTableCell {TD} at (5,36) size 122x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 118x22
-                  text run at (2,2) width 118: "Click name to see"
-              RenderTableCell {TD} at (132,51) size 100x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 96x22
-                  text run at (2,2) width 96: "Mac Clbr Opt"
-            RenderTableRow {TR} at (0,67) size 237x26
-              RenderTableCell {TD} at (5,67) size 122x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 42x22
-                  text run at (2,2) width 42: "Guilty"
-            RenderTableRow {TR} at (0,98) size 237x26
-              RenderTableCell {TD} at (5,98) size 122x26 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 4x22
+      RenderBlock (anonymous) at (0,118) size 784x127
+        RenderTable {TABLE} at (0,0) size 245x127 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 243x125
+            RenderTableRow {TR} at (0,5) size 243x25
+              RenderTableCell {TD} at (5,5) size 131x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 22x21
+                  text run at (2,2) width 22: "foo"
+              RenderTableCell {TD} at (141,5) size 97x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 23x21
+                  text run at (2,2) width 23: "bar"
+            RenderTableRow {TR} at (0,35) size 243x25
+              RenderTableCell {TD} at (5,35) size 131x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 127x21
+                  text run at (2,2) width 127: "Click name to see"
+              RenderTableCell {TD} at (141,50) size 97x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 93x21
+                  text run at (2,2) width 93: "Mac Clbr Opt"
+            RenderTableRow {TR} at (0,65) size 243x25
+              RenderTableCell {TD} at (5,65) size 131x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 41x21
+                  text run at (2,2) width 41: "Guilty"
+            RenderTableRow {TR} at (0,95) size 243x25
+              RenderTableCell {TD} at (5,95) size 131x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 4x21
                   text run at (2,2) width 4: " "
-              RenderTableCell {TD} at (132,98) size 100x26 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 27x22
-                  text run at (2,2) width 27: "L C"
-      RenderBlock (anonymous) at (0,253) size 784x22
-        RenderInline {B} at (0,0) size 0x22
-          RenderInline {B} at (0,0) size 0x22
+              RenderTableCell {TD} at (141,95) size 97x25 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 25x21
+                  text run at (2,2) width 25: "L C"
+      RenderBlock (anonymous) at (0,245) size 784x21
+        RenderInline {B} at (0,0) size 0x21
+          RenderInline {B} at (0,0) size 0x21
             RenderText {#text} at (0,0) size 0x0
-            RenderBR {BR} at (0,0) size 0x22
+            RenderBR {BR} at (0,0) size 0x21
             RenderInline {B} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,275) size 784x100
-        RenderTable {TABLE} at (0,0) size 275x100 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 273x98
-            RenderTableRow {TR} at (0,5) size 273x26
-              RenderTableCell {TD} at (5,5) size 122x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 118x22
-                  text run at (2,2) width 118: "Click name to see"
-              RenderTableCell {TD} at (132,36) size 100x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=3 cs=1]
-                RenderText {#text} at (2,2) size 96x22
-                  text run at (2,2) width 96: "Mac Clbr Opt"
-            RenderTableRow {TR} at (0,36) size 273x26
-              RenderTableCell {TD} at (5,36) size 122x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 42x22
-                  text run at (2,2) width 42: "Guilty"
-            RenderTableRow {TR} at (0,67) size 273x26
-              RenderTableCell {TD} at (5,67) size 122x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 4x22
+      RenderBlock (anonymous) at (0,266) size 784x97
+        RenderTable {TABLE} at (0,0) size 279x97 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 277x95
+            RenderTableRow {TR} at (0,5) size 277x25
+              RenderTableCell {TD} at (5,5) size 131x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 127x21
+                  text run at (2,2) width 127: "Click name to see"
+              RenderTableCell {TD} at (141,35) size 97x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=3 cs=1]
+                RenderText {#text} at (2,2) size 93x21
+                  text run at (2,2) width 93: "Mac Clbr Opt"
+            RenderTableRow {TR} at (0,35) size 277x25
+              RenderTableCell {TD} at (5,35) size 131x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 41x21
+                  text run at (2,2) width 41: "Guilty"
+            RenderTableRow {TR} at (0,65) size 277x25
+              RenderTableCell {TD} at (5,65) size 131x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 4x21
                   text run at (2,2) width 4: " "
-              RenderTableCell {TD} at (237,67) size 31x26 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 27x22
-                  text run at (2,2) width 27: "L C"
-      RenderBlock (anonymous) at (0,375) size 784x22
-        RenderInline {B} at (0,0) size 0x22
-          RenderInline {B} at (0,0) size 0x22
-            RenderInline {B} at (0,0) size 0x22
+              RenderTableCell {TD} at (243,65) size 29x25 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 25x21
+                  text run at (2,2) width 25: "L C"
+      RenderBlock (anonymous) at (0,363) size 784x21
+        RenderInline {B} at (0,0) size 0x21
+          RenderInline {B} at (0,0) size 0x21
+            RenderInline {B} at (0,0) size 0x21
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (0,0) size 0x22
+              RenderBR {BR} at (0,0) size 0x21
               RenderInline {B} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,397) size 784x131
-        RenderTable {TABLE} at (0,0) size 275x131 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 273x129
-            RenderTableRow {TR} at (0,5) size 273x26
-              RenderTableCell {TD} at (5,5) size 122x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 21x22
-                  text run at (2,2) width 21: "foo"
-              RenderTableCell {TD} at (132,5) size 100x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 24x22
-                  text run at (2,2) width 24: "bar"
-            RenderTableRow {TR} at (0,36) size 273x26
-              RenderTableCell {TD} at (5,36) size 122x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 118x22
-                  text run at (2,2) width 118: "Click name to see"
-              RenderTableCell {TD} at (132,67) size 100x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=3 cs=1]
-                RenderText {#text} at (2,2) size 96x22
-                  text run at (2,2) width 96: "Mac Clbr Opt"
-            RenderTableRow {TR} at (0,67) size 273x26
-              RenderTableCell {TD} at (5,67) size 122x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 42x22
-                  text run at (2,2) width 42: "Guilty"
-            RenderTableRow {TR} at (0,98) size 273x26
-              RenderTableCell {TD} at (5,98) size 122x26 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 4x22
+      RenderBlock (anonymous) at (0,384) size 784x127
+        RenderTable {TABLE} at (0,0) size 279x127 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 277x125
+            RenderTableRow {TR} at (0,5) size 277x25
+              RenderTableCell {TD} at (5,5) size 131x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 22x21
+                  text run at (2,2) width 22: "foo"
+              RenderTableCell {TD} at (141,5) size 97x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 23x21
+                  text run at (2,2) width 23: "bar"
+            RenderTableRow {TR} at (0,35) size 277x25
+              RenderTableCell {TD} at (5,35) size 131x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 127x21
+                  text run at (2,2) width 127: "Click name to see"
+              RenderTableCell {TD} at (141,65) size 97x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=3 cs=1]
+                RenderText {#text} at (2,2) size 93x21
+                  text run at (2,2) width 93: "Mac Clbr Opt"
+            RenderTableRow {TR} at (0,65) size 277x25
+              RenderTableCell {TD} at (5,65) size 131x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 41x21
+                  text run at (2,2) width 41: "Guilty"
+            RenderTableRow {TR} at (0,95) size 277x25
+              RenderTableCell {TD} at (5,95) size 131x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 4x21
                   text run at (2,2) width 4: " "
-              RenderTableCell {TD} at (237,98) size 31x26 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 27x22
-                  text run at (2,2) width 27: "L C"
-      RenderBlock (anonymous) at (0,528) size 784x0
+              RenderTableCell {TD} at (243,95) size 29x25 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 25x21
+                  text run at (2,2) width 25: "L C"
+      RenderBlock (anonymous) at (0,511) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderInline {B} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0

@@ -1,42 +1,42 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x276
-  RenderBlock {html} at (0,0) size 800x276
-    RenderBody {body} at (8,8) size 784x260
-      RenderTable {table} at (0,0) size 784x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 782x30
-          RenderTableRow {tr} at (0,2) size 782x26
-            RenderTableCell {td} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 471x22
-                text run at (2,2) width 434: "This table should have a width 100% of the available horizontal "
-                text run at (436,2) width 37: "space"
-      RenderBlock (anonymous) at (0,32) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,54) size 588x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 586x30
-          RenderTableRow {tr} at (0,2) size 586x26
-            RenderTableCell {td} at (2,2) size 582x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 463x22
-                text run at (2,2) width 426: "This table should have a width 75% of the available horizontal "
-                text run at (428,2) width 37: "space"
-      RenderBlock (anonymous) at (0,86) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,108) size 392x54 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 390x52
-          RenderTableRow {tr} at (0,2) size 390x48
-            RenderTableCell {td} at (2,2) size 386x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 349x44
-                text run at (2,2) width 349: "This table should have a width 50% of the available"
-                text run at (2,24) width 73: "horizontal "
-                text run at (75,24) width 37: "space"
-      RenderBlock (anonymous) at (0,162) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,184) size 196x76 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 194x74
-          RenderTableRow {tr} at (0,2) size 194x70
-            RenderTableCell {td} at (2,2) size 190x70 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 181x66
-                text run at (2,2) width 164: "This table should have a"
-                text run at (2,24) width 181: "width 25% of the available"
-                text run at (2,46) width 73: "horizontal "
-                text run at (75,46) width 37: "space"
+layer at (0,0) size 800x266
+  RenderBlock {html} at (0,0) size 800x266
+    RenderBody {body} at (8,8) size 784x250
+      RenderTable {table} at (0,0) size 784x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 782x29
+          RenderTableRow {tr} at (0,2) size 782x25
+            RenderTableCell {td} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 494x21
+                text run at (2,2) width 451: "This table should have a width 100% of the available horizontal "
+                text run at (453,2) width 43: "space"
+      RenderBlock (anonymous) at (0,31) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,52) size 588x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 586x29
+          RenderTableRow {tr} at (0,2) size 586x25
+            RenderTableCell {td} at (2,2) size 582x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 485x21
+                text run at (2,2) width 442: "This table should have a width 75% of the available horizontal "
+                text run at (444,2) width 43: "space"
+      RenderBlock (anonymous) at (0,83) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,104) size 392x52 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 390x50
+          RenderTableRow {tr} at (0,2) size 390x46
+            RenderTableCell {td} at (2,2) size 386x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 364x42
+                text run at (2,2) width 364: "This table should have a width 50% of the available"
+                text run at (2,23) width 74: "horizontal "
+                text run at (76,23) width 43: "space"
+      RenderBlock (anonymous) at (0,156) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,177) size 196x73 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 194x71
+          RenderTableRow {tr} at (0,2) size 194x67
+            RenderTableCell {td} at (2,2) size 190x67 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 186x63
+                text run at (2,2) width 174: "This table should have a"
+                text run at (2,23) width 186: "width 25% of the available"
+                text run at (2,44) width 74: "horizontal "
+                text run at (76,44) width 43: "space"

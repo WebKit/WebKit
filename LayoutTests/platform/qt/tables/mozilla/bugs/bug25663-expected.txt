@@ -3,30 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 612x120 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 610x118
-          RenderTableRow {TR} at (0,2) size 610x114
-            RenderTableCell {TD} at (2,21) size 479x76 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 475x72 [bgcolor=#BBBBBB]
-                RenderTableSection {TBODY} at (0,0) size 475x72
-                  RenderTableRow {TR} at (0,2) size 475x68
-                    RenderTableCell {TD} at (2,35) size 2x2 [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (6,2) size 467x68 [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 232x22
-                        text run at (1,1) width 232: "Welcome to the new DaveCentral!"
-                      RenderBR {BR} at (233,17) size 0x0
-                      RenderText {#text} at (1,23) size 461x44
-                        text run at (1,23) width 90: "I have a new "
-                        text run at (91,23) width 371: "Linux software archive as well as the Windows archive"
-                        text run at (1,45) width 224: "you have come to know and love."
-            RenderTableCell {TD} at (483,2) size 125x114 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 121x22
-                text run at (2,2) width 121: "ANDOVER.NET"
-              RenderBR {BR} at (123,18) size 0x0
-              RenderText {#text} at (2,24) size 116x22
-                text run at (2,24) width 116: "E-COMMERCE"
-              RenderBR {BR} at (118,40) size 0x0
-              RenderText {#text} at (2,46) size 109x66
-                text run at (2,46) width 109: "Buy some smart"
-                text run at (2,68) width 67: "stuff from"
-                text run at (2,90) width 88: "Andover.Net"
+      RenderTable {TABLE} at (0,0) size 610x115 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 608x113
+          RenderTableRow {TR} at (0,2) size 608x109
+            RenderTableCell {TD} at (2,20) size 479x73 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 475x69 [bgcolor=#BBBBBB]
+                RenderTableSection {TBODY} at (0,0) size 475x69
+                  RenderTableRow {TR} at (0,2) size 475x65
+                    RenderTableCell {TD} at (2,33) size 2x2 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (6,2) size 467x65 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 242x21
+                        text run at (1,1) width 242: "Welcome to the new DaveCentral!"
+                      RenderBR {BR} at (243,17) size 0x0
+                      RenderText {#text} at (1,22) size 424x42
+                        text run at (1,22) width 94: "I have a new "
+                        text run at (95,22) width 330: "Linux software archive as well as the Windows"
+                        text run at (1,43) width 56: "archive "
+                        text run at (57,43) width 236: "you have come to know and love."
+            RenderTableCell {TD} at (483,2) size 123x109 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 118x21
+                text run at (2,2) width 118: "ANDOVER.NET"
+              RenderBR {BR} at (120,18) size 0x0
+              RenderText {#text} at (2,23) size 112x21
+                text run at (2,23) width 112: "E-COMMERCE"
+              RenderBR {BR} at (114,39) size 0x0
+              RenderText {#text} at (2,44) size 114x63
+                text run at (2,44) width 114: "Buy some smart"
+                text run at (2,65) width 64: "stuff from"
+                text run at (2,86) width 89: "Andover.Net"

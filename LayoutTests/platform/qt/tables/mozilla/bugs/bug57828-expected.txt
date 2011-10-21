@@ -3,39 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 272x54 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 266x48
-          RenderTableRow {TR} at (0,2) size 266x44
-            RenderTableCell {TD} at (2,2) size 262x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 278x54 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 272x48
+          RenderTableRow {TR} at (0,2) size 272x44
+            RenderTableCell {TD} at (2,2) size 268x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
-              RenderText {#text} at (45,2) size 215x22
-                text run at (45,2) width 215: "NOWRAP cell, no width on cell"
-      RenderBlock (anonymous) at (0,54) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,76) size 272x54 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 266x48
-          RenderTableRow {TR} at (0,2) size 266x44
-            RenderTableCell {TD} at (2,2) size 262x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (45,2) size 221x21
+                text run at (45,2) width 221: "NOWRAP cell, no width on cell"
+      RenderBlock (anonymous) at (0,54) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,75) size 278x54 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 272x48
+          RenderTableRow {TR} at (0,2) size 272x44
+            RenderTableCell {TD} at (2,2) size 268x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
-              RenderText {#text} at (45,2) size 215x22
-                text run at (45,2) width 215: "NOWRAP cell, no width on cell"
-      RenderBlock (anonymous) at (0,130) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,152) size 110x120 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 104x114
-          RenderTableRow {TR} at (0,2) size 104x110
-            RenderTableCell {TD} at (2,2) size 100x110 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (45,2) size 221x21
+                text run at (45,2) width 221: "NOWRAP cell, no width on cell"
+      RenderBlock (anonymous) at (0,129) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,150) size 110x117 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 104x111
+          RenderTableRow {TR} at (0,2) size 104x107
+            RenderTableCell {TD} at (2,2) size 100x107 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
-              RenderText {#text} at (2,42) size 74x66
-                text run at (2,42) width 74: "NOWRAP"
-                text run at (2,64) width 26: "cell,"
-                text run at (2,86) width 72: "width=100"
-      RenderBlock (anonymous) at (0,272) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,294) size 310x54 [border: (3px outset #808080)]
+              RenderText {#text} at (2,42) size 74x63
+                text run at (2,42) width 73: "NOWRAP"
+                text run at (2,63) width 29: "cell,"
+                text run at (2,84) width 74: "width=100"
+      RenderBlock (anonymous) at (0,267) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,288) size 310x54 [border: (3px outset #808080)]
         RenderTableSection {TBODY} at (3,3) size 304x48
           RenderTableRow {TR} at (0,2) size 304x44
             RenderTableCell {TD} at (2,2) size 300x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 40x40
-              RenderText {#text} at (45,2) size 180x22
-                text run at (45,2) width 180: "NOWRAP cell, width=300"
+              RenderText {#text} at (45,2) size 184x21
+                text run at (45,2) width 184: "NOWRAP cell, width=300"

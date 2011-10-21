@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 40x22
-          text run at (0,0) width 40: "BAD:"
-        RenderBR {BR} at (40,16) size 0x0
-        RenderBR {BR} at (0,22) size 0x22
-      RenderBlock {CENTER} at (0,44) size 784x68
-        RenderTable {TABLE} at (0,0) size 784x68 [border: (5px outset #808080)]
-          RenderTableSection {TBODY} at (5,5) size 774x58
-            RenderTableRow {TR} at (0,2) size 774x26
-              RenderTableCell {TD} at (2,2) size 770x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 28x22
-                  text run at (2,2) width 28: "One"
-            RenderTableRow {TR} at (0,30) size 774x26
-              RenderTableCell {TD} at (2,30) size 770x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 31x22
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 38x21
+          text run at (0,0) width 38: "BAD:"
+        RenderBR {BR} at (38,16) size 0x0
+        RenderBR {BR} at (0,21) size 0x21
+      RenderBlock {CENTER} at (0,42) size 784x66
+        RenderTable {TABLE} at (0,0) size 784x66 [border: (5px outset #808080)]
+          RenderTableSection {TBODY} at (5,5) size 774x56
+            RenderTableRow {TR} at (0,2) size 774x25
+              RenderTableCell {TD} at (2,2) size 770x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 30x21
+                  text run at (2,2) width 30: "One"
+            RenderTableRow {TR} at (0,29) size 774x25
+              RenderTableCell {TD} at (2,29) size 770x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 31x21
                   text run at (2,2) width 31: "Two"
-      RenderBlock (anonymous) at (0,112) size 784x88
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 53x22
-          text run at (0,44) width 53: "GOOD:"
-        RenderBR {BR} at (53,60) size 0x0
-        RenderBR {BR} at (0,66) size 0x22
-      RenderBlock {CENTER} at (0,200) size 784x68
-        RenderTable {TABLE} at (0,0) size 784x68 [border: (5px outset #808080)]
-          RenderTableSection {TBODY} at (5,5) size 774x58
-            RenderTableRow {TR} at (0,2) size 774x26
-              RenderTableCell {TD} at (2,2) size 770x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 28x22
-                  text run at (2,2) width 28: "One"
-            RenderTableRow {TR} at (0,30) size 774x26
-              RenderTableCell {TD} at (2,30) size 770x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 31x22
+      RenderBlock (anonymous) at (0,108) size 784x84
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 52x21
+          text run at (0,42) width 52: "GOOD:"
+        RenderBR {BR} at (52,58) size 0x0
+        RenderBR {BR} at (0,63) size 0x21
+      RenderBlock {CENTER} at (0,192) size 784x66
+        RenderTable {TABLE} at (0,0) size 784x66 [border: (5px outset #808080)]
+          RenderTableSection {TBODY} at (5,5) size 774x56
+            RenderTableRow {TR} at (0,2) size 774x25
+              RenderTableCell {TD} at (2,2) size 770x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 30x21
+                  text run at (2,2) width 30: "One"
+            RenderTableRow {TR} at (0,29) size 774x25
+              RenderTableCell {TD} at (2,29) size 770x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 31x21
                   text run at (2,2) width 31: "Two"

@@ -3,50 +3,50 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x106
+      RenderBlock (anonymous) at (0,0) size 784x105
         RenderImage {IMG} at (0,0) size 220x100
-        RenderText {#text} at (220,84) size 4x22
+        RenderText {#text} at (220,84) size 4x21
           text run at (220,84) width 4: " "
         RenderBR {BR} at (224,100) size 0x0
-      RenderTable {TABLE} at (0,106) size 784x208
-        RenderTableSection {TBODY} at (0,0) size 784x208
-          RenderTableRow {TR} at (0,2) size 784x24
-            RenderTableCell {TD} at (2,2) size 150x24 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 12x22
-                text run at (1,1) width 12: "X"
-            RenderTableCell {TD} at (154,2) size 150x24 [bgcolor=#DDDDDD] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 12x22
-                text run at (1,1) width 12: "X"
-            RenderTableCell {TD} at (306,2) size 476x24 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 12x22
-                text run at (1,1) width 12: "X"
-          RenderTableRow {TR} at (0,28) size 784x178
-            RenderTableCell {TD} at (2,28) size 302x112 [bgcolor=#DDDD00] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 280x110
-                text run at (1,1) width 255: "this_word_has_no_breakable_spaces "
-                text run at (256,1) width 25: "... if"
-                text run at (1,23) width 265: "this bug is still active and the window is"
-                text run at (1,45) width 240: ">250px wide, you can't see that the "
-                text run at (241,45) width 36: "word"
-                text run at (1,67) width 278: "above is 33 characters long. (I could have"
-                text run at (1,89) width 136: "used a table instead "
-                text run at (137,89) width 128: "but this is simpler)."
-            RenderTableCell {TD} at (306,28) size 476x178 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 462x44
-                text run at (1,1) width 462: "Try shrinking this table to ~250px wide. The left hand (gold) column"
-                text run at (1,23) width 207: "will suddenly expand in width."
-              RenderBR {BR} at (208,39) size 0x0
-              RenderBR {BR} at (1,45) size 0x22
-              RenderText {#text} at (1,67) size 474x110
-                text run at (1,67) width 273: "mozilla qa smoke tests smoke qa mozilla "
-                text run at (274,67) width 196: "mozilla qa smoke tests smoke"
-                text run at (1,89) width 73: "qa mozilla "
-                text run at (74,89) width 273: "mozilla qa smoke tests smoke qa mozilla "
-                text run at (347,89) width 116: "mozilla qa smoke"
-                text run at (1,111) width 153: "tests smoke qa mozilla "
-                text run at (154,111) width 273: "mozilla qa smoke tests smoke qa mozilla "
-                text run at (427,111) width 48: "mozilla"
-                text run at (1,133) width 221: "qa smoke tests smoke qa mozilla "
-                text run at (222,133) width 217: "mozilla qa smoke tests smoke qa"
-                text run at (1,155) width 52: "mozilla "
-                text run at (53,155) width 269: "mozilla qa smoke tests smoke qa mozilla"
+      RenderTable {TABLE} at (0,105) size 784x199
+        RenderTableSection {TBODY} at (0,0) size 784x199
+          RenderTableRow {TR} at (0,2) size 784x23
+            RenderTableCell {TD} at (2,2) size 148x23 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 11x21
+                text run at (1,1) width 11: "X"
+            RenderTableCell {TD} at (152,2) size 148x23 [bgcolor=#DDDDDD] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 11x21
+                text run at (1,1) width 11: "X"
+            RenderTableCell {TD} at (302,2) size 480x23 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 11x21
+                text run at (1,1) width 11: "X"
+          RenderTableRow {TR} at (0,27) size 784x170
+            RenderTableCell {TD} at (2,27) size 298x107 [bgcolor=#DDDD00] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 294x105
+                text run at (1,1) width 275: "this_word_has_no_breakable_spaces "
+                text run at (276,1) width 12: "..."
+                text run at (1,22) width 290: "if this bug is still active and the window is"
+                text run at (1,43) width 252: ">250px wide, you can't see that the "
+                text run at (253,43) width 35: "word"
+                text run at (1,64) width 294: "above is 33 characters long. (I could have"
+                text run at (1,85) width 147: "used a table instead "
+                text run at (148,85) width 132: "but this is simpler)."
+            RenderTableCell {TD} at (302,27) size 480x170 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 474x42
+                text run at (1,1) width 474: "Try shrinking this table to ~250px wide. The left hand (gold) column"
+                text run at (1,22) width 213: "will suddenly expand in width."
+              RenderBR {BR} at (214,38) size 0x0
+              RenderBR {BR} at (1,43) size 0x21
+              RenderText {#text} at (1,64) size 472x105
+                text run at (1,64) width 293: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (294,64) width 161: "mozilla qa smoke tests"
+                text run at (1,85) width 128: "smoke qa mozilla "
+                text run at (129,85) width 293: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (422,85) width 51: "mozilla"
+                text run at (1,106) width 238: "qa smoke tests smoke qa mozilla "
+                text run at (239,106) width 234: "mozilla qa smoke tests smoke qa"
+                text run at (1,127) width 55: "mozilla "
+                text run at (56,127) width 293: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (349,127) width 124: "mozilla qa smoke"
+                text run at (1,148) width 165: "tests smoke qa mozilla "
+                text run at (166,148) width 289: "mozilla qa smoke tests smoke qa mozilla"

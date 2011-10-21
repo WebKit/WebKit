@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x107
-        RenderBlock {CENTER} at (0,0) size 784x107
-          RenderTable {TABLE} at (78,0) size 627x42 [bgcolor=#000000]
-            RenderTableSection {TBODY} at (0,0) size 627x42
-              RenderTableRow {TR} at (0,5) size 627x32
-                RenderTableCell {TD} at (5,5) size 40x32 [bgcolor=#FFCC33] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (27,5) size 8x22
-                    text run at (27,5) width 8: "1"
-                RenderTableCell {TD} at (50,5) size 516x32 [bgcolor=#FFCC33] [r=0 c=1 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 48x22 [color=#0000EE]
-                    RenderText {#text} at (5,5) size 48x22
-                      text run at (5,5) width 48: "Believe"
-                RenderTableCell {TD} at (571,5) size 51x32 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
-                  RenderText {#text} at (17,5) size 29x22
-                    text run at (17,5) width 29: "4:53"
-          RenderBlock {DIV} at (0,42) size 784x65
-            RenderBR {BR} at (784,0) size 0x22
-            RenderBR {BR} at (784,22) size 0x22
-            RenderInline {A} at (0,0) size 152x22 [color=#0000EE]
-              RenderInline {FONT} at (0,0) size 152x21 [color=#FFCC33]
-                RenderText {#text} at (632,44) size 152x21
-                  text run at (632,44) width 94: "Back to the "
-                  text run at (726,44) width 58: "index..."
+      RenderBlock {DIV} at (0,0) size 784x104
+        RenderBlock {CENTER} at (0,0) size 784x104
+          RenderTable {TABLE} at (78,0) size 627x41 [bgcolor=#000000]
+            RenderTableSection {TBODY} at (0,0) size 627x41
+              RenderTableRow {TR} at (0,5) size 627x31
+                RenderTableCell {TD} at (5,5) size 40x31 [bgcolor=#FFCC33] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (26,5) size 9x21
+                    text run at (26,5) width 9: "1"
+                RenderTableCell {TD} at (50,5) size 516x31 [bgcolor=#FFCC33] [r=0 c=1 rs=1 cs=1]
+                  RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
+                    RenderText {#text} at (5,5) size 54x21
+                      text run at (5,5) width 54: "Believe"
+                RenderTableCell {TD} at (571,5) size 51x31 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (15,5) size 31x21
+                    text run at (15,5) width 31: "4:53"
+          RenderBlock {DIV} at (0,41) size 784x63
+            RenderBR {BR} at (784,0) size 0x21
+            RenderBR {BR} at (784,21) size 0x21
+            RenderInline {A} at (0,0) size 134x21 [color=#0000EE]
+              RenderInline {FONT} at (0,0) size 134x21 [color=#FFCC33]
+                RenderText {#text} at (650,42) size 134x21
+                  text run at (650,42) width 83: "Back to the "
+                  text run at (733,42) width 51: "index..."

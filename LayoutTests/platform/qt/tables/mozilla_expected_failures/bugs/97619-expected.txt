@@ -3,63 +3,62 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x142 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x140
-          RenderTableRow {TR} at (0,2) size 782x136
-            RenderTableCell {TD} at (2,2) size 78x136 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 74x88
-                text run at (2,2) width 63: "check for"
-                text run at (2,24) width 60: "handling"
-                text run at (2,46) width 13: "of"
-                text run at (2,68) width 74: "whitespace"
-              RenderImage {IMG} at (2,90) size 20x16
-              RenderText {#text} at (22,90) size 74x44
-                text run at (22,90) width 54: " around"
-                text run at (2,112) width 65: "the image"
-            RenderTableCell {TD} at (82,57) size 698x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,150) size 77x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,160) size 784x180 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x178
-          RenderTableRow {TR} at (0,2) size 782x174
-            RenderTableCell {TD} at (2,2) size 24x174 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 18x88
-                text run at (2,2) width 16: "aa"
-                text run at (2,24) width 18: "bb"
-                text run at (2,46) width 14: "cc"
-                text run at (2,68) width 18: "dd"
-              RenderImage {IMG} at (2,90) size 20x16
-              RenderText {#text} at (2,106) size 16x66
-                text run at (2,106) width 14: "ee"
-                text run at (2,128) width 10: "ff"
-                text run at (2,150) width 16: "gg"
-            RenderTableCell {TD} at (28,76) size 752x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,348) size 77x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,358) size 784x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x52
-          RenderTableRow {TR} at (0,2) size 782x48
-            RenderTableCell {TD} at (2,2) size 227x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 223x22
-                text run at (2,2) width 223: "checkforhandlingofnowhitespace"
-              RenderImage {IMG} at (2,24) size 20x16
-              RenderText {#text} at (22,24) size 115x22
-                text run at (22,24) width 115: " aroundtheimage"
-            RenderTableCell {TD} at (231,13) size 549x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-      RenderBlock {HR} at (0,420) size 77x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,430) size 784x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26
-            RenderTableCell {TD} at (2,2) size 358x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 223x22
-                text run at (2,2) width 223: "checkforhandlingofnowhitespace"
-              RenderImage {IMG} at (225,2) size 20x16
-              RenderText {#text} at (245,2) size 111x22
-                text run at (245,2) width 111: "aroundtheimage"
-            RenderTableCell {TD} at (362,2) size 418x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
+      RenderTable {TABLE} at (0,0) size 784x115 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x113
+          RenderTableRow {TR} at (0,2) size 782x109
+            RenderTableCell {TD} at (2,2) size 85x109 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 81x63
+                text run at (2,2) width 64: "check for"
+                text run at (2,23) width 79: "handling of"
+                text run at (2,44) width 81: "whitespace"
+              RenderImage {IMG} at (2,65) size 20x16
+              RenderText {#text} at (22,65) size 74x42
+                text run at (22,65) width 54: " around"
+                text run at (2,86) width 70: "the image"
+            RenderTableCell {TD} at (89,44) size 691x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+      RenderBlock {HR} at (0,123) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,133) size 784x173 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x171
+          RenderTableRow {TR} at (0,2) size 782x167
+            RenderTableCell {TD} at (2,2) size 24x167 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 18x84
+                text run at (2,2) width 18: "aa"
+                text run at (2,23) width 18: "bb"
+                text run at (2,44) width 16: "cc"
+                text run at (2,65) width 18: "dd"
+              RenderImage {IMG} at (2,86) size 20x16
+              RenderText {#text} at (2,102) size 18x63
+                text run at (2,102) width 18: "ee"
+                text run at (2,123) width 8: "ff"
+                text run at (2,144) width 18: "gg"
+            RenderTableCell {TD} at (28,73) size 752x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+      RenderBlock {HR} at (0,314) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,324) size 784x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x50
+          RenderTableRow {TR} at (0,2) size 782x46
+            RenderTableCell {TD} at (2,2) size 238x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 234x21
+                text run at (2,2) width 234: "checkforhandlingofnowhitespace"
+              RenderImage {IMG} at (2,23) size 20x16
+              RenderText {#text} at (22,23) size 120x21
+                text run at (22,23) width 120: " aroundtheimage"
+            RenderTableCell {TD} at (242,12) size 538x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+      RenderBlock {HR} at (0,384) size 77x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,394) size 784x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25
+            RenderTableCell {TD} at (2,2) size 374x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 234x21
+                text run at (2,2) width 234: "checkforhandlingofnowhitespace"
+              RenderImage {IMG} at (236,2) size 20x16
+              RenderText {#text} at (256,2) size 116x21
+                text run at (256,2) width 116: "aroundtheimage"
+            RenderTableCell {TD} at (378,2) size 402x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"

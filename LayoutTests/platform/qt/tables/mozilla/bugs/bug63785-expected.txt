@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 109x66
-        RenderTableSection {TBODY} at (0,0) size 109x66
-          RenderTableRow {TR} at (0,2) size 109x62
-            RenderTableCell {TD} at (2,2) size 105x62 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 103x60
-                RenderBlock {P} at (0,0) size 103x22
-                  RenderText {#text} at (0,0) size 102x22
-                    text run at (0,0) width 102: "Paragraph one"
-                RenderBlock {P} at (0,38) size 103x22
-                  RenderText {#text} at (0,0) size 103x22
-                    text run at (0,0) width 103: "Paragraph two"
+      RenderTable {TABLE} at (0,0) size 112x64
+        RenderTableSection {TBODY} at (0,0) size 112x64
+          RenderTableRow {TR} at (0,2) size 112x60
+            RenderTableCell {TD} at (2,2) size 108x60 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 106x58
+                RenderBlock {P} at (0,0) size 106x21
+                  RenderText {#text} at (0,0) size 106x21
+                    text run at (0,0) width 106: "Paragraph one"
+                RenderBlock {P} at (0,37) size 106x21
+                  RenderText {#text} at (0,0) size 104x21
+                    text run at (0,0) width 104: "Paragraph two"

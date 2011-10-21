@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 642x188 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 640x186
-          RenderTableRow {TR} at (0,2) size 640x182
-            RenderTableCell {TD} at (2,88) size 124x10 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 642x184 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 640x182
+          RenderTableRow {TR} at (0,2) size 640x178
+            RenderTableCell {TD} at (2,86) size 124x10 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 120x6
                 RenderTableSection {TBODY} at (0,0) size 120x6
                   RenderTableRow {TR} at (0,2) size 120x2
                     RenderTableCell {TD} at (2,2) size 116x2 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (128,2) size 510x182 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 506x178 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 504x176
-                  RenderTableRow {TR} at (0,2) size 504x172
-                    RenderTableCell {TD} at (2,2) size 500x172 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (128,2) size 510x178 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 506x174 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 504x172
+                  RenderTableRow {TR} at (0,2) size 504x168
+                    RenderTableCell {TD} at (2,2) size 500x168 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (2,2) size 496x80
                         RenderTableSection {TBODY} at (0,0) size 496x80
                           RenderTableRow {TR} at (0,10) size 496x60
                             RenderTableCell {TD} at (10,10) size 476x60 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 468x22 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 468x21 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 468x60
-                      RenderBlock (anonymous) at (2,82) size 496x88
-                        RenderText {#text} at (0,0) size 496x88
-                          text run at (0,0) width 318: "Your donation to protect our wildlife was paid "
-                          text run at (318,0) width 178: "for by the sponsors on this"
-                          text run at (0,22) width 115: "page, so it's free. "
-                          text run at (115,22) width 307: "100% of each donation is distributed through"
-                          text run at (0,44) width 95: "organizations "
-                          text run at (95,44) width 371: "working hard to protect our wildlife. You can view live"
-                          text run at (0,66) width 341: "donation totals in support of this cause by clicking."
+                      RenderBlock (anonymous) at (2,82) size 496x84
+                        RenderText {#text} at (0,0) size 478x84
+                          text run at (0,0) width 322: "Your donation to protect our wildlife was paid "
+                          text run at (322,0) width 156: "for by the sponsors on"
+                          text run at (0,21) width 152: "this page, so it's free. "
+                          text run at (152,21) width 315: "100% of each donation is distributed through"
+                          text run at (0,42) width 100: "organizations "
+                          text run at (100,42) width 375: "working hard to protect our wildlife. You can view live"
+                          text run at (0,63) width 354: "donation totals in support of this cause by clicking."

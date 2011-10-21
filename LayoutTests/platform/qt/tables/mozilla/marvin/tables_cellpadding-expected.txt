@@ -3,62 +3,62 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x88
-        RenderText {#text} at (0,0) size 778x66
-          text run at (0,0) width 638: "CELLPADDING controls the padding in pixels between the border of each cells and the cell's "
-          text run at (638,0) width 118: "contents.The first"
-          text run at (0,22) width 457: "table has a cellpadding of 8 pixels. The second table is not using cell "
-          text run at (457,22) width 321: "padding. Notice the difference. There should be"
-          text run at (0,44) width 301: "a larger gap between the cell border and it's "
-          text run at (301,44) width 174: "contents in the first table. "
+      RenderBlock (anonymous) at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 782x63
+          text run at (0,0) width 661: "CELLPADDING controls the padding in pixels between the border of each cells and the cell's "
+          text run at (661,0) width 121: "contents.The first"
+          text run at (0,21) width 490: "table has a cellpadding of 8 pixels. The second table is not using cell "
+          text run at (490,21) width 262: "padding. Notice the difference. There"
+          text run at (0,42) width 387: "should be a larger gap between the cell border and it's "
+          text run at (387,42) width 179: "contents in the first table. "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,66) size 0x22
-      RenderTable {TABLE} at (0,88) size 272x90 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 268x86
-          RenderTableRow {TR} at (0,2) size 268x40
-            RenderTableCell {TD} at (2,2) size 88x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 68x22
-                text run at (9,9) width 68: "Navigator"
-            RenderTableCell {TD} at (92,2) size 90x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 72x22
-                text run at (9,9) width 72: "Messenger"
-            RenderTableCell {TD} at (184,2) size 82x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 60x22
-                text run at (9,9) width 60: "Collabra"
-          RenderTableRow {TR} at (0,44) size 268x40
-            RenderTableCell {TD} at (2,44) size 88x40 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 70x22
-                text run at (9,9) width 70: "Composer"
-            RenderTableCell {TD} at (92,44) size 90x40 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 64x22
-                text run at (9,9) width 64: "Calendar"
-            RenderTableCell {TD} at (184,44) size 82x40 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (9,9) size 64x22
-                text run at (9,9) width 64: "Netcaster"
-      RenderBlock (anonymous) at (0,178) size 784x66
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 234x22
-          text run at (0,44) width 234: "This table contains no cellpadding."
-      RenderTable {TABLE} at (0,244) size 230x62 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 226x58
-          RenderTableRow {TR} at (0,2) size 226x26
-            RenderTableCell {TD} at (2,2) size 74x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 68x22
-                text run at (2,2) width 68: "Navigator"
-            RenderTableCell {TD} at (78,2) size 76x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x22
-                text run at (2,2) width 72: "Messenger"
-            RenderTableCell {TD} at (156,2) size 68x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x22
-                text run at (2,2) width 60: "Collabra"
-          RenderTableRow {TR} at (0,30) size 226x26
-            RenderTableCell {TD} at (2,30) size 74x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 70x22
-                text run at (2,2) width 70: "Composer"
-            RenderTableCell {TD} at (78,30) size 76x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 64x22
-                text run at (2,2) width 64: "Calendar"
-            RenderTableCell {TD} at (156,30) size 68x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 64x22
-                text run at (2,2) width 64: "Netcaster"
+        RenderBR {BR} at (0,63) size 0x21
+      RenderTable {TABLE} at (0,84) size 287x88 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 283x84
+          RenderTableRow {TR} at (0,2) size 283x39
+            RenderTableCell {TD} at (2,2) size 92x39 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 69x21
+                text run at (9,9) width 69: "Navigator"
+            RenderTableCell {TD} at (96,2) size 97x39 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 79x21
+                text run at (9,9) width 79: "Messenger"
+            RenderTableCell {TD} at (195,2) size 86x39 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 61x21
+                text run at (9,9) width 61: "Collabra"
+          RenderTableRow {TR} at (0,43) size 283x39
+            RenderTableCell {TD} at (2,43) size 92x39 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 74x21
+                text run at (9,9) width 74: "Composer"
+            RenderTableCell {TD} at (96,43) size 97x39 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 66x21
+                text run at (9,9) width 66: "Calendar"
+            RenderTableCell {TD} at (195,43) size 86x39 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (9,9) size 68x21
+                text run at (9,9) width 68: "Netcaster"
+      RenderBlock (anonymous) at (0,172) size 784x63
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 247x21
+          text run at (0,42) width 247: "This table contains no cellpadding."
+      RenderTable {TABLE} at (0,235) size 245x60 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 241x56
+          RenderTableRow {TR} at (0,2) size 241x25
+            RenderTableCell {TD} at (2,2) size 78x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 69x21
+                text run at (2,2) width 69: "Navigator"
+            RenderTableCell {TD} at (82,2) size 83x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 79x21
+                text run at (2,2) width 79: "Messenger"
+            RenderTableCell {TD} at (167,2) size 72x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 61x21
+                text run at (2,2) width 61: "Collabra"
+          RenderTableRow {TR} at (0,29) size 241x25
+            RenderTableCell {TD} at (2,29) size 78x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 74x21
+                text run at (2,2) width 74: "Composer"
+            RenderTableCell {TD} at (82,29) size 83x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x21
+                text run at (2,2) width 66: "Calendar"
+            RenderTableCell {TD} at (167,29) size 72x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x21
+                text run at (2,2) width 68: "Netcaster"

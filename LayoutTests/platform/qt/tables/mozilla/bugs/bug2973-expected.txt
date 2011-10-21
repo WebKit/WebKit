@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x98
-        RenderTableSection {TBODY} at (0,0) size 784x98
-          RenderTableRow {TR} at (0,2) size 784x94
-            RenderTableCell {TD} at (2,2) size 641x94 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 639x92
-                RenderTableSection {TBODY} at (0,0) size 639x92
-                  RenderTableRow {TR} at (0,2) size 639x88
-                    RenderTableCell {TD} at (2,2) size 635x88 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 56x86
-                        text run at (1,1) width 56: "inside of"
-                        text run at (1,65) width 33: "table"
-                      RenderImage {IMG} at (34,23) size 600x58
-            RenderTableCell {TD} at (645,26) size 137x46 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 126x44
-                text run at (1,1) width 126: "2nd row of outside"
-                text run at (1,23) width 33: "table"
+      RenderTable {TABLE} at (0,0) size 784x96
+        RenderTableSection {TBODY} at (0,0) size 784x96
+          RenderTableRow {TR} at (0,2) size 784x92
+            RenderTableCell {TD} at (2,2) size 643x92 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 641x90
+                RenderTableSection {TBODY} at (0,0) size 641x90
+                  RenderTableRow {TR} at (0,2) size 641x86
+                    RenderTableCell {TD} at (2,2) size 637x86 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 60x84
+                        text run at (1,1) width 60: "inside of"
+                        text run at (1,64) width 35: "table"
+                      RenderImage {IMG} at (36,22) size 600x58
+            RenderTableCell {TD} at (647,26) size 135x44 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 130x42
+                text run at (1,1) width 130: "2nd row of outside"
+                text run at (1,22) width 35: "table"

@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x48
-  RenderBlock {html} at (0,0) size 800x48
-    RenderBody {body} at (8,8) size 784x32
-      RenderTable {table} at (0,0) size 676x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 674x30
-          RenderTableRow {tr} at (0,2) size 674x26
-            RenderTableCell {th} at (2,2) size 334x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 330x22
-                text run at (2,2) width 330: "This heading cell should have a lime background"
-            RenderTableCell {th} at (338,2) size 334x26 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 330x22
-                text run at (2,2) width 330: "This heading cell should have a lime background"
+layer at (0,0) size 800x47
+  RenderBlock {html} at (0,0) size 800x47
+    RenderBody {body} at (8,8) size 784x31
+      RenderTable {table} at (0,0) size 760x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 758x29
+          RenderTableRow {tr} at (0,2) size 758x25
+            RenderTableCell {th} at (2,2) size 376x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 372x21
+                text run at (2,2) width 372: "This heading cell should have a lime background"
+            RenderTableCell {th} at (380,2) size 376x25 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 372x21
+                text run at (2,2) width 372: "This heading cell should have a lime background"

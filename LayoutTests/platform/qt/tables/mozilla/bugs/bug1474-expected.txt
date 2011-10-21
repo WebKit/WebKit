@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 627x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 625x30
-          RenderTableRow {TR} at (0,2) size 625x26
-            RenderTableCell {TD} at (2,2) size 128x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x22
-                text run at (2,2) width 24: "one"
-            RenderTableCell {TD} at (132,2) size 133x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 25x22
+      RenderTable {TABLE} at (0,0) size 627x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 625x29
+          RenderTableRow {TR} at (0,2) size 625x25
+            RenderTableCell {TD} at (2,2) size 141x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x21
+                text run at (2,2) width 27: "one"
+            RenderTableCell {TD} at (145,2) size 132x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x21
                 text run at (2,2) width 25: "two"
-            RenderTableCell {TD} at (267,2) size 179x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 35x22
-                text run at (2,2) width 35: "three"
-            RenderTableCell {TD} at (448,2) size 175x26 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 34x22
-                text run at (2,2) width 34: "four!"
+            RenderTableCell {TD} at (279,2) size 182x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x21
+                text run at (2,2) width 36: "three"
+            RenderTableCell {TD} at (463,2) size 160x25 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x21
+                text run at (2,2) width 31: "four!"

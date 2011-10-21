@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 715x22
-          text run at (0,0) width 715: "The TFOOT element labels the head area of a table. In this test, the TFOOT text should be center aligned."
-      RenderTable {TABLE} at (0,38) size 724x94 [border: (1px outset #808080)]
-        RenderTableSection {THEAD} at (1,1) size 722x30
-          RenderTableRow {TR} at (0,2) size 722x26
-            RenderTableCell {TD} at (2,2) size 358x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 354x22
-                text run at (2,2) width 354: "This text is in the THEADThis text is in the THEAD"
-            RenderTableCell {TD} at (362,2) size 358x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 354x22
-                text run at (2,2) width 354: "This text is in the THEADThis text is in the THEAD"
-        RenderTableSection {TFOOT} at (1,63) size 722x30
-          RenderTableRow {TR} at (0,2) size 722x26
-            RenderTableCell {TD} at (2,2) size 358x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (91,2) size 176x22
-                text run at (91,2) width 176: "This text is in the TFOOT"
-            RenderTableCell {TD} at (362,2) size 358x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (91,2) size 176x22
-                text run at (91,2) width 176: "This text is in the TFOOT"
-        RenderTableSection {TBODY} at (1,31) size 722x30
-          RenderTableRow {TR} at (0,2) size 722x26
-            RenderTableCell {TD} at (2,2) size 358x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 354x22
-                text run at (2,2) width 354: "This text is in the TBODYThis text is in the TBODY"
-            RenderTableCell {TD} at (362,2) size 358x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 354x22
-                text run at (2,2) width 354: "This text is in the TBODYThis text is in the TBODY"
-        RenderTableSection {TBODY} at (1,61) size 722x2
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 744x21
+          text run at (0,0) width 744: "The TFOOT element labels the head area of a table. In this test, the TFOOT text should be center aligned."
+      RenderTable {TABLE} at (0,37) size 732x91 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 730x29
+          RenderTableRow {TR} at (0,2) size 730x25
+            RenderTableCell {TD} at (2,2) size 362x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 358x21
+                text run at (2,2) width 358: "This text is in the THEADThis text is in the THEAD"
+            RenderTableCell {TD} at (366,2) size 362x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 358x21
+                text run at (2,2) width 358: "This text is in the THEADThis text is in the THEAD"
+        RenderTableSection {TFOOT} at (1,61) size 730x29
+          RenderTableRow {TR} at (0,2) size 730x25
+            RenderTableCell {TD} at (2,2) size 362x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (92,2) size 178x21
+                text run at (92,2) width 178: "This text is in the TFOOT"
+            RenderTableCell {TD} at (366,2) size 362x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (92,2) size 178x21
+                text run at (92,2) width 178: "This text is in the TFOOT"
+        RenderTableSection {TBODY} at (1,30) size 730x29
+          RenderTableRow {TR} at (0,2) size 730x25
+            RenderTableCell {TD} at (2,2) size 362x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 358x21
+                text run at (2,2) width 358: "This text is in the TBODYThis text is in the TBODY"
+            RenderTableCell {TD} at (366,2) size 362x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 358x21
+                text run at (2,2) width 358: "This text is in the TBODYThis text is in the TBODY"
+        RenderTableSection {TBODY} at (1,59) size 730x2

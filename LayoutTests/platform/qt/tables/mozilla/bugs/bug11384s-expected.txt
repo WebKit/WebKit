@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x124
-  RenderBlock {HTML} at (0,0) size 800x124
-    RenderBody {BODY} at (8,21) size 784x95
+layer at (0,0) size 800x123
+  RenderBlock {HTML} at (0,0) size 800x123
+    RenderBody {BODY} at (8,21) size 784x94
       RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (148,0) size 488x42
-          text run at (148,0) width 488: "<BODY style=\"text-align: center\">"
-      RenderTable {TABLE} at (0,63) size 627x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 625x30
-          RenderTableRow {TR} at (0,2) size 625x26
-            RenderTableCell {TD} at (2,2) size 621x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (154,2) size 313x22
-                text run at (154,2) width 313: "The text should be center-aligned not the table"
+        RenderText {#text} at (130,0) size 524x42
+          text run at (130,0) width 524: "<BODY style=\"text-align: center\">"
+      RenderTable {TABLE} at (0,63) size 627x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 625x29
+          RenderTableRow {TR} at (0,2) size 625x25
+            RenderTableCell {TD} at (2,2) size 621x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (146,2) size 329x21
+                text run at (146,2) width 329: "The text should be center-aligned not the table"

@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x122
-  RenderBlock {html} at (0,0) size 800x122
-    RenderBody {body} at (8,16) size 784x98
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 357x22
-          text run at (0,0) width 357: "Numbers in table should be aligned at decimal points"
-      RenderTable {table} at (0,38) size 400x60 [border: (1px outset #808080)]
+layer at (0,0) size 800x119
+  RenderBlock {html} at (0,0) size 800x119
+    RenderBody {body} at (8,16) size 784x95
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 376x21
+          text run at (0,0) width 376: "Numbers in table should be aligned at decimal points"
+      RenderTable {table} at (0,37) size 400x58 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection (anonymous) at (1,1) size 398x58
-          RenderTableRow {tr} at (0,2) size 398x26
-            RenderTableCell {td} at (2,2) size 182x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 36x22
-                text run at (2,2) width 36: "55.00"
-            RenderTableCell {td} at (186,2) size 210x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x22
-                text run at (2,2) width 60: "55555.00"
-          RenderTableRow {tr} at (0,30) size 398x26
-            RenderTableCell {td} at (2,30) size 182x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 52x22
-                text run at (2,2) width 52: "1234.56"
-            RenderTableCell {td} at (186,30) size 210x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x22
-                text run at (2,2) width 44: "123.45"
+        RenderTableSection (anonymous) at (1,1) size 398x56
+          RenderTableRow {tr} at (0,2) size 398x25
+            RenderTableCell {td} at (2,2) size 182x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x21
+                text run at (2,2) width 40: "55.00"
+            RenderTableCell {td} at (186,2) size 210x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 67x21
+                text run at (2,2) width 67: "55555.00"
+          RenderTableRow {tr} at (0,29) size 398x25
+            RenderTableCell {td} at (2,29) size 182x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x21
+                text run at (2,2) width 58: "1234.56"
+            RenderTableCell {td} at (186,29) size 210x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x21
+                text run at (2,2) width 49: "123.45"

@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderInline {A} at (0,0) size 29x22 [color=#551A8B]
-          RenderText {#text} at (0,0) size 29x22
-            text run at (0,0) width 29: "note"
-        RenderText {#text} at (29,0) size 4x22
-          text run at (29,0) width 4: " "
-        RenderInline {A} at (0,0) size 76x22 [color=#551A8B]
-          RenderText {#text} at (33,0) size 76x22
-            text run at (33,0) width 76: "closepopup"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 31x21 [color=#551A8B]
+          RenderText {#text} at (0,0) size 31x21
+            text run at (0,0) width 31: "note"
+        RenderText {#text} at (31,0) size 4x21
+          text run at (31,0) width 4: " "
+        RenderInline {A} at (0,0) size 83x21 [color=#551A8B]
+          RenderText {#text} at (35,0) size 83x21
+            text run at (35,0) width 83: "closepopup"
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,22) size 43x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 41x30
-          RenderTableRow {TR} at (0,2) size 41x26
-            RenderTableCell {TD} at (2,2) size 37x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x22
-                text run at (2,2) width 33: "table"
-layer at (8,30) size 21x22
-  RenderBlock (positioned) {DIV} at (8,30) size 21x22
-    RenderText {#text} at (0,0) size 21x22
+      RenderTable {TABLE} at (0,21) size 45x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 43x29
+          RenderTableRow {TR} at (0,2) size 43x25
+            RenderTableCell {TD} at (2,2) size 39x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 35x21
+                text run at (2,2) width 35: "table"
+layer at (8,29) size 21x21
+  RenderBlock (positioned) {DIV} at (8,29) size 21x21
+    RenderText {#text} at (0,0) size 21x21
       text run at (0,0) width 21: "div"

@@ -6,32 +6,33 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 800x102
         RenderImage {IMG} at (0,0) size 102x102 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,102) size 800x160 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 796x156
+      RenderTable {TABLE} at (0,102) size 800x153 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 796x149
           RenderTableRow {TR} at (0,0) size 796x0
-            RenderTableCell {TD} at (0,0) size 114x128 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderTable {TABLE} at (1,1) size 112x126 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 110x124
-                  RenderTableRow {TR} at (0,0) size 110x124
-                    RenderTableCell {TD} at (0,0) size 110x124 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 114x127 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderTable {TABLE} at (1,1) size 112x125 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 110x123
+                  RenderTableRow {TR} at (0,0) size 110x123
+                    RenderTableCell {TD} at (0,0) size 110x123 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (5,1) size 100x100
-                      RenderText {#text} at (1,101) size 57x22
-                        text run at (1,101) width 57: "HELLO"
-          RenderTableRow {TR} at (0,0) size 796x156
-            RenderTableCell {TD} at (114,0) size 327x156 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 322x154
-                text run at (1,1) width 300: "The Zurich football team known as FC Blue"
-                text run at (1,23) width 161: "Stars is one of the city's "
-                text run at (162,23) width 161: "oldest-established clubs,"
-                text run at (1,45) width 286: "and it is thanks mainly to its annual junior"
-                text run at (1,67) width 192: "tournament which has been "
-                text run at (193,67) width 99: "running for 60"
-                text run at (1,89) width 40: "years "
-                text run at (41,89) width 262: "(traditionally played on Ascension Day"
-                text run at (1,111) width 243: "and the day before) that it now also "
-                text run at (244,111) width 44: "has an"
-                text run at (1,133) width 87: "international"
-            RenderTableCell {TD} at (441,55) size 355x46 [bgcolor=#E6E8FA] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 320x44
-                text run at (1,1) width 320: "hello hello hello hello hello hello hello hello hello"
-                text run at (1,23) width 68: "hello hello"
+                      RenderText {#text} at (1,101) size 53x21
+                        text run at (1,101) width 53: "HELLO"
+          RenderTableRow {TR} at (0,0) size 796x149
+            RenderTableCell {TD} at (114,0) size 327x149 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 320x147
+                text run at (1,1) width 307: "The Zurich football team known as FC Blue"
+                text run at (1,22) width 170: "Stars is one of the city's "
+                text run at (171,22) width 130: "oldest-established"
+                text run at (1,43) width 46: "clubs, "
+                text run at (47,43) width 247: "and it is thanks mainly to its annual"
+                text run at (1,64) width 244: "junior tournament which has been "
+                text run at (245,64) width 76: "running for"
+                text run at (1,85) width 65: "60 years "
+                text run at (66,85) width 240: "(traditionally played on Ascension"
+                text run at (1,106) width 284: "Day and the day before) that it now also "
+                text run at (285,106) width 26: "has"
+                text run at (1,127) width 110: "an international"
+            RenderTableCell {TD} at (441,52) size 355x44 [bgcolor=#E6E8FA] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 347x42
+                text run at (1,1) width 347: "hello hello hello hello hello hello hello hello hello"
+                text run at (1,22) width 74: "hello hello"

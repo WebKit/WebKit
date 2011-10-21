@@ -1,31 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x112
-  RenderBlock {HTML} at (0,0) size 800x112
-    RenderBody {BODY} at (8,8) size 784x96
-      RenderTable {TABLE} at (0,0) size 400x96 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 398x94
-          RenderTableRow {TR} at (0,0) size 398x94
-            RenderTableCell {TD} at (0,0) size 302x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 300x92 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 298x90
-                  RenderTableRow {TR} at (0,0) size 298x90
-                    RenderTableCell {TD} at (0,0) size 298x90 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 294x88
-                        text run at (1,1) width 272: "Presidential candidates George W. Bush"
-                        text run at (1,23) width 294: "and Al Gore are expected to show a kinder,"
-                        text run at (1,45) width 269: "gentler side Wednesday in the second of"
-                        text run at (1,67) width 230: "three nationally televised debates. "
-                      RenderBR {BR} at (231,83) size 0x0
-            RenderTableCell {TD} at (302,2) size 96x90 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 94x88
-                RenderInline {FONT} at (0,0) size 87x88 [color=#CC3333]
-                  RenderText {#text} at (0,0) size 87x88
-                    text run at (0,0) width 74: "Avon.com:"
-                    text run at (0,22) width 85: "Fall makeup"
-                    text run at (0,44) width 87: "sale. Save up"
-                    text run at (0,66) width 53: "to 47%."
-              RenderBlock (anonymous) at (1,89) size 94x0 [color=#CC3333]
+layer at (0,0) size 800x129
+  RenderBlock {HTML} at (0,0) size 800x129
+    RenderBody {BODY} at (8,8) size 784x113
+      RenderTable {TABLE} at (0,0) size 400x113 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 398x111
+          RenderTableRow {TR} at (0,0) size 398x111
+            RenderTableCell {TD} at (0,0) size 302x111 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 300x109 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 298x107
+                  RenderTableRow {TR} at (0,0) size 298x107
+                    RenderTableCell {TD} at (0,0) size 298x107 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 288x105
+                        text run at (1,1) width 288: "Presidential candidates George W. Bush"
+                        text run at (1,22) width 253: "and Al Gore are expected to show a"
+                        text run at (1,43) width 267: "kinder, gentler side Wednesday in the"
+                        text run at (1,64) width 250: "second of three nationally televised"
+                        text run at (1,85) width 65: "debates. "
+                      RenderBR {BR} at (66,101) size 0x0
+            RenderTableCell {TD} at (302,12) size 96x86 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 94x84
+                RenderInline {FONT} at (0,0) size 88x84 [color=#CC3333]
+                  RenderText {#text} at (0,0) size 88x84
+                    text run at (0,0) width 75: "Avon.com:"
+                    text run at (0,21) width 88: "Fall makeup"
+                    text run at (0,42) width 75: "sale. Save"
+                    text run at (0,63) width 75: "up to 47%."
+              RenderBlock (anonymous) at (1,85) size 94x0 [color=#CC3333]
                 RenderBlock {FORM} at (0,0) size 94x0
-              RenderBlock (anonymous) at (1,89) size 94x0
+              RenderBlock (anonymous) at (1,85) size 94x0
                 RenderInline {FONT} at (0,0) size 0x0 [color=#CC3333]

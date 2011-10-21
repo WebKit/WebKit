@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 137x70 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 135x68
-          RenderTableRow {TR} at (0,2) size 135x64
-            RenderTableCell {TD} at (2,2) size 63x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,21) size 21x22
-                text run at (21,21) width 21: "foo"
-            RenderTableCell {TD} at (67,2) size 66x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (21,21) size 24x22
-                text run at (21,21) width 24: "bar"
+      RenderTable {TABLE} at (0,0) size 137x69 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 135x67
+          RenderTableRow {TR} at (0,2) size 135x63
+            RenderTableCell {TD} at (2,2) size 64x63 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (21,21) size 22x21
+                text run at (21,21) width 22: "foo"
+            RenderTableCell {TD} at (68,2) size 65x63 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (21,21) size 23x21
+                text run at (21,21) width 23: "bar"

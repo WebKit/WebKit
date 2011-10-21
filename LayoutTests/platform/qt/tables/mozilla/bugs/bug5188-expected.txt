@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 624x169
-        RenderTableSection {TBODY} at (0,0) size 624x169
+      RenderTable {TABLE} at (0,0) size 624x165
+        RenderTableSection {TBODY} at (0,0) size 624x165
           RenderTableRow {TR} at (0,2) size 624x60
             RenderTableCell {TD} at (2,2) size 150x1 [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 150x1
             RenderTableCell {TD} at (154,2) size 468x60 [r=0 c=1 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 468x60
-          RenderTableRow {TR} at (0,64) size 624x103
-            RenderTableCell {TD} at (154,64) size 297x103 [r=1 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 297x103
-                RenderTableSection {TBODY} at (0,0) size 297x103
+          RenderTableRow {TR} at (0,64) size 624x99
+            RenderTableCell {TD} at (154,64) size 297x99 [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 297x99
+                RenderTableSection {TBODY} at (0,0) size 297x99
                   RenderTableRow {TR} at (0,0) size 297x9
                     RenderTableCell {TD} at (0,0) size 297x9 [r=0 c=0 rs=1 cs=2]
                       RenderImage {IMG} at (3,3) size 126x3
                       RenderText {#text} at (0,0) size 0x0
-                  RenderTableRow {TR} at (0,9) size 297x94
-                    RenderTableCell {TD} at (0,9) size 149x50 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 138x44
-                        text run at (3,3) width 138: "New WidgetMasters"
-                        text run at (3,25) width 85: "every Week!"
-                    RenderTableCell {TD} at (149,9) size 148x94 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 137x88
-                        text run at (3,3) width 125: "WidgetMaster can"
-                        text run at (3,25) width 137: "build your company"
-                        text run at (3,47) width 12: "a "
-                        text run at (15,47) width 48: "custom"
-                        text run at (3,69) width 102: "WidgetMaster!"
-            RenderTableCell {TD} at (453,64) size 169x26 [r=1 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 26x26 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 24x24
-                  RenderTableRow {TR} at (0,0) size 24x24
-                    RenderTableCell {TD} at (0,0) size 24x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 22x22
-                        text run at (1,1) width 22: "cell"
+                  RenderTableRow {TR} at (0,9) size 297x90
+                    RenderTableCell {TD} at (0,9) size 149x48 [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 143x42
+                        text run at (3,3) width 143: "New WidgetMasters"
+                        text run at (3,24) width 88: "every Week!"
+                    RenderTableCell {TD} at (149,9) size 148x90 [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 139x84
+                        text run at (3,3) width 128: "WidgetMaster can"
+                        text run at (3,24) width 139: "build your company"
+                        text run at (3,45) width 13: "a "
+                        text run at (16,45) width 51: "custom"
+                        text run at (3,66) width 102: "WidgetMaster!"
+            RenderTableCell {TD} at (453,64) size 169x25 [r=1 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 29x25 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 27x23
+                  RenderTableRow {TR} at (0,0) size 27x23
+                    RenderTableCell {TD} at (0,0) size 27x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 25x21
+                        text run at (1,1) width 25: "cell"

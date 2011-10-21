@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x278
-  RenderBlock {html} at (0,0) size 800x278
-    RenderBody {body} at (8,16) size 784x254
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 168x22
-          text run at (0,0) width 168: "TD VALIGN=MIDDLE"
-      RenderTable {table} at (0,38) size 641x216 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 639x214
-          RenderTableRow {tr} at (0,2) size 639x210
-            RenderTableCell {td} at (2,2) size 204x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x276
+  RenderBlock {html} at (0,0) size 800x276
+    RenderBody {body} at (8,16) size 784x252
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 155x21
+          text run at (0,0) width 155: "TD VALIGN=MIDDLE"
+      RenderTable {table} at (0,37) size 660x215 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 658x213
+          RenderTableRow {tr} at (0,2) size 658x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,94) size 429x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 425x22
-                text run at (2,2) width 293: "This text should be vertically aligned to the "
-                text run at (295,2) width 132: "middle of the image"
+            RenderTableCell {td} at (208,94) size 448x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 444x21
+                text run at (2,2) width 305: "This text should be vertically aligned to the "
+                text run at (307,2) width 139: "middle of the image"

@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x278
-  RenderBlock {html} at (0,0) size 800x278
-    RenderBody {body} at (8,16) size 784x254
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 238x22
-          text run at (0,0) width 238: "COLGROUP VALIGN=MIDDLE"
-      RenderTable {table} at (0,38) size 705x216 [border: (1px outset #808080)]
+layer at (0,0) size 800x276
+  RenderBlock {html} at (0,0) size 800x276
+    RenderBody {body} at (8,16) size 784x252
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 225x21
+          text run at (0,0) width 225: "COLGROUP VALIGN=MIDDLE"
+      RenderTable {table} at (0,37) size 726x215 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection (anonymous) at (1,1) size 703x214
-          RenderTableRow {tr} at (0,2) size 703x210
-            RenderTableCell {td} at (2,2) size 204x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection (anonymous) at (1,1) size 724x213
+          RenderTableRow {tr} at (0,2) size 724x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,94) size 493x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 489x22
-                text run at (2,2) width 407: "The middle of text should be vertically aligned to the middle "
-                text run at (409,2) width 82: "of the image"
+            RenderTableCell {td} at (208,94) size 514x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 510x21
+                text run at (2,2) width 423: "The middle of text should be vertically aligned to the middle "
+                text run at (425,2) width 87: "of the image"

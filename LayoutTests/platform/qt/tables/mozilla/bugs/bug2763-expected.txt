@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 282x22
-          text run at (0,0) width 282: "two and words should be on the same line"
-      RenderTable {TABLE} at (0,22) size 600x44
-        RenderTableSection {TBODY} at (0,0) size 600x44
-          RenderTableRow {TR} at (0,0) size 600x22
-            RenderTableCell {TD} at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 71x22
-                text run at (0,0) width 71: "two words"
-            RenderTableCell {TD} at (150,0) size 450x22 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 30x22
-                text run at (0,0) width 30: "blah"
-          RenderTableRow {TR} at (0,22) size 600x22
-            RenderTableCell {TD} at (0,22) size 600x22 [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (0,0) size 30x22
-                text run at (0,0) width 30: "blah"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 298x21
+          text run at (0,0) width 298: "two and words should be on the same line"
+      RenderTable {TABLE} at (0,21) size 600x42
+        RenderTableSection {TBODY} at (0,0) size 600x42
+          RenderTableRow {TR} at (0,0) size 600x21
+            RenderTableCell {TD} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 72x21
+                text run at (0,0) width 72: "two words"
+            RenderTableCell {TD} at (150,0) size 450x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 31x21
+                text run at (0,0) width 31: "blah"
+          RenderTableRow {TR} at (0,21) size 600x21
+            RenderTableCell {TD} at (0,21) size 600x21 [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (0,0) size 31x21
+                text run at (0,0) width 31: "blah"

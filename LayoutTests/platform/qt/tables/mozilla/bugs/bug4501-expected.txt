@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x225 [bgcolor=#FFCC00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x223
+      RenderTable {TABLE} at (0,0) size 784x224 [bgcolor=#FFCC00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x222
           RenderTableRow {TR} at (0,0) size 782x199
             RenderTableCell {TD} at (0,0) size 113x199 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 111x197
@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (113,0) size 669x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 381x98
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,199) size 782x24
-            RenderTableCell {TD} at (0,199) size 113x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 97x22
-                text run at (1,1) width 97: "something else"
-            RenderTableCell {TD} at (113,199) size 669x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 226x22
-                RenderTableSection {TBODY} at (0,0) size 226x22
-                  RenderTableRow {TR} at (0,0) size 226x22
-                    RenderTableCell {TD} at (0,0) size 226x22 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 226x22
-                        text run at (0,0) width 226: "Sunday April 11, 1999, 07:34 PM"
+          RenderTableRow {TR} at (0,199) size 782x23
+            RenderTableCell {TD} at (0,199) size 113x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 108x21
+                text run at (1,1) width 108: "something else"
+            RenderTableCell {TD} at (113,199) size 669x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 234x21
+                RenderTableSection {TBODY} at (0,0) size 234x21
+                  RenderTableRow {TR} at (0,0) size 234x21
+                    RenderTableCell {TD} at (0,0) size 234x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 234x21
+                        text run at (0,0) width 234: "Sunday April 11, 1999, 07:34 PM"

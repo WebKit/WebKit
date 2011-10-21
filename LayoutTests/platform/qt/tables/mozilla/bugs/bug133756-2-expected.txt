@@ -1,91 +1,91 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x504
-  RenderBlock {HTML} at (0,0) size 800x504
-    RenderBody {BODY} at (8,8) size 784x488
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 1: border=1 cellspacing=0 cellpadding=0"
-      RenderTable {TABLE} at (0,22) size 72x26 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 70x24
+layer at (0,0) size 800x484
+  RenderBlock {HTML} at (0,0) size 800x484
+    RenderBody {BODY} at (8,8) size 784x468
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 1: border=1 cellspacing=0 cellpadding=0"
+      RenderTable {TABLE} at (0,21) size 72x25 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 70x23
           RenderTableRow {TR} at (0,0) size 70x0
-            RenderTableCell {TD} at (0,0) size 70x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 68x22
+            RenderTableCell {TD} at (0,0) size 70x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 68x21
                 text run at (1,1) width 68: "First Row"
-          RenderTableRow {TR} at (0,0) size 70x24
-      RenderBlock (anonymous) at (0,48) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 2: border=1 cellspacing=1 cellpadding=0"
-      RenderTable {TABLE} at (0,70) size 74x28 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 72x26
+          RenderTableRow {TR} at (0,0) size 70x23
+      RenderBlock (anonymous) at (0,46) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 2: border=1 cellspacing=1 cellpadding=0"
+      RenderTable {TABLE} at (0,67) size 74x27 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 72x25
           RenderTableRow {TR} at (0,1) size 72x0
-            RenderTableCell {TD} at (1,1) size 70x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 68x22
+            RenderTableCell {TD} at (1,1) size 70x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 68x21
                 text run at (1,1) width 68: "First Row"
-          RenderTableRow {TR} at (0,2) size 72x23
-      RenderBlock (anonymous) at (0,98) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 3: border=1 cellspacing=0 cellpadding=1"
-      RenderTable {TABLE} at (0,120) size 74x28 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 72x26
+          RenderTableRow {TR} at (0,2) size 72x22
+      RenderBlock (anonymous) at (0,94) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 3: border=1 cellspacing=0 cellpadding=1"
+      RenderTable {TABLE} at (0,115) size 74x27 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 72x25
           RenderTableRow {TR} at (0,0) size 72x0
-            RenderTableCell {TD} at (0,0) size 72x26 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 68x22
+            RenderTableCell {TD} at (0,0) size 72x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 68x21
                 text run at (2,2) width 68: "First Row"
-          RenderTableRow {TR} at (0,0) size 72x26
-      RenderBlock (anonymous) at (0,148) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 4: border=1 cellspacing=1 cellpadding=1"
-      RenderTable {TABLE} at (0,170) size 76x30 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 74x28
+          RenderTableRow {TR} at (0,0) size 72x25
+      RenderBlock (anonymous) at (0,142) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 4: border=1 cellspacing=1 cellpadding=1"
+      RenderTable {TABLE} at (0,163) size 76x29 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 74x27
           RenderTableRow {TR} at (0,1) size 74x0
-            RenderTableCell {TD} at (1,1) size 72x26 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 68x22
+            RenderTableCell {TD} at (1,1) size 72x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 68x21
                 text run at (2,2) width 68: "First Row"
-          RenderTableRow {TR} at (0,2) size 74x25
-      RenderBlock (anonymous) at (0,200) size 784x110
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 490x22
-          text run at (0,44) width 490: "Same tables as above but removing height=\"50%\" from the second row:"
-        RenderBR {BR} at (490,44) size 0x22
-        RenderBR {BR} at (0,66) size 0x22
-        RenderText {#text} at (0,88) size 317x22
-          text run at (0,88) width 317: "Table 5: border=1 cellspacing=0 cellpadding=0"
-      RenderTable {TABLE} at (0,310) size 72x26 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 70x24
+          RenderTableRow {TR} at (0,2) size 74x24
+      RenderBlock (anonymous) at (0,192) size 784x105
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 506x21
+          text run at (0,42) width 506: "Same tables as above but removing height=\"50%\" from the second row:"
+        RenderBR {BR} at (506,42) size 0x21
+        RenderBR {BR} at (0,63) size 0x21
+        RenderText {#text} at (0,84) size 334x21
+          text run at (0,84) width 334: "Table 5: border=1 cellspacing=0 cellpadding=0"
+      RenderTable {TABLE} at (0,297) size 72x25 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 70x23
           RenderTableRow {TR} at (0,0) size 70x0
-            RenderTableCell {TD} at (0,0) size 70x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 68x22
+            RenderTableCell {TD} at (0,0) size 70x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 68x21
                 text run at (1,1) width 68: "First Row"
-          RenderTableRow {TR} at (0,0) size 70x24
-      RenderBlock (anonymous) at (0,336) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 6: border=1 cellspacing=1 cellpadding=0"
-      RenderTable {TABLE} at (0,358) size 74x28 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 72x26
+          RenderTableRow {TR} at (0,0) size 70x23
+      RenderBlock (anonymous) at (0,322) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 6: border=1 cellspacing=1 cellpadding=0"
+      RenderTable {TABLE} at (0,343) size 74x27 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 72x25
           RenderTableRow {TR} at (0,1) size 72x0
-            RenderTableCell {TD} at (1,1) size 70x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 68x22
+            RenderTableCell {TD} at (1,1) size 70x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 68x21
                 text run at (1,1) width 68: "First Row"
-          RenderTableRow {TR} at (0,2) size 72x23
-      RenderBlock (anonymous) at (0,386) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 7: border=1 cellspacing=0 cellpadding=1"
-      RenderTable {TABLE} at (0,408) size 74x28 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 72x26
+          RenderTableRow {TR} at (0,2) size 72x22
+      RenderBlock (anonymous) at (0,370) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 7: border=1 cellspacing=0 cellpadding=1"
+      RenderTable {TABLE} at (0,391) size 74x27 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 72x25
           RenderTableRow {TR} at (0,0) size 72x0
-            RenderTableCell {TD} at (0,0) size 72x26 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 68x22
+            RenderTableCell {TD} at (0,0) size 72x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 68x21
                 text run at (2,2) width 68: "First Row"
-          RenderTableRow {TR} at (0,0) size 72x26
-      RenderBlock (anonymous) at (0,436) size 784x22
-        RenderText {#text} at (0,0) size 317x22
-          text run at (0,0) width 317: "Table 8: border=1 cellspacing=1 cellpadding=1"
-      RenderTable {TABLE} at (0,458) size 76x30 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 74x28
+          RenderTableRow {TR} at (0,0) size 72x25
+      RenderBlock (anonymous) at (0,418) size 784x21
+        RenderText {#text} at (0,0) size 334x21
+          text run at (0,0) width 334: "Table 8: border=1 cellspacing=1 cellpadding=1"
+      RenderTable {TABLE} at (0,439) size 76x29 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 74x27
           RenderTableRow {TR} at (0,1) size 74x0
-            RenderTableCell {TD} at (1,1) size 72x26 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 68x22
+            RenderTableCell {TD} at (1,1) size 72x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 68x21
                 text run at (2,2) width 68: "First Row"
-          RenderTableRow {TR} at (0,2) size 74x25
+          RenderTableRow {TR} at (0,2) size 74x24

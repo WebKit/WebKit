@@ -3,90 +3,90 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 150x32 [bgcolor=#00FF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 148x30
-          RenderTableRow {TR} at (0,2) size 148x26
-            RenderTableCell {TD} at (2,2) size 63x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x22
-                text run at (2,2) width 24: "200"
-            RenderTableCell {TD} at (67,2) size 79x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 68x22
-                text run at (2,2) width 68: "one_hund"
-      RenderBlock (anonymous) at (0,32) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,54) size 500x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 498x30
-          RenderTableRow {TR} at (0,2) size 498x26
-            RenderTableCell {TD} at (2,2) size 174x26 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 77x22
-                text run at (2,2) width 77: "fooooooooo"
-            RenderTableCell {TD} at (178,2) size 174x26 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 77x22
-                text run at (2,2) width 77: "fooooooooo"
-            RenderTableCell {TD} at (354,2) size 142x26 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 96x22
-                text run at (2,2) width 96: "foo foo foo foo"
-      RenderBlock (anonymous) at (0,86) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {HR} at (0,116) size 402x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,126) size 784x22
-        RenderText {#text} at (0,0) size 386x22
-          text run at (0,0) width 386: "fixed table - fixed cells are increased based on fixed width"
-      RenderTable {TABLE} at (0,148) size 400x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 398x52
-          RenderTableRow {TR} at (0,2) size 398x48
-            RenderTableCell {TD} at (2,13) size 259x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-            RenderTableCell {TD} at (263,2) size 133x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 121x44
-                text run at (2,2) width 121: "foo foo foo foo foo"
-                text run at (2,24) width 71: "foo foo foo"
-      RenderBlock (anonymous) at (0,202) size 784x66
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderText {#text} at (0,44) size 395x22
-          text run at (0,44) width 395: "excess above min allocated based on fixed widths (not min)"
-      RenderTable {TABLE} at (0,268) size 100x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 98x52
-          RenderTableRow {TR} at (0,2) size 98x48
-            RenderTableCell {TD} at (2,2) size 34x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x44
-                text run at (2,2) width 21: "foo"
-                text run at (2,24) width 21: "foo"
-            RenderTableCell {TD} at (38,13) size 58x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-      RenderBlock (anonymous) at (0,322) size 784x44
-        RenderBR {BR} at (0,0) size 0x22
-        RenderText {#text} at (0,22) size 395x22
-          text run at (0,22) width 395: "excess above min allocated based on fixed widths (not min)"
-      RenderTable {TABLE} at (0,366) size 100x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 98x52
-          RenderTableRow {TR} at (0,2) size 98x48
-            RenderTableCell {TD} at (2,2) size 25x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x44
-                text run at (2,2) width 21: "foo"
-                text run at (2,24) width 21: "foo"
-            RenderTableCell {TD} at (29,13) size 67x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-      RenderBlock (anonymous) at (0,420) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,442) size 600x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 598x30
-          RenderTableRow {TR} at (0,2) size 598x26
-            RenderTableCell {TD} at (2,2) size 25x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-            RenderTableCell {TD} at (29,2) size 567x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-      RenderBlock (anonymous) at (0,474) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,496) size 40x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 38x30
-          RenderTableRow {TR} at (0,2) size 38x26
-            RenderTableCell {TD} at (2,2) size 34x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
+      RenderTable {TABLE} at (0,0) size 150x31 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 148x29
+          RenderTableRow {TR} at (0,2) size 148x25
+            RenderTableCell {TD} at (2,2) size 61x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x21
+                text run at (2,2) width 27: "200"
+            RenderTableCell {TD} at (65,2) size 81x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 72x21
+                text run at (2,2) width 72: "one_hund"
+      RenderBlock (anonymous) at (0,31) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,52) size 500x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 498x29
+          RenderTableRow {TR} at (0,2) size 498x25
+            RenderTableCell {TD} at (2,2) size 175x25 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 85x21
+                text run at (2,2) width 85: "fooooooooo"
+            RenderTableCell {TD} at (179,2) size 176x25 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 85x21
+                text run at (2,2) width 85: "fooooooooo"
+            RenderTableCell {TD} at (357,2) size 139x25 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 100x21
+                text run at (2,2) width 100: "foo foo foo foo"
+      RenderBlock (anonymous) at (0,83) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {HR} at (0,112) size 402x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,122) size 784x21
+        RenderText {#text} at (0,0) size 408x21
+          text run at (0,0) width 408: "fixed table - fixed cells are increased based on fixed width"
+      RenderTable {TABLE} at (0,143) size 400x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 398x50
+          RenderTableRow {TR} at (0,2) size 398x46
+            RenderTableCell {TD} at (2,12) size 259x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+            RenderTableCell {TD} at (263,2) size 133x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 126x42
+                text run at (2,2) width 126: "foo foo foo foo foo"
+                text run at (2,23) width 74: "foo foo foo"
+      RenderBlock (anonymous) at (0,195) size 784x63
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 421x21
+          text run at (0,42) width 421: "excess above min allocated based on fixed widths (not min)"
+      RenderTable {TABLE} at (0,258) size 100x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 98x50
+          RenderTableRow {TR} at (0,2) size 98x46
+            RenderTableCell {TD} at (2,2) size 34x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x42
+                text run at (2,2) width 22: "foo"
+                text run at (2,23) width 22: "foo"
+            RenderTableCell {TD} at (38,12) size 58x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+      RenderBlock (anonymous) at (0,310) size 784x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 421x21
+          text run at (0,21) width 421: "excess above min allocated based on fixed widths (not min)"
+      RenderTable {TABLE} at (0,352) size 100x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 98x50
+          RenderTableRow {TR} at (0,2) size 98x46
+            RenderTableCell {TD} at (2,2) size 26x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x42
+                text run at (2,2) width 22: "foo"
+                text run at (2,23) width 22: "foo"
+            RenderTableCell {TD} at (30,12) size 66x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+      RenderBlock (anonymous) at (0,404) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,425) size 600x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 598x29
+          RenderTableRow {TR} at (0,2) size 598x25
+            RenderTableCell {TD} at (2,2) size 26x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+            RenderTableCell {TD} at (30,2) size 566x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+      RenderBlock (anonymous) at (0,456) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,477) size 40x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 38x29
+          RenderTableRow {TR} at (0,2) size 38x25
+            RenderTableCell {TD} at (2,2) size 34x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"

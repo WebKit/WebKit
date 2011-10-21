@@ -1,48 +1,48 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x374
-  RenderBlock {html} at (0,0) size 800x374
-    RenderBody {body} at (8,8) size 784x358
-      RenderTable {table} at (0,0) size 100x98 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 98x96
-          RenderTableRow {tr} at (0,2) size 98x92
-            RenderTableCell {td} at (2,2) size 94x92 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 81x88
-                text run at (2,2) width 67: "This table"
-                text run at (2,24) width 81: "should have"
-                text run at (2,46) width 68: "a width of"
-                text run at (2,68) width 66: "100 pixels"
-      RenderBlock (anonymous) at (0,98) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,120) size 200x54 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 198x52
-          RenderTableRow {tr} at (0,2) size 198x48
-            RenderTableCell {td} at (2,2) size 194x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 164x44
-                text run at (2,2) width 164: "This table should have a"
-                text run at (2,24) width 126: "width of 200 pixels"
-      RenderBlock (anonymous) at (0,174) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,196) size 300x54 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 298x52
-          RenderTableRow {tr} at (0,2) size 298x48
-            RenderTableCell {td} at (2,2) size 294x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 252x44
-                text run at (2,2) width 252: "This table should have a width of 300"
-                text run at (2,24) width 38: "pixels"
-      RenderBlock (anonymous) at (0,250) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,272) size 400x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 398x30
-          RenderTableRow {tr} at (0,2) size 398x26
-            RenderTableCell {td} at (2,2) size 394x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 294x22
-                text run at (2,2) width 294: "This table should have a width of 400 pixels"
-      RenderBlock (anonymous) at (0,304) size 784x22
-        RenderBR {br} at (0,0) size 0x22
-      RenderTable {table} at (0,326) size 500x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 498x30
-          RenderTableRow {tr} at (0,2) size 498x26
-            RenderTableCell {td} at (2,2) size 494x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 294x22
-                text run at (2,2) width 294: "This table should have a width of 500 pixels"
+layer at (0,0) size 800x360
+  RenderBlock {html} at (0,0) size 800x360
+    RenderBody {body} at (8,8) size 784x344
+      RenderTable {table} at (0,0) size 100x94 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 98x92
+          RenderTableRow {tr} at (0,2) size 98x88
+            RenderTableCell {td} at (2,2) size 94x88 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 87x84
+                text run at (2,2) width 70: "This table"
+                text run at (2,23) width 87: "should have"
+                text run at (2,44) width 68: "a width of"
+                text run at (2,65) width 73: "100 pixels"
+      RenderBlock (anonymous) at (0,94) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,115) size 200x52 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 198x50
+          RenderTableRow {tr} at (0,2) size 198x46
+            RenderTableCell {td} at (2,2) size 194x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 174x42
+                text run at (2,2) width 174: "This table should have a"
+                text run at (2,23) width 132: "width of 200 pixels"
+      RenderBlock (anonymous) at (0,167) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,188) size 300x52 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 298x50
+          RenderTableRow {tr} at (0,2) size 298x46
+            RenderTableCell {td} at (2,2) size 294x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 264x42
+                text run at (2,2) width 264: "This table should have a width of 300"
+                text run at (2,23) width 42: "pixels"
+      RenderBlock (anonymous) at (0,240) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,261) size 400x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 398x29
+          RenderTableRow {tr} at (0,2) size 398x25
+            RenderTableCell {td} at (2,2) size 394x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 310x21
+                text run at (2,2) width 310: "This table should have a width of 400 pixels"
+      RenderBlock (anonymous) at (0,292) size 784x21
+        RenderBR {br} at (0,0) size 0x21
+      RenderTable {table} at (0,313) size 500x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 498x29
+          RenderTableRow {tr} at (0,2) size 498x25
+            RenderTableCell {td} at (2,2) size 494x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 310x21
+                text run at (2,2) width 310: "This table should have a width of 500 pixels"

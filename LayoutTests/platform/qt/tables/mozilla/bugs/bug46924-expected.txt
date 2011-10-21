@@ -1,53 +1,53 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x304
-  RenderBlock {HTML} at (0,0) size 800x304
-    RenderBody {BODY} at (8,8) size 784x288
-      RenderBlock {DIV} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 339x22
-          text run at (0,0) width 339: "Buggy example: This table has a tfoot and a tbody"
-      RenderTable {TABLE} at (0,22) size 784x62 [border: (1px outset #808080)]
-        RenderTableSection {TFOOT} at (1,31) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26 [bgcolor=#808000]
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (663,2) size 113x22
-                text run at (663,2) width 113: "This is the footer"
-        RenderTableSection {TBODY} at (1,1) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26 [bgcolor=#C0C0C0]
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-      RenderBlock (anonymous) at (0,84) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderBlock {DIV} at (0,106) size 784x22
-        RenderText {#text} at (0,0) size 322x22
-          text run at (0,0) width 322: "For comparison: The same table without a tfoot"
-      RenderTable {TABLE} at (0,128) size 784x32 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26 [bgcolor=#C0C0C0]
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-      RenderBlock {DIV} at (0,160) size 784x44
-        RenderText {#text} at (0,0) size 768x44
-          text run at (0,0) width 768: "ILLEGAL example: TFOOT after TBODY -- THIS IS PROHIBITED BY HTML 4.01 STRICT AND SHOULD"
-          text run at (0,22) width 510: "NOT WORK IN STRICT MODE. Please fix or reenable transitional mode."
-      RenderTable {TABLE} at (0,204) size 784x62 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26 [bgcolor=#C0C0C0]
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-        RenderTableSection {TFOOT} at (1,31) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26 [bgcolor=#808000]
-            RenderTableCell {TD} at (2,2) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (663,2) size 113x22
-                text run at (663,2) width 113: "This is the footer"
-      RenderBlock (anonymous) at (0,266) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-layer at (13,35) size 387x22
-  RenderBlock (relative positioned) {DIV} at (2,2) size 387x22 [bgcolor=#FF0000]
-    RenderText {#text} at (96,0) size 291x22
-      text run at (96,0) width 291: "This row should be in the (grey) table body"
-layer at (13,141) size 387x22
-  RenderBlock (relative positioned) {DIV} at (2,2) size 387x22 [bgcolor=#FF0000]
-    RenderText {#text} at (96,0) size 291x22
-      text run at (96,0) width 291: "This row should be in the (grey) table body"
-layer at (13,217) size 387x22
-  RenderBlock (relative positioned) {DIV} at (2,2) size 387x22 [bgcolor=#FF0000]
-    RenderText {#text} at (96,0) size 291x22
-      text run at (96,0) width 291: "This row should be in the (grey) table body"
+layer at (0,0) size 800x293
+  RenderBlock {HTML} at (0,0) size 800x293
+    RenderBody {BODY} at (8,8) size 784x277
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 353x21
+          text run at (0,0) width 353: "Buggy example: This table has a tfoot and a tbody"
+      RenderTable {TABLE} at (0,21) size 784x60 [border: (1px outset #808080)]
+        RenderTableSection {TFOOT} at (1,30) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25 [bgcolor=#808000]
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (659,2) size 117x21
+                text run at (659,2) width 117: "This is the footer"
+        RenderTableSection {TBODY} at (1,1) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,81) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {DIV} at (0,102) size 784x21
+        RenderText {#text} at (0,0) size 331x21
+          text run at (0,0) width 331: "For comparison: The same table without a tfoot"
+      RenderTable {TABLE} at (0,123) size 784x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (0,154) size 784x42
+        RenderText {#text} at (0,0) size 747x42
+          text run at (0,0) width 747: "ILLEGAL example: TFOOT after TBODY -- THIS IS PROHIBITED BY HTML 4.01 STRICT AND SHOULD"
+          text run at (0,21) width 516: "NOT WORK IN STRICT MODE. Please fix or reenable transitional mode."
+      RenderTable {TABLE} at (0,196) size 784x60 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (1,30) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25 [bgcolor=#808000]
+            RenderTableCell {TD} at (2,2) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (659,2) size 117x21
+                text run at (659,2) width 117: "This is the footer"
+      RenderBlock (anonymous) at (0,256) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+layer at (13,34) size 387x21
+  RenderBlock (relative positioned) {DIV} at (2,2) size 387x21 [bgcolor=#FF0000]
+    RenderText {#text} at (86,0) size 301x21
+      text run at (86,0) width 301: "This row should be in the (grey) table body"
+layer at (13,136) size 387x21
+  RenderBlock (relative positioned) {DIV} at (2,2) size 387x21 [bgcolor=#FF0000]
+    RenderText {#text} at (86,0) size 301x21
+      text run at (86,0) width 301: "This row should be in the (grey) table body"
+layer at (13,209) size 387x21
+  RenderBlock (relative positioned) {DIV} at (2,2) size 387x21 [bgcolor=#FF0000]
+    RenderText {#text} at (86,0) size 301x21
+      text run at (86,0) width 301: "This row should be in the (grey) table body"

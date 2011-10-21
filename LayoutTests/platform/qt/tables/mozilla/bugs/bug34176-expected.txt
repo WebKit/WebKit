@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x42 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x40
-          RenderTableRow {TR} at (0,2) size 782x36
-            RenderTableCell {TD} at (2,2) size 778x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 774x32 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 772x30
-                  RenderTableRow {TR} at (0,2) size 772x26
-                    RenderTableCell {TD} at (2,2) size 219x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 34x22
-                        text run at (2,2) width 34: "cell 1"
-                    RenderTableCell {TD} at (223,2) size 547x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 34x22
-                        text run at (2,2) width 34: "cell 2"
+      RenderTable {TABLE} at (0,0) size 784x41 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x39
+          RenderTableRow {TR} at (0,2) size 782x35
+            RenderTableCell {TD} at (2,2) size 778x35 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 774x31 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 772x29
+                  RenderTableRow {TR} at (0,2) size 772x25
+                    RenderTableCell {TD} at (2,2) size 219x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 38x21
+                        text run at (2,2) width 38: "cell 1"
+                    RenderTableCell {TD} at (223,2) size 547x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 38x21
+                        text run at (2,2) width 38: "cell 2"

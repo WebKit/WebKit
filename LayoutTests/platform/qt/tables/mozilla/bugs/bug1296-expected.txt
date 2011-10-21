@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 657x63
-        RenderTableSection {TBODY} at (0,0) size 657x63
-          RenderTableRow {TR} at (0,2) size 657x59
-            RenderTableCell {TD} at (2,19) size 197x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 195x22
-                text run at (1,1) width 195: "Let's put some space in here!"
-            RenderTableCell {TD} at (201,2) size 454x59 [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 668x63
+        RenderTableSection {TBODY} at (0,0) size 668x63
+          RenderTableRow {TR} at (0,2) size 668x59
+            RenderTableCell {TD} at (2,20) size 208x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 206x21
+                text run at (1,1) width 206: "Let's put some space in here!"
+            RenderTableCell {TD} at (212,2) size 454x59 [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 452x57
                 RenderTableSection {TBODY} at (0,0) size 452x57
                   RenderTableRow {TR} at (0,2) size 452x53

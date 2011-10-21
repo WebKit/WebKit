@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x45
+      RenderBlock {P} at (0,0) size 784x44
         RenderBlock (anonymous) at (0,0) size 784x17
-          RenderInline {CODE} at (0,0) size 217x17
-            RenderText {#text} at (0,0) size 217x17
-              text run at (0,0) width 217: "<TABLE border=\"0\" frame=\"void\">"
+          RenderInline {CODE} at (0,0) size 202x17
+            RenderText {#text} at (0,0) size 202x17
+              text run at (0,0) width 202: "<TABLE border=\"0\" frame=\"void\">"
           RenderText {#text} at (0,0) size 0x0
-        RenderTable {TABLE} at (0,17) size 76x28
-          RenderTableSection {TBODY} at (0,0) size 76x28
-            RenderTableRow {TR} at (0,2) size 76x24
-              RenderTableCell {TD} at (2,2) size 30x24 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x22
-                  text run at (1,1) width 28: "Left"
-              RenderTableCell {TD} at (34,2) size 40x24 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 38x22
+        RenderTable {TABLE} at (0,17) size 74x27
+          RenderTableSection {TBODY} at (0,0) size 74x27
+            RenderTableRow {TR} at (0,2) size 74x23
+              RenderTableCell {TD} at (2,2) size 28x23 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 26x21
+                  text run at (1,1) width 26: "Left"
+              RenderTableCell {TD} at (32,2) size 40x23 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 38x21
                   text run at (1,1) width 38: "Right"

@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 748x60 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 746x58
-          RenderTableRow {TR} at (0,2) size 746x26
-            RenderTableCell {TD} at (2,2) size 227x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 112x22
-                text run at (2,2) width 112: "R1C1 colspan=0"
-            RenderTableCell {TD} at (231,2) size 513x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 112x22
-                text run at (2,2) width 112: "R1C2 colspan=0"
-          RenderTableRow {TR} at (0,30) size 746x26
-            RenderTableCell {TD} at (2,30) size 742x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 112x22
-                text run at (2,2) width 112: "R2C1 colspan=2"
+      RenderTable {TABLE} at (0,0) size 748x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 746x56
+          RenderTableRow {TR} at (0,2) size 746x25
+            RenderTableCell {TD} at (2,2) size 227x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 120x21
+                text run at (2,2) width 120: "R1C1 colspan=0"
+            RenderTableCell {TD} at (231,2) size 513x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 120x21
+                text run at (2,2) width 120: "R1C2 colspan=0"
+          RenderTableRow {TR} at (0,29) size 746x25
+            RenderTableCell {TD} at (2,29) size 742x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 120x21
+                text run at (2,2) width 120: "R2C1 colspan=2"

@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 85x122 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 83x120
+      RenderTable {TABLE} at (0,0) size 85x139 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 83x137
           RenderTableRow {TR} at (0,2) size 83x22
             RenderTableCell {TD} at (2,2) size 79x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {HR} at (3,10) size 72x2 [border: (1px inset #000000)]
-          RenderTableRow {TR} at (0,26) size 83x92
-            RenderTableCell {TD} at (2,26) size 79x92 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 73x88
-                text run at (2,2) width 73: "this should"
-                text run at (2,24) width 36: "wrap"
-                text run at (2,46) width 71: "within this"
-                text run at (2,68) width 23: "TD"
-      RenderBlock (anonymous) at (0,122) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,144) size 92x122 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 90x120
+          RenderTableRow {TR} at (0,26) size 83x109
+            RenderTableCell {TD} at (2,26) size 79x109 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 71x105
+                text run at (2,2) width 25: "this"
+                text run at (2,23) width 48: "should"
+                text run at (2,44) width 35: "wrap"
+                text run at (2,65) width 71: "within this"
+                text run at (2,86) width 22: "TD"
+      RenderBlock (anonymous) at (0,139) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,160) size 92x97 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 90x95
           RenderTableRow {TR} at (0,2) size 90x22
             RenderTableCell {TD} at (2,2) size 86x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {HR} at (2,10) size 82x2 [border: (1px inset #000000)]
-          RenderTableRow {TR} at (0,26) size 90x92
-            RenderTableCell {TD} at (2,26) size 86x92 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 73x88
-                text run at (2,2) width 73: "this should"
-                text run at (2,24) width 36: "wrap"
-                text run at (2,46) width 71: "within this"
-                text run at (2,68) width 23: "TD"
+          RenderTableRow {TR} at (0,26) size 90x67
+            RenderTableCell {TD} at (2,26) size 86x67 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 81x63
+                text run at (2,2) width 77: "this should"
+                text run at (2,23) width 81: "wrap within"
+                text run at (2,44) width 51: "this TD"

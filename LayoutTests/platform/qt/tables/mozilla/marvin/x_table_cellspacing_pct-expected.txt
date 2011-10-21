@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x48
-  RenderBlock {html} at (0,0) size 800x48
-    RenderBody {body} at (8,8) size 784x32
-      RenderTable {table} at (0,0) size 480x32 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 478x30
-          RenderTableRow {tr} at (0,2) size 478x26
-            RenderTableCell {td} at (2,2) size 236x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 232x22
-                text run at (2,2) width 232: "This cell should have 20% spacing"
-            RenderTableCell {td} at (240,2) size 236x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 232x22
-                text run at (2,2) width 232: "This cell should have 20% spacing"
+layer at (0,0) size 800x47
+  RenderBlock {html} at (0,0) size 800x47
+    RenderBody {body} at (8,8) size 784x31
+      RenderTable {table} at (0,0) size 510x31 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 508x29
+          RenderTableRow {tr} at (0,2) size 508x25
+            RenderTableCell {td} at (2,2) size 251x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 247x21
+                text run at (2,2) width 247: "This cell should have 20% spacing"
+            RenderTableCell {td} at (255,2) size 251x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 247x21
+                text run at (2,2) width 247: "This cell should have 20% spacing"

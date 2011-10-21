@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 455x22
-          text run at (0,0) width 455: "If the font size is too big for the inside table, it is probably bug 6925."
-      RenderTable {TABLE} at (0,22) size 110x56 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 108x54
-          RenderTableRow {TR} at (0,2) size 108x50
-            RenderTableCell {TD} at (2,2) size 104x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {CENTER} at (2,2) size 100x46
-                RenderTable {TABLE} at (0,0) size 100x24 [border: (1px outset #808080)]
-                  RenderTableSection {TBODY} at (1,1) size 98x22
-                    RenderTableRow {TR} at (0,2) size 98x18
-                      RenderTableCell {TD} at (2,2) size 94x18 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 472x21
+          text run at (0,0) width 472: "If the font size is too big for the inside table, it is probably bug 6925."
+      RenderTable {TABLE} at (0,21) size 110x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 108x52
+          RenderTableRow {TR} at (0,2) size 108x48
+            RenderTableCell {TD} at (2,2) size 104x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (2,2) size 100x44
+                RenderTable {TABLE} at (0,0) size 100x23 [border: (1px outset #808080)]
+                  RenderTableSection {TBODY} at (1,1) size 98x21
+                    RenderTableRow {TR} at (0,2) size 98x17
+                      RenderTableCell {TD} at (2,2) size 94x17 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                         RenderBlock (anonymous) at (2,2) size 90x0
                           RenderInline {FONT} at (0,0) size 0x0
                             RenderText {#text} at (0,0) size 0x0
                         RenderBlock (anonymous) at (2,2) size 90x0
                         RenderBlock (anonymous) at (2,2) size 90x0
                           RenderInline {FONT} at (0,0) size 0x0
-                        RenderBlock {CENTER} at (2,2) size 90x14
-                          RenderInline {FONT} at (0,0) size 26x14
-                            RenderText {#text} at (32,0) size 26x14
-                              text run at (32,0) width 26: "inside"
+                        RenderBlock {CENTER} at (2,2) size 90x13
+                          RenderInline {FONT} at (0,0) size 28x13
+                            RenderText {#text} at (31,0) size 28x13
+                              text run at (31,0) width 28: "inside"
                           RenderText {#text} at (0,0) size 0x0
-                        RenderBlock (anonymous) at (2,16) size 90x0
+                        RenderBlock (anonymous) at (2,15) size 90x0
                           RenderText {#text} at (0,0) size 0x0
-                RenderBlock (anonymous) at (0,24) size 100x22
-                  RenderText {#text} at (7,0) size 86x22
-                    text run at (7,0) width 86: "outside table"
+                RenderBlock (anonymous) at (0,23) size 100x21
+                  RenderText {#text} at (4,0) size 92x21
+                    text run at (4,0) width 92: "outside table"

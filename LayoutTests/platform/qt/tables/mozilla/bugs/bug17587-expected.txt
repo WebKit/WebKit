@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 606x266 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 604x264
+      RenderTable {TABLE} at (0,0) size 606x278 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 604x276
           RenderTableRow {TR} at (0,0) size 604x62
             RenderTableCell {TD} at (0,0) size 114x136 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
               RenderImage {IMG} at (1,1) size 112x134
             RenderTableCell {TD} at (114,0) size 490x62 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=2]
               RenderImage {IMG} at (21,1) size 468x60
-          RenderTableRow {TR} at (0,62) size 604x24
-            RenderTableCell {TD} at (114,62) size 490x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 488x22
-                RenderTableSection {TBODY} at (0,0) size 488x22
-                  RenderTableRow {TR} at (0,0) size 488x22
-                    RenderTableCell {TD} at (0,0) size 488x22 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 90x22
+          RenderTableRow {TR} at (0,62) size 604x23
+            RenderTableCell {TD} at (114,62) size 490x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 488x21
+                RenderTableSection {TBODY} at (0,0) size 488x21
+                  RenderTableRow {TR} at (0,0) size 488x21
+                    RenderTableCell {TD} at (0,0) size 488x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 90x21
                         text run at (0,0) width 90: "Top Nav Bar"
-          RenderTableRow {TR} at (0,86) size 604x178
-            RenderTableCell {TD} at (114,174) size 337x2 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (451,86) size 153x178 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 147x176
-                RenderText {#text} at (1,1) size 147x176
-                  text run at (1,1) width 124: "\"Freakish animal-"
-                  text run at (1,23) width 125: "things, all sporting"
-                  text run at (1,45) width 113: "maniacal smiles, "
-                  text run at (114,45) width 29: "race"
-                  text run at (1,67) width 147: "around a series of ice-"
-                  text run at (1,89) width 100: "themed tracks,"
-                  text run at (1,111) width 92: "showing their"
-                  text run at (1,133) width 78: "malformed "
-                  text run at (79,133) width 50: "asses to"
-                  text run at (1,155) width 125: "the entire world. \""
+          RenderTableRow {TR} at (0,85) size 604x191
+            RenderTableCell {TD} at (114,179) size 337x2 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (451,85) size 153x191 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 149x189
+                RenderText {#text} at (1,1) size 149x189
+                  text run at (1,1) width 133: "\"Freakish animal-"
+                  text run at (1,22) width 141: "things, all sporting"
+                  text run at (1,43) width 125: "maniacal smiles,"
+                  text run at (1,64) width 105: "race around a"
+                  text run at (1,85) width 96: "series of ice-"
+                  text run at (1,106) width 112: "themed tracks,"
+                  text run at (1,127) width 103: "showing their"
+                  text run at (1,148) width 85: "malformed "
+                  text run at (86,148) width 64: "asses to"
+                  text run at (1,169) width 133: "the entire world. \""
               RenderText {#text} at (0,0) size 0x0

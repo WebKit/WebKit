@@ -1,43 +1,43 @@
-layer at (0,0) size 784x1352
+layer at (0,0) size 784x1348
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1352
-  RenderBlock {HTML} at (0,0) size 784x1352
-    RenderBody {BODY} at (8,8) size 768x1336
-      RenderBlock {P} at (0,0) size 768x22
-        RenderText {#text} at (0,0) size 376x22
-          text run at (0,0) width 376: "100 percent height table inside 100 percent height table:"
-      RenderTable {TABLE} at (0,38) size 768x584 [bgcolor=#808080] [border: (1px outset #808080)]
+layer at (0,0) size 784x1348
+  RenderBlock {HTML} at (0,0) size 784x1348
+    RenderBody {BODY} at (8,8) size 768x1332
+      RenderBlock {P} at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 397x21
+          text run at (0,0) width 397: "100 percent height table inside 100 percent height table:"
+      RenderTable {TABLE} at (0,37) size 768x584 [bgcolor=#808080] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 766x582
           RenderTableRow {TR} at (0,2) size 766x578
             RenderTableCell {TD} at (2,2) size 380x578 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 376x574 [bgcolor=#FFFF00] [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 374x572
                   RenderTableRow {TR} at (0,2) size 374x568
-                    RenderTableCell {TD} at (2,273) size 184x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 142x22
-                        text run at (2,2) width 142: " Inner Table (yellow)"
-                    RenderTableCell {TD} at (188,273) size 184x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 4x22
+                    RenderTableCell {TD} at (2,273) size 184x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 145x21
+                        text run at (2,2) width 145: " Inner Table (yellow)"
+                    RenderTableCell {TD} at (188,273) size 184x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 4x21
                         text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (384,278) size 380x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 131x22
-                text run at (2,2) width 131: " Outer Table (grey)"
-      RenderBlock {P} at (0,638) size 768x22
-        RenderText {#text} at (0,0) size 368x22
-          text run at (0,0) width 368: "50 percent height table inside 100 percent height table:"
-      RenderTable {TABLE} at (0,676) size 768x660 [bgcolor=#808080] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x658
-          RenderTableRow {TR} at (0,2) size 766x654
-            RenderTableCell {TD} at (2,164) size 380x329 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 376x325 [bgcolor=#FFFF00] [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 374x323
-                  RenderTableRow {TR} at (0,2) size 374x319
-                    RenderTableCell {TD} at (2,148) size 184x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 142x22
-                        text run at (2,2) width 142: " Inner Table (yellow)"
-                    RenderTableCell {TD} at (188,148) size 184x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 4x22
+            RenderTableCell {TD} at (384,278) size 380x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 133x21
+                text run at (2,2) width 133: " Outer Table (grey)"
+      RenderBlock {P} at (0,637) size 768x21
+        RenderText {#text} at (0,0) size 388x21
+          text run at (0,0) width 388: "50 percent height table inside 100 percent height table:"
+      RenderTable {TABLE} at (0,674) size 768x658 [bgcolor=#808080] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x656
+          RenderTableRow {TR} at (0,2) size 766x652
+            RenderTableCell {TD} at (2,164) size 380x328 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 376x324 [bgcolor=#FFFF00] [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 374x322
+                  RenderTableRow {TR} at (0,2) size 374x318
+                    RenderTableCell {TD} at (2,148) size 184x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 145x21
+                        text run at (2,2) width 145: " Inner Table (yellow)"
+                    RenderTableCell {TD} at (188,148) size 184x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 4x21
                         text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (384,316) size 380x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 131x22
-                text run at (2,2) width 131: " Outer Table (grey)"
+            RenderTableCell {TD} at (384,315) size 380x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 133x21
+                text run at (2,2) width 133: " Outer Table (grey)"

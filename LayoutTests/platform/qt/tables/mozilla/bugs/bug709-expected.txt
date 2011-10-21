@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x50
-        RenderTableSection {TBODY} at (0,0) size 784x50
-          RenderTableRow {TR} at (0,2) size 784x46
-            RenderTableCell {TD} at (2,2) size 322x46 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (16,1) size 290x44
-                text run at (16,1) width 290: "The quick brown fox jumped over the lazy"
-                text run at (146,23) width 30: "dog."
-            RenderTableCell {TD} at (326,2) size 456x46 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (31,1) size 394x44
-                text run at (31,1) width 394: "Now is the time for all good men to come to the aid of their"
-                text run at (199,23) width 58: "country."
+      RenderTable {TABLE} at (0,0) size 784x48
+        RenderTableSection {TBODY} at (0,0) size 784x48
+          RenderTableRow {TR} at (0,2) size 784x44
+            RenderTableCell {TD} at (2,2) size 321x44 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (13,1) size 295x42
+                text run at (13,1) width 295: "The quick brown fox jumped over the lazy"
+                text run at (145,22) width 31: "dog."
+            RenderTableCell {TD} at (325,2) size 457x44 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (24,1) size 409x42
+                text run at (24,1) width 409: "Now is the time for all good men to come to the aid of their"
+                text run at (200,22) width 57: "country."

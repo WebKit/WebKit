@@ -7,37 +7,37 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,10) size 184x49 [bgcolor=#F7D68C] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 182x47
           RenderTableRow {TR} at (0,0) size 182x47
-            RenderTableCell {TD} at (0,0) size 138x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 136x44
+            RenderTableCell {TD} at (0,1) size 138x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 136x42
                 text run at (1,1) width 136: "xxxxxxxxxxxxxxxxx"
-                text run at (1,23) width 100: "xxxxxx xxxxxx"
+                text run at (1,22) width 100: "xxxxxx xxxxxx"
             RenderTableCell {TD} at (138,0) size 44x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 21x45
               RenderImage {IMG} at (22,1) size 21x45
-      RenderBlock (anonymous) at (0,59) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,81) size 468x80 [bgcolor=#F7D68C]
-        RenderTableSection {TBODY} at (0,0) size 468x80
-          RenderTableRow {TR} at (0,0) size 468x50
-            RenderTableCell {TD} at (0,0) size 326x25 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 264x25
-                RenderInline {B} at (0,0) size 264x25
-                  RenderText {#text} at (0,0) size 264x25
-                    text run at (0,0) width 264: " 25 offres d'emploi des entreprises"
-            RenderTableCell {TD} at (326,0) size 100x50 [bgcolor=#EE9E02] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (16,17) size 20x1
-              RenderText {#text} at (36,0) size 36x22
-                text run at (36,0) width 36: "page "
-              RenderInline {FONT} at (0,0) size 28x50
-                RenderInline {B} at (0,0) size 28x50
-                  RenderText {#text} at (72,0) size 28x50
-                    text run at (72,0) width 28: "12 /"
-                    text run at (82,25) width 18: "13"
+      RenderBlock (anonymous) at (0,59) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,80) size 468x78 [bgcolor=#F7D68C]
+        RenderTableSection {TBODY} at (0,0) size 468x78
+          RenderTableRow {TR} at (0,0) size 468x48
+            RenderTableCell {TD} at (0,0) size 326x24 [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 296x24
+                RenderInline {B} at (0,0) size 296x24
+                  RenderText {#text} at (0,0) size 296x24
+                    text run at (0,0) width 296: " 25 offres d'emploi des entreprises"
+            RenderTableCell {TD} at (326,0) size 100x48 [bgcolor=#EE9E02] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (10,17) size 20x1
+              RenderText {#text} at (30,0) size 40x21
+                text run at (30,0) width 40: "page "
+              RenderInline {FONT} at (0,0) size 30x48
+                RenderInline {B} at (0,0) size 30x48
+                  RenderText {#text} at (70,0) size 30x48
+                    text run at (70,0) width 30: "12 /"
+                    text run at (80,24) width 20: "13"
             RenderTableCell {TD} at (426,0) size 42x45 [r=0 c=2 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 21x45
               RenderImage {IMG} at (21,0) size 21x45
-          RenderTableRow {TR} at (0,50) size 468x30
-            RenderTableCell {TD} at (0,50) size 326x30 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,48) size 468x30
+            RenderTableCell {TD} at (0,48) size 326x30 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 326x30
-            RenderTableCell {TD} at (326,50) size 100x30 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (326,48) size 100x30 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 100x30

@@ -1,38 +1,38 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x338
-  RenderBlock {html} at (0,0) size 800x338
-    RenderBody {body} at (8,16) size 784x314
-      RenderBlock {p} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 206x22
-          text run at (0,0) width 206: "TFOOT VALIGN=BOTTOM"
-      RenderTable {table} at (0,38) size 784x276 [border: (1px outset #808080)]
-        RenderTableSection {thead} at (1,1) size 782x30
-          RenderTableRow {tr} at (0,2) size 782x26
-            RenderTableCell {td} at (2,2) size 204x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "THEAD"
-            RenderTableCell {td} at (208,2) size 572x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "THEAD"
-        RenderTableSection {tfoot} at (1,61) size 782x214
-          RenderTableRow {tr} at (0,2) size 782x210
-            RenderTableCell {td} at (2,2) size 204x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x334
+  RenderBlock {html} at (0,0) size 800x334
+    RenderBody {body} at (8,16) size 784x310
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 194x21
+          text run at (0,0) width 194: "TFOOT VALIGN=BOTTOM"
+      RenderTable {table} at (0,37) size 784x273 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 782x29
+          RenderTableRow {tr} at (0,2) size 782x25
+            RenderTableCell {td} at (2,2) size 204x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "THEAD"
+            RenderTableCell {td} at (208,2) size 572x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "THEAD"
+        RenderTableSection {tfoot} at (1,59) size 782x213
+          RenderTableRow {tr} at (0,2) size 782x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,142) size 572x70 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 559x66
-                text run at (2,2) width 387: "The bottom of this text should be vertically aligned to the "
-                text run at (389,2) width 172: "bottom of the image. x-fill"
-                text run at (2,24) width 170: "x-fill x-fill x-fill x-fill x-fill "
-                text run at (172,24) width 306: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
-                text run at (478,24) width 81: "x-fill x-fill x-"
-                text run at (2,46) width 225: "fill x-fill x-fill x-fill x-fill x-fill x-fill "
-                text run at (227,46) width 132: "x-fill x-fill x-fill x-fill"
-        RenderTableSection {tbody} at (1,31) size 782x30
-          RenderTableRow {tr} at (0,2) size 782x26
-            RenderTableCell {td} at (2,2) size 204x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "TBODY"
-            RenderTableCell {td} at (208,2) size 572x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "TBODY"
+            RenderTableCell {td} at (208,144) size 572x67 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 561x63
+                text run at (2,2) width 400: "The bottom of this text should be vertically aligned to the "
+                text run at (402,2) width 160: "bottom of the image. x-"
+                text run at (2,23) width 185: "fill x-fill x-fill x-fill x-fill x-fill "
+                text run at (187,23) width 297: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
+                text run at (484,23) width 79: "x-fill x-fill x-"
+                text run at (2,44) width 218: "fill x-fill x-fill x-fill x-fill x-fill x-fill "
+                text run at (220,44) width 128: "x-fill x-fill x-fill x-fill"
+        RenderTableSection {tbody} at (1,30) size 782x29
+          RenderTableRow {tr} at (0,2) size 782x25
+            RenderTableCell {td} at (2,2) size 204x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "TBODY"
+            RenderTableCell {td} at (208,2) size 572x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "TBODY"

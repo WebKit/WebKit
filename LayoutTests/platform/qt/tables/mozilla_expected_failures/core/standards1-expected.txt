@@ -1,497 +1,497 @@
-layer at (0,0) size 784x2672
+layer at (0,0) size 784x2595
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x2672
-  RenderBlock {HTML} at (0,0) size 784x2672
-    RenderBody {BODY} at (8,21) size 768x2643
+layer at (0,0) size 784x2595
+  RenderBlock {HTML} at (0,0) size 784x2595
+    RenderBody {BODY} at (8,21) size 768x2566
       RenderBlock {H1} at (0,0) size 768x42
-        RenderText {#text} at (0,0) size 541x42
-          text run at (0,0) width 541: "Problems with COLSPAN and WIDTH"
-      RenderBlock {P} at (0,63) size 768x22
-        RenderText {#text} at (0,0) size 270x22
-          text run at (0,0) width 270: "Each block of tables should be identical."
-      RenderBlock {H2} at (0,104) size 768x33
-        RenderText {#text} at (0,0) size 129x33
-          text run at (0,0) width 129: "Sized Tables"
-      RenderBlock {P} at (0,156) size 768x44
-        RenderText {#text} at (0,0) size 756x44
-          text run at (0,0) width 756: "The following tables have width=400, which should make them the same width as the red lines which are caused"
-          text run at (0,22) width 62: "by DIVs:"
-      RenderBlock {H3} at (0,218) size 768x26
-        RenderText {#text} at (0,0) size 65x26
-          text run at (0,0) width 65: "260/140"
-      RenderBlock {DIV} at (0,262) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,268) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 252x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (256,2) size 142x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,322) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,328) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 262x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (266,2) size 132x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,382) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,388) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 254x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (258,2) size 140x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,442) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,448) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 254x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (258,2) size 140x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,502) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,508) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 256x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=65%"
-            RenderTableCell {TD} at (260,2) size 138x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,562) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,568) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 257x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (261,2) size 137x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=35%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,622) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,628) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 257x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=65%"
-            RenderTableCell {TD} at (261,2) size 137x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=35%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,682) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,706) size 768x26
-        RenderText {#text} at (0,0) size 65x26
-          text run at (0,0) width 65: "140/260"
-      RenderBlock {DIV} at (0,750) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,756) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 142x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (146,2) size 252x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,810) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,816) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 132x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (136,2) size 262x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,870) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,876) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 139x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (143,2) size 255x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,930) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,936) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 139x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (143,2) size 255x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,990) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,996) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 137x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=35%"
-            RenderTableCell {TD} at (141,2) size 257x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,1050) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1056) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 138x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (142,2) size 256x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=65%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,1110) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1116) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 138x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=35%"
-            RenderTableCell {TD} at (142,2) size 256x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=65%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,1170) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,1194) size 768x26
-        RenderText {#text} at (0,0) size 39x26
+        RenderText {#text} at (0,0) size 566x42
+          text run at (0,0) width 566: "Problems with COLSPAN and WIDTH"
+      RenderBlock {P} at (0,63) size 768x21
+        RenderText {#text} at (0,0) size 285x21
+          text run at (0,0) width 285: "Each block of tables should be identical."
+      RenderBlock {H2} at (0,103) size 768x32
+        RenderText {#text} at (0,0) size 146x32
+          text run at (0,0) width 146: "Sized Tables"
+      RenderBlock {P} at (0,154) size 768x42
+        RenderText {#text} at (0,0) size 740x42
+          text run at (0,0) width 740: "The following tables have width=400, which should make them the same width as the red lines which are"
+          text run at (0,21) width 116: "caused by DIVs:"
+      RenderBlock {H3} at (0,214) size 768x25
+        RenderText {#text} at (0,0) size 71x25
+          text run at (0,0) width 71: "260/140"
+      RenderBlock {DIV} at (0,257) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,263) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 252x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (256,2) size 142x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,315) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,321) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 262x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (266,2) size 132x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,373) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,379) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 254x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (258,2) size 140x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,431) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,437) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 254x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (258,2) size 140x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,489) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,495) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 256x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=65%"
+            RenderTableCell {TD} at (260,2) size 138x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,547) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,553) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 257x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (261,2) size 137x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=35%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,605) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,611) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 257x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=65%"
+            RenderTableCell {TD} at (261,2) size 137x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=35%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,663) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {H3} at (0,687) size 768x25
+        RenderText {#text} at (0,0) size 71x25
+          text run at (0,0) width 71: "140/260"
+      RenderBlock {DIV} at (0,730) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,736) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 142x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (146,2) size 252x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,788) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,794) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 132x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (136,2) size 262x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,846) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,852) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 139x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (143,2) size 255x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,904) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,910) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 139x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (143,2) size 255x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,962) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,968) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 137x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=35%"
+            RenderTableCell {TD} at (141,2) size 257x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,1020) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1026) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 138x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (142,2) size 256x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=65%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,1078) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1084) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 138x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=35%"
+            RenderTableCell {TD} at (142,2) size 256x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=65%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,1136) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {H3} at (0,1160) size 768x25
+        RenderText {#text} at (0,0) size 39x25
           text run at (0,0) width 39: "50%"
-      RenderBlock {DIV} at (0,1238) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1244) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 197x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-            RenderTableCell {TD} at (201,2) size 197x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1298) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1304) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 197x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (201,2) size 197x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1358) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1364) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 197x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-            RenderTableCell {TD} at (201,2) size 197x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1418) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1424) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 197x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (201,2) size 197x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1478) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1484) size 400x54
-        RenderTableSection {TBODY} at (0,0) size 400x54
-          RenderTableRow {TR} at (0,2) size 400x24
-            RenderTableCell {TD} at (2,2) size 197x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=200"
-            RenderTableCell {TD} at (201,2) size 197x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=200"
-          RenderTableRow {TR} at (0,28) size 400x24
-            RenderTableCell {TD} at (2,28) size 396x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,1538) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H2} at (0,1563) size 768x33
-        RenderText {#text} at (0,0) size 230x33
-          text run at (0,0) width 230: "Tables Without Width"
-      RenderBlock {P} at (0,1615) size 768x44
-        RenderText {#text} at (0,0) size 742x44
-          text run at (0,0) width 742: "The following tables have no width. They should still be the same size, by virtue of them having a 400 pixel cell"
-          text run at (0,22) width 221: "and no padding/margin/borders."
-      RenderBlock {H3} at (0,1677) size 768x26
-        RenderText {#text} at (0,0) size 65x26
-          text run at (0,0) width 65: "260/140"
-      RenderBlock {DIV} at (0,1721) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1727) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 258x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (262,2) size 142x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1781) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1787) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 262x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (266,2) size 138x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1841) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1847) size 410x54
-        RenderTableSection {TBODY} at (0,0) size 410x54
-          RenderTableRow {TR} at (0,2) size 410x24
-            RenderTableCell {TD} at (2,2) size 262x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (266,2) size 142x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 410x24
-            RenderTableCell {TD} at (2,28) size 406x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,1901) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,1907) size 410x54
-        RenderTableSection {TBODY} at (0,0) size 410x54
-          RenderTableRow {TR} at (0,2) size 410x24
-            RenderTableCell {TD} at (2,2) size 262x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-            RenderTableCell {TD} at (266,2) size 142x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-          RenderTableRow {TR} at (0,28) size 410x24
-            RenderTableCell {TD} at (2,28) size 406x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,1961) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,1985) size 768x26
-        RenderText {#text} at (0,0) size 65x26
-          text run at (0,0) width 65: "140/260"
+      RenderBlock {DIV} at (0,1203) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1209) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 197x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+            RenderTableCell {TD} at (201,2) size 197x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1261) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1267) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 197x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (201,2) size 197x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1319) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1325) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 197x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+            RenderTableCell {TD} at (201,2) size 197x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1377) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1383) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 197x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (201,2) size 197x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1435) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1441) size 400x52
+        RenderTableSection {TBODY} at (0,0) size 400x52
+          RenderTableRow {TR} at (0,2) size 400x23
+            RenderTableCell {TD} at (2,2) size 197x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=200"
+            RenderTableCell {TD} at (201,2) size 197x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=200"
+          RenderTableRow {TR} at (0,27) size 400x23
+            RenderTableCell {TD} at (2,27) size 396x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,1493) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {H2} at (0,1518) size 768x32
+        RenderText {#text} at (0,0) size 249x32
+          text run at (0,0) width 249: "Tables Without Width"
+      RenderBlock {P} at (0,1569) size 768x42
+        RenderText {#text} at (0,0) size 752x42
+          text run at (0,0) width 752: "The following tables have no width. They should still be the same size, by virtue of them having a 400 pixel"
+          text run at (0,21) width 255: "cell and no padding/margin/borders."
+      RenderBlock {H3} at (0,1629) size 768x25
+        RenderText {#text} at (0,0) size 71x25
+          text run at (0,0) width 71: "260/140"
+      RenderBlock {DIV} at (0,1672) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1678) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 258x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (262,2) size 142x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1730) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1736) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 262x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (266,2) size 138x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1788) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1794) size 410x52
+        RenderTableSection {TBODY} at (0,0) size 410x52
+          RenderTableRow {TR} at (0,2) size 410x23
+            RenderTableCell {TD} at (2,2) size 262x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (266,2) size 142x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 410x23
+            RenderTableCell {TD} at (2,27) size 406x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,1846) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1852) size 410x52
+        RenderTableSection {TBODY} at (0,0) size 410x52
+          RenderTableRow {TR} at (0,2) size 410x23
+            RenderTableCell {TD} at (2,2) size 262x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+            RenderTableCell {TD} at (266,2) size 142x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+          RenderTableRow {TR} at (0,27) size 410x23
+            RenderTableCell {TD} at (2,27) size 406x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,1904) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {H3} at (0,1928) size 768x25
+        RenderText {#text} at (0,0) size 71x25
+          text run at (0,0) width 71: "140/260"
+      RenderBlock {DIV} at (0,1971) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,1977) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 142x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (146,2) size 258x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
       RenderBlock {DIV} at (0,2029) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2035) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 142x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (146,2) size 258x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2089) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2095) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 138x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (142,2) size 262x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2149) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2155) size 410x54
-        RenderTableSection {TBODY} at (0,0) size 410x54
-          RenderTableRow {TR} at (0,2) size 410x24
-            RenderTableCell {TD} at (2,2) size 142x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (146,2) size 262x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 410x24
-            RenderTableCell {TD} at (2,28) size 406x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2209) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2215) size 410x54
-        RenderTableSection {TBODY} at (0,0) size 410x54
-          RenderTableRow {TR} at (0,2) size 410x24
-            RenderTableCell {TD} at (2,2) size 142x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=140"
-            RenderTableCell {TD} at (146,2) size 262x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=260"
-          RenderTableRow {TR} at (0,28) size 410x24
-            RenderTableCell {TD} at (2,28) size 406x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,2269) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,2293) size 768x26
-        RenderText {#text} at (0,0) size 39x26
+      RenderTable {TABLE} at (0,2035) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 138x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (142,2) size 262x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2087) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2093) size 410x52
+        RenderTableSection {TBODY} at (0,0) size 410x52
+          RenderTableRow {TR} at (0,2) size 410x23
+            RenderTableCell {TD} at (2,2) size 142x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (146,2) size 262x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 410x23
+            RenderTableCell {TD} at (2,27) size 406x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2145) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2151) size 410x52
+        RenderTableSection {TBODY} at (0,0) size 410x52
+          RenderTableRow {TR} at (0,2) size 410x23
+            RenderTableCell {TD} at (2,2) size 142x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=140"
+            RenderTableCell {TD} at (146,2) size 262x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=260"
+          RenderTableRow {TR} at (0,27) size 410x23
+            RenderTableCell {TD} at (2,27) size 406x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,2203) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {H3} at (0,2227) size 768x25
+        RenderText {#text} at (0,0) size 39x25
           text run at (0,0) width 39: "50%"
-      RenderBlock {DIV} at (0,2337) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2343) size 560x54
-        RenderTableSection {TBODY} at (0,0) size 560x54
-          RenderTableRow {TR} at (0,2) size 560x24
-            RenderTableCell {TD} at (2,2) size 277x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-            RenderTableCell {TD} at (281,2) size 277x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 560x24
-            RenderTableCell {TD} at (2,28) size 556x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2397) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2403) size 562x54
-        RenderTableSection {TBODY} at (0,0) size 562x54
-          RenderTableRow {TR} at (0,2) size 562x24
-            RenderTableCell {TD} at (2,2) size 278x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (282,2) size 278x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-          RenderTableRow {TR} at (0,28) size 562x24
-            RenderTableCell {TD} at (2,28) size 558x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2457) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2463) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 200x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-            RenderTableCell {TD} at (204,2) size 200x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 80x22
-                text run at (1,1) width 80: "width=50%"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2517) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2523) size 406x54
-        RenderTableSection {TBODY} at (0,0) size 406x54
-          RenderTableRow {TR} at (0,2) size 406x24
-            RenderTableCell {TD} at (2,2) size 200x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-            RenderTableCell {TD} at (204,2) size 200x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 34x22
-                text run at (1,1) width 34: "plain"
-          RenderTableRow {TR} at (0,28) size 406x24
-            RenderTableCell {TD} at (2,28) size 402x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 144x22
-                text run at (1,1) width 144: "colspan=2 width=400"
-      RenderBlock {DIV} at (0,2577) size 406x6 [border: (3px solid #FF0000)]
-      RenderTable {TABLE} at (0,2583) size 410x54
-        RenderTableSection {TBODY} at (0,0) size 410x54
-          RenderTableRow {TR} at (0,2) size 410x24
-            RenderTableCell {TD} at (2,2) size 202x24 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=200"
-            RenderTableCell {TD} at (206,2) size 202x24 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 72x22
-                text run at (1,1) width 72: "width=200"
-          RenderTableRow {TR} at (0,28) size 410x24
-            RenderTableCell {TD} at (2,28) size 406x24 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 68x22
-                text run at (1,1) width 68: "colspan=2"
-      RenderBlock {DIV} at (0,2637) size 406x6 [border: (3px solid #FF0000)]
+      RenderBlock {DIV} at (0,2270) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2276) size 554x52
+        RenderTableSection {TBODY} at (0,0) size 554x52
+          RenderTableRow {TR} at (0,2) size 554x23
+            RenderTableCell {TD} at (2,2) size 274x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+            RenderTableCell {TD} at (278,2) size 274x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 554x23
+            RenderTableCell {TD} at (2,27) size 550x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2328) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2334) size 556x52
+        RenderTableSection {TBODY} at (0,0) size 556x52
+          RenderTableRow {TR} at (0,2) size 556x23
+            RenderTableCell {TD} at (2,2) size 275x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (279,2) size 275x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+          RenderTableRow {TR} at (0,27) size 556x23
+            RenderTableCell {TD} at (2,27) size 552x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2386) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2392) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 200x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+            RenderTableCell {TD} at (204,2) size 200x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 79x21
+                text run at (1,1) width 79: "width=50%"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2444) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2450) size 406x52
+        RenderTableSection {TBODY} at (0,0) size 406x52
+          RenderTableRow {TR} at (0,2) size 406x23
+            RenderTableCell {TD} at (2,2) size 200x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+            RenderTableCell {TD} at (204,2) size 200x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 35x21
+                text run at (1,1) width 35: "plain"
+          RenderTableRow {TR} at (0,27) size 406x23
+            RenderTableCell {TD} at (2,27) size 402x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 152x21
+                text run at (1,1) width 152: "colspan=2 width=400"
+      RenderBlock {DIV} at (0,2502) size 406x6 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (0,2508) size 410x52
+        RenderTableSection {TBODY} at (0,0) size 410x52
+          RenderTableRow {TR} at (0,2) size 410x23
+            RenderTableCell {TD} at (2,2) size 202x23 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=200"
+            RenderTableCell {TD} at (206,2) size 202x23 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "width=200"
+          RenderTableRow {TR} at (0,27) size 410x23
+            RenderTableCell {TD} at (2,27) size 406x23 [bgcolor=#FF00FF] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 74x21
+                text run at (1,1) width 74: "colspan=2"
+      RenderBlock {DIV} at (0,2560) size 406x6 [border: (3px solid #FF0000)]

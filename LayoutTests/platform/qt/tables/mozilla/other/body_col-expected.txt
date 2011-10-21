@@ -3,39 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 159x184 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 164x177 [border: (2px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (2,2) size 155x180
-          RenderTableRow {TR} at (0,2) size 155x48
-            RenderTableCell {TH} at (2,2) size 49x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (15,2) size 37x44
-                text run at (15,2) width 19: "La"
-                text run at (6,24) width 37: "Mesa"
-            RenderTableCell {TD} at (53,13) size 100x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-          RenderTableRow {TR} at (0,52) size 155x48
-            RenderTableCell {TH} at (2,52) size 49x48 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 43x44
-                text run at (17,2) width 15: "El"
-                text run at (3,24) width 43: "Cajon"
-            RenderTableCell {TD} at (53,63) size 100x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-          RenderTableRow {TR} at (0,102) size 155x48
-            RenderTableCell {TH} at (2,102) size 49x48 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,2) size 43x44
-                text run at (3,2) width 43: "Chula"
-                text run at (7,24) width 35: "Vista"
-            RenderTableCell {TD} at (53,113) size 100x26 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x22
-                text run at (2,2) width 12: "X"
-          RenderTableRow {TR} at (0,152) size 155x26
-            RenderTableCell {TH} at (2,152) size 49x26 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x22
-                text run at (2,2) width 45: "Bonita"
-            RenderTableCell {TD} at (53,152) size 100x26 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 28x22
-                text run at (2,2) width 28: "N/A"
+        RenderTableSection {TBODY} at (2,2) size 160x173
+          RenderTableRow {TR} at (0,2) size 160x46
+            RenderTableCell {TH} at (2,2) size 54x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,2) size 40x42
+                text run at (17,2) width 20: "La"
+                text run at (7,23) width 40: "Mesa"
+            RenderTableCell {TD} at (58,12) size 100x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+          RenderTableRow {TR} at (0,50) size 160x46
+            RenderTableCell {TH} at (2,50) size 54x46 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (19,2) size 46x42
+                text run at (19,2) width 16: "El"
+                text run at (4,23) width 46: "Cajon"
+            RenderTableCell {TD} at (58,60) size 100x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+          RenderTableRow {TR} at (0,98) size 160x46
+            RenderTableCell {TH} at (2,98) size 54x46 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 46x42
+                text run at (4,2) width 46: "Chula"
+                text run at (8,23) width 38: "Vista"
+            RenderTableCell {TD} at (58,108) size 100x25 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x21
+                text run at (2,2) width 11: "X"
+          RenderTableRow {TR} at (0,146) size 160x25
+            RenderTableCell {TH} at (2,146) size 54x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x21
+                text run at (2,2) width 50: "Bonita"
+            RenderTableCell {TD} at (58,146) size 100x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x21
+                text run at (2,2) width 27: "N/A"

@@ -3,87 +3,87 @@ layer at (0,0) size 808x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
-      RenderTable {TABLE} at (0,0) size 206x38 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 204x36
-          RenderTableRow {TR} at (0,2) size 204x32
-            RenderTableCell {TD} at (2,2) size 200x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 196x28 [bgcolor=#FFA500]
-                RenderTableSection {TBODY} at (0,0) size 196x28
-                  RenderTableRow {TR} at (0,2) size 196x24
-                    RenderTableCell {TD} at (2,2) size 192x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 190x22
-                        text run at (1,1) width 190: "nested in auto, width=100%"
-      RenderBlock (anonymous) at (0,38) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,60) size 200x60 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 198x58
-          RenderTableRow {TR} at (0,2) size 198x54
-            RenderTableCell {TD} at (2,2) size 194x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 190x50 [bgcolor=#00FF00]
-                RenderTableSection {TBODY} at (0,0) size 190x50
-                  RenderTableRow {TR} at (0,2) size 190x46
-                    RenderTableCell {TD} at (2,2) size 186x46 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 101x44
-                        text run at (1,1) width 101: "nested in fixed,"
-                        text run at (1,23) width 88: "width=100%"
-      RenderBlock (anonymous) at (0,120) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,142) size 800x38 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 798x36
-          RenderTableRow {TR} at (0,2) size 798x32
-            RenderTableCell {TD} at (2,2) size 794x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 790x28 [bgcolor=#00FF00]
-                RenderTableSection {TBODY} at (0,0) size 790x28
-                  RenderTableRow {TR} at (0,2) size 790x24
-                    RenderTableCell {TD} at (2,2) size 786x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 193x22
-                        text run at (1,1) width 193: "nested in fixed, width=100%"
-      RenderBlock (anonymous) at (0,180) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,202) size 242x38 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 240x36
-          RenderTableRow {TR} at (0,2) size 240x32
-            RenderTableCell {TD} at (2,2) size 200x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 196x28
-                RenderTableSection {TBODY} at (0,0) size 196x28
-                  RenderTableRow {TR} at (0,2) size 196x24
-                    RenderTableCell {TD} at (2,2) size 192x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 190x22
-                        text run at (1,1) width 190: "nested in auto, width=100%"
-            RenderTableCell {TD} at (204,5) size 34x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 30x22
-                text run at (2,2) width 30: "auto"
-      RenderBlock (anonymous) at (0,240) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,262) size 784x38 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x36
-          RenderTableRow {TR} at (0,2) size 782x32
-            RenderTableCell {TD} at (2,2) size 690x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 343x28 [bgcolor=#00FF00]
-                RenderTableSection {TBODY} at (0,0) size 343x28
-                  RenderTableRow {TR} at (0,2) size 343x24
-                    RenderTableCell {TD} at (2,2) size 339x24 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 192x22
-                        text run at (1,1) width 192: "nested in 100%, width=50%"
-            RenderTableCell {TD} at (694,5) size 86x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
-      RenderBlock (anonymous) at (0,300) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,322) size 784x44 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x42
-          RenderTableRow {TR} at (0,2) size 782x38
-            RenderTableCell {TD} at (2,2) size 560x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 278x34 [bgcolor=#00FF00]
-                RenderTableSection {TBODY} at (0,0) size 278x34
-                  RenderTableRow {TR} at (0,2) size 278x30
-                    RenderTableCell {TD} at (2,2) size 274x30 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 136x28 [bgcolor=#FF0000]
-                        RenderTableSection {TBODY} at (0,0) size 136x28
-                          RenderTableRow {TR} at (0,2) size 136x24
-                            RenderTableCell {TD} at (2,2) size 132x24 [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (1,1) size 49x22
-                                text run at (1,1) width 49: "2n50%"
-            RenderTableCell {TD} at (564,8) size 216x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x22
-                text run at (2,2) width 21: "foo"
+      RenderTable {TABLE} at (0,0) size 212x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 210x35
+          RenderTableRow {TR} at (0,2) size 210x31
+            RenderTableCell {TD} at (2,2) size 206x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 202x27 [bgcolor=#FFA500]
+                RenderTableSection {TBODY} at (0,0) size 202x27
+                  RenderTableRow {TR} at (0,2) size 202x23
+                    RenderTableCell {TD} at (2,2) size 198x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 196x21
+                        text run at (1,1) width 196: "nested in auto, width=100%"
+      RenderBlock (anonymous) at (0,37) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,58) size 200x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 198x56
+          RenderTableRow {TR} at (0,2) size 198x52
+            RenderTableCell {TD} at (2,2) size 194x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 190x48 [bgcolor=#00FF00]
+                RenderTableSection {TBODY} at (0,0) size 190x48
+                  RenderTableRow {TR} at (0,2) size 190x44
+                    RenderTableCell {TD} at (2,2) size 186x44 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 107x42
+                        text run at (1,1) width 107: "nested in fixed,"
+                        text run at (1,22) width 88: "width=100%"
+      RenderBlock (anonymous) at (0,116) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,137) size 800x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 798x35
+          RenderTableRow {TR} at (0,2) size 798x31
+            RenderTableCell {TD} at (2,2) size 794x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 790x27 [bgcolor=#00FF00]
+                RenderTableSection {TBODY} at (0,0) size 790x27
+                  RenderTableRow {TR} at (0,2) size 790x23
+                    RenderTableCell {TD} at (2,2) size 786x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 199x21
+                        text run at (1,1) width 199: "nested in fixed, width=100%"
+      RenderBlock (anonymous) at (0,174) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,195) size 249x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 247x35
+          RenderTableRow {TR} at (0,2) size 247x31
+            RenderTableCell {TD} at (2,2) size 206x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 202x27
+                RenderTableSection {TBODY} at (0,0) size 202x27
+                  RenderTableRow {TR} at (0,2) size 202x23
+                    RenderTableCell {TD} at (2,2) size 198x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 196x21
+                        text run at (1,1) width 196: "nested in auto, width=100%"
+            RenderTableCell {TD} at (210,5) size 35x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x21
+                text run at (2,2) width 31: "auto"
+      RenderBlock (anonymous) at (0,232) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,253) size 784x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x35
+          RenderTableRow {TR} at (0,2) size 782x31
+            RenderTableCell {TD} at (2,2) size 689x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 342x27 [bgcolor=#00FF00]
+                RenderTableSection {TBODY} at (0,0) size 342x27
+                  RenderTableRow {TR} at (0,2) size 342x23
+                    RenderTableCell {TD} at (2,2) size 338x23 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 197x21
+                        text run at (1,1) width 197: "nested in 100%, width=50%"
+            RenderTableCell {TD} at (693,5) size 87x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"
+      RenderBlock (anonymous) at (0,290) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,311) size 784x43 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x41
+          RenderTableRow {TR} at (0,2) size 782x37
+            RenderTableCell {TD} at (2,2) size 556x37 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 276x33 [bgcolor=#00FF00]
+                RenderTableSection {TBODY} at (0,0) size 276x33
+                  RenderTableRow {TR} at (0,2) size 276x29
+                    RenderTableCell {TD} at (2,2) size 272x29 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 135x27 [bgcolor=#FF0000]
+                        RenderTableSection {TBODY} at (0,0) size 135x27
+                          RenderTableRow {TR} at (0,2) size 135x23
+                            RenderTableCell {TD} at (2,2) size 131x23 [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (1,1) size 50x21
+                                text run at (1,1) width 50: "2n50%"
+            RenderTableCell {TD} at (560,8) size 220x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x21
+                text run at (2,2) width 22: "foo"

@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x44
-        RenderTableSection {TBODY} at (0,0) size 784x44
-          RenderTableRow {TR} at (0,0) size 784x44
-            RenderTableCell {TD} at (0,0) size 135x44 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 135x44
-                RenderTableSection {TBODY} at (0,0) size 135x44
-                  RenderTableRow {TR} at (0,0) size 135x44
-                    RenderTableCell {TD} at (0,0) size 135x44 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 93x44
-                        text run at (0,0) width 93: "should be 135"
-                        text run at (0,22) width 43: "pixels-"
-            RenderTableCell {TD} at (135,0) size 649x44 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 607x44
-                text run at (0,0) width 508: "Spain stretched their unbeaten streak to six games as they beat Croatia 3-1 "
-                text run at (508,0) width 99: "in a friendly at"
-                text run at (0,22) width 391: "Seville's new Olympic stadium which was inaugurated on "
-                text run at (391,22) width 83: "Wednesday."
+      RenderTable {TABLE} at (0,0) size 784x42
+        RenderTableSection {TBODY} at (0,0) size 784x42
+          RenderTableRow {TR} at (0,0) size 784x42
+            RenderTableCell {TD} at (0,0) size 135x42 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 135x42
+                RenderTableSection {TBODY} at (0,0) size 135x42
+                  RenderTableRow {TR} at (0,0) size 135x42
+                    RenderTableCell {TD} at (0,0) size 135x42 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 101x42
+                        text run at (0,0) width 101: "should be 135"
+                        text run at (0,21) width 47: "pixels-"
+            RenderTableCell {TD} at (135,0) size 649x42 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 633x42
+                text run at (0,0) width 534: "Spain stretched their unbeaten streak to six games as they beat Croatia 3-1 "
+                text run at (534,0) width 99: "in a friendly at"
+                text run at (0,21) width 410: "Seville's new Olympic stadium which was inaugurated on "
+                text run at (410,21) width 89: "Wednesday."

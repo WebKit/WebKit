@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 32x28
-        RenderTableSection {TBODY} at (0,0) size 32x28
-          RenderTableRow {TR} at (0,2) size 32x24
-            RenderTableCell {TD} at (2,2) size 28x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 26x22
-                text run at (1,1) width 26: "Foo"
+      RenderTable {TABLE} at (0,0) size 34x27
+        RenderTableSection {TBODY} at (0,0) size 34x27
+          RenderTableRow {TR} at (0,2) size 34x23
+            RenderTableCell {TD} at (2,2) size 30x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 28x21
+                text run at (1,1) width 28: "Foo"

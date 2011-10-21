@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 368x22
-          text run at (0,0) width 368: "The window needs to be resized smaller to see the bug "
-        RenderBR {BR} at (368,16) size 0x0
-      RenderTable {TABLE} at (0,22) size 479x28
-        RenderTableSection {TBODY} at (0,0) size 479x28
-          RenderTableRow {TR} at (0,2) size 479x24
-            RenderTableCell {TD} at (2,2) size 37x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 35x22
-                text run at (1,1) width 35: "Back"
-            RenderTableCell {TD} at (41,2) size 63x24 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 61x22
-                text run at (1,1) width 61: "Forward"
-            RenderTableCell {TD} at (106,2) size 50x24 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 48x22
-                text run at (1,1) width 48: "Reload"
-            RenderTableCell {TD} at (158,2) size 42x24 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 40x22
-                text run at (1,1) width 40: "Home"
-            RenderTableCell {TD} at (202,2) size 49x24 [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 47x22
-                text run at (1,1) width 47: "Search"
-            RenderTableCell {TD} at (253,2) size 90x24 [r=0 c=5 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 88x22
-                text run at (1,1) width 88: "My Netscape"
-            RenderTableCell {TD} at (345,2) size 37x24 [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 35x22
-                text run at (1,1) width 35: "Print"
-            RenderTableCell {TD} at (384,2) size 58x24 [r=0 c=7 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 56x22
-                text run at (1,1) width 56: "Security"
-            RenderTableCell {TD} at (444,2) size 33x24 [r=0 c=8 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 31x22
-                text run at (1,1) width 31: "Stop"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 394x21
+          text run at (0,0) width 394: "The window needs to be resized smaller to see the bug "
+        RenderBR {BR} at (394,16) size 0x0
+      RenderTable {TABLE} at (0,21) size 496x27
+        RenderTableSection {TBODY} at (0,0) size 496x27
+          RenderTableRow {TR} at (0,2) size 496x23
+            RenderTableCell {TD} at (2,2) size 38x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x21
+                text run at (1,1) width 36: "Back"
+            RenderTableCell {TD} at (42,2) size 61x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 59x21
+                text run at (1,1) width 59: "Forward"
+            RenderTableCell {TD} at (105,2) size 54x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 52x21
+                text run at (1,1) width 52: "Reload"
+            RenderTableCell {TD} at (161,2) size 45x23 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 43x21
+                text run at (1,1) width 43: "Home"
+            RenderTableCell {TD} at (208,2) size 53x23 [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 51x21
+                text run at (1,1) width 51: "Search"
+            RenderTableCell {TD} at (263,2) size 95x23 [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 93x21
+                text run at (1,1) width 93: "My Netscape"
+            RenderTableCell {TD} at (360,2) size 35x23 [r=0 c=6 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 33x21
+                text run at (1,1) width 33: "Print"
+            RenderTableCell {TD} at (397,2) size 60x23 [r=0 c=7 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 58x21
+                text run at (1,1) width 58: "Security"
+            RenderTableCell {TD} at (459,2) size 35x23 [r=0 c=8 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 33x21
+                text run at (1,1) width 33: "Stop"

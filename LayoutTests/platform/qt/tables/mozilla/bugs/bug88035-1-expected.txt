@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x584 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x582
           RenderTableRow {TR} at (0,2) size 782x288
-            RenderTableCell {TD} at (2,133) size 778x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (153,2) size 472x22
-                text run at (153,2) width 472: "This table is not wrapped in a <CENTER> tag, with HEIGHT=100%"
+            RenderTableCell {TD} at (2,133) size 778x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (151,2) size 476x21
+                text run at (151,2) width 476: "This table is not wrapped in a <CENTER> tag, with HEIGHT=100%"
           RenderTableRow {TR} at (0,292) size 782x288
-            RenderTableCell {TD} at (2,423) size 778x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 72x22 [color=#0000EE]
-                RenderText {#text} at (353,2) size 72x22
-                  text run at (353,2) width 72: "This one is"
+            RenderTableCell {TD} at (2,423) size 778x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 78x21 [color=#0000EE]
+                RenderText {#text} at (350,2) size 78x21
+                  text run at (350,2) width 78: "This one is"
               RenderText {#text} at (0,0) size 0x0

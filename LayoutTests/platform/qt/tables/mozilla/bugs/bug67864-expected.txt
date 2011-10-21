@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 69x144
-        RenderBlock {CAPTION} at (0,0) size 69x116
-          RenderTable {TABLE} at (0,0) size 69x116
-            RenderTableSection {TBODY} at (0,0) size 69x116
-              RenderTableRow {TR} at (0,2) size 69x112
-                RenderTableCell {TD} at (2,2) size 65x112 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 57x110
-                    text run at (1,1) width 57: "Another"
-                    text run at (1,23) width 33: "table"
-                    text run at (1,45) width 39: "inside"
-                    text run at (1,67) width 21: "the"
-                    text run at (1,89) width 50: "caption"
-        RenderTableSection {TBODY} at (0,116) size 69x28
-          RenderTableRow {TR} at (0,2) size 69x24
-            RenderTableCell {TD} at (2,2) size 65x24 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 63x22
-                text run at (1,1) width 63: "First row"
+      RenderTable {TABLE} at (0,0) size 67x138
+        RenderBlock {CAPTION} at (0,0) size 67x111
+          RenderTable {TABLE} at (0,0) size 67x111
+            RenderTableSection {TBODY} at (0,0) size 67x111
+              RenderTableRow {TR} at (0,2) size 67x107
+                RenderTableCell {TD} at (2,2) size 63x107 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (1,1) size 56x105
+                    text run at (1,1) width 56: "Another"
+                    text run at (1,22) width 35: "table"
+                    text run at (1,43) width 43: "inside"
+                    text run at (1,64) width 22: "the"
+                    text run at (1,85) width 52: "caption"
+        RenderTableSection {TBODY} at (0,111) size 67x27
+          RenderTableRow {TR} at (0,2) size 67x23
+            RenderTableCell {TD} at (2,2) size 63x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 61x21
+                text run at (1,1) width 61: "First row"

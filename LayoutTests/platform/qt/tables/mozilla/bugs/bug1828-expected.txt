@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 270x50 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 268x48
-          RenderTableRow {TR} at (0,0) size 268x24
-            RenderTableCell {TD} at (0,0) size 268x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DT} at (1,1) size 266x22
-                RenderText {#text} at (0,0) size 266x22
-                  text run at (0,0) width 266: "Richard Pizzarro<rhp@netscape.com>"
-          RenderTableRow {TR} at (0,24) size 268x24
-            RenderTableCell {TD} at (0,24) size 268x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 190x22
-                text run at (1,1) width 190: "Architect Rich's Home Page"
+      RenderTable {TABLE} at (0,0) size 279x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 277x46
+          RenderTableRow {TR} at (0,0) size 277x23
+            RenderTableCell {TD} at (0,0) size 277x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DT} at (1,1) size 275x21
+                RenderText {#text} at (0,0) size 275x21
+                  text run at (0,0) width 275: "Richard Pizzarro<rhp@netscape.com>"
+          RenderTableRow {TR} at (0,23) size 277x23
+            RenderTableCell {TD} at (0,23) size 277x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 199x21
+                text run at (1,1) width 199: "Architect Rich's Home Page"

@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 208x22
-          text run at (0,0) width 208: "TBODY VALIGN=BOTTOM"
-      RenderTable {TABLE} at (0,22) size 784x257 [border: (1px outset #808080)]
-        RenderTableSection {THEAD} at (1,1) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26
-            RenderTableCell {TD} at (2,2) size 304x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "THEAD"
-            RenderTableCell {TD} at (308,2) size 472x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x22
-                text run at (2,2) width 58: "THEAD"
-        RenderTableSection {TFOOT} at (1,226) size 782x30
-          RenderTableRow {TR} at (0,2) size 782x26
-            RenderTableCell {TD} at (2,2) size 304x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 56x22
-                text run at (2,2) width 56: "TFOOT"
-            RenderTableCell {TD} at (308,2) size 472x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 56x22
-                text run at (2,2) width 56: "TFOOT"
-        RenderTableSection {TBODY} at (1,31) size 782x193
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 196x21
+          text run at (0,0) width 196: "TBODY VALIGN=BOTTOM"
+      RenderTable {TABLE} at (0,21) size 784x255 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25
+            RenderTableCell {TD} at (2,2) size 304x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "THEAD"
+            RenderTableCell {TD} at (308,2) size 472x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x21
+                text run at (2,2) width 56: "THEAD"
+        RenderTableSection {TFOOT} at (1,225) size 782x29
+          RenderTableRow {TR} at (0,2) size 782x25
+            RenderTableCell {TD} at (2,2) size 304x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x21
+                text run at (2,2) width 54: "TFOOT"
+            RenderTableCell {TD} at (308,2) size 472x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x21
+                text run at (2,2) width 54: "TFOOT"
+        RenderTableSection {TBODY} at (1,30) size 782x193
           RenderTableRow {TR} at (0,2) size 782x189
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
-            RenderTableCell {TD} at (308,143) size 472x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 428x44
-                text run at (2,2) width 428: "This text is within the TBODY element and should be vertically"
-                text run at (2,24) width 143: "aligned to the bottom"
-        RenderTableSection {TBODY} at (1,224) size 782x2
+            RenderTableCell {TD} at (308,145) size 472x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 441x42
+                text run at (2,2) width 441: "This text is within the TBODY element and should be vertically"
+                text run at (2,23) width 148: "aligned to the bottom"
+        RenderTableSection {TBODY} at (1,223) size 782x2

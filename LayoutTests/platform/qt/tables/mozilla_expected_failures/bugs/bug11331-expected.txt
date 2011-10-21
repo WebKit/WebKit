@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x176
-        RenderBlock (anonymous) at (0,0) size 784x88
-          RenderText {#text} at (0,0) size 358x22
-            text run at (0,0) width 358: "In the yellow table the \"W\" is clipped on its left edge."
-          RenderBR {BR} at (358,16) size 0x0
-          RenderText {#text} at (0,22) size 181x22
-            text run at (0,22) width 181: "The only difference is that:"
-          RenderBR {BR} at (181,38) size 0x0
-          RenderText {#text} at (0,44) size 267x22
-            text run at (0,44) width 267: "yellow table has CELLPADDING=\"0\""
-          RenderBR {BR} at (267,60) size 0x0
-          RenderText {#text} at (0,66) size 258x22
-            text run at (0,66) width 258: "grey table has CELLPADDING=\"1\"."
-        RenderTable {TABLE} at (0,88) size 40x43 [bgcolor=#FFFF00]
+      RenderBlock {P} at (0,0) size 784x172
+        RenderBlock (anonymous) at (0,0) size 784x84
+          RenderText {#text} at (0,0) size 368x21
+            text run at (0,0) width 368: "In the yellow table the \"W\" is clipped on its left edge."
+          RenderBR {BR} at (368,16) size 0x0
+          RenderText {#text} at (0,21) size 186x21
+            text run at (0,21) width 186: "The only difference is that:"
+          RenderBR {BR} at (186,37) size 0x0
+          RenderText {#text} at (0,42) size 264x21
+            text run at (0,42) width 264: "yellow table has CELLPADDING=\"0\""
+          RenderBR {BR} at (264,58) size 0x0
+          RenderText {#text} at (0,63) size 253x21
+            text run at (0,63) width 253: "grey table has CELLPADDING=\"1\"."
+        RenderTable {TABLE} at (0,84) size 40x43 [bgcolor=#FFFF00]
           RenderTableSection {TBODY} at (0,0) size 40x43
             RenderTableRow {TR} at (0,2) size 40x39
               RenderTableCell {TD} at (2,2) size 36x39 [r=0 c=0 rs=1 cs=1]
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 30: "Online"
                     text run at (0,13) width 24: "Web-"
                     text run at (0,26) width 25: "Store"
-        RenderTable {TABLE} at (0,131) size 40x45 [bgcolor=#EEEEEE]
+        RenderTable {TABLE} at (0,127) size 40x45 [bgcolor=#EEEEEE]
           RenderTableSection {TBODY} at (0,0) size 40x45
             RenderTableRow {TR} at (0,2) size 40x41
               RenderTableCell {TD} at (2,2) size 36x41 [r=0 c=0 rs=1 cs=1]

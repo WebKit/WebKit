@@ -3,46 +3,46 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 278x22
-          text run at (0,0) width 278: "Tables: both lines should be 1 pixel thick."
-        RenderBR {BR} at (278,16) size 0x0
-        RenderBR {BR} at (0,22) size 0x22
-      RenderTable {TABLE} at (0,44) size 37x5
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "Tables: both lines should be 1 pixel thick."
+        RenderBR {BR} at (292,16) size 0x0
+        RenderBR {BR} at (0,21) size 0x21
+      RenderTable {TABLE} at (0,42) size 37x5
         RenderTableSection {TBODY} at (0,0) size 37x5
           RenderTableRow {TR} at (0,2) size 37x1
             RenderTableCell {TD} at (2,2) size 31x1 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 30x1
             RenderTableCell {TD} at (35,2) size 0x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock (anonymous) at (0,49) size 784x22
-        RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,71) size 34x5
+      RenderBlock (anonymous) at (0,47) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,68) size 34x5
         RenderTableSection {TBODY} at (0,0) size 34x5
           RenderTableRow {TR} at (0,2) size 34x1
             RenderTableCell {TD} at (2,2) size 30x1 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 30x1
-      RenderBlock (anonymous) at (0,76) size 784x206
-        RenderBR {BR} at (0,0) size 0x22
-        RenderBR {BR} at (0,22) size 0x22
-        RenderBR {BR} at (0,44) size 0x22
-        RenderText {#text} at (0,66) size 418x22
-          text run at (0,66) width 236: "2 texts, FACE=\"Arial, Helvetica\", "
-          text run at (236,66) width 182: "1st at size=0, 2nd at size=-4"
-        RenderBR {BR} at (418,82) size 0x0
-        RenderBR {BR} at (0,88) size 0x22
-        RenderInline {FONT} at (0,0) size 111x26
-          RenderText {#text} at (0,110) size 111x13
-            text run at (0,110) width 111: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (111,120) size 0x0
-          RenderText {#text} at (0,123) size 78x13
-            text run at (0,123) width 78: "Available NOW! "
-        RenderBR {BR} at (78,133) size 0x0
-        RenderBR {BR} at (0,136) size 0x22
-        RenderInline {FONT} at (0,0) size 111x26
-          RenderText {#text} at (0,158) size 111x13
-            text run at (0,158) width 111: "Detonator 3.53 Drivers"
-          RenderBR {BR} at (111,168) size 0x0
-          RenderText {#text} at (0,171) size 78x13
-            text run at (0,171) width 78: "Available NOW! "
-        RenderBR {BR} at (78,181) size 0x0
-        RenderBR {BR} at (0,184) size 0x22
+      RenderBlock (anonymous) at (0,73) size 784x199
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderBR {BR} at (0,42) size 0x21
+        RenderText {#text} at (0,63) size 432x21
+          text run at (0,63) width 235: "2 texts, FACE=\"Arial, Helvetica\", "
+          text run at (235,63) width 197: "1st at size=0, 2nd at size=-4"
+        RenderBR {BR} at (432,79) size 0x0
+        RenderBR {BR} at (0,84) size 0x21
+        RenderInline {FONT} at (0,0) size 104x26
+          RenderText {#text} at (0,105) size 104x13
+            text run at (0,105) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,115) size 0x0
+          RenderText {#text} at (0,118) size 75x13
+            text run at (0,118) width 75: "Available NOW! "
+        RenderBR {BR} at (75,128) size 0x0
+        RenderBR {BR} at (0,131) size 0x21
+        RenderInline {FONT} at (0,0) size 104x26
+          RenderText {#text} at (0,152) size 104x13
+            text run at (0,152) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,162) size 0x0
+          RenderText {#text} at (0,165) size 75x13
+            text run at (0,165) width 75: "Available NOW! "
+        RenderBR {BR} at (75,175) size 0x0
+        RenderBR {BR} at (0,178) size 0x21

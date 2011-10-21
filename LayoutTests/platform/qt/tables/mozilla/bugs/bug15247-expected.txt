@@ -3,90 +3,90 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x108 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x106
-          RenderTableRow {TR} at (0,2) size 782x102
-            RenderTableCell {TD} at (2,2) size 619x102 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 615x22
-                RenderText {#text} at (0,0) size 272x22
-                  text run at (0,0) width 272: "some normal text before the nested table"
-              RenderTable {TABLE} at (52,24) size 553x54 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 551x52
-                  RenderTableRow {TR} at (0,2) size 551x48
-                    RenderTableCell {TD} at (2,2) size 181x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (185,2) size 181x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (368,2) size 181x48 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-              RenderBlock (anonymous) at (2,78) size 615x22
-                RenderText {#text} at (0,0) size 261x22
-                  text run at (0,0) width 261: "some normal text after the nested table"
-            RenderTableCell {TD} at (623,29) size 157x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 153x44
-                text run at (2,2) width 153: "contents of table cell to"
-                text run at (2,24) width 33: "right"
-      RenderTable {TABLE} at (0,108) size 784x108 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x106
-          RenderTableRow {TR} at (0,2) size 782x102
-            RenderTableCell {TD} at (2,2) size 619x102 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 615x22
-                RenderText {#text} at (0,0) size 272x22
-                  text run at (0,0) width 272: "some normal text before the nested table"
-              RenderTable {TABLE} at (52,24) size 565x54 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 563x52
-                  RenderTableRow {TR} at (0,2) size 563x48
-                    RenderTableCell {TD} at (2,2) size 185x48 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (189,2) size 185x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (376,2) size 185x48 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-              RenderBlock (anonymous) at (2,78) size 615x22
-                RenderText {#text} at (0,0) size 261x22
-                  text run at (0,0) width 261: "some normal text after the nested table"
-            RenderTableCell {TD} at (623,29) size 157x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 153x44
-                text run at (2,2) width 153: "contents of table cell to"
-                text run at (2,24) width 33: "right"
-      RenderTable {TABLE} at (0,216) size 784x136 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x134
-          RenderTableRow {TR} at (0,2) size 782x130
-            RenderTableCell {TD} at (2,2) size 623x130 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 619x22
-                RenderText {#text} at (0,0) size 272x22
-                  text run at (0,0) width 272: "some normal text before the nested table"
-              RenderTable {TABLE} at (52,24) size 569x82 [border: (10px solid #000000)]
-                RenderTableSection {TBODY} at (15,15) size 539x52
-                  RenderTableRow {TR} at (0,2) size 539x48
-                    RenderTableCell {TD} at (2,2) size 177x48 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (181,2) size 177x48 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-                    RenderTableCell {TD} at (360,2) size 177x48 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 167x44
-                        text run at (2,2) width 167: "selection of words to pad"
-                        text run at (2,24) width 59: "table cell"
-              RenderBlock (anonymous) at (2,106) size 619x22
-                RenderText {#text} at (0,0) size 261x22
-                  text run at (0,0) width 261: "some normal text after the nested table"
-            RenderTableCell {TD} at (627,43) size 153x48 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 136x44
-                text run at (2,2) width 136: "contents of table cell"
-                text run at (2,24) width 50: "to right"
+      RenderTable {TABLE} at (0,0) size 784x104 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x102
+          RenderTableRow {TR} at (0,2) size 782x98
+            RenderTableCell {TD} at (2,2) size 621x98 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 617x21
+                RenderText {#text} at (0,0) size 287x21
+                  text run at (0,0) width 287: "some normal text before the nested table"
+              RenderTable {TABLE} at (52,23) size 555x52 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 553x50
+                  RenderTableRow {TR} at (0,2) size 553x46
+                    RenderTableCell {TD} at (2,2) size 181x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+                    RenderTableCell {TD} at (185,2) size 182x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+                    RenderTableCell {TD} at (369,2) size 182x46 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+              RenderBlock (anonymous) at (2,75) size 617x21
+                RenderText {#text} at (0,0) size 273x21
+                  text run at (0,0) width 273: "some normal text after the nested table"
+            RenderTableCell {TD} at (625,28) size 155x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 145x42
+                text run at (2,2) width 145: "contents of table cell"
+                text run at (2,23) width 48: "to right"
+      RenderTable {TABLE} at (0,104) size 784x104 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x102
+          RenderTableRow {TR} at (0,2) size 782x98
+            RenderTableCell {TD} at (2,2) size 621x98 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 617x21
+                RenderText {#text} at (0,0) size 287x21
+                  text run at (0,0) width 287: "some normal text before the nested table"
+              RenderTable {TABLE} at (52,23) size 567x52 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 565x50
+                  RenderTableRow {TR} at (0,2) size 565x46
+                    RenderTableCell {TD} at (2,2) size 185x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+                    RenderTableCell {TD} at (189,2) size 186x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+                    RenderTableCell {TD} at (377,2) size 186x46 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 176x42
+                        text run at (2,2) width 176: "selection of words to pad"
+                        text run at (2,23) width 64: "table cell"
+              RenderBlock (anonymous) at (2,75) size 617x21
+                RenderText {#text} at (0,0) size 273x21
+                  text run at (0,0) width 273: "some normal text after the nested table"
+            RenderTableCell {TD} at (625,28) size 155x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 145x42
+                text run at (2,2) width 145: "contents of table cell"
+                text run at (2,23) width 48: "to right"
+      RenderTable {TABLE} at (0,208) size 784x132 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x130
+          RenderTableRow {TR} at (0,2) size 782x126
+            RenderTableCell {TD} at (2,2) size 625x126 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 621x21
+                RenderText {#text} at (0,0) size 287x21
+                  text run at (0,0) width 287: "some normal text before the nested table"
+              RenderTable {TABLE} at (52,23) size 571x80 [border: (10px solid #000000)]
+                RenderTableSection {TBODY} at (15,15) size 541x50
+                  RenderTableRow {TR} at (0,2) size 541x46
+                    RenderTableCell {TD} at (2,2) size 177x46 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 145x42
+                        text run at (2,2) width 145: "selection of words to"
+                        text run at (2,23) width 95: "pad table cell"
+                    RenderTableCell {TD} at (181,2) size 178x46 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 145x42
+                        text run at (2,2) width 145: "selection of words to"
+                        text run at (2,23) width 95: "pad table cell"
+                    RenderTableCell {TD} at (361,2) size 178x46 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 145x42
+                        text run at (2,2) width 145: "selection of words to"
+                        text run at (2,23) width 95: "pad table cell"
+              RenderBlock (anonymous) at (2,103) size 621x21
+                RenderText {#text} at (0,0) size 273x21
+                  text run at (0,0) width 273: "some normal text after the nested table"
+            RenderTableCell {TD} at (629,42) size 151x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 145x42
+                text run at (2,2) width 145: "contents of table cell"
+                text run at (2,23) width 48: "to right"

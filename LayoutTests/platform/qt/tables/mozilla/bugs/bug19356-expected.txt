@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x62 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x60
-          RenderTableRow {TR} at (0,4) size 782x52
-            RenderTableCell {TD} at (4,15) size 12x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x22
+      RenderTable {TABLE} at (0,0) size 784x60 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x58
+          RenderTableRow {TR} at (0,4) size 782x50
+            RenderTableCell {TD} at (4,14) size 12x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x21
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (20,15) size 681x30 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 69x22
+            RenderTableCell {TD} at (20,14) size 676x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 69x21
                 text run at (4,4) width 69: "Top Story"
-            RenderTableCell {TD} at (705,4) size 73x52 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 65x44
+            RenderTableCell {TD} at (700,4) size 78x50 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 70x42
                 text run at (4,4) width 27: "Full"
-                text run at (4,26) width 65: "Coverage"
+                text run at (4,25) width 70: "Coverage"
