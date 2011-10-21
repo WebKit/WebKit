@@ -139,6 +139,14 @@ def unit_test_list():
     tests.add('failures/expected/text.html', actual_text='text_fail-png')
     tests.add('failures/unexpected/missing_text.html', expected_text=None)
     tests.add('failures/unexpected/missing_image.html', expected_image=None)
+    tests.add('failures/unexpected/missing_render_tree_dump.html', actual_text="""layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderText {#text} at (0,0) size 133x18
+        text run at (0,0) width 133: "This is an image test!"
+""", expected_text=None)
     tests.add('failures/unexpected/crash.html', crash=True)
     tests.add('failures/unexpected/crash-with-stderr.html', crash=True,
               error="mock-std-error-output")

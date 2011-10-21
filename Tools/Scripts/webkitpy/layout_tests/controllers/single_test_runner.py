@@ -28,6 +28,7 @@
 
 
 import logging
+import re
 import time
 
 from webkitpy.layout_tests.layout_package import test_result_writer
@@ -141,17 +142,16 @@ class SingleTestRunner:
         self._overwrite_baselines(driver_output)
         return TestResult(self._test_name, failures, driver_output.test_time, driver_output.has_stderr())
 
+    _render_tree_dump_pattern = re.compile(r"^layer at \(\d+,\d+\) size \d+x\d+\n")
+
     def _add_missing_baselines(self, test_result, driver_output):
+        missingImage = test_result.has_failure_matching_types(test_failures.FailureMissingImage, test_failures.FailureMissingImageHash)
         if test_result.has_failure_matching_types(test_failures.FailureMissingResult):
-            # FIXME: We seem to be putting new text results in non-platform
-            # specific directories even when they're rendertree dumps. Maybe
-            # we should have a different kind of failure for render tree dumps
-            # than for text tests?
-            self._save_baseline_data(driver_output.text, ".txt", generate_new_baseline=False)
+            self._save_baseline_data(driver_output.text, ".txt", SingleTestRunner._render_tree_dump_pattern.match(driver_output.text))
         if test_result.has_failure_matching_types(test_failures.FailureMissingAudio):
             self._save_baseline_data(driver_output.audio, ".wav", generate_new_baseline=False)
-        if test_result.has_failure_matching_types(test_failures.FailureMissingImage, test_failures.FailureMissingImageHash):
-            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=False)
+        if missingImage:
+            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=True)
 
     def _overwrite_baselines(self, driver_output):
         # Although all DumpRenderTree output should be utf-8,
@@ -182,8 +182,7 @@ class SingleTestRunner:
             relative_dir = fs.dirname(self._test_name)
             baseline_path = port.baseline_path()
             output_dir = fs.join(baseline_path, relative_dir)
-            output_file = fs.basename(fs.splitext(self._test_name)[0] +
-                "-expected" + modifier)
+            output_file = fs.basename(fs.splitext(self._test_name)[0] + "-expected" + modifier)
             fs.maybe_make_directory(output_dir)
             output_path = fs.join(output_dir, output_file)
         else:
