@@ -69,4 +69,5 @@ messages -> WebProcess {
     SetEnhancedAccessibility(bool flag)
 
     GetWebCoreStatistics(uint64_t callbackID)
+    GarbageCollectJavaScriptObjects()
 }

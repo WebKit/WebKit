@@ -177,6 +177,7 @@ private:
     void setTextCheckerState(const TextCheckerState&);
     
     void getWebCoreStatistics(uint64_t callbackID);
+    void garbageCollectJavaScriptObjects();
 
     // ChildProcess
     virtual bool shouldTerminate();

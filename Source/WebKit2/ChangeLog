@@ -1,5 +1,26 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94454
+
+    2011-09-02  Ada Chan  <adachan@apple.com>
+
+            Add WKContextGarbageCollectJavaScriptObjects() which does a garbage collection in the WebProcess
+            https://bugs.webkit.org/show_bug.cgi?id=67526
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/API/C/WKContext.cpp:
+            (WKContextGarbageCollectJavaScriptObjects):
+            * UIProcess/API/C/WKContext.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::garbageCollectJavaScriptObjects): Send a message to WebProcess to garbage collect JS objects.
+            * UIProcess/WebContext.h:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::garbageCollectJavaScriptObjects): Call GCController::garbageCollectNow().
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in: Add GarbageCollectJavaScriptObjects message.
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94371
 
     2011-09-01  Ada Chan  <adachan@apple.com>
