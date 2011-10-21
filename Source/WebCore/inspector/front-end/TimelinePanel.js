@@ -255,10 +255,6 @@ WebInspector.TimelinePanel.prototype = {
         this._shortcuts[shortcut.makeKey("e", modifiers.CtrlOrMeta)] = this._toggleTimelineButtonClicked.bind(this);
         section.addKey(shortcut.shortcutToString("e", modifiers.CtrlOrMeta), WebInspector.UIString("Start/stop recording"));
 
-        var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold);
-        this._shortcuts[shortcut.makeKey("f", modifiers.Shift | modifiers.CtrlOrMeta)] = this._toggleFilterButtonClicked.bind(this);
-        section.addKey(shortcut.shortcutToString("f", modifiers.Shift | modifiers.CtrlOrMeta), WebInspector.UIString("Filter out records shorter than %s", shortRecordThresholdTitle));
-
         this._shortcuts[shortcut.makeKey("s", modifiers.CtrlOrMeta)] = this._saveToFile.bind(this);
         section.addKey(shortcut.shortcutToString("s", modifiers.CtrlOrMeta), WebInspector.UIString("Save Timeline data\u2026"));
 

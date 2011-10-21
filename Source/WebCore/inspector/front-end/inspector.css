@@ -4159,6 +4159,43 @@ a.worker-item:hover {
     margin-bottom: 6px;
 }
 
+#drawer-status-bar .search-status-bar-item {
+    cursor: pointer;
+    font-size: 11px;
+    height: 23px;
+}
+
+#drawer-status-bar .search-status-bar-message {
+    margin-left:5px;
+    margin-right:5px;
+    margin-top:6px;
+    float:left;
+}
+
+#drawer-status-bar .search-status-bar-progress {
+    height: 10px;
+    width: 100px;
+    margin-top: 8px;
+    float: left;
+}
+
+#drawer-status-bar .search-status-bar-stop-button-item {
+    width: 19px;
+    height: 24px;
+    overflow: hidden;
+}
+
+#drawer-status-bar .search-status-bar-stop-button .glyph {
+    -webkit-mask-position: -96px -48px;
+    background-color: rgb(216, 0, 0) !important;
+}
+
+#drawer-status-bar .search-results-status-bar-message {
+    margin-right: 10px;
+    cursor: default;
+    font-size: 11px;
+}
+
 .search-view .search-results {
     position: absolute;
     top: 35px;
@@ -4166,13 +4203,23 @@ a.worker-item:hover {
     left: 0;
     right: 0;
     overflow-y: auto;
-    
+}
+
+#search-results-pane-file-based .search-results-outline-disclosure {
     padding-bottom: 5px;
 }
 
 #search-results-pane-file-based .search-result {
     font-size: 12px;
     margin-top: 3px;
+    word-wrap: normal;
+    white-space: pre;
+    cursor: pointer;
+}
+
+#search-results-pane-file-based .search-result:hover {
+    background-color: rgba(121, 121, 121, 0.1);
+    -webkit-border-radius: 5px;
 }
 
 #search-results-pane-file-based .search-result:first-child {
@@ -4189,6 +4236,17 @@ a.worker-item:hover {
     margin-left: 5px;
     color: #333;
 }
+
+#search-results-pane-file-based .show-more-matches {
+    margin-left: 5px;
+    color: #333;
+    cursor: pointer;
+}
+
+#search-results-pane-file-based .show-more-matches:hover {
+    text-decoration: underline;
+}
+
 
 #search-results-pane-file-based .search-match {
     font-family: 'dejavu sans mono', monospace;
@@ -4208,7 +4266,7 @@ a.worker-item:hover {
 
 #search-results-pane-file-based .search-match:hover {
     background-color: rgba(56, 121, 217, 0.1);
-    -webkit-border-radius: 5px;*/
+    -webkit-border-radius: 5px;
 }
 
 #search-results-pane-file-based .search-match .highlighted-match {

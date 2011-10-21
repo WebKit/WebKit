@@ -62,6 +62,8 @@ static String createSearchRegexSource(const String& text)
 static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
 {
     Vector<pair<int, String> > result;
+    if (text.isEmpty())
+        return result;
 
     int lineNumber = 0;
     unsigned start = 0;
@@ -105,6 +107,9 @@ RegularExpression createSearchRegex(const String& query, bool caseSensitive, boo
 
 int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
 {
+    if (content.isEmpty())
+        return 0;
+
     int result = 0;
     int position;
     unsigned start = 0;

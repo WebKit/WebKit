@@ -1,3 +1,76 @@
+2011-10-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Advanced search is working very slowly and does not show searching progress.
+        https://bugs.webkit.org/show_bug.cgi?id=70611
+
+        Search implementation changed so that we do not start searching in the next file unless
+        the previous one was already searched. This allows to interrupt search.
+        Not all search matches are added on UI by default now, only first 20 for each file.
+        Search progress information and search stop button were added to drawer status bar.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::getRegularExpressionMatchesByLines):
+        (WebCore::ContentSearchUtils::countRegularExpressionMatches):
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController.prototype._onSearchResult):
+        (WebInspector.AdvancedSearchController.prototype._onSearchFinished):
+        (WebInspector.AdvancedSearchController.prototype.startSearch):
+        (WebInspector.AdvancedSearchController.prototype.resetSearch):
+        (WebInspector.AdvancedSearchController.prototype.stopSearch):
+        (WebInspector.SearchView):
+        (WebInspector.SearchView.prototype.get statusBarItems):
+        (WebInspector.SearchView.prototype.get counterElement):
+        (WebInspector.SearchView.prototype.set resultsPane):
+        (WebInspector.SearchView.prototype.searchStarted):
+        (WebInspector.SearchView.prototype._updateSearchResultsMessage):
+        (WebInspector.SearchView.prototype._updateSearchProgress):
+        (WebInspector.SearchView.prototype.resetResults):
+        (WebInspector.SearchView.prototype._resetCounters):
+        (WebInspector.SearchView.prototype.nothingFound):
+        (WebInspector.SearchView.prototype.addSearchResult):
+        (WebInspector.SearchView.prototype.searchFinished):
+        (WebInspector.SearchView.prototype._searchStopButtonPressed):
+        (WebInspector.SearchResultsPane):
+        (WebInspector.FileBasedSearchResultsPane):
+        (WebInspector.FileBasedSearchResultsPane.prototype.addSearchResult):
+        (WebInspector.FileBasedSearchResultsPane.prototype._fileTreeElementExpanded):
+        (WebInspector.FileBasedSearchResultsPane.prototype._appendSearchMatches):
+        (WebInspector.FileBasedSearchResultsPane.prototype._appendShowMoreMatchesElement):
+        (WebInspector.FileBasedSearchResultsPane.prototype._showMoreMatchesElementSelected):
+        (WebInspector.FileBasedSearchResultsPane.prototype._addFileTreeElement):
+        (WebInspector.FileBasedSearchResultsPane.prototype._regexMatchRanges):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.hide):
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/ScriptsSearchScope.js:
+        (WebInspector.ScriptsSearchScope):
+        (WebInspector.ScriptsSearchScope.prototype.performSearch.filterOutContentScripts):
+        (WebInspector.ScriptsSearchScope.prototype.performSearch.continueSearch):
+        (WebInspector.ScriptsSearchScope.prototype.performSearch.searchCallbackWrapper):
+        (WebInspector.ScriptsSearchScope.prototype.performSearch):
+        (WebInspector.ScriptsSearchScope.prototype.stopSearch):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._registerShortcuts):
+        * inspector/front-end/inspector.css:
+        (#drawer-status-bar .search-status-bar-item):
+        (#drawer-status-bar .search-status-bar-message):
+        (#drawer-status-bar .search-status-bar-progress):
+        (#drawer-status-bar .search-status-bar-stop-button-item):
+        (#drawer-status-bar .search-status-bar-stop-button .glyph):
+        (#drawer-status-bar .search-results-status-bar-message):
+        (.search-view .search-results):
+        (#search-results-pane-file-based .search-results-outline-disclosure):
+        (#search-results-pane-file-based .search-result):
+        (#search-results-pane-file-based .search-result:hover):
+        (#search-results-pane-file-based .show-more-matches):
+        (#search-results-pane-file-based .show-more-matches:hover):
+        (#search-results-pane-file-based .search-match:hover):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-10-20  Zhenyao Mo  <zmo@google.com>
 
         Implement mechanism to enable privileged webgl extensions

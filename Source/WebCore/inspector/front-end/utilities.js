@@ -1046,7 +1046,7 @@ function numberToStringWithSpacesPadding(value, symbolsCount)
 {
     var numberString = value.toString();
     var paddingLength = Math.max(0, symbolsCount - numberString.length);
-    var paddingString = Array(paddingLength).join("\u00a0");
+    var paddingString = Array(paddingLength + 1).join("\u00a0");
     return paddingString + numberString;
 }
 

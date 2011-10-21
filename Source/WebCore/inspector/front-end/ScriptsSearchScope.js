@@ -34,53 +34,60 @@ WebInspector.ScriptsSearchScope = function()
 {
     // FIXME: Add title once it is used by search controller.
     WebInspector.SearchScope.call(this)
+    this._searchId = 0;
 }
 
 WebInspector.ScriptsSearchScope.prototype = {
     /**
      * @param {WebInspector.SearchConfig} searchConfig
      * @param {function(Object)} searchResultCallback
-     * @param {function()} searchFinishedCallback
+     * @param {function(boolean)} searchFinishedCallback
      */
     performSearch: function(searchConfig, searchResultCallback, searchFinishedCallback)
     {
-        var callbacksLeft = 0;
-
-        function maybeSearchFinished()
-        {
-            if (callbacksLeft === 0)
-                searchFinishedCallback();                
-        }
-        
-        function searchCallbackWrapper(uiSourceCode, searchMatches)
-        {
-            if (searchMatches.length) {
-                var searchResult = new WebInspector.FileBasedSearchResultsPane.SearchResult(uiSourceCode, searchMatches);
-                searchResultCallback(searchResult);
-            }
-            --callbacksLeft;
-            maybeSearchFinished();
-        }
+        this.stopSearch();
         
         var uiSourceCodes = this._sortedUISourceCodes();
-        // FIXME: Enable support for counting matches for incremental search.
-        // FIXME: Enable support for bounding search results/matches number to keep inspector responsive.
-        for (var i = 0; i < uiSourceCodes.length; i++) {
-            var uiSourceCode = uiSourceCodes[i];
-            // FIXME: Add setting to search in content scripts as well.
-            if (!uiSourceCode.isContentScript) {
-                // Increase callbacksLeft first because searchInContent call could be synchronous.
-                callbacksLeft++;
-                // FIXME: We should not request next searchInContent unless previous one is already finished.  
-                uiSourceCode.searchInContent(searchConfig.query, !searchConfig.ignoreCase, searchConfig.isRegex, searchCallbackWrapper.bind(this, uiSourceCode));
-            }
+        var uiSourceCodeIndex = 0;
+        
+        function filterOutContentScripts(uiSourceCode)
+        {
+            return !uiSourceCode.isContentScript;
         }
-        maybeSearchFinished();
+        
+        // FIXME: Add setting to search in content scripts as well.
+        uiSourceCodes.filter(filterOutContentScripts);
+
+        function continueSearch()
+        {
+            // FIXME: Enable support for counting matches for incremental search.
+            // FIXME: Enable support for bounding search results/matches number to keep inspector responsive.
+            if (uiSourceCodeIndex < uiSourceCodes.length) {
+                var uiSourceCode = uiSourceCodes[uiSourceCodeIndex++];
+                uiSourceCode.searchInContent(searchConfig.query, !searchConfig.ignoreCase, searchConfig.isRegex, searchCallbackWrapper.bind(this, this._searchId, uiSourceCode));
+            } else 
+                searchFinishedCallback(true);
+        }
+
+        function searchCallbackWrapper(searchId, uiSourceCode, searchMatches)
+        {
+            if (searchId !== this._searchId) {
+                searchFinishedCallback(false);
+                return;
+            }
+                
+            var searchResult = new WebInspector.FileBasedSearchResultsPane.SearchResult(uiSourceCode, searchMatches);
+            searchResultCallback(searchResult);
+            continueSearch.call(this);
+        }
+        
+        continueSearch.call(this);
+        return uiSourceCodes.length;
     },
 
     stopSearch: function()
     {
-        // FIXME: Implement search so that it could be stopped.
+        ++this._searchId;
     },
 
     /**

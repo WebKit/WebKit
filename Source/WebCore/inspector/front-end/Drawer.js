@@ -74,6 +74,8 @@ WebInspector.Drawer.prototype = {
     show: function(view, animationType)
     {
         this.immediatelyFinishAnimation();
+        if (this._view && this._view.counterElement)
+            this._view.counterElement.parentNode.removeChild(this._view.counterElement);
 
         var drawerWasVisible = this.visible;
 
@@ -86,6 +88,9 @@ WebInspector.Drawer.prototype = {
         this._viewStatusBar.removeChildren();
         for (var i = 0; i < statusBarItems.length; ++i)
             this._viewStatusBar.appendChild(statusBarItems[i]);
+
+        if (this._view.counterElement)
+            this._counters.insertBefore(this._view.counterElement, this._counters.firstChild);
 
         document.body.addStyleClass("drawer-visible");
         this._view.show(this._drawerContentsElement);
@@ -112,7 +117,7 @@ WebInspector.Drawer.prototype = {
             this._currentPanelCounters.parentNode.removeChild(this._currentPanelCounters);
             this._mainStatusBar.appendChild(this._currentPanelCounters);
         }
-
+        
         function animationFinished()
         {
             WebInspector.currentPanel().statusBarResized();
@@ -166,6 +171,9 @@ WebInspector.Drawer.prototype = {
             WebInspector.currentPanel().doResize();
             this._mainStatusBar.insertBefore(anchoredItems, this._mainStatusBar.firstChild);
             this._mainStatusBar.style.removeProperty("padding-left");
+
+            if (this._view.counterElement)
+                this._view.counterElement.parentNode.removeChild(this._view.counterElement);
 
             if (this._currentPanelCounters) {
                 this._currentPanelCounters.setAttribute("style", null);
