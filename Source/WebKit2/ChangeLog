@@ -1,5 +1,18 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94371
+
+    2011-09-01  Ada Chan  <adachan@apple.com>
+
+            Cut down the ifdefs in WebKit::getWebCoreMemoryCacheStatistics() now that 
+            MemoryCache::Statistics always has the xslStyleSheets field.
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::getWebCoreMemoryCacheStatistics):
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94340
 
     2011-09-01  Ada Chan  <adachan@apple.com>
