@@ -1,5 +1,50 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98060
+
+    2011-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+            Hidden composited iframes cause infinite loop
+            https://bugs.webkit.org/show_bug.cgi?id=52655
+
+            Reviewed by Darin Adler.
+
+            visibility:hidden is problematic for compositing, because it causes
+            RenderLayers to be removed from the z-order layer tree. This confuses
+            RenderLayerCompositor in several ways; it never sees these layers
+            when traversing the tree as it computes compositing requirements, or
+            rebuilds the layer tree.
+
+            This is a particular problem with composited iframes. When an iframe
+            becomes composited, scheduleSetNeedsStyleRecalc() is called on that
+            iframe's ownerElement in the parent document. If this happens inside
+            Document::updateStyleForAllDocuments(), we get into an infinite loop
+            because notifyIFramesOfCompositingChange() queues up style update as we
+            bounce in and out of compositing mode, so documentsThatNeedStyleRecalc
+            never empties out.
+
+            This is an initial, conservative fix that doesn't attempt to fix all
+            the issues with visibility. It changes RenderLayerCompositor to count
+            the number of compositing RenderLayers, and to not leave compositing
+            mode if there are any (even if they are hidden, so not hit while
+            traversing the z-order tree). This avoids the infinite loop.
+
+            Test: compositing/visibility/hidden-iframe.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::ensureBacking):
+            (WebCore::RenderLayer::clearBacking):
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+            (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers):
+            (WebCore::RenderLayerCompositor::updateCompositingLayers):
+            (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+            * rendering/RenderLayerCompositor.h:
+            (WebCore::RenderLayerCompositor::layerBecameComposited):
+            (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97821
 
     2011-10-18  Anders Carlsson  <andersca@apple.com>

@@ -1,5 +1,21 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98060
+
+    2011-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+            Hidden composited iframes cause infinite loop
+            https://bugs.webkit.org/show_bug.cgi?id=52655
+
+            Reviewed by Darin Adler.
+
+            Test with a visibility:hidden iframe, whose subframe becomes composited.
+
+            * compositing/visibility/hidden-iframe-expected.txt: Added.
+            * compositing/visibility/hidden-iframe.html: Added.
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97821
 
     2011-10-18  Anders Carlsson  <andersca@apple.com>

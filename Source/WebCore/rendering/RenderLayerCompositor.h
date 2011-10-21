@@ -148,6 +148,13 @@ public:
     void didMoveOnscreen();
     void willMoveOffscreen();
     
+    void layerBecameComposited(const RenderLayer*) { ++m_compositedLayerCount; }
+    void layerBecameNonComposited(const RenderLayer*)
+    {
+        ASSERT(m_compositedLayerCount > 0);
+        --m_compositedLayerCount;
+    }
+    
     void didStartAcceleratedAnimation(CSSPropertyID);
     
 #if ENABLE(VIDEO)
@@ -232,6 +239,8 @@ private:
     void removeCompositedChildren(RenderLayer*);
 
     bool layerHas3DContent(const RenderLayer*) const;
+    
+    bool hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const;
 
     void ensureRootPlatformLayer();
     void destroyRootPlatformLayer();
@@ -269,6 +278,7 @@ private:
     bool m_hasAcceleratedCompositing;
     ChromeClient::CompositingTriggerFlags m_compositingTriggers;
 
+    int m_compositedLayerCount;
     bool m_showDebugBorders;
     bool m_showRepaintCounter;
     bool m_compositingConsultsOverlap;
