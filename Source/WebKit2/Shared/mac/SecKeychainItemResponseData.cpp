@@ -72,6 +72,10 @@ void SecKeychainItemResponseData::encode(CoreIPC::ArgumentEncoder* encoder) cons
     encoder->encodeBool(m_data.get());
     if (m_data)
         CoreIPC::encode(encoder, m_data.get());
+
+    encoder->encodeBool(m_keychainItem.get());
+    if (m_keychainItem)
+        CoreIPC::encode(encoder, m_keychainItem.get());
 }
 
 bool SecKeychainItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecKeychainItemResponseData& secKeychainItemResponseData)
@@ -103,6 +107,13 @@ bool SecKeychainItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecK
         return false;
 
     if (expectData && !CoreIPC::decode(decoder, secKeychainItemResponseData.m_data))
+        return false;
+
+    bool expectItem;
+    if (!decoder->decodeBool(expectItem))
+        return false;
+
+    if (expectItem && !CoreIPC::decode(decoder, secKeychainItemResponseData.m_keychainItem))
         return false;
 
     return true;
