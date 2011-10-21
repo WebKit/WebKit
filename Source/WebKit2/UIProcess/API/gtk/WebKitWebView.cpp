@@ -345,8 +345,22 @@ void webkit_web_view_go_back(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageGoBack(toAPI(page));
+    WKPageGoBack(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
+ * webkit_web_view_can_go_back:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether @web_view has a previous history item.
+ *
+ * Returns: %TRUE if able to move back or %FALSE otherwise.
+ */
+gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return WKPageCanGoBack(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
 }
 
 /**
@@ -361,8 +375,22 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageGoForward(toAPI(page));
+    WKPageGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
+ * webkit_web_view_can_go_forward:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether @web_view has a next history item.
+ *
+ * Returns: %TRUE if able to move forward or %FALSE otherwise.
+ */
+gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return WKPageCanGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
 }
 
 /**

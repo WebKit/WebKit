@@ -1,5 +1,19 @@
 2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add can_go_back/forward methods to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69823
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_go_back):
+        (webkit_web_view_can_go_back):
+        (webkit_web_view_go_forward):
+        (webkit_web_view_can_go_forward):
+        * UIProcess/API/gtk/WebKitWebView.h:
+
+2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add webkit_web_view_stop_loading() to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=69610
 

@@ -105,8 +105,14 @@ webkit_web_view_reload_bypass_cache         (WebKitWebView         *web_view);
 WEBKIT_API void
 webkit_web_view_go_back                     (WebKitWebView         *web_view);
 
+WEBKIT_API gboolean
+webkit_web_view_can_go_back                 (WebKitWebView         *web_view)
+
 WEBKIT_API void
 webkit_web_view_go_forward                  (WebKitWebView         *web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_go_forward              (WebKitWebView         *web_view);
 
 WEBKIT_API const gchar *
 webkit_web_view_get_custom_charset          (WebKitWebView         *web_view);
