@@ -85,6 +85,9 @@ v8::Handle<v8::Value> toV8(Event* event)
     if (!event)
         return v8::Null();
 
+    if (event->interfaceName() == eventNames().interfaceForEvent)
+        return V8Event::wrap(event);
+
     typedef v8::Handle<v8::Value> (*ToV8Function)(Event*);
     typedef HashMap<WTF::AtomicStringImpl*, ToV8Function> FunctionMap;
 

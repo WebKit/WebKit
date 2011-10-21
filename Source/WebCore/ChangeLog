@@ -1,3 +1,10 @@
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix crash for infinite recursion.
+
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+
 2011-10-20  Dirk Pranke  <dpranke@chromium.org>
 
         Still lots of crashes in the chromium debug bots.
