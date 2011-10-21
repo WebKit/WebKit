@@ -1642,7 +1642,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
                 callType = ConstantFunction;
-            else if (m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).isLinked() && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
+            else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee && !m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
                 callType = LinkedFunction;
             else
                 callType = UnknownFunction;
@@ -1667,7 +1667,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget)->executable()->intrinsic();
                 else {
                     ASSERT(callType == LinkedFunction);
-                    JSFunction* function = m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).callee.get();
+                    JSFunction* function = m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee.get();
                     intrinsic = function->executable()->intrinsic();
                     if (intrinsic != NoIntrinsic)
                         addToGraph(CheckFunction, OpInfo(function), callTarget);

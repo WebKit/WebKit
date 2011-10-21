@@ -638,6 +638,7 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
     if (!calleeCodeBlock || static_cast<int>(exec->argumentCountIncludingThis()) == calleeCodeBlock->m_numParameters) {
         ASSERT(!callLinkInfo.isLinked());
         callLinkInfo.callee.set(exec->callerFrame()->globalData(), callLinkInfo.hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
+        callLinkInfo.lastSeenCallee.set(exec->callerFrame()->globalData(), callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo.hotPathOther, codePtr);
         
         if (calleeCodeBlock)

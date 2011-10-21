@@ -724,6 +724,7 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
         callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
+        callLinkInfo->lastSeenCallee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
         
         if (calleeCodeBlock)

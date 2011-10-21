@@ -1545,9 +1545,12 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
 #if ENABLE(JIT)
-    for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
+    for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i) {
         if (callLinkInfo(i).isLinked())
             visitor.append(&callLinkInfo(i).callee);
+        if (!!callLinkInfo(i).lastSeenCallee)
+            visitor.append(&callLinkInfo(i).lastSeenCallee);
+    }
 #endif
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)

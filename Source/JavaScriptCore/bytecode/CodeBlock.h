@@ -121,6 +121,7 @@ namespace JSC {
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
         JITWriteBarrier<JSFunction> callee;
+        WriteBarrier<JSFunction> lastSeenCallee;
         bool hasSeenShouldRepatch : 1;
         bool isCall : 1;
         bool isDFG : 1;

@@ -1,3 +1,25 @@
+2011-10-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG call optimization handling will fail if the call had been unlinked due
+        to the callee being optimized
+        https://bugs.webkit.org/show_bug.cgi?id=70468
+
+        Reviewed by Geoff Garen.
+        
+        If a call had ever been linked, we remember this fact as well as the function
+        to which it was linked even if unlinkIncomingCalls() or unlinkCalls() are
+        called.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+
 2011-10-20  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT 32_64 - Fix ByteArray speculation
