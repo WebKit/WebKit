@@ -248,7 +248,7 @@ Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuCo
  *
  * Frees the context menu.
  *
- * @param o the view object
+ * @param menu the view object
  * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
  *
  * @note emits a signal "contextmenu,free"
@@ -269,7 +269,7 @@ Eina_Bool ewk_context_menu_free(Ewk_Context_Menu* menu)
  *
  * Appends the WebCore's item to the context menu object.
  *
- * @param o the context menu object
+ * @param menu the context menu object
  * @param core the WebCore's context menu item that will be added to the context menu
  * @note emits a signal "contextmenu,item,appended"
  *
@@ -294,7 +294,7 @@ void ewk_context_menu_item_append(Ewk_Context_Menu* menu, WebCore::ContextMenuIt
  *
  * Emits a signal with the items of the context menu.
  *
- * @param o the context menu object
+ * @param menu the context menu object
  * @return the same context menu object that was given through parameter
  *
  * @note emits a signal "contextmenu,customize"
@@ -314,7 +314,7 @@ Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* menu)
  *
  * Emits a signal "contextmenu,show"
  *
- * @param o the context menu object
+ * @param menu the context menu object
  */
 void ewk_context_menu_show(Ewk_Context_Menu* menu)
 {

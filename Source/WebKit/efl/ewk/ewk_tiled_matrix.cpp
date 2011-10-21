@@ -33,10 +33,10 @@
 
 struct _Ewk_Tile_Matrix {
     Eina_Matrixsparse* matrix;
-    Ewk_Tile_Unused_Cache* tuc;
+    Ewk_Tile_Unused_Cache* tilieUnusedCache;
     Evas_Colorspace cspace;
     struct {
-        void (*cb)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update);
+        void (*callback)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update);
         void* data;
     } render;
     unsigned int frozen;
@@ -61,42 +61,42 @@ static uint64_t bytes_leaked = 0;
 /* called when matrixsparse is resized or freed */
 static void _ewk_tile_matrix_cell_free(void* userData, void* cellData)
 {
-    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(userData);
+    Ewk_Tile_Matrix* tileMatrix = static_cast<Ewk_Tile_Matrix*>(userData);
     Ewk_Tile* tile = static_cast<Ewk_Tile*>(cellData);
 
     if (!tile)
         return;
 
-    ewk_tile_unused_cache_freeze(tm->tuc);
+    ewk_tile_unused_cache_freeze(tileMatrix->tilieUnusedCache);
 
     if (tile->updates || tile->stats.full_update)
-        tm->updates = eina_list_remove(tm->updates, tile);
+        tileMatrix->updates = eina_list_remove(tileMatrix->updates, tile);
 
     if (tile->visible)
         ERR("freeing cell that is visible, leaking tile %p", tile);
     else {
-        if (!ewk_tile_unused_cache_tile_get(tm->tuc, tile))
-            ERR("tile %p was not in cache %p? leaking...", tile, tm->tuc);
+        if (!ewk_tile_unused_cache_tile_get(tileMatrix->tilieUnusedCache, tile))
+            ERR("tile %p was not in cache %p? leaking...", tile, tileMatrix->tilieUnusedCache);
         else {
             DBG("tile cell does not exist anymore, free it %p", tile);
 #ifdef DEBUG_MEM_LEAKS
-            tm->stats.bytes.freed += tile->bytes;
-            tm->stats.tiles.freed++;
+            tileMatrix->stats.bytes.freed += tile->bytes;
+            tileMatrix->stats.tiles.freed++;
 #endif
             ewk_tile_free(tile);
         }
     }
 
-    ewk_tile_unused_cache_thaw(tm->tuc);
+    ewk_tile_unused_cache_thaw(tileMatrix->tilieUnusedCache);
 }
 
 /* called when cache of unused tile is flushed */
 static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
 {
-    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(data);
+    Ewk_Tile_Matrix* tileMatrix = static_cast<Ewk_Tile_Matrix*>(data);
     Eina_Matrixsparse_Cell* cell;
 
-    if (!eina_matrixsparse_cell_idx_get(tm->matrix, tile->row, tile->col, &cell)) {
+    if (!eina_matrixsparse_cell_idx_get(tileMatrix->matrix, tile->row, tile->col, &cell)) {
         ERR("removing tile %p that was not in the matrix? Leaking...", tile);
         return;
     }
@@ -107,7 +107,7 @@ static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
     }
 
     if (tile->updates || tile->stats.full_update)
-        tm->updates = eina_list_remove(tm->updates, tile);
+        tileMatrix->updates = eina_list_remove(tileMatrix->updates, tile);
 
     /* set to null to avoid double free */
     eina_matrixsparse_cell_data_replace(cell, 0, 0);
@@ -120,8 +120,8 @@ static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
     }
 
 #ifdef DEBUG_MEM_LEAKS
-    tm->stats.bytes.freed += tile->bytes;
-    tm->stats.tiles.freed++;
+    tileMatrix->stats.bytes.freed += tile->bytes;
+    tileMatrix->stats.tiles.freed++;
 #endif
 
     ewk_tile_free(tile);
@@ -145,38 +145,38 @@ static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
  *
  * @return newly allocated instance on success, @c 0 on failure.
  */
-Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, unsigned long columns, unsigned long rows, Evas_Colorspace colorSpace, void (*render_callback)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update), const void* renderData)
+Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, unsigned long columns, unsigned long rows, Evas_Colorspace colorSpace, void (*renderCallback)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update), const void* renderData)
 {
-    Ewk_Tile_Matrix* tm = static_cast<Ewk_Tile_Matrix*>(calloc(1, sizeof(Ewk_Tile_Matrix)));
-    if (!tm)
+    Ewk_Tile_Matrix* tileMatrix = static_cast<Ewk_Tile_Matrix*>(calloc(1, sizeof(Ewk_Tile_Matrix)));
+    if (!tileMatrix)
         return 0;
 
-    tm->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tm);
-    if (!tm->matrix) {
+    tileMatrix->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix);
+    if (!tileMatrix->matrix) {
         ERR("could not create sparse matrix.");
-        free(tm);
+        free(tileMatrix);
         return 0;
     }
 
     if (tileUnusedCache)
-        tm->tuc = ewk_tile_unused_cache_ref(tileUnusedCache);
+        tileMatrix->tilieUnusedCache = ewk_tile_unused_cache_ref(tileUnusedCache);
     else {
-        tm->tuc = ewk_tile_unused_cache_new(40960000);
-        if (!tm->tuc) {
+        tileMatrix->tilieUnusedCache = ewk_tile_unused_cache_new(40960000);
+        if (!tileMatrix->tilieUnusedCache) {
             ERR("no cache of unused tile!");
-            eina_matrixsparse_free(tm->matrix);
-            free(tm);
+            eina_matrixsparse_free(tileMatrix->matrix);
+            free(tileMatrix);
             return 0;
         }
     }
 
-    tm->cspace = colorSpace;
-    tm->render.cb = render_callback;
-    tm->render.data = (void*)renderData;
-    tm->tile.width = DEFAULT_TILE_W;
-    tm->tile.height = DEFAULT_TILE_H;
+    tileMatrix->cspace = colorSpace;
+    tileMatrix->render.callback = renderCallback;
+    tileMatrix->render.data = (void*)renderData;
+    tileMatrix->tile.width = DEFAULT_TILE_W;
+    tileMatrix->tile.height = DEFAULT_TILE_H;
 
-    return tm;
+    return tileMatrix;
 }
 
 /**
@@ -191,12 +191,12 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
 #endif
 
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
-    ewk_tile_unused_cache_freeze(tileMatrix->tuc);
+    ewk_tile_unused_cache_freeze(tileMatrix->tilieUnusedCache);
 
     eina_matrixsparse_free(tileMatrix->matrix);
 
-    ewk_tile_unused_cache_thaw(tileMatrix->tuc);
-    ewk_tile_unused_cache_unref(tileMatrix->tuc);
+    ewk_tile_unused_cache_thaw(tileMatrix->tilieUnusedCache);
+    ewk_tile_unused_cache_unref(tileMatrix->tilieUnusedCache);
 
 #ifdef DEBUG_MEM_LEAKS
     tiles = tileMatrix->stats.tiles.allocated - tileMatrix->stats.tiles.freed;
@@ -244,7 +244,7 @@ void ewk_tile_matrix_resize(Ewk_Tile_Matrix* tileMatrix, unsigned long cols, uns
 Ewk_Tile_Unused_Cache* ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix* tileMatrix)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, 0);
-    return tileMatrix->tuc;
+    return tileMatrix->tilieUnusedCache;
 }
 
 /**
@@ -279,7 +279,7 @@ Ewk_Tile* ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix* tileMatrix, unsigned l
 
 end:
     if (!tile->visible) {
-        if (!ewk_tile_unused_cache_tile_get(tileMatrix->tuc, tile))
+        if (!ewk_tile_unused_cache_tile_get(tileMatrix->tilieUnusedCache, tile))
             WRN("Ewk_Tile was unused but not in cache? bug!");
     }
 
@@ -320,18 +320,18 @@ Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix* tileMatrix, unsigne
  */
 Ewk_Tile* ewk_tile_matrix_tile_new(Ewk_Tile_Matrix* tileMatrix, Evas* canvas, unsigned long column, unsigned long row, float zoom)
 {
-    Evas_Coord tw, th;
+    Evas_Coord tileWidth, tileHeight;
     Ewk_Tile* tile;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, 0);
     EINA_SAFETY_ON_FALSE_RETURN_VAL(zoom > 0.0, 0);
 
-    tw = tileMatrix->tile.width;
-    th = tileMatrix->tile.height;
+    tileWidth = tileMatrix->tile.width;
+    tileHeight = tileMatrix->tile.height;
 
-    tile = ewk_tile_new(canvas, tw, th, zoom, tileMatrix->cspace);
+    tile = ewk_tile_new(canvas, tileWidth, tileHeight, zoom, tileMatrix->cspace);
     if (!tile) {
-        ERR("could not create tile %dx%d at %f, cspace=%d", tw, th, (double)zoom, tileMatrix->cspace);
+        ERR("could not create tile %dx%d at %f, cspace=%d", tileWidth, tileHeight, (double)zoom, tileMatrix->cspace);
         return 0;
     }
 
@@ -343,8 +343,8 @@ Ewk_Tile* ewk_tile_matrix_tile_new(Ewk_Tile_Matrix* tileMatrix, Evas* canvas, un
 
     tile->col = column;
     tile->row = row;
-    tile->x = column * tw;
-    tile->y = row * th;
+    tile->x = column * tileWidth;
+    tile->y = row * tileHeight;
 
     cairo_translate(tile->cairo, -tile->x, -tile->y);
 
@@ -385,16 +385,16 @@ Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile, 
         return EINA_TRUE;
 
     tile->stats.last_used = lastUsed;
-    return ewk_tile_unused_cache_tile_put(tileMatrix->tuc, tile, _ewk_tile_matrix_tile_free, tileMatrix);
+    return ewk_tile_unused_cache_tile_put(tileMatrix->tilieUnusedCache, tile, _ewk_tile_matrix_tile_free, tileMatrix);
 }
 
 Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long col, unsigned long row, const Eina_Rectangle* update)
 {
-    Eina_Rectangle new_update;
+    Eina_Rectangle newUpdate;
     EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(update, EINA_FALSE);
 
-    memcpy(&new_update, update, sizeof(new_update));
+    memcpy(&newUpdate, update, sizeof(newUpdate));
     // check update is valid, otherwise return EINA_FALSE
     if (update->x < 0 || update->y < 0 || update->w <= 0 || update->h <= 0) {
         ERR("invalid update region.");
@@ -402,9 +402,9 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long
     }
 
     if (update->x + update->w - 1 >= tileMatrix->tile.width)
-        new_update.w = tileMatrix->tile.width - update->x;
+        newUpdate.w = tileMatrix->tile.width - update->x;
     if (update->y + update->h - 1 >= tileMatrix->tile.height)
-        new_update.h = tileMatrix->tile.height - update->y;
+        newUpdate.h = tileMatrix->tile.height - update->y;
 
     Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tileMatrix->matrix, row, col));
     if (!tile)
@@ -412,7 +412,7 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long
 
     if (!tile->updates && !tile->stats.full_update)
         tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
-    ewk_tile_update_area(tile, &new_update);
+    ewk_tile_update_area(tile, &newUpdate);
 
     return EINA_TRUE;
 }
@@ -453,7 +453,7 @@ void ewk_tile_matrix_tile_updates_clear(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* t
 static Eina_Bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix* tileMatrix, const Eina_Rectangle* area, float zoom, Eina_Tile_Grid_Slicer* slicer)
 {
     unsigned long rows, cols;
-    Evas_Coord x, y, width, height, tw, th;
+    Evas_Coord x, y, width, height, tileWidth, tileHeight;
 
     if (area->w <= 0 || area->h <= 0) {
         WRN("invalid area region: %d,%d+%dx%d.",
@@ -466,8 +466,8 @@ static Eina_Bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix* tileMatrix, cons
     width = area->w;
     height = area->h;
 
-    tw = tileMatrix->tile.width;
-    th = tileMatrix->tile.height;
+    tileWidth = tileMatrix->tile.width;
+    tileHeight = tileMatrix->tile.height;
 
     // cropping area region to fit matrix
     eina_matrixsparse_size_get(tileMatrix->matrix, &rows, &cols);
@@ -480,12 +480,12 @@ static Eina_Bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix* tileMatrix, cons
         y = 0;
     }
 
-    if (y + height - 1 > (long)(rows * th))
-        height = rows * th - y;
-    if (x + width - 1 > (long)(cols * tw))
-        width = cols * tw - x;
+    if (y + height - 1 > (long)(rows * tileHeight))
+        height = rows * tileHeight - y;
+    if (x + width - 1 > (long)(cols * tileWidth))
+        width = cols * tileWidth - x;
 
-    return eina_tile_grid_slicer_setup(slicer, x, y, width, height, tw, th);
+    return eina_tile_grid_slicer_setup(slicer, x, y, width, height, tileWidth, tileHeight);
 }
 
 
@@ -531,17 +531,17 @@ Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix* tileMatrix, const Eina_Rectang
 
 void ewk_tile_matrix_updates_process(Ewk_Tile_Matrix* tileMatrix)
 {
-    Eina_List* l, * l_next;
+    Eina_List* list, *listNext;
     void* item;
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
 
     // process updates, unflag tiles
-    EINA_LIST_FOREACH_SAFE(tileMatrix->updates, l, l_next, item) {
+    EINA_LIST_FOREACH_SAFE(tileMatrix->updates, list, listNext, item) {
         Ewk_Tile* tile = static_cast<Ewk_Tile*>(item);
-        ewk_tile_updates_process(tile, tileMatrix->render.cb, tileMatrix->render.data);
+        ewk_tile_updates_process(tile, tileMatrix->render.callback, tileMatrix->render.data);
         if (tile->visible) {
             ewk_tile_updates_clear(tile);
-            tileMatrix->updates = eina_list_remove_list(tileMatrix->updates, l);
+            tileMatrix->updates = eina_list_remove_list(tileMatrix->updates, list);
         }
     }
 }
@@ -559,7 +559,7 @@ void ewk_tile_matrix_updates_clear(Ewk_Tile_Matrix* tileMatrix)
 // remove me later!
 void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
 {
-    Eina_Iterator* it = eina_matrixsparse_iterator_complete_new(tileMatrix->matrix);
+    Eina_Iterator* iterator = eina_matrixsparse_iterator_complete_new(tileMatrix->matrix);
     Eina_Matrixsparse_Cell* cell;
     Eina_Bool last_empty = EINA_FALSE;
 
@@ -574,9 +574,9 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
     printf("Ewk_Tile Matrix:\n");
 #endif
 
-    EINA_ITERATOR_FOREACH(it, cell) {
-        unsigned long row, col;
-        eina_matrixsparse_cell_position_get(cell, &row, &col);
+    EINA_ITERATOR_FOREACH(iterator, cell) {
+        unsigned long row, column;
+        eina_matrixsparse_cell_position_get(cell, &row, &column);
 
         Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
         if (!tile) {
@@ -584,22 +584,22 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
                 last_empty = EINA_TRUE;
                 printf("Empty:");
             }
-            printf(" [%lu,%lu]", col, row);
+            printf(" [%lu,%lu]", column, row);
         } else {
             if (last_empty) {
                 last_empty = EINA_FALSE;
                 printf("\n");
             }
-            printf("%3lu,%3lu %10p:", col, row, tile);
+            printf("%3lu,%3lu %10p:", column, row, tile);
             printf(" [%3lu,%3lu + %dx%d @ %0.3f]%c", tile->col, tile->row, tile->width, tile->height, tile->zoom, tile->visible ? '*' : ' ');
             printf("\n");
         }
     }
     if (last_empty)
         printf("\n");
-    eina_iterator_free(it);
+    eina_iterator_free(iterator);
 
-    ewk_tile_unused_cache_dbg(tileMatrix->tuc);
+    ewk_tile_unused_cache_dbg(tileMatrix->tilieUnusedCache);
 }
 
 /**
@@ -615,7 +615,7 @@ void ewk_tile_matrix_freeze(Ewk_Tile_Matrix* tileMatrix)
 {
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
     if (!tileMatrix->frozen)
-        ewk_tile_unused_cache_freeze(tileMatrix->tuc);
+        ewk_tile_unused_cache_freeze(tileMatrix->tilieUnusedCache);
     tileMatrix->frozen++;
 }
 
@@ -635,5 +635,5 @@ void ewk_tile_matrix_thaw(Ewk_Tile_Matrix* tileMatrix)
 
     tileMatrix->frozen--;
     if (!tileMatrix->frozen)
-        ewk_tile_unused_cache_thaw(tileMatrix->tuc);
+        ewk_tile_unused_cache_thaw(tileMatrix->tilieUnusedCache);
 }

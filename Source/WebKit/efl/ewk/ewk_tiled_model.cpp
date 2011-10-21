@@ -149,59 +149,59 @@ void ewk_tile_accounting_dbg()
 
 static inline void _ewk_tile_paint_rgb888(Ewk_Tile* tile, uint8_t red, uint8_t green, uint8_t blue)
 {
-    uint32_t c1 = 0xff000000 | ((uint32_t)red << 16) | ((uint32_t)green << 8) | blue;
-    uint32_t c2 = ((uint64_t)c1 << 32) | c1;
+    uint32_t color1 = 0xff000000 | ((uint32_t)red << 16) | ((uint32_t)green << 8) | blue;
+    uint32_t color2 = ((uint64_t)color1 << 32) | color1;
 
     uint64_t* dst64 = (uint64_t*)tile->pixels;
     uint64_t* dst64_end = dst64 + ((tile->bytes / 8) & ~7);
     for (; dst64 < dst64_end; dst64 += 8) {
         /* TODO: ARM add pld or NEON instructions */
-        dst64[0] = c2;
-        dst64[1] = c2;
-        dst64[2] = c2;
-        dst64[3] = c2;
-        dst64[4] = c2;
-        dst64[5] = c2;
-        dst64[6] = c2;
-        dst64[7] = c2;
+        dst64[0] = color2;
+        dst64[1] = color2;
+        dst64[2] = color2;
+        dst64[3] = color2;
+        dst64[4] = color2;
+        dst64[5] = color2;
+        dst64[6] = color2;
+        dst64[7] = color2;
     }
 
     uint32_t* dst32 = (uint32_t*)dst64_end;
     uint32_t* dst32_end = (uint32_t*)(tile->pixels + tile->bytes);
     for (; dst32 < dst32_end; dst32++)
-        *dst32 = c1;
+        *dst32 = color1;
 }
 
 static inline void _ewk_tile_paint_rgb565(Ewk_Tile* tile, uint8_t red, uint8_t green, uint8_t blue)
 {
-    uint16_t* dst16, * dst16_end, c1;
-    uint64_t* dst64, * dst64_end, c2;
+    uint16_t* dst16, * dst16_end, color1;
+    uint64_t* dst64, * dst64_end, color2;
 
-    c1 = ((((red >> 3) & 0x1f) << 11) |
+    color1 = ((((red >> 3) & 0x1f) << 11) |
           (((green >> 2) & 0x3f) << 5) |
           ((blue >> 3) & 0x1f));
 
-    c2 = (((uint64_t)c1 << 48) | ((uint64_t)c1 << 32) |
-          ((uint64_t)c1 << 16) | c1);
+    color2 = (((uint64_t)color1 << 48) | ((uint64_t)color1 << 32) |
+          ((uint64_t)color1 << 16) | color1);
 
     dst64 = (uint64_t*)tile->pixels;
     dst64_end = dst64 + ((tile->bytes / 8) & ~7);
     for (; dst64 < dst64_end; dst64 += 8) {
         /* TODO: ARM add pld or NEON instructions */
-        dst64[0] = c2;
-        dst64[1] = c2;
-        dst64[2] = c2;
-        dst64[3] = c2;
-        dst64[4] = c2;
-        dst64[5] = c2;
-        dst64[6] = c2;
-        dst64[7] = c2;
+        dst64[0] = color2;
+        dst64[1] = color2;
+        dst64[2] = color2;
+        dst64[3] = color2;
+        dst64[4] = color2;
+        dst64[5] = color2;
+        dst64[6] = color2;
+        dst64[7] = color2;
     }
 
     dst16 = (uint16_t*)dst16_end;
     dst16_end = (uint16_t*)(tile->pixels + tile->bytes);
     for (; dst16 < dst16_end; dst16++)
-        *dst16 = c1;
+        *dst16 = color1;
 }
 
 static inline void _ewk_tile_paint(Ewk_Tile* tile, uint8_t red, uint8_t green, uint8_t blue)
@@ -231,17 +231,17 @@ static inline void _ewk_tile_paint(Ewk_Tile* tile, uint8_t red, uint8_t green, u
  */
 Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zoom, Evas_Colorspace colorSpace)
 {
-    Evas_Coord* ec;
-    Evas_Colorspace* ecs;
-    float* f;
-    size_t* s;
+    Evas_Coord* evasCoord;
+    Evas_Colorspace* evasColorSpace;
+    float* tileZoom;
+    size_t* tileSize;
     Ewk_Tile* tile;
     unsigned int area;
     size_t bytes;
     cairo_format_t format;
     cairo_status_t status;
     int stride;
-    Ecore_Evas* ee;
+    Ecore_Evas* ecoreEvas;
     const char* engine;
 
     area = width * height;
@@ -267,8 +267,8 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
 
     tile->image = evas_object_image_add(evas);
 
-    ee = ecore_evas_ecore_evas_get(evas);
-    engine = ecore_evas_engine_name_get(ee);
+    ecoreEvas = ecore_evas_ecore_evas_get(evas);
+    engine = ecore_evas_engine_name_get(ecoreEvas);
     if (engine && !strcmp(engine, "opengl_x11"))
         evas_object_image_content_hint_set(tile->image, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
 
@@ -279,20 +279,20 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
     tile->stats.area = area;
 
     /* ugly, but let's avoid at all costs having users to modify those */
-    ec = (Evas_Coord*)&tile->width;
-    *ec = width;
+    evasCoord = (Evas_Coord*)&tile->width;
+    *evasCoord = width;
 
-    ec = (Evas_Coord*)&tile->height;
-    *ec = height;
+    evasCoord = (Evas_Coord*)&tile->height;
+    *evasCoord = height;
 
-    ecs = (Evas_Colorspace*)&tile->cspace;
-    *ecs = colorSpace;
+    evasColorSpace = (Evas_Colorspace*)&tile->cspace;
+    *evasColorSpace = colorSpace;
 
-    f = (float*)&tile->zoom;
-    *f = zoom;
+    tileZoom = (float*)&tile->zoom;
+    *tileZoom = zoom;
 
-    s = (size_t*)&tile->bytes;
-    *s = bytes;
+    tileSize = (size_t*)&tile->bytes;
+    *tileSize = bytes;
 
     evas_object_image_size_set(tile->image, tile->width, tile->height);
     evas_object_image_colorspace_set(tile->image, tile->cspace);
@@ -480,7 +480,7 @@ struct _Ewk_Tile_Unused_Cache_Entry {
     Ewk_Tile* tile;
     int weight;
     struct {
-        void (*cb)(void* data, Ewk_Tile* tile);
+        void (*callback)(void* data, Ewk_Tile* tile);
         void* data;
     } tile_free;
 };
@@ -496,7 +496,7 @@ struct _Ewk_Tile_Unused_Cache {
         size_t used; /**< in bytes, maybe more than max. */
     } memory;
     struct {
-        Evas_Coord x, y, w, h;
+        Evas_Coord x, y, width, height;
         float zoom;
         Eina_Bool locked;
     } locked;
@@ -540,8 +540,8 @@ void ewk_tile_unused_cache_lock_area(Ewk_Tile_Unused_Cache* tileUnusedCache, Eva
     tileUnusedCache->locked.locked = EINA_TRUE;
     tileUnusedCache->locked.x = x;
     tileUnusedCache->locked.y = y;
-    tileUnusedCache->locked.w = width;
-    tileUnusedCache->locked.h = height;
+    tileUnusedCache->locked.width = width;
+    tileUnusedCache->locked.height = height;
     tileUnusedCache->locked.zoom = zoom;
 }
 
@@ -594,7 +594,7 @@ void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache* tileUnusedCache)
     void* item;
     EINA_LIST_FREE(tileUnusedCache->entries.list, item) {
         Ewk_Tile_Unused_Cache_Entry* itr = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
-        itr->tile_free.cb(itr->tile_free.data, itr->tile);
+        itr->tile_free.callback(itr->tile_free.data, itr->tile);
         free(itr);
     }
 
@@ -650,7 +650,7 @@ size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache* tileUnusedCac
 
 size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache* tileUnusedCache, size_t bytes)
 {
-    Eina_List* l, * l_next;
+    Eina_List* list, * listNext;
     EINA_SAFETY_ON_NULL_RETURN_VAL(tileUnusedCache, 0);
     size_t done;
     unsigned int count;
@@ -668,7 +668,7 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache* tileUnusedCache, size_
     void* item;
     done = 0;
     count = 0;
-    EINA_LIST_FOREACH_SAFE(tileUnusedCache->entries.list, l, l_next, item) {
+    EINA_LIST_FOREACH_SAFE(tileUnusedCache->entries.list, list, listNext, item) {
         Ewk_Tile_Unused_Cache_Entry* itr = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         Ewk_Tile* tile = itr->tile;
         if (done > bytes)
@@ -676,14 +676,14 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache* tileUnusedCache, size_
         if (tileUnusedCache->locked.locked
             && tile->x + tile->width > tileUnusedCache->locked.x
             && tile->y + tile->height > tileUnusedCache->locked.y
-            && tile->x < tileUnusedCache->locked.x + tileUnusedCache->locked.w
-            && tile->y < tileUnusedCache->locked.y + tileUnusedCache->locked.h
+            && tile->x < tileUnusedCache->locked.x + tileUnusedCache->locked.width
+            && tile->y < tileUnusedCache->locked.y + tileUnusedCache->locked.height
             && tile->zoom == tileUnusedCache->locked.zoom) {
             continue;
         }
         done += sizeof(Ewk_Tile) + itr->tile->bytes;
-        itr->tile_free.cb(itr->tile_free.data, itr->tile);
-        tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, l);
+        itr->tile_free.callback(itr->tile_free.data, itr->tile);
+        tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, list);
         free(itr);
         count++;
     }
@@ -743,31 +743,31 @@ void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache* tileUnusedCache)
  * ewk_tile_unused_cache_tile_put().
  *
  * @param tileUnusedCache cache of unused tiles
- * @param t the tile to be removed from Ewk_Tile_Unused_Cache.
+ * @param tile the tile to be removed from Ewk_Tile_Unused_Cache.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  */
 Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile)
 {
-    Eina_List* e, * l;
+    Eina_List* foundEntry, *iterateEntry;
 
     void* item;
-    e = 0;
-    EINA_LIST_FOREACH(tileUnusedCache->entries.list, l, item) {
+    foundEntry = 0;
+    EINA_LIST_FOREACH(tileUnusedCache->entries.list, iterateEntry, item) {
         Ewk_Tile_Unused_Cache_Entry* entry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         if (entry->tile == tile) {
-            e = l;
+            foundEntry = iterateEntry;
             break;
         }
     }
-    if (!e) {
+    if (!foundEntry) {
         ERR("tile %p not found in cache %p", tile, tileUnusedCache);
         return EINA_FALSE;
     }
 
     tileUnusedCache->entries.count--;
     tileUnusedCache->memory.used -= sizeof(Ewk_Tile) + tile->bytes;
-    tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, e);
+    tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, foundEntry);
     free(item);
 
     return EINA_TRUE;
@@ -795,29 +795,29 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
  *
  * @see ewk_tile_unused_cache_auto_flush()
  */
-Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile, void (* tile_free_cb)(void* data, Ewk_Tile* tile), const void* data)
+Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile, void (* tileFreeCb)(void* data, Ewk_Tile* tile), const void* data)
 {
-    Ewk_Tile_Unused_Cache_Entry* uce;
+    Ewk_Tile_Unused_Cache_Entry* unusedCacheEntry;
 
     if (tile->visible) {
         ERR("tile=%p is not unused (visible=%d)", tile, tile->visible);
         return EINA_FALSE;
     }
 
-    uce = static_cast<Ewk_Tile_Unused_Cache_Entry*>(malloc(sizeof(Ewk_Tile_Unused_Cache_Entry)));
-    if (!uce)
+    unusedCacheEntry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(malloc(sizeof(Ewk_Tile_Unused_Cache_Entry)));
+    if (!unusedCacheEntry)
         return EINA_FALSE;
 
-    tileUnusedCache->entries.list = eina_list_append(tileUnusedCache->entries.list, uce);
+    tileUnusedCache->entries.list = eina_list_append(tileUnusedCache->entries.list, unusedCacheEntry);
     if (eina_error_get()) {
         ERR("List allocation failed");
         return EINA_FALSE;
     }
 
-    uce->tile = tile;
-    uce->weight = 0; /* calculated just before sort */
-    uce->tile_free.cb = tile_free_cb;
-    uce->tile_free.data = (void*)data;
+    unusedCacheEntry->tile = tile;
+    unusedCacheEntry->weight = 0; /* calculated just before sort */
+    unusedCacheEntry->tile_free.callback = tileFreeCb;
+    unusedCacheEntry->tile_free.data = (void*)data;
 
     tileUnusedCache->entries.count++;
     tileUnusedCache->memory.used += sizeof(Ewk_Tile) + tile->bytes;
@@ -828,13 +828,13 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
 void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache* tileUnusedCache)
 {
     void* item;
-    Eina_List* l;
+    Eina_List* list;
     int count = 0;
     printf("Cache of unused tiles: entries: %zu/%zu, memory: %zu/%zu\n",
            tileUnusedCache->entries.count, tileUnusedCache->entries.allocated,
            tileUnusedCache->memory.used, tileUnusedCache->memory.max);
 
-    EINA_LIST_FOREACH(tileUnusedCache->entries.list, l, item) {
+    EINA_LIST_FOREACH(tileUnusedCache->entries.list, list, item) {
         const Ewk_Tile* tile = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item)->tile;
         printf(" [%3lu,%3lu + %dx%d @ %0.3f]%c",
                tile->col, tile->row, tile->width, tile->height, tile->zoom,

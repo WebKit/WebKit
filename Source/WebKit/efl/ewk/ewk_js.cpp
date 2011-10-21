@@ -85,10 +85,10 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
 // These methods are used by NPAI, thats the reason to use bool instead of Eina_Bool.
 static bool ewk_js_property_has(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
@@ -96,7 +96,7 @@ static bool ewk_js_property_has(NPObject* npObject, NPIdentifier name)
     }
 
     char* prop_name = _NPN_UTF8FromIdentifier(name);
-    bool fail = eina_hash_find(obj->properties, prop_name); // FIXME: should search methods too?
+    bool fail = eina_hash_find(object->properties, prop_name); // FIXME: should search methods too?
     free(prop_name);
 
     return fail;
@@ -104,13 +104,13 @@ static bool ewk_js_property_has(NPObject* npObject, NPIdentifier name)
 
 static bool ewk_js_property_get(NPObject* npObject, NPIdentifier name, NPVariant* result)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Variant* value;
     Ewk_JS_Property* prop;
     bool fail = false;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
@@ -123,19 +123,19 @@ static bool ewk_js_property_get(NPObject* npObject, NPIdentifier name, NPVariant
         return false;
     }
 
-    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(obj->cls->properties, name));
+    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(object->cls->properties, name));
     if (prop && prop->get) { // Class has property and property has getter.
-        fail = prop->get(obj, prop->name, value);
+        fail = prop->get(object, prop->name, value);
         if (!fail)
             fail = ewk_js_variant_to_npvariant(value, result);
-    } else if (obj->cls->default_prop.get) { // Default getter exists.
-        fail = obj->cls->default_prop.get(obj, prop->name, value);
+    } else if (object->cls->default_prop.get) { // Default getter exists.
+        fail = object->cls->default_prop.get(object, prop->name, value);
         if (!fail)
             fail = ewk_js_variant_to_npvariant(value, result);
     } else { // Fallback to objects hash map.
         char* prop_name = _NPN_UTF8FromIdentifier(name);
         free(value);
-        value = static_cast<Ewk_JS_Variant*>(eina_hash_find(obj->properties, prop_name));
+        value = static_cast<Ewk_JS_Variant*>(eina_hash_find(object->properties, prop_name));
         free(prop_name);
         if (value)
             return ewk_js_variant_to_npvariant(value, result);
@@ -147,7 +147,7 @@ static bool ewk_js_property_get(NPObject* npObject, NPIdentifier name, NPVariant
 
 static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPVariant* npValue)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Variant* value;
     Ewk_JS_Property* prop;
     bool fail = false;
@@ -168,13 +168,13 @@ static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPV
 
     ewk_js_npvariant_to_variant(value, npValue);
     char* prop_name = _NPN_UTF8FromIdentifier(name);
-    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(obj->cls->properties, prop_name));
+    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(object->cls->properties, prop_name));
     if (prop && prop->set)
-        fail = prop->set(obj, prop->name, value); // Class has property and property has setter.
-    else if (obj->cls->default_prop.set)
-        fail = obj->cls->default_prop.set(obj, prop_name, value); // Default getter exists.
+        fail = prop->set(object, prop->name, value); // Class has property and property has setter.
+    else if (object->cls->default_prop.set)
+        fail = object->cls->default_prop.set(object, prop_name, value); // Default getter exists.
     else { // Fallback to objects hash map.
-        void* old = eina_hash_set(obj->properties, prop_name, value);
+        void* old = eina_hash_set(object->properties, prop_name, value);
         free(old);
         fail = true;
     }
@@ -185,12 +185,12 @@ static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPV
 
 static bool ewk_js_property_remove(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Property* prop;
     bool fail = false;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
@@ -198,13 +198,13 @@ static bool ewk_js_property_remove(NPObject* npObject, NPIdentifier name)
     }
 
     char* prop_name = _NPN_UTF8FromIdentifier(name);
-    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(obj->cls->properties, prop_name));
+    prop = static_cast<Ewk_JS_Property*>(eina_hash_find(object->cls->properties, prop_name));
     if (prop && prop->del)
-        fail = prop->del(obj, prop->name); // Class has property and property has getter.
-    else if (obj->cls->default_prop.del)
-        fail = obj->cls->default_prop.del(obj, prop_name);
+        fail = prop->del(object, prop->name); // Class has property and property has getter.
+    else if (object->cls->default_prop.del)
+        fail = object->cls->default_prop.del(object, prop_name);
     else
-        fail = eina_hash_del(obj->properties, prop_name, 0);
+        fail = eina_hash_del(object->properties, prop_name, 0);
 
     free(prop_name);
     return fail;
@@ -212,22 +212,22 @@ static bool ewk_js_property_remove(NPObject* npObject, NPIdentifier name)
 
 static bool ewk_js_properties_enumerate(NPObject* npObject, NPIdentifier** value, uint32_t* count)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Eina_Iterator* it;
     char* key;
     int i = 0;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
-    *count = eina_hash_population(obj->properties);
+    *count = eina_hash_population(object->properties);
     *value = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * *count));
     if (!*value) {
         ERR("Could not allocate memory for NPIdentifier");
         return false;
     }
 
-    it = eina_hash_iterator_key_new(obj->properties);
+    it = eina_hash_iterator_key_new(object->properties);
     EINA_ITERATOR_FOREACH(it, key)
         (*value)[i++] = _NPN_GetStringIdentifier(key);
 
@@ -237,34 +237,34 @@ static bool ewk_js_properties_enumerate(NPObject* npObject, NPIdentifier** value
 
 static bool ewk_js_method_has(NPObject* npObject, NPIdentifier name)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
         return false;
     }
-    return eina_hash_find(obj->cls->methods, name); // Returns pointer if found(true), 0(false) otherwise.
+    return eina_hash_find(object->cls->methods, name); // Returns pointer if found(true), 0(false) otherwise.
 }
 
 static bool ewk_js_method_invoke(NPObject* npObject, NPIdentifier name, const NPVariant* npArgs, uint32_t npArgCount, NPVariant* result)
 {
-    Ewk_JS_Object* obj = reinterpret_cast<Ewk_JS_Object*>(npObject);
+    Ewk_JS_Object* object = reinterpret_cast<Ewk_JS_Object*>(npObject);
     Ewk_JS_Method* method;
     Ewk_JS_Variant* args;
     Ewk_JS_Variant* ret_val;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
         return false;
     }
 
-    method = static_cast<Ewk_JS_Method*>(eina_hash_find(obj->cls->methods, name));
+    method = static_cast<Ewk_JS_Method*>(eina_hash_find(object->cls->methods, name));
     if (!method)
         return false;
 
@@ -276,7 +276,7 @@ static bool ewk_js_method_invoke(NPObject* npObject, NPIdentifier name, const NP
 
     for (uint32_t i = 0; i < npArgCount; i++)
         ewk_js_npvariant_to_variant(&args[i], &npArgs[i]);
-    ret_val = method->invoke(obj, args, npArgCount);
+    ret_val = method->invoke(object, args, npArgCount);
     ewk_js_variant_to_npvariant(ret_val, result);
 
     ewk_js_variant_free(ret_val);
@@ -393,7 +393,7 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
     NPIdentifier* values;
     uint32_t np_props_count;
     Ewk_JS_Class* cls;
-    Ewk_JS_Object* obj;
+    Ewk_JS_Object* object;
     Eina_Iterator* it;
     Ewk_JS_Property* prop;
     JavaScriptObject* jso;
@@ -436,42 +436,42 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
     }
 
     // Can't use ewk_js_object_new(cls) because it expects cls->meta to exist.
-    obj = static_cast<Ewk_JS_Object*>(malloc(sizeof(Ewk_JS_Object)));
-    if (!obj) {
+    object = static_cast<Ewk_JS_Object*>(malloc(sizeof(Ewk_JS_Object)));
+    if (!object) {
         ERR("Could not allocate memory for ewk_js_object");
         goto error;
     }
 
     free(values);
-    EINA_MAGIC_SET(obj, EWK_JS_OBJECT_MAGIC);
-    obj->name = 0;
-    obj->cls = cls;
-    obj->view = 0;
+    EINA_MAGIC_SET(object, EWK_JS_OBJECT_MAGIC);
+    object->name = 0;
+    object->cls = cls;
+    object->view = 0;
 
     jso = reinterpret_cast<JavaScriptObject*>(npObject);
     if (!strcmp("Array", jso->imp->className().ascii().data()))
-        obj->type = EWK_JS_OBJECT_ARRAY;
+        object->type = EWK_JS_OBJECT_ARRAY;
     else if (!strcmp("Function", jso->imp->className().ascii().data()))
-        obj->type = EWK_JS_OBJECT_FUNCTION;
+        object->type = EWK_JS_OBJECT_FUNCTION;
     else
-        obj->type = EWK_JS_OBJECT_OBJECT;
+        object->type = EWK_JS_OBJECT_OBJECT;
 
     if (eina_hash_population(cls->properties) < 25)
-        obj->properties = eina_hash_string_small_new(0);
+        object->properties = eina_hash_string_small_new(0);
     else
-        obj->properties = eina_hash_string_superfast_new(0);
+        object->properties = eina_hash_string_superfast_new(0);
 
     it = eina_hash_iterator_data_new(cls->properties);
     EINA_ITERATOR_FOREACH(it, prop) {
         const char* key = prop->name;
         Ewk_JS_Variant* value = &prop->value;
-        eina_hash_add(obj->properties, key, value);
+        eina_hash_add(object->properties, key, value);
     }
 
     eina_iterator_free(it);
-    obj->base = *reinterpret_cast<JavaScriptObject*>(npObject);
+    object->base = *reinterpret_cast<JavaScriptObject*>(npObject);
 
-    return obj;
+    return object;
 
 error:
     ewk_js_class_free(cls);
@@ -527,37 +527,37 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
 
 Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
-    Ewk_JS_Object* obj;
+    Ewk_JS_Object* object;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsMetaClass, 0);
 
-    obj = static_cast<Ewk_JS_Object*>(malloc(sizeof(Ewk_JS_Object)));
-    if (!obj) {
+    object = static_cast<Ewk_JS_Object*>(malloc(sizeof(Ewk_JS_Object)));
+    if (!object) {
         ERR("Could not allocate memory for ewk_js_object");
         return 0;
     }
 
-    EINA_MAGIC_SET(obj, EWK_JS_OBJECT_MAGIC);
-    obj->cls = ewk_js_class_new(jsMetaClass);
-    obj->view = 0;
-    obj->name = 0;
-    obj->type = EWK_JS_OBJECT_OBJECT;
+    EINA_MAGIC_SET(object, EWK_JS_OBJECT_MAGIC);
+    object->cls = ewk_js_class_new(jsMetaClass);
+    object->view = 0;
+    object->name = 0;
+    object->type = EWK_JS_OBJECT_OBJECT;
 
-    if (eina_hash_population(obj->cls->properties) < 25)
-        obj->properties = eina_hash_string_small_new(reinterpret_cast<Eina_Free_Cb>(ewk_js_variant_free));
+    if (eina_hash_population(object->cls->properties) < 25)
+        object->properties = eina_hash_string_small_new(reinterpret_cast<Eina_Free_Cb>(ewk_js_variant_free));
     else
-        obj->properties = eina_hash_string_superfast_new(reinterpret_cast<Eina_Free_Cb>(ewk_js_variant_free));
+        object->properties = eina_hash_string_superfast_new(reinterpret_cast<Eina_Free_Cb>(ewk_js_variant_free));
 
-    for (int i = 0; obj->cls->meta->properties && obj->cls->meta->properties[i].name; i++) {
-        Ewk_JS_Property prop = obj->cls->meta->properties[i];
-        const char* key = obj->cls->meta->properties[i].name;
+    for (int i = 0; object->cls->meta->properties && object->cls->meta->properties[i].name; i++) {
+        Ewk_JS_Property prop = object->cls->meta->properties[i];
+        const char* key = object->cls->meta->properties[i].name;
         Ewk_JS_Variant* value = static_cast<Ewk_JS_Variant*>(malloc(sizeof(Ewk_JS_Variant)));
         if (!value) {
             ERR("Could not allocate memory for ewk_js_variant");
             goto error;
         }
         if (prop.get)
-            prop.get(obj, key, value);
+            prop.get(object, key, value);
         else {
             value->type = prop.value.type;
             switch (value->type) {
@@ -582,15 +582,15 @@ Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
                 break;
             }
         }
-        eina_hash_add(obj->properties, key, value);
+        eina_hash_add(object->properties, key, value);
     }
 
-    obj->base.object.referenceCount = 1;
-    obj->base.object._class = &EWK_NPCLASS;
-    return obj;
+    object->base.object.referenceCount = 1;
+    object->base.object._class = &EWK_NPCLASS;
+    return object;
 
 error:
-    ewk_js_object_free(obj);
+    ewk_js_object_free(object);
     return 0;
 }
 

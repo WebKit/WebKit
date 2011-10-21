@@ -56,26 +56,26 @@ static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
 
 static WTF::String _ewk_settings_webkit_platform_get()
 {
-    WTF::String ua_platform;
+    WTF::String uaPlatform;
 #if PLATFORM(X11)
-    ua_platform = "X11";
+    uaPlatform = "X11";
 #else
-    ua_platform = "Unknown";
+    uaPlatform = "Unknown";
 #endif
-    return ua_platform;
+    return uaPlatform;
 }
 
 static WTF::String _ewk_settings_webkit_os_version_get()
 {
-    WTF::String ua_os_version;
+    WTF::String uaOsVersion;
     struct utsname name;
 
     if (uname(&name) != -1)
-        ua_os_version = makeString(name.sysname, ' ', name.machine);
+        uaOsVersion = makeString(name.sysname, ' ', name.machine);
     else
-        ua_os_version = "Unknown";
+        uaOsVersion = "Unknown";
 
-    return ua_os_version;
+    return uaOsVersion;
 }
 
 uint64_t ewk_settings_web_database_default_quota_get()
@@ -245,10 +245,10 @@ void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double ini
  */
 const char* ewk_settings_default_user_agent_get(void)
 {
-    WTF::String ua_version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
-    WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);
+    WTF::String uaVersion = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
+    WTF::String staticUa = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", uaVersion) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion);
 
-    return eina_stringshare_add(static_ua.utf8().data());
+    return eina_stringshare_add(staticUa.utf8().data());
 }
 
 Eina_Bool ewk_settings_cache_directory_path_set(const char* path)

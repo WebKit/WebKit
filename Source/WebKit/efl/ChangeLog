@@ -1,3 +1,47 @@
+2011-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change efl style local variables with WebKit coding Style.
+        https://bugs.webkit.org/show_bug.cgi?id=69988
+
+        Reviewed by Antonio Gomes.
+
+        In common with Bug 69073, this is a third step in order to be more compliant with WebKit coding style.
+        We have used one-letter| two-letter local variable according to efl style. However, it's
+        more difficult for other reviewers to review EFL patches. So, this patch changes efl style
+        local variable with meaningful one.
+
+        - Use *menu* instead of *o* in comment of ewk_contextmenu.cpp.
+        - Use *list* instead of *l* local variable
+        - Use *ewkPolicy* instead of *ewk_policy* in ewk_cookies.cpp
+        - Use *smartData* instead of *sd* local variable for Ewk_XXXX_Smart_Data struct.
+        - Use *width*, *height* instead of *w*, *h* local variables.
+        - Use *scrollX*, *scrollY*, *scrollWidth*, *scrollHeight*, *centerX*, *centerY*, *deltaX*, *deltaY*,
+        *baseX*, *baseY* instead of *sx*, *sy*, *sw*, *sh*, *cx*, *cy*, *dx*, *dy*, *bx*, *by*.
+        - Use *red*, *green*, *blue*, *alpha*, *contentRed*, *contentGreen*, *contentBlue* and *contentAlpha*
+        instead of *r*,*g*,*b*,*a*,*cr*,*cg*,*cb*,*ca*.
+        - Use *tilePositionX*, *tilePositionY* instead of *ox*,*oy* in tiled backingstore files.
+        - Use *object* instead of *obj* 
+        - Use *length* instead of *len*
+        - Use *coreFrame* instead of *cf*
+        - Use *buffer* instead of *buf*
+        - Use *item* instead of *i*
+        - Use *currentColumn*, *currentRow* instead of *m_col*, *m_row* 
+        - Remove "_" in local variable.
+        - And so on.
+
+        * ewk/ewk_auth_soup.cpp:
+        * ewk/ewk_contextmenu.cpp:
+        * ewk/ewk_cookies.cpp:
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_history.cpp:
+        * ewk/ewk_js.cpp:
+        * ewk/ewk_main.cpp:
+        * ewk/ewk_settings.cpp:
+        * ewk/ewk_tiled_backing_store.cpp:
+        * ewk/ewk_tiled_matrix.cpp:
+        * ewk/ewk_tiled_model.cpp:
+        * ewk/ewk_view.cpp:
+
 2011-10-21  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] ewk_view_mode_get uses dedicated macros instead of standard NULL checking.

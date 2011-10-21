@@ -67,66 +67,66 @@ Eina_Bool ewk_cookies_file_set(const char* filename)
 void ewk_cookies_clear(void)
 {
 #if USE(SOUP)
-    GSList* l;
+    GSList* list;
     GSList* p;
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
 
-    l = soup_cookie_jar_all_cookies(cookieJar);
-    for (p = l; p; p = p->next)
+    list = soup_cookie_jar_all_cookies(cookieJar);
+    for (p = list; p; p = p->next)
         soup_cookie_jar_delete_cookie(cookieJar, (SoupCookie*)p->data);
 
-    soup_cookies_free(l);
+    soup_cookies_free(list);
 #endif
 }
 
 Eina_List* ewk_cookies_get_all(void)
 {
-    Eina_List* el = 0;
+    Eina_List* result = 0;
 #if USE(SOUP)
-    GSList* l;
+    GSList* list;
     GSList* p;
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
 
-    l = soup_cookie_jar_all_cookies(cookieJar);
-    for (p = l; p; p = p->next) {
+    list = soup_cookie_jar_all_cookies(cookieJar);
+    for (p = list; p; p = p->next) {
         SoupCookie* cookie = static_cast<SoupCookie*>(p->data);
-        Ewk_Cookie* c = static_cast<Ewk_Cookie*>(malloc(sizeof(*c)));
-        c->name = strdup(cookie->name);
-        c->value = strdup(cookie->value);
-        c->domain = strdup(cookie->domain);
-        c->path = strdup(cookie->path);
-        c->expires = soup_date_to_time_t(cookie->expires);
-        c->secure = static_cast<Eina_Bool>(cookie->secure);
-        c->http_only = static_cast<Eina_Bool>(cookie->http_only);
-        el = eina_list_append(el, c);
+        Ewk_Cookie* ewkCookie = static_cast<Ewk_Cookie*>(malloc(sizeof(*ewkCookie)));
+        ewkCookie->name = strdup(cookie->name);
+        ewkCookie->value = strdup(cookie->value);
+        ewkCookie->domain = strdup(cookie->domain);
+        ewkCookie->path = strdup(cookie->path);
+        ewkCookie->expires = soup_date_to_time_t(cookie->expires);
+        ewkCookie->secure = static_cast<Eina_Bool>(cookie->secure);
+        ewkCookie->http_only = static_cast<Eina_Bool>(cookie->http_only);
+        result = eina_list_append(result, ewkCookie);
     }
 
-    soup_cookies_free(l);
+    soup_cookies_free(list);
 #endif
-    return el;
+    return result;
 }
 
 void ewk_cookies_cookie_del(Ewk_Cookie* cookie)
 {
 #if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
-    GSList* l;
+    GSList* list;
     GSList* p;
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
-    SoupCookie* c1 = soup_cookie_new(
+    SoupCookie* cookie1 = soup_cookie_new(
         cookie->name, cookie->value, cookie->domain, cookie->path, -1);
 
-    l = soup_cookie_jar_all_cookies(cookieJar);
-    for (p = l; p; p = p->next) {
-        SoupCookie* c2 = static_cast<SoupCookie*>(p->data);
-        if (soup_cookie_equal(c1, c2)) {
-            soup_cookie_jar_delete_cookie(cookieJar, c2);
+    list = soup_cookie_jar_all_cookies(cookieJar);
+    for (p = list; p; p = p->next) {
+        SoupCookie* cookie2 = static_cast<SoupCookie*>(p->data);
+        if (soup_cookie_equal(cookie1, cookie2)) {
+            soup_cookie_jar_delete_cookie(cookieJar, cookie2);
             break;
         }
     }
 
-    soup_cookie_free(c1);
-    soup_cookies_free(l);
+    soup_cookie_free(cookie1);
+    soup_cookies_free(list);
 #endif
 }
 
@@ -167,7 +167,7 @@ void ewk_cookies_policy_set(Ewk_Cookie_Policy cookiePolicy)
 
 Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
-    Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
+    Ewk_Cookie_Policy ewkPolicy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
 #if USE(SOUP)
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
@@ -175,16 +175,16 @@ Ewk_Cookie_Policy ewk_cookies_policy_get(void)
     policy = soup_cookie_jar_get_accept_policy(cookieJar);
     switch (policy) {
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
-        ewk_policy = EWK_COOKIE_JAR_ACCEPT_NEVER;
+        ewkPolicy = EWK_COOKIE_JAR_ACCEPT_NEVER;
         break;
     case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
-        ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
+        ewkPolicy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
         break;
     case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
-        ewk_policy = EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+        ewkPolicy = EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
     }
 #endif
 
-    return ewk_policy;
+    return ewkPolicy;
 }

@@ -40,7 +40,7 @@ extern "C" {
  */
 
 typedef struct _Ewk_Auth_Data {
-    SoupMessage* msg;
+    SoupMessage* message;
     SoupAuth* auth;
     SoupSession* session;
 } Ewk_Auth_Data;
@@ -79,51 +79,51 @@ void ewk_auth_soup_credentials_set(const char* username, const char* password, v
     if (!data)
         return;
 
-    Ewk_Auth_Data* auth_data = static_cast<Ewk_Auth_Data*>(data);
-    soup_auth_authenticate(auth_data->auth, username, password);
-    soup_session_unpause_message(auth_data->session, auth_data->msg);
-    free_auth_data(auth_data);
+    Ewk_Auth_Data* authenticationData = static_cast<Ewk_Auth_Data*>(data);
+    soup_auth_authenticate(authenticationData->auth, username, password);
+    soup_session_unpause_message(authenticationData->session, authenticationData->message);
+    free_auth_data(authenticationData);
 }
 
-static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAuth* auth, gboolean retrying, gpointer /* user_data */)
+static void session_authenticate(SoupSession* session, SoupMessage* message, SoupAuth* auth, gboolean retrying, gpointer /* user_data */)
 {
     SoupURI* uri;
-    Ewk_Auth_Data* auth_data;
+    Ewk_Auth_Data* authenticationData;
     const char* realm;
 
     if (!ewk_auth_show_dialog_callback)
         return;
 
-    auth_data = static_cast<Ewk_Auth_Data*>(calloc(1, sizeof(Ewk_Auth_Data)));
+    authenticationData = static_cast<Ewk_Auth_Data*>(calloc(1, sizeof(Ewk_Auth_Data)));
 
-    if (!auth_data) {
+    if (!authenticationData) {
         CRITICAL("could not allocate Ewk_Auth_Data");
         return;
     }
 
-    soup_session_pause_message(session, msg);
+    soup_session_pause_message(session, message);
     // We need to make sure the message sticks around when pausing it.
-    g_object_ref(msg);
+    g_object_ref(message);
     g_object_ref(session);
     g_object_ref(auth);
 
-    auth_data->msg = msg;
-    auth_data->auth = auth;
-    auth_data->session = session;
+    authenticationData->message = message;
+    authenticationData->auth = auth;
+    authenticationData->session = session;
 
-    uri = soup_message_get_uri(auth_data->msg);
-    realm = soup_auth_get_realm(auth_data->auth);
+    uri = soup_message_get_uri(authenticationData->message);
+    realm = soup_auth_get_realm(authenticationData->auth);
 
     // Call application method responsible for showing authentication dialog and sending back authorization data.
-    ewk_auth_show_dialog_callback(realm, soup_uri_to_string(uri, TRUE), auth_data);
+    ewk_auth_show_dialog_callback(realm, soup_uri_to_string(uri, TRUE), authenticationData);
 }
 
-static void free_auth_data(Ewk_Auth_Data* auth_data)
+static void free_auth_data(Ewk_Auth_Data* authData)
 {
-    g_object_unref(auth_data->msg);
-    g_object_unref(auth_data->session);
-    g_object_unref(auth_data->auth);
-    free(auth_data);
+    g_object_unref(authData->message);
+    g_object_unref(authData->session);
+    g_object_unref(authData->auth);
+    free(authData);
 }
 
 static void attach(SoupSessionFeature* manager, SoupSession* session)
