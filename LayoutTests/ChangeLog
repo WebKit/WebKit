@@ -1,3 +1,18 @@
+2011-10-21  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: first chunk of rebaselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 707 of 713 files for brevity.]
+
+        * platform/chromium-mac-leopard/css1: Added.
+        * platform/chromium-mac-leopard/css1/basic: Added.
+        * platform/chromium-mac-leopard/css1/basic/class_as_selector-expected.png: Added.
+        ...
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-54-d-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-55-d-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-56-d-expected.png: Added.
+
 2011-10-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing a11y test in GTK.
