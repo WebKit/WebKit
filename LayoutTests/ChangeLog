@@ -1,3 +1,11 @@
+2011-10-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for 3 new tests.
+
+        * platform/gtk/fast/css/clip-text-in-scaled-div-expected.txt: Added.
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.txt: Added.
+        * platform/gtk/fast/selectors/visited-descendant-expected.txt: Added.
+
 2011-10-21  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: rebaselining to account for focus ring changes in
