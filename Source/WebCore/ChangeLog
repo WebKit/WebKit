@@ -1,5 +1,31 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97821
+
+    2011-10-18  Anders Carlsson  <andersca@apple.com>
+
+            Assertion failure when going back in page with navigated subframes
+            https://bugs.webkit.org/show_bug.cgi?id=70389
+            <rdar://problem/8988444>
+
+            Reviewed by Darin Adler.
+
+            Test: fast/history/history-back-twice-with-subframes-assert.html
+
+            If a single navigation ends up loading multiple frame, the first committed frame will
+            end up calling recursiveUpdateForCommit on the main frame which will null out the provisional item
+            for all frames on the page. This means that it can null out the provisional item for any frames
+            that are still yet to be committed which causes the aforementioned assertion failure.
+
+            Fix this by only nulling out the provisional history item (and saving/restoring the scroll position and
+            some other things) for frames that already contain the URL that the item requested. If a frame is being loaded,
+            it will null out its provisional history item when it's committed.
+
+            * loader/HistoryController.cpp:
+            (WebCore::HistoryController::recursiveUpdateForCommit):
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97433
 
     2011-10-13  Michael Saboff  <msaboff@apple.com>
