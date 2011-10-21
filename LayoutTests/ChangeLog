@@ -1,3 +1,18 @@
+2011-10-21  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: second chunk of baselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 706 of 712 files for brevity.]
+
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-57-d-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-58-d-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t170602-bdr-conflct-w-59-d-expected.png: Added.
+        ...
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-in-inline-rtl-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-in-inline-short-ltr-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-in-inline-short-rtl-expected.png: Added.
+
 2011-10-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98079.
