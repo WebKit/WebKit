@@ -1919,7 +1919,7 @@ bool WebViewImpl::isFixedLayoutModeEnabled() const
         return false;
 
     Frame* frame = page()->mainFrame();
-    if (!frame)
+    if (!frame || !frame->view())
         return false;
 
     return frame->view()->useFixedLayout();
@@ -1931,7 +1931,7 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
         return;
 
     Frame* frame = page()->mainFrame();
-    if (!frame)
+    if (!frame || !frame->view())
         return;
 
     frame->view()->setUseFixedLayout(enable);
@@ -1943,7 +1943,7 @@ WebSize WebViewImpl::fixedLayoutSize() const
         return WebSize();
 
     Frame* frame = page()->mainFrame();
-    if (!frame)
+    if (!frame || !frame->view())
         return WebSize();
 
     return frame->view()->fixedLayoutSize();
@@ -1955,7 +1955,7 @@ void WebViewImpl::setFixedLayoutSize(const WebSize& layoutSize)
         return;
 
     Frame* frame = page()->mainFrame();
-    if (!frame)
+    if (!frame || !frame->view())
         return;
 
     frame->view()->setFixedLayoutSize(layoutSize);
