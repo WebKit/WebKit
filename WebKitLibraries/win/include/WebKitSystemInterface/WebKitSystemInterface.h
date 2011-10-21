@@ -81,7 +81,7 @@ void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, 
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
 void wkSetUpFontCache(size_t s);
 
-void wkSetPatternBaseCTM(CGContextRef, CGAffineTransform);
+void wkSetBaseCTM(CGContextRef, CGAffineTransform);
 void wkSetPatternPhaseInUserSpace(CGContextRef, CGPoint phasePoint);
 CGAffineTransform wkGetUserToBaseCTM(CGContextRef);
 

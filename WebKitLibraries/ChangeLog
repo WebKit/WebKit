@@ -1,3 +1,15 @@
+2011-10-21  Jeff Miller  <jeffm@apple.com>
+
+        Focus rings are too thin in HiDPI in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=70396
+        
+        Rename wkSetPatternBaseCTM() to wkSetBaseCTM().
+
+        Reviewed by Beth Dakin.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-10-19  Beth Dakin  <bdakin@apple.com>
 
         Try to fix the Chromium build.
