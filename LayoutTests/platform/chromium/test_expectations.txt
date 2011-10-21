@@ -2603,6 +2603,8 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 BUGWK47923 GPU GPU-CG : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
+BUGCR101112 WIN GPU : compositing/geometry/object-clip-rects-assertion.html = PASS CRASH
+
 // Chromium does not support PDF content in <img> tags.
 WONTFIX GPU WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
 WONTFIX MAC GPU-CG : compositing/color-matching/pdf-image-match.html = IMAGE
