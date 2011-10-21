@@ -912,15 +912,12 @@ all : InspectorProtocolVersion.h
 InspectorProtocolVersion.h : Inspector.json inspector/generate-inspector-protocol-version
 	python $(WebCore)/inspector/generate-inspector-protocol-version -o InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
 
-Inspector.idl : Inspector.json inspector/generate-inspector-idl
-	python $(WebCore)/inspector/generate-inspector-idl -o Inspector.idl $(WebCore)/inspector/Inspector.json
-
 all : InspectorFrontend.h
 
-INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspector.pm
+INSPECTOR_GENERATOR_SCRIPTS = inspector/CodeGeneratorInspector.py
 
-InspectorFrontend.h : Inspector.idl $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir . --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
+InspectorFrontend.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
+	python $(WebCore)/inspector/CodeGeneratorInspector.py $(WebCore)/inspector/Inspector.json --output_h_dir . --output_cpp_dir . --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT"
 
 all : InjectedScriptSource.h
 

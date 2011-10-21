@@ -140,7 +140,7 @@
                     { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
                 ],
                 "hidden": true
-            },
+            }
         ],
         "commands": [
             {
@@ -848,7 +848,7 @@
                     { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
                     { "name": "id", "type": "number", "description": "Entry id for further reference." }
                 ]
-            },
+            }
         ],
         "commands": [
             {

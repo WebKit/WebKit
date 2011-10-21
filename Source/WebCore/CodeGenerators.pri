@@ -683,29 +683,12 @@ inspectorValidate.depends = $$PWD/inspector/generate-inspector-protocol-version
 inspectorValidate.wkAddOutputToSources = false
 addExtraCompiler(inspectorValidate)
 
-inspectorJSON.output = $${WC_GENERATED_SOURCES_DIR}/Inspector.idl
+inspectorJSON.output = $${WC_GENERATED_SOURCES_DIR}/InspectorFrontend.cpp $${WC_GENERATED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
 inspectorJSON.input = INSPECTOR_JSON
-inspectorJSON.wkScript = $$PWD/inspector/generate-inspector-idl
-inspectorJSON.commands = python $$inspectorJSON.wkScript -o $${WC_GENERATED_SOURCES_DIR}/Inspector.idl $$PWD/inspector/Inspector.json
-inspectorJSON.depends = $$PWD/inspector/generate-inspector-idl
-inspectorJSON.wkAddOutputToSources = false
+inspectorJSON.wkScript = $$PWD/inspector/CodeGeneratorInspector.py
+inspectorJSON.commands = python $$inspectorJSON.wkScript $$PWD/inspector/Inspector.json --output_h_dir $$WC_GENERATED_SOURCES_DIR --output_cpp_dir $$WC_GENERATED_SOURCES_DIR --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\"
+inspectorJSON.depends = $$inspectorJSON.wkScript
 addExtraCompiler(inspectorJSON)
-inspectorJSON.variable_out = INSPECTOR_JSON_OUTPUT
-
-inspectorIDL.output = $${WC_GENERATED_SOURCES_DIR}/InspectorFrontend.cpp $${WC_GENERATED_SOURCES_DIR}/InspectorBackendDispatcher.cpp
-inspectorIDL.input = INSPECTOR_JSON_OUTPUT
-inspectorIDL.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
-inspectorIDL.commands = perl -I$$PWD/bindings/scripts -I$$PWD/inspector $$inspectorIDL.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator Inspector --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
-inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
-              $$PWD/inspector/CodeGeneratorInspector.pm \
-              $$PWD/bindings/scripts/IDLParser.pm \
-              $$PWD/bindings/scripts/IDLStructure.pm \
-              $$PWD/bindings/scripts/InFilesParser.pm \
-              $$PWD/bindings/scripts/preprocessor.pm \
-              $$PWD/inspector/Inspector.json \
-              $$PWD/inspector/generate-inspector-idl
-inspectorIDL.wkExtraSources = $$inspectorIDL.output
-addExtraCompiler(inspectorIDL)
 
 inspectorBackendStub.output = generated/InspectorBackendStub.qrc
 inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
