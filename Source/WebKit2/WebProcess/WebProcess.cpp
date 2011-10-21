@@ -59,6 +59,7 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCache.h>
+#include <WebCore/GCController.h>
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
@@ -77,10 +78,6 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
-
-#ifndef NDEBUG
-#include <WebCore/GCController.h>
-#endif
 
 #if !OS(WINDOWS)
 #include <unistd.h>

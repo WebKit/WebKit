@@ -1,5 +1,18 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94472
+
+    2011-09-02  Michael Saboff  <msaboff@apple.com>
+
+            Fixed release build by removing #ifndef NDEBUG to
+            allow definition of gcController().
+
+            Rubber-stamp by Sam Weinig.
+
+            * WebProcess/WebProcess.cpp:
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 96765
 
     2011-10-05  Anders Carlsson  <andersca@apple.com>
