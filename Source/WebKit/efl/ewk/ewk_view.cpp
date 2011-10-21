@@ -3788,13 +3788,8 @@ Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
 Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
 {
     Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;
-
-    EWK_VIEW_SD_GET(ewkView, sd);
-    if (!sd)
-        return mode;
-    EWK_VIEW_PRIV_GET(sd, priv);
-    if (!priv)
-        return mode;
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, mode);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, mode);
 
     switch (priv->page->viewMode()) {
     case WebCore::Page::ViewModeFloating:

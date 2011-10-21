@@ -1,3 +1,17 @@
+2011-10-21  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] ewk_view_mode_get uses dedicated macros instead of standard NULL checking.
+        https://bugs.webkit.org/show_bug.cgi?id=65680
+
+        Reviewed by Ryosuke Niwa.
+
+        Generally API methods using macros NULL checking in WebKit-EFL.
+        The macros ensure that code is smaller, version of view object
+        is checked and error message is displayed if NULL is passed.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_mode_get):
+
 2011-10-19  Rafael Antognolli  <antognolli@profusion.mobi>
 
         [EFL] Fix typos on ewk_view and ewk_js.
