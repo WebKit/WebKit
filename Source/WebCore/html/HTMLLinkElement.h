@@ -51,7 +51,7 @@ public:
 
     String type() const;
 
-    StyleSheet* sheet() const;
+    CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
     // FIXME: This should be renamed isStyleSheetLoading as this is only used for stylesheets.
     bool isLoading() const;

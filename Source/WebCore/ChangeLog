@@ -1,3 +1,22 @@
+2011-10-21  Andreas Kling  <kling@webkit.org>
+
+        Style and Link elements' sheet() should return CSSStyleSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=70608
+
+        Reviewed by Antti Koivisto.
+
+        Return a CSSStyleSheet* instead of a StyleSheet* in these functions
+        since we know they are always CSSStyleSheets.
+        Also remove some now-unnecessary isCSSStyleSheet() checks.
+
+        * dom/StyleElement.h:
+        (WebCore::StyleElement::sheet):
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::sheet):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+
 2011-10-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Advanced search is working very slowly and does not show searching progress.

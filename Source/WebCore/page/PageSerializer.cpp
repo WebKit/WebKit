@@ -234,17 +234,15 @@ void PageSerializer::serializeFrame(Frame* frame)
             addImageToResources(cachedImage, imageElement->renderer(), url);
         } else if (element->hasTagName(HTMLNames::linkTag)) {
             HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(element);
-            StyleSheet* sheet = linkElement->sheet();
-            if (sheet && sheet->isCSSStyleSheet()) {
+            if (CSSStyleSheet* sheet = linkElement->sheet()) {
                 KURL url = document->completeURL(linkElement->getAttribute(HTMLNames::hrefAttr));
-                serializeCSSStyleSheet(static_cast<CSSStyleSheet*>(sheet), url);
+                serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }
         } else if (element->hasTagName(HTMLNames::styleTag)) {
             HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(element);
-            StyleSheet* sheet = styleElement->sheet();
-            if (sheet && sheet->isCSSStyleSheet())
-                serializeCSSStyleSheet(static_cast<CSSStyleSheet*>(sheet), KURL());
+            if (CSSStyleSheet* sheet = styleElement->sheet())
+                serializeCSSStyleSheet(sheet, KURL());
         }
     }
 

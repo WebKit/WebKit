@@ -119,11 +119,6 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-StyleSheet* HTMLLinkElement::sheet() const
-{
-    return m_sheet.get();
-}
-
 void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == relAttr) {
