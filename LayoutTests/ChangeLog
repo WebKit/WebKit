@@ -1,3 +1,9 @@
+2011-10-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline after r97878.
+
+        * platform/mac/editing/pasteboard/drag-selected-image-to-contenteditable-expected.txt:
+
 2011-10-20  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update for GPU bots.
