@@ -435,7 +435,7 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
     WKPageSetCustomTextEncodingName(toAPI(page), wkEncodingName.get());
 }
 
-/*
+/**
  * webkit_web_view_get_estimated_load_progress:
  * @web_view: a #WebKitWebView
  *
