@@ -1,3 +1,9 @@
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: Mark call-base-resolution.html as crashing on snow-leopard.
+
 2011-10-21  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Implement WebKitMutationObserver.observe for childList changes

@@ -3345,7 +3345,8 @@ BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = PASS MISSING
 
-BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
+BUGWK70630 SNOWLEOPARD : fast/js/call-base-resolution.html = PASS TEXT CRASH
+BUGCR89474 LEOPARD WIN LINUX: fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
