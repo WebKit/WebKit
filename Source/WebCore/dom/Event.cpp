@@ -102,6 +102,11 @@ const AtomicString& Event::interfaceName() const
     return eventNames().interfaceForEvent;
 }
 
+bool Event::hasInterface(const AtomicString& name) const
+{
+    return interfaceName() == name;
+}
+
 bool Event::isUIEvent() const
 {
     return false;

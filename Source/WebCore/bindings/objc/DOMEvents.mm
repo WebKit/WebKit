@@ -44,34 +44,34 @@
 #import "DOMSVGZoomEvent.h"
 #endif
 
+using WebCore::eventNames;
+
 Class kitClass(WebCore::Event* impl)
 {
-    AtomicString desiredInterface = impl->interfaceName();
-
     if (impl->isUIEvent()) {
         if (impl->isKeyboardEvent())
             return [DOMKeyboardEvent class];
         if (impl->isMouseEvent())
             return [DOMMouseEvent class];
-        if (desiredInterface == WebCore::eventNames().interfaceForTextEvent)
+        if (impl->hasInterface(eventNames().interfaceForTextEvent))
             return [DOMTextEvent class];
-        if (desiredInterface == WebCore::eventNames().interfaceForWheelEvent)
+        if (impl->hasInterface(eventNames().interfaceForWheelEvent))
             return [DOMWheelEvent class];        
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-        if (desiredInterface == WebCore::eventNames().interfaceForSVGZoomEvent)
+        if (impl->hasInterface(eventNames().interfaceForSVGZoomEvent))
             return [DOMSVGZoomEvent class];
 #endif
         return [DOMUIEvent class];
     }
-    if (desiredInterface == WebCore::eventNames().interfaceForMutationEvent)
+    if (impl->hasInterface(eventNames().interfaceForMutationEvent))
         return [DOMMutationEvent class];
-    if (desiredInterface == WebCore::eventNames().interfaceForOverflowEvent)
+    if (impl->hasInterface(eventNames().interfaceForOverflowEvent))
         return [DOMOverflowEvent class];
-    if (desiredInterface == WebCore::eventNames().interfaceForMessageEvent)
+    if (impl->hasInterface(eventNames().interfaceForMessageEvent))
         return [DOMMessageEvent class];
-    if (desiredInterface == WebCore::eventNames().interfaceForProgressEvent || desiredInterface == WebCore::eventNames().interfaceForXMLHttpRequestProgressEvent)
+    if (impl->hasInterface(eventNames().interfaceForProgressEvent) || impl->hasInterface(eventNames().interfaceForXMLHttpRequestProgressEvent))
         return [DOMProgressEvent class];
-    if (desiredInterface == WebCore::eventNames().interfaceForBeforeLoadEvent)
+    if (impl->hasInterface(eventNames().interfaceForBeforeLoadEvent))
         return [DOMBeforeLoadEvent class];
     return [DOMEvent class];
 }

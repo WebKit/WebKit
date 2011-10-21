@@ -53,7 +53,7 @@ JSErrorHandler::~JSErrorHandler()
 
 void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
-    if (event->interfaceName() != eventNames().interfaceForErrorEvent)
+    if (!event->hasInterface(eventNames().interfaceForErrorEvent))
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
     ASSERT(scriptExecutionContext);

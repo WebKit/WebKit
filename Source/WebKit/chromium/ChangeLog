@@ -1,5 +1,31 @@
 2011-10-21  Adam Barth  <abarth@webkit.org>
 
+        Introduce Event::hasInterface to make uses of interfaceName more readable
+        https://bugs.webkit.org/show_bug.cgi?id=70652
+
+        Reviewed by Eric Seidel.
+
+        Update call sites to the new interface.
+
+        * src/WebDOMEvent.cpp:
+        (WebKit::WebDOMEvent::isMutationEvent):
+        (WebKit::WebDOMEvent::isTextEvent):
+        (WebKit::WebDOMEvent::isCompositionEvent):
+        (WebKit::WebDOMEvent::isMessageEvent):
+        (WebKit::WebDOMEvent::isWheelEvent):
+        (WebKit::WebDOMEvent::isOverflowEvent):
+        (WebKit::WebDOMEvent::isPageTransitionEvent):
+        (WebKit::WebDOMEvent::isPopStateEvent):
+        (WebKit::WebDOMEvent::isProgressEvent):
+        (WebKit::WebDOMEvent::isXMLHttpRequestProgressEvent):
+        (WebKit::WebDOMEvent::isWebKitAnimationEvent):
+        (WebKit::WebDOMEvent::isWebKitTransitionEvent):
+        (WebKit::WebDOMEvent::isBeforeLoadEvent):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+
+2011-10-21  Adam Barth  <abarth@webkit.org>
+
         Event.h has too many virtual isMumbleEvent() functions
         https://bugs.webkit.org/show_bug.cgi?id=70636
 

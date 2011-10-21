@@ -113,6 +113,7 @@ namespace WebCore {
         Clipboard* clipboardData() const { return isClipboardEvent() ? clipboard() : 0; }
 
         virtual const AtomicString& interfaceName() const;
+        bool hasInterface(const AtomicString&) const;
 
         // These events are general classes of events.
         virtual bool isUIEvent() const;

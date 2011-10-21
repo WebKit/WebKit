@@ -47,7 +47,7 @@ V8WorkerContextErrorHandler::V8WorkerContextErrorHandler(v8::Local<v8::Object> l
 
 v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    ASSERT(event->interfaceName() == eventNames().interfaceForErrorEvent);
+    ASSERT(event->hasInterface(eventNames().interfaceForErrorEvent));
     v8::Local<v8::Object> listener = getListenerObject(context);
     v8::Local<v8::Value> returnValue;
     if (!listener.IsEmpty() && listener->IsFunction()) {

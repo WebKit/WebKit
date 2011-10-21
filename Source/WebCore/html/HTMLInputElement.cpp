@@ -1269,7 +1269,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (evt->isBeforeTextInsertedEvent())
         m_inputType->handleBeforeTextInsertedEvent(static_cast<BeforeTextInsertedEvent*>(evt));
 
-    if (evt->interfaceName() == eventNames().interfaceForWheelEvent) {
+    if (evt->hasInterface(eventNames().interfaceForWheelEvent)) {
         m_inputType->handleWheelEvent(static_cast<WheelEvent*>(evt));
         if (evt->defaultHandled())
             return;

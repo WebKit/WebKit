@@ -45,7 +45,7 @@ V8WindowErrorHandler::V8WindowErrorHandler(v8::Local<v8::Object> listener, bool 
 
 v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    if (event->interfaceName() != eventNames().interfaceForErrorEvent)
+    if (!event->hasInterface(eventNames().interfaceForErrorEvent))
         return V8EventListener::callListenerFunction(context, jsEvent, event);
 
     ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);

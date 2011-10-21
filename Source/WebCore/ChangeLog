@@ -1,3 +1,38 @@
+2011-10-21  Adam Barth  <abarth@webkit.org>
+
+        Introduce Event::hasInterface to make uses of interfaceName more readable
+        https://bugs.webkit.org/show_bug.cgi?id=70652
+
+        Reviewed by Eric Seidel.
+
+        Eric felt that this approach would be more readable because it requires
+        less syntax at each callsite.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/objc/DOMEvents.mm:
+        (kitClass):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * dom/Event.cpp:
+        (WebCore::Event::hasInterface):
+        * dom/Event.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::determineDispatchBehavior):
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        (WebCore::TextFieldInputType::shouldSubmitImplicitly):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::handleEvent):
+
 2011-10-21  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Implement basic subtree observation
