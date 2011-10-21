@@ -1,5 +1,28 @@
 2011-10-21  Luiz Agostini  <luiz.agostini@palm.com>
 
+        [Qt] Remote debugging needs QWebInspector to work
+        https://bugs.webkit.org/show_bug.cgi?id=70651
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removing QWebInspector dependency from remote inspector.
+
+        * Api/qwebinspector.cpp:
+        * Api/qwebinspector_p.h:
+        (QWebInspectorPrivate::QWebInspectorPrivate):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::InspectorClientQt):
+        (WebCore::InspectorClientQt::openInspectorFrontend):
+        (WebCore::InspectorClientQt::attachAndReplaceRemoteFrontend):
+        (WebCore::InspectorClientQt::detachRemoteFrontend):
+        (WebCore::InspectorClientQt::sendMessageToFrontend):
+        * WebCoreSupport/InspectorClientQt.h:
+        * WebCoreSupport/InspectorServerQt.cpp:
+        (WebCore::InspectorServerRequestHandlerQt::tcpReadyRead):
+        * WebCoreSupport/InspectorServerQt.h:
+
+2011-10-21  Luiz Agostini  <luiz.agostini@palm.com>
+
         [Qt] Wrong type conversion in InspectorServerQt.cpp
         https://bugs.webkit.org/show_bug.cgi?id=70639
 

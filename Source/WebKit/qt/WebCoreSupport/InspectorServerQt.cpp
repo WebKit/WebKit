@@ -240,7 +240,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                     m_inspectorClient = m_server->inspectorClientForPage(pageNum);
                     // Attach remoteFrontendChannel to inspector, also transferring ownership.
                     if (m_inspectorClient)
-                        m_inspectorClient->attachAndReplaceRemoteFrontend(new RemoteFrontendChannel(this));
+                        m_inspectorClient->attachAndReplaceRemoteFrontend(this);
                 }
 
             }
@@ -369,20 +369,6 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
         // Remove this WebSocket message from m_data (payload, start-of-frame byte, end-of-frame byte).
         m_data = m_data.mid(length + 2);
     }
-}
-
-RemoteFrontendChannel::RemoteFrontendChannel(InspectorServerRequestHandlerQt* requestHandler)
-    : QObject(requestHandler)
-    , m_requestHandler(requestHandler)
-{
-}
-
-bool RemoteFrontendChannel::sendMessageToFrontend(const String& message)
-{
-    if (!m_requestHandler)
-        return false;
-    CString cstr = message.utf8();
-    return m_requestHandler->webSocketSend(cstr.data(), cstr.length());
 }
 
 }

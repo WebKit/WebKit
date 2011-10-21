@@ -179,6 +179,7 @@ InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
     , m_frontendWebPage(0)
     , m_frontendClient(0)
+    , m_remoteFrontEndChannel(0)
 {
     InspectorServerQt* webInspectorServer = InspectorServerQt::server();
     if (webInspectorServer)
@@ -210,7 +211,7 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
 
     QWebInspector* inspector = m_inspectedWebPage->d->getOrCreateInspector();
     // Remote frontend was attached.
-    if (m_inspectedWebPage->d->inspector->d->remoteFrontend)
+    if (m_remoteFrontEndChannel)
         return;
 
     // This is a known hook that allows changing the default URL for the
@@ -248,11 +249,10 @@ void InspectorClientQt::releaseFrontendPage()
     m_frontendClient = 0;
 }
 
-void InspectorClientQt::attachAndReplaceRemoteFrontend(RemoteFrontendChannel* channel)
+void InspectorClientQt::attachAndReplaceRemoteFrontend(InspectorServerRequestHandlerQt* channel)
 {
 #if ENABLE(INSPECTOR)
-    // Channel was allocated by InspectorServerQt. Here we transfer ownership to inspector.
-    m_inspectedWebPage->d->inspector->d->attachAndReplaceRemoteFrontend(channel);
+    m_remoteFrontEndChannel = channel;
     m_inspectedWebPage->d->inspectorController()->connectFrontend();
 #endif
 }
@@ -260,7 +260,7 @@ void InspectorClientQt::attachAndReplaceRemoteFrontend(RemoteFrontendChannel* ch
 void InspectorClientQt::detachRemoteFrontend()
 {
 #if ENABLE(INSPECTOR)
-    m_inspectedWebPage->d->inspector->d->detachRemoteFrontend();
+    m_remoteFrontEndChannel = 0;
     m_inspectedWebPage->d->inspectorController()->disconnectFrontend();
 #endif
 }
@@ -283,10 +283,9 @@ void InspectorClientQt::hideHighlight()
 bool InspectorClientQt::sendMessageToFrontend(const String& message)
 {
 #if ENABLE(INSPECTOR)
-    if (m_inspectedWebPage->d->inspector->d->remoteFrontend) {
-        RemoteFrontendChannel* session = qobject_cast<RemoteFrontendChannel*>(m_inspectedWebPage->d->inspector->d->remoteFrontend);
-        if (session)
-            session->sendMessageToFrontend(message);
+    if (m_remoteFrontEndChannel) {
+        WTF::CString msg = message.utf8();
+        m_remoteFrontEndChannel->webSocketSend(msg.data(), msg.length());
         return true;
     }
     if (!m_frontendWebPage)

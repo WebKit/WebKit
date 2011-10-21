@@ -66,17 +66,6 @@ private:
     friend class InspectorServerRequestHandlerQt;
 };
 
-class RemoteFrontendChannel : public QObject {
-    Q_OBJECT
-public:
-
-    RemoteFrontendChannel(InspectorServerRequestHandlerQt* requestHandler);
-    bool sendMessageToFrontend(const String& message);
-
-private:
-    InspectorServerRequestHandlerQt* m_requestHandler;
-};
-
 class InspectorServerRequestHandlerQt : public QObject {
     Q_OBJECT
 public:
