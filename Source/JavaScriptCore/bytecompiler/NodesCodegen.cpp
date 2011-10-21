@@ -1216,8 +1216,9 @@ RegisterID* AssignDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> value = generator.destinationForAssignResult(dst);
     RegisterID* result = generator.emitNode(value.get(), m_right);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitPutById(base.get(), m_ident, result);
-    return generator.moveToDestinationIfNeeded(dst, result);
+    RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result : generator.moveToDestinationIfNeeded(generator.tempDestination(result), result);
+    generator.emitPutById(base.get(), m_ident, forwardResult);
+    return generator.moveToDestinationIfNeeded(dst, forwardResult);
 }
 
 // ------------------------------ ReadModifyDotNode -----------------------------------
@@ -1251,8 +1252,9 @@ RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     RegisterID* result = generator.emitNode(value.get(), m_right);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitPutByVal(base.get(), property.get(), result);
-    return generator.moveToDestinationIfNeeded(dst, result);
+    RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result : generator.moveToDestinationIfNeeded(generator.tempDestination(result), result);
+    generator.emitPutByVal(base.get(), property.get(), forwardResult);
+    return generator.moveToDestinationIfNeeded(dst, forwardResult);
 }
 
 // ------------------------------ ReadModifyBracketNode -----------------------------------

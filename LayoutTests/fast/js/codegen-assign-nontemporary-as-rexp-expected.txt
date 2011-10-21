@@ -1,0 +1,11 @@
+Tests whether bytecode codegen properly handles assignment as righthand expression.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS assign_as_rexp_1() is 'PASS'
+PASS assign_as_rexp_2() is 'PASS'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

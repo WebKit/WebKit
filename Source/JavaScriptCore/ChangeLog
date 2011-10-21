@@ -1,3 +1,14 @@
+2011-10-21  Zheng Liu  <zheng.z.liu@intel.com>
+
+        bytecompiler sometimes generates incorrect bytecode for put_by_id
+        https://bugs.webkit.org/show_bug.cgi?id=70403
+
+        Reviewed by Filip Pizlo.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+
 2011-10-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not try to predict argument types by looking at the values of
