@@ -1,3 +1,47 @@
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94115
+
+    2011-08-30  Ada Chan  <adachan@apple.com>
+
+            Laying some groundwork to fetch performance statistics from WebProcess.
+            https://bugs.webkit.org/show_bug.cgi?id=67160
+
+            Reviewed by Darin Adler.
+
+            Add WKContextGetStatistics() which sends a message to WebProcess to fetch the performance statistics.
+            * UIProcess/API/C/WKContext.cpp:
+            (WKContextGetStatistics):
+            * UIProcess/API/C/WKContext.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::~WebContext):
+            (WebKit::WebContext::getWebCoreStatistics):
+            (WebKit::WebContext::didGetWebCoreStatistics):
+            * UIProcess/WebContext.h:
+            * UIProcess/WebContext.messages.in: Add the DidGetWebCoreStatistics message that WebProcess can send when it has
+            the performance statistics ready.
+
+            Add WebProcess::getWebCoreStatistics().  Currently it just sends back an empty StatisticsData object.
+            It will gather the performance statistics to store in the StatisticsData object in a future patch.
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::getWebCoreStatistics):
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+
+            Add the skeleton for StatisticsData.
+            * Scripts/webkit2/messages.py:
+            * Shared/StatisticsData.cpp: Added.
+            (WebKit::StatisticsData::encode):
+            (WebKit::StatisticsData::decode):
+            (WebKit::StatisticsData::StatisticsData):
+            * Shared/StatisticsData.h: Added.
+
+            Add StatisticsData.h/cpp to project.
+            * CMakeLists.txt:
+            * GNUmakefile.am:
+            * WebKit2.pro:
+            * WebKit2.xcodeproj/project.pbxproj:
+            * win/WebKit2.vcproj:
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
         Merge r94818.

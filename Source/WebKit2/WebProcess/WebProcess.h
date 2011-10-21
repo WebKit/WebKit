@@ -175,6 +175,8 @@ private:
     void cancelDownload(uint64_t downloadID);
 
     void setTextCheckerState(const TextCheckerState&);
+    
+    void getWebCoreStatistics(uint64_t callbackID);
 
     // ChildProcess
     virtual bool shouldTerminate();

@@ -177,6 +177,8 @@ WebContext::~WebContext()
 
     m_resourceCacheManagerProxy->invalidate();
     m_resourceCacheManagerProxy->clearContext();
+    
+    invalidateCallbackMap(m_dictionaryCallbacks);
 
     platformInvalidateContext();
     
@@ -780,4 +782,26 @@ bool WebContext::httpPipeliningEnabled()
 #endif
 }
 
+void WebContext::getWebCoreStatistics(PassRefPtr<DictionaryCallback> prpCallback)
+{
+    RefPtr<DictionaryCallback> callback = prpCallback;
+    
+    uint64_t callbackID = callback->callbackID();
+    m_dictionaryCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebProcess::GetWebCoreStatistics(callbackID), 0);
+}
+
+void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, uint64_t callbackID)
+{
+    RefPtr<DictionaryCallback> callback = m_dictionaryCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+     
+    // FIXME: Store statistics data into a dictionary.
+    RefPtr<ImmutableDictionary> statistics = ImmutableDictionary::create();
+    callback->performCallbackWithReturnValue(statistics.get());
+}
+    
 } // namespace WebKit

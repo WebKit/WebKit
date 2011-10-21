@@ -67,4 +67,6 @@ messages -> WebProcess {
     SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
 
     SetEnhancedAccessibility(bool flag)
+
+    GetWebCoreStatistics(uint64_t callbackID)
 }

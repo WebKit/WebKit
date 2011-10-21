@@ -40,4 +40,6 @@ messages -> WebContext {
     void DidClearPluginSiteData(uint64_t callbackID)
 #endif
 
+    DidGetWebCoreStatistics(WebKit::StatisticsData statisticsData, uint64_t callbackID)
+
 }
