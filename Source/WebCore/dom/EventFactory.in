@@ -4,6 +4,7 @@ Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
 BeforeLoadEvent
+CloseEvent
 CompositionEvent
 CustomEvent
 ErrorEvent
@@ -30,7 +31,6 @@ AudioProcessingEvent conditional=WEB_AUDIO
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
 MediaStreamEvent conditional=MEDIA_STREAM
 SpeechInputEvent conditional=INPUT_SPEECH
-CloseEvent conditional=WEB_SOCKETS
 WebGLContextEvent conditional=WEBGL
 StorageEvent
 SVGEvents interfaceName=Event, conditional=SVG

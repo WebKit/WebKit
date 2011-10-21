@@ -1,5 +1,11 @@
 2011-10-20  Adam Barth  <abarth@webkit.org>
 
+        CloseEvent.idl isn't conditional on WebSockets.
+
+        * dom/EventFactory.in:
+
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
         Event.h shouldn't need to know about every ifdef and feature that uses events
         https://bugs.webkit.org/show_bug.cgi?id=70483
 
