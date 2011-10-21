@@ -1,3 +1,15 @@
+2011-10-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98079.
+        http://trac.webkit.org/changeset/98079
+        https://bugs.webkit.org/show_bug.cgi?id=70624
+
+        The extensions tests enabled are failing on the Chromium Win
+        Dbg bot (Requested by jchaffraix on #webkit).
+
+        * inspector/front-end/ExtensionAPI.js:
+        (buildExtensionAPIInjectedScript):
+
 2011-10-21  Dan Bernstein  <mitz@apple.com>
 
         Column rules positioned incorrectly in vertical-rl block with horizontal border or padding
