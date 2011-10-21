@@ -1,3 +1,15 @@
+2011-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Style guide should mention the preference of index over iterator
+        https://bugs.webkit.org/show_bug.cgi?id=70285
+
+        Reviewed by Darin Adler.
+
+        Per discussion on https://lists.webkit.org/pipermail/webkit-dev/2011-October/018274.html,
+        we prefer index over iterators.
+
+        * coding/coding-style.html:
+
 2011-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo pointed by Sam (Weinig).

@@ -708,6 +708,22 @@ MyClass::MyClass(Document* doc) : MySuperClass()
 
 MyOtherClass::MyOtherClass() : MySuperClass() {}
 </pre>
+
+<li>Prefer index over iterator in Vector iterations for a terse, easier-to-read code.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+size_t frameViewsCount = frameViews.size();
+for (size_t i = i; i &lt; frameViewsCount; ++i)
+    frameViews[i]->updateLayoutAndStyleIfNeededRecursive();
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+const Vector&lt;RefPtr&lt;FrameView&gt; &gt;::iterator end = frameViews.end();
+for (Vector&lt;RefPtr&lt;FrameView&gt; &gt;::iterator it = frameViews.begin(); it != end; ++it)
+    (*it)-&gt;updateLayoutAndStyleIfNeededRecursive();
+</pre>
 </ol>
 
 <h3>Pointers and References</h3>
