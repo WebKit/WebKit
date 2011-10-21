@@ -1,3 +1,17 @@
+2011-10-20  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Fix opaque flag default and for ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=70554
+
+        Reviewed by James Robinson.
+
+        Covered by layout tests.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::setContents): Set opaque flag based on if the image claims to have alpha.
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium): Match the default opaque value in GraphicsLayerChromium.
+
 2011-10-20  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms][File] Add tooltip to "No file selected" text
