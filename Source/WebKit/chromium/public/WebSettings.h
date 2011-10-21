@@ -95,6 +95,7 @@ public:
     virtual void setWebAudioEnabled(bool) = 0;
     virtual void setExperimentalWebGLEnabled(bool) = 0;
     virtual void setOpenGLMultisamplingEnabled(bool) = 0;
+    virtual void setPrivilegedWebGLExtensionsEnabled(bool) = 0;
     virtual void setShowDebugBorders(bool) = 0;
     virtual void setShowFPSCounter(bool) = 0;
     virtual bool showFPSCounter() const = 0;

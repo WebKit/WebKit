@@ -342,6 +342,9 @@ namespace WebCore {
         void setOpenGLMultisamplingEnabled(bool);
         bool openGLMultisamplingEnabled() const { return m_openGLMultisamplingEnabled; }
 
+        void setPrivilegedWebGLExtensionsEnabled(bool);
+        bool privilegedWebGLExtensionsEnabled() const { return m_privilegedWebGLExtensionsEnabled; }
+
         void setAccelerated2dCanvasEnabled(bool);
         bool accelerated2dCanvasEnabled() const { return m_acceleratedCanvas2dEnabled; }
 
@@ -565,6 +568,7 @@ namespace WebCore {
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
         bool m_openGLMultisamplingEnabled : 1;
+        bool m_privilegedWebGLExtensionsEnabled : 1;
         bool m_webAudioEnabled : 1;
         bool m_acceleratedCanvas2dEnabled : 1;
         bool m_legacyAcceleratedCanvas2dEnabled : 1;

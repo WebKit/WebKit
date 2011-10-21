@@ -284,6 +284,11 @@ void WebSettingsImpl::setOpenGLMultisamplingEnabled(bool enabled)
     m_settings->setOpenGLMultisamplingEnabled(enabled);
 }
 
+void WebSettingsImpl::setPrivilegedWebGLExtensionsEnabled(bool enabled)
+{
+    m_settings->setPrivilegedWebGLExtensionsEnabled(enabled);
+}
+
 void WebSettingsImpl::setShowDebugBorders(bool show)
 {
     m_settings->setShowDebugBorders(show);

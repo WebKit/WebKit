@@ -477,7 +477,9 @@ void WebGLRenderingContext::setupFlags()
 
 bool WebGLRenderingContext::allowPrivilegedExtensions() const
 {
-    // FIXME: implement this function.
+    Page* p = canvas()->document()->page();
+    if (p && p->settings())
+        return p->settings()->privilegedWebGLExtensionsEnabled();
     return false;
 }
 

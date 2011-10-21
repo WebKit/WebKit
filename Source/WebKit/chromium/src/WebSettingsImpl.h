@@ -87,6 +87,7 @@ public:
     virtual void setWebAudioEnabled(bool);
     virtual void setExperimentalWebGLEnabled(bool);
     virtual void setOpenGLMultisamplingEnabled(bool);
+    virtual void setPrivilegedWebGLExtensionsEnabled(bool);
     virtual void setShowDebugBorders(bool);
     virtual void setShowFPSCounter(bool);
     virtual bool showFPSCounter() const { return m_showFPSCounter; }

@@ -185,6 +185,7 @@ Settings::Settings(Page* page)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
     , m_openGLMultisamplingEnabled(true)
+    , m_privilegedWebGLExtensionsEnabled(false)
     , m_webAudioEnabled(false)
     , m_acceleratedCanvas2dEnabled(false)
     , m_legacyAcceleratedCanvas2dEnabled(false)
@@ -788,6 +789,11 @@ void Settings::setWebGLEnabled(bool enabled)
 void Settings::setOpenGLMultisamplingEnabled(bool enabled)
 {
     m_openGLMultisamplingEnabled = enabled;
+}
+
+void Settings::setPrivilegedWebGLExtensionsEnabled(bool enabled)
+{
+    m_privilegedWebGLExtensionsEnabled = enabled;
 }
 
 void Settings::setAccelerated2dCanvasEnabled(bool enabled)
