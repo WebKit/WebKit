@@ -1,3 +1,18 @@
+2011-10-02  Kent Tamura  <tkent@chromium.org>
+
+        Add a test to check behavior of tabindex attribute with a large number
+        https://bugs.webkit.org/show_bug.cgi?id=69056
+
+        Reviewed by Daniel Bates.
+
+        r96290 changed the behavior of integer parsing so that large
+        number strings which can not be represented in 32 bit integers
+        makes an error. Before r96290, we had assumed such large numbers
+        are equivelent to 0. We assume them invalid values.
+
+        * fast/dom/tabindex-defaults-expected.txt: Added.
+        * fast/dom/tabindex-defaults.html: Added.
+
 2011-10-20  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Update test expectation for inspector/debugger/{linkifier,script-formatter}.html
