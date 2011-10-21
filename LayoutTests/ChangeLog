@@ -1,3 +1,12 @@
+2011-10-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Suppress inspector failures for the moment.
+        https://bugs.webkit.org/show_bug.cgi?id=70573
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r97878.

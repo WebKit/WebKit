@@ -3874,3 +3874,7 @@ BUGWK70382 LEOPARD CPU-CG : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK70383 LEOPARD CPU-CG : editing/pasteboard/4944770-1.html = IMAGE
 
 BUGWK70386 SNOWLEOPARD DEBUG : storage/domstorage/events/documentURI.html = PASS CRASH
+
+BUGWK70573 : inspector/debugger/linkifier.html = TEXT
+BUGWK70573 : inspector/debugger/script-formatter.html = TEXT
+
