@@ -95,8 +95,8 @@ function extension_testOnContentCommitted(nextTest)
     });
     // The next step is going to produce a console message that will be logged, so synchronize the output now.
     evaluateOnFrontend("InspectorTest.runAfterPendingDispatches(reply)", function() {
-        extension_runWithResource(/test-script\.js$/, function(resource) {
-            resource.setContent("function function1(){}", true);
+        extension_runWithResource(/abe\.png$/, function(resource) {
+            resource.setContent("", true);
         });
         extension_runWithResource(/audits-style1\.css$/, function(resource) {
             resource.setContent(expected_content, true);
@@ -137,7 +137,7 @@ function extension_testOpenResourceHandler(nextTest)
 function addResource()
 {
     var script = document.createElement("script");
-    script.src = "data:application/javascript,function test_func(){}";
+    script.src = "data:application/javascript," + escape("function test_func(){};");
     document.head.appendChild(script);
 }
 

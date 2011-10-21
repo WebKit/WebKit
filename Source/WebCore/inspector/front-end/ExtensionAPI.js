@@ -715,5 +715,6 @@ function buildExtensionAPIInjectedScript(platformAPI)
         injectedExtensionAPI.toString() + ";" +
         "injectedExtensionAPI(injectedScriptId);" +
         (platformAPI || "") +
+        "return {};" +
         "})";
 }

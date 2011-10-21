@@ -1,3 +1,20 @@
+2011-10-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: make extension tests pass on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=70334
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/extensions-headers.html:
+        * http/tests/inspector/resources/extension-main.js:
+        ():
+        * inspector/extensions/extensions-audits.html:
+        * inspector/extensions/extensions-console.html:
+        * inspector/extensions/extensions-resources.html:
+        * platform/chromium/inspector/extensions/extensions-api-expected.txt: Added.
+        * platform/chromium/inspector/extensions/extensions-eval-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-21  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Test expectation change: fast/canvas/webgl/WebGLContextEvent.html now passes.
