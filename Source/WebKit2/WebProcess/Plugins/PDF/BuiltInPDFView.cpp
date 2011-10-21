@@ -483,6 +483,12 @@ bool BuiltInPDFView::handleMouseLeaveEvent(const WebMouseEvent&)
     return false;
 }
 
+bool BuiltInPDFView::handleContextMenuEvent(const WebMouseEvent&)
+{
+    // Use default WebKit context menu.
+    return false;
+}
+
 bool BuiltInPDFView::handleKeyboardEvent(const WebKeyboardEvent&)
 {
     return false;

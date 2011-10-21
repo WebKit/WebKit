@@ -627,6 +627,9 @@ void PluginView::handleEvent(Event* event)
     } else if (event->type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove) {
         // We have a mouse leave event.
         didHandleEvent = m_plugin->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+    } else if (event->type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown) {
+        // We have a context menu event.
+        didHandleEvent = m_plugin->handleContextMenuEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     } else if ((event->type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
                || (event->type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp)) {
         // We have a keyboard event.
