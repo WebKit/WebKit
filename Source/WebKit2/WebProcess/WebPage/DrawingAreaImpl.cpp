@@ -147,6 +147,7 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
     Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollOffset));
 
     m_dirtyRegion.unite(scrollRepaintRegion);
+    scheduleDisplay();
 
     m_scrollRect = scrollRect;
     m_scrollOffset += scrollOffset;
