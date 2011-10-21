@@ -1,3 +1,17 @@
+2011-10-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [WK2] WebFrameLoaderClient::shouldFallback() should use a port-specific implementation
+        https://bugs.webkit.org/show_bug.cgi?id=70055
+
+        Reviewed by Luiz Agostini.
+
+        In QtWebKit 1, our FrameLoaderClient::shouldFallback was checking for InterruptedForPolicyChange
+        error. In WebKit2, we are relying on the common implementation for WebFrameLoaderClient::shouldFallback
+        which doesn't check for the same error. Here we add this check only for Qt.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldFallBack):
+
 2011-10-21  Anders Carlsson  <andersca@apple.com>
 
         Flash of white when loading a page after a web process crash
