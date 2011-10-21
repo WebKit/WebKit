@@ -465,6 +465,7 @@ SOURCES += \
     dom/CDATASection.cpp \
     dom/CharacterData.cpp \
     dom/CheckedRadioButtons.cpp \
+    dom/ChildListMutationScope.cpp \
     dom/ChildNodeList.cpp \
     dom/ClassNodeList.cpp \
     dom/ClientRect.cpp \

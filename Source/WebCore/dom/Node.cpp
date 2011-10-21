@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "Attribute.h"
+#include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSParser.h"
@@ -2130,6 +2131,9 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case DOCUMENT_FRAGMENT_NODE:
         case SHADOW_ROOT_NODE: {
             ContainerNode* container = toContainerNode(this);
+#if ENABLE(MUTATION_OBSERVERS)
+            ChildListMutationScope mutation(this);
+#endif
             container->removeChildren();
             if (!text.isEmpty())
                 container->appendChild(document()->createTextNode(text), ec);
@@ -2700,9 +2704,9 @@ void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& ob
     if (!observerEntries || observerEntries->isEmpty())
         return;
 
-    for (Vector<MutationObserverEntry>::iterator iter = observerEntries->begin(); iter != observerEntries->end(); ++iter) {
-        if (iter->matches(type))
-            observers.append(iter->observer.get());
+    for (size_t i = 0; i < observerEntries->size(); ++i) {
+        if ((*observerEntries)[i].matches(type))
+            observers.append((*observerEntries)[i].observer.get());
     }
 }
 

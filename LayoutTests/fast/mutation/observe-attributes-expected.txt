@@ -23,7 +23,7 @@ PASS mutations[1].attributeNamespace is null
 Testing that observing without specifying "attributes" does not result in hearing about attribute changes.
 PASS mutations is null
 
-Testing that re-observing the same node with the same observing has the effect of resetting the options.
+Testing that re-observing the same node with the same observer has the effect of resetting the options.
 PASS calls is 1
 PASS mutations.length is 1
 PASS mutations[0].type is "attributes"

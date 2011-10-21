@@ -625,8 +625,8 @@ static void enqueueAttributesMutationRecord(Element* element, const QualifiedNam
         return;
 
     RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name);
-    for (Vector<WebKitMutationObserver*>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
-        (*iter)->enqueueMutationRecord(mutation);
+    for (size_t i = 0; i < observers.size(); ++i)
+        observers[i]->enqueueMutationRecord(mutation);
 }
 #endif
 

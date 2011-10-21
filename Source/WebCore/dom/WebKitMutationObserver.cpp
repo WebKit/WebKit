@@ -65,8 +65,8 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
 
 void WebKitMutationObserver::disconnect()
 {
-    for (Vector<Node*>::iterator iter = m_observedNodes.begin(); iter !=  m_observedNodes.end(); ++iter)
-        (*iter)->unregisterMutationObserver(this);
+    for (size_t i = 0; i < m_observedNodes.size(); ++i)
+        m_observedNodes[i]->unregisterMutationObserver(this);
 
     m_observedNodes.clear();
 }

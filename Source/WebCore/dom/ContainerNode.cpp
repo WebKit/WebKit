@@ -24,7 +24,7 @@
 #include "ContainerNode.h"
 
 #include "BeforeLoadEvent.h"
-#include "MemoryCache.h"
+#include "ChildListMutationScope.h"
 #include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
 #include "EventNames.h"
@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryCache.h"
 #include "MutationEvent.h"
 #include "ResourceLoadScheduler.h"
 #include "Page.h"
@@ -140,6 +141,10 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     // Now actually add the child(ren)
     if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
         return true;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(this);
+#endif
 
     RefPtr<Node> next = refChild;
     RefPtr<Node> refChildPreviousSibling = refChild->previousSibling();
@@ -272,6 +277,10 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         return false;
     }
 
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(this);
+#endif
+
     RefPtr<Node> prev = oldChild->previousSibling();
     RefPtr<Node> next = oldChild->nextSibling();
 
@@ -399,6 +408,10 @@ static void willRemoveChildren(ContainerNode* container)
 
     NodeVector children;
     collectNodes(container, children);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(container);
+#endif
 
     for (NodeVector::const_iterator it = children.begin(); it != children.end(); it++) {
         Node* child = it->get();
@@ -610,6 +623,10 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
     collectTargetNodes(newChild.get(), targets);
     if (targets.isEmpty())
         return true;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(this);
+#endif
 
     // Now actually add the child(ren)
     RefPtr<Node> prev = lastChild();
@@ -1095,6 +1112,13 @@ static void dispatchChildInsertionEvents(Node* child)
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
 
+#if ENABLE(MUTATION_OBSERVERS)
+    if (c->parentNode()) {
+        ChildListMutationScope mutation(c->parentNode());
+        mutation.childAdded(c);
+    }
+#endif
+
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, c->parentNode()));
 
@@ -1115,6 +1139,13 @@ static void dispatchChildRemovalEvents(Node* child)
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
+
+#if ENABLE(MUTATION_OBSERVERS)
+    if (c->parentNode()) {
+        ChildListMutationScope mutation(c->parentNode());
+        mutation.willRemoveChild(c);
+    }
+#endif
 
     // dispatch pre-removal mutation events
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))

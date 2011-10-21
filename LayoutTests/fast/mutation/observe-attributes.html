@@ -10,8 +10,7 @@
 <script>
 
 window.jsTestIsAsync = true;
-var mutations;
-var mutations2;
+var mutations, mutations2;
 var calls;
 
 function testBasic() {
@@ -107,7 +106,7 @@ function testMultipleRegistration() {
     var observer;
 
     function start() {
-        debug('Testing that re-observing the same node with the same observing has the effect of resetting the options.');
+        debug('Testing that re-observing the same node with the same observer has the effect of resetting the options.');
     
 		calls = 0;
         mutations = null;

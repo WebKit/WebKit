@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ChildListMutationScope.h"
 #include "DocumentFragment.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -317,6 +318,10 @@ static inline bool hasOneTextChild(ContainerNode* node)
 
 static void replaceChildrenWithFragment(HTMLElement* element, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(element);
+#endif
+
     if (!fragment->firstChild()) {
         element->removeChildren();
         return;
@@ -338,6 +343,10 @@ static void replaceChildrenWithFragment(HTMLElement* element, PassRefPtr<Documen
 
 static void replaceChildrenWithText(HTMLElement* element, const String& text, ExceptionCode& ec)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(element);
+#endif
+
     if (hasOneTextChild(element)) {
         static_cast<Text*>(element->firstChild())->setData(text, ec);
         return;

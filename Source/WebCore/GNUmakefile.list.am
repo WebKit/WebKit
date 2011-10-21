@@ -1122,6 +1122,8 @@ webcore_sources += \
 	Source/WebCore/dom/CharacterData.h \
 	Source/WebCore/dom/CheckedRadioButtons.cpp \
 	Source/WebCore/dom/CheckedRadioButtons.h \
+	Source/WebCore/dom/ChildListMutationScope.cpp \
+	Source/WebCore/dom/ChildListMutationScope.h \
 	Source/WebCore/dom/ChildNodeList.cpp \
 	Source/WebCore/dom/ChildNodeList.h \
 	Source/WebCore/dom/ClassNodeList.cpp \

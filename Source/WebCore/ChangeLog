@@ -1,3 +1,65 @@
+2011-10-21  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Implement WebKitMutationObserver.observe for childList changes
+        https://bugs.webkit.org/show_bug.cgi?id=68955
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds a ChildListMutationScope object which manages the coalescing of
+        multiple child removals and additions within DOM operations into single childList
+        mutation records.
+
+        Note that this patch doesn't cover all the cases which can be coalesced (it only
+        covers ContainerNode.*, and Node.innerHTML/innerText). A separate bug,
+        https://bugs.webkit.org/show_bug.cgi?id=70385, has been opened to track the
+        remaining cases.
+
+        Test: fast/mutation/observe-childList.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ChildListMutationScope.cpp: Added.
+        (WebCore::ChildListAccumulation::ChildListAccumulation::ChildListAccumulation):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::~ChildListAccumulation):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::childAdded):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::willRemoveChild):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::dispatch):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::clear):
+        (WebCore::ChildListAccumulation::ChildListAccumulation::isEmpty):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::ChildListAccumulator):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::~ChildListAccumulator):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::initialize):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::instance):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::childAdded):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::willRemoveChild):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::incrementScopingLevel):
+        (WebCore::ChildListAccumulation::ChildListAccumulator::decrementScopingLevel):
+        (WebCore::ChildListMutationScope::ChildListMutationScope):
+        (WebCore::ChildListMutationScope::~ChildListMutationScope):
+        (WebCore::ChildListMutationScope::childAdded):
+        (WebCore::ChildListMutationScope::willRemoveChild):
+        * dom/ChildListMutationScope.h: Added.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::willRemoveChildren):
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent):
+        (WebCore::Node::registeredMutationObserversOfType):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::disconnect):
+        * html/HTMLElement.cpp:
+        (WebCore::replaceChildrenWithFragment):
+        (WebCore::replaceChildrenWithText):
+
 2011-10-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98079.

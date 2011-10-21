@@ -5127,6 +5127,8 @@
             'dom/CSSMappedAttributeDeclaration.cpp',
             'dom/CharacterData.cpp',
             'dom/CheckedRadioButtons.cpp',
+            'dom/ChildListMutationScope.cpp',
+            'dom/ChildListMutationScope.h',
             'dom/ChildNodeList.cpp',
             'dom/ChildNodeList.h',
             'dom/ClassNodeList.cpp',
