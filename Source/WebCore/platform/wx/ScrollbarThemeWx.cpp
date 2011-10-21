@@ -172,15 +172,6 @@ IntRect ScrollbarThemeWx::trackRect(Scrollbar* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + trackStart, thickness, scrollbar->height() - 2 * bs.height());
 }
 
-void ScrollbarThemeWx::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)
-{
-    // ScrollbarThemeComposite::paintScrollCorner incorrectly assumes that the
-    // ScrollView is a FrameView (see FramelessScrollView), so we cannot let
-    // that code run.  For FrameView's this is correct since we don't do custom
-    // scrollbar corner rendering, which ScrollbarThemeComposite supports.
-    ScrollbarTheme::paintScrollCorner(view, context, cornerRect);
-}
-
 bool ScrollbarThemeWx::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& rect)
 {
     wxOrientation orientation = (scrollbar->orientation() == HorizontalScrollbar) ? wxHORIZONTAL : wxVERTICAL;

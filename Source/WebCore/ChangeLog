@@ -1,5 +1,63 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge <rdar://problem/10310999>
+
+    2011-10-21  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/8750378> Support PDF viewing in subframes in WebKit2
+
+        Includes patches landed up to 10/14.
+
+        * platform/graphics/IntPoint.h:
+        (WebCore::operator-):
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::move):
+        (WebCore::IntRect::moveBy):
+        (WebCore::IntRect::expand):
+        (WebCore::IntRect::contract):
+        Merge earlier added functions that are used by BuiltInPDFView.
+
+        * platform/mac/ScrollbarThemeMac.mm: (WebCore::ScrollbarThemeMac::backButtonRect):
+        Merge an unrelated clang build fix, so that one can actually build and test locally.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::builtInPDFPluginName):
+        (WebCore::DefaultLocalizationStrategy::pdfDocumentTypeDescription):
+        * platform/DefaultLocalizationStrategy.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::builtInPDFPluginName):
+        (WebCore::pdfDocumentTypeDescription):
+        * platform/LocalizedStrings.h:
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::pageForScrollView):
+        (WebCore::ScrollbarThemeComposite::paintScrollCorner):
+        * platform/chromium/FramelessScrollView.cpp:
+        * platform/chromium/FramelessScrollView.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paintScrollCorner):
+        * platform/wx/ScrollbarThemeWx.cpp:
+        * platform/wx/ScrollbarThemeWx.h:
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::scroll):
+        (WebCore::PluginViewBase::horizontalScrollbar):
+        (WebCore::PluginViewBase::verticalScrollbar):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::nodeAtPoint):
+        (WebCore::RenderEmbeddedObject::scroll):
+        (WebCore::RenderEmbeddedObject::logicalScroll):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderWidget.h:
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98060
 
     2011-10-20  Simon Fraser  <simon.fraser@apple.com>

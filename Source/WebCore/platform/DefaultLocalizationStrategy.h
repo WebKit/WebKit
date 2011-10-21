@@ -161,6 +161,8 @@ public:
     virtual String allFilesText();
 #endif
 #if PLATFORM(MAC)
+    virtual String builtInPDFPluginName();
+    virtual String pdfDocumentTypeDescription();
     virtual String keygenMenuItem512();
     virtual String keygenMenuItem1024();
     virtual String keygenMenuItem2048();

@@ -1,5 +1,31 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge <rdar://problem/10310999>
+
+    2011-10-21  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/8750378> Support PDF viewing in subframes in WebKit2
+
+        Includes patches landed up to 10/14.
+
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF: Added.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: Added.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: Added.
+        * WebProcess/Plugins/Plugin.cpp:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98013
 
     2011-10-20  Brady Eidson  <beidson@apple.com>

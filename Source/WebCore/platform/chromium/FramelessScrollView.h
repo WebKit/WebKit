@@ -75,7 +75,6 @@ namespace WebCore {
     protected:
         // ScrollView protected methods:
         virtual void paintContents(GraphicsContext*, const IntRect&);
-        virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
         virtual void contentsResized();
         virtual void visibleContentsResized();
 

@@ -59,6 +59,10 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/CurrentTime.h>
 
+#if PLATFORM(MAC)
+#include "BuiltInPDFView.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -539,6 +543,11 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
     Vector<PluginInfoStore::Plugin> plugins = m_pluginInfoStore.plugins();
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginInfos.append(plugins[i].info);
+
+#if PLATFORM(MAC)
+    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
+    pluginInfos.append(BuiltInPDFView::pluginInfo());
+#endif
 }
 
 void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)

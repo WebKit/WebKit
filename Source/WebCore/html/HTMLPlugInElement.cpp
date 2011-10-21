@@ -169,6 +169,9 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     if (!widget)
         return;
     widget->handleEvent(event);
+    if (event->defaultHandled())
+        return;
+    HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

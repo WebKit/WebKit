@@ -515,6 +515,33 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
+bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
+    return m_plugin->handleScroll(direction, granularity);
+}
+
+Scrollbar* PluginView::horizontalScrollbar()
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+
+    return m_plugin->horizontalScrollbar();
+}
+
+Scrollbar* PluginView::verticalScrollbar()
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+
+    return m_plugin->verticalScrollbar();
+}
+
 void PluginView::setBoundsSize(const WebCore::IntSize& size)
 {
     Widget::setBoundsSize(size);
@@ -524,8 +551,14 @@ void PluginView::setBoundsSize(const WebCore::IntSize& size)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
+    if (!m_plugin || !m_isInitialized)
         return;
+
+    if (context->paintingDisabled()) {
+        if (context->updatingControlTints())
+            m_plugin->updateControlTints(context);
+        return;
+    }
 
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
     IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
@@ -576,6 +609,8 @@ void PluginView::handleEvent(Event* event)
         || (event->type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
         || (event->type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
         // We have a mouse event.
+
+        // FIXME: Clicking in a scroll bar should not change focus.
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
         

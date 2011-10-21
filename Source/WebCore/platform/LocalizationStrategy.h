@@ -168,6 +168,8 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    virtual String builtInPDFPluginName() = 0;
+    virtual String pdfDocumentTypeDescription() = 0;
     virtual String keygenMenuItem512() = 0;
     virtual String keygenMenuItem1024() = 0;
     virtual String keygenMenuItem2048() = 0;

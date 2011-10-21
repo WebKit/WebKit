@@ -390,6 +390,21 @@ PluginController* PluginProxy::controller()
     return m_pluginController;
 }
 
+bool PluginProxy::handleScroll(ScrollDirection, ScrollGranularity)
+{
+    return false;
+}
+
+Scrollbar* PluginProxy::horizontalScrollbar()
+{
+    return 0;
+}
+
+Scrollbar* PluginProxy::verticalScrollbar()
+{
+    return 0;
+}
+
 void PluginProxy::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);

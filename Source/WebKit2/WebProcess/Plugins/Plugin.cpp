@@ -80,4 +80,8 @@ Plugin::~Plugin()
 {
 }
 
+void Plugin::updateControlTints(GraphicsContext*)
+{
+}
+
 } // namespace WebKit

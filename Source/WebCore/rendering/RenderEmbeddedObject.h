@@ -65,7 +65,12 @@ private:
 
     virtual void layout();
     virtual void viewCleared();
-    
+
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
+
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Node** stopNode);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Node** stopNode);
+
     void setMissingPluginIndicatorIsPressed(bool);
     bool isInMissingPluginIndicator(MouseEvent*);
     bool getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth);

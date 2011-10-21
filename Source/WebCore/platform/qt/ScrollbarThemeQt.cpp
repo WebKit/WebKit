@@ -233,13 +233,8 @@ int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
     return scrollbar->orientation() == HorizontalScrollbar ? track.width() : track.height();
 }
 
-void ScrollbarThemeQt::paintScrollCorner(ScrollView* scrollView, GraphicsContext* context, const IntRect& rect)
+void ScrollbarThemeQt::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& rect)
 {
-    if (context->updatingControlTints()) {
-       scrollView->invalidateRect(rect);
-       return;
-    }
-
     StylePainter p(this, context);
     if (!p.isValid())
         return;

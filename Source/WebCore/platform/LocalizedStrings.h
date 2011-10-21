@@ -164,6 +164,8 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
+    String builtInPDFPluginName();
+    String pdfDocumentTypeDescription();
     String keygenMenuItem512();
     String keygenMenuItem1024();
     String keygenMenuItem2048();

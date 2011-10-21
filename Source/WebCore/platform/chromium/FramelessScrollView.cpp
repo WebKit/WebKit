@@ -77,12 +77,6 @@ void FramelessScrollView::paintContents(GraphicsContext*, const IntRect&)
 {
 }
 
-void FramelessScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
-{
-    // ScrollbarThemeComposite::paintScrollCorner incorrectly assumes that the ScrollView is a FrameView.
-    ScrollbarTheme::defaultPaintScrollCorner(context, cornerRect);
-}
-
 void FramelessScrollView::contentsResized()
 {
 }

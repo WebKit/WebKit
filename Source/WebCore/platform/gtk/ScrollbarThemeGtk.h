@@ -48,7 +48,6 @@ public:
     void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
     void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect&);
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
     virtual int scrollbarThickness(ScrollbarControlSize);
     virtual IntSize buttonSize(Scrollbar*);

@@ -190,6 +190,11 @@ inline IntPoint operator-(const IntPoint& a, const IntSize& b)
     return IntPoint(a.x() - b.width(), a.y() - b.height());
 }
 
+inline IntPoint operator-(const IntPoint& point)
+{
+    return IntPoint(-point.x(), -point.y());
+}
+
 inline bool operator==(const IntPoint& a, const IntPoint& b)
 {
     return a.x() == b.x() && a.y() == b.y();

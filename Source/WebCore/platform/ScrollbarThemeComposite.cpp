@@ -41,7 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-#if PLATFORM(WIN)
 static Page* pageForScrollView(ScrollView* view)
 {
     if (!view)
@@ -53,7 +52,6 @@ static Page* pageForScrollView(ScrollView* view)
         return 0;
     return frameView->frame()->page();
 }
-#endif
 
 bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
@@ -306,8 +304,7 @@ int ScrollbarThemeComposite::trackLength(Scrollbar* scrollbar)
 
 void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)
 {
-    FrameView* frameView = static_cast<FrameView*>(view);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
+    Page* page = pageForScrollView(view);
     if (page && page->settings()->shouldPaintCustomScrollbars() && page->chrome()->client()->paintCustomScrollCorner(context, cornerRect))
         return;
     context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);

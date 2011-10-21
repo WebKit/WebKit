@@ -764,6 +764,21 @@ void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     NPP_SetValue(NPNVprivateModeBool, &value);
 }
 
+bool NetscapePlugin::handleScroll(ScrollDirection, ScrollGranularity)
+{
+    return false;
+}
+
+Scrollbar* NetscapePlugin::horizontalScrollbar()
+{
+    return 0;
+}
+
+Scrollbar* NetscapePlugin::verticalScrollbar()
+{
+    return 0;
+}
+
 bool NetscapePlugin::supportsSnapshotting() const
 {
 #if PLATFORM(MAC)

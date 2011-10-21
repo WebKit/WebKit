@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class PluginView : public WebCore::PluginViewBase, WebCore::MediaCanStartListener, PluginController, WebFrame::LoadListener {
+class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener {
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
@@ -102,7 +102,10 @@ private:
 #endif
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*);
     virtual void privateBrowsingStateChanged(bool);
-    
+    virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
+    virtual WebCore::Scrollbar* horizontalScrollbar();
+    virtual WebCore::Scrollbar* verticalScrollbar();
+
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void setBoundsSize(const WebCore::IntSize&);
