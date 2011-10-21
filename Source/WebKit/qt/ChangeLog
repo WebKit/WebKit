@@ -1,3 +1,18 @@
+2011-10-21  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt] WebKit build does not respect QMAKE_MAC_SDK variable.
+        https://bugs.webkit.org/show_bug.cgi?id=70596
+
+        Instead of only relying on DARWIN_MAJOR_VERSION we also
+        check QMAKE_MAC_SDK. In case QMAKE_MAC_SDK is not defined
+        we are still falling back to DARWIN_MAJOR_VERSION.
+
+        Patch by Andy Shaw <andy.shaw@digia.com>
+
+        Reviewed by Noam Rosenthal.
+
+        * QtWebKit.pro:
+
 2011-10-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Typo fix.

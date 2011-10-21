@@ -191,12 +191,12 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         # We can know the Mac OS version by using the Darwin major version
         DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
         DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
-        equals(DARWIN_MAJOR_VERSION, "11") {
-            LIBS += $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceLion.a
-        } else:equals(DARWIN_MAJOR_VERSION, "10") {
-            LIBS += $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a
-        } else:equals(DARWIN_MAJOR_VERSION, "9") {
+        equals(DARWIN_MAJOR_VERSION, "9") | contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.5.sdk") {
             LIBS += $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceLeopard.a
+        } else: equals(DARWIN_MAJOR_VERSION, "10") | contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+            LIBS += $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a
+        } else: equals(DARWIN_MAJOR_VERSION, "11") | contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.7.sdk") {
+            LIBS += $$SOURCE_DIR/../WebKitLibraries/libWebKitSystemInterfaceLion.a
         }
     }
 }
