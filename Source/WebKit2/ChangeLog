@@ -1,3 +1,11 @@
+2011-10-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Buildfix for newer Qt5. Remove duplicated defines.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/tests/util.h:
+
 2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK+ build after r98081.

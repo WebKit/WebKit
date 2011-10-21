@@ -49,6 +49,7 @@ static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
     return timeoutSpy.isEmpty();
 }
 
+#if QT_VERSION <= QT_VERSION_CHECK(5, 0, 0)
 // Will try to wait for the condition while allowing event processing
 #define QTRY_VERIFY(__expr) \
     do { \
@@ -76,3 +77,4 @@ static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
         } \
         QCOMPARE(__expr, __expected); \
     } while(0)
+#endif
