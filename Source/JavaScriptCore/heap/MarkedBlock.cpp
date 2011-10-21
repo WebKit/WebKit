@@ -70,9 +70,7 @@ inline void MarkedBlock::callDestructor(JSCell* cell, void* jsFinalObjectVPtr)
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
-    if (vptr == jsFinalObjectVPtr)
-        reinterpret_cast<JSFinalObject*>(cell)->JSFinalObject::~JSFinalObject();
-    else
+    if (vptr != jsFinalObjectVPtr)
         cell->~JSCell();
 
     cell->zap();

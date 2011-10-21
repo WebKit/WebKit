@@ -84,9 +84,7 @@ namespace JSC {
 
         virtual UString className() const;
 
-        // The inline virtual destructor cannot be the first virtual function declared
-        // in the class as it results in the vtable being generated as a weak symbol
-        virtual ~JSObject();
+        static void finalize(JSCell*);
 
         JSValue prototype() const;
         void setPrototype(JSGlobalData&, JSValue prototype);
@@ -444,12 +442,6 @@ inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, Proper
     : JSCell(globalData, structure)
     , m_propertyStorage(globalData, this, inlineStorage)
 {
-}
-
-inline JSObject::~JSObject()
-{
-    if (!isUsingInlineStorage())
-        delete [] m_propertyStorage.get();
 }
 
 inline JSValue JSObject::prototype() const

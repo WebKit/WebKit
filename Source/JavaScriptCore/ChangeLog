@@ -1,3 +1,23 @@
+2011-10-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add finalizer to JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=70336
+
+        Reviewed by Darin Adler.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor): Skip the call to the destructor 
+        if we're a JSFinalObject, since the finalizer takes care of things.
+        * runtime/JSCell.h:
+        (JSC::JSCell::~JSCell): Remove the GC validation due to a conflict with 
+        future changes and the fact that we no longer always call the destructor, making 
+        the information provided less useful.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::finalize): Add finalizer for JSObject.
+        (JSC::JSObject::allocatePropertyStorage): The first time we need to allocate out-of-line
+        property storage, we add a finalizer to ourself.
+        * runtime/JSObject.h:
+
 2011-10-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Remove QtScript source code from WebKit.

@@ -70,6 +70,11 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
+void JSObject::finalize(JSCell* cell)
+{
+    delete [] static_cast<JSObject*>(cell)->m_propertyStorage.get();
+}
+
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = static_cast<JSObject*>(cell);
@@ -688,7 +693,9 @@ void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize,
     for (unsigned i = 0; i < oldSize; ++i)
        newPropertyStorage[i] = oldPropertyStorage[i];
 
-    if (!isUsingInlineStorage())
+    if (isUsingInlineStorage())
+        Heap::heap(this)->addFinalizer(this, &finalize);
+    else
         delete [] oldPropertyStorage;
 
     m_propertyStorage.set(globalData, this, newPropertyStorage);
