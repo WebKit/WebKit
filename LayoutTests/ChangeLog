@@ -1,5 +1,11 @@
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed gardening, yet another flaky crashing test.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Gardening rebaselines.
 
         * platform/chromium-linux-x86/fast/multicol/vertical-lr: Removed.
