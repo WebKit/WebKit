@@ -1,3 +1,29 @@
+2011-10-21  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Implement basic subtree observation
+        https://bugs.webkit.org/show_bug.cgi?id=70436
+
+        Reviewed by Ryosuke Niwa.
+
+        Note that this patch only implements "basic" subtree semantics,
+        not the fully robust semantics described in
+        http://lists.w3.org/Archives/Public/public-webapps/2011JulSep/1622.html.
+        Most importantly, this change does not handle the case where mutations
+        occur in a temporarily detached subtree.
+
+        The plan is to implement those semantics in a followup to avoid
+        blocking other parts of the MutationObserver spec that rely on
+        the existence of subtree observation but not its specific
+        implementation.
+
+        Test: fast/mutation/observe-subtree.html
+
+        * dom/Node.cpp:
+        (WebCore::addMatchingObservers): Static helper method for registeredMutationObserversOfType().
+        (WebCore::Node::registeredMutationObserversOfType): Walk up the tree looking for observers.
+        * dom/NodeRareData.h:
+        (WebCore::MutationObserverEntry::hasAllOptions): A stricter, renamed from matches().
+
 2011-10-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: objectStore.transaction property should be readonly

@@ -2698,16 +2698,29 @@ Vector<MutationObserverEntry>* Node::mutationObserverEntries()
     return hasRareData() ? rareData()->mutationObserverEntries() : 0;
 }
 
-void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
+static void addMatchingObservers(HashSet<WebKitMutationObserver*>& observerSet, Vector<MutationObserverEntry>* observerEntries, MutationObserverOptions options)
 {
-    Vector<MutationObserverEntry>* observerEntries = mutationObserverEntries();
-    if (!observerEntries || observerEntries->isEmpty())
+    if (!observerEntries)
         return;
 
-    for (size_t i = 0; i < observerEntries->size(); ++i) {
-        if ((*observerEntries)[i].matches(type))
-            observers.append((*observerEntries)[i].observer.get());
+    const size_t size = observerEntries->size();
+    for (size_t i = 0; i < size; ++i) {
+        MutationObserverEntry& entry = observerEntries->at(i);
+        if (entry.hasAllOptions(options))
+            observerSet.add(entry.observer.get());
     }
+}
+
+void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
+{
+    HashSet<WebKitMutationObserver*> observerSet;
+    addMatchingObservers(observerSet, mutationObserverEntries(), type);
+    for (Node* node = parentNode(); node; node = node->parentNode())
+        addMatchingObservers(observerSet, node->mutationObserverEntries(), type | WebKitMutationObserver::Subtree);
+
+    // FIXME: this method should output a HashSet instead of a Vector.
+    if (!observerSet.isEmpty())
+        copyToVector(observerSet, observers);
 }
 
 Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options)

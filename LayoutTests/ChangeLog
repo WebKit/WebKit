@@ -1,3 +1,13 @@
+2011-10-21  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Implement basic subtree observation
+        https://bugs.webkit.org/show_bug.cgi?id=70436
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/mutation/observe-subtree-expected.txt: Added.
+        * fast/mutation/observe-subtree.html: Added.
+
 2011-10-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: objectStore.transaction property should be readonly

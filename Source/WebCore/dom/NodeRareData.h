@@ -101,15 +101,14 @@ struct MutationObserverEntry {
         return observer == other.observer;
     }
 
-    bool matches(MutationObserverOptions options) const
+    bool hasAllOptions(MutationObserverOptions options) const
     {
-        return this->options & options;
+        return (this->options & options) == options;
     }
 
     RefPtr<WebKitMutationObserver> observer;
     MutationObserverOptions options;
 };
-
 #endif // ENABLE(MUTATION_OBSERVERS)
 
 class NodeRareData {
