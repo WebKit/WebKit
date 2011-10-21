@@ -3504,9 +3504,6 @@ BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
 // They're now running them so these need to be triaged.
 BUGWK66989 : transforms/3d = PASS FAIL
 
-// Failing after r94084. This looks like it may be a real regression.
-BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT
-
 BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
 
 // Renders differently in 32 vs 64 bit mode and is flaky

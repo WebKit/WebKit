@@ -1,3 +1,11 @@
+2011-10-21  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Test expectation change: fast/canvas/webgl/WebGLContextEvent.html now passes.
+
+        Unreviewed. The test passes since http://trac.webkit.org/changeset/98044/
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-20  Adam Barth  <abarth@webkit.org>
 
         These tests are skipped so there's no need to say they TIMEOUT.
