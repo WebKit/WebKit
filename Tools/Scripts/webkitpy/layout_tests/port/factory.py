@@ -106,6 +106,9 @@ class PortFactory(object):
         elif port_to_use.startswith('google-chrome'):
             import google_chrome
             maker = google_chrome.GetGoogleChromePort
+        elif port_to_use.startswith('efl'):
+            import efl
+            maker = efl.EflPort
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
 
