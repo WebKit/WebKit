@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class GraphicsContextState;
+struct GraphicsContextState;
 
 // Much like PlatformContextSkia in the Skia port, this class holds information that
 // would normally be private to GraphicsContext, except that we want to allow access
