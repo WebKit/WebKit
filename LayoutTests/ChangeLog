@@ -1,5 +1,11 @@
 2011-10-21  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip failing a11y test in GTK.
+
+        * platform/gtk/Skipped: Skip accessibility/menu-list-sends-change-notification.html
+
+2011-10-21  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for 3 new tests.
 
         * platform/gtk/fast/css/clip-text-in-scaled-div-expected.txt: Added.
