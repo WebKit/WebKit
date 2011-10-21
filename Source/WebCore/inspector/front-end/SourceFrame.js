@@ -310,7 +310,7 @@ WebInspector.SourceFrame.prototype = {
         if (typeof this._executionLineNumber === "number")
             this.setExecutionLine(this._executionLineNumber);
 
-        if (this._lineToHighlight) {
+        if (typeof this._lineToHighlight === "number") {
             this.highlightLine(this._lineToHighlight);
             delete this._lineToHighlight;
         }

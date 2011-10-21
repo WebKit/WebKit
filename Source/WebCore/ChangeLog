@@ -1,3 +1,13 @@
+2011-10-20  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: first line in file is not highlighted.
+        https://bugs.webkit.org/show_bug.cgi?id=70504
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+
 2011-10-21  Andreas Kling  <kling@webkit.org>
 
         Simplify CSSStyleRule::setSelectorText().
