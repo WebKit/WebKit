@@ -1,3 +1,61 @@
+2011-10-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Remove QtScript source code from WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=64088
+
+        Reviewed by Tor Arne Vestbø.
+
+        Removed dead code that isn't developed anymore.
+
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * qt/api/QtScript.pro: Removed.
+        * qt/api/qscriptconverter_p.h: Removed.
+        * qt/api/qscriptengine.cpp: Removed.
+        * qt/api/qscriptengine.h: Removed.
+        * qt/api/qscriptengine_p.cpp: Removed.
+        * qt/api/qscriptengine_p.h: Removed.
+        * qt/api/qscriptfunction.cpp: Removed.
+        * qt/api/qscriptfunction_p.h: Removed.
+        * qt/api/qscriptoriginalglobalobject_p.h: Removed.
+        * qt/api/qscriptprogram.cpp: Removed.
+        * qt/api/qscriptprogram.h: Removed.
+        * qt/api/qscriptprogram_p.h: Removed.
+        * qt/api/qscriptstring.cpp: Removed.
+        * qt/api/qscriptstring.h: Removed.
+        * qt/api/qscriptstring_p.h: Removed.
+        * qt/api/qscriptsyntaxcheckresult.cpp: Removed.
+        * qt/api/qscriptsyntaxcheckresult.h: Removed.
+        * qt/api/qscriptsyntaxcheckresult_p.h: Removed.
+        * qt/api/qscriptvalue.cpp: Removed.
+        * qt/api/qscriptvalue.h: Removed.
+        * qt/api/qscriptvalue_p.h: Removed.
+        * qt/api/qscriptvalueiterator.cpp: Removed.
+        * qt/api/qscriptvalueiterator.h: Removed.
+        * qt/api/qscriptvalueiterator_p.h: Removed.
+        * qt/api/qtscriptglobal.h: Removed.
+        * qt/benchmarks/benchmarks.pri: Removed.
+        * qt/benchmarks/benchmarks.pro: Removed.
+        * qt/benchmarks/qscriptengine/qscriptengine.pro: Removed.
+        * qt/benchmarks/qscriptengine/tst_qscriptengine.cpp: Removed.
+        * qt/benchmarks/qscriptvalue/qscriptvalue.pro: Removed.
+        * qt/benchmarks/qscriptvalue/tst_qscriptvalue.cpp: Removed.
+        * qt/tests/qscriptengine/qscriptengine.pro: Removed.
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp: Removed.
+        * qt/tests/qscriptstring/qscriptstring.pro: Removed.
+        * qt/tests/qscriptstring/tst_qscriptstring.cpp: Removed.
+        * qt/tests/qscriptvalue/qscriptvalue.pro: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue.cpp: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue.h: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated_comparison.cpp: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated_init.cpp: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated_istype.cpp: Removed.
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated_totype.cpp: Removed.
+        * qt/tests/qscriptvalueiterator/qscriptvalueiterator.pro: Removed.
+        * qt/tests/qscriptvalueiterator/tst_qscriptvalueiterator.cpp: Removed.
+        * qt/tests/tests.pri: Removed.
+        * qt/tests/tests.pro: Removed.
+
 2011-10-21  Zheng Liu  <zheng.z.liu@intel.com>
 
         bytecompiler sometimes generates incorrect bytecode for put_by_id

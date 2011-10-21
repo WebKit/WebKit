@@ -84,7 +84,7 @@ defineTest(prependJavaScriptCoreLib) {
     }
 
     # The following line is to prevent qmake from adding jscore to libQtWebKit's prl dependencies.
-    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit and QtScript
+    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit
     # statically in applications (which isn't used often because, among other things, of licensing obstacles).
     CONFIG -= explicitlib
     CONFIG -= staticlib

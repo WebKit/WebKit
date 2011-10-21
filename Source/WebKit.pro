@@ -45,11 +45,4 @@ exists($$PWD/WebKit/qt/declarative) {
 
 SUBDIRS += WebKit/qt/tests
 
-build-qtscript {
-    SUBDIRS += \
-        JavaScriptCore/qt/api/QtScript.pro \
-        JavaScriptCore/qt/tests \
-        JavaScriptCore/qt/benchmarks
-}
-
 include(WebKit/qt/docs/docs.pri)
