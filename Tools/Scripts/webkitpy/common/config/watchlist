@@ -12,11 +12,21 @@
 #
 {
     "DEFINITIONS": {
+        "ChromiumDumpRenderTree": {
+            "filename": r"Tools/DumpRenderTree/chromium/",
+        },
         "ChromiumGraphics": {
             "filename": r"Source/WebCore/platform/graphics/chromium/",
         },
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
+        },
+        "Forms": {
+            "filename": r"Source/WebCore/html/HTML(FieldSet|Form|FormControl|Input|Label"
+                        r"|OptGroup|Option|Select|TextArea|TextFormControl)Element\."
+                        r"|Source/WebCore/html/\w*InputType\."
+                        r"|Source/WebCore/rendering/Render(ListBox|MenuList|Slider|TextControl"
+                        r"|TextControlMultiLine|TextControlSingleLine)\."
         },
         "GStreamerGraphics": {
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
@@ -73,8 +83,10 @@
         # Note: All email addresses listed must be registered with bugzilla.
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
+        "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "pnormand@igalia.com", ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
