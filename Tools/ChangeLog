@@ -1,5 +1,19 @@
 2011-10-20  Eric Seidel  <eric@webkit.org>
 
+        Switch webkit2 bot to NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=56729
+
+        Reviewed by Adam Barth.
+
+        Move the WK2 bot to using NRWT instead of ORWT, as announced on webkit-dev:
+        https://lists.webkit.org/pipermail/webkit-dev/2011-October/018337.html
+
+        * Scripts/run-webkit-tests:
+        (runningOnBuildBot):
+        (useNewRunWebKitTests):
+
+2011-10-20  Eric Seidel  <eric@webkit.org>
+
         NRWT is asserting on DRT due to lack of newline when processing line from DumpRenderTree
         https://bugs.webkit.org/show_bug.cgi?id=70585
 

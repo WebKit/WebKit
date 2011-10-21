@@ -55,16 +55,6 @@ sub runningOnBuildBot()
     return $isBuildBotUser{$ENV{"USER"}};
 }
 
-# We could use isWebKit2() instead of our own custom usingWebKit2(), but then
-# we'd have to be careful to add -2 or --webkit-test-runner back into @ARGV below.
-sub usingWebKit2()
-{
-    # If either -2 or --webkit-test-runner is passed, we're supposed to use WebKit2.
-    # NRWT's WebKit2 support is still a work in progress:
-    # https://bugs.webkit.org/show_bug.cgi?id=56729
-    return grep(/(-2|--webkit-test-runner)/, @ARGV);
-}
-
 sub usingLeaks()
 {
     # LeaksViewer gets confused by NRWT's --leaks output, see bugs:
@@ -90,7 +80,7 @@ sub useNewRunWebKitTests()
         return (!isDarwin() and !isARM());
     }
 
-    return ((isLeopard() or isSnowLeopard() or isLion() or isGtk()) and !usingWebKit2() and !usingLeaks());
+    return ((isLeopard() or isSnowLeopard() or isLion() or isGtk()) and !usingLeaks());
 }
 
 my $harnessName = "old-run-webkit-tests";
