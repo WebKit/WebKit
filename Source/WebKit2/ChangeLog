@@ -1,3 +1,24 @@
+2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_stop_loading() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69610
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_stop_loading):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (provisionalLoadFailedCallback):
+        (loadFailedCallback):
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (LoadStopTrackingTest::loadCommitted):
+        (LoadStopTrackingTest::loadFailed):
+        (LoadStopTrackingTest::loadFinished):
+        (testLoadCancelled):
+        (serverCallback):
+        (beforeAll):
+
 2011-10-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] qweberror* should follow the new file and class naming rules

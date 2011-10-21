@@ -315,6 +315,25 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
 }
 
 /**
+ * webkit_web_view_stop_loading:
+ * @web_view: a #WebKitWebView
+ *
+ * Stops any ongoing loading operation in @web_view.
+ * This method does nothing if no content is being loaded.
+ * If there is a loading operation in progress, it will be cancelled and
+ * #WebKitWebLoaderClient::provisional-load-failed or
+ * #WebKitWebLoaderClient::load-failed will be emitted on the current
+ * #WebKitWebLoaderClient with %WEBKIT_NETWORK_ERROR_CANCELLED error.
+ * See also webkit_web_view_get_loader_client().
+ */
+void webkit_web_view_stop_loading(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WKPageStopLoading(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
  * webkit_web_view_go_back:
  * @web_view: a #WebKitWebView
  *

@@ -94,6 +94,9 @@ webkit_web_view_load_alternate_html         (WebKitWebView         *web_view,
                                              const gchar           *unreachable_uri);
 
 WEBKIT_API void
+webkit_web_view_stop_loading                (WebKitWebView         *web_view);
+
+WEBKIT_API void
 webkit_web_view_reload                      (WebKitWebView         *web_view);
 
 WEBKIT_API void

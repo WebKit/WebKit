@@ -70,6 +70,38 @@ static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
 
+class LoadStopTrackingTest : public LoadTrackingTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(LoadStopTrackingTest);
+
+    virtual void loadCommitted(WebKitWebLoaderClient* client)
+    {
+        LoadTrackingTest::loadCommitted(client);
+        webkit_web_view_stop_loading(m_webView);
+    }
+    virtual void loadFailed(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error)
+    {
+        g_assert(g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED));
+        LoadTrackingTest::loadFailed(client, failingURI, error);
+    }
+    virtual void loadFinished(WebKitWebLoaderClient* client)
+    {
+        g_assert_not_reached();
+    }
+};
+
+static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
+{
+    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/cancelled").data());
+    test->waitUntilLoadFinished();
+
+    Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
+    g_assert_cmpint(events.size(), ==, 3);
+    g_assert_cmpint(events[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(events[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFailed);
+}
+
 static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 {
     // Check that nothing happens when there's nothing to reload.
@@ -117,6 +149,11 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     else if (g_str_equal(path, "/redirect")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "/normal");
+    } else if (g_str_equal(path, "/cancelled")) {
+        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_server_unpause_message(server, message);
+        return;
     }
 
     soup_message_body_complete(message->response_body);
@@ -130,6 +167,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-status", testLoadingStatus);
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebLoaderClient", "load-alternate-content", testLoadAlternateContent);
+    LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);
     LoadTrackingTest::add("WebKitWebView", "reload", testWebViewReload);
 }

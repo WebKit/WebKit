@@ -36,6 +36,7 @@ static gboolean provisionalLoadReceivedServerRedirectCallback(WebKitWebLoaderCli
 
 static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
+    g_assert(error);
     test->provisionalLoadFailed(client, failingURI, error);
     return TRUE;
 }
@@ -54,6 +55,7 @@ static gboolean loadFinishedCallback(WebKitWebLoaderClient* client, WebKitWebVie
 
 static gboolean loadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
+    g_assert(error);
     test->loadFailed(client, failingURI, error);
     return TRUE;
 }
