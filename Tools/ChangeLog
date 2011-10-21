@@ -1,3 +1,17 @@
+2011-10-20  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Connecting to localhost:8880 takes one second on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=64788
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        Bind to "localhost" instead of "127.0.0.1" to let pywebsocket listen on both
+        IPv4 and IPv6 addresses. This should prevent the test reserved-opcodes.html
+        from timing out on Windows, because this test tries to open a lot of
+        connections to localhost and each attempt takes one second to fall back from
+        IPv6 to IPv4 on Windows (I have no idea why Windows works like this, though).
+
 2011-10-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         nrwt: newly generated results are put in cross-platform directory

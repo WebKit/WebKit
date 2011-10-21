@@ -117,7 +117,7 @@ class PyWebSocket(http_server.Lighttpd):
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
-            '--server-host', '127.0.0.1',
+            '--server-host', 'localhost',
             '--port', str(self._port),
             # FIXME: Don't we have a self._port_obj.layout_test_path?
             '--document-root', self._filesystem.join(self._layout_tests, 'http', 'tests'),
