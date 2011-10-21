@@ -1,3 +1,17 @@
+2011-10-21  Andreas Kling  <kling@webkit.org>
+
+        Simplify CSSStyleRule::setSelectorText().
+        https://bugs.webkit.org/show_bug.cgi?id=70607
+
+        Reviewed by Antti Koivisto.
+
+        Remove unnecessary isCSSStyleSheet() check and redundant Document finding
+        logic (CSSStyleSheet::document() will return the owner node's Document just
+        like this code would.)
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
 2011-10-21  Alejandro G. Castro  <alex@igalia.com>
 
         [cairo] Forward declaration of GraphicsContextState uses class instead of struct

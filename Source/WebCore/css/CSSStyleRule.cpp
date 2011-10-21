@@ -57,13 +57,10 @@ String CSSStyleRule::selectorText() const
 void CSSStyleRule::setSelectorText(const String& selectorText)
 {
     Document* doc = 0;
-    StyleSheet* ownerStyleSheet = m_style->parentStyleSheet();
-    if (ownerStyleSheet) {
-        if (ownerStyleSheet->isCSSStyleSheet())
-            doc = static_cast<CSSStyleSheet*>(ownerStyleSheet)->document();
-        if (!doc)
-            doc = ownerStyleSheet->ownerNode() ? ownerStyleSheet->ownerNode()->document() : 0;
-    }
+
+    if (CSSStyleSheet* styleSheet = m_style->parentStyleSheet())
+        doc = styleSheet->document();
+
     if (!doc)
         doc = m_style->node() ? m_style->node()->document() : 0;
 
