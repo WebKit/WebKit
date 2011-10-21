@@ -2062,7 +2062,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_processDidCrash
 {
-    [self setNeedsDisplay:YES];
     [self _updateRemoteAccessibilityRegistration:NO];
 }
 
@@ -2073,7 +2072,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_didRelaunchProcess
 {
-    [self setNeedsDisplay:YES];
 }
 
 - (void)_setCursor:(NSCursor *)cursor

@@ -74,6 +74,8 @@ public:
     virtual void didUninstallPageOverlay() { }
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) { }
 
+    virtual void setPaintingEnabled(bool) { }
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerSync() = 0;

@@ -56,6 +56,7 @@ DrawingAreaImpl::~DrawingAreaImpl()
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeImpl, webPage)
     , m_backingStoreStateID(0)
+    , m_isPaintingEnabled(true)
     , m_inUpdateBackingStoreState(false)
     , m_shouldSendDidUpdateBackingStoreState(false)
     , m_isWaitingForDidUpdate(false)
@@ -78,6 +79,9 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
 
 void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 {
+    if (!m_isPaintingEnabled)
+        return;
+
     IntRect dirtyRect = rect;
     dirtyRect.intersect(m_webPage->bounds());
 
@@ -100,6 +104,9 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 
 void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
+    if (!m_isPaintingEnabled)
+        return;
+
     if (m_layerTreeHost) {
         ASSERT(m_scrollRect.isEmpty());
         ASSERT(m_scrollOffset.isEmpty());
@@ -226,6 +233,11 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
     }
 
     setNeedsDisplay(rect);
+}
+
+void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
+{
+    m_isPaintingEnabled = paintingEnabled;
 }
 
 void DrawingAreaImpl::layerHostDidFlushLayers()

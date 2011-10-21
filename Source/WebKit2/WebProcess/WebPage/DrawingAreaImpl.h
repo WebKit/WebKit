@@ -62,7 +62,9 @@ private:
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
-    
+
+    virtual void setPaintingEnabled(bool);
+
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void scheduleCompositingLayerSync();
     virtual void syncCompositingLayers();
@@ -99,6 +101,9 @@ private:
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
+
+    // Whether painting is enabled. If painting is disabled, any calls to setNeedsDisplay and scroll are ignored.
+    bool m_isPaintingEnabled;
 
     // Whether we're currently processing an UpdateBackingStoreState message.
     bool m_inUpdateBackingStoreState;
