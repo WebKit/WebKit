@@ -1,5 +1,12 @@
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: This test is flaky and crashing
+        sometimes on snow-leopard.
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Fix r98125 by having duplicate entries for Win Debug.
 
         * platform/chromium/test_expectations.txt:

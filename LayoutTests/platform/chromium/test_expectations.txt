@@ -2688,6 +2688,7 @@ BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 // Snow Leopard-only flakiness
 BUGWK54322 SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
+BUGWK70633 SNOWLEOPARD : fast/history/history-back-forward-within-subframe-hash.html = PASS CRASH
 BUGWK54322 SNOWLEOPARD : fast/history/history-back-within-subframe-hash.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : fast/loader/loadInProgress.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : http/tests/loading/location-hash-reload-cycle.html = PASS TEXT
