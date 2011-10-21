@@ -2,6 +2,12 @@
 
         Unreviewed gardening.
 
+        * platform/chromium/test_expectations.txt: The test is now also failing on debug on XP.
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
         * platform/chromium/test_expectations.txt: Mark call-base-resolution.html as crashing on snow-leopard.
 
 2011-10-21  Rafael Weinstein  <rafaelw@chromium.org>
