@@ -34,6 +34,7 @@
 
 #include "V8WorkerContextErrorHandler.h"
 
+#include "EventNames.h"
 #include "ErrorEvent.h"
 #include "V8Binding.h"
 
@@ -46,7 +47,7 @@ V8WorkerContextErrorHandler::V8WorkerContextErrorHandler(v8::Local<v8::Object> l
 
 v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    ASSERT(event->isErrorEvent());
+    ASSERT(event->interfaceName() == eventNames().interfaceForErrorEvent);
     v8::Local<v8::Object> listener = getListenerObject(context);
     v8::Local<v8::Value> returnValue;
     if (!listener.IsEmpty() && listener->IsFunction()) {

@@ -66,7 +66,6 @@ public:
     bool verticalOverflow() const { return m_verticalOverflow; }
 
     virtual const AtomicString& interfaceName() const;
-    virtual bool isOverflowEvent() const;
 
 private:
     OverflowEvent();

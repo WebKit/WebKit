@@ -69,9 +69,4 @@ const AtomicString& MutationEvent::interfaceName() const
     return eventNames().interfaceForMutationEvent;
 }
 
-bool MutationEvent::isMutationEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

@@ -50,8 +50,6 @@ public:
 private:
     SVGZoomEvent();
 
-    virtual bool isSVGZoomEvent() const;
-
     float m_newScale;
     float m_previousScale;
 

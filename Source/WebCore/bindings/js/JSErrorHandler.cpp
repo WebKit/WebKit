@@ -34,6 +34,7 @@
 
 #include "ErrorEvent.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "JSEvent.h"
 #include <runtime/JSLock.h>
 
@@ -52,7 +53,7 @@ JSErrorHandler::~JSErrorHandler()
 
 void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
-    if (!event->isErrorEvent())
+    if (event->interfaceName() != eventNames().interfaceForErrorEvent)
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
     ASSERT(scriptExecutionContext);

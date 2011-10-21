@@ -112,22 +112,7 @@ bool Event::isMouseEvent() const
     return false;
 }
 
-bool Event::isMutationEvent() const
-{
-    return false;
-}
-
 bool Event::isKeyboardEvent() const
-{
-    return false;
-}
-
-bool Event::isTextEvent() const
-{
-    return false;
-}
-
-bool Event::isCompositionEvent() const
 {
     return false;
 }
@@ -142,54 +127,12 @@ bool Event::isClipboardEvent() const
     return false;
 }
 
-bool Event::isWheelEvent() const
-{
-    return false;
-}
-
-bool Event::isMessageEvent() const
+bool Event::storesResultAsString() const
 {
     return false;
 }
 
 bool Event::isBeforeTextInsertedEvent() const
-{
-    return false;
-}
-
-bool Event::isOverflowEvent() const
-{
-    return false;
-}
-
-bool Event::isPageTransitionEvent() const
-{
-    return false;
-}
-
-bool Event::isProgressEvent() const
-{
-    return false;
-}
-
-bool Event::isBeforeLoadEvent() const
-{
-    return false;
-}
-
-#if ENABLE(SVG)
-bool Event::isSVGZoomEvent() const
-{
-    return false;
-}
-#endif
-
-bool Event::isErrorEvent() const
-{
-    return false;
-}
-
-bool Event::storesResultAsString() const
 {
     return false;
 }

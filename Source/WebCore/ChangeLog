@@ -1,3 +1,70 @@
+2011-10-21  Adam Barth  <abarth@webkit.org>
+
+        Event.h has too many virtual isMumbleEvent() functions
+        https://bugs.webkit.org/show_bug.cgi?id=70636
+
+        Reviewed by Dimitri Glazkov.
+
+        We should use the new interfaceName() way of doing run-time type inference.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::JSEvent::clipboardData):
+        * bindings/objc/DOMEvents.mm:
+        (kitClass):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::V8Event::clipboardDataAccessorGetter):
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEvent::interfaceName):
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/ClipboardEvent.cpp:
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.cpp:
+        * dom/CompositionEvent.h:
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        (WebCore::Event::storesResultAsString):
+        (WebCore::Event::storeResult):
+        (WebCore::Event::clipboardData):
+        * dom/Event.h:
+        * dom/Event.idl:
+            - Remove this interface from the CPP bindings because this function
+              no longer exists.  It's unclear to me how strong our API
+              commitments are in the CPP bindings.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::determineDispatchBehavior):
+        * dom/MessageEvent.cpp:
+        * dom/MessageEvent.h:
+        * dom/MutationEvent.cpp:
+        * dom/MutationEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * dom/OverflowEvent.cpp:
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.h:
+        * dom/ProgressEvent.h:
+        * dom/TextEvent.cpp:
+        * dom/TextEvent.h:
+        * dom/WheelEvent.cpp:
+        * dom/WheelEvent.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        (WebCore::TextFieldInputType::shouldSubmitImplicitly):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        * svg/SVGZoomEvent.cpp:
+        * svg/SVGZoomEvent.h:
+
 2011-10-21  Raymond Toy  <rtoy@google.com>
 
         Flush denormals in Biquad, ZeroPole, and DynamicsCompressor.

@@ -83,7 +83,6 @@ module events {
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
         // Extra WebCore methods exposed to allow compile-time casting in C++
-        boolean isMutationEvent();
         boolean isMouseEvent();
         boolean isUIEvent();
 #endif

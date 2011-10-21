@@ -60,9 +60,4 @@ const AtomicString& CompositionEvent::interfaceName() const
     return eventNames().interfaceForCompositionEvent;
 }
 
-bool CompositionEvent::isCompositionEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

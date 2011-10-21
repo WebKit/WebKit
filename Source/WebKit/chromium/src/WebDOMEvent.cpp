@@ -115,28 +115,28 @@ bool WebDOMEvent::isMouseEvent() const
     return m_private->isMouseEvent();
 }
 
-bool WebDOMEvent::isMutationEvent() const
-{
-    ASSERT(m_private);
-    return m_private->isMutationEvent();
-}
-
 bool WebDOMEvent::isKeyboardEvent() const
 {
     ASSERT(m_private);
     return m_private->isKeyboardEvent();
 }
 
+bool WebDOMEvent::isMutationEvent() const
+{
+    ASSERT(m_private);
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForMutationEvent;
+}
+
 bool WebDOMEvent::isTextEvent() const
 {
     ASSERT(m_private);
-    return m_private->isTextEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForTextEvent;
 }
 
 bool WebDOMEvent::isCompositionEvent() const
 {
     ASSERT(m_private);
-    return m_private->isCompositionEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForCompositionEvent;
 }
 
 bool WebDOMEvent::isDragEvent() const
@@ -154,13 +154,13 @@ bool WebDOMEvent::isClipboardEvent() const
 bool WebDOMEvent::isMessageEvent() const
 {
     ASSERT(m_private);
-    return m_private->isMessageEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForMessageEvent;
 }
 
 bool WebDOMEvent::isWheelEvent() const
 {
     ASSERT(m_private);
-    return m_private->isWheelEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForWheelEvent;
 }
 
 bool WebDOMEvent::isBeforeTextInsertedEvent() const
@@ -172,13 +172,13 @@ bool WebDOMEvent::isBeforeTextInsertedEvent() const
 bool WebDOMEvent::isOverflowEvent() const
 {
     ASSERT(m_private);
-    return m_private->isOverflowEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForOverflowEvent;
 }
 
 bool WebDOMEvent::isPageTransitionEvent() const
 {
     ASSERT(m_private);
-    return m_private->isPageTransitionEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForPageTransitionEvent;
 }
 
 bool WebDOMEvent::isPopStateEvent() const
@@ -190,7 +190,7 @@ bool WebDOMEvent::isPopStateEvent() const
 bool WebDOMEvent::isProgressEvent() const
 {
     ASSERT(m_private);
-    return m_private->isProgressEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForProgressEvent;
 }
 
 bool WebDOMEvent::isXMLHttpRequestProgressEvent() const
@@ -214,7 +214,7 @@ bool WebDOMEvent::isWebKitTransitionEvent() const
 bool WebDOMEvent::isBeforeLoadEvent() const
 {
     ASSERT(m_private);
-    return m_private->isBeforeLoadEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForBeforeLoadEvent;
 }
 
 } // namespace WebKit

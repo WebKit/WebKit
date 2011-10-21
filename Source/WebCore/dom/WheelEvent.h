@@ -78,8 +78,6 @@ namespace WebCore {
                    const IntPoint& screenLocation, const IntPoint& pageLocation,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice);
 
-        virtual bool isWheelEvent() const;
-
         IntPoint m_wheelDelta;
         IntPoint m_rawDelta;
         Granularity m_granularity;

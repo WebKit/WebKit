@@ -38,6 +38,7 @@
 #import "DOMTextEvent.h"
 #import "DOMWheelEvent.h"
 #import "Event.h"
+#import "EventNames.h"
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVGZoomEvent.h"
@@ -45,30 +46,32 @@
 
 Class kitClass(WebCore::Event* impl)
 {
+    AtomicString desiredInterface = impl->interfaceName();
+
     if (impl->isUIEvent()) {
         if (impl->isKeyboardEvent())
             return [DOMKeyboardEvent class];
-        if (impl->isTextEvent())
-            return [DOMTextEvent class];
         if (impl->isMouseEvent())
             return [DOMMouseEvent class];
-        if (impl->isWheelEvent())
+        if (desiredInterface == WebCore::eventNames().interfaceForTextEvent)
+            return [DOMTextEvent class];
+        if (desiredInterface == WebCore::eventNames().interfaceForWheelEvent)
             return [DOMWheelEvent class];        
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
-        if (impl->isSVGZoomEvent())
+        if (desiredInterface == WebCore::eventNames().interfaceForSVGZoomEvent)
             return [DOMSVGZoomEvent class];
 #endif
         return [DOMUIEvent class];
     }
-    if (impl->isMutationEvent())
+    if (desiredInterface == WebCore::eventNames().interfaceForMutationEvent)
         return [DOMMutationEvent class];
-    if (impl->isOverflowEvent())
+    if (desiredInterface == WebCore::eventNames().interfaceForOverflowEvent)
         return [DOMOverflowEvent class];
-    if (impl->isMessageEvent())
+    if (desiredInterface == WebCore::eventNames().interfaceForMessageEvent)
         return [DOMMessageEvent class];
-    if (impl->isProgressEvent())
+    if (desiredInterface == WebCore::eventNames().interfaceForProgressEvent || desiredInterface == WebCore::eventNames().interfaceForXMLHttpRequestProgressEvent)
         return [DOMProgressEvent class];
-    if (impl->isBeforeLoadEvent())
+    if (desiredInterface == WebCore::eventNames().interfaceForBeforeLoadEvent)
         return [DOMBeforeLoadEvent class];
     return [DOMEvent class];
 }

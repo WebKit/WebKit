@@ -59,7 +59,6 @@ public:
                                  bool persisted);
 
     virtual const AtomicString& interfaceName() const;
-    virtual bool isPageTransitionEvent() const { return true; }
 
     bool persisted() const { return m_persisted; }
 

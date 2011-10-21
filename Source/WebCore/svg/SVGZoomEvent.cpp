@@ -69,11 +69,6 @@ FloatPoint SVGZoomEvent::newTranslate() const
     return m_newTranslate;
 }
 
-bool SVGZoomEvent::isSVGZoomEvent() const
-{
-    return true;
-}
-
 const AtomicString& SVGZoomEvent::interfaceName() const
 {
     return eventNames().interfaceForSVGZoomEvent;

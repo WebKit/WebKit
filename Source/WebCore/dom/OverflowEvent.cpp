@@ -73,11 +73,6 @@ const AtomicString& OverflowEvent::interfaceName() const
     return eventNames().interfaceForOverflowEvent;
 }
 
-bool OverflowEvent::isOverflowEvent() const
-{
-    return true;
-}
-
 void OverflowEvent::initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow)
 {
     if (dispatched())

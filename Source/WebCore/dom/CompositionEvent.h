@@ -48,7 +48,6 @@ namespace WebCore {
         String data() const { return m_data; }
 
         virtual const AtomicString& interfaceName() const;
-        virtual bool isCompositionEvent() const;
 
     private:
         CompositionEvent();

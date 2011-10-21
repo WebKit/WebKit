@@ -68,8 +68,6 @@ protected:
     ProgressEvent(const AtomicString&, const ProgressEventInit&);
 
 private:
-    virtual bool isProgressEvent() const { return true; }
-    
     bool m_lengthComputable;
     unsigned long long m_loaded;
     unsigned long long m_total;

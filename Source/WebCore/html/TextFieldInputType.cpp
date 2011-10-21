@@ -142,7 +142,7 @@ void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
 
 void TextFieldInputType::forwardEvent(Event* event)
 {
-    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)) {
+    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->interfaceName() == eventNames().interfaceForWheelEvent || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)) {
         RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element()->renderer());
         if (event->type() == eventNames().blurEvent) {
             if (RenderBox* innerTextRenderer = innerTextElement()->renderBox()) {
@@ -160,7 +160,7 @@ void TextFieldInputType::forwardEvent(Event* event)
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 {
-    return (event->type() == eventNames().textInputEvent && event->isTextEvent() && static_cast<TextEvent*>(event)->data() == "\n") || InputType::shouldSubmitImplicitly(event);
+    return (event->type() == eventNames().textInputEvent && event->interfaceName() == eventNames().interfaceForTextEvent && static_cast<TextEvent*>(event)->data() == "\n") || InputType::shouldSubmitImplicitly(event);
 }
 
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const

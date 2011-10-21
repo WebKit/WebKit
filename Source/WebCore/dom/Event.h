@@ -114,29 +114,17 @@ namespace WebCore {
 
         virtual const AtomicString& interfaceName() const;
 
-        // These are needed for the CPP bindings.
+        // These events are general classes of events.
         virtual bool isUIEvent() const;
         virtual bool isMouseEvent() const;
-        virtual bool isMutationEvent() const;
-
-        virtual bool isDragEvent() const; // a subset of mouse events
-
-        // FIXME: Remove these! Callers should use interfaceName() instead.
         virtual bool isKeyboardEvent() const;
-        virtual bool isTextEvent() const;
-        virtual bool isCompositionEvent() const;
+
+        // Drag events are a subset of mouse events.
+        virtual bool isDragEvent() const;
+
+        // These events lack a DOM interface.
         virtual bool isClipboardEvent() const;
-        virtual bool isMessageEvent() const;
-        virtual bool isWheelEvent() const;
         virtual bool isBeforeTextInsertedEvent() const;
-        virtual bool isOverflowEvent() const;
-        virtual bool isPageTransitionEvent() const;
-        virtual bool isProgressEvent() const;
-        virtual bool isBeforeLoadEvent() const;
-#if ENABLE(SVG)
-        virtual bool isSVGZoomEvent() const;
-#endif
-        virtual bool isErrorEvent() const;
 
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
         bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }

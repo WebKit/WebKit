@@ -104,9 +104,4 @@ const AtomicString& TextEvent::interfaceName() const
     return eventNames().interfaceForTextEvent;
 }
 
-bool TextEvent::isTextEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

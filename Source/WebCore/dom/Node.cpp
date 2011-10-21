@@ -2876,7 +2876,7 @@ void Node::defaultEventHandler(Event* event)
                 page->contextMenuController()->handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
-        if (event->isTextEvent())
+        if (event->interfaceName() == eventNames().interfaceForTextEvent)
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->defaultTextInputEventHandler(static_cast<TextEvent*>(event));
 #if ENABLE(PAN_SCROLLING)
@@ -2896,7 +2896,7 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
-    } else if (eventType == eventNames().mousewheelEvent && event->isWheelEvent()) {
+    } else if (eventType == eventNames().mousewheelEvent && event->interfaceName() == eventNames().interfaceForWheelEvent) {
         WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
         
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.

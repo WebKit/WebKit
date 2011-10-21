@@ -169,9 +169,4 @@ const AtomicString& MessageEvent::interfaceName() const
     return eventNames().interfaceForMessageEvent;
 }
 
-bool MessageEvent::isMessageEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

@@ -89,11 +89,6 @@ const AtomicString& WheelEvent::interfaceName() const
     return eventNames().interfaceForWheelEvent;
 }
 
-bool WheelEvent::isWheelEvent() const
-{
-    return true;
-}
-
 inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
 {
     return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;

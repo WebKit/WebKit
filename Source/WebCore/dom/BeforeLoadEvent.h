@@ -70,7 +70,6 @@ public:
     const String& url() const { return m_url; }
 
     virtual const AtomicString& interfaceName() const { return eventNames().interfaceForBeforeLoadEvent; }
-    virtual bool isBeforeLoadEvent() const { return true; }
 
 private:
     BeforeLoadEvent()

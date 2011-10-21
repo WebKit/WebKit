@@ -1,3 +1,26 @@
+2011-10-21  Adam Barth  <abarth@webkit.org>
+
+        Event.h has too many virtual isMumbleEvent() functions
+        https://bugs.webkit.org/show_bug.cgi?id=70636
+
+        Reviewed by Dimitri Glazkov.
+
+        Update these callsites to the new API.
+
+        * src/WebDOMEvent.cpp:
+        (WebKit::WebDOMEvent::isKeyboardEvent):
+        (WebKit::WebDOMEvent::isMutationEvent):
+        (WebKit::WebDOMEvent::isTextEvent):
+        (WebKit::WebDOMEvent::isCompositionEvent):
+        (WebKit::WebDOMEvent::isClipboardEvent):
+        (WebKit::WebDOMEvent::isMessageEvent):
+        (WebKit::WebDOMEvent::isWheelEvent):
+        (WebKit::WebDOMEvent::isBeforeTextInsertedEvent):
+        (WebKit::WebDOMEvent::isOverflowEvent):
+        (WebKit::WebDOMEvent::isPageTransitionEvent):
+        (WebKit::WebDOMEvent::isProgressEvent):
+        (WebKit::WebDOMEvent::isBeforeLoadEvent):
+
 2011-10-20  Zhenyao Mo  <zmo@google.com>
 
         Implement mechanism to enable privileged webgl extensions

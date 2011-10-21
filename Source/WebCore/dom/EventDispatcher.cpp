@@ -396,7 +396,7 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, N
 
     // Per XBL 2.0 spec, mutation events should never cross shadow DOM boundary:
     // http://dev.w3.org/2006/xbl2/#event-flow-and-targeting-across-shadow-s
-    if (event->isMutationEvent())
+    if (event->interfaceName() == eventNames().interfaceForMutationEvent)
         return StayInsideShadowDOM;
 
     // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
