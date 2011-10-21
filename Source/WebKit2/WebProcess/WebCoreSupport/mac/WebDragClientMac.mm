@@ -58,6 +58,7 @@ using namespace WebKit;
 // Create it explicitly because dragImage is called in the UI process.
 @interface NSFilePromiseDragSource : NSObject
 {
+    id _dragSource;
     char _unknownFields[256];
 }
 - (id)initWithSource:(id)dragSource;
@@ -188,6 +189,21 @@ void WebDragClient::dragEnded()
 } // namespace WebKit
 
 @implementation WKPasteboardFilePromiseOwner
+
+- (id)initWithSource:(id)dragSource
+{
+    self = [super initWithSource:dragSource];
+    if (!self)
+        return nil;
+    [_dragSource retain];
+    return self;
+}
+
+- (void)dealloc
+{
+    [_dragSource release];
+    [super dealloc];
+}
 
 // The AppKit implementation of copyDropDirectory gets the current pasteboard in
 // a way that only works in the process where the drag is initiated. We supply
