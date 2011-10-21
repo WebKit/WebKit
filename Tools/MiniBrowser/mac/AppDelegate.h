@@ -33,6 +33,7 @@ typedef unsigned long ProcessModel;
     ProcessModel _currentProcessModel;
     WKContextRef _threadContext;
     WKContextRef _processContext;
+    WKPageGroupRef _pageGroup;
 }
 
 - (WKContextRef)getCurrentContext;

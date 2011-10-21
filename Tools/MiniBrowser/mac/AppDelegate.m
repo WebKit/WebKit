@@ -148,6 +148,10 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKContextSetCacheModel(_processContext, kWKCacheModelPrimaryWebBrowser);
 
         WKRelease(bundlePath);
+        
+        WKStringRef pageGroupIdentifier = WKStringCreateWithCFString(CFSTR("MiniBrowser"));
+        _pageGroup = WKPageGroupCreateWithIdentifier(pageGroupIdentifier);
+        WKRelease(pageGroupIdentifier);
     }
 
     return self;
@@ -155,7 +159,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (IBAction)newWindow:(id)sender
 {
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext]];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext] pageGroup:_pageGroup];
     [[controller window] makeKeyAndOrderFront:sender];
     
     [controller loadURLString:defaultURL];
@@ -256,7 +260,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
     BrowserWindowController *controller = [self frontmostBrowserWindowController];
     if (!controller) {
-        controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext]];
+        controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext] pageGroup:_pageGroup];
         [[controller window] makeKeyAndOrderFront:self];
     }
     

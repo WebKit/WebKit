@@ -1,3 +1,25 @@
+2011-10-21  Sam Weinig  <sam@webkit.org>
+
+        Remove ability to create a WKView without a WKContextRef and WKPageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=70653
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate openPanelDidEnd:returnCode:contextInfo:]):
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController initWithContext:pageGroup:]):
+        (-[BrowserWindowController windowWillClose:]):
+        (createNewPage):
+        (-[BrowserWindowController awakeFromNib]):
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test):
+        Update testing code to pass a PageGroup as necessary.
+
 2011-10-21  Leandro Pereira  <leandro@profusion.mobi>
 
         webkitpy: Teach NRWT about the EFL port

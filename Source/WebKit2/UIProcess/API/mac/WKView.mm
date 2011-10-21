@@ -198,14 +198,9 @@ struct WKViewInterpretKeyEventsParameters {
 
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame
-{
-    return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
-}
-
 - (id)initWithFrame:(NSRect)frame processCluster:(WKProcessCluster *)processCluster
 {
-    return [self initWithFrame:frame contextRef:processCluster.contextRef];
+    return [self initWithFrame:frame contextRef:processCluster.contextRef pageGroupRef:0];
 }
 
 - (void)dealloc
@@ -2570,11 +2565,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 @end
 
 @implementation WKView (Private)
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef
-{   
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
-}
 
 - (void)_registerDraggedTypes
 {

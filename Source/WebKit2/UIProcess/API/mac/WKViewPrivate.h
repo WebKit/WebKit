@@ -31,7 +31,6 @@
 
 @property(readonly) WKPageRef pageRef;
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
