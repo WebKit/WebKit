@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessCluster.h>
+#import <WebKit2/WKProcessGroup.h>
 
-@interface WKProcessCluster (Internal)
+@interface WKProcessGroup (Internal)
 
 @property(readonly) WKContextRef contextRef;
 

@@ -73,7 +73,7 @@
 #import <wtf/RetainPtr.h>
 
 /* API internals. */
-#import "WKProcessClusterInternal.h"
+#import "WKProcessGroupInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 
 
@@ -198,7 +198,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 @implementation WKView
 
-- (id)initWithFrame:(NSRect)frame processCluster:(WKProcessCluster *)processCluster
+- (id)initWithFrame:(NSRect)frame processCluster:(WKProcessGroup *)processCluster
 {
     return [self initWithFrame:frame contextRef:processCluster.contextRef pageGroupRef:0];
 }

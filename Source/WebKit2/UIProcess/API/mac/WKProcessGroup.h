@@ -26,15 +26,14 @@
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
 
-@class WKProcessClusterData;
+@class WKProcessGroupData;
 
 WK_EXPORT
-@interface WKProcessCluster : NSObject
-{
-    WKProcessClusterData *_data;
+@interface WKProcessGroup : NSObject {
+@private
+    WKProcessGroupData *_data;
 }
 
-- (id)init;
 - (id)initWithInjectedBundleURL:(NSURL *)bundleURL;
 
 @end

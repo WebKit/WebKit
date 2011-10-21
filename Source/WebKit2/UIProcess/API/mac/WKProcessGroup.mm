@@ -24,23 +24,23 @@
  */
 
 #import "config.h"
-#import "WKProcessCluster.h"
-#import "WKProcessClusterInternal.h"
+#import "WKProcessGroup.h"
+#import "WKProcessGroupInternal.h"
 
 #import "WKContext.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 
-@interface WKProcessClusterData : NSObject {
+@interface WKProcessGroupData : NSObject {
 @public
     WKRetainPtr<WKContextRef> _contextRef;
 }
 @end
 
-@implementation WKProcessClusterData
+@implementation WKProcessGroupData
 @end
 
-@implementation WKProcessCluster
+@implementation WKProcessGroup
 
 - (id)init
 {
@@ -53,7 +53,7 @@
     if (!self)
         return nil;
 
-    _data = [[WKProcessClusterData alloc] init];
+    _data = [[WKProcessGroupData alloc] init];
     
     if (bundleURL) {
         WKRetainPtr<WKStringRef> bundleURLString = adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL absoluteString]));
@@ -72,7 +72,7 @@
 
 @end
 
-@implementation WKProcessCluster (Internal)
+@implementation WKProcessGroup (Internal)
 
 - (WKContextRef)contextRef
 {
