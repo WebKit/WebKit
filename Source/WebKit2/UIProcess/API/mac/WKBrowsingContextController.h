@@ -29,8 +29,8 @@
 @class WKBrowsingContextControllerData;
 
 WK_EXPORT
-@interface WKBrowsingContextController : NSObject
-{
+@interface WKBrowsingContextController : NSObject {
+@private
     WKBrowsingContextControllerData *_data;
 }
 

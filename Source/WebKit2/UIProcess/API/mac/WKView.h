@@ -32,6 +32,7 @@
 
 WK_EXPORT
 @interface WKView : NSView <NSTextInputClient> {
+@private
     WKViewData *_data;
     unsigned _unused;
 }
