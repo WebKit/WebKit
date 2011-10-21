@@ -3855,3 +3855,6 @@ BUGWK70383 LEOPARD CPU-CG : editing/pasteboard/4944770-1.html = IMAGE
 BUGWK70386 SNOWLEOPARD DEBUG : storage/domstorage/events/documentURI.html = PASS CRASH
 
 BUGCR101024 MAC CPU : fast/events/reveal-link-when-focused.html = IMAGE
+
+BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
+BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT

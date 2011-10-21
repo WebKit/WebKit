@@ -1,5 +1,25 @@
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Gardening rebaselines.
+
+        * platform/chromium-linux-x86/fast/multicol/vertical-lr: Removed.
+        * platform/chromium-linux-x86/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl: Removed.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Removed.
+        * platform/chromium-linux/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Removed.
+        * platform/chromium-linux/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Removed.
+        * platform/chromium-win/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+        * platform/chromium/fast/multicol: Added.
+        * platform/chromium/fast/multicol/vertical-lr: Added.
+        * platform/chromium/fast/multicol/vertical-lr/rules-with-border-before-expected.png: Added.
+        * platform/chromium/fast/multicol/vertical-rl: Added.
+        * platform/chromium/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        The dumps are weird on SL so we don't land them but mark the test as PASS TEXT.
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed gardening.
 
         * platform/chromium/test_expectations.txt: This test is flaky and crashing
