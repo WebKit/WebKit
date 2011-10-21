@@ -39,6 +39,7 @@ PASS setVersionTrans !== null is true
 store = setVersionTrans.objectStore('storeName')
 index = store.createIndex('indexFail', 'x')
 PASS db.version is "new version"
+PASS store.transaction is setVersionTrans
 PASS store.indexNames is ['indexName']
 PASS store.indexNames.length is 1
 PASS store.indexNames.contains('') is false

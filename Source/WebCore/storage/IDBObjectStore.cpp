@@ -68,6 +68,11 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
     return m_objectStore->indexNames();
 }
 
+IDBTransaction* IDBObjectStore::transaction() const
+{
+    return m_transaction.get();
+}
+
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());

@@ -1,3 +1,19 @@
+2011-10-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: objectStore.transaction property should be readonly
+        https://bugs.webkit.org/show_bug.cgi?id=62395
+
+        Reviewed by Tony Chang.
+
+        Implement the IDBObjectStore.transaction property defined by the spec.
+
+        Test: storage/indexeddb/readonly-properties.html
+
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::transaction):
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStore.idl:
+
 2011-10-21  Adam Barth  <abarth@webkit.org>
 
         Event.h has too many virtual isMumbleEvent() functions

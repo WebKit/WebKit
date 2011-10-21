@@ -116,6 +116,7 @@ function createAnotherIndex()
 function checkMetadata()
 {
     shouldBeEqualToString("db.version", "new version");
+    shouldBe("store.transaction", "setVersionTrans");
     shouldBe("store.indexNames", "['indexName']");
     shouldBe("store.indexNames.length", "1");
     shouldBe("store.indexNames.contains('')", "false");

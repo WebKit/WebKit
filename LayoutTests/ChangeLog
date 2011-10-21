@@ -1,3 +1,15 @@
+2011-10-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: objectStore.transaction property should be readonly
+        https://bugs.webkit.org/show_bug.cgi?id=62395
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/readonly-properties-expected.txt: Added.
+        * storage/indexeddb/readonly-properties.html: Added.
+
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening, yet another flaky crashing test.

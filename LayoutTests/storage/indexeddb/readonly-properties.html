@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test IndexedDB readonly properties");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function setReadonlyProperty(property, value)
+{
+    oldValue = eval(property);
+    debug("trying to set readonly property " + property);
+    evalAndLog(property + " = " + value);
+    newValue = eval(property);
+    if (oldValue == newValue) {
+        testPassed(property + " is still " + oldValue);
+    } else {
+        testFailed(property + " value was changed to " + newValue);
+    }
+}
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+    IDBCursor = evalAndLog("IDBCursor = window.IDBCursor || window.webkitIDBCursor;");
+    shouldBeFalse("IDBCursor == null");
+    IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
+    shouldBeFalse("IDBKeyRange == null");
+
+    name = "foo";
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = createAndPopulateObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAndPopulateObjectStore()
+{
+    transaction = evalAndLog("transaction = event.target.result;");
+    deleteAllObjectStores(db);
+    objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
+    setReadonlyProperty("objectStore.transaction", "this");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
