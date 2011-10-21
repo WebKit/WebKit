@@ -99,7 +99,7 @@ public:
     {
         if (isInt32Prediction(prediction))
             return ValueSource(Int32InRegisterFile);
-        if (isArrayPrediction(prediction))
+        if (isArrayPrediction(prediction) || isByteArrayPrediction(prediction))
             return ValueSource(CellInRegisterFile);
         return ValueSource(ValueInRegisterFile);
     }

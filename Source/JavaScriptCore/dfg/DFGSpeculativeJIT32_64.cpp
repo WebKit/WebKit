@@ -696,13 +696,13 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
-        if (isArrayPrediction(prediction)) {
+        if (isArrayPrediction(prediction) || isByteArrayPrediction(prediction)) {
             m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
             // Like cellResult, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node.virtualRegister();
-            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderCell);
             m_generationInfo[virtualRegister].initCell(m_compileIndex, node.refCount(), result.gpr());
             break;
         }
