@@ -106,7 +106,7 @@ WEBKIT_API void
 webkit_web_view_go_back                     (WebKitWebView         *web_view);
 
 WEBKIT_API gboolean
-webkit_web_view_can_go_back                 (WebKitWebView         *web_view)
+webkit_web_view_can_go_back                 (WebKitWebView         *web_view);
 
 WEBKIT_API void
 webkit_web_view_go_forward                  (WebKitWebView         *web_view);
