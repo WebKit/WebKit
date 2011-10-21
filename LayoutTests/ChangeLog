@@ -1,3 +1,9 @@
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
+        These tests are skipped so there's no need to say they TIMEOUT.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-02  Kent Tamura  <tkent@chromium.org>
 
         Add a test to check behavior of tabindex attribute with a large number
