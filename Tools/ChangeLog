@@ -1,3 +1,31 @@
+2011-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Bencher script doesn't measure GC times accurately
+        https://bugs.webkit.org/show_bug.cgi?id=70588
+
+        Reviewed by Geoff Garen.
+        
+        Added two new options which allow different ways of measuring GC times:
+        
+        --measure-gc, which omits calls to gc() between benchmark invocations.
+        This option takes an optional argument, which is the name of the
+        VM in which to enable this feature. This allows comparing a single VM
+        against itself, with and without GC.
+        
+        --rerun <N>, which causes each sample measurement to include N invocations
+        which do not have gc() calls between them. The default is N = 1, which
+        results in the same behavior as before.
+        
+        You can use either --measure-gc or --rerun <N> for N > 1 (preferably
+        N >= 3) to get more of a contribution from GC to the measured times.
+        --rerun results in tighter confidence intervals than --measure-gc, since
+        it amortizes GC effects in each sample, while with --measure-gc some
+        samples will see GC and some won't leading to a higher standard devation
+        and thus requiring more samples to reduce confidence intervals to
+        managable levels.
+
+        * Scripts/bencher:
+
 2011-10-21  Sam Weinig  <sam@webkit.org>
 
         Remove ability to create a WKView without a WKContextRef and WKPageGroupRef

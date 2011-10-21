@@ -198,12 +198,14 @@ IBR_LOOKUP=[0.00615583, 0.0975, 0.22852, 0.341628, 0.430741, 0.500526, 0.555933,
 
 # Run-time configuration parameters (can be set with command-line options)
 
+$rerun=1
 $inner=3
 $warmup=1
 $outer=4
 $includeSunSpider=true
 $includeV8=true
 $includeKraken=true
+$measureGC=false
 $benchmarkPattern=nil
 $verbosity=0
 $innerMode=:reload
@@ -243,6 +245,8 @@ def usage
   puts "of the form Conf#<n> will be ascribed to the configuration automatically."
   puts 
   puts "Options:"
+  puts "--rerun <n>          Set the number of iterations of the benchmark that"
+  puts "                     contribute to the measured run time.  Default is #{$rerun}."
   puts "--inner <n>          Set the number of inner (per-runtime-invocation)"
   puts "                     iterations.  Default is #{$inner}."
   puts "--outer <n>          Set the number of runtime invocations for each benchmark."
@@ -262,6 +266,10 @@ def usage
   puts "--exclude-sunspider  Exclude SunSpider (only run V8 and Kraken)."
   puts "--exclude-kraken     Exclude SunSpider (only run SunSpider and V8)."
   puts "--benchmarks         Only run benchmarks matching the given regular expression."
+  puts "--measure-gc         Turn off manual calls to gc(), so that GC time is measured."
+  puts "                     Works best with large values of --inner.  You can also say"
+  puts "                     --measure-gc <conf>, which turns this on for one"
+  puts "                     configuration only."
   puts "--keep-files         Keep temporary files.  Useful for debugging."
   puts "--verbose or -v      Print more stuff."
   puts "--brief              Print only the final result for each VM."
@@ -583,7 +591,9 @@ def emitTimeHelpers(file)
   end
   doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
   doublePuts($stderr,file,"   var __bencher_before = __bencher_curTimeMS();")
-  doublePuts($stderr,file,"   run(__bencher_what);")
+  $rerun.times {
+    doublePuts($stderr,file,"   run(__bencher_what);")
+  }
   doublePuts($stderr,file,"   var __bencher_after = __bencher_curTimeMS();")
   doublePuts($stderr,file,"   return __bencher_after - __bencher_before;")
   doublePuts($stderr,file,"}")
@@ -597,11 +607,11 @@ def emitBenchRunCode(vm, file, benchpath)
     when :jsc
       $warmup.times {
         doublePuts($stderr,file,"__bencher_run(#{benchpath.inspect})")
-        doublePuts($stderr,file,"gc();")
+        doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
       }
       $inner.times {
         doublePuts($stderr,file,"print(\"Time: \"+__bencher_run(#{benchpath.inspect}));")
-        doublePuts($stderr,file,"gc();")
+        doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
       }
     when :dumpRenderTree
       doublePuts($stderr,file,"__bencher_count = 0;")
@@ -630,14 +640,16 @@ def emitBenchRunCode(vm, file, benchpath)
     doublePuts($stderr,file,"}")
     $warmup.times {
       doublePuts($stderr,file,"runit();")
-      doublePuts($stderr,file,"gc();")
+      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
     }
     $inner.times {
       doublePuts($stderr,file,"before = __bencher_curTimeMS();")
-      doublePuts($stderr,file,"runit();")
+      $rerun.times {
+        doublePuts($stderr,file,"runit();")
+      }
       doublePuts($stderr,file,"after = __bencher_curTimeMS();")
       doublePuts($stderr,file,"print(\"Time: \"+(after-before));")
-      doublePuts($stderr,file,"gc();")
+      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
     }
     if vm.vmType == :dumpRenderTree
       doublePuts($stderr,file,"quit();")
@@ -730,6 +742,10 @@ class VM < StatsAccumulator
   
   def name
     @name
+  end
+  
+  def shouldMeasureGC
+    $measureGC == true or ($measureGC == name)
   end
   
   def path
@@ -915,16 +931,18 @@ class KrakenBenchmark
       | file |
       emitTimeHelpers(file)
       doublePuts($stderr,file,"load(#{dataPath.inspect});")
-      doublePuts($stderr,file,"gc();");
+      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
       if $innerMode == :reload
         case vm.vmType
         when :jsc
           doublePuts($stderr,file,"for (var __bencher_index = 0; __bencher_index < #{$warmup+$inner}; ++__bencher_index) {")
           doublePuts($stderr,file,"   before = __bencher_curTimeMS();")
-          doublePuts($stderr,file,"   load(#{benchPath.inspect});")
+          $rerun.times {
+            doublePuts($stderr,file,"   load(#{benchPath.inspect});")
+          }
           doublePuts($stderr,file,"   after = __bencher_curTimeMS();")
           doublePuts($stderr,file,"   if (__bencher_index >= #{$warmup}) #{vm.printFunction}(\"Time: \"+(after-before));");
-          doublePuts($stderr,file,"   gc();");
+          doublePuts($stderr,file,"   gc();") unless vm.shouldMeasureGC
           doublePuts($stderr,file,"}")
         when :dumpRenderTree
           raise "Kraken in DumpRenderTree is currently unsupported."
@@ -1125,7 +1143,8 @@ def statsToStr(stats)
 end
   
 begin
-  GetoptLong.new(['--inner', GetoptLong::REQUIRED_ARGUMENT],
+  GetoptLong.new(['--rerun', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--inner', GetoptLong::REQUIRED_ARGUMENT],
                  ['--outer', GetoptLong::REQUIRED_ARGUMENT],
                  ['--warmup', GetoptLong::REQUIRED_ARGUMENT],
                  ['--time-mode', GetoptLong::REQUIRED_ARGUMENT],
@@ -1136,6 +1155,7 @@ begin
                  ['--exclude-v8', GetoptLong::NO_ARGUMENT],
                  ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
                  ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
                  ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
                  ['--load-once', GetoptLong::NO_ARGUMENT],
                  ['--keep-files', GetoptLong::NO_ARGUMENT],
@@ -1144,6 +1164,8 @@ begin
                  ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
+    when '--rerun'
+      $rerun = intArg(opt,arg,1,nil)
     when '--inner'
       $inner = intArg(opt,arg,1,nil)
     when '--outer'
@@ -1189,6 +1211,12 @@ begin
       $includeKraken = false
     when '--benchmarks'
       $benchmarkPattern = Regexp.new(arg)
+    when '--measure-gc'
+      if arg == ''
+        $measureGC = true
+      else
+        $measureGC = arg
+      end
     when '--load-once'
       $innerMode = :loadOnce
     when '--keep-files'
@@ -1256,12 +1284,28 @@ begin
     $vms << VM.new(vm, name, nameKind)
   }
   
+  if $measureGC and $measureGC != true
+    found = false
+    $vms.each {
+      | vm |
+      if vm.name == $measureGC
+        found = true
+      end
+    }
+    unless found
+      $stderr.puts "Warning: --measure-gc option ignored because no VM is named #{$measureGC}"
+    end
+  end
+  
   if $timeMode == :auto
     havePreciseTime = true
     $vms.each {
       | vm |
       if vm.vmType == :dumpRenderTree
         $stderr.puts "Warning: #{vm} does not have preciseTime() because it is DumpRenderTree; using Date.now instead."
+        if $rerun != 1
+          quickFail("Cannot use --rerun with a DumpRenderTree style VM, because this support has not yet been implemented.", "Wrong option for VM type.")
+        end
         havePreciseTime = false
       else
         Tempfile.open("bencher-timetest") {
@@ -1398,7 +1442,7 @@ begin
   
   $plans.each_with_index {
     | plan, idx |
-    if $verbosity == 0 and not $brief
+    if $verbosity == 0
       text1 = lpad(idx.to_s,$plans.size.to_s.size)+"/"+$plans.size.to_s
       text2 = plan.suite.to_s+"/"+plan.benchmark.to_s+"/"+plan.vm.to_s
       $stderr.print "\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}"
@@ -1408,7 +1452,7 @@ begin
     plan.runAndRecord
   }
   
-  if $verbosity == 0 and not $brief
+  if $verbosity == 0
     $stderr.print "\r#{$plans.size}/#{$plans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}"
     $stderr.puts "\r#{$plans.size}/#{$plans.size}"
   end
@@ -1573,9 +1617,17 @@ begin
   
   outp.puts wrap("Collected #{$outer*$inner} sample#{plural($outer*$inner)} per benchmark/VM, "+
                  "with #{$outer} VM invocation#{plural($outer)} per benchmark."+
+                 (if $rerun > 1 then (" Ran #{$rerun} benchmark iterations, and measured the "+
+                                      "total time of those iterations, for each sample.")
+                  else "" end)+
+                 (if $measureGC == true then (" No manual garbage collection invocations were "+
+                                              "emitted.")
+                  elsif $measureGC then (" Emitted a call to gc() between sample measurements for "+
+                                         "all VMs except #{$measureGC}.")
+                  else (" Emitted a call to gc() between sample measurements.") end)+
                  (if $warmup == 0 then (" Did not include any warm-up iterations; measurements "+
                                         "began with the very first iteration.")
-                  else (" Used #{$warmup} benchmark iteration#{plural($warmup)} per VM "+
+                  else (" Used #{$warmup*$rerun} benchmark iteration#{plural($warmup)} per VM "+
                         "invocation for warm-up.") end)+
                  (case $timeMode
                   when :preciseTime then (" Used the jsc-specific preciseTime() function to get "+
