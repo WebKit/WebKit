@@ -27,6 +27,7 @@
 #include "DeviceMotionEvent.h"
 
 #include "DeviceMotionData.h"
+#include "EventNames.h"
 
 namespace WebCore {
 
@@ -52,6 +53,18 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomicString& type, bool bub
 
     initEvent(type, bubbles, cancelable);
     m_deviceMotionData = deviceMotionData;
+}
+
+const AtomicString& DeviceMotionEvent::interfaceName() const
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    return eventNames().interfaceForDeviceMotionEvent;
+#else
+    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
+    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
+    // but DeviceMotionEvent.cpp itself is required by ungarded code.
+    return eventNames().interfaceForEvent;
+#endif
 }
 
 } // namespace WebCore

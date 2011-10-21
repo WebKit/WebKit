@@ -50,8 +50,6 @@ struct CloseEventInit : public EventInit {
 
 class CloseEvent : public Event {
 public:
-    virtual bool isCloseEvent() const { return true; }
-
     static PassRefPtr<CloseEvent> create()
     {
         return adoptRef(new CloseEvent());
@@ -77,6 +75,8 @@ public:
     bool wasClean() const { return m_wasClean; }
     unsigned short code() const { return m_code; }
     String reason() const { return m_reason; }
+
+    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForCloseEvent; }
 
 private:
     CloseEvent()

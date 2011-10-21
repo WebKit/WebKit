@@ -58,9 +58,9 @@ OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent()
 {
 }
 
-bool OfflineAudioCompletionEvent::isOfflineAudioCompletionEvent() const
+const AtomicString& OfflineAudioCompletionEvent::interfaceName() const
 {
-    return true;
+    return eventNames().interfaceForOfflineAudioCompletionEvent;
 }
 
 } // namespace WebCore

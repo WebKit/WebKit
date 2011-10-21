@@ -47,10 +47,11 @@ public:
     static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>);
     static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
     void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue&);
-    bool isPopStateEvent() const { return true; }
 
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
     ScriptValue state() const { return m_state; }
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     PopStateEvent();

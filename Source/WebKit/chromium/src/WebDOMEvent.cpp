@@ -32,6 +32,7 @@
 #include "WebDOMEvent.h"
 
 #include "Event.h"
+#include "EventNames.h"
 #include "Node.h"
 #include <wtf/PassRefPtr.h>
 
@@ -183,7 +184,7 @@ bool WebDOMEvent::isPageTransitionEvent() const
 bool WebDOMEvent::isPopStateEvent() const
 {
     ASSERT(m_private);
-    return m_private->isPopStateEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForPopStateEvent;
 }
 
 bool WebDOMEvent::isProgressEvent() const
@@ -195,19 +196,19 @@ bool WebDOMEvent::isProgressEvent() const
 bool WebDOMEvent::isXMLHttpRequestProgressEvent() const
 {
     ASSERT(m_private);
-    return m_private->isXMLHttpRequestProgressEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForXMLHttpRequestProgressEvent;
 }
 
 bool WebDOMEvent::isWebKitAnimationEvent() const
 {
     ASSERT(m_private);
-    return m_private->isWebKitAnimationEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForWebKitAnimationEvent;
 }
 
 bool WebDOMEvent::isWebKitTransitionEvent() const
 {
     ASSERT(m_private);
-    return m_private->isWebKitTransitionEvent();
+    return m_private->interfaceName() == WebCore::eventNames().interfaceForWebKitTransitionEvent;
 }
 
 bool WebDOMEvent::isBeforeLoadEvent() const

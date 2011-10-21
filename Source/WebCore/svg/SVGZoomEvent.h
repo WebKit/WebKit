@@ -45,6 +45,8 @@ public:
 
     FloatPoint newTranslate() const;
 
+    virtual const AtomicString& interfaceName() const;
+
 private:
     SVGZoomEvent();
 

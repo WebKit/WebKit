@@ -85,4 +85,9 @@ double WebKitTransitionEvent::elapsedTime() const
     return m_elapsedTime;
 }
 
+const AtomicString& WebKitTransitionEvent::interfaceName() const
+{
+    return eventNames().interfaceForWebKitTransitionEvent;
+}
+
 } // namespace WebCore

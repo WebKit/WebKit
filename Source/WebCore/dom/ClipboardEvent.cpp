@@ -23,6 +23,8 @@
 #include "config.h"
 #include "ClipboardEvent.h"
 
+#include "EventNames.h"
+
 namespace WebCore {
 
 ClipboardEvent::ClipboardEvent()
@@ -36,6 +38,12 @@ ClipboardEvent::ClipboardEvent(const AtomicString& eventType, bool canBubble, bo
 
 ClipboardEvent::~ClipboardEvent()
 {
+}
+
+const AtomicString& ClipboardEvent::interfaceName() const
+{
+    // Notice that there is no ClipboardEvent.idl.
+    return eventNames().interfaceForEvent;
 }
 
 bool ClipboardEvent::isClipboardEvent() const

@@ -707,6 +707,8 @@
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/EventFactory.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/EventHeaders.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/EventInterfaces.h',
           ],
           'action': [
             'python',

@@ -1,3 +1,135 @@
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
+        Event.h shouldn't need to know about every ifdef and feature that uses events
+        https://bugs.webkit.org/show_bug.cgi?id=70483
+
+        Reviewed by Eric Seidel.
+
+        This patch expands make_event_factory.pl to create a
+        DOM_EVENT_INTERFACES_FOR_EACH macro that we can use to generate code
+        for each Event interface.  We then apply that macro to removing a large
+        number of virtual functions on Event.  Instead of having a Boolean
+        virtual function for each subclass of Event, we have a single virtual
+        interfaceName function, which returns an AtomicString.  We then use the
+        AtomicString to jump through a HashMap to find the appropriate
+        JavaScript wrapper type.
+
+        This patch does not remove all of the Boolean virtual functions because
+        I got exhausted making all of these edits, but I did remove all the
+        ones that involve ifdefs.  A future patch will remove more.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEvent::interfaceName):
+        (WebCore::BeforeLoadEvent::isBeforeLoadEvent):
+        * dom/BeforeTextInsertedEvent.cpp:
+        (WebCore::BeforeTextInsertedEvent::interfaceName):
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::interfaceName):
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::interfaceName):
+        * dom/CompositionEvent.h:
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::interfaceName):
+        * dom/CustomEvent.h:
+        * dom/DeviceMotionEvent.cpp:
+        (WebCore::DeviceMotionEvent::interfaceName):
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::interfaceName):
+        * dom/DeviceOrientationEvent.h:
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::interfaceName):
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        (WebCore::Event::interfaceName):
+        * dom/Event.h:
+        * dom/EventNames.cpp:
+        (WebCore::EventNames::EventNames):
+        * dom/EventNames.h:
+        * dom/HashChangeEvent.h:
+        (WebCore::HashChangeEvent::interfaceName):
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::interfaceName):
+        * dom/KeyboardEvent.h:
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::interfaceName):
+        * dom/MessageEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::interfaceName):
+        * dom/MouseEvent.h:
+        * dom/MutationEvent.cpp:
+        (WebCore::MutationEvent::interfaceName):
+        * dom/MutationEvent.h:
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::interfaceName):
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.cpp:
+        (WebCore::PageTransitionEvent::interfaceName):
+        * dom/PageTransitionEvent.h:
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::interfaceName):
+        * dom/PopStateEvent.h:
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEvent::interfaceName):
+        * dom/ProgressEvent.h:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::interfaceName):
+        * dom/TextEvent.h:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::interfaceName):
+        * dom/TouchEvent.h:
+        * dom/UIEvent.h:
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEvent::interfaceName):
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEvent::interfaceName):
+        * dom/WebKitTransitionEvent.h:
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::interfaceName):
+        * dom/WheelEvent.h:
+        * dom/make_event_factory.pl:
+        (printFactoryFile):
+        (printMacroFile):
+        (printHeadersFile):
+        * html/canvas/WebGLContextEvent.cpp:
+        (WebCore::WebGLContextEvent::interfaceName):
+        * html/canvas/WebGLContextEvent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::handleEvent):
+        * p2p/MediaStreamEvent.cpp:
+        (WebCore::MediaStreamEvent::interfaceName):
+        * p2p/MediaStreamEvent.h:
+        * page/SpeechInputEvent.cpp:
+        (WebCore::SpeechInputEvent::interfaceName):
+        * page/SpeechInputEvent.h:
+        * storage/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::interfaceName):
+        * storage/IDBVersionChangeEvent.h:
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::interfaceName):
+        * storage/StorageEvent.h:
+        * svg/SVGZoomEvent.cpp:
+        (WebCore::SVGZoomEvent::interfaceName):
+        * svg/SVGZoomEvent.h:
+        * webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::interfaceName):
+        * webaudio/AudioProcessingEvent.h:
+        * webaudio/OfflineAudioCompletionEvent.cpp:
+        (WebCore::OfflineAudioCompletionEvent::interfaceName):
+        * webaudio/OfflineAudioCompletionEvent.h:
+        * websockets/CloseEvent.h:
+        (WebCore::CloseEvent::interfaceName):
+        * xml/XMLHttpRequestProgressEvent.h:
+        (WebCore::XMLHttpRequestProgressEvent::interfaceName):
+
 2011-10-20  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route onSwapBuffersComplete from LayerRenderer to CCScheduler.

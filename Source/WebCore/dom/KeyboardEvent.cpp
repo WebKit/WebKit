@@ -139,6 +139,11 @@ int KeyboardEvent::charCode() const
     return static_cast<int>(text.characterStartingAt(0));
 }
 
+const AtomicString& KeyboardEvent::interfaceName() const
+{
+    return eventNames().interfaceForKeyboardEvent;
+}
+
 bool KeyboardEvent::isKeyboardEvent() const
 {
     return true;

@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-
 #include "ErrorEvent.h"
 
 #include "EventNames.h"
@@ -82,6 +81,11 @@ void ErrorEvent::initErrorEvent(const AtomicString& type, bool canBubble, bool c
 bool ErrorEvent::isErrorEvent() const
 {
     return true;
+}
+
+const AtomicString& ErrorEvent::interfaceName() const
+{
+    return eventNames().interfaceForErrorEvent;
 }
 
 } // namespace WebCore

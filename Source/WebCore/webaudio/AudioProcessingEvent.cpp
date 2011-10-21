@@ -58,9 +58,9 @@ AudioProcessingEvent::~AudioProcessingEvent()
 {
 }
 
-bool AudioProcessingEvent::isAudioProcessingEvent() const
+const AtomicString& AudioProcessingEvent::interfaceName() const
 {
-    return true;
+    return eventNames().interfaceForAudioProcessingEvent;
 }
 
 } // namespace WebCore

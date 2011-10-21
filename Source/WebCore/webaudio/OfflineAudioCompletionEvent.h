@@ -41,9 +41,9 @@ public:
     
     virtual ~OfflineAudioCompletionEvent();
 
-    virtual bool isOfflineAudioCompletionEvent() const;
-
     AudioBuffer* renderedBuffer() { return m_renderedBuffer.get(); }
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     OfflineAudioCompletionEvent();

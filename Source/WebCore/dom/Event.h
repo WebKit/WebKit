@@ -112,58 +112,31 @@ namespace WebCore {
 
         Clipboard* clipboardData() const { return isClipboardEvent() ? clipboard() : 0; }
 
-        virtual bool isCustomEvent() const;
+        virtual const AtomicString& interfaceName() const;
+
+        // These are needed for the CPP bindings.
         virtual bool isUIEvent() const;
         virtual bool isMouseEvent() const;
         virtual bool isMutationEvent() const;
+
+        virtual bool isDragEvent() const; // a subset of mouse events
+
+        // FIXME: Remove these! Callers should use interfaceName() instead.
         virtual bool isKeyboardEvent() const;
         virtual bool isTextEvent() const;
         virtual bool isCompositionEvent() const;
-        virtual bool isDragEvent() const; // a subset of mouse events
         virtual bool isClipboardEvent() const;
         virtual bool isMessageEvent() const;
         virtual bool isWheelEvent() const;
         virtual bool isBeforeTextInsertedEvent() const;
         virtual bool isOverflowEvent() const;
         virtual bool isPageTransitionEvent() const;
-        virtual bool isPopStateEvent() const;
         virtual bool isProgressEvent() const;
-        virtual bool isXMLHttpRequestProgressEvent() const;
-        virtual bool isWebKitAnimationEvent() const;
-        virtual bool isWebKitTransitionEvent() const;
         virtual bool isBeforeLoadEvent() const;
-        virtual bool isHashChangeEvent() const;
 #if ENABLE(SVG)
         virtual bool isSVGZoomEvent() const;
 #endif
-        virtual bool isStorageEvent() const;
-#if ENABLE(INDEXED_DATABASE)
-        virtual bool isIDBVersionChangeEvent() const;
-#endif
-#if ENABLE(WEB_AUDIO)
-        virtual bool isAudioProcessingEvent() const;
-        virtual bool isOfflineAudioCompletionEvent() const;
-#endif
         virtual bool isErrorEvent() const;
-#if ENABLE(TOUCH_EVENTS)
-        virtual bool isTouchEvent() const;
-#endif
-#if ENABLE(DEVICE_ORIENTATION)
-        virtual bool isDeviceMotionEvent() const;
-        virtual bool isDeviceOrientationEvent() const;
-#endif
-#if ENABLE(INPUT_SPEECH)
-        virtual bool isSpeechInputEvent() const;
-#endif
-#if ENABLE(WEB_SOCKETS)
-        virtual bool isCloseEvent() const;
-#endif
-#if ENABLE(MEDIA_STREAM)
-        virtual bool isMediaStreamEvent() const;
-#endif
-#if ENABLE(WEBGL)
-        virtual bool isWebGLContextEvent() const;
-#endif
 
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
         bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }

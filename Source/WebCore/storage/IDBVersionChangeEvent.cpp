@@ -53,6 +53,11 @@ String IDBVersionChangeEvent::version()
     return m_version;
 }
 
+const AtomicString& IDBVersionChangeEvent::interfaceName() const
+{
+    return eventNames().interfaceForIDBVersionChangeEvent;
+}
+
 } // namespace WebCore
 
 #endif

@@ -46,9 +46,9 @@ public:
 
     void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceMotionData*);
 
-    virtual bool isDeviceMotionEvent() const { return true; }
-
     DeviceMotionData* deviceMotionData() const { return m_deviceMotionData.get(); }
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     DeviceMotionEvent();

@@ -24,6 +24,7 @@
 #include "Event.h"
 
 #include "EventDispatcher.h"
+#include "EventNames.h"
 #include "EventTarget.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
@@ -96,9 +97,9 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_cancelable = cancelableArg;
 }
 
-bool Event::isCustomEvent() const
+const AtomicString& Event::interfaceName() const
 {
-    return false;
+    return eventNames().interfaceForEvent;
 }
 
 bool Event::isUIEvent() const
@@ -166,37 +167,12 @@ bool Event::isPageTransitionEvent() const
     return false;
 }
 
-bool Event::isPopStateEvent() const
-{
-    return false;
-}
-
 bool Event::isProgressEvent() const
 {
     return false;
 }
 
-bool Event::isWebKitAnimationEvent() const
-{
-    return false;
-}
-
-bool Event::isWebKitTransitionEvent() const
-{
-    return false;
-}
-
-bool Event::isXMLHttpRequestProgressEvent() const
-{
-    return false;
-}
-
 bool Event::isBeforeLoadEvent() const
-{
-    return false;
-}
-
-bool Event::isHashChangeEvent() const
 {
     return false;
 }
@@ -208,82 +184,10 @@ bool Event::isSVGZoomEvent() const
 }
 #endif
 
-bool Event::isStorageEvent() const
-{
-    return false;
-}
-
-#if ENABLE(INDEXED_DATABASE)
-bool Event::isIDBVersionChangeEvent() const
-{
-    return false;
-}
-#endif
-
 bool Event::isErrorEvent() const
 {
     return false;
 }
-
-#if ENABLE(TOUCH_EVENTS)
-bool Event::isTouchEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(DEVICE_ORIENTATION)
-bool Event::isDeviceMotionEvent() const
-{
-    return false;
-}
-
-bool Event::isDeviceOrientationEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(WEB_AUDIO)
-bool Event::isAudioProcessingEvent() const
-{
-    return false;
-}
-
-bool Event::isOfflineAudioCompletionEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(INPUT_SPEECH)
-bool Event::isSpeechInputEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-bool Event::isCloseEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-bool Event::isMediaStreamEvent() const
-{
-    return false;
-}
-#endif
-
-#if ENABLE(WEBGL)
-bool Event::isWebGLContextEvent() const
-{
-    return false;
-}
-#endif
-
 
 bool Event::storesResultAsString() const
 {

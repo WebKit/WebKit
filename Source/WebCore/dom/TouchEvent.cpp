@@ -28,6 +28,8 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "TouchEvent.h"
+
+#include "EventNames.h"
 #include "TouchList.h"
 
 namespace WebCore {
@@ -71,6 +73,11 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
     m_shiftKey = shiftKey;
     m_metaKey = metaKey;
     initCoordinates(IntPoint(clientX, clientY));
+}
+
+const AtomicString& TouchEvent::interfaceName() const
+{
+    return eventNames().interfaceForTouchEvent;
 }
 
 } // namespace WebCore

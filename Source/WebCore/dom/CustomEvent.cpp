@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CustomEvent.h"
 
+#include "EventNames.h"
+
 namespace WebCore {
 
 CustomEventInit::CustomEventInit()
@@ -57,9 +59,9 @@ void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool
     m_detail = detail;
 }
 
-bool CustomEvent::isCustomEvent() const
+const AtomicString& CustomEvent::interfaceName() const
 {
-    return true;
+    return eventNames().interfaceForCustomEvent;
 }
 
 } // namespace WebCore

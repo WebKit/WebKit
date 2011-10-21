@@ -29,9 +29,12 @@
  */
 
 #include "config.h"
-#include "SpeechInputEvent.h"
 
 #if ENABLE(INPUT_SPEECH)
+
+#include "SpeechInputEvent.h"
+
+#include "EventNames.h"
 
 namespace WebCore {
 
@@ -57,6 +60,11 @@ SpeechInputEvent::SpeechInputEvent(const AtomicString& eventType, const SpeechIn
 
 SpeechInputEvent::~SpeechInputEvent()
 {
+}
+
+const AtomicString& SpeechInputEvent::interfaceName() const
+{
+    return eventNames().interfaceForSpeechInputEvent;
 }
 
 } // namespace WebCore

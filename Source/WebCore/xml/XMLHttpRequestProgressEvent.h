@@ -27,6 +27,7 @@
 #ifndef XMLHttpRequestProgressEvent_h
 #define XMLHttpRequestProgressEvent_h
 
+#include "EventNames.h"
 #include "ProgressEvent.h"
 
 namespace WebCore {
@@ -46,9 +47,9 @@ public:
     unsigned long long position() const { return loaded(); }
     unsigned long long totalSize() const { return total(); }
 
-private:
-    virtual bool isXMLHttpRequestProgressEvent() const { return true; }
+    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForXMLHttpRequestProgressEvent; }
 
+private:
     XMLHttpRequestProgressEvent() { }
     XMLHttpRequestProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
         : ProgressEvent(type, lengthComputable, loaded, total)

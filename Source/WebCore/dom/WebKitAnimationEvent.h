@@ -63,7 +63,7 @@ public:
     const String& animationName() const;
     double elapsedTime() const;
 
-    virtual bool isWebKitAnimationEvent() const { return true; }
+    virtual const AtomicString& interfaceName() const;
 
 private:
     WebKitAnimationEvent();

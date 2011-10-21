@@ -22,6 +22,7 @@
 #ifndef EventNames_h
 #define EventNames_h
 
+#include "EventInterfaces.h"
 #include "ThreadGlobalData.h"
 #include <wtf/text/AtomicString.h>
 
@@ -201,6 +202,10 @@ namespace WebCore {
         #define DOM_EVENT_NAMES_DECLARE(name) AtomicString name##Event;
         DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
         #undef DOM_EVENT_NAMES_DECLARE
+
+        #define DOM_EVENT_INTERFACE_DECLARE(name) AtomicString interfaceFor##name;
+        DOM_EVENT_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
+        #undef DOM_EVENT_INTERFACE_DECLARE
     };
 
     inline EventNames& eventNames()

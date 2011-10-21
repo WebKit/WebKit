@@ -40,6 +40,9 @@ use IO::File;
 use InFilesParser;
 
 sub readEvents($);
+sub printFactoryFile($);
+sub printMacroFile($);
+sub printHeadersFile($);
 
 my $eventsFile = "";
 my $outputDir = ".";
@@ -58,7 +61,9 @@ die "You must specify --events <file>" unless length($eventsFile);
 
 my %events = %{readEvents($eventsFile)};
 
-printCppFile("$outputDir/EventFactory.cpp");
+printFactoryFile("$outputDir/EventFactory.cpp");
+printMacroFile("$outputDir/EventInterfaces.h");
+printHeadersFile("$outputDir/EventHeaders.h");
 
 sub defaultEventPropertyHash
 {
@@ -119,34 +124,22 @@ sub interfaceForEvent($)
     return $interfaceName;
 }
 
-sub printCppFile
+sub printFactoryFile($)
 {
-    my $cppPath = shift;
+    my $path = shift;
     my $F;
 
-    open F, ">$cppPath";
+    open F, ">$path";
 
     printLicenseHeader($F);
 
     print F "#include \"config.h\"\n";
-    print F "#include \"EventFactory.h\"\n\n";
-
-    my %includedInterfaces = ();
-
-    for my $eventName (sort keys %parsedEvents) {
-        my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName);
-
-        next if defined($includedInterfaces{$interfaceName});
-        $includedInterfaces{$interfaceName} = 1;
-
-        print F "#if ENABLE($conditional)\n" if $conditional;
-        print F "#include \"$interfaceName.h\"\n";
-        print F "#endif\n" if $conditional;
-    }
-
-    print F "\nnamespace WebCore {\n\n";
-
+    print F "#include \"EventFactory.h\"\n";
+    print F "\n";
+    print F "#include \"EventHeaders.h\"\n";
+    print F "\n";
+    print F "namespace WebCore {\n";
+    print F "\n";
     print F "PassRefPtr<Event> EventFactory::create(const String& eventType)\n";
     print F "{\n";
 
@@ -162,8 +155,108 @@ sub printCppFile
 
     print F "    return 0;\n";
     print F "}\n";
+    print F "\n";
+    print F "} // namespace WebCore\n";
+    close F;
+}
 
-    print F "\n} // namespace WebCore\n";
+sub printMacroFile($)
+{
+    my $path = shift;
+    my $F;
+
+    open F, ">$path";
+
+    printLicenseHeader($F);
+
+    print F "#ifndef EventInterfaces_h\n";
+    print F "#define EventInterfaces_h\n";
+    print F "\n";
+
+    my %unconditionalInterfaces = ();
+    my %interfacesByConditional = ();
+
+    for my $eventName (sort keys %parsedEvents) {
+        my $conditional = $parsedEvents{$eventName}{"conditional"};
+        my $interfaceName = interfaceForEvent($eventName);
+
+        if ($conditional) {
+            if (!defined($interfacesByConditional{$conditional})) {
+                $interfacesByConditional{$conditional} = ();
+            }
+            $interfacesByConditional{$conditional}{$interfaceName} = 1;
+        } else {
+            $unconditionalInterfaces{$interfaceName} = 1
+        }
+    }
+
+    for my $conditional (sort keys %interfacesByConditional) {
+        print F "#if ENABLE($conditional)\n";
+        print F "#define DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+
+        for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
+            next if defined($unconditionalInterfaces{$interface});
+            print F "    macro($interface) \\\n";
+        }
+
+        print F "// End of DOM_EVENT_INTERFACES_FOR_EACH_$conditional\n";
+        print F "#else\n";
+        print F "#define DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro)\n";
+        print F "#endif\n";
+        print F "\n";
+    }
+
+    print F "#define DOM_EVENT_INTERFACES_FOR_EACH(macro) \\\n";
+    print F "    \\\n";
+    for my $interface (sort keys %unconditionalInterfaces) {
+            print F "    macro($interface) \\\n";
+    }
+    print F "    \\\n";
+    for my $conditional (sort keys %interfacesByConditional) {
+        print F "    DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+    }
+
+    print F "\n";
+    print F "#endif // EventInterfaces_h\n";
+
+    close F;
+}
+
+sub printHeadersFile($)
+{
+    my $path = shift;
+    my $F;
+
+    open F, ">$path";
+
+    printLicenseHeader($F);
+
+    print F "#ifndef EventHeaders_h\n";
+    print F "#define EventHeaders_h\n";
+    print F "\n";
+
+    my %includedInterfaces = ();
+
+    for my $eventName (sort keys %parsedEvents) {
+        my $conditional = $parsedEvents{$eventName}{"conditional"};
+        my $interfaceName = interfaceForEvent($eventName);
+
+        next if defined($includedInterfaces{$interfaceName});
+        $includedInterfaces{$interfaceName} = 1;
+
+        print F "#if ENABLE($conditional)\n" if $conditional;
+        print F "#include \"$interfaceName.h\"\n";
+        print F "#if USE(JSC)\n";
+        print F "#include \"JS$interfaceName.h\"\n";
+        print F "#elif USE(V8)\n";
+        print F "#include \"V8$interfaceName.h\"\n";
+        print F "#endif\n";
+        print F "#endif\n" if $conditional;
+    }
+
+    print F "\n";
+    print F "#endif // EventHeaders_h\n";
+
     close F;
 }
 

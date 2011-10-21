@@ -60,6 +60,8 @@ public:
     unsigned long long loaded() const { return m_loaded; }
     unsigned long long total() const { return m_total; }
 
+    virtual const AtomicString& interfaceName() const;
+
 protected:
     ProgressEvent();
     ProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);

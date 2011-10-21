@@ -50,7 +50,7 @@ namespace WebCore {
         // Needed once we support init<blank>EventNS
         // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, Storage storageAreaArg);
 
-        virtual bool isStorageEvent() const { return true; }
+        virtual const AtomicString& interfaceName() const;
 
     private:
         StorageEvent();

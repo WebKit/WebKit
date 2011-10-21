@@ -41,10 +41,10 @@ public:
     
     virtual ~AudioProcessingEvent();
 
-    virtual bool isAudioProcessingEvent() const;
-
     AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     AudioProcessingEvent();

@@ -99,6 +99,11 @@ void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool can
     m_data = data;
 }
 
+const AtomicString& TextEvent::interfaceName() const
+{
+    return eventNames().interfaceForTextEvent;
+}
+
 bool TextEvent::isTextEvent() const
 {
     return true;

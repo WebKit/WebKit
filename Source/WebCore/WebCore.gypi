@@ -409,6 +409,8 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathExpression.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathNSResolver.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathResult.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/EventHeaders.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/EventInterfaces.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLNames.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSDOMWindow.h',

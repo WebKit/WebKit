@@ -39,13 +39,12 @@ class IDBAny;
 
 class IDBVersionChangeEvent : public Event {
 public:
-    static PassRefPtr<IDBVersionChangeEvent> create(const String& version, const AtomicString& eventType);
-    // FIXME: Need to allow creation of these events from JS.
+    static PassRefPtr<IDBVersionChangeEvent> create(const String& version = String(), const AtomicString& eventType = AtomicString());
     virtual ~IDBVersionChangeEvent();
 
-    virtual bool isIDBVersionChangeEvent() const { return true; }
-
     virtual String version();
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     IDBVersionChangeEvent(const String& version, const AtomicString& eventType);

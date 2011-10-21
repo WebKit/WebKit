@@ -33,50 +33,13 @@
 
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
-#include "CustomEvent.h"
 #include "Event.h"
-#include "V8BeforeLoadEvent.h"
+#include "EventHeaders.h"
+#include "EventInterfaces.h"
+#include "EventNames.h"
 #include "V8Binding.h"
 #include "V8Clipboard.h"
-#include "V8CloseEvent.h"
-#include "V8CompositionEvent.h"
-#include "V8CustomEvent.h"
-#include "V8DeviceMotionEvent.h"
-#include "V8DeviceOrientationEvent.h"
-#include "V8ErrorEvent.h"
-#include "V8HashChangeEvent.h"
-#include "V8IDBVersionChangeEvent.h"
-#include "V8KeyboardEvent.h"
-#include "V8MessageEvent.h"
-#include "V8MouseEvent.h"
-#include "V8MutationEvent.h"
-#include "V8OverflowEvent.h"
-#include "V8PageTransitionEvent.h"
-#include "V8PopStateEvent.h"
-#include "V8ProgressEvent.h"
 #include "V8Proxy.h"
-#include "V8SpeechInputEvent.h"
-#include "V8StorageEvent.h"
-#include "V8TextEvent.h"
-#include "V8TouchEvent.h"
-#include "V8UIEvent.h"
-#include "V8WebKitAnimationEvent.h"
-#include "V8WebKitTransitionEvent.h"
-#include "V8WheelEvent.h"
-#include "V8XMLHttpRequestProgressEvent.h"
-
-#if ENABLE(SVG)
-#include "V8SVGZoomEvent.h"
-#endif
-
-#if ENABLE(WEB_AUDIO)
-#include "V8AudioProcessingEvent.h"
-#include "V8OfflineAudioCompletionEvent.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "V8MediaStreamEvent.h"
-#endif
 
 namespace WebCore {
 
@@ -106,90 +69,35 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> toV8(Event* impl)
+#define DECLARE_EVENT_WRAPPER(interfaceName) \
+    static v8::Handle<v8::Value> toV8##interfaceName(Event* event) \
+    { \
+        return toV8(static_cast<interfaceName*>(event)); \
+    } \
+
+DOM_EVENT_INTERFACES_FOR_EACH(DECLARE_EVENT_WRAPPER)
+
+#define ADD_WRAPPER_TO_MAP(interfaceName) \
+    map.add(eventNames().interfaceFor##interfaceName.impl(), toV8##interfaceName);
+
+v8::Handle<v8::Value> toV8(Event* event)
 {
-    if (!impl)
+    if (!event)
         return v8::Null();
-    if (impl->isUIEvent()) {
-        if (impl->isKeyboardEvent())
-            return toV8(static_cast<KeyboardEvent*>(impl));
-        if (impl->isTextEvent())
-            return toV8(static_cast<TextEvent*>(impl));
-        if (impl->isMouseEvent())
-            return toV8(static_cast<MouseEvent*>(impl));
-        if (impl->isWheelEvent())
-            return toV8(static_cast<WheelEvent*>(impl));
-#if ENABLE(SVG)
-        if (impl->isSVGZoomEvent())
-            return toV8(static_cast<SVGZoomEvent*>(impl));
-#endif
-        if (impl->isCompositionEvent())
-            return toV8(static_cast<CompositionEvent*>(impl));
-#if ENABLE(TOUCH_EVENTS)
-        if (impl->isTouchEvent())
-            return toV8(static_cast<TouchEvent*>(impl));
-#endif
-        return toV8(static_cast<UIEvent*>(impl));
+
+    typedef v8::Handle<v8::Value> (*ToV8Function)(Event*);
+    typedef HashMap<WTF::AtomicStringImpl*, ToV8Function> FunctionMap;
+
+    DEFINE_STATIC_LOCAL(FunctionMap, map, ());
+    if (map.isEmpty()) {
+        DOM_EVENT_INTERFACES_FOR_EACH(ADD_WRAPPER_TO_MAP)
     }
-    if (impl->isHashChangeEvent())
-        return toV8(static_cast<HashChangeEvent*>(impl));
-    if (impl->isMutationEvent())
-        return toV8(static_cast<MutationEvent*>(impl));
-    if (impl->isOverflowEvent())
-        return toV8(static_cast<OverflowEvent*>(impl));
-    if (impl->isMessageEvent())
-        return toV8(static_cast<MessageEvent*>(impl));
-    if (impl->isPageTransitionEvent())
-        return toV8(static_cast<PageTransitionEvent*>(impl));
-    if (impl->isPopStateEvent())
-        return toV8(static_cast<PopStateEvent*>(impl));
-    if (impl->isProgressEvent()) {
-        if (impl->isXMLHttpRequestProgressEvent())
-            return toV8(static_cast<XMLHttpRequestProgressEvent*>(impl));
-        return toV8(static_cast<ProgressEvent*>(impl));
-    }
-    if (impl->isWebKitAnimationEvent())
-        return toV8(static_cast<WebKitAnimationEvent*>(impl));
-    if (impl->isWebKitTransitionEvent())
-        return toV8(static_cast<WebKitTransitionEvent*>(impl));
-#if ENABLE(WORKERS)
-    if (impl->isErrorEvent())
-        return toV8(static_cast<ErrorEvent*>(impl));
-#endif
-    if (impl->isStorageEvent())
-        return toV8(static_cast<StorageEvent*>(impl));
-#if ENABLE(INDEXED_DATABASE)
-    if (impl->isIDBVersionChangeEvent())
-        return toV8(static_cast<IDBVersionChangeEvent*>(impl));
-#endif
-    if (impl->isBeforeLoadEvent())
-        return toV8(static_cast<BeforeLoadEvent*>(impl));
-#if ENABLE(DEVICE_ORIENTATION)
-    if (impl->isDeviceMotionEvent())
-        return toV8(static_cast<DeviceMotionEvent*>(impl));
-    if (impl->isDeviceOrientationEvent())
-        return toV8(static_cast<DeviceOrientationEvent*>(impl));
-#endif
-#if ENABLE(WEB_AUDIO)
-    if (impl->isAudioProcessingEvent())
-        return toV8(static_cast<AudioProcessingEvent*>(impl));
-    if (impl->isOfflineAudioCompletionEvent())
-        return toV8(static_cast<OfflineAudioCompletionEvent*>(impl));
-#endif
-#if ENABLE(INPUT_SPEECH)
-    if (impl->isSpeechInputEvent())
-        return toV8(static_cast<SpeechInputEvent*>(impl));
-#endif
-    if (impl->isCustomEvent())
-        return toV8(static_cast<CustomEvent*>(impl));
-#if ENABLE(WEB_SOCKETS)
-    if (impl->isCloseEvent())
-        return toV8(static_cast<CloseEvent*>(impl));
-#endif
-#if ENABLE(MEDIA_STREAM)
-    if (impl->isMediaStreamEvent())
-        return toV8(static_cast<MediaStreamEvent*>(impl));
-#endif
-    return V8Event::wrap(impl);
+
+    ToV8Function specializedToV8 = map.get(event->interfaceName().impl());
+    if (specializedToV8)
+        return specializedToV8(event);
+
+    return V8Event::wrap(event);
 }
+
 } // namespace WebCore

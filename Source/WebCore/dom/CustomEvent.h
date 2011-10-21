@@ -53,7 +53,7 @@ public:
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, ScriptValue detail);
 
-    virtual bool isCustomEvent() const;
+    virtual const AtomicString& interfaceName() const;
 
     ScriptValue detail() const { return m_detail; }
 

@@ -63,6 +63,8 @@ public:
     TouchList* targetTouches() const { return m_targetTouches.get(); }
     TouchList* changedTouches() const { return m_changedTouches.get(); }
 
+    virtual const AtomicString& interfaceName() const;
+
 private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches,
@@ -70,8 +72,6 @@ private:
             PassRefPtr<AbstractView>, int screenX, int screenY, int pageX,
             int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
-
-    virtual bool isTouchEvent() const { return true; }
 
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;

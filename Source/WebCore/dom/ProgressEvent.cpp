@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ProgressEvent.h"
 
+#include "EventNames.h"
+
 namespace WebCore {
 
 ProgressEventInit::ProgressEventInit()
@@ -69,6 +71,11 @@ void ProgressEvent::initProgressEvent(const AtomicString& typeArg, bool canBubbl
     m_lengthComputable = lengthComputableArg;
     m_loaded = loadedArg;
     m_total = totalArg;
+}
+
+const AtomicString& ProgressEvent::interfaceName() const
+{
+    return eventNames().interfaceForProgressEvent;
 }
 
 }

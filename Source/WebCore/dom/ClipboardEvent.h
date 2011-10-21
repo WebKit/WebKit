@@ -44,6 +44,7 @@ namespace WebCore {
 
         Clipboard* clipboard() const { return m_clipboard.get(); }
 
+        virtual const AtomicString& interfaceName() const;
         virtual bool isClipboardEvent() const;
 
     private:

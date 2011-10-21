@@ -46,9 +46,9 @@ public:
 
     void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientation*);
 
-    virtual bool isDeviceOrientationEvent() const { return true; }
-
     DeviceOrientation* orientation() const { return m_orientation.get(); }
+
+    virtual const AtomicString& interfaceName() const;
 
 private:
     DeviceOrientationEvent();

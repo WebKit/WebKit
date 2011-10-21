@@ -55,6 +55,11 @@ void CompositionEvent::initCompositionEvent(const AtomicString& type, bool canBu
     m_data = data;
 }
 
+const AtomicString& CompositionEvent::interfaceName() const
+{
+    return eventNames().interfaceForCompositionEvent;
+}
+
 bool CompositionEvent::isCompositionEvent() const
 {
     return true;

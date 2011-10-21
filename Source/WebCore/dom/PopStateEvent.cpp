@@ -95,4 +95,9 @@ void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, 
     m_state = state;
 }
 
+const AtomicString& PopStateEvent::interfaceName() const
+{
+    return eventNames().interfaceForPopStateEvent;
+}
+
 } // namespace WebCore

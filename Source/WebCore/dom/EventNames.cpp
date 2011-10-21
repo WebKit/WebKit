@@ -25,9 +25,14 @@ namespace WebCore {
 
 #define INITIALIZE_EVENT_NAME(name) \
     , name##Event(#name)
+
+#define INITIALIZE_EVENT_INTERFACE(name) \
+    , interfaceFor##name(#name)
+
 EventNames::EventNames()
     : dummy(0)
 DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_EVENT_NAME)
+DOM_EVENT_INTERFACES_FOR_EACH(INITIALIZE_EVENT_INTERFACE)
 {
 }
 

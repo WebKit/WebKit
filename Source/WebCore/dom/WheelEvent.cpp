@@ -84,6 +84,11 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<A
                    ctrlKey, altKey, shiftKey, metaKey);
 }
 
+const AtomicString& WheelEvent::interfaceName() const
+{
+    return eventNames().interfaceForWheelEvent;
+}
+
 bool WheelEvent::isWheelEvent() const
 {
     return true;

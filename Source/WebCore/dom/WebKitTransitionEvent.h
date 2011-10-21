@@ -63,7 +63,7 @@ public:
     const String& propertyName() const;
     double elapsedTime() const;
 
-    virtual bool isWebKitTransitionEvent() const { return true; }
+    virtual const AtomicString& interfaceName() const;
 
 private:
     WebKitTransitionEvent();

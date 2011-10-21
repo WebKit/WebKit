@@ -49,6 +49,7 @@ namespace WebCore {
     
         String data() const { return m_data; }
 
+        virtual const AtomicString& interfaceName() const;
         virtual bool isTextEvent() const;
 
         bool isLineBreak() const { return m_inputType == TextEventInputLineBreak; }

@@ -68,6 +68,11 @@ OverflowEvent::OverflowEvent(const AtomicString& type, const OverflowEventInit& 
 {
 }
 
+const AtomicString& OverflowEvent::interfaceName() const
+{
+    return eventNames().interfaceForOverflowEvent;
+}
+
 bool OverflowEvent::isOverflowEvent() const
 {
     return true;

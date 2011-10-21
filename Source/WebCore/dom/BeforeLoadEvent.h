@@ -42,8 +42,6 @@ struct BeforeLoadEventInit : public EventInit {
 
 class BeforeLoadEvent : public Event {
 public:
-    virtual bool isBeforeLoadEvent() const { return true; }
-
     static PassRefPtr<BeforeLoadEvent> create()
     {
         return adoptRef(new BeforeLoadEvent);
@@ -70,6 +68,9 @@ public:
     }
 
     const String& url() const { return m_url; }
+
+    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForBeforeLoadEvent; }
+    virtual bool isBeforeLoadEvent() const { return true; }
 
 private:
     BeforeLoadEvent()
