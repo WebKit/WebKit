@@ -1,3 +1,12 @@
+2011-10-21  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] fast/events/touch/page-scaled-touch-gesture-click.html is failing 
+        https://bugs.webkit.org/show_bug.cgi?id=70593
+
+        It was introduced in r97988. Skip it.
+
+        * platform/qt/Skipped:
+
 2011-10-21  Andrey Kosyakov  <caseq@chromium.org>
 
         [Qt] 2 inspector/extensions tests times out on Mac and linux after r97850
