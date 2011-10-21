@@ -2460,3 +2460,7 @@ fast/borders/inline-mask-overlay-image-outset.html
 # REGRESSION(r97881): It broke fast/dom/error-to-string-stack-overflow.html
 # https://bugs.webkit.org/show_bug.cgi?id=70476
 fast/dom/error-to-string-stack-overflow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=70414
+inspector/extensions/extensions-events.html
+inspector/extensions/extensions-network.html

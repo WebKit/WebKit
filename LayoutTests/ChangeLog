@@ -1,3 +1,12 @@
+2011-10-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        [Qt] 2 inspector/extensions tests times out on Mac and linux after r97850
+        https://bugs.webkit.org/show_bug.cgi?id=70414
+
+        Unreviewed. Skipped inspector/extensions/extensions-{events,network}.html
+
+        * platform/qt/Skipped:
+
 2011-10-03  Kent Tamura  <tkent@chromium.org>
 
         Add tests to check behavior of border attribute with a large number or an invalid value.
