@@ -1,3 +1,15 @@
+2011-10-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Crash after printing a view with accelerated compositing content
+        https://bugs.webkit.org/show_bug.cgi?id=70643
+        <rdar://problem/9479083>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKPrintingView.mm: (-[WKPrintingView _delayedResumeAutodisplayTimerFired]):
+        We cannot rely on -[WKView drawRect:] calling endPrinting() for us. That call to endPrinting()
+        is still necessary to paint e.g. when resizing a window while a print dialog is present.
+
 2011-10-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2] WebFrameLoaderClient::shouldFallback() should use a port-specific implementation
