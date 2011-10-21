@@ -1,3 +1,9 @@
+2011-10-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix for newer Qt5. Remove duplicated defines.
+
+        * UIProcess/API/qt/tests/util.h:
+
 2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add can_go_back/forward methods to WebKit2 GTK+ API
