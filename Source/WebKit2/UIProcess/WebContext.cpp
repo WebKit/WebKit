@@ -30,8 +30,10 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
 #include "Logging.h"
+#include "MutableDictionary.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
+#include "StatisticsData.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
 #include "WebApplicationCacheManagerProxy.h"
@@ -791,6 +793,16 @@ void WebContext::getWebCoreStatistics(PassRefPtr<DictionaryCallback> prpCallback
     process()->send(Messages::WebProcess::GetWebCoreStatistics(callbackID), 0);
 }
 
+static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
+{
+    RefPtr<MutableDictionary> result = MutableDictionary::create();
+    HashMap<String, uint64_t>::const_iterator end = map.end();
+    for (HashMap<String, uint64_t>::const_iterator it = map.begin(); it != end; ++it)
+        result->set(it->first, RefPtr<WebUInt64>(WebUInt64::create(it->second)).get());
+    
+    return result;
+}
+
 void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, uint64_t callbackID)
 {
     RefPtr<DictionaryCallback> callback = m_dictionaryCallbacks.take(callbackID);
@@ -798,9 +810,11 @@ void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, u
         // FIXME: Log error or assert.
         return;
     }
-     
-    // FIXME: Store statistics data into a dictionary.
-    RefPtr<ImmutableDictionary> statistics = ImmutableDictionary::create();
+
+    RefPtr<MutableDictionary> statistics = createDictionaryFromHashMap(statisticsData.statisticsNumbers);
+    statistics->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptProtectedObjectTypeCounts).get());
+    statistics->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptObjectTypeCounts).get());
+    
     callback->performCallbackWithReturnValue(statistics.get());
 }
     

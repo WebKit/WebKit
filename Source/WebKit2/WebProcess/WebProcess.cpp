@@ -52,10 +52,16 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
+#include <WebCore/FontCache.h>
+#include <WebCore/GlyphPageTreeNode.h>
+#include <WebCore/IconDatabase.h>
+#include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryCache.h>
@@ -68,6 +74,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageTracker.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
 
@@ -83,6 +90,7 @@
 #include "NetscapePluginModule.h"
 #endif
 
+using namespace JSC;
 using namespace WebCore;
 
 namespace WebKit {
@@ -812,11 +820,55 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 }
 #endif
     
+static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
+{
+    TypeCountSet::const_iterator end = countedSet->end();
+    for (TypeCountSet::const_iterator it = countedSet->begin(); it != end; ++it)
+        map.set(it->first, it->second);
+}
+
 void WebProcess::getWebCoreStatistics(uint64_t callbackID)
 {
     StatisticsData data;
     
-    // FIXME: Gather performance data.
+    // Gather JavaScript statistics.
+    {
+        JSLock lock(SilenceAssertionsOnly);
+        data.statisticsNumbers.set("JavaScriptObjectsCount", JSDOMWindow::commonJSGlobalData()->heap.objectCount());
+        data.statisticsNumbers.set("JavaScriptGlobalObjectsCount", JSDOMWindow::commonJSGlobalData()->heap.globalObjectCount());
+        data.statisticsNumbers.set("JavaScriptProtectedObjectsCount", JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount());
+        data.statisticsNumbers.set("JavaScriptProtectedGlobalObjectsCount", JSDOMWindow::commonJSGlobalData()->heap.protectedGlobalObjectCount());
+        
+        OwnPtr<TypeCountSet> protectedObjectTypeCounts(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
+        fromCountedSetToHashMap(protectedObjectTypeCounts.get(), data.javaScriptProtectedObjectTypeCounts);
+        
+        OwnPtr<TypeCountSet> objectTypeCounts(JSDOMWindow::commonJSGlobalData()->heap.objectTypeCounts());
+        fromCountedSetToHashMap(objectTypeCounts.get(), data.javaScriptObjectTypeCounts);
+        
+        uint64_t javaScriptHeapSize = JSDOMWindow::commonJSGlobalData()->heap.size();
+        data.statisticsNumbers.set("JavaScriptHeapSize", javaScriptHeapSize);
+        data.statisticsNumbers.set("JavaScriptFreeSize", JSDOMWindow::commonJSGlobalData()->heap.capacity() - javaScriptHeapSize);
+    }
+
+    WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
+    data.statisticsNumbers.set("FastMallocReservedVMBytes", fastMallocStatistics.reservedVMBytes);
+    data.statisticsNumbers.set("FastMallocCommittedVMBytes", fastMallocStatistics.committedVMBytes);
+    data.statisticsNumbers.set("FastMallocFreeListBytes", fastMallocStatistics.freeListBytes);
+    
+    // Gather icon statistics.
+    data.statisticsNumbers.set("IconPageURLMappingCount", iconDatabase().pageURLMappingCount());
+    data.statisticsNumbers.set("IconRetainedPageURLCount", iconDatabase().retainedPageURLCount());
+    data.statisticsNumbers.set("IconRecordCount", iconDatabase().iconRecordCount());
+    data.statisticsNumbers.set("IconsWithDataCount", iconDatabase().iconRecordCountWithData());
+    
+    // Gather font statistics.
+    data.statisticsNumbers.set("CachedFontDataCount", fontCache()->fontDataCount());
+    data.statisticsNumbers.set("CachedFontDataInactiveCount", fontCache()->inactiveFontDataCount());
+    
+    // Gather glyph page statistics.
+    data.statisticsNumbers.set("GlyphPageCount", GlyphPageTreeNode::treeGlyphPageCount());
+    
+    // FIXME: Gather WebCore cache statistics.
     
     m_connection->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
 }

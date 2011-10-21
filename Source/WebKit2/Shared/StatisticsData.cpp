@@ -32,18 +32,25 @@ namespace WebKit {
 
 void StatisticsData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    // FIXME: To be implemented.
+    encoder->encode(statisticsNumbers);
+    encoder->encode(javaScriptProtectedObjectTypeCounts);
+    encoder->encode(javaScriptObjectTypeCounts);
 }
 
 bool StatisticsData::decode(CoreIPC::ArgumentDecoder* decoder, StatisticsData& statisticsData)
 {
-    // FIXME: To be implemented.
+    if (!decoder->decode(statisticsData.statisticsNumbers))
+        return false;
+    if (!decoder->decode(statisticsData.javaScriptProtectedObjectTypeCounts))
+        return false;
+    if (!decoder->decode(statisticsData.javaScriptObjectTypeCounts))
+        return false;
+
     return true;
 }
 
 StatisticsData::StatisticsData()
 {    
-    // FIXME: To be implemented.
 }
 
 } // namespace WebKit

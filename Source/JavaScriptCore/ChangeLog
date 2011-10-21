@@ -1,3 +1,15 @@
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94298
+
+    2011-09-01  Ada Chan  <adachan@apple.com>
+
+            Export fastMallocStatistics and Heap::objectTypeCounts for https://bugs.webkit.org/show_bug.cgi?id=67160.
+
+            Reviewed by Darin Adler.
+
+            * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-09-06  Mark Rowe  <mrowe@apple.com>
 
         Merge r94251.

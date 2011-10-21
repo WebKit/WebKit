@@ -28,12 +28,19 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct StatisticsData {
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, StatisticsData&);
+    
+    HashMap<String, uint64_t> statisticsNumbers;
+    HashMap<String, uint64_t> javaScriptProtectedObjectTypeCounts;
+    HashMap<String, uint64_t> javaScriptObjectTypeCounts;    
     
     StatisticsData();
 };
