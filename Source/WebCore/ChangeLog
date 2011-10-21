@@ -1,3 +1,18 @@
+2011-10-21  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        [Gtk] mousemove event always has metaKey == true
+        https://bugs.webkit.org/show_bug.cgi?id=35299
+
+        Reviewed by Martin Robinson.
+
+        GDK_MOD2_MASK doesn't always mean meta so we can't use it to identify
+        the meta key state. Use GDK_META_MASK instead.
+
+        Test: platform/gtk/fast/events/event-sender-metakey.html
+
+        * platform/gtk/PlatformMouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2011-10-21  Andreas Kling  <kling@webkit.org>
 
         Style and Link elements' sheet() should return CSSStyleSheet.

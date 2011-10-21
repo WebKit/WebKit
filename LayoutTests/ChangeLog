@@ -1,3 +1,16 @@
+2011-10-21  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        [Gtk] mousemove event always has metaKey == true
+        https://bugs.webkit.org/show_bug.cgi?id=35299
+
+        Reviewed by Martin Robinson.
+
+        For testing state of metaKey for mouse and keyboard events generated
+        using evnetSender object.
+
+        * platform/gtk/fast/events/event-sender-metakey-expected.txt: Added.
+        * platform/gtk/fast/events/event-sender-metakey.html: Added.
+
 2011-10-21  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: first chunk of rebaselines for Chromium-Skia

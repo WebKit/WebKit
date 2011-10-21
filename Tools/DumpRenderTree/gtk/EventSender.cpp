@@ -276,10 +276,10 @@ static guint gdkModifierFromJSValue(JSContextRef context, const JSValueRef value
     else if (JSStringIsEqualToUTF8CString(string, "altKey"))
         gdkModifier = GDK_MOD1_MASK;
     
-    // Currently the metaKey as defined in WebCore/platform/gtk/MouseEventGtk.cpp
-    // is GDK_MOD2_MASK. This code must be kept in sync with that file.
+    // Currently the metaKey as defined in WebCore/platform/gtk/PlatformMouseEventGtk.cpp
+    // is GDK_META_MASK. This code must be kept in sync with that file.
     else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
-        gdkModifier = GDK_MOD2_MASK;
+        gdkModifier = GDK_META_MASK;
     
     JSStringRelease(string);
     return gdkModifier;
@@ -395,7 +395,9 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     event->motion.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(event->motion.window);
     event->button.device = getDefaultGDKPointerDevice(event->motion.window);
-    event->motion.state = getStateFlags();
+
+    guint modifiers = argumentCount >= 3 ? gdkModifersFromJSValue(context, arguments[2]) : 0;
+    event->motion.state = modifiers | getStateFlags();
     event->motion.axes = 0;
 
     int xRoot, yRoot;

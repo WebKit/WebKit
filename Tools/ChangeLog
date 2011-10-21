@@ -1,3 +1,15 @@
+2011-10-21  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        [Gtk] mousemove event always has metaKey == true
+        https://bugs.webkit.org/show_bug.cgi?id=35299
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (gdkModifierFromJSValue): GDK_META_MASK is used to represent metaKey for platform GTK mouse and
+        keyboard events. So making it in sync with WebCore files.
+        (mouseMoveToCallback): Sending modifier keys state for mouse move event.
+
 2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         watchlist: Add a new entry for WebKit2 GTK+ public API

@@ -83,7 +83,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     m_shiftKey = motion->state & GDK_SHIFT_MASK;
     m_ctrlKey = motion->state & GDK_CONTROL_MASK;
     m_altKey = motion->state & GDK_MOD1_MASK;
-    m_metaKey = motion->state & GDK_MOD2_MASK;
+    m_metaKey = motion->state & GDK_META_MASK;
 
     switch (motion->type) {
     case GDK_MOTION_NOTIFY:
