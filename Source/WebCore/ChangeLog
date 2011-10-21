@@ -1,3 +1,15 @@
+2011-10-20  Antoine Labour  <piman@chromium.org>
+
+        Make WebCore depend on translator_glsl instead of translator_common
+        https://bugs.webkit.org/show_bug.cgi?id=70548
+
+        Reviewed by Kenneth Russell.
+
+        This is a build-only fix. Tested by checking WebKit still compiles and
+        link.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-10-20  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Fix opaque flag default and for ImageLayerChromium
