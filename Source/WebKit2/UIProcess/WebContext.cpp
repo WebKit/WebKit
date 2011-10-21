@@ -815,6 +815,12 @@ void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, u
     statistics->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptProtectedObjectTypeCounts).get());
     statistics->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptObjectTypeCounts).get());
     
+    size_t cacheStatisticsCount = statisticsData.webCoreCacheStatistics.size();
+    Vector<RefPtr<APIObject> > cacheStatisticsVector(cacheStatisticsCount);
+    for (size_t i = 0; i < cacheStatisticsCount; ++i)
+        cacheStatisticsVector[i] = createDictionaryFromHashMap(statisticsData.webCoreCacheStatistics[i]);
+    statistics->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatisticsVector).get());
+    
     callback->performCallbackWithReturnValue(statistics.get());
 }
     

@@ -29,6 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +42,7 @@ struct StatisticsData {
     HashMap<String, uint64_t> statisticsNumbers;
     HashMap<String, uint64_t> javaScriptProtectedObjectTypeCounts;
     HashMap<String, uint64_t> javaScriptObjectTypeCounts;    
+    Vector<HashMap<String, uint64_t> > webCoreCacheStatistics;
     
     StatisticsData();
 };
