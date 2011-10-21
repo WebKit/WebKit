@@ -1901,7 +1901,9 @@ void WebPage::setTextForActivePopupMenu(int32_t index)
 
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
-    ASSERT(m_contextMenu);
+    if (!m_contextMenu)
+        return;
+
     m_contextMenu->itemSelected(item);
     m_contextMenu = 0;
 }
