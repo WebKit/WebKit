@@ -1,3 +1,22 @@
+2011-10-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: remove debugger support for out-of-process dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=70602
+
+        Now that Chromium uses in-process dedicated workers, remove support for out-of-process
+        dedicated workers debugger.
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebWorker.h:
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::connectToInspector):
+        (WebKit::WebWorkerClientImpl::disconnectFromInspector):
+        (WebKit::WebWorkerClientImpl::WebWorkerClientImpl):
+        * src/WebWorkerClientImpl.h:
+        * src/WebWorkerImpl.cpp:
+        * src/WebWorkerImpl.h:
+
 2011-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

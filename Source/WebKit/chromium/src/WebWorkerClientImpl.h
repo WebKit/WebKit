@@ -105,8 +105,6 @@ public:
     virtual void openFileSystem(WebFileSystem::Type, long long size, bool create,
                                 WebFileSystemCallbacks*);
 
-    virtual void dispatchDevToolsMessage(const WebString&);
-
     // WebCommentWorkerBase methods:
     virtual NewWebCommonWorkerClient* newCommonClient() { return this; }
     virtual WebView* view() const;
@@ -119,7 +117,6 @@ private:
     // Guard against context from being destroyed before a worker exits.
     RefPtr<WebCore::ScriptExecutionContext> m_scriptExecutionContext;
     WebFrameImpl* m_webFrame;
-    WebCore::WorkerContextProxy::PageInspector* m_pageInspector;
 };
 
 } // namespace WebKit;

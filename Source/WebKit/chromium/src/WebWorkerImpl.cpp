@@ -42,8 +42,6 @@
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "SubstituteData.h"
-#include "WorkerDebuggerAgent.h"
-#include "WorkerInspectorController.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
@@ -151,39 +149,6 @@ void WebWorkerImpl::workerObjectDestroyed()
 void WebWorkerImpl::clientDestroyed()
 {
     m_client = 0;
-}
-
-static void connectToWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
-{
-    ASSERT(context->isWorkerContext());
-    static_cast<WorkerContext*>(context)->workerInspectorController()->connectFrontend();
-}
-
-void WebWorkerImpl::attachDevTools()
-{
-    workerThread()->runLoop().postTask(createCallbackTask(connectToWorkerContextInspectorTask, true));
-}
-
-static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
-{
-    ASSERT(context->isWorkerContext());
-    static_cast<WorkerContext*>(context)->workerInspectorController()->disconnectFrontend();
-}
-
-void WebWorkerImpl::detachDevTools()
-{
-    workerThread()->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
-}
-
-static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
-{
-    ASSERT(context->isWorkerContext());
-    static_cast<WorkerContext*>(context)->workerInspectorController()->dispatchMessageFromFrontend(message);
-}
-
-void WebWorkerImpl::dispatchDevToolsMessage(const WebString& message)
-{
-    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 #else

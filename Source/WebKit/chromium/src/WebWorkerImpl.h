@@ -57,10 +57,6 @@ public:
     virtual void workerObjectDestroyed();
     virtual void clientDestroyed();
 
-    virtual void attachDevTools();
-    virtual void detachDevTools();
-    virtual void dispatchDevToolsMessage(const WebKit::WebString&);
-
     // WebWorkerBase methods:
     virtual WebWorkerClient* client() { return m_client; }
     virtual WebCommonWorkerClient* commonClient();

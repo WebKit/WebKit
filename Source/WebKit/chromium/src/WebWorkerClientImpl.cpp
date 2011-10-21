@@ -118,13 +118,10 @@ void WebWorkerClientImpl::workerObjectDestroyed()
 void WebWorkerClientImpl::connectToInspector(PageInspector* inspector)
 {
     m_proxy->connectToInspector(inspector);
-    ASSERT(!m_pageInspector);
-    m_pageInspector = inspector;
 }
 
 void WebWorkerClientImpl::disconnectFromInspector()
 {
-    m_pageInspector = 0;
     m_proxy->disconnectFromInspector();
 }
 
@@ -212,12 +209,6 @@ bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const 
     return !webView->permissionClient() || webView->permissionClient()->allowDatabase(m_webFrame, name, displayName, estimatedSize);
 }
  
-void WebWorkerClientImpl::dispatchDevToolsMessage(const WebString& message)
-{
-    if (m_pageInspector)
-        m_pageInspector->dispatchMessageFromWorker(message);
-}
-
 WebView* WebWorkerClientImpl::view() const 
 {   
     return m_webFrame->view(); 
@@ -227,8 +218,6 @@ WebWorkerClientImpl::WebWorkerClientImpl(Worker* worker, WebFrameImpl* webFrame)
     : m_proxy(new WorkerMessagingProxy(worker))
     , m_scriptExecutionContext(worker->scriptExecutionContext())
     , m_webFrame(webFrame)    
-    , m_pageInspector(0)
-
 {
 }
 
