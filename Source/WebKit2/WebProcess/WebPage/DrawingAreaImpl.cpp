@@ -242,7 +242,7 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
 
     m_layerTreeHost->forceRepaint();
 
-    if (m_shouldSendDidUpdateBackingStoreState) {
+    if (m_shouldSendDidUpdateBackingStoreState && !exitAcceleratedCompositingModePending()) {
         sendDidUpdateBackingStoreState();
         return;
     }
