@@ -3860,3 +3860,4 @@ BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT
 
 BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRASH
+BUGWK67031 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH

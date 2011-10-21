@@ -1,3 +1,10 @@
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Gardening update.
+
+        * platform/chromium/test_expectations.txt: We are randomly hitting
+        a known ASSERT on this test case.
+
 2011-10-21  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Implement basic subtree observation
