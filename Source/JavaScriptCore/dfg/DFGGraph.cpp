@@ -284,15 +284,8 @@ void Graph::refChildren(NodeIndex op)
     }
 }
 
-void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
+void Graph::predictArgumentTypes(CodeBlock* codeBlock)
 {
-    if (exec) {
-        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_arguments.size());
-        
-        for (size_t arg = 1; arg < numberOfArguments; ++arg)
-            at(m_arguments[arg]).variableAccessData()->predict(predictionFromValue(exec->argument(arg - 1)));
-    }
-    
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
 

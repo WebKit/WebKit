@@ -384,24 +384,24 @@ void ProgramExecutable::clearCodeVirtual()
     Base::clearCodeVirtual();
 }
 
-JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
+JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
     if (m_codeBlockForCall->getJITType() != JITCode::topTierJIT())
-        error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()));
+        error = compileForCallInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()));
     ASSERT(!!m_codeBlockForCall);
     return error;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
+JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
     if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
-        error = compileForConstructInternal(exec, scopeChainNode, calleeArgsExec, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()));
+        error = compileForConstructInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()));
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
@@ -435,7 +435,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ExecState*
     return result.release();
 }
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
@@ -459,7 +459,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompileFunction(exec, calleeArgsExec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
+            dfgCompiled = DFG::tryCompileFunction(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
         if (dfgCompiled) {
             if (m_codeBlockForCall->alternative())
                 m_codeBlockForCall->alternative()->unlinkIncomingCalls();
@@ -478,8 +478,6 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
         
         m_codeBlockForCall->setJITCode(m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
     }
-#else
-    UNUSED_PARAM(calleeArgsExec);
 #endif
 
 #if ENABLE(JIT)
@@ -496,7 +494,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     return 0;
 }
 
-JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
+JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
     UNUSED_PARAM(jitType);
     
@@ -519,7 +517,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     if (globalData->canUseJIT()) {
         bool dfgCompiled = false;
         if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompileFunction(exec, calleeArgsExec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
+            dfgCompiled = DFG::tryCompileFunction(exec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
         if (dfgCompiled) {
             if (m_codeBlockForConstruct->alternative())
                 m_codeBlockForConstruct->alternative()->unlinkIncomingCalls();
@@ -538,8 +536,6 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
         
         m_codeBlockForConstruct->setJITCode(m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
     }
-#else
-    UNUSED_PARAM(calleeArgsExec);
 #endif
 
 #if ENABLE(JIT)

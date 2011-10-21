@@ -201,7 +201,7 @@ public:
     const char* nameOfVariableAccessData(VariableAccessData*);
 #endif
 
-    void predictArgumentTypes(ExecState*, CodeBlock*);
+    void predictArgumentTypes(CodeBlock*);
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
     {

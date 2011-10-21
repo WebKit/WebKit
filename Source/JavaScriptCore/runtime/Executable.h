@@ -464,17 +464,17 @@ namespace JSC {
         
         PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ExecState*, ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
 
-        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec = 0)
+        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
-                error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec, JITCode::bottomTierJIT());
+                error = compileForCallInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForCall);
             return error;
         }
 
-        JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
+        JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(JSGlobalData&);
@@ -491,17 +491,17 @@ namespace JSC {
             return *m_codeBlockForCall;
         }
 
-        JSObject* compileForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec = 0)
+        JSObject* compileForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
-                error = compileForConstructInternal(exec, scopeChainNode, calleeArgsExec, JITCode::bottomTierJIT());
+                error = compileForConstructInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForConstruct);
             return error;
         }
 
-        JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
+        JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(JSGlobalData&);
@@ -520,30 +520,26 @@ namespace JSC {
         
         JSObject* compileFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
         {
-            // compileFor should only be called with a callframe set up to call this function,
-            // since we will make speculative optimizations based on the arguments.
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
             ASSERT(asFunction(exec->callee())->jsExecutable() == this);
 
             if (kind == CodeForCall)
-                return compileForCall(exec, scopeChainNode, exec);
+                return compileForCall(exec, scopeChainNode);
             ASSERT(kind == CodeForConstruct);
-            return compileForConstruct(exec, scopeChainNode, exec);
+            return compileForConstruct(exec, scopeChainNode);
         }
         
         JSObject* compileOptimizedFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
         {
-            // compileOptimizedFor should only be called with a callframe set up to call this function,
-            // since we will make speculative optimizations based on the arguments.
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
             ASSERT(asFunction(exec->callee())->jsExecutable() == this);
             
             if (kind == CodeForCall)
-                return compileOptimizedForCall(exec, scopeChainNode, exec);
+                return compileOptimizedForCall(exec, scopeChainNode);
             ASSERT(kind == CodeForConstruct);
-            return compileOptimizedForConstruct(exec, scopeChainNode, exec);
+            return compileOptimizedForConstruct(exec, scopeChainNode);
         }
         
 #if ENABLE(JIT)
@@ -606,8 +602,8 @@ namespace JSC {
         FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
 
-        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec, JITCode::JITType);
-        JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec, JITCode::JITType);
+        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
+        JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         
         OwnPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
         {

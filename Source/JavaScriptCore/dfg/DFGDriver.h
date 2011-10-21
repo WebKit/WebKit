@@ -39,10 +39,10 @@ namespace DFG {
 
 #if ENABLE(DFG_JIT)
 bool tryCompile(ExecState*, CodeBlock*, JITCode&);
-bool tryCompileFunction(ExecState*, ExecState* calleeArgsExec, CodeBlock*, JITCode&, MacroAssemblerCodePtr& jitCodeWithArityCheck);
+bool tryCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr& jitCodeWithArityCheck);
 #else
 inline bool tryCompile(ExecState*, CodeBlock*, JITCode&) { return false; }
-inline bool tryCompileFunction(ExecState*, ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
+inline bool tryCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
 #endif
 
 } } // namespace JSC::DFG

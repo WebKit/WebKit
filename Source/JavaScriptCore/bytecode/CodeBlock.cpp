@@ -1827,16 +1827,6 @@ void CodeBlock::copyDataFromAlternative()
 }
 
 #if ENABLE(JIT)
-// FIXME: Implement OSR. If compileOptimized() is called from somewhere other than the
-// epilogue, do OSR from the old code block to the new one.
-
-// FIXME: After doing successful optimized compilation, reset the profiling counter to -1, so
-// that the next execution of the old code block will jump straight into compileOptimized()
-// and perform OSR.
-
-// FIXME: Ensure that a call to compileOptimized() just does OSR (and resets the counter to -1)
-// if the code had already been compiled.
-
 CodeBlock* ProgramCodeBlock::replacement()
 {
     return &static_cast<ProgramExecutable*>(ownerExecutable())->generatedBytecode();

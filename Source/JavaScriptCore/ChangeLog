@@ -1,5 +1,34 @@
 2011-10-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not try to predict argument types by looking at the values of
+        argument registers at the time of compilation
+        https://bugs.webkit.org/show_bug.cgi?id=70578
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.cpp:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::FunctionExecutable::compileFor):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+
+2011-10-20  Filip Pizlo  <fpizlo@apple.com>
+
         DFG call optimization handling will fail if the call had been unlinked due
         to the callee being optimized
         https://bugs.webkit.org/show_bug.cgi?id=70468
