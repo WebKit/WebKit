@@ -1,5 +1,11 @@
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Fix r98125 by having duplicate entries for Win Debug.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed gardening.
 
         * platform/chromium/test_expectations.txt: The test is now also failing on debug on XP.
