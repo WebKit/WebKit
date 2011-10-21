@@ -35,6 +35,8 @@ WebInspector.AdvancedSearchController = function()
     this._searchId = 0;
     
     WebInspector.settings.advancedSearchConfig = WebInspector.settings.createSetting("advancedSearchConfig", new WebInspector.SearchConfig("", true, false));
+    
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
 }
 
 WebInspector.AdvancedSearchController.createShortcut = function()
@@ -52,6 +54,11 @@ WebInspector.AdvancedSearchController.prototype = {
             this.show();
             event.handled = true;
         }
+    },
+
+    _frameNavigated: function()
+    {
+        this.resetSearch();
     },
 
     /**
@@ -369,6 +376,9 @@ WebInspector.SearchView.prototype = {
     
     _onAction: function()
     {
+        if (!this.searchConfig.query || !this.searchConfig.query.length)
+            return;
+        
         this._save();
         this._controller.startSearch(this.searchConfig);
     }

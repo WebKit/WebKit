@@ -1,3 +1,14 @@
+2011-10-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Advanced search results should be cleared on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=70627
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController):
+        (WebInspector.AdvancedSearchController.prototype._frameNavigated):
+
 2011-10-21  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Implement WebKitMutationObserver.observe for childList changes
