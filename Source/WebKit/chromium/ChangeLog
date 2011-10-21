@@ -1,3 +1,19 @@
+2011-10-20  Darin Adler  <darin@apple.com>
+
+        Remove OptionElement (first half)
+        https://bugs.webkit.org/show_bug.cgi?id=70276
+
+        Reviewed by Kent Tamura.
+
+        Update hand-written binding for option element so it does not depend on otherwise-unneeded functions.
+
+        * src/WebOptionElement.cpp:
+        (WebKit::WebOptionElement::defaultSelected): Call hasAttribute.
+        (WebKit::WebOptionElement::setDefaultSelected): Call setAttribute.
+
+        * src/WebSearchableFormData.cpp:
+        (HTMLNames::IsSelectInDefaultState): Call hasAttribute.
+
 2011-10-20  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Add support for building with make
