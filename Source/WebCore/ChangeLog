@@ -1,5 +1,11 @@
 2011-10-20  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the GTK build.
+
+        * GNUmakefile.am:
+
+2011-10-20  Adam Barth  <abarth@webkit.org>
+
         CloseEvent.idl isn't conditional on WebSockets.
 
         * dom/EventFactory.in:
