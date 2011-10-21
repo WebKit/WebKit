@@ -1346,6 +1346,9 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
+    // FIXME (bug 68185): this call should be made at another abstraction layer
+    m_frame->loader()->resetMultipleFormSubmissionProtection();
+    
     cancelFakeMouseMoveEvent();
     m_mousePressed = true;
     m_capturesDragging = true;
@@ -2477,7 +2480,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (FrameView* view = m_frame->view())
         view->resetDeferredRepaintDelay();
 
-    // FIXME: what is this doing here, in keyboard event handler?
+    // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame->loader()->resetMultipleFormSubmissionProtection();
 
     // In IE, access keys are special, they are handled after default keydown processing, but cannot be canceled - this is hard to match.

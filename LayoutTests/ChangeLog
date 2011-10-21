@@ -1,3 +1,20 @@
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95226
+
+    2011-09-15  Jon Lee  <jonlee@apple.com>
+
+            Submitting a form with target=_blank works only once
+            https://bugs.webkit.org/show_bug.cgi?id=28633
+            <rdar://problem/7357787>
+
+            Reviewed by Andy Estes.
+
+            New test that simulates mouse clicking submit button twice (which didn't work), as well as using the keyboard twice (which did work).
+
+            * fast/forms/resources/submit-to-blank-multiple-times-form-action.html: Added.
+            * fast/forms/submit-to-blank-multiple-times-expected.txt: Added.
+            * fast/forms/submit-to-blank-multiple-times.html: Added.
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
         Merge r89705.

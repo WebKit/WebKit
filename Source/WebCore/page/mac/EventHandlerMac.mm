@@ -477,8 +477,6 @@ void EventHandler::mouseDown(NSEvent *event)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    m_frame->loader()->resetMultipleFormSubmissionProtection();
-
     m_mouseDownView = nil;
     
     CurrentEventScope scope(event);
