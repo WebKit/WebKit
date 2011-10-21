@@ -1,3 +1,16 @@
+2011-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        watchlist: Add a new entry for WebKit2 GTK+ public API
+        https://bugs.webkit.org/show_bug.cgi?id=70601
+
+        Reviewed by Philippe Normand.
+
+        Subscribe myself to WebKit2 GTK+ API patches. Also add a message
+        for patches that might include new API that points to the WebKit2
+        GTK+ API guidelines.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-10-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Remove QtScript source code from WebKit.

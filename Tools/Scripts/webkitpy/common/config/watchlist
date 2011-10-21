@@ -78,6 +78,9 @@
         "StyleChecker": {
             "filename": r"Tools/Scripts/webkitpy/style/",
         },
+        "GtkWebKit2PublicAPI": {
+            "filename": r"Source/WebKit2/UIProcess/API/gtk/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -98,9 +101,13 @@
         "SecurityCritical": [ "abarth@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
+        "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
                                "because this patch contains changes to the Chromium public API.", ],
+        "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
+                                 "please make sure it follows the guidelines for new WebKit2 GTK+ API. "
+                                 "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
     },
 }
