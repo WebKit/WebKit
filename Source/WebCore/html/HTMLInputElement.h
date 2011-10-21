@@ -232,6 +232,8 @@ public:
     bool connectToColorChooser();
 #endif
 
+    String defaultToolTip() const;
+
     static const int maximumLength;
 
 protected:

@@ -722,6 +722,11 @@ void InputType::readonlyAttributeChanged()
 {
 }
 
+String InputType::defaultToolTip() const
+{
+    return String();
+}
+
 namespace InputTypeNames {
 
 // The type names must be lowercased because they will be the return values of

@@ -37,6 +37,7 @@
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -366,6 +367,22 @@ void FileInputType::receiveDroppedFiles(const Vector<String>& paths)
 Icon* FileInputType::icon() const
 {
     return m_icon.get();
+}
+
+String FileInputType::defaultToolTip() const
+{
+    FileList* fileList = m_fileList.get();
+    unsigned listSize = fileList->length();
+    if (!listSize)
+        return fileButtonNoFileSelectedLabel();
+
+    StringBuilder names;
+    for (size_t i = 0; i < listSize; ++i) {
+        names.append(fileList->item(i)->fileName());
+        if (i != listSize - 1)
+            names.append('\n');
+    }
+    return names.toString();
 }
 
 } // namespace WebCore

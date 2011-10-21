@@ -1827,4 +1827,9 @@ void HTMLInputElement::updateValueIfNeeded()
         setValue(newValue);
 }
 
+String HTMLInputElement::defaultToolTip() const
+{
+    return m_inputType->defaultToolTip();
+}
+
 } // namespace

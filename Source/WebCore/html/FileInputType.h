@@ -65,6 +65,7 @@ private:
     virtual bool isFileUpload() const;
     virtual void createShadowSubtree();
     virtual void multipleAttributeChanged();
+    virtual String defaultToolTip() const OVERRIDE;
 
     // FileChooserClient implementation.
     virtual void filesChosen(const Vector<String>&);

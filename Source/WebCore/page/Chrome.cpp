@@ -419,21 +419,14 @@ void Chrome::setToolTip(const HitTestResult& result)
         if (Node* node = result.innerNonSharedNode()) {
             if (node->hasTagName(inputTag)) {
                 HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
-                if (input->isFileUpload()) {
-                    FileList* files = input->files();
-                    unsigned listSize = files->length();
-                    if (listSize > 1) {
-                        StringBuilder names;
-                        for (size_t i = 0; i < listSize; ++i) {
-                            names.append(files->item(i)->fileName());
-                            if (i != listSize - 1)
-                                names.append('\n');
-                        }
-                        toolTip = names.toString();
-                        // filename always display as LTR.
-                        toolTipDirection = LTR;
-                    }
-                }
+                toolTip = input->defaultToolTip();
+
+                // FIXME: We should obtain text direction of tooltip from
+                // ChromeClient or platform. As of October 2011, all client
+                // implementations don't use text direction information for
+                // ChromeClient::setToolTip. We'll work on tooltip text
+                // direction during bidi cleanup in form inputs.
+                toolTipDirection = LTR;
             }
         }
     }

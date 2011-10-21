@@ -1,3 +1,29 @@
+2011-10-20  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms][File] Add tooltip to "No file selected" text
+        https://bugs.webkit.org/show_bug.cgi?id=70474
+
+        Reviewed by Kent Tamura.
+
+        No new tests. Existing tests cover all changes.
+
+        This patch provides tooltip for text portion of upload file control
+        tell users to know actual text of truncated text of file name and
+        "No file selected" text. Tooltip is always displayed even if user
+        select only one file for truncated displayed file name.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::defaultToolTip): Implement default tooltip logic.
+        * html/FileInputType.h: declaration of new method defaultToolTip.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultToolTip): Impelement new method defaultToolTip.
+        * html/HTMLInputElement.h: declaration of new method defaultToolTip.
+        * html/InputType.cpp:
+        (WebCore::InputType::defaultToolTip): Implement default method of defaultToolTip method.
+        * html/InputType.h: declaration of new method defaultToolTip.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip): Use new method HTMLInputElement::defaultToolTip and move default tooltip logic to FileInputType::defaultToolTip method.
+
 2011-10-20  Darin Adler  <darin@apple.com>
 
         Remove OptionElement (first half)
