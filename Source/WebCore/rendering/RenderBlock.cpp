@@ -5258,7 +5258,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         if (child->isBox() && child->isHorizontalWritingMode() != isHorizontalWritingMode()) {
             RenderBox* childBox = toRenderBox(child);
             LayoutUnit oldHeight = childBox->logicalHeight();
-            setLogicalHeight(childBox->borderAndPaddingLogicalHeight());
+            childBox->setLogicalHeight(childBox->borderAndPaddingLogicalHeight());
             childBox->computeLogicalHeight();
             childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = childBox->logicalHeight();
             childBox->setLogicalHeight(oldHeight);
