@@ -520,9 +520,12 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     RenderObject* renderer = range->startContainer()->renderer();
     RenderStyle* style = renderer->style();
     NSFont *font = style->font().primaryFont()->getNSFont();
-    if (!font)
-        return;
     
+    // We won't be able to get an NSFont in the case that a Web Font is being used, so use
+    // the default system font at the same size instead.
+    if (!font)
+        font = [NSFont systemFontOfSize:style->font().primaryFont()->platformData().size()];
+
     CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
     if (!fontDescriptorAttributes)
         return;

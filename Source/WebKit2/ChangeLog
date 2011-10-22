@@ -1,5 +1,19 @@
 2011-10-21  Sam Weinig  <sam@webkit.org>
 
+        Lookup does not work on text using web fonts in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=70669
+        <rdar://problem/10147441>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        If the font for the range is web font (and therefore no NSFont is 
+        available), use the system font of the same size. While not great,
+        it approximates what WebKit1 does.
+
+2011-10-21  Sam Weinig  <sam@webkit.org>
+
         Fix crash below CoreIPC::MessageSender<WebKit::WebPage>::send<Messages::WebPageProxy::DidPerformDictionaryLookup>
         https://bugs.webkit.org/show_bug.cgi?id=70667
         <rdar://problem/9622186>
