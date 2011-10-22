@@ -1,3 +1,22 @@
+2011-10-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add put to the MethodTable
+        https://bugs.webkit.org/show_bug.cgi?id=70439
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMWindowCustom.cpp: Added static put since it was overlooked in 
+        previous patches.
+        (WebCore::JSDOMWindow::putVirtual):
+        (WebCore::JSDOMWindow::put):
+        * bindings/js/JSDOMWindowShell.cpp: Ditto.
+        (WebCore::JSDOMWindowShell::putVirtual):
+        (WebCore::JSDOMWindowShell::put):
+        * bindings/js/JSDOMWindowShell.h:
+
 2011-10-21  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70580

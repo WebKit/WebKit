@@ -346,21 +346,27 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
 
 void JSDOMWindow::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    if (!impl()->frame())
+    put(this, exec, propertyName, value, slot);
+}
+
+void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    if (!thisObject->impl()->frame())
         return;
 
     // Optimization: access JavaScript global variables directly before involving the DOM.
-    if (JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
-        if (allowsAccessFrom(exec))
-            JSGlobalObject::put(this, exec, propertyName, value, slot);
+    if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
+        if (thisObject->allowsAccessFrom(exec))
+            JSGlobalObject::put(thisObject, exec, propertyName, value, slot);
         return;
     }
 
-    if (lookupPut<JSDOMWindow>(exec, propertyName, value, s_info.propHashTable(exec), this))
+    if (lookupPut<JSDOMWindow>(exec, propertyName, value, s_info.propHashTable(exec), thisObject))
         return;
 
-    if (allowsAccessFrom(exec))
-        Base::put(this, exec, propertyName, value, slot);
+    if (thisObject->allowsAccessFrom(exec))
+        Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 bool JSDOMWindow::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)

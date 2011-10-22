@@ -133,15 +133,15 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
 
+        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
         explicit JSFunction(VPtrStealingHackType);
 
         bool isHostFunctionNonInline() const;
-
-        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);

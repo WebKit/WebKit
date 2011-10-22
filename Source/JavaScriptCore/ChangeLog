@@ -1,5 +1,18 @@
 2011-10-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Add put to the MethodTable
+        https://bugs.webkit.org/show_bug.cgi?id=70439
+
+        Reviewed by Oliver Hunt.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/ClassInfo.h: Added put and putByIndex to the MethodTable.
+        * runtime/JSFunction.h: Changed access modifier for put to protected since some
+        subclasses of JSFunction need to reference it in their MethodTables.
+
+2011-10-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Add finalizer to JSObject
         https://bugs.webkit.org/show_bug.cgi?id=70336
 

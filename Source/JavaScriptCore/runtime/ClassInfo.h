@@ -40,12 +40,20 @@ namespace JSC {
 
         typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
         GetConstructDataFunctionPtr getConstructData;
+
+        typedef void (*PutFunctionPtr)(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        PutFunctionPtr put;
+
+        typedef void (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        PutByIndexFunctionPtr putByIndex;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \
         &ClassName::visitChildren, \
         &ClassName::getCallData, \
         &ClassName::getConstructData, \
+        &ClassName::put, \
+        &ClassName::putByIndex, \
     }, \
     sizeof(ClassName)
 
