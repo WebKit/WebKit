@@ -39,7 +39,6 @@ VPATH = \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/notifications \
-    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -277,7 +276,6 @@ DOM_CLASSES = \
     Internals \
     JavaScriptAudioNode \
     KeyboardEvent \
-    LocalMediaStream \
     Location \
     LowPass2FilterNode \
     MediaElementAudioSourceNode \
@@ -285,11 +283,6 @@ DOM_CLASSES = \
     MediaList \
     MediaQueryList \
     MediaQueryListListener \
-    MediaStream \
-    MediaStreamEvent \
-    MediaStreamList \
-    MediaStreamTrack \
-    MediaStreamTrackList \
     MemoryInfo \
     MessageChannel \
     MessageEvent \
@@ -303,9 +296,6 @@ DOM_CLASSES = \
     MutationRecord \
     NamedNodeMap \
     Navigator \
-    NavigatorUserMediaError \
-    NavigatorUserMediaErrorCallback \
-    NavigatorUserMediaSuccessCallback \
     Node \
     NodeFilter \
     NodeIterator \
@@ -320,7 +310,6 @@ DOM_CLASSES = \
     OperationNotAllowedException \
     OverflowEvent \
     PageTransitionEvent \
-    PeerConnection \
     Performance \
     PerformanceNavigation \
     PerformanceTiming \
@@ -503,7 +492,6 @@ DOM_CLASSES = \
     ScriptProfileNode \
     SharedWorker \
     SharedWorkerContext \
-    SignalingCallback \
     SpeechInputEvent \
     SpeechInputResult \
     SpeechInputResultList \
@@ -892,7 +880,6 @@ IDL_INCLUDES = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/css \
-    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/notifications \
     $(WebCore)/xml \

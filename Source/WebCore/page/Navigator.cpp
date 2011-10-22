@@ -35,9 +35,6 @@
 #include "Geolocation.h"
 #include "KURL.h"
 #include "Language.h"
-#include "MediaStreamFrameController.h"
-#include "NavigatorUserMediaErrorCallback.h"
-#include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -46,6 +43,12 @@
 #include "StorageNamespace.h"
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamFrameController.h"
+#include "NavigatorUserMediaErrorCallback.h"
+#include "NavigatorUserMediaSuccessCallback.h"
+#endif
 
 namespace WebCore {
 

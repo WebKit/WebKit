@@ -43,9 +43,10 @@ public:
 
     void initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
-    PassRefPtr<MediaStream> stream() const;
+    // From EventTarget.
+    virtual bool isMediaStreamEvent() const { return true; }
 
-    virtual const AtomicString& interfaceName() const;
+    PassRefPtr<MediaStream> stream() const;
 
 private:
     MediaStreamEvent();

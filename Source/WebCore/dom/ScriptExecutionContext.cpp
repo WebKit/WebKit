@@ -40,8 +40,6 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "FileThread.h"
-#include "MediaStream.h"
-#include "MediaStreamRegistry.h"
 #include "MessagePort.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
@@ -55,6 +53,11 @@
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStream.h"
+#include "MediaStreamRegistry.h"
 #endif
 
 namespace WebCore {

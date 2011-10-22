@@ -63,7 +63,6 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
-#include "MediaStreamFrameController.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -110,6 +109,10 @@
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamFrameController.h"
 #endif
 
 #if USE(TILED_BACKING_STORE)

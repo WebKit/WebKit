@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,63 +23,56 @@
  */
 
 #include "config.h"
-#include "MediaStreamTrack.h"
+#include "MediaStreamEvent.h"
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "EventNames.h"
+#include "MediaStream.h"
+
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
+PassRefPtr<MediaStreamEvent> MediaStreamEvent::create()
 {
-    return adoptRef(new MediaStreamTrack(streamDescriptor, trackIndex));
+    return adoptRef(new MediaStreamEvent);
 }
 
-MediaStreamTrack::MediaStreamTrack(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
-    : m_streamDescriptor(streamDescriptor)
-    , m_trackIndex(trackIndex)
+PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+{
+    return adoptRef(new MediaStreamEvent(type, canBubble, cancelable, stream));
+}
+
+
+MediaStreamEvent::MediaStreamEvent()
 {
 }
 
-MediaStreamTrack::~MediaStreamTrack()
+MediaStreamEvent::MediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+    : Event(type, canBubble, cancelable)
+    , m_stream(stream)
 {
 }
 
-String MediaStreamTrack::kind() const
+MediaStreamEvent::~MediaStreamEvent()
 {
-    DEFINE_STATIC_LOCAL(String, audioKind, ("audio"));
-    DEFINE_STATIC_LOCAL(String, videoKind, ("video"));
-
-    switch (m_streamDescriptor->component(m_trackIndex)->source()->type()) {
-    case MediaStreamSource::TypeAudio:
-        return audioKind;
-    case MediaStreamSource::TypeVideo:
-        return videoKind;
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
 }
 
-String MediaStreamTrack::label() const
+void MediaStreamEvent::initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
 {
-    return m_streamDescriptor->component(m_trackIndex)->source()->name();
-}
-
-bool MediaStreamTrack::enabled() const
-{
-    return m_streamDescriptor->component(m_trackIndex)->enabled();
-}
-
-void MediaStreamTrack::setEnabled(bool enabled)
-{
-    if (enabled == m_streamDescriptor->component(m_trackIndex)->enabled())
+    if (dispatched())
         return;
 
-    m_streamDescriptor->component(m_trackIndex)->setEnabled(enabled);
+    initEvent(type, canBubble, cancelable);
 
-    // FIXME: tell the platform that the track was enabled/disabled
+    m_stream = stream;
+}
+
+PassRefPtr<MediaStream> MediaStreamEvent::stream() const
+{
+    return m_stream;
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+

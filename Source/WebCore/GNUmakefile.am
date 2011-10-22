@@ -38,8 +38,8 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/loader/cache \
 	-I$(srcdir)/Source/WebCore/loader/icon \
 	-I$(srcdir)/Source/WebCore/mathml \
+	-I$(srcdir)/Source/WebCore/mediastream \
 	-I$(srcdir)/Source/WebCore/notifications \
-	-I$(srcdir)/Source/WebCore/p2p \
 	-I$(srcdir)/Source/WebCore/page \
 	-I$(srcdir)/Source/WebCore/page/animation \
 	-I$(srcdir)/Source/WebCore/platform \
@@ -714,8 +714,8 @@ IDL_PATH := \
     $(WebCore)/html/canvas \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
+    $(WebCore)/mediastream \
     $(WebCore)/notifications \
-    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -828,8 +828,8 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/html/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/notifications/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/p2p/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/page/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \

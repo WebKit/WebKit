@@ -1169,7 +1169,6 @@ webcore_sources += \
 	Source/WebCore/dom/DeviceOrientationEvent.cpp \
 	Source/WebCore/dom/DeviceOrientationEvent.h \
 	Source/WebCore/dom/DeviceOrientation.h \
-	Source/WebCore/dom/DispatchTask.h \
 	Source/WebCore/dom/Document.cpp \
 	Source/WebCore/dom/DocumentFragment.cpp \
 	Source/WebCore/dom/DocumentFragment.h \
@@ -1237,17 +1236,7 @@ webcore_sources += \
 	Source/WebCore/dom/HashChangeEvent.h \
 	Source/WebCore/dom/KeyboardEvent.cpp \
 	Source/WebCore/dom/KeyboardEvent.h \
-	Source/WebCore/dom/LocalMediaStream.cpp \
-	Source/WebCore/dom/LocalMediaStream.h \
 	Source/WebCore/dom/MappedAttributeEntry.h \
-	Source/WebCore/dom/MediaStream.cpp \
-	Source/WebCore/dom/MediaStream.h \
-	Source/WebCore/dom/MediaStreamList.cpp \
-	Source/WebCore/dom/MediaStreamList.h \
-	Source/WebCore/dom/MediaStreamTrack.cpp \
-	Source/WebCore/dom/MediaStreamTrack.h \
-	Source/WebCore/dom/MediaStreamTrackList.cpp \
-	Source/WebCore/dom/MediaStreamTrackList.h \
 	Source/WebCore/dom/MessageChannel.cpp \
 	Source/WebCore/dom/MessageChannel.h \
 	Source/WebCore/dom/MessageEvent.cpp \
@@ -2253,17 +2242,34 @@ webcore_sources += \
 	Source/WebCore/mathml/MathMLMathElement.h \
 	Source/WebCore/mathml/MathMLTextElement.cpp \
 	Source/WebCore/mathml/MathMLTextElement.h \
+	Source/WebCore/mediastream/LocalMediaStream.cpp \
+	Source/WebCore/mediastream/LocalMediaStream.h \
+	Source/WebCore/mediastream/MediaStream.cpp \
+	Source/WebCore/mediastream/MediaStream.h \
+	Source/WebCore/mediastream/MediaStreamClient.h \
+	Source/WebCore/mediastream/MediaStreamController.cpp \
+	Source/WebCore/mediastream/MediaStreamController.h \
+	Source/WebCore/mediastream/MediaStreamEvent.cpp \
+	Source/WebCore/mediastream/MediaStreamEvent.h \
+	Source/WebCore/mediastream/MediaStreamFrameController.cpp \
+	Source/WebCore/mediastream/MediaStreamFrameController.h \
+	Source/WebCore/mediastream/MediaStreamList.cpp \
+	Source/WebCore/mediastream/MediaStreamList.h \
+	Source/WebCore/mediastream/MediaStreamRegistry.cpp \
+	Source/WebCore/mediastream/MediaStreamRegistry.h \
+	Source/WebCore/mediastream/MediaStreamTrack.cpp \
+	Source/WebCore/mediastream/MediaStreamTrack.h \
+	Source/WebCore/mediastream/MediaStreamTrackList.cpp \
+	Source/WebCore/mediastream/MediaStreamTrackList.h \
+	Source/WebCore/mediastream/PeerConnection.cpp \
+	Source/WebCore/mediastream/PeerConnection.h \
+	Source/WebCore/mediastream/SignalingCallback.h \
 	Source/WebCore/notifications/NotificationCenter.cpp \
 	Source/WebCore/notifications/NotificationCenter.h \
 	Source/WebCore/notifications/NotificationContents.h \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
 	Source/WebCore/notifications/NotificationPresenter.h \
-	Source/WebCore/p2p/MediaStreamEvent.cpp \
-	Source/WebCore/p2p/MediaStreamEvent.h \
-	Source/WebCore/p2p/PeerConnection.cpp \
-	Source/WebCore/p2p/PeerConnection.h \
-	Source/WebCore/p2p/SignalingCallback.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \
 	Source/WebCore/page/animation/AnimationBase.h \
 	Source/WebCore/page/animation/AnimationController.cpp \
@@ -2336,11 +2342,6 @@ webcore_sources += \
 	Source/WebCore/page/Location.cpp \
 	Source/WebCore/page/Location.h \
 	Source/WebCore/page/MediaCanStartListener.h \
-	Source/WebCore/page/MediaStreamClient.h \
-	Source/WebCore/page/MediaStreamController.cpp \
-	Source/WebCore/page/MediaStreamController.h \
-	Source/WebCore/page/MediaStreamFrameController.cpp \
-	Source/WebCore/page/MediaStreamFrameController.h \
 	Source/WebCore/page/MemoryInfo.cpp \
 	Source/WebCore/page/MemoryInfo.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \
@@ -2708,8 +2709,6 @@ webcore_sources += \
 	Source/WebCore/platform/Logging.h \
 	Source/WebCore/platform/MIMETypeRegistry.cpp \
 	Source/WebCore/platform/MIMETypeRegistry.h \
-	Source/WebCore/platform/MediaStreamRegistry.cpp \
-	Source/WebCore/platform/MediaStreamRegistry.h \
 	Source/WebCore/platform/MemoryPressureHandler.cpp \
 	Source/WebCore/platform/MemoryPressureHandler.h \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \

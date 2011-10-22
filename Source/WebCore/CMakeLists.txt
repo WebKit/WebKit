@@ -340,8 +340,6 @@ SET(WebCore_IDL_FILES
     page/Location.idl
     page/MemoryInfo.idl
     page/Navigator.idl
-    page/NavigatorUserMediaErrorCallback.idl
-    page/NavigatorUserMediaSuccessCallback.idl
     page/Performance.idl
     page/PerformanceNavigation.idl
     page/PerformanceTiming.idl
@@ -2068,33 +2066,6 @@ ENDIF()
 IF (ENABLE_PROGRESS_TAG)
     LIST(APPEND WebCore_SOURCES
         accessibility/AccessibilityProgressIndicator.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_MEDIA_STREAM)
-    LIST(APPEND WebCore_SOURCES
-        dom/LocalMediaStream.cpp
-        dom/MediaStream.cpp
-        dom/MediaStreamList.cpp
-        dom/MediaStreamTrack.cpp
-        dom/MediaStreamTrackList.cpp
-        p2p/MediaStreamEvent.cpp
-        p2p/PeerConnection.cpp
-        page/MediaStreamController.cpp
-        page/MediaStreamFrameController.cpp
-        platform/MediaStreamRegistry.cpp
-    )
-
-    LIST(APPEND WebCore_IDL_FILES
-        dom/LocalMediaStream.idl
-        dom/MediaStream.idl
-        dom/MediaStreamList.idl
-        dom/MediaStreamTrack.idl
-        dom/MediaStreamTrackList.idl
-        p2p/MediaStreamEvent.idl
-        p2p/PeerConnection.idl
-        p2p/SignalingCallback.idl
-        page/NavigatorUserMediaError.idl
     )
 ENDIF ()
 

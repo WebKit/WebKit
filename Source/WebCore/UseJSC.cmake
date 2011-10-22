@@ -97,14 +97,12 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSMessagePortCustom.cpp
     bindings/js/JSMutationCallbackCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
-    bindings/js/JSNavigatorCustom.cpp
     bindings/js/JSNodeCustom.cpp
     bindings/js/JSNodeFilterCondition.cpp
     bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSOptionConstructor.cpp
-    bindings/js/JSPeerConnectionCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
@@ -236,12 +234,6 @@ ENDIF ()
 IF (ENABLE_VIDEO)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSAudioConstructor.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_MEDIA_STREAM)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSNavigatorCustom.cpp
     )
 ENDIF ()
 

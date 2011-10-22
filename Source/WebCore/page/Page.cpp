@@ -51,8 +51,6 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
-#include "MediaStreamClient.h"
-#include "MediaStreamController.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
 #include "PageGroup.h"
@@ -79,6 +77,11 @@
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "GeolocationController.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamClient.h"
+#include "MediaStreamController.h"
 #endif
 
 namespace WebCore {

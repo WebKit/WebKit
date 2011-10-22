@@ -320,7 +320,6 @@ v8 {
         bindings/js/JSMessagePortCustom.h \
         bindings/js/JSMutationCallbackCustom.cpp \
         bindings/js/JSNamedNodeMapCustom.cpp \
-        bindings/js/JSNavigatorCustom.cpp  \
         bindings/js/JSNodeCustom.cpp \
         bindings/js/JSNodeFilterCondition.cpp \
         bindings/js/JSNodeFilterCustom.cpp \
@@ -3268,47 +3267,6 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
     v8 {
         SOURCES += \
             bindings/v8/custom/V8GeolocationCustom.cpp
-    }
-}
-
-contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
-    HEADERS += \
-        dom/LocalMediaStream.h \
-        dom/MediaStream.h \
-        dom/MediaStreamList.h \
-        dom/MediaStreamTrack.h \
-        dom/MediaStreamTrackList.h \
-        p2p/MediaStreamEvent.h \
-        p2p/PeerConnection.h \
-        p2p/SignalingCallback.h \
-        page/CallbackTask.h \
-        page/MediaStreamClient.h \
-        page/MediaStreamController.h \
-        page/MediaStreamFrameController.h \
-        page/NavigatorUserMediaError.h \
-        page/NavigatorUserMediaErrorCallback.h \
-        page/NavigatorUserMediaSuccessCallback.h \
-        platform/MediaStreamRegistry.h
-
-    SOURCES += \
-        dom/LocalMediaStream.cpp \
-        dom/MediaStream.cpp \
-        dom/MediaStreamList.cpp \
-        dom/MediaStreamTrack.cpp \
-        dom/MediaStreamTrackList.cpp \
-        p2p/MediaStreamEvent.cpp \
-        p2p/PeerConnection.cpp \
-        page/MediaStreamController.cpp \
-        page/MediaStreamFrameController.cpp \
-        platform/MediaStreamRegistry.cpp
-
-    v8 {
-        SOURCES += \
-            bindings/v8/custom/V8NavigatorCustom.cpp
-    } else {
-        SOURCES += \
-            bindings/js/JSNavigatorCustom.cpp \
-            bindings/js/JSPeerConnectionCustom.cpp
     }
 }
 

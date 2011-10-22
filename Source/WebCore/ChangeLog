@@ -1,3 +1,186 @@
+2011-10-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Move all MediaStream and PeerConnection related non-platform files to WebCore/mediastream
+        https://bugs.webkit.org/show_bug.cgi?id=70233
+
+        Reviewed by Adam Barth.
+
+        Removed affected files from build systems that don't have a MEDIA_STREAM build flag.
+
+        No new tests since we're just moving files.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * dom/DOMAllInOne.cpp:
+        * dom/DispatchTask.h: Removed unused file.
+        * dom/ScriptExecutionContext.cpp:
+        * mediastream/LocalMediaStream.cpp: Renamed from Source/WebCore/dom/LocalMediaStream.cpp.
+        (WebCore::LocalMediaStream::create):
+        (WebCore::LocalMediaStream::LocalMediaStream):
+        (WebCore::LocalMediaStream::stop):
+        (WebCore::LocalMediaStream::stopTimerFired):
+        (WebCore::LocalMediaStream::~LocalMediaStream):
+        (WebCore::LocalMediaStream::toLocalMediaStream):
+        * mediastream/LocalMediaStream.h: Renamed from Source/WebCore/dom/LocalMediaStream.h.
+        * mediastream/LocalMediaStream.idl: Renamed from Source/WebCore/dom/LocalMediaStream.idl.
+        * mediastream/MediaStream.cpp: Renamed from Source/WebCore/dom/MediaStream.cpp.
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::readyState):
+        (WebCore::MediaStream::toMediaStream):
+        (WebCore::MediaStream::streamEnded):
+        (WebCore::MediaStream::scriptExecutionContext):
+        (WebCore::MediaStream::eventTargetData):
+        (WebCore::MediaStream::ensureEventTargetData):
+        * mediastream/MediaStream.h: Renamed from Source/WebCore/dom/MediaStream.h.
+        (WebCore::MediaStream::label):
+        (WebCore::MediaStream::tracks):
+        (WebCore::MediaStream::descriptor):
+        (WebCore::MediaStream::refEventTarget):
+        (WebCore::MediaStream::derefEventTarget):
+        * mediastream/MediaStream.idl: Renamed from Source/WebCore/dom/MediaStream.idl.
+        * mediastream/MediaStreamClient.h: Renamed from Source/WebCore/page/MediaStreamClient.h.
+        (WebCore::MediaStreamClient::~MediaStreamClient):
+        * mediastream/MediaStreamController.cpp: Renamed from Source/WebCore/page/MediaStreamController.cpp.
+        (WebCore::MediaStreamController::Request::Request):
+        (WebCore::MediaStreamController::Request::localId):
+        (WebCore::MediaStreamController::Request::frameController):
+        (WebCore::MediaStreamController::MediaStreamController):
+        (WebCore::MediaStreamController::~MediaStreamController):
+        (WebCore::MediaStreamController::isClientAvailable):
+        (WebCore::MediaStreamController::unregisterFrameController):
+        (WebCore::MediaStreamController::registerRequest):
+        (WebCore::MediaStreamController::generateStream):
+        (WebCore::MediaStreamController::streamGenerated):
+        (WebCore::MediaStreamController::streamGenerationFailed):
+        * mediastream/MediaStreamController.h: Renamed from Source/WebCore/page/MediaStreamController.h.
+        * mediastream/MediaStreamEvent.cpp: Renamed from Source/WebCore/p2p/MediaStreamEvent.cpp.
+        (WebCore::MediaStreamEvent::create):
+        (WebCore::MediaStreamEvent::MediaStreamEvent):
+        (WebCore::MediaStreamEvent::~MediaStreamEvent):
+        (WebCore::MediaStreamEvent::initMediaStreamEvent):
+        (WebCore::MediaStreamEvent::stream):
+        * mediastream/MediaStreamEvent.h: Renamed from Source/WebCore/p2p/MediaStreamEvent.h.
+        (WebCore::MediaStreamEvent::isMediaStreamEvent):
+        * mediastream/MediaStreamEvent.idl: Renamed from Source/WebCore/p2p/MediaStreamEvent.idl.
+        * mediastream/MediaStreamFrameController.cpp: Renamed from Source/WebCore/page/MediaStreamFrameController.cpp.
+        (WebCore::MediaStreamFrameController::Request::~Request):
+        (WebCore::MediaStreamFrameController::Request::scriptExecutionContext):
+        (WebCore::MediaStreamFrameController::Request::isGenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::Request::Request):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::create):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::~GenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::isGenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::abort):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::successCallback):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::errorCallback):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::GenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::RequestMap::abort):
+        (WebCore::MediaStreamFrameController::RequestMap::abortAll):
+        (WebCore::MediaStreamFrameController::MediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::~MediaStreamFrameController):
+        (WebCore::MediaStreamFrameController::securityOrigin):
+        (WebCore::MediaStreamFrameController::scriptExecutionContext):
+        (WebCore::MediaStreamFrameController::pageController):
+        (WebCore::MediaStreamFrameController::enterDetachedState):
+        (WebCore::MediaStreamFrameController::isClientAvailable):
+        (WebCore::MediaStreamFrameController::disconnectPage):
+        (WebCore::MediaStreamFrameController::disconnectFrame):
+        (WebCore::MediaStreamFrameController::transferToNewPage):
+        (WebCore::MediaStreamFrameController::parseGenerateStreamOptions):
+        (WebCore::MediaStreamFrameController::generateStream):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        (WebCore::MediaStreamFrameController::streamGenerationFailed):
+        * mediastream/MediaStreamFrameController.h: Renamed from Source/WebCore/page/MediaStreamFrameController.h.
+        (WebCore::MediaStreamFrameController::IdGenerator::IdGenerator):
+        (WebCore::MediaStreamFrameController::IdGenerator::getNextId):
+        * mediastream/MediaStreamList.cpp: Renamed from Source/WebCore/dom/MediaStreamList.cpp.
+        (WebCore::MediaStreamList::create):
+        (WebCore::MediaStreamList::MediaStreamList):
+        (WebCore::MediaStreamList::~MediaStreamList):
+        (WebCore::MediaStreamList::length):
+        (WebCore::MediaStreamList::item):
+        (WebCore::MediaStreamList::append):
+        (WebCore::MediaStreamList::remove):
+        (WebCore::MediaStreamList::contains):
+        * mediastream/MediaStreamList.h: Renamed from Source/WebCore/dom/MediaStreamList.h.
+        * mediastream/MediaStreamList.idl: Renamed from Source/WebCore/dom/MediaStreamList.idl.
+        * mediastream/MediaStreamRegistry.cpp: Renamed from Source/WebCore/platform/MediaStreamRegistry.cpp.
+        (WebCore::MediaStreamRegistry::registry):
+        (WebCore::MediaStreamRegistry::registerMediaStreamURL):
+        (WebCore::MediaStreamRegistry::unregisterMediaStreamURL):
+        (WebCore::MediaStreamRegistry::mediaStream):
+        * mediastream/MediaStreamRegistry.h: Renamed from Source/WebCore/platform/MediaStreamRegistry.h.
+        * mediastream/MediaStreamTrack.cpp: Renamed from Source/WebCore/dom/MediaStreamTrack.cpp.
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::kind):
+        (WebCore::MediaStreamTrack::label):
+        (WebCore::MediaStreamTrack::enabled):
+        (WebCore::MediaStreamTrack::setEnabled):
+        * mediastream/MediaStreamTrack.h: Renamed from Source/WebCore/dom/MediaStreamTrack.h.
+        * mediastream/MediaStreamTrack.idl: Renamed from Source/WebCore/dom/MediaStreamTrack.idl.
+        * mediastream/MediaStreamTrackList.cpp: Renamed from Source/WebCore/dom/MediaStreamTrackList.cpp.
+        (WebCore::MediaStreamTrackList::create):
+        (WebCore::MediaStreamTrackList::MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::~MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::length):
+        (WebCore::MediaStreamTrackList::item):
+        * mediastream/MediaStreamTrackList.h: Renamed from Source/WebCore/dom/MediaStreamTrackList.h.
+        * mediastream/MediaStreamTrackList.idl: Renamed from Source/WebCore/dom/MediaStreamTrackList.idl.
+        * mediastream/PeerConnection.cpp: Renamed from Source/WebCore/p2p/PeerConnection.cpp.
+        (WebCore::PeerConnection::create):
+        (WebCore::PeerConnection::PeerConnection):
+        (WebCore::PeerConnection::~PeerConnection):
+        (WebCore::PeerConnection::processSignalingMessage):
+        (WebCore::PeerConnection::readyState):
+        (WebCore::PeerConnection::send):
+        (WebCore::PeerConnection::addStream):
+        (WebCore::PeerConnection::removeStream):
+        (WebCore::PeerConnection::localStreams):
+        (WebCore::PeerConnection::remoteStreams):
+        (WebCore::PeerConnection::close):
+        (WebCore::PeerConnection::iceProcessingCompleted):
+        (WebCore::PeerConnection::sdpGenerated):
+        (WebCore::PeerConnection::dataStreamMessageReceived):
+        (WebCore::PeerConnection::remoteStreamAdded):
+        (WebCore::PeerConnection::remoteStreamRemoved):
+        (WebCore::PeerConnection::toPeerConnection):
+        (WebCore::PeerConnection::scriptExecutionContext):
+        (WebCore::PeerConnection::stop):
+        (WebCore::PeerConnection::eventTargetData):
+        (WebCore::PeerConnection::ensureEventTargetData):
+        (WebCore::PeerConnection::scheduleInitialNegotiation):
+        (WebCore::PeerConnection::initialNegotiationTimerFired):
+        (WebCore::PeerConnection::ensureStreamChangeScheduled):
+        (WebCore::PeerConnection::streamChangeTimerFired):
+        (WebCore::PeerConnection::scheduleReadyStateChange):
+        (WebCore::PeerConnection::readyStateChangeTimerFired):
+        (WebCore::PeerConnection::changeReadyState):
+        * mediastream/PeerConnection.h: Renamed from Source/WebCore/p2p/PeerConnection.h.
+        (WebCore::PeerConnection::refEventTarget):
+        (WebCore::PeerConnection::derefEventTarget):
+        * mediastream/PeerConnection.idl: Renamed from Source/WebCore/p2p/PeerConnection.idl.
+        * mediastream/SignalingCallback.h: Renamed from Source/WebCore/p2p/SignalingCallback.h.
+        (WebCore::SignalingCallback::~SignalingCallback):
+        * mediastream/SignalingCallback.idl: Renamed from Source/WebCore/p2p/SignalingCallback.idl.
+        * page/Frame.cpp:
+        * page/Navigator.cpp:
+        * page/Page.cpp:
+
 2011-10-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: get rid of View::hide, View::set visible, View::attach,

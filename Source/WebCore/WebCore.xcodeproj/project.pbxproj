@@ -1123,7 +1123,6 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
-		490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 490C47CD13E82D1800F7AB82 /* DispatchTask.h */; };
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1147,8 +1146,6 @@
 		4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958782012A57DDF007238AC /* PlatformCALayerMac.mm */; };
 		4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */; };
 		4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */; };
-		49785EE013F192F000A795AD /* MediaStreamRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */; };
-		49785EE113F192F000A795AD /* MediaStreamRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 49785EDF13F192F000A795AD /* MediaStreamRegistry.h */; };
 		4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */; };
 		498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */; };
 		498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */; };
@@ -1175,20 +1172,8 @@
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49A2CFD913E9787E00579F13 /* MediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */; };
-		49A2CFDA13E9787E00579F13 /* MediaStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */; };
-		49A2D39413E981A300579F13 /* JSMediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */; };
-		49A2D39513E981A300579F13 /* JSMediaStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */; };
-		49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */; };
-		49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */; };
-		49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */; };
 		49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */; };
 		49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */; };
-		49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */; };
-		49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */; };
-		49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F013D97646003808A9 /* JSPeerConnection.h */; };
-		49BE30F513D97646003808A9 /* JSSignalingCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */; };
-		49BE30F613D97646003808A9 /* JSSignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F213D97646003808A9 /* JSSignalingCallback.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSInt8Array.cpp */; };
@@ -1226,14 +1211,6 @@
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
-		49C9F32313D574F90052600A /* MediaStreamTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F31D13D574F80052600A /* MediaStreamTrackList.h */; };
-		49C9F32413D574F90052600A /* MediaStreamTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */; };
-		49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F32013D574F90052600A /* MediaStreamTrack.h */; };
-		49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F32113D574F90052600A /* MediaStreamTrack.cpp */; };
-		49C9F48E13D57D320052600A /* JSMediaStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */; };
-		49C9F48F13D57D320052600A /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */; };
-		49C9F49013D57D320052600A /* JSMediaStreamTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */; };
-		49C9F49113D57D320052600A /* JSMediaStreamTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */; };
@@ -4108,7 +4085,6 @@
 		A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E5A30D746458006442E9 /* Navigator.cpp */; };
 		A9C6E5A60D746458006442E9 /* Navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E5A40D746458006442E9 /* Navigator.h */; };
 		A9C6E6470D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */; };
-		A9C6E6490D7465D8006442E9 /* JSNavigatorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E6480D7465D8006442E9 /* JSNavigatorCustom.cpp */; };
 		A9C6E64C0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */; };
 		A9C6E64D0D7465E7006442E9 /* JSDOMPluginCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E64B0D7465E7006442E9 /* JSDOMPluginCustom.cpp */; };
 		A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9D247F50D757E3300FDF959 /* JSNavigator.cpp */; };
@@ -4147,10 +4123,6 @@
 		B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */ = {isa = PBXBuildFile; fileRef = B10B697D140C174000BC1C26 /* WebVTTToken.h */; };
 		B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */; };
 		B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */; };
-		B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */; };
-		B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* MediaStreamList.h */; };
-		B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */; };
-		B14353F9138EA95B00D53276 /* JSMediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353F7138EA95B00D53276 /* JSMediaStreamList.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1AD4E5C13A12A0B00846B27 /* TextTrackCueIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */; };
 		B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */; };
@@ -4167,29 +4139,6 @@
 		B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */; };
 		B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
-		B1E5457A1346291F0092A545 /* LocalMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545711346291F0092A545 /* LocalMediaStream.cpp */; };
-		B1E5457B1346291F0092A545 /* LocalMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545721346291F0092A545 /* LocalMediaStream.h */; };
-		B1E5457D1346291F0092A545 /* MediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545741346291F0092A545 /* MediaStream.cpp */; };
-		B1E5457E1346291F0092A545 /* MediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545751346291F0092A545 /* MediaStream.h */; };
-		B1E54593134629C10092A545 /* CallbackTask.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54587134629C10092A545 /* CallbackTask.h */; };
-		B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54588134629C10092A545 /* MediaStreamClient.h */; };
-		B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */; };
-		B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458A134629C10092A545 /* MediaStreamFrameController.h */; };
-		B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E5458B134629C10092A545 /* MediaStreamController.cpp */; };
-		B1E54598134629C10092A545 /* MediaStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458C134629C10092A545 /* MediaStreamController.h */; };
-		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
-		B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */; };
-		B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */; };
-		B1E545DD13462B0B0092A545 /* JSLocalMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545CF13462B0B0092A545 /* JSLocalMediaStream.cpp */; };
-		B1E545DE13462B0B0092A545 /* JSLocalMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D013462B0B0092A545 /* JSLocalMediaStream.h */; };
-		B1E545DF13462B0B0092A545 /* JSNavigatorUserMediaError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */; };
-		B1E545E013462B0B0092A545 /* JSNavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */; };
-		B1E545E113462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */; };
-		B1E545E213462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */; };
-		B1E545E313462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */; };
-		B1E545E413462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */; };
-		B1E545E513462B0B0092A545 /* JSMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D713462B0B0092A545 /* JSMediaStream.cpp */; };
-		B1E545E613462B0B0092A545 /* JSMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D813462B0B0092A545 /* JSMediaStream.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
 		B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */; };
@@ -8290,7 +8239,6 @@
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
-		490C47CD13E82D1800F7AB82 /* DispatchTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchTask.h; sourceTree = "<group>"; };
 		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
 		493E5E0812D6420500020081 /* PlatformCALayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerClient.h; path = ca/PlatformCALayerClient.h; sourceTree = "<group>"; };
@@ -8319,8 +8267,6 @@
 		4958782012A57DDF007238AC /* PlatformCALayerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCALayerMac.mm; path = ca/mac/PlatformCALayerMac.mm; sourceTree = "<group>"; };
 		4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestingTransformState.cpp; sourceTree = "<group>"; };
 		4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestingTransformState.h; sourceTree = "<group>"; };
-		49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamRegistry.cpp; sourceTree = "<group>"; };
-		49785EDF13F192F000A795AD /* MediaStreamRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamRegistry.h; sourceTree = "<group>"; };
 		4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrix.h; sourceTree = "<group>"; };
 		4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSMatrix.h; sourceTree = "<group>"; };
@@ -8349,23 +8295,8 @@
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayerCA.cpp; path = ca/GraphicsLayerCA.cpp; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsLayerCA.h; path = ca/GraphicsLayerCA.h; sourceTree = "<group>"; };
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAAnimation.h; path = ca/PlatformCAAnimation.h; sourceTree = "<group>"; };
-		49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaStreamEvent.cpp; path = p2p/MediaStreamEvent.cpp; sourceTree = "<group>"; };
-		49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaStreamEvent.h; path = p2p/MediaStreamEvent.h; sourceTree = "<group>"; };
-		49A2CFD813E9787E00579F13 /* MediaStreamEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MediaStreamEvent.idl; path = p2p/MediaStreamEvent.idl; sourceTree = "<group>"; };
-		49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamEvent.cpp; sourceTree = "<group>"; };
-		49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamEvent.h; sourceTree = "<group>"; };
-		49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PeerConnection.cpp; path = p2p/PeerConnection.cpp; sourceTree = "<group>"; };
-		49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeerConnection.h; path = p2p/PeerConnection.h; sourceTree = "<group>"; };
-		49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PeerConnection.idl; path = p2p/PeerConnection.idl; sourceTree = "<group>"; };
-		49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalingCallback.h; path = p2p/SignalingCallback.h; sourceTree = "<group>"; };
-		49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SignalingCallback.idl; path = p2p/SignalingCallback.idl; sourceTree = "<group>"; };
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
-		49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnectionCustom.cpp; sourceTree = "<group>"; };
-		49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnection.cpp; sourceTree = "<group>"; };
-		49BE30F013D97646003808A9 /* JSPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPeerConnection.h; sourceTree = "<group>"; };
-		49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSignalingCallback.cpp; sourceTree = "<group>"; };
-		49BE30F213D97646003808A9 /* JSSignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSignalingCallback.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSInt8Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8Array.cpp; sourceTree = "<group>"; };
@@ -8412,16 +8343,6 @@
 		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
 		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
-		49C9F31C13D574F80052600A /* MediaStreamTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrackList.idl; sourceTree = "<group>"; };
-		49C9F31D13D574F80052600A /* MediaStreamTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackList.h; sourceTree = "<group>"; };
-		49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackList.cpp; sourceTree = "<group>"; };
-		49C9F31F13D574F80052600A /* MediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrack.idl; sourceTree = "<group>"; };
-		49C9F32013D574F90052600A /* MediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrack.h; sourceTree = "<group>"; };
-		49C9F32113D574F90052600A /* MediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrack.cpp; sourceTree = "<group>"; };
-		49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrack.cpp; sourceTree = "<group>"; };
-		49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrack.h; sourceTree = "<group>"; };
-		49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackList.cpp; sourceTree = "<group>"; };
-		49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackList.h; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
 		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
 		49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerspectiveTransformOperation.cpp; path = transforms/PerspectiveTransformOperation.cpp; sourceTree = "<group>"; };
@@ -11222,7 +11143,6 @@
 		A9C6E5A30D746458006442E9 /* Navigator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Navigator.cpp; sourceTree = "<group>"; };
 		A9C6E5A40D746458006442E9 /* Navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Navigator.h; sourceTree = "<group>"; };
 		A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMimeTypeArrayCustom.cpp; sourceTree = "<group>"; };
-		A9C6E6480D7465D8006442E9 /* JSNavigatorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorCustom.cpp; sourceTree = "<group>"; };
 		A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPluginArrayCustom.cpp; sourceTree = "<group>"; };
 		A9C6E64B0D7465E7006442E9 /* JSDOMPluginCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPluginCustom.cpp; sourceTree = "<group>"; };
 		A9C6E65D0D746694006442E9 /* Navigator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Navigator.idl; sourceTree = "<group>"; };
@@ -11267,11 +11187,6 @@
 		B10B697D140C174000BC1C26 /* WebVTTToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTToken.h; sourceTree = "<group>"; };
 		B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTTokenizer.cpp; sourceTree = "<group>"; };
 		B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTTokenizer.h; sourceTree = "<group>"; };
-		B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamList.cpp; sourceTree = "<group>"; };
-		B14353D2138EA8ED00D53276 /* MediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamList.h; sourceTree = "<group>"; };
-		B14353D3138EA8ED00D53276 /* MediaStreamList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamList.idl; sourceTree = "<group>"; };
-		B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamList.cpp; sourceTree = "<group>"; };
-		B14353F7138EA95B00D53276 /* JSMediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamList.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueIndex.cpp; sourceTree = "<group>"; };
 		B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueIndex.h; sourceTree = "<group>"; };
@@ -11288,34 +11203,6 @@
 		B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackLoader.cpp; path = loader/TextTrackLoader.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackLoader.h; path = loader/TextTrackLoader.h; sourceTree = SOURCE_ROOT; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
-		B1E545711346291F0092A545 /* LocalMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalMediaStream.cpp; sourceTree = "<group>"; };
-		B1E545721346291F0092A545 /* LocalMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalMediaStream.h; sourceTree = "<group>"; };
-		B1E545731346291F0092A545 /* LocalMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalMediaStream.idl; sourceTree = "<group>"; };
-		B1E545741346291F0092A545 /* MediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStream.cpp; sourceTree = "<group>"; };
-		B1E545751346291F0092A545 /* MediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStream.h; sourceTree = "<group>"; };
-		B1E545761346291F0092A545 /* MediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStream.idl; sourceTree = "<group>"; };
-		B1E54587134629C10092A545 /* CallbackTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackTask.h; sourceTree = "<group>"; };
-		B1E54588134629C10092A545 /* MediaStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamClient.h; sourceTree = "<group>"; };
-		B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamFrameController.cpp; sourceTree = "<group>"; };
-		B1E5458A134629C10092A545 /* MediaStreamFrameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamFrameController.h; sourceTree = "<group>"; };
-		B1E5458B134629C10092A545 /* MediaStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamController.cpp; sourceTree = "<group>"; };
-		B1E5458C134629C10092A545 /* MediaStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamController.h; sourceTree = "<group>"; };
-		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
-		B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
-		B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
-		B1E54590134629C10092A545 /* NavigatorUserMediaErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaErrorCallback.idl; sourceTree = "<group>"; };
-		B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaSuccessCallback.h; sourceTree = "<group>"; };
-		B1E54592134629C10092A545 /* NavigatorUserMediaSuccessCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaSuccessCallback.idl; sourceTree = "<group>"; };
-		B1E545CF13462B0B0092A545 /* JSLocalMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocalMediaStream.cpp; sourceTree = "<group>"; };
-		B1E545D013462B0B0092A545 /* JSLocalMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLocalMediaStream.h; sourceTree = "<group>"; };
-		B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaError.cpp; sourceTree = "<group>"; };
-		B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaError.h; sourceTree = "<group>"; };
-		B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaErrorCallback.cpp; sourceTree = "<group>"; };
-		B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
-		B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaSuccessCallback.cpp; sourceTree = "<group>"; };
-		B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaSuccessCallback.h; sourceTree = "<group>"; };
-		B1E545D713462B0B0092A545 /* JSMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStream.cpp; sourceTree = "<group>"; };
-		B1E545D813462B0B0092A545 /* JSMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStream.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
 		B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
@@ -13886,7 +13773,6 @@
 				BCB16BFB0979C38700467741 /* loader */,
 				FABE72EC1059C1EB00D999DD /* mathml */,
 				333F703D0FB49C16008E12A6 /* notifications */,
-				49A5A4F613E2EFE600CFDAE0 /* p2p */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				5DCF83690D59157800953BC6 /* plugins */,
@@ -15007,21 +14893,6 @@
 			name = ca;
 			sourceTree = "<group>";
 		};
-		49A5A4F613E2EFE600CFDAE0 /* p2p */ = {
-			isa = PBXGroup;
-			children = (
-				49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */,
-				49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */,
-				49A2CFD813E9787E00579F13 /* MediaStreamEvent.idl */,
-				49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */,
-				49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */,
-				49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */,
-				49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */,
-				49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */,
-			);
-			name = p2p;
-			sourceTree = "<group>";
-		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
@@ -15501,7 +15372,6 @@
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
-				B1E54587134629C10092A545 /* CallbackTask.h */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
@@ -15569,11 +15439,6 @@
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
-				B1E54588134629C10092A545 /* MediaStreamClient.h */,
-				B1E5458B134629C10092A545 /* MediaStreamController.cpp */,
-				B1E5458C134629C10092A545 /* MediaStreamController.h */,
-				B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */,
-				B1E5458A134629C10092A545 /* MediaStreamFrameController.h */,
 				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
 				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
 				9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */,
@@ -15584,12 +15449,6 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
-				B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */,
-				B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */,
-				B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */,
-				B1E54590134629C10092A545 /* NavigatorUserMediaErrorCallback.idl */,
-				B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */,
-				B1E54592134629C10092A545 /* NavigatorUserMediaSuccessCallback.idl */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
@@ -18309,18 +18168,6 @@
 				FE80DA600E9C4703000D6F75 /* JSGeolocation.h */,
 				FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */,
 				FE80DA620E9C4703000D6F75 /* JSGeoposition.h */,
-				B1E545CF13462B0B0092A545 /* JSLocalMediaStream.cpp */,
-				B1E545D013462B0B0092A545 /* JSLocalMediaStream.h */,
-				B1E545D713462B0B0092A545 /* JSMediaStream.cpp */,
-				B1E545D813462B0B0092A545 /* JSMediaStream.h */,
-				49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */,
-				49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */,
-				B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */,
-				B14353F7138EA95B00D53276 /* JSMediaStreamList.h */,
-				49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */,
-				49C9F48B13D57D320052600A /* JSMediaStreamTrack.h */,
-				49C9F48C13D57D320052600A /* JSMediaStreamTrackList.cpp */,
-				49C9F48D13D57D320052600A /* JSMediaStreamTrackList.h */,
 				C6F0902014327D4F00685849 /* JSMutationCallback.cpp */,
 				C6F0902114327D4F00685849 /* JSMutationCallback.h */,
 				C6F08FC71431000D00685849 /* JSMutationRecord.cpp */,
@@ -18333,8 +18180,6 @@
 				BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
-				49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */,
-				49BE30F013D97646003808A9 /* JSPeerConnection.h */,
 				598365E31355F604001B185D /* JSPositionCallback.cpp */,
 				598365DC1355F53C001B185D /* JSPositionCallback.h */,
 				FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */,
@@ -18347,8 +18192,6 @@
 				E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */,
 				4998AECB13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp */,
 				4998AECC13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h */,
-				49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */,
-				49BE30F213D97646003808A9 /* JSSignalingCallback.h */,
 				75415D4F129AB2D2003AD669 /* JSSpeechInputEvent.cpp */,
 				75415D50129AB2D2003AD669 /* JSSpeechInputEvent.h */,
 				75415D51129AB2D2003AD669 /* JSSpeechInputResult.cpp */,
@@ -19710,13 +19553,11 @@
 				41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */,
 				C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
-				A9C6E6480D7465D8006442E9 /* JSNavigatorCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
 				BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
-				49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */,
 				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
 				9FA37EE61172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp */,
@@ -19848,12 +19689,6 @@
 				9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */,
 				A9D247F50D757E3300FDF959 /* JSNavigator.cpp */,
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
-				B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */,
-				B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */,
-				B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */,
-				B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */,
-				B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */,
-				B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */,
 				8A9A587211E84C81008ACFD1 /* JSPerformance.cpp */,
 				8A9A587311E84C81008ACFD1 /* JSPerformance.h */,
 				8A9A586E11E84C35008ACFD1 /* JSPerformanceNavigation.cpp */,
@@ -20102,8 +19937,6 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
-				49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */,
-				49785EDF13F192F000A795AD /* MediaStreamRegistry.h */,
 				657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */,
 				657EDA071385CB97004E0645 /* MemoryPressureHandler.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
@@ -21078,7 +20911,6 @@
 				59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */,
 				59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */,
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
-				490C47CD13E82D1800F7AB82 /* DispatchTask.h */,
 				A8185F3409765765005826D9 /* Document.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
 				6548E24809E1E04D00AF8020 /* Document.idl */,
@@ -21163,22 +20995,7 @@
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
 				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
-				B1E545711346291F0092A545 /* LocalMediaStream.cpp */,
-				B1E545721346291F0092A545 /* LocalMediaStream.h */,
-				B1E545731346291F0092A545 /* LocalMediaStream.idl */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
-				B1E545741346291F0092A545 /* MediaStream.cpp */,
-				B1E545751346291F0092A545 /* MediaStream.h */,
-				B1E545761346291F0092A545 /* MediaStream.idl */,
-				B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */,
-				B14353D2138EA8ED00D53276 /* MediaStreamList.h */,
-				B14353D3138EA8ED00D53276 /* MediaStreamList.idl */,
-				49C9F32113D574F90052600A /* MediaStreamTrack.cpp */,
-				49C9F32013D574F90052600A /* MediaStreamTrack.h */,
-				49C9F31F13D574F80052600A /* MediaStreamTrack.idl */,
-				49C9F31E13D574F80052600A /* MediaStreamTrackList.cpp */,
-				49C9F31D13D574F80052600A /* MediaStreamTrackList.h */,
-				49C9F31C13D574F80052600A /* MediaStreamTrackList.idl */,
 				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
 				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,
 				E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */,
@@ -21820,7 +21637,6 @@
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
-				B1E54593134629C10092A545 /* CallbackTask.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
@@ -22008,7 +21824,6 @@
 				89878555122CA064003AABDA /* DirectoryReader.h in Headers */,
 				890AE0E11256A07900F5968C /* DirectoryReaderBase.h in Headers */,
 				893C48031248BD3A002B3D86 /* DirectoryReaderSync.h in Headers */,
-				490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
 				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
@@ -23308,17 +23123,11 @@
 				1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
-				B1E545DE13462B0B0092A545 /* JSLocalMediaStream.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				FDA15EC612B03F3B003A583A /* JSLowPass2FilterNode.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
-				B1E545E613462B0B0092A545 /* JSMediaStream.h in Headers */,
-				49A2D39513E981A300579F13 /* JSMediaStreamEvent.h in Headers */,
-				B14353F9138EA95B00D53276 /* JSMediaStreamList.h in Headers */,
-				49C9F48F13D57D320052600A /* JSMediaStreamTrack.h in Headers */,
-				49C9F49113D57D320052600A /* JSMediaStreamTrackList.h in Headers */,
 				9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
@@ -23332,9 +23141,6 @@
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
-				B1E545E013462B0B0092A545 /* JSNavigatorUserMediaError.h in Headers */,
-				B1E545E213462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h in Headers */,
-				B1E545E413462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h in Headers */,
 				BC9439C3116CF4940048C750 /* JSNodeCustom.h in Headers */,
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
 				BCB773620C17853D00132BA4 /* JSNodeFilterCondition.h in Headers */,
@@ -23351,7 +23157,6 @@
 				A826E8AE0A1A8F2300CD1BB6 /* JSOptionConstructor.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
-				49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				8A9A587111E84C36008ACFD1 /* JSPerformanceNavigation.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
@@ -23372,7 +23177,6 @@
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
 				41D07A7F0FF935CA0095EDCE /* JSSharedWorker.h in Headers */,
 				41D1690610238B66009BC827 /* JSSharedWorkerContext.h in Headers */,
-				49BE30F613D97646003808A9 /* JSSignalingCallback.h in Headers */,
 				75415D56129AB2D2003AD669 /* JSSpeechInputEvent.h in Headers */,
 				75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */,
 				75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */,
@@ -23631,7 +23435,6 @@
 				A5732B0D136A16C4005C8D7C /* LocalizedDate.h in Headers */,
 				F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
-				B1E5457B1346291F0092A545 /* LocalMediaStream.h in Headers */,
 				511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */,
 				511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
@@ -23670,15 +23473,6 @@
 				D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */,
 				D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */,
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
-				B1E5457E1346291F0092A545 /* MediaStream.h in Headers */,
-				B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */,
-				B1E54598134629C10092A545 /* MediaStreamController.h in Headers */,
-				49A2CFDA13E9787E00579F13 /* MediaStreamEvent.h in Headers */,
-				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
-				B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */,
-				49785EE113F192F000A795AD /* MediaStreamRegistry.h in Headers */,
-				49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */,
-				49C9F32313D574F90052600A /* MediaStreamTrackList.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
 				9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */,
 				6571DCC81385E6A400702DD0 /* MemoryPressureHandler.h in Headers */,
@@ -23711,9 +23505,6 @@
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
-				B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */,
-				B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */,
-				B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */,
 				8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */,
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
@@ -23786,7 +23577,6 @@
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
 				B22279710D00BF220071B782 /* PatternAttributes.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
-				49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
@@ -24082,7 +23872,6 @@
 				41D168E810226E89009BC827 /* SharedWorkerContext.h in Headers */,
 				41D168EA10226E89009BC827 /* SharedWorkerRepository.h in Headers */,
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
-				49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
@@ -26349,7 +26138,6 @@
 				1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */,
 				A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */,
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
-				B1E545DD13462B0B0092A545 /* JSLocalMediaStream.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
 				FDA15EC512B03F3B003A583A /* JSLowPass2FilterNode.cpp in Sources */,
@@ -26358,11 +26146,6 @@
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
-				B1E545E513462B0B0092A545 /* JSMediaStream.cpp in Sources */,
-				49A2D39413E981A300579F13 /* JSMediaStreamEvent.cpp in Sources */,
-				B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */,
-				49C9F48E13D57D320052600A /* JSMediaStreamTrack.cpp in Sources */,
-				49C9F49013D57D320052600A /* JSMediaStreamTrackList.cpp in Sources */,
 				9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */,
 				9FDC8FF212FAB0060099AB1C /* JSMemoryInfoCustom.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
@@ -26381,10 +26164,6 @@
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */,
 				A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */,
-				A9C6E6490D7465D8006442E9 /* JSNavigatorCustom.cpp in Sources */,
-				B1E545DF13462B0B0092A545 /* JSNavigatorUserMediaError.cpp in Sources */,
-				B1E545E113462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp in Sources */,
-				B1E545E313462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */,
 				14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */,
@@ -26405,8 +26184,6 @@
 				A826EC480A1B0CBE00CD1BB6 /* JSOptionConstructor.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
-				49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */,
-				49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */,
 				8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
 				8A9A588711E84F37008ACFD1 /* JSPerformanceTiming.cpp in Sources */,
@@ -26430,7 +26207,6 @@
 				41D07A7E0FF935CA0095EDCE /* JSSharedWorker.cpp in Sources */,
 				41D1690510238B66009BC827 /* JSSharedWorkerContext.cpp in Sources */,
 				14CD8D82106B529000A46D23 /* JSSharedWorkerCustom.cpp in Sources */,
-				49BE30F513D97646003808A9 /* JSSignalingCallback.cpp in Sources */,
 				75415D55129AB2D2003AD669 /* JSSpeechInputEvent.cpp in Sources */,
 				75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */,
 				75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */,
@@ -26714,7 +26490,6 @@
 				F5CC42DC12F801CA00D5F7E3 /* LocalizedNumberMac.mm in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
 				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */,
-				B1E5457A1346291F0092A545 /* LocalMediaStream.cpp in Sources */,
 				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
@@ -26748,14 +26523,6 @@
 				D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */,
 				D340629B1253BC8C009E4259 /* MediaQueryListListener.cpp in Sources */,
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
-				B1E5457D1346291F0092A545 /* MediaStream.cpp in Sources */,
-				B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */,
-				49A2CFD913E9787E00579F13 /* MediaStreamEvent.cpp in Sources */,
-				B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */,
-				B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */,
-				49785EE013F192F000A795AD /* MediaStreamRegistry.cpp in Sources */,
-				49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */,
-				49C9F32413D574F90052600A /* MediaStreamTrackList.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,
 				9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */,
 				657EDA081385CB97004E0645 /* MemoryPressureHandler.cpp in Sources */,
@@ -26842,7 +26609,6 @@
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
-				49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 				8A844D0411D3C18E0014065C /* Performance.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,

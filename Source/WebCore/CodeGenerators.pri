@@ -134,11 +134,6 @@ IDL_BINDINGS += \
 #    dom/EventTarget.idl \
     dom/HashChangeEvent.idl \
     dom/KeyboardEvent.idl \
-    dom/LocalMediaStream.idl \
-    dom/MediaStream.idl \
-    dom/MediaStreamList.idl \
-    dom/MediaStreamTrack.idl \
-    dom/MediaStreamTrackList.idl \
     dom/MouseEvent.idl \
     dom/MessageChannel.idl \
     dom/MessageEvent.idl \
@@ -322,9 +317,6 @@ IDL_BINDINGS += \
     loader/appcache/DOMApplicationCache.idl \
     notifications/Notification.idl \
     notifications/NotificationCenter.idl \
-    p2p/MediaStreamEvent.idl \
-    p2p/PeerConnection.idl \
-    p2p/SignalingCallback.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/Coordinates.idl \
@@ -338,9 +330,6 @@ IDL_BINDINGS += \
     page/Location.idl \
     page/MemoryInfo.idl \
     page/Navigator.idl \
-    page/NavigatorUserMediaError.idl \
-    page/NavigatorUserMediaErrorCallback.idl \
-    page/NavigatorUserMediaSuccessCallback.idl \
     page/Performance.idl \
     page/PerformanceNavigation.idl \
     page/PerformanceTiming.idl \
