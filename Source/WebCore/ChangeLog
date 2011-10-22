@@ -1,3 +1,20 @@
+2011-10-21  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make setVisibility extension- and thread-correct
+        https://bugs.webkit.org/show_bug.cgi?id=70635
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::setVisible):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setVisible):
+
 2011-10-21  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70647

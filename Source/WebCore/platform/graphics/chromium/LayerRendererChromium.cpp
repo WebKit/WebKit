@@ -201,6 +201,10 @@ bool LayerRendererChromium::initialize()
     if (extensions->supports("GL_EXT_texture_format_BGRA8888"))
         extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
 
+    m_capabilities.usingSetVisibility = extensions->supports("GL_CHROMIUM_set_visibility");
+    if (m_capabilities.usingSetVisibility)
+        extensions->ensureEnabled("GL_CHROMIUM_set_visibility");
+
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
@@ -246,6 +250,16 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
     unsigned long error = context->getError();
     if (error != GraphicsContext3D::NO_ERROR)
         LOG_ERROR("GL command failed: File: %s\n\tLine %d\n\tcommand: %s, error %x\n", file, line, command, static_cast<int>(error));
+}
+
+void LayerRendererChromium::setVisible(bool visible)
+{
+    if (!visible)
+        releaseRenderSurfaceTextures();
+    if (m_capabilities.usingSetVisibility) {
+        Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+        extensions3DChromium->setVisibilityCHROMIUM(visible);
+    }
 }
 
 void LayerRendererChromium::releaseRenderSurfaceTextures()

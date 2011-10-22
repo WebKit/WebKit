@@ -97,6 +97,11 @@ void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
     m_private->unmapTexSubImage2DCHROMIUM(data);
 }
 
+void Extensions3DChromium::setVisibilityCHROMIUM(bool visibility)
+{
+    m_private->setVisibilityCHROMIUM(visibility);
+}
+
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
 {
     return 0;

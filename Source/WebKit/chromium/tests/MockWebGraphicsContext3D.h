@@ -43,8 +43,6 @@ public:
 
     virtual void reshape(int width, int height) { }
 
-    virtual void setVisibility(bool visible) { }
-
     virtual bool isGLES2Compliant() { return false; }
 
     virtual bool readBackFramebuffer(unsigned char* pixels, size_t bufferSize, WebGLId framebuffer, int width, int height) { return false; }
@@ -61,6 +59,8 @@ public:
     virtual void unmapBufferSubDataCHROMIUM(const void*) { }
     virtual void* mapTexSubImage2DCHROMIUM(WGC3Denum target, WGC3Dint level, WGC3Dint xoffset, WGC3Dint yoffset, WGC3Dsizei width, WGC3Dsizei height, WGC3Denum format, WGC3Denum type, WGC3Denum access) { return 0; }
     virtual void unmapTexSubImage2DCHROMIUM(const void*) { }
+
+    virtual void setVisibilityCHROMIUM(bool visible) { }
 
     virtual WebString getRequestableExtensionsCHROMIUM() { return WebString(); }
     virtual void requestExtensionCHROMIUM(const char*) { }

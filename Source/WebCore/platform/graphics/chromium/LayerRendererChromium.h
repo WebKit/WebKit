@@ -145,7 +145,7 @@ public:
 
     bool isContextLost();
 
-    void releaseRenderSurfaceTextures();
+    void setVisible(bool);
 
     GC3Denum bestTextureFormat();
 
@@ -169,6 +169,8 @@ private:
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
     void setDrawViewportRect(const IntRect&, bool flipY);
+
+    void releaseRenderSurfaceTextures();
 
     bool useRenderSurface(CCRenderSurface*);
 

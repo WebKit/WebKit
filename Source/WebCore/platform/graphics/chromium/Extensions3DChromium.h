@@ -70,6 +70,9 @@ public:
     void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
     void unmapTexSubImage2DCHROMIUM(const void*);
 
+    // GL_CHROMIUM_set_visibility
+    void setVisibilityCHROMIUM(bool);
+
     // GL_CHROMIUM_swapbuffers_complete_callback
     class SwapBuffersCompleteCallbackCHROMIUM {
     public:

@@ -128,8 +128,8 @@ void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
 
 void CCLayerTreeHostImpl::setVisible(bool visible)
 {
-    if (m_layerRenderer && !visible)
-        m_layerRenderer->releaseRenderSurfaceTextures();
+    if (m_layerRenderer)
+        m_layerRenderer->setVisible(visible);
 }
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)

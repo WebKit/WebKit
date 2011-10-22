@@ -1,3 +1,19 @@
+2011-10-21  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make setVisibility extension- and thread-correct
+        https://bugs.webkit.org/show_bug.cgi?id=70635
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::setVisibilityCHROMIUM):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::setVisibilityCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setVisibilityState):
+
 2011-10-21  Adam Barth  <abarth@webkit.org>
 
         Introduce Event::hasInterface to make uses of interfaceName more readable
