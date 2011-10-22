@@ -1,3 +1,20 @@
+2011-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG inlining sometimes fails to reset constant references
+        https://bugs.webkit.org/show_bug.cgi?id=70668
+
+        Reviewed by Anders Carlsson.
+        
+        Added a new test that covers this specific bug as well as the general
+        ability to perform inlining, and the ability to OSR out of an inline
+        stack.
+
+        * fast/js/dfg-inline-constant-expected.txt: Added.
+        * fast/js/dfg-inline-constant.html: Added.
+        * fast/js/script-tests/dfg-inline-constant.js: Added.
+        (foo):
+        (bar):
+
 2011-10-21  Ojan Vafai  <ojan@chromium.org>
 
         Fixup test expectations now that http://trac.webkit.org/changeset/98173 has landed.

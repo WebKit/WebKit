@@ -82,6 +82,8 @@ private:
     bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int firstArg, int lastArg, unsigned nextOffset);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg, PredictedType prediction);
+    // Prepare to parse a block.
+    void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
     // Find reachable code and setup predecessor links in the graph's BasicBlocks.
@@ -1027,6 +1029,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size()));
     m_inlineStackTop->m_caller->m_blockLinkingTargets.append(m_graph.m_blocks.size());
     m_graph.m_blocks.append(block.release());
+    prepareToParseBlock();
     
     // At this point we return and continue to generate code for the caller, but
     // in the new basic block.
@@ -1122,14 +1125,14 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
 }
 
+void ByteCodeParser::prepareToParseBlock()
+{
+    for (unsigned i = 0; i < m_constants.size(); ++i)
+        m_constants[i] = ConstantRecord();
+}
+
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
-    // No need to reset state initially, since it has been set by the constructor.
-    if (m_currentIndex) {
-        for (unsigned i = 0; i < m_constants.size(); ++i)
-            m_constants[i] = ConstantRecord();
-    }
-    
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
@@ -2379,6 +2382,7 @@ bool ByteCodeParser::parseCodeBlock()
                     m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size()));
                     m_inlineStackTop->m_blockLinkingTargets.append(m_graph.m_blocks.size());
                     m_graph.m_blocks.append(block.release());
+                    prepareToParseBlock();
                 }
             }
 
