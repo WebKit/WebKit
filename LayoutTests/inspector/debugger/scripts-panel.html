@@ -49,6 +49,7 @@ function test()
         {
             var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
+            panel.show();
 
             panel._uiSourceCodeAdded({ data: createUISouceCode("foo.js") });
             panel._uiSourceCodeAdded({ data: createUISouceCode("bar.js") });
@@ -66,6 +67,7 @@ function test()
             // Select "baz.js".
             select.selectedIndex = 1;
             panel._filesSelectChanged();
+            panel.detach();
 
             next();
         },
@@ -74,6 +76,7 @@ function test()
         {
             var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
+            panel.show();
 
             var files = ["index.html", "script1.js", "script2.js", "script3.js"];
             for (var i = 0; i < files.length; ++i)
@@ -123,6 +126,7 @@ function test()
             panel.backButton.click();
             checkCurrentlySelectedFileName("index.html");
 
+            panel.detach();
             next();
         },
 
@@ -130,6 +134,7 @@ function test()
         {
             var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
+            panel.show();
 
             var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
             var nextId = 0;
@@ -156,6 +161,8 @@ function test()
                 var tooltip = option.title.replace(rootURL, "<root>/");
                 InspectorTest.addResult(text + (tooltip ? "(" + tooltip + ")" : ""));
             }
+
+            panel.detach();
             next();
         },
 
@@ -163,6 +170,7 @@ function test()
         {
             var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
+            panel.show();
 
             panel._uiSourceCodeAdded({ data: createUISouceCode("foo.js") });
             var compiledSourceCode = createUISouceCode("compiled.js");
@@ -183,6 +191,7 @@ function test()
             panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [source1SourceCode, source2SourceCode], uiSourceCodeList: [compiledSourceCode] }});
             InspectorTest.assertEquals(2, panel._filesSelectElement.length);
 
+            panel.detach();
             next();
         }
     ]);

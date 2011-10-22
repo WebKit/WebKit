@@ -43,7 +43,7 @@ WebInspector.ResourceTimingView = function(resource)
 }
 
 WebInspector.ResourceTimingView.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
         if (!this._resource.timing) {
             if (!this._emptyView) {
@@ -51,7 +51,6 @@ WebInspector.ResourceTimingView.prototype = {
                 this._emptyView.show(this.element);
                 this.innerView = this._emptyView;
             }
-            WebInspector.View.prototype.show.call(this, parentElement);
             return;
         }
 
@@ -61,7 +60,6 @@ WebInspector.ResourceTimingView.prototype = {
         }
 
         this._refresh();
-        WebInspector.View.prototype.show.call(this, parentElement);
     },
 
     _refresh: function()

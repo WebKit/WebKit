@@ -124,13 +124,14 @@ WebInspector.ElementsPanel.prototype = {
         this.updateBreadcrumbSizes();
     },
 
-    show: function()
+    wasShown: function()
     {
+        WebInspector.Panel.prototype.wasShown.call(this);
+
         // Attach heavy component lazily
         if (this.treeOutline.element.parentElement !== this.contentElement)
             this.contentElement.appendChild(this.treeOutline.element);
 
-        WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         this.updateBreadcrumb();
         this.treeOutline.updateSelection();
@@ -140,16 +141,16 @@ WebInspector.ElementsPanel.prototype = {
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
-
         WebInspector.domAgent.hideDOMNodeHighlight();
         this.setSearchingForNode(false);
         this.treeOutline.setVisible(false);
 
         // Detach heavy component on hide
         this.contentElement.removeChild(this.treeOutline.element);
+
+        WebInspector.Panel.prototype.willHide.call(this);
     },
 
     onResize: function()
@@ -406,7 +407,7 @@ WebInspector.ElementsPanel.prototype = {
 
     _nodeRemoved: function(event)
     {
-        if (!this.visible)
+        if (!this.isShowing())
             return;
 
         var crumbs = this.crumbsElement;
@@ -461,7 +462,7 @@ WebInspector.ElementsPanel.prototype = {
      */
     updateBreadcrumb: function(forceUpdate)
     {
-        if (!this.visible)
+        if (!this.isShowing())
             return;
 
         var crumbs = this.crumbsElement;
@@ -588,7 +589,7 @@ WebInspector.ElementsPanel.prototype = {
      */
     updateBreadcrumbSizes: function(focusedCrumb)
     {
-        if (!this.visible)
+        if (!this.isShowing())
             return;
 
         if (document.body.offsetWidth <= 0) {

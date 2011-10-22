@@ -150,6 +150,13 @@ var WebInspector = {
 
     _createPanels: function()
     {
+        WebInspector.mainPanelsView = new WebInspector.View();
+        WebInspector.mainPanelsView.markAsRoot();
+        WebInspector.mainPanelsView.element.id = "main-panels";
+        WebInspector.mainPanelsView.element.setAttribute("spellcheck", false);
+        var parentElement = document.getElementById("main");
+        WebInspector.mainPanelsView.show(parentElement);
+
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
             this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
             this.panels.console = new WebInspector.ConsolePanel();

@@ -54,10 +54,8 @@ WebInspector.DatabaseQueryView.Events = {
 }
 
 WebInspector.DatabaseQueryView.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
-
         function moveBackIfOutside()
         {
             if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)

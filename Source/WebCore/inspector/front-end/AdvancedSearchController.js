@@ -75,7 +75,7 @@ WebInspector.AdvancedSearchController.prototype = {
         if (!this._searchView)
             this._searchView = new WebInspector.SearchView(this);
         
-        if (this._searchView.visible)
+        if (this._searchView.isShowing())
             this._searchView.focus();
         else
             WebInspector.showViewInDrawer(this._searchView);
@@ -159,7 +159,6 @@ WebInspector.SearchView = function(controller)
     
     this._controller = controller;
 
-    this.element = document.createElement("div");
     this.element.className = "search-view";
 
     this._searchPanelElement = this.element.createChild("div");
@@ -267,8 +266,9 @@ WebInspector.SearchView.prototype = {
         
         this._updateSearchResultsMessage();
         
-        var searchingView = new WebInspector.EmptyView(WebInspector.UIString("Searching..."));
-        searchingView.show(this._searchResultsElement);
+        if (!this._searchingView)
+            this._searchingView = new WebInspector.EmptyView(WebInspector.UIString("Searching..."));
+        this._searchingView.show(this._searchResultsElement);
     },
 
     _updateSearchResultsMessage: function()
@@ -287,6 +287,10 @@ WebInspector.SearchView.prototype = {
 
     resetResults: function()
     {
+        if (this._searchingView)
+            this._searchingView.detach();
+        if (this._notFoundView)
+            this._notFoundView.detach();
         this._searchResultsElement.removeChildren();
     },
 
@@ -301,8 +305,9 @@ WebInspector.SearchView.prototype = {
     {
         this.resetResults();
 
-        var notFoundView = new WebInspector.EmptyView(WebInspector.UIString("No matches found."));
-        notFoundView.show(this._searchResultsElement);
+        if (!this._notFoundView)
+            this._notFoundView = new WebInspector.EmptyView(WebInspector.UIString("No matches found."));
+        this._notFoundView.show(this._searchResultsElement);
         this._searchResultsMessageElement.textContent = WebInspector.UIString("No matches found.");
     },
 

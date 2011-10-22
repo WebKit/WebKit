@@ -83,13 +83,6 @@ WebInspector.PanelEnablerView.prototype = {
         this.dispatchEventToListeners("enable clicked");
     },
 
-    show: function(parentElement)
-    {
-        WebInspector.View.prototype.show.call(this, parentElement);
-
-        setTimeout(this.doResize.bind(this), 0);
-    },
-
     onResize: function()
     {
         this.imageElement.removeStyleClass("hidden");

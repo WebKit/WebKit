@@ -43,9 +43,8 @@ WebInspector.ImageView.prototype = {
         return true;
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this._createContentIfNeeded();
     },
 

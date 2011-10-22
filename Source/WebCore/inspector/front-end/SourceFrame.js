@@ -44,7 +44,6 @@ WebInspector.SourceFrame = function(delegate, url)
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
     this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);
-    this.element.appendChild(this._textViewer.element);
 
     this.popoverHelper = new WebInspector.ObjectPopoverHelper(this._textViewer.element,
             this._getPopoverAnchor.bind(this), this.onShowPopover.bind(this), this.onHidePopover.bind(this), true);
@@ -88,9 +87,8 @@ WebInspector.SourceFrame.createSearchRegex = function(query)
 
 
 WebInspector.SourceFrame.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
         this._ensureContentLoaded();
         this._textViewer.show(this.element);
     },

@@ -550,18 +550,18 @@ WebInspector.TimelinePanel.prototype = {
         return [this._containerElement];
     },
 
-    show: function()
+    wasShown: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
+        WebInspector.Panel.prototype.wasShown.call(this);
         this._refresh();
         WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
         this._closeRecordDetails();
         WebInspector.drawer.currentPanelCounters = null;
+        WebInspector.Panel.prototype.willHide.call(this);
     },
 
     _onScroll: function(event)
@@ -584,7 +584,7 @@ WebInspector.TimelinePanel.prototype = {
         this._closeRecordDetails();
         this._boundariesAreValid &= preserveBoundaries;
 
-        if (!this.visible)
+        if (!this.isShowing())
             return;
 
         if (preserveBoundaries)

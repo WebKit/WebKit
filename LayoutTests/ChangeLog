@@ -1,3 +1,14 @@
+2011-10-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of View::hide, View::set visible, View::attach.
+        https://bugs.webkit.org/show_bug.cgi?id=70523
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/scripts-panel.html:
+        * inspector/view-events-expected.txt:
+        * inspector/view-events.html:
+
 2011-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining sometimes fails to reset constant references

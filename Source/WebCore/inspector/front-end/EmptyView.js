@@ -39,13 +39,8 @@ WebInspector.EmptyView = function(text)
 }
 
 WebInspector.EmptyView.prototype = {
-    /**
-     * @param {Element} parentElement
-     */
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
-
         this.element.className = "storage-empty-view";
         this.element.textContent = this._text;
     },

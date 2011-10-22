@@ -142,7 +142,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.panelEnablerView = new WebInspector.PanelEnablerView("scripts", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
     this.panelEnablerView.addEventListener("enable clicked", this._enableDebugging, this);
 
-    this.element.appendChild(this.panelEnablerView.element);
     this.element.appendChild(this.viewsContainerElement);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
@@ -218,9 +217,9 @@ WebInspector.ScriptsPanel.prototype = {
         return this._paused;
     },
 
-    show: function()
+    wasShown: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
+        WebInspector.Panel.prototype.wasShown.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
@@ -855,12 +854,12 @@ WebInspector.ScriptsPanel.prototype = {
             this.enableToggleButton.title = WebInspector.UIString("Debugging enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             this._pauseOnExceptionButton.visible = true;
-            this.panelEnablerView.visible = false;
+            this.panelEnablerView.detach();
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Debugging disabled. Click to enable.");
             this.enableToggleButton.toggled = false;
             this._pauseOnExceptionButton.visible = false;
-            this.panelEnablerView.visible = true;
+            this.panelEnablerView.show(this.element);
         }
 
         if (this._paused) {
@@ -1024,11 +1023,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (this.toggleBreakpointsButton.toggled) {
             DebuggerAgent.setBreakpointsActive(true);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
-            document.getElementById("main-panels").removeStyleClass("breakpoints-deactivated");
+            WebInspector.mainPanelsView.element.removeStyleClass("breakpoints-deactivated");
         } else {
             DebuggerAgent.setBreakpointsActive(false);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
-            document.getElementById("main-panels").addStyleClass("breakpoints-deactivated");
+            WebInspector.mainPanelsView.element.addStyleClass("breakpoints-deactivated");
         }
     },
 

@@ -49,7 +49,6 @@ WebInspector.TabbedPane.prototype = {
         tabElement.addEventListener("click", this.selectTab.bind(this, id, true), false);
 
         this._tabsElement.appendChild(tabElement);
-        this._contentElement.appendChild(view.element);
 
         this._tabs[id] = { tabElement: tabElement, view: view };
     },

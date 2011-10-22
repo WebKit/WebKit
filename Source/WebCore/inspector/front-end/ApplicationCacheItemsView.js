@@ -103,16 +103,14 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         }
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
         this.updateNetworkState(navigator.onLine);
         this._update();
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
         this.deleteButton.visible = false;
     },
 
@@ -179,7 +177,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this._populateDataGrid();
         this._dataGrid.autoSizeColumns(20, 80);
         this._dataGrid.element.removeStyleClass("hidden");
-        this._emptyView.hide();
+        this._emptyView.detach();
         this.deleteButton.visible = true;
 
         var totalSizeString = Number.bytesToString(this._size);

@@ -41,7 +41,6 @@ WebInspector.Panel = function(name)
     this._shortcuts = {};
 
     WebInspector.settings[this._sidebarWidthSettingName()] = WebInspector.settings.createSetting(this._sidebarWidthSettingName(), undefined);
-    this._hideOnDetach = false;
 }
 
 // Should by in sync with style declarations.
@@ -62,18 +61,13 @@ WebInspector.Panel.prototype = {
         return this._panelName;
     },
 
-    setHideOnDetach: function()
-    {
-        this._hideOnDetach = true;
-    },
-
     show: function()
     {
-        if (!WebInspector.Panel._mainPanelsElement)
-            WebInspector.Panel._mainPanelsElement = document.getElementById("main-panels");
-    
-        WebInspector.View.prototype.show.call(this, WebInspector.Panel._mainPanelsElement);
+        WebInspector.View.prototype.show.call(this, WebInspector.mainPanelsView.element);
+    },
 
+    wasShown: function()
+    {
         var statusBarItems = this.statusBarItems;
         if (statusBarItems) {
             this._statusBarItemContainer = document.createElement("div");
@@ -91,13 +85,8 @@ WebInspector.Panel.prototype = {
         WebInspector.extensionServer.notifyPanelShown(this.name);
     },
 
-    detach: function()
+    willHide: function()
     {
-        if (this._hideOnDetach)
-            this.hide();
-        else
-            WebInspector.View.prototype.detach.call(this);
-
         if (this._statusBarItemContainer && this._statusBarItemContainer.parentNode)
             this._statusBarItemContainer.parentNode.removeChild(this._statusBarItemContainer);
         delete this._statusBarItemContainer;

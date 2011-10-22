@@ -31,86 +31,149 @@
 WebInspector.View = function()
 {
     this.element = document.createElement("div");
-    this.element.addEventListener("DOMNodeInsertedIntoDocument", this._handleInsertedIntoDocument.bind(this), false);
-    this.element.addEventListener("DOMNodeRemovedFromDocument", this._handleRemovedFromDocument.bind(this), false);
     this.element.__view = this;
-    this._visible = false;
+    this._visible = true;
+    this._isRoot = false;
+    this._isShowing = false;
     this._children = [];
-    this._inDetach = false;
+    this._hideOnDetach = false;
 }
 
 WebInspector.View.prototype = {
-    get visible()
+    markAsRoot: function()
     {
-        return this._visible;
+        this._isRoot = true;
     },
 
-    set visible(x)
+    isShowing: function()
     {
-        if (this._visible === x)
+        return this._isShowing;
+    },
+
+    setHideOnDetach: function()
+    {
+        this._hideOnDetach = true;
+    },
+
+    _parentIsShowing: function()
+    {
+        return this._isRoot || (this._parentView && this._parentView.isShowing());
+    },
+
+    _processWasShown: function()
+    {
+        if (!this._parentIsShowing())
             return;
 
-        if (x)
-            this.show(this.element.parentElement);
-        else
-            this.hide();
+        this._isShowing = true;
+        this.restoreScrollPositions();
+
+        this.wasShown();
+        this.onResize();
+        for (var i = 0; i < this._children.length; ++i)
+            this._children[i]._processWasShown();
+    },
+
+    _processWillHide: function()
+    {
+        if (!this._parentIsShowing())
+            return;
+
+        this.storeScrollPositions();
+
+        for (var i = 0; i < this._children.length; ++i)
+            this._children[i]._processWillHide();
+
+        this.willHide();
+        this._isShowing = false;
+    },
+
+    _processOnResize: function()
+    {
+        if (!this.isShowing())
+            return;
+
+        this.onResize();
+        for (var i = 0; i < this._children.length; ++i)
+            this._children[i]._processOnResize();
     },
 
     wasShown: function()
     {
-        this.restoreScrollPositions();
-        this.onResize();
     },
 
     willHide: function()
     {
-        this.storeScrollPositions();
     },
 
-    willDetach: function()
+    onResize: function()
     {
     },
 
     /**
      * @param {Element} parentElement
+     * @param {Element=} insertBefore
      */
-    show: function(parentElement)
+    show: function(parentElement, insertBefore)
     {
+        WebInspector.View._assert(parentElement, "Attempt to attach view with no parent element");
+
         this._visible = true;
         this.element.addStyleClass("visible");
-        if (parentElement && this.element.parentElement != parentElement)
-            this.attach(parentElement);
-        this.dispatchToSelfAndChildren("wasShown", true);
-    },
 
-    hide: function()
-    {
-        this.dispatchToSelfAndChildren("willHide", true);
-        if (!this._inDetach)
-            this.element.removeStyleClass("visible");
-        this._visible = false;
-    },
+        if (this.element.parentElement === parentElement) {
+            this._processWasShown();
+            return;
+        }
 
-    /**
-     * @param {Element} parentElement
-     */
-    attach: function(parentElement)
-    {
-        parentElement.appendChild(this.element);
+        // Force legal append
+        WebInspector.View._incrementViewCounter(parentElement, this.element);
+        if (insertBefore)
+            WebInspector.View._originalInsertBefore.call(parentElement, this.element, insertBefore);
+        else
+            WebInspector.View._originalAppendChild.call(parentElement, this.element);
+
+        // Update view hierarchy
+        var currentParent = parentElement;
+        while (currentParent && !currentParent.__view)
+            currentParent = currentParent.parentElement;
+
+        if (currentParent) {
+            this._parentView = currentParent.__view;
+            this._parentView._children.push(this);
+            this._isRoot = false;
+        } else
+            WebInspector.View._assert(this._isRoot, "Attempt to attach view to orphan node");
+
+        this._processWasShown();
     },
 
     detach: function()
     {
-        if (this._visible) {
-            this._inDetach = true;
-            this.hide();
-            this._inDetach = false;
+        var parentElement = this.element.parentElement;
+        if (!parentElement)
+            return;
+
+        this._processWillHide();
+
+        if (this._hideOnDetach) {
+            this.element.removeStyleClass("visible");
+            return;
         }
 
-        this.dispatchToSelfAndChildren("willDetach", false);
+        // Force legal removal
+        WebInspector.View._decrementViewCounter(parentElement, this.element);
+        WebInspector.View._originalRemoveChild.call(parentElement, this.element);
 
-        if (this.element.parentElement)
-            this.element.parentElement.removeChild(this.element);
+        // Update view hierarchy
+        if (this._parentView) {
+            var childIndex = this._parentView._children.indexOf(this);
+            WebInspector.View._assert(childIndex >= 0, "Attempt to remove non-child view");
+            this._parentView._children.splice(childIndex, 1);
+            this._parentView = null;
+        }
+
+        this._visible = false;
     },
 
     elementsToRestoreScrollPositionsFor: function()
@@ -140,28 +203,6 @@ WebInspector.View.prototype = {
         }
     },
 
-    _addChildView: function(view)
-    {
-        this._children.push(view);
-        view._parentView = this;
-    },
-
-    _removeChildView: function(view)
-    {
-        var childIndex = this._children.indexOf(view);
-        if (childIndex < 0) {
-            console.error("Attempt to remove non-child view");
-            return;
-        }
-
-        this._children.splice(childIndex, 1);
-        view._parentView = null;
-    },
-
-    onResize: function()
-    {
-    },
-
     canHighlightLine: function()
     {
         return false;
@@ -173,45 +214,7 @@ WebInspector.View.prototype = {
 
     doResize: function()
     {
-        this.dispatchToSelfAndChildren("onResize", true);
-    },
-
-    dispatchToSelfAndChildren: function(methodName, visibleOnly)
-    {
-        if (visibleOnly && !this.visible)
-            return;
-        if (typeof this[methodName] === "function")
-            this[methodName].call(this);
-        this.dispatchToChildren(methodName, visibleOnly);
-    },
-
-    dispatchToChildren: function(methodName, visibleOnly)
-    {
-        if (visibleOnly && !this.visible)
-            return;
-        for (var i = 0; i < this._children.length; ++i)
-            this._children[i].dispatchToSelfAndChildren(methodName, visibleOnly);
-    },
-
-    _handleInsertedIntoDocument: function(event)
-    {
-        var parentElement = this.element.parentElement;
-        while (parentElement && !parentElement.__view)
-            parentElement = parentElement.parentElement;
-
-        var parentView = parentElement ? parentElement.__view : WebInspector._rootView;
-        parentView._addChildView(this);
-        this.onInsertedIntoDocument();
-    },
-
-    onInsertedIntoDocument: function()
-    {
-    },
-
-    _handleRemovedFromDocument: function(event)
-    {
-        if (this._parentView)
-            this._parentView._removeChildView(this);
+        this._processOnResize();
     },
 
     printViewHierarchy: function()
@@ -235,4 +238,64 @@ WebInspector.View.prototype = {
 
 WebInspector.View.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector._rootView = new WebInspector.View();
+WebInspector.View._originalAppendChild = Element.prototype.appendChild;
+WebInspector.View._originalInsertBefore = Element.prototype.insertBefore;
+WebInspector.View._originalRemoveChild = Element.prototype.removeChild;
+WebInspector.View._originalRemoveChildren = Element.prototype.removeChildren;
+
+WebInspector.View._incrementViewCounter = function(parentElement, childElement)
+{
+    var count = (childElement.__viewCounter || 0) + (childElement.__view ? 1 : 0);
+    if (!count)
+        return;
+
+    while (parentElement) {
+        parentElement.__viewCounter = (parentElement.__viewCounter || 0) + count;
+        parentElement = parentElement.parentElement;
+    }
+}
+
+WebInspector.View._decrementViewCounter = function(parentElement, childElement)
+{
+    var count = (childElement.__viewCounter || 0) + (childElement.__view ? 1 : 0);
+    if (!count)
+        return;
+
+    while (parentElement) {
+        parentElement.__viewCounter -= count;
+        parentElement = parentElement.parentElement;
+    }
+}
+
+WebInspector.View._assert = function(condition, message)
+{
+    if (!condition) {
+        console.trace();
+        throw new Error(message);
+    }
+}
+
+Element.prototype.appendChild = function(child)
+{
+    WebInspector.View._assert(!child.__view, "Attempt to add view via regular DOM operation.");
+    return WebInspector.View._originalAppendChild.call(this, child);
+}
+
+Element.prototype.insertBefore = function(child, anchor)
+{
+    WebInspector.View._assert(!child.__view, "Attempt to add view via regular DOM operation.");
+    return WebInspector.View._originalInsertBefore.call(this, child, anchor);
+}
+
+
+Element.prototype.removeChild = function(child)
+{
+    WebInspector.View._assert(!child.__viewCounter && !child.__view, "Attempt to remove element containing view via regular DOM operation");
+    return WebInspector.View._originalRemoveChild.call(this, child);
+}
+
+Element.prototype.removeChildren = function()
+{
+    WebInspector.View._assert(!this.__viewCounter, "Attempt to remove element containing view via regular DOM operation");
+    WebInspector.View._originalRemoveChildren.call(this);
+}

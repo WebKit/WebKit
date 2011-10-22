@@ -59,15 +59,13 @@ WebInspector.CookieItemsView.prototype = {
         return [this._refreshButton.element, this._deleteButton.element];
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
         this._update();
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
         this._deleteButton.visible = false;
     },
 
@@ -102,7 +100,7 @@ WebInspector.CookieItemsView.prototype = {
 
         this._cookiesTable.setCookies(this._cookies);
         this._cookiesTable.element.removeStyleClass("hidden");
-        this._emptyView.hide();
+        this._emptyView.detach();
         if (isAdvanced) {
             this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), this._cookies.length,
                 Number.bytesToString(this._totalSize));

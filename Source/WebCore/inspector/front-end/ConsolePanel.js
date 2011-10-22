@@ -50,23 +50,23 @@ WebInspector.ConsolePanel.prototype = {
         return this._view.statusBarItems;
     },
 
-    show: function()
+    wasShown: function()
     {
+        WebInspector.Panel.prototype.wasShown.call(this);
         if (WebInspector.drawer.visible) {
             WebInspector.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
             this._drawerWasVisible = true;
         }
-        WebInspector.Panel.prototype.show.call(this);
         this._view.show(this.element);
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
         if (this._drawerWasVisible) {
             WebInspector.drawer.show(this._view, WebInspector.Drawer.AnimationType.Immediately);
             delete this._drawerWasVisible;
         }
+        WebInspector.Panel.prototype.willHide.call(this);
     },
 
     searchCanceled: function()
@@ -132,7 +132,7 @@ WebInspector.ConsolePanel.prototype = {
 
     _consoleMessageAdded: function(event)
     {
-        if (!this._searchRegex || !this.visible)
+        if (!this._searchRegex || !this.isShowing())
             return;
         var message = event.data;
         this._searchRegex.lastIndex = 0;
@@ -148,7 +148,7 @@ WebInspector.ConsolePanel.prototype = {
             return;
         this._clearCurrentSearchResultHighlight();
         this._searchResults.length = 0;
-        if (this.visible)
+        if (this.isShowing())
             WebInspector.searchController.updateSearchMatchesCount(0, this);
     }
 }

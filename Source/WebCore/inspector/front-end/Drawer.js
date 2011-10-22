@@ -79,8 +79,10 @@ WebInspector.Drawer.prototype = {
 
         var drawerWasVisible = this.visible;
 
-        if (this._view)
+        if (this._view) {
+            this._view.detach();
             this._drawerContentsElement.removeChildren();
+        }
 
         this._view = view;
 
@@ -93,6 +95,7 @@ WebInspector.Drawer.prototype = {
             this._counters.insertBefore(this._view.counterElement, this._counters.firstChild);
 
         document.body.addStyleClass("drawer-visible");
+        this._view.markAsRoot();
         this._view.show(this._drawerContentsElement);
 
         if (drawerWasVisible)
@@ -181,9 +184,9 @@ WebInspector.Drawer.prototype = {
                 this._counters.insertBefore(this._currentPanelCounters, this._counters.firstChild);
             }
 
-            this._view.hide();
-            this._drawerContentsElement.removeChildren();
+            this._view.detach();
             delete this._view;
+            this._drawerContentsElement.removeChildren();
             document.body.removeStyleClass("drawer-visible");
             delete this._currentAnimation;
         }

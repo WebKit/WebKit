@@ -506,7 +506,7 @@ WebInspector.NetworkLogView.prototype = {
 
         this._needsRefresh = true;
 
-        if (this.visible && !("_refreshTimeout" in this))
+        if (this.isShowing() && !this._refreshTimeout)
             this._refreshTimeout = setTimeout(this.refresh.bind(this), this._defaultRefreshDelay);
     },
 
@@ -524,7 +524,7 @@ WebInspector.NetworkLogView.prototype = {
         }
 
         var proceed = true;
-        if (!this.visible) {
+        if (!this.isShowing()) {
             this._scheduleRefresh();
             proceed = false;
         } else
@@ -646,20 +646,18 @@ WebInspector.NetworkLogView.prototype = {
 
     wasShown: function()
     {
-        WebInspector.View.prototype.wasShown.call(this);
         this._refreshIfNeeded();
     },
 
     willHide: function()
     {
-        WebInspector.View.prototype.willHide.call(this);
         this._popoverHelper.hidePopover();
     },
 
     refresh: function()
     {
         this._needsRefresh = false;
-        if ("_refreshTimeout" in this) {
+        if (this._refreshTimeout) {
             clearTimeout(this._refreshTimeout);
             delete this._refreshTimeout;
         }
@@ -1297,9 +1295,9 @@ WebInspector.NetworkPanel.prototype = {
         WebInspector.Panel.prototype.handleShortcut.call(this, event);
     },
 
-    show: function()
+    wasShown: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
+        WebInspector.Panel.prototype.wasShown.call(this);
         this._networkLogView.show(this.sidebarElement);
     },
 

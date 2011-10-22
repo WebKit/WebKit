@@ -226,7 +226,6 @@ WebInspector.ConsoleView.prototype = {
 
     wasShown: function()
     {
-        WebInspector.View.prototype.wasShown.call(this);
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
     },

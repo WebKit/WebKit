@@ -35,6 +35,7 @@ console.warn = function(vararg) {}
 console.assert = function(vararg) {}
 /** @param {...*} vararg */
 console.error = function(vararg) {}
+console.trace = function() {}
 
 var WebInspector = {}
 
@@ -278,3 +279,8 @@ function ExtensionDescriptor() {
  * @type {WebInspector.HandlerRegistry}
  */
 WebInspector.openAnchorLocationRegistry = null;
+
+/**
+ * @type {WebInspector.View}
+ */
+WebInspector.mainPanelsView;

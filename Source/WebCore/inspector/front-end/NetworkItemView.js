@@ -61,9 +61,9 @@ WebInspector.NetworkItemView = function(resource)
 }
 
 WebInspector.NetworkItemView.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.TabbedPane.prototype.show.call(this, parentElement);
+        WebInspector.TabbedPane.prototype.wasShown.call();
         this._selectTab();
     },
 
@@ -116,17 +116,9 @@ WebInspector.ResourceContentView.prototype = {
         this._innerView = innerView;
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this._ensureInnerViewShown();
-    },
-
-    hide: function()
-    {
-        if (this._innerView)
-            this._innerView.hide();
-        WebInspector.ResourceView.prototype.hide.call(this);
     },
 
     _ensureInnerViewShown: function()

@@ -164,9 +164,8 @@ WebInspector.CPUProfileView.prototype = {
         return this._bottomUpTree;
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
     },
 

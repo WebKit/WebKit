@@ -1,26 +1,117 @@
 This tests that events are properly propagated through View hierarchy.
 
-parentView.show(root)
-> ParentView.wasShown()
-> ParentView.onResize()
-parentView.doResize()
-> ParentView.onResize()
-childView.show(parentView.element)
-> ChildView.wasShown()
-> ChildView.onResize()
-parentView.doResize()
-> ParentView.onResize()
-> ChildView.onResize()
-parentView.hide()
-> ParentView.willHide()
-> ChildView.willHide()
-parentView.show(root)
-> ParentView.wasShown()
-> ParentView.onResize()
-> ChildView.wasShown()
-> ChildView.onResize()
-childView.hide()
-> ChildView.willHide()
-parentView.hide()
-> ParentView.willHide()
+
+Running: testShowView
+View()
+View.show()
+  View.wasShown()
+  View.onResize()
+View.detach()
+  View.willHide()
+
+Running: testAppendViaDOM
+View()
+Error: Attempt to add view via regular DOM operation.
+
+Running: testInsertViaDOM
+View()
+Error: Attempt to add view via regular DOM operation.
+
+Running: testAttachToOrphanNode
+View()
+View.show()
+Error: Attempt to attach view to orphan node
+
+Running: testImmediateParent
+Parent()
+Child()
+Child.show()
+OK
+
+Running: testDistantParent
+Parent()
+Child()
+Child.show()
+OK
+
+Running: testEvents
+Parent()
+Parent.show()
+  Parent.wasShown()
+  Parent.onResize()
+Child()
+Parent.show()
+  Parent.wasShown()
+  Parent.onResize()
+Parent.doResize()
+  Parent.onResize()
+Child.show()
+  Child.wasShown()
+  Child.onResize()
+Parent.doResize()
+  Parent.onResize()
+  Child.onResize()
+Parent.detach()
+  Child.willHide()
+  Parent.willHide()
+Parent.show()
+  Parent.wasShown()
+  Parent.onResize()
+  Child.wasShown()
+  Child.onResize()
+Child.detach()
+  Child.willHide()
+Parent.detach()
+  Parent.willHide()
+
+Running: testViewCounter
+Parent()
+Parent.show()
+  Parent.wasShown()
+  Parent.onResize()
+Child()
+Child.show()
+  Child.wasShown()
+  Child.onResize()
+  view counter: 1
+Child 2()
+Child 2.show()
+  Child 2.wasShown()
+  Child 2.onResize()
+  view counter: 2
+Child.detach()
+  Child.willHide()
+  view counter: 1
+Child 2.detach()
+  Child 2.willHide()
+  view counter: 0
+
+Running: testRemoveChild
+Parent()
+Parent.show()
+  Parent.wasShown()
+  Parent.onResize()
+Child()
+Child.show()
+  Child.wasShown()
+  Child.onResize()
+Error: Attempt to remove element containing view via regular DOM operation
+
+Running: testImplicitRemoveChild
+Parent()
+Child()
+Child.show()
+Error: Attempt to remove element containing view via regular DOM operation
+
+Running: testRemoveChildren
+Parent()
+Child()
+Child.show()
+Error: Attempt to remove element containing view via regular DOM operation
+
+Running: testImplicitRemoveChildren
+Parent()
+Child()
+Child.show()
+Error: Attempt to remove element containing view via regular DOM operation
 

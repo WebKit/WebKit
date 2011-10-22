@@ -77,9 +77,8 @@ WebInspector.FontView.prototype = {
         this.element.appendChild(this.fontPreviewElement);
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this._createContentIfNeeded();
 
         this.updateFontPreviewSize();
@@ -109,7 +108,7 @@ WebInspector.FontView.prototype = {
 
     updateFontPreviewSize: function()
     {
-        if (!this.fontPreviewElement || !this.visible)
+        if (!this.fontPreviewElement || !this.isShowing())
             return;
 
         this.fontPreviewElement.style.removeProperty("visibility");

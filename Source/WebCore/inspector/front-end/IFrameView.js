@@ -38,36 +38,12 @@ WebInspector.IFrameView = function(src, className)
 {
     WebInspector.View.call(this);
     this.element.className = "fill";
-    this._src = src;
-    this._className = className;
-}
 
-WebInspector.IFrameView.prototype = {
-    willDetach: function()
-    {
-        if (this._iframe) {
-            if (!WebInspector.IFrameView._parentIframe) {
-                WebInspector.IFrameView._parentIframe = document.createElement("iframe");
-                WebInspector.IFrameView._parentIframe.style.display = "none";
-                document.body.appendChild(WebInspector.IFrameView._parentIframe);
-            }
-            WebInspector.IFrameView._parentIframe.contentDocument.adoptNode(this._iframe);
-            WebInspector.IFrameView._parentIframe.contentDocument.body.appendChild(this._iframe);
-        }
-    },
-
-    onInsertedIntoDocument: function()
-    {
-        if (!this._iframe) {
-            this._iframe = document.createElement("iframe");
-            this._iframe.src = this._src;
-            if (this._className)
-                this._iframe.className = this._className;
-        }
-
-        document.adoptNode(this._iframe);
-        this.element.appendChild(this._iframe);
-    }
+    this._iframe = document.createElement("iframe");
+    this._iframe.src = src;
+    if (className)
+        this._iframe.className = className;
+    this.element.appendChild(this._iframe);
 }
 
 WebInspector.IFrameView.prototype.__proto__ = WebInspector.View.prototype;

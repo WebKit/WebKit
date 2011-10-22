@@ -1,3 +1,107 @@
+2011-10-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of View::hide, View::set visible, View::attach,
+        View::set visible.
+        https://bugs.webkit.org/show_bug.cgi?id=70523
+
+        This change also introduces assetions that forces view attach / detach operations
+        to be performed explicitly.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype.wasShown):
+        (WebInspector.ApplicationCacheItemsView.prototype.willHide):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.wasShown):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.wasShown):
+        (WebInspector.ConsolePanel.prototype.willHide):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.wasShown):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.wasShown):
+        (WebInspector.CookieItemsView.prototype.willHide):
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.wasShown):
+        (WebInspector.DOMStorageItemsView.prototype.willHide):
+        * inspector/front-end/DatabaseQueryView.js:
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype.wasShown):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.willHide):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.hide):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.wasShown):
+        (WebInspector.ElementsPanel.prototype.willHide):
+        * inspector/front-end/EmptyView.js:
+        (WebInspector.EmptyView.prototype.wasShown):
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype.wasShown):
+        * inspector/front-end/IFrameView.js:
+        (WebInspector.IFrameView):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype.wasShown):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView.prototype.wasShown):
+        (WebInspector.ResourceContentView.prototype.wasShown):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.wasShown):
+        (WebInspector.NetworkLogView.prototype.willHide):
+        (WebInspector.NetworkPanel.prototype.wasShown):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.wasShown):
+        (WebInspector.Panel.prototype.willHide):
+        * inspector/front-end/PanelEnablerView.js:
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.prototype.willHide):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.wasShown):
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype._enableDetailedHeapProfiles):
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype.wasShown):
+        * inspector/front-end/ResourceHTMLView.js:
+        (WebInspector.ResourceHTMLView.prototype.wasShown):
+        (WebInspector.ResourceHTMLView.prototype.willHide):
+        * inspector/front-end/ResourceJSONView.js:
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype.wasShown):
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.prototype.wasShown):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.wasShown):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.wasShown):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.wasShown):
+        (WebInspector.TimelinePanel.prototype.willHide):
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.get visible):
+        (WebInspector.View.prototype.setHideOnDetach):
+        (WebInspector.View.prototype._wasShown):
+        (WebInspector.View.prototype._willHide):
+        (WebInspector.View.prototype._onResize):
+        (WebInspector.View.prototype.wasShown):
+        (WebInspector.View.prototype.willHide):
+        (WebInspector.View.prototype.onResize):
+        (WebInspector.View.prototype.show):
+        (WebInspector.View.prototype.detach):
+        (WebInspector.View.prototype.doResize):
+        (WebInspector.View.prototype.dispatchToSelfAndChildren):
+        (WebInspector.View.prototype.dispatchToChildren):
+        (WebInspector.View.prototype._handleInsertedIntoDocument):
+
 2011-10-22  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r92480): Passing uninitialized variable in HTMLElement::calculateAndAdjustDirectionality()

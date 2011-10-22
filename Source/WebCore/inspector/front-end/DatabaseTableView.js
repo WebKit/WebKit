@@ -42,9 +42,8 @@ WebInspector.DatabaseTableView = function(database, tableName)
 }
 
 WebInspector.DatabaseTableView.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
         this.update();
     },
 

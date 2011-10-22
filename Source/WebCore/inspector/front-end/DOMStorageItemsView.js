@@ -50,15 +50,13 @@ WebInspector.DOMStorageItemsView.prototype = {
         return [this.refreshButton.element, this.deleteButton.element];
     },
 
-    show: function(parentElement)
+    wasShown: function()
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
         this.update();
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
         this.deleteButton.visible = false;
     },
 

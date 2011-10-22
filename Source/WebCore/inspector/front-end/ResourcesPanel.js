@@ -104,10 +104,9 @@ WebInspector.ResourcesPanel.prototype = {
         return [this.sidebarElement];
     },
 
-    show: function()
+    wasShown: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
-
+        WebInspector.Panel.prototype.wasShown.call(this);
         this._populateResourceTree();
     },
 
@@ -165,7 +164,9 @@ WebInspector.ResourcesPanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
         this.applicationCacheListTreeElement.removeChildren();
-        this.storageViews.removeChildren();
+
+        if (this.visibleView)
+            this.visibleView.detach();
 
         this.storageViewStatusBarItemsContainer.removeChildren();
 
@@ -1335,7 +1336,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         var oldView = this._sourceView;
         var newView = this._createSourceView();
 
-        var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
+        var oldViewParentNode = oldView.isShowing() ? oldView.element.parentNode : null;
         newView.inheritScrollPositions(oldView);
 
         this._sourceView.detach();

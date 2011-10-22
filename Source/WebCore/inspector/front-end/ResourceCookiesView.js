@@ -44,21 +44,18 @@ WebInspector.ResourceCookiesView = function(resource)
 }
 
 WebInspector.ResourceCookiesView.prototype = {
-    show: function(parentElement)
+    wasShown: function()
     {
         if (!this._gotCookies) {
             if (!this._emptyView) {
                 this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no cookies."));
                 this._emptyView.show(this.element);
             }
-            WebInspector.View.prototype.show.call(this, parentElement);
             return;
         }
 
         if (!this._cookiesTable)
             this._buildCookiesTable();
-        WebInspector.View.prototype.show.call(this, parentElement);
-        this._cookiesTable.updateWidths();
     },
 
     onResize: function()
@@ -85,7 +82,7 @@ WebInspector.ResourceCookiesView.prototype = {
     _refreshCookies: function()
     {
         delete this._cookiesTable;
-        if (!this._gotCookies || !this.visible)
+        if (!this._gotCookies || !this.isShowing())
             return;
         this._buildCookiesTable();
         this._cookiesTable.updateWidths();

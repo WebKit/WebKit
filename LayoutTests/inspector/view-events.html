@@ -7,54 +7,224 @@ function test()
 {
     function TestView(viewName)
     {
-        this._viewName = viewName;
         WebInspector.View.call(this);
+
+        this._viewName = viewName;
+        InspectorTest.addResult(this._viewName + "()");
     }
 
     TestView.prototype = {
+        show: function(parentElement)
+        {
+            InspectorTest.addResult(this._viewName + ".show()");
+            WebInspector.View.prototype.show.call(this, parentElement);
+        },
+
+        detach: function()
+        {
+            InspectorTest.addResult(this._viewName + ".detach()");
+            WebInspector.View.prototype.detach.call(this);
+        },
+
+        doResize: function()
+        {
+            InspectorTest.addResult(this._viewName + ".doResize()");
+            WebInspector.View.prototype.doResize.call(this);
+        },
+
         wasShown: function()
         {
-            InspectorTest.addResult("> " + this._viewName + ".wasShown()");
-            WebInspector.View.prototype.wasShown.call(this);
+            InspectorTest.addResult("  " + this._viewName + ".wasShown()");
         },
 
         willHide: function()
         {
-            InspectorTest.addResult("> " + this._viewName + ".willHide()");
-            WebInspector.View.prototype.willHide.call(this);
+            InspectorTest.addResult("  " + this._viewName + ".willHide()");
         },
 
         onResize: function()
         {
-            InspectorTest.addResult("> " + this._viewName + ".onResize()");
+            InspectorTest.addResult("  " + this._viewName + ".onResize()");
         }
     };
 
     TestView.prototype.__proto__ = WebInspector.View.prototype;
 
-    function traceEval(expressions)
-    {
-        for (var i = 0; i < expressions.length; ++i) {
-            InspectorTest.addResult(expressions[i]);
-            eval(expressions[i]);
+    InspectorTest.runTestSuite([
+        function testShowView(next)
+        {
+            var view = new TestView("View");
+            view.show(WebInspector.mainPanelsView.element);
+            view.detach();
+            next();
+        },
+
+        function testAppendViaDOM(next)
+        {
+            try {
+                var view = new TestView("View");
+                document.body.appendChild(view.element);
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testInsertViaDOM(next)
+        {
+            try {
+                var view = new TestView("View");
+                document.body.insertBefore(view.element, null);
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testAttachToOrphanNode(next)
+        {
+            try {
+                var view = new TestView("View");
+                var div = document.createElement("div");
+                view.show(div);
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testImmediateParent(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            childView.show(parentView.element);
+            if (childView._parentView === parentView)
+                InspectorTest.addResult("OK");
+            else
+                InspectorTest.addResult("FAILED");
+            next();
+        },
+
+        function testDistantParent(next)
+        {
+            var parentView = new TestView("Parent");
+            var div = document.createElement("div");
+            parentView.element.appendChild(div);
+            var childView = new TestView("Child");
+            childView.show(div);
+
+            if (childView._parentView === parentView)
+                InspectorTest.addResult("OK");
+            else
+                InspectorTest.addResult("FAILED");
+            next();
+        },
+
+        function testEvents(next)
+        {
+            var parentView = new TestView("Parent");
+            parentView.markAsRoot();
+            parentView.show(document.body);
+
+            var childView = new TestView("Child");
+            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.doResize();
+            childView.show(parentView.element);
+            parentView.doResize();
+            parentView.detach();
+            parentView.show(WebInspector.mainPanelsView.element);
+            childView.detach();
+            parentView.detach();
+            next();
+        },
+
+        function testViewCounter(next)
+        {
+            var parentView = new TestView("Parent");
+            parentView.markAsRoot();
+            parentView.show(document.body);
+
+            var childView = new TestView("Child");
+            childView.show(parentView.element);
+            InspectorTest.addResult("  view counter: " + parentView.element.__viewCounter);
+
+            var childView2 = new TestView("Child 2");
+            childView2.show(parentView.element);
+            InspectorTest.addResult("  view counter: " + parentView.element.__viewCounter);
+
+            childView.detach();
+            InspectorTest.addResult("  view counter: " + parentView.element.__viewCounter);
+
+            childView2.detach();
+            InspectorTest.addResult("  view counter: " + parentView.element.__viewCounter);
+
+            next();
+        },
+
+        function testRemoveChild(next)
+        {
+            var parentView = new TestView("Parent");
+            parentView.markAsRoot();
+            parentView.show(document.body);
+
+            var childView = new TestView("Child");
+            childView.show(parentView.element);
+            try {
+                parentView.element.removeChild(childView.element);
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testImplicitRemoveChild(next)
+        {
+            var parentView = new TestView("Parent");
+            var div = document.createElement("div");
+            parentView.element.appendChild(div);
+
+            var childView = new TestView("Child");
+            childView.show(div);
+
+            try {
+                parentView.element.removeChild(div);
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testRemoveChildren(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            childView.show(parentView.element);
+            parentView.element.appendChild(document.createElement("div"));
+            try {
+                parentView.element.removeChildren();
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
+        },
+
+        function testImplicitRemoveChildren(next)
+        {
+            var parentView = new TestView("Parent");
+            var div = document.createElement("div");
+            parentView.element.appendChild(div);
+
+            var childView = new TestView("Child");
+            childView.show(div);
+
+            try {
+                parentView.element.removeChildren();
+            } catch (e) {
+                InspectorTest.addResult(e);
+            }
+            next();
         }
-    }
-    var parentView = new TestView("ParentView");
-    var childView = new TestView("ChildView");
-    var root = document.getElementById("main-panels");
-    traceEval([
-        "parentView.show(root)",
-        "parentView.doResize()",
-        "childView.show(parentView.element)",
-        "parentView.doResize()",
-        "parentView.hide()",
-        "parentView.show(root)",
-        "childView.hide()",
-        "parentView.hide()"
     ]);
-    childView.detach();
-    parentView.detach();
-    InspectorTest.completeTest();
 }
 
 </script>
