@@ -16,6 +16,9 @@ PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not t
 PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('2147483648', null) did not throw an exception
 PASS: Posting message ('2147483648', null) did not throw an exception
+PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]): threw exception Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
+PASS: Posting message ('[object MessagePort],[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('done', *) did not throw an exception
 Received message '4' with 0 ports.
 Received message '4' with 0 ports.
@@ -27,5 +30,7 @@ Received message '7' with 2 ports.
 Received message '7' with 2 ports.
 Received message '2147483648' with 0 ports.
 Received message '2147483648' with 0 ports.
+Received message '[object MessagePort]' with 2 ports.
+Received message '[object MessagePort],[object MessagePort]' with 2 ports.
 Received message 'done' with 0 ports.
 

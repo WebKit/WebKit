@@ -9,10 +9,15 @@ PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port
 PASS channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: MessagePortArray argument must contain only MessagePorts.
 PASS channel.port1.postMessage("notAnArray", channel3.port1) threw exception TypeError: MessagePortArray argument has no length attribute.
 PASS channel.port1.postMessage("notASequence", [{length: 3}]) threw exception TypeError: MessagePortArray argument must contain only MessagePorts.
+PASS channel.port1.postMessage("largeSequence", largePortArray) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
 PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
+PASS Sending host object has thrown Error: DATA_CLONE_ERR: DOM Exception 25
+PASS send-port: transferred one port
+PASS send-port-twice: transferred one port twice
+PASS send-two-ports: transferred two ports
 
 TEST COMPLETE
 

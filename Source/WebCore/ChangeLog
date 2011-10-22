@@ -1,3 +1,20 @@
+2011-10-21  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70580
+        [Chromium] Implement MessagePort transfer in chromium port of webkit.
+
+        Reviewed by David Levin.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::V8ObjectMap::Writer::writeTransferredMessagePort):
+        (WebCore::V8ObjectMap::Serializer::Serializer):
+        (WebCore::V8ObjectMap::Serializer::doSerialize):
+        (WebCore::V8ObjectMap::Reader::read):
+        (WebCore::V8ObjectMap::Deserializer::Deserializer):
+        (WebCore::V8ObjectMap::Deserializer::tryGetTransferredMessagePort):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::deserialize):
+
 2011-10-21  Ojan Vafai  <ojan@chromium.org>
 
         r97693 caused 42 failures on the chromium mac bots

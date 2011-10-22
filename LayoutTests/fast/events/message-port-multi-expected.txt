@@ -14,6 +14,11 @@ PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
+FAIL Sending host object should throw
+FAIL send-port: port transfer failed
+FAIL send-port-twice: failed to transfer one port twice
+FAIL send-two-ports: failed to transfer two ports
+FAIL Unexpected message [object Object]
 
 TEST COMPLETE
 

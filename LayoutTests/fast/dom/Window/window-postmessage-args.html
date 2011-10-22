@@ -52,7 +52,14 @@ var channel1 = new MessageChannel;
 tryPostMessageFunction(window.postMessage, '7', [channel1.port1, channel1.port2], '*');
 var channel2 = new MessageChannel;
 tryPostMessageFunction(window.webkitPostMessage, '7', [channel2.port1, channel2.port2], '*');
+var channel3 = new MessageChannel;
 tryPostMessage(2147483648, null, '*');
+tryPostMessageFunction(window.postMessage, channel3.port1, [channel3.port1, channel3.port2], '*', true);
+var channel4 = new MessageChannel;
+tryPostMessageFunction(window.webkitPostMessage, channel4.port1, [channel4.port1, channel4.port2], '*');
+var channel5 = new MessageChannel;
+tryPostMessageFunction(window.webkitPostMessage, [channel5.port1, channel5.port2], [channel5.port1, channel5.port2], '*');
+
 tryPostMessageFunction(window.postMessage, 'done', '*');
 </script>
 </body>

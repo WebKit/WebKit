@@ -1,3 +1,22 @@
+2011-10-21  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70580
+        [Chromium] Implement MessagePort transfer in chromium port of webkit.
+        Results for JSC include some FAILs - this will be addressed when JSC 
+        implements message port transfers as well (https://bugs.webkit.org/show_bug.cgi?id=70658)
+
+        Reviewed by David Levin.
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/dom/Window/window-postmessage-args.html:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/resources/message-port-multi.js:
+        (testTransfers.channel0.port2.onmessage):
+        (testTransfers):
+        (channel.port2.onmessage):
+        * platform/chromium-win/fast/events/message-port-multi-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-args-expected.txt:
+
 2011-10-21  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         Setting form.enctype reflected attribute behaves strangely.

@@ -64,6 +64,7 @@
 #include "V8Int16Array.h"
 #include "V8Int32Array.h"
 #include "V8Int8Array.h"
+#include "V8MessagePort.h"
 #include "V8Proxy.h"
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
@@ -182,6 +183,7 @@ enum SerializationTag {
     Int32Tag = 'I', // value:ZigZag-encoded int32 -> Integer
     Uint32Tag = 'U', // value:uint32_t -> Integer
     DateTag = 'D', // value:double -> Date (ref)
+    MessagePortTag = 'M', // index:int -> MessagePort. Fills the result with transferred MessagePort.
     NumberTag = 'N', // value:double -> Number
     BlobTag = 'b', // url:WebCoreString, type:WebCoreString, size:uint64_t -> Blob (ref)
     FileTag = 'f', // file:RawFile -> File (ref)
@@ -429,6 +431,12 @@ public:
         doWriteUint32(static_cast<uint32_t>(flags));
     }
 
+    void writeTransferredMessagePort(uint32_t index)
+    {
+        append(MessagePortTag);
+        doWriteUint32(index);
+    }
+
     void writeArray(uint32_t length)
     {
         append(ArrayTag);
@@ -576,7 +584,7 @@ public:
         JSFailure
     };
 
-    Serializer(Writer& writer, v8::TryCatch& tryCatch)
+    Serializer(Writer& writer, MessagePortArray* messagePorts, v8::TryCatch& tryCatch)
         : m_writer(writer)
         , m_tryCatch(tryCatch)
         , m_depth(0)
@@ -585,6 +593,10 @@ public:
         , m_nextObjectReference(0)
     {
         ASSERT(!tryCatch.HasCaught());
+        if (messagePorts) {
+            for (size_t i = 0; i < messagePorts->size(); i++)
+                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get()), i);
+        }
     }
 
     Status serialize(v8::Handle<v8::Value> value)
@@ -1011,6 +1023,7 @@ private:
     Status m_status;
     typedef V8ObjectMap<v8::Object, uint32_t> ObjectPool;
     ObjectPool m_objectPool;
+    ObjectPool m_transferredMessagePorts;
     uint32_t m_nextObjectReference;
 };
 
@@ -1048,6 +1061,13 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         return writeAndGreyArrayBufferView(value.As<v8::Object>(), next);
     else if (value->IsString())
         writeString(value);
+    else if (V8MessagePort::HasInstance(value)) {
+        uint32_t messagePortIndex;
+        if (m_transferredMessagePorts.tryGet(value.As<v8::Object>(), &messagePortIndex))
+                m_writer.writeTransferredMessagePort(messagePortIndex);
+            else
+                return handleError(DataCloneError, next);
+        }
     else {
         v8::Handle<v8::Object> jsObject = value.As<v8::Object>();
         if (jsObject.IsEmpty())
@@ -1096,6 +1116,7 @@ public:
     virtual uint32_t objectReferenceCount() = 0;
     virtual void pushObjectReference(const v8::Handle<v8::Value>&) = 0;
     virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>*) = 0;
+    virtual bool tryGetTransferredMessagePort(uint32_t index, v8::Handle<v8::Value>*) = 0;
     virtual bool newArray(uint32_t length) = 0;
     virtual bool newObject() = 0;
     virtual bool completeArray(uint32_t length, v8::Handle<v8::Value>*) = 0;
@@ -1212,6 +1233,7 @@ public:
                 return false;
             creator.pushObjectReference(*value);
             break;
+
         case ArrayTag: {
             uint32_t length;
             if (!doReadUint32(&length))
@@ -1276,6 +1298,16 @@ public:
             if (!creator.newArray(length))
                 return false;
             return true;
+        }
+        case MessagePortTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t index;
+            if (!doReadUint32(&index))
+                return false;
+            if (!creator.tryGetTransferredMessagePort(index, value))
+                return false;
+            break;
         }
         case ObjectReferenceTag: {
             if (m_version <= 0)
@@ -1652,8 +1684,9 @@ private:
 
 class Deserializer : public CompositeCreator {
 public:
-    explicit Deserializer(Reader& reader)
+    explicit Deserializer(Reader& reader, MessagePortArray* messagePorts)
         : m_reader(reader)
+        , m_transferredMessagePorts(messagePorts)
         , m_version(0)
     {
     }
@@ -1759,6 +1792,16 @@ public:
         m_objectPool.append(object);
     }
 
+    virtual bool tryGetTransferredMessagePort(uint32_t index, v8::Handle<v8::Value>* object)
+    {
+        if (!m_transferredMessagePorts)
+            return false;
+        if (index >= m_transferredMessagePorts->size())
+            return false;
+        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get());
+        return true;
+    }
+
     virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>* object)
     {
         if (reference >= m_objectPool.size())
@@ -1837,6 +1880,7 @@ private:
     Vector<v8::Local<v8::Value> > m_stack;
     Vector<v8::Handle<v8::Value> > m_objectPool;
     Vector<uint32_t> m_openCompositeReferenceStack;
+    MessagePortArray* m_transferredMessagePorts;
     uint32_t m_version;
 };
 
@@ -1920,14 +1964,14 @@ SerializedScriptValue::SerializedScriptValue()
 {
 }
 
-SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, MessagePortArray*, bool& didThrow)
+SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, bool& didThrow)
 {
     didThrow = false;
     Writer writer;
     Serializer::Status status;
     {
         v8::TryCatch tryCatch;
-        Serializer serializer(writer, tryCatch);
+        Serializer serializer(writer, messagePorts, tryCatch);
         status = serializer.serialize(value);
         if (status == Serializer::JSException) {
             // If there was a JS exception thrown, re-throw it.
@@ -1965,13 +2009,13 @@ SerializedScriptValue::SerializedScriptValue(const String& wireData)
     m_data = wireData.crossThreadString();
 }
 
-v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray*)
+v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messagePorts)
 {
     if (!m_data.impl())
         return v8::Null();
     COMPILE_ASSERT(sizeof(BufferValueType) == 2, BufferValueTypeIsTwoBytes);
     Reader reader(reinterpret_cast<const uint8_t*>(m_data.impl()->characters()), 2 * m_data.length());
-    Deserializer deserializer(reader);
+    Deserializer deserializer(reader, messagePorts);
     return deserializer.deserialize();
 }
 
