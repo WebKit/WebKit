@@ -240,7 +240,7 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerC
 
 bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const
 {
-    return m_compositedLayerCount > rootLayer->isComposited();
+    return m_compositedLayerCount > (rootLayer->isComposited() ? 1 : 0);
 }
 
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)

@@ -1,5 +1,16 @@
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98112
+
+    2011-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix Windows build.
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers):
+
+2011-10-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98027
 
     2011-10-20  Alexey Proskuryakov  <ap@apple.com>
