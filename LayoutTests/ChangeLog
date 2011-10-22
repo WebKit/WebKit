@@ -1,3 +1,17 @@
+2011-10-21  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Setting form.enctype reflected attribute behaves strangely.
+        https://bugs.webkit.org/show_bug.cgi?id=44879
+
+        Reviewed by Darin Adler.
+
+        Leading/trailing white-spaces should not be allowed while specifying attribute value.
+        Added more test coverage for form.enctype attribute.
+
+        * fast/forms/encoding-test.html:
+        * fast/forms/enctype-attribute-expected.txt:
+        * fast/forms/enctype-attribute.html: Corrected test case as per new behavior.
+
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Gardening update.

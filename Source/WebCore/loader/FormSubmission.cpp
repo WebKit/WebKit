@@ -90,9 +90,9 @@ void FormSubmission::Attributes::parseAction(const String& action)
 
 String FormSubmission::Attributes::parseEncodingType(const String& type)
 {
-    if (type.contains("multipart", false) || type.contains("form-data", false))
+    if (equalIgnoringCase(type, "multipart/form-data"))
         return "multipart/form-data";
-    if (type.contains("text", false) || type.contains("plain", false))
+    if (equalIgnoringCase(type, "text/plain"))
         return "text/plain";
     return "application/x-www-form-urlencoded";
 }

@@ -1,3 +1,16 @@
+2011-10-21  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Setting form.enctype reflected attribute behaves strangely.
+        https://bugs.webkit.org/show_bug.cgi?id=44879
+
+        Reviewed by Darin Adler.
+
+        The spec says form.enctype should be application/x-www-form-urlencoded,
+        So as "text", "plain", "multipart" or "form-data" these are not a valid value so must be ignored.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::Attributes::parseEncodingType):
+
 2011-10-21  Matthew Delaney  <mdelaney@apple.com>
 
         Ensure periodic flushing of canvas drawing context
