@@ -3686,10 +3686,6 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 BUGCR96861 WIN DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
-BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
-BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.primarycolours.html = TEXT
-BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.quality.basic.html = TEXT
-
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH IMAGE
 
