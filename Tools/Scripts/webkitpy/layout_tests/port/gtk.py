@@ -129,7 +129,7 @@ class GtkPort(webkit.WebKitPort):
     def show_results_html_file(self, results_filename):
         run_launcher_args = ["file://%s" % results_filename]
         if self.get_option('webkit_test_runner'):
-            run_launcher_args.append('--webkit-test-runner')
+            run_launcher_args.append('-2')
         # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
         # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
         self._run_script("run-launcher", run_launcher_args)
