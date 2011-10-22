@@ -578,6 +578,7 @@ private:
         case Return:
         case CheckHasInstance:
         case Phi:
+        case Flush:
         case Throw:
         case ThrowReferenceError:
         case ForceOSRExit:

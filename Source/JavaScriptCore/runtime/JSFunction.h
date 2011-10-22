@@ -37,6 +37,7 @@ namespace JSC {
     class VPtrHackExecutable;
     namespace DFG {
     class JITCodeGenerator;
+    class JITCompiler;
     }
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
@@ -46,6 +47,7 @@ namespace JSC {
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
         friend class DFG::JITCodeGenerator;
+        friend class DFG::JITCompiler;
         friend class JSGlobalData;
 
     public:

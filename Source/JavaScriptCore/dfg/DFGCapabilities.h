@@ -26,20 +26,42 @@
 #ifndef DFGCapabilities_h
 #define DFGCapabilities_h
 
+#include "DFGIntrinsic.h"
+#include "DFGNode.h"
+#include "Heuristics.h"
 #include "Interpreter.h"
 #include <wtf/Platform.h>
-
-#include "DFGNode.h"
 
 namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 // Fast check functions; if they return true it is still necessary to
 // check opcodes.
-inline bool mightCompileEval(CodeBlock*) { return true; }
-inline bool mightCompileProgram(CodeBlock*) { return true; }
-inline bool mightCompileFunctionForCall(CodeBlock*) { return true; }
-inline bool mightCompileFunctionForConstruct(CodeBlock*) { return true; }
+inline bool mightCompileEval(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Heuristics::maximumEvalOptimizationCandidateInstructionCount;
+}
+inline bool mightCompileProgram(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Heuristics::maximumProgramOptimizationCandidateInstructionCount;
+}
+inline bool mightCompileFunctionForCall(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForCallOptimizationCandidateInstructionCount;
+}
+inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForConstructOptimizationCandidateInstructionCount;
+}
+
+inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForCallInlineCandidateInstructionCount;
+}
+inline bool mightInlineFunctionForConstruct(CodeBlock*)
+{
+    return false;
+}
 
 // Opcode checking.
 inline bool canCompileOpcode(OpcodeID opcodeID)
@@ -146,14 +168,45 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     }
 }
 
+inline bool canInlineOpcode(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+        
+    // These opcodes would be easy to support with inlining, but we currently don't do it.
+    // The issue is that the scope chain will not be set correctly.
+    case op_get_scoped_var:
+    case op_put_scoped_var:
+    case op_resolve:
+    case op_resolve_base:
+    case op_resolve_global:
+        
+    // Trivial to support with the copy propagation machine we already have, but the glue
+    // isn't there, yet.
+    case op_get_callee:
+        
+    // Inlining doesn't correctly remap regular expression operands.
+    case op_new_regexp:
+        return false;
+        
+    default:
+        return canCompileOpcode(opcodeID);
+    }
+}
+
 bool canCompileOpcodes(CodeBlock*);
+bool canInlineOpcodes(CodeBlock*);
 #else // ENABLE(DFG_JIT)
 inline bool mightCompileEval(CodeBlock*) { return false; }
 inline bool mightCompileProgram(CodeBlock*) { return false; }
 inline bool mightCompileFunctionForCall(CodeBlock*) { return false; }
 inline bool mightCompileFunctionForConstruct(CodeBlock*) { return false; }
+inline bool mightInlineFunctionForCall(CodeBlock*) { return false; }
+inline bool mightInlineFunctionForConstruct(CodeBlock*) { return false; }
+
 inline bool canCompileOpcode(OpcodeID) { return false; }
+inline bool canInlineOpcode(OpcodeID) { return false; }
 inline bool canCompileOpcodes(CodeBlock*) { return false; }
+inline bool canInlineOpcodes(CodeBlock*) { return false; }
 #endif // ENABLE(DFG_JIT)
 
 inline bool canCompileEval(CodeBlock* codeBlock)
@@ -174,6 +227,16 @@ inline bool canCompileFunctionForCall(CodeBlock* codeBlock)
 inline bool canCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
     return mightCompileFunctionForConstruct(codeBlock) && canCompileOpcodes(codeBlock);
+}
+
+inline bool canInlineFunctionForCall(CodeBlock* codeBlock)
+{
+    return mightInlineFunctionForCall(codeBlock) && canInlineOpcodes(codeBlock);
+}
+
+inline bool canInlineFunctionForConstruct(CodeBlock* codeBlock)
+{
+    return mightInlineFunctionForConstruct(codeBlock) && canInlineOpcodes(codeBlock);
 }
 
 } } // namespace JSC::DFG

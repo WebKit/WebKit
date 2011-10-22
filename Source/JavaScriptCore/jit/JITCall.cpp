@@ -184,6 +184,13 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     // Done! - return back to the hot path.
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+#if ENABLE(VALUE_PROFILER)
+    if (m_canBeOptimized) {
+        RareCaseProfile* rareCaseProfile = m_codeBlock->rareCaseProfile(m_codeBlock->numberOfRareCaseProfiles() - 1);
+        ASSERT((unsigned)rareCaseProfile->m_bytecodeOffset == m_bytecodeOffset);
+        add32(Imm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
+    }
+#endif
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions

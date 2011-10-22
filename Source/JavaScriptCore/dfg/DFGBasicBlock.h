@@ -46,11 +46,23 @@ struct BasicBlock {
         , isOSRTarget(false)
         , cfaHasVisited(false)
         , cfaShouldRevisit(false)
+#if !ASSERT_DISABLED
+        , isLinked(false)
+#endif
+        , isReachable(false)
         , variablesAtHead(numArguments, numLocals)
         , variablesAtTail(numArguments, numLocals)
         , valuesAtHead(numArguments, numLocals)
         , valuesAtTail(numArguments, numLocals)
     {
+    }
+    
+    void ensureLocals(unsigned newNumLocals)
+    {
+        variablesAtHead.ensureLocals(newNumLocals);
+        variablesAtTail.ensureLocals(newNumLocals);
+        valuesAtHead.ensureLocals(newNumLocals);
+        valuesAtTail.ensureLocals(newNumLocals);
     }
 
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
@@ -62,6 +74,10 @@ struct BasicBlock {
     bool isOSRTarget;
     bool cfaHasVisited;
     bool cfaShouldRevisit;
+#if !ASSERT_DISABLED
+    bool isLinked;
+#endif
+    bool isReachable;
     
     PredecessorList m_predecessors;
     
@@ -72,6 +88,21 @@ struct BasicBlock {
     Operands<AbstractValue> valuesAtTail;
 };
 
+struct UnlinkedBlock {
+    BlockIndex m_blockIndex;
+    bool m_needsNormalLinking;
+    bool m_needsEarlyReturnLinking;
+    
+    UnlinkedBlock() { }
+    
+    explicit UnlinkedBlock(BlockIndex blockIndex)
+        : m_blockIndex(blockIndex)
+        , m_needsNormalLinking(true)
+        , m_needsEarlyReturnLinking(false)
+    {
+    }
+};
+    
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

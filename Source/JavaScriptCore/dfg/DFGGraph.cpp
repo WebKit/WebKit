@@ -79,6 +79,46 @@ const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessDa
     return buf;
 }
 
+static void printWhiteSpace(unsigned amount)
+{
+    while (amount-- > 0)
+        printf(" ");
+}
+
+void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
+{
+    if (!nodeIndex)
+        return;
+    
+    Node& currentNode = at(nodeIndex);
+    Node& previousNode = at(nodeIndex - 1);
+    if (previousNode.codeOrigin.inlineCallFrame == currentNode.codeOrigin.inlineCallFrame)
+        return;
+    
+    Vector<CodeOrigin> previousInlineStack = previousNode.codeOrigin.inlineStack();
+    Vector<CodeOrigin> currentInlineStack = currentNode.codeOrigin.inlineStack();
+    unsigned commonSize = std::min(previousInlineStack.size(), currentInlineStack.size());
+    unsigned indexOfDivergence = commonSize;
+    for (unsigned i = 0; i < commonSize; ++i) {
+        if (previousInlineStack[i].inlineCallFrame != currentInlineStack[i].inlineCallFrame) {
+            indexOfDivergence = i;
+            break;
+        }
+    }
+    
+    // Print the pops.
+    for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
+        printWhiteSpace(i * 2);
+        printf("<-- %p\n", previousInlineStack[i].inlineCallFrame->executable.get());
+    }
+    
+    // Print the pushes.
+    for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
+        printWhiteSpace(i * 2);
+        printf("--> %p\n", currentInlineStack[i].inlineCallFrame->executable.get());
+    }
+}
+
 void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
 {
     Node& node = at(nodeIndex);
@@ -91,6 +131,9 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         ASSERT(refCount);
         --refCount;
     }
+    
+    dumpCodeOrigin(nodeIndex);
+    printWhiteSpace((node.codeOrigin.inlineDepth() - 1) * 2);
 
     // Example/explanation of dataflow dump output
     //
@@ -240,7 +283,7 @@ void Graph::dump(CodeBlock* codeBlock)
 {
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
-        printf("Block #%u (bc#%u):  %s\n", (int)b, block->bytecodeBegin, block->isOSRTarget ? " (OSR target)" : "");
+        printf("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
         printf("  vars: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtHead, stdout);

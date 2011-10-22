@@ -384,6 +384,24 @@ void ProgramExecutable::clearCodeVirtual()
     Base::clearCodeVirtual();
 }
 
+CodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
+{
+    CodeBlock* result;
+    if (kind == CodeForCall)
+        result = m_codeBlockForCall.get();
+    else {
+        ASSERT(kind == CodeForConstruct);
+        result = m_codeBlockForConstruct.get();
+    }
+    if (!result)
+        return 0;
+    while (result->alternative())
+        result = result->alternative();
+    ASSERT(result);
+    ASSERT(result->getJITType() == JITCode::BaselineJIT);
+    return result;
+}
+
 JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
@@ -406,11 +424,12 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
     return error;
 }
 
-PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ExecState* exec, ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
+PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
     exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
+    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalObject, 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!body) {
         ASSERT(exception);
         return nullptr;
@@ -419,8 +438,6 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ExecState*
         body->setUsesArguments();
     body->finishParsing(m_parameters, m_name);
     recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
-
-    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
 
     OwnPtr<FunctionCodeBlock> result;
     ASSERT((compilationKind == FirstCompilation) == !codeBlockFor(specializationKind));
@@ -442,7 +459,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scopeChainNode, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
     if (!newCodeBlock)
         return exception;
 
@@ -500,7 +517,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
     JSObject* exception;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(exec, scopeChainNode, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scopeChainNode, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
     if (!newCodeBlock)
         return exception;
 

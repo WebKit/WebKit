@@ -64,16 +64,29 @@ public:
     T& local(size_t idx) { return m_locals[idx]; }
     const T& local(size_t idx) const { return m_locals[idx]; }
     
+    void ensureLocals(size_t size)
+    {
+        if (size <= m_locals.size())
+            return;
+
+        size_t oldSize = m_locals.size();
+        m_locals.resize(size);
+        for (size_t i = oldSize; i < m_locals.size(); ++i)
+            m_locals[i] = Traits::defaultValue();
+    }
+    
     void setLocal(size_t idx, const T& value)
     {
-        if (idx >= m_locals.size()) {
-            size_t oldSize = m_locals.size();
-            m_locals.resize(idx + 1);
-            for (size_t i = oldSize; i < m_locals.size(); ++i)
-                m_locals[i] = Traits::defaultValue();
-        }
+        ensureLocals(idx + 1);
         
         m_locals[idx] = value;
+    }
+    
+    T getLocal(size_t idx)
+    {
+        if (idx >= m_locals.size())
+            return Traits::defaultValue();
+        return m_locals[idx];
     }
     
     void setArgumentFirstTime(size_t idx, const T& value)

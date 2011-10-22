@@ -33,7 +33,8 @@ namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 
-bool canCompileOpcodes(CodeBlock* codeBlock)
+template<bool (*canHandleOpcode)(OpcodeID)>
+bool canHandleOpcodes(CodeBlock* codeBlock)
 {
     Interpreter* interpreter = codeBlock->globalData()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
@@ -43,7 +44,7 @@ bool canCompileOpcodes(CodeBlock* codeBlock)
         switch (interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
 #define DEFINE_OP(opcode, length)           \
         case opcode:                        \
-            if (!canCompileOpcode(opcode))  \
+            if (!canHandleOpcode(opcode))  \
                 return false;               \
             bytecodeOffset += length;       \
             break;
@@ -56,6 +57,16 @@ bool canCompileOpcodes(CodeBlock* codeBlock)
     }
     
     return true;
+}
+
+bool canCompileOpcodes(CodeBlock* codeBlock)
+{
+    return canHandleOpcodes<canCompileOpcode>(codeBlock);
+}
+
+bool canInlineOpcodes(CodeBlock* codeBlock)
+{
+    return canHandleOpcodes<canInlineOpcode>(codeBlock);
 }
 
 #endif

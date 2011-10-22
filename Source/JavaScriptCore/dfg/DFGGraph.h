@@ -111,6 +111,10 @@ public:
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(CodeBlock* = 0);
     void dump(NodeIndex, CodeBlock* = 0);
+
+    // Dump the code origin of the given node as a diff from the code origin of the
+    // preceding node.
+    void dumpCodeOrigin(NodeIndex);
 #endif
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
@@ -257,9 +261,9 @@ private:
     Graph& m_graph;
 };
 
-inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin)
+inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& linkingTargets, unsigned bytecodeBegin)
 {
-    return *WTF::binarySearchWithFunctor<BlockIndex, unsigned>(blocks.begin(), blocks.size(), bytecodeBegin, WTF::KeyMustBePresentInArray, GetBytecodeBeginForBlock(*this));
+    return *WTF::binarySearchWithFunctor<BlockIndex, unsigned>(linkingTargets.begin(), linkingTargets.size(), bytecodeBegin, WTF::KeyMustBePresentInArray, GetBytecodeBeginForBlock(*this));
 }
 
 } } // namespace JSC::DFG

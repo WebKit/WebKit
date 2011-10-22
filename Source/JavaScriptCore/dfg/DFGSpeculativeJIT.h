@@ -328,7 +328,7 @@ struct OSRExit {
     
     MacroAssembler::Jump m_check;
     NodeIndex m_nodeIndex;
-    unsigned m_bytecodeIndex;
+    CodeOrigin m_codeOrigin;
     
     unsigned m_recoveryIndex;
     
@@ -566,7 +566,7 @@ private:
     Vector<ValueSource, 0> m_arguments;
     Vector<ValueSource, 0> m_variables;
     int m_lastSetOperand;
-    uint32_t m_bytecodeIndexForOSR;
+    CodeOrigin m_codeOriginForOSR;
     
     AbstractState m_state;
     
@@ -801,7 +801,6 @@ inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_arguments(jit.codeBlock()->m_numParameters)
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
-    , m_bytecodeIndexForOSR(std::numeric_limits<uint32_t>::max())
     , m_state(m_jit.codeBlock(), m_jit.graph())
 {
 }

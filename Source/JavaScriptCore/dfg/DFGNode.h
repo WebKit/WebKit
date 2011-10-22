@@ -215,6 +215,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(SetLocal, 0) \
     macro(Phantom, NodeMustGenerate) \
     macro(Phi, 0) \
+    macro(Flush, NodeMustGenerate) \
     \
     /* Marker for arguments being set. */\
     macro(SetArgument, 0) \
@@ -485,6 +486,7 @@ struct Node {
         case SetLocal:
         case Phi:
         case SetArgument:
+        case Flush:
             return true;
         default:
             return false;
@@ -836,7 +838,7 @@ struct Node {
 
     bool shouldGenerate()
     {
-        return m_refCount && op != Phi;
+        return m_refCount && op != Phi && op != Flush;
     }
 
     unsigned refCount()

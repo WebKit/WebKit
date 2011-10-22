@@ -886,7 +886,10 @@
 #define ENABLE_DFG_JIT 1
 #endif
 
-/* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC). */
+/* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you
+   can enable it manually with DFG turned off if you want to use it as a standalone
+   profiler. In that case, you probably want to also enable VERBOSE_VALUE_PROFILE
+   below. */
 #if !defined(ENABLE_VALUE_PROFILER) && ENABLE(DFG_JIT)
 #define ENABLE_VALUE_PROFILER 1
 #endif

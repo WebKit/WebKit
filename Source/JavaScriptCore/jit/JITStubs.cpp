@@ -2015,7 +2015,11 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        printf("Returning from old JIT call frame with optimized replacement %p(%p), with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+        printf("Returning from old JIT call frame with optimized replacement %p(%p), with success/fail %u/%u", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+        CallFrame* callerFrame = callFrame->callerFrame();
+        if (callerFrame)
+            printf(", callerFrame = %p, returnPC = %p, caller code block = %p", callerFrame, callFrame->returnPC().value(), callerFrame->codeBlock());
+        printf("\n");
 #endif
         if (codeBlock->replacement()->shouldReoptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -2023,6 +2027,8 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
 #endif
             codeBlock->reoptimize(callFrame->globalData());
         }
+        
+        codeBlock->optimizeSoon();
 
         codeBlock->optimizeSoon();
         return;

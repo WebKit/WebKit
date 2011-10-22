@@ -26,7 +26,9 @@
 #ifndef CodeOrigin_h
 #define CodeOrigin_h
 
+#include "WriteBarrier.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -56,20 +58,66 @@ struct CodeOrigin {
     }
     
     bool isSet() const { return bytecodeIndex != std::numeric_limits<uint32_t>::max(); }
+    
+    // The inline depth is the depth of the inline stack, so 1 = not inlined,
+    // 2 = inlined one deep, etc.
+    unsigned inlineDepth() const;
+    
+    static unsigned inlineDepthForCallFrame(InlineCallFrame*);
+    
+    bool operator==(const CodeOrigin& other) const;
+    
+#ifndef NDEBUG
+    // Get the inline stack. This is slow, and is intended for debugging only.
+    Vector<CodeOrigin> inlineStack() const;
+#endif
 };
 
 struct InlineCallFrame {
-    ExecutableBase* executable;
+    WriteBarrier<ExecutableBase> executable;
     unsigned stackOffset;
     unsigned calleeVR;
     CodeOrigin caller;
-    unsigned numArgumentsIncludingThis;
+    unsigned numArgumentsIncludingThis : 31;
+    bool isCall : 1;
 };
 
 struct CodeOriginAtCallReturnOffset {
     CodeOrigin codeOrigin;
     unsigned callReturnOffset;
 };
+
+inline unsigned CodeOrigin::inlineDepthForCallFrame(InlineCallFrame* inlineCallFrame)
+{
+    unsigned result = 1;
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
+        result++;
+    return result;
+}
+
+inline unsigned CodeOrigin::inlineDepth() const
+{
+    return inlineDepthForCallFrame(inlineCallFrame);
+}
+    
+inline bool CodeOrigin::operator==(const CodeOrigin& other) const
+{
+    return bytecodeIndex == other.bytecodeIndex
+        && inlineCallFrame == other.inlineCallFrame;
+}
+    
+#ifndef NDEBUG
+// Get the inline stack. This is slow, and is intended for debugging only.
+inline Vector<CodeOrigin> CodeOrigin::inlineStack() const
+{
+    Vector<CodeOrigin> result(inlineDepth());
+    result.last() = *this;
+    unsigned index = result.size() - 2;
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
+        result[index--] = current->caller;
+    return result;
+}
+#endif
 
 inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* data)
 {

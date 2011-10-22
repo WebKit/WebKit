@@ -1,3 +1,132 @@
+2011-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have inlining
+        https://bugs.webkit.org/show_bug.cgi?id=69996
+
+        Reviewed by Oliver Hunt.
+        
+        Implements inlining that's hooked into the bytecode parser. Only
+        works for calls, for now, though nothing fundamentally prevents us
+        from inlining constructor calls. 2% overall speed-up on all
+        benchmarks. 7% speed-up on V8 (around 34% and 27% on deltablue and
+        richards respectively), neutral on Kraken and SunSpider. 
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::CodeBlock::setInstructionCount):
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::inlineDepthForCallFrame):
+        (JSC::CodeOrigin::inlineDepth):
+        (JSC::CodeOrigin::operator==):
+        (JSC::CodeOrigin::inlineStack):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::ensureLocals):
+        (JSC::DFG::UnlinkedBlock::UnlinkedBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getDirect):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::~InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        (JSC::DFG::ByteCodeParser::handleSuccessor):
+        (JSC::DFG::ByteCodeParser::determineReachability):
+        (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::canHandleOpcodes):
+        (JSC::DFG::canCompileOpcodes):
+        (JSC::DFG::canInlineOpcodes):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        (JSC::DFG::canInlineOpcode):
+        (JSC::DFG::canInlineOpcodes):
+        (JSC::DFG::canInlineFunctionForCall):
+        (JSC::DFG::canInlineFunctionForConstruct):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::printWhiteSpace):
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::GetBytecodeBeginForBlock::operator()):
+        (JSC::DFG::Graph::blockIndexForBytecodeOffset):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::decodedCodeMapFor):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::debugCall):
+        (JSC::DFG::JITCompiler::baselineCodeBlockFor):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVariableAccessData):
+        (JSC::DFG::Node::shouldGenerate):
+        * dfg/DFGOperands.h:
+        (JSC::DFG::Operands::ensureLocals):
+        (JSC::DFG::Operands::setLocal):
+        (JSC::DFG::Operands::getLocal):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallerFrameSlow):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::profiledCodeBlockFor):
+        (JSC::FunctionExecutable::parameterCount):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+        * runtime/JSFunction.h:
+
 2011-10-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add put to the MethodTable

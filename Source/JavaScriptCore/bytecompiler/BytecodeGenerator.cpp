@@ -144,9 +144,9 @@ JSObject* BytecodeGenerator::generate()
 
     m_scopeNode->emitBytecode(*this);
 
-#ifndef NDEBUG
     m_codeBlock->setInstructionCount(m_codeBlock->instructions().size());
 
+#ifndef NDEBUG
     if (s_dumpsGeneratedCode)
         m_codeBlock->dump(m_scopeChain->globalObject->globalExec());
 #endif

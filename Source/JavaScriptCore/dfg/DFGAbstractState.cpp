@@ -71,6 +71,10 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     
     ASSERT(!m_block);
     
+    ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
+    ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
+    ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
+    
     for (size_t i = 0; i < basicBlock->end - basicBlock->begin; ++i)
         m_nodes[i].clear();
     m_variables = basicBlock->valuesAtHead;
@@ -629,6 +633,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case Phi:
+    case Flush:
         break;
             
     case Breakpoint:
@@ -683,6 +688,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     switch (node.op) {
     case Phi:
     case SetArgument:
+    case Flush:
         // The block transfers the value from head to tail.
         source = &inVariable;
         break;

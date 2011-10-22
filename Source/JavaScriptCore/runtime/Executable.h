@@ -462,7 +462,7 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
         
-        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ExecState*, ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
+        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
@@ -570,9 +570,16 @@ namespace JSC {
             return generatedBytecodeForConstruct();
         }
 
+        CodeBlock* baselineCodeBlockFor(CodeSpecializationKind);
+        
+        CodeBlock* profiledCodeBlockFor(CodeSpecializationKind kind)
+        {
+            return baselineCodeBlockFor(kind);
+        }
+        
         const Identifier& name() { return m_name; }
         JSString* nameValue() const { return m_nameValue.get(); }
-        size_t parameterCount() const { return m_parameters->size(); } // Including 'this'!
+        size_t parameterCount() const { return m_parameters->size(); } // Excluding 'this'!
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         UString paramString() const;
         SharedSymbolTable* symbolTable() const { return m_symbolTable; }

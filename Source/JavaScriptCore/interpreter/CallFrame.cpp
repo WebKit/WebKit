@@ -92,7 +92,7 @@ CallFrame* CallFrame::trueCallerFrameSlow()
     CodeOrigin codeOrigin = machineCaller->codeBlock()->codeOriginForReturn(returnPC());
     
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
-        InlineCallFrame* nextInlineCallFrame = inlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
+        InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
         
         CallFrame* inlinedCaller = machineCaller + inlineCallFrame->stackOffset;
         

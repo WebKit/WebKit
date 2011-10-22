@@ -255,8 +255,15 @@ public:
             move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
         }
+#if CPU(X86_64)
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+#elif CPU(X86)
+        poke(GPRInfo::callFrameRegister, 0);
+        poke(TrustedImmPtr(argument), 1);
+#else
+#error "DFG JIT not supported on this platform."
+#endif
         move(TrustedImmPtr(reinterpret_cast<void*>(function)), GPRInfo::regT0);
         call(GPRInfo::regT0);
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
@@ -430,8 +437,21 @@ private:
     void compileBody();
     void link(LinkBuffer&);
 
-    void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*, Vector<BytecodeAndMachineOffset>& decodedCodeMap);
+    void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
     void linkOSRExits(SpeculativeJIT&);
+    
+    CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
+    {
+        if (codeOrigin.inlineCallFrame) {
+            ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
+            ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
+            return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
+        }
+        ASSERT(codeBlock()->alternative() == codeBlock()->baselineVersion());
+        return codeBlock()->alternative();
+    }
+    
+    Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
 
     // The globalData, used to access constants such as the vPtrs.
     JSGlobalData* m_globalData;
@@ -441,7 +461,9 @@ private:
 
     // The codeBlock currently being generated, used to access information such as constant values, immediates.
     CodeBlock* m_codeBlock;
-
+    
+    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> > m_decodedCodeMaps;
+    
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.
     Vector<CallRecord> m_calls;

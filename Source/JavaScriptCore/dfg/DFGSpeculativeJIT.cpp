@@ -109,13 +109,13 @@ void ValueRecovery::dump(FILE* out) const
 OSRExit::OSRExit(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
     : m_check(check)
     , m_nodeIndex(jit->m_compileIndex)
-    , m_bytecodeIndex(jit->m_bytecodeIndexForOSR)
+    , m_codeOrigin(jit->m_codeOriginForOSR)
     , m_recoveryIndex(recoveryIndex)
     , m_arguments(jit->m_arguments.size())
     , m_variables(jit->m_variables.size())
     , m_lastSetOperand(jit->m_lastSetOperand)
 {
-    ASSERT(m_bytecodeIndex != std::numeric_limits<uint32_t>::max());
+    ASSERT(m_codeOrigin.isSet());
     for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
         m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
     for (unsigned variable = 0; variable < m_variables.size(); ++variable)
@@ -260,6 +260,11 @@ void SpeculativeJIT::compile(BasicBlock& block)
 {
     ASSERT(m_compileOkay);
     ASSERT(m_compileIndex == block.begin);
+    
+    if (!block.isReachable) {
+        m_compileIndex = block.end;
+        return;
+    }
 
     if (block.isOSRTarget)
         m_jit.noticeOSREntry(block);
@@ -291,11 +296,11 @@ void SpeculativeJIT::compile(BasicBlock& block)
     }
     
     m_lastSetOperand = std::numeric_limits<int>::max();
-    m_bytecodeIndexForOSR = std::numeric_limits<uint32_t>::max();
+    m_codeOriginForOSR = CodeOrigin();
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = at(m_compileIndex);
-        m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex;
+        m_codeOriginForOSR = node.codeOrigin;
         if (!node.shouldGenerate()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
             fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
@@ -366,7 +371,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_compileIndex);
-    m_bytecodeIndexForOSR = 0;
+    m_codeOriginForOSR = CodeOrigin(0);
 
     for (size_t i = 0; i < m_arguments.size(); ++i)
         m_arguments[i] = ValueSource(ValueInRegisterFile);

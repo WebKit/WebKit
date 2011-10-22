@@ -1581,6 +1581,15 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     }
 #endif
 
+#if ENABLE(DFG_JIT)
+    if (hasCodeOrigins()) {
+        // Make sure that executables that we have inlined don't die.
+        // FIXME: If they would have otherwise died, we should probably trigger recompilation.
+        for (size_t i = 0; i < inlineCallFrames().size(); ++i)
+            visitor.append(&inlineCallFrames()[i].executable);
+    }
+#endif
+
 #if ENABLE(VALUE_PROFILER)
     for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
         valueProfile(profileIndex)->computeUpdatedPrediction();

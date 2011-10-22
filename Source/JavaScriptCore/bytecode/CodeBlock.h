@@ -251,6 +251,18 @@ namespace JSC {
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
         
+        CodeBlock* baselineVersion()
+        {
+            CodeBlock* result = replacement();
+            if (!result)
+                return 0; // This can happen if we're in the process of creating the baseline version.
+            while (result->alternative())
+                result = result->alternative();
+            ASSERT(result);
+            ASSERT(result->getJITType() == JITCode::BaselineJIT);
+            return result;
+        }
+        
         void visitAggregate(SlotVisitor&);
 
         static void dumpStatistics();
@@ -376,10 +388,8 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_instructions; }
         void discardBytecode() { m_instructions.clear(); }
 
-#ifndef NDEBUG
         unsigned instructionCount() { return m_instructionCount; }
         void setInstructionCount(unsigned instructionCount) { m_instructionCount = instructionCount; }
-#endif
 
 #if ENABLE(JIT)
         void setJITCode(const JITCode& code, MacroAssemblerCodePtr codeWithArityCheck)
@@ -531,10 +541,14 @@ namespace JSC {
             return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset);
         }
         
-        static uint32_t slowCaseThreshold() { return 100; }
         bool likelyToTakeSlowCase(int bytecodeOffset)
         {
-            return rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= slowCaseThreshold();
+            return rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= Heuristics::likelyToTakeSlowCaseThreshold;
+        }
+        
+        bool couldTakeSlowCase(int bytecodeOffset)
+        {
+            return rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= Heuristics::couldTakeSlowCaseThreshold;
         }
         
         RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
@@ -552,21 +566,21 @@ namespace JSC {
         bool likelyToTakeSpecialFastCase(int bytecodeOffset)
         {
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return specialFastCaseCount >= slowCaseThreshold();
+            return specialFastCaseCount >= Heuristics::likelyToTakeSlowCaseThreshold;
         }
         
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
         {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return (slowCaseCount - specialFastCaseCount) >= slowCaseThreshold();
+            return (slowCaseCount - specialFastCaseCount) >= Heuristics::likelyToTakeSlowCaseThreshold;
         }
         
         bool likelyToTakeAnySlowCase(int bytecodeOffset)
         {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return (slowCaseCount + specialFastCaseCount) >= slowCaseThreshold();
+            return (slowCaseCount + specialFastCaseCount) >= Heuristics::likelyToTakeSlowCaseThreshold;
         }
         
         void resetRareCaseProfiles();
@@ -945,9 +959,7 @@ namespace JSC {
         JSGlobalData* m_globalData;
 
         Vector<Instruction> m_instructions;
-#ifndef NDEBUG
         unsigned m_instructionCount;
-#endif
 
         int m_thisRegister;
         int m_argumentsRegister;

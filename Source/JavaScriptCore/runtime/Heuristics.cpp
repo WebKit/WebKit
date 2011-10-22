@@ -39,6 +39,15 @@
 
 namespace JSC { namespace Heuristics {
 
+unsigned maximumEvalOptimizationCandidateInstructionCount;
+unsigned maximumProgramOptimizationCandidateInstructionCount;
+unsigned maximumFunctionForCallOptimizationCandidateInstructionCount;
+unsigned maximumFunctionForConstructOptimizationCandidateInstructionCount;
+
+unsigned maximumFunctionForCallInlineCandidateInstructionCount;
+
+unsigned maximumInliningDepth;
+
 int32_t executionCounterValueForOptimizeAfterWarmUp;
 int32_t executionCounterValueForOptimizeAfterLongWarmUp;
 int32_t executionCounterValueForDontOptimizeAnytimeSoon;
@@ -49,6 +58,9 @@ int32_t executionCounterIncrementForLoop;
 int32_t executionCounterIncrementForReturn;
 
 unsigned desiredSpeculativeSuccessFailRatio;
+
+unsigned likelyToTakeSlowCaseThreshold;
+unsigned couldTakeSlowCaseThreshold;
 
 unsigned largeFailCountThresholdBase;
 unsigned largeFailCountThresholdBaseForLoop;
@@ -99,6 +111,18 @@ void setHeuristic(T& variable, const char* name, U value)
 
 void initializeHeuristics()
 {
+    // FIXME: Must revisit these heuristics! The DFG, being an optimizing compiler, may
+    // take a long time for pathologically huge code blocks. The best way to cope with
+    // this is to refuse to optimize them.
+    SET(maximumEvalOptimizationCandidateInstructionCount,                 std::numeric_limits<unsigned>::max());
+    SET(maximumProgramOptimizationCandidateInstructionCount,              std::numeric_limits<unsigned>::max());
+    SET(maximumFunctionForCallOptimizationCandidateInstructionCount,      std::numeric_limits<unsigned>::max());
+    SET(maximumFunctionForConstructOptimizationCandidateInstructionCount, std::numeric_limits<unsigned>::max());
+    
+    SET(maximumFunctionForCallInlineCandidateInstructionCount, 100);
+    
+    SET(maximumInliningDepth, 3);
+
     SET(executionCounterValueForOptimizeAfterWarmUp,     -1000);
     SET(executionCounterValueForOptimizeAfterLongWarmUp, -5000);
     SET(executionCounterValueForDontOptimizeAnytimeSoon, std::numeric_limits<int32_t>::min());
@@ -109,6 +133,9 @@ void initializeHeuristics()
     SET(executionCounterIncrementForReturn, 15);
 
     SET(desiredSpeculativeSuccessFailRatio, 6);
+    
+    SET(likelyToTakeSlowCaseThreshold, 100);
+    SET(couldTakeSlowCaseThreshold,    10); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
 
     SET(largeFailCountThresholdBase,        20);
     SET(largeFailCountThresholdBaseForLoop, 1);

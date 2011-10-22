@@ -848,7 +848,7 @@ void SpeculativeJIT::compile(Node& node)
         // to the *next* instruction, since we've already "executed" the
         // SetLocal and whatever other DFG Nodes are associated with the same
         // bytecode index as the SetLocal.
-        ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex);
+        ASSERT(m_codeOriginForOSR == node.codeOrigin);
         Node& nextNode = at(m_compileIndex + 1);
         
         // Oddly, it's possible for the bytecode index for the next node to be
@@ -861,7 +861,7 @@ void SpeculativeJIT::compile(Node& node)
         // statement) would be dead anyway - so the fact that DFG would have
         // already made the assignment, and baked it into the register file during
         // OSR exit, would not be visible to the old JIT in any way.
-        m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex;
+        m_codeOriginForOSR = nextNode.codeOrigin;
         
         PredictedType predictedType = node.variableAccessData()->prediction();
         if (isInt32Prediction(predictedType)) {
@@ -1890,7 +1890,9 @@ void SpeculativeJIT::compile(Node& node)
     case ConvertThis: {
         if (isObjectPrediction(m_state.forNode(node.child1()).m_type)) {
             SpeculateCellOperand thisValue(this, node.child1());
-            cellResult(thisValue.gpr(), m_compileIndex);
+            GPRTemporary result(this, thisValue);
+            m_jit.move(thisValue.gpr(), result.gpr());
+            cellResult(result.gpr(), m_compileIndex);
             break;
         }
         
@@ -1913,11 +1915,16 @@ void SpeculativeJIT::compile(Node& node)
         
         if (isObjectPrediction(at(node.child1()).prediction())) {
             SpeculateCellOperand thisValue(this, node.child1());
+            GPRTemporary result(this, thisValue);
+            GPRReg thisValueGPR = thisValue.gpr();
+            GPRReg resultGPR = result.gpr();
             
             if (!isObjectPrediction(m_state.forNode(node.child1()).m_type))
-                speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValue.gpr()), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+                speculationCheck(m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(thisValueGPR), JITCompiler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
             
-            cellResult(thisValue.gpr(), m_compileIndex);
+            m_jit.move(thisValueGPR, resultGPR);
+            
+            cellResult(resultGPR, m_compileIndex);
             break;
         }
         
@@ -2391,6 +2398,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case Phi:
+    case Flush:
         ASSERT_NOT_REACHED();
 
     case Breakpoint:

@@ -27,7 +27,6 @@
 #include "DFGJITCompiler.h"
 
 #if ENABLE(DFG_JIT)
-#if USE(JSVALUE64)
 
 #include "CodeBlock.h"
 #include "DFGJITCodeGenerator.h"
@@ -39,13 +38,48 @@
 
 namespace JSC { namespace DFG {
 
-void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecovery* recovery, Vector<BytecodeAndMachineOffset>& decodedCodeMap)
+Vector<BytecodeAndMachineOffset>& JITCompiler::decodedCodeMapFor(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock == codeBlock->baselineVersion());
+    ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->jitCodeMap());
+    
+    std::pair<HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> >::iterator, bool> result = m_decodedCodeMaps.add(codeBlock, Vector<BytecodeAndMachineOffset>());
+    
+    if (result.second)
+        codeBlock->jitCodeMap()->decode(result.first->second);
+    
+    return result.first->second;
+}
+
+void JITCompiler::linkOSRExits(SpeculativeJIT& speculative)
+{
+    OSRExitVector::Iterator exitsIter = speculative.osrExits().begin();
+    OSRExitVector::Iterator exitsEnd = speculative.osrExits().end();
+    
+    while (exitsIter != exitsEnd) {
+        const OSRExit& exit = *exitsIter;
+        exitSpeculativeWithOSR(exit, speculative.speculationRecovery(exit.m_recoveryIndex));
+        ++exitsIter;
+    }
+}
+
+#if USE(JSVALUE64)
+
+void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecovery* recovery)
 {
     // 1) Pro-forma stuff.
     exit.m_check.link(this);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x  ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
+    fprintf(stderr, "OSR exit for Node @%d (", (int)exit.m_nodeIndex);
+    for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+        fprintf(stderr, "bc#%u", codeOrigin.bytecodeIndex);
+        if (!codeOrigin.inlineCallFrame)
+            break;
+        fprintf(stderr, " -> %p ", codeOrigin.inlineCallFrame->executable.get());
+    }
+    fprintf(stderr, ") at JIT offset 0x%x  ", debugOffset());
     exit.dump(stderr);
 #endif
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
@@ -482,19 +516,55 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
         loadPtr(addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     
-    // 13) Fix call frame.
+    // 13) Fix call frame(s).
     
     ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
     storePtr(TrustedImmPtr(codeBlock()->alternative()), addressFor((VirtualRegister)RegisterFile::CodeBlock));
     
+    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        CodeBlock* baselineCodeBlock = baselineCodeBlockFor(codeOrigin);
+        CodeBlock* baselineCodeBlockForCaller = baselineCodeBlockFor(inlineCallFrame->caller);
+        Vector<BytecodeAndMachineOffset>& decodedCodeMap = decodedCodeMapFor(baselineCodeBlockForCaller);
+        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
+        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), returnBytecodeIndex);
+        
+        ASSERT(mapping);
+        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
+        
+        void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlockForCaller->getJITCode().start()) + mapping->m_machineCodeOffset);
+
+        loadPtr(addressFor((VirtualRegister)inlineCallFrame->calleeVR), GPRInfo::regT1);
+        loadPtr(MacroAssembler::Address(GPRInfo::regT1, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), GPRInfo::regT2);
+        GPRReg callerFrameGPR;
+        if (inlineCallFrame->caller.inlineCallFrame) {
+            addPtr(Imm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
+            callerFrameGPR = GPRInfo::regT3;
+        } else
+            callerFrameGPR = GPRInfo::callFrameRegister;
+        
+        storePtr(TrustedImmPtr(baselineCodeBlock), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CodeBlock)));
+        storePtr(GPRInfo::regT2, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
+        storePtr(callerFrameGPR, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
+        storePtr(TrustedImmPtr(jumpTarget), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
+        storePtr(TrustedImmPtr(JSValue::encode(jsNumber(inlineCallFrame->numArgumentsIncludingThis))), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
+        storePtr(GPRInfo::regT1, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
+    }
+    
+    if (exit.m_codeOrigin.inlineCallFrame)
+        addPtr(Imm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
+    
     // 14) Jump into the corresponding baseline JIT code.
     
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), exit.m_bytecodeIndex);
+    CodeBlock* baselineCodeBlock = baselineCodeBlockFor(exit.m_codeOrigin);
+    Vector<BytecodeAndMachineOffset>& decodedCodeMap = decodedCodeMapFor(baselineCodeBlock);
+    
+    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex);
     
     ASSERT(mapping);
-    ASSERT(mapping->m_bytecodeIndex == exit.m_bytecodeIndex);
+    ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
-    void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(codeBlock()->alternative()->getJITCode().start()) + mapping->m_machineCodeOffset);
+    void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlock->getJITCode().start()) + mapping->m_machineCodeOffset);
     
     ASSERT(GPRInfo::regT1 != GPRInfo::cachedResultRegister);
     
@@ -504,24 +574,6 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
 #if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "-> %p\n", jumpTarget);
 #endif
-}
-
-void JITCompiler::linkOSRExits(SpeculativeJIT& speculative)
-{
-    Vector<BytecodeAndMachineOffset> decodedCodeMap;
-    ASSERT(codeBlock()->alternative());
-    ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
-    ASSERT(codeBlock()->alternative()->jitCodeMap());
-    codeBlock()->alternative()->jitCodeMap()->decode(decodedCodeMap);
-    
-    OSRExitVector::Iterator exitsIter = speculative.osrExits().begin();
-    OSRExitVector::Iterator exitsEnd = speculative.osrExits().end();
-    
-    while (exitsIter != exitsEnd) {
-        const OSRExit& exit = *exitsIter;
-        exitSpeculativeWithOSR(exit, speculative.speculationRecovery(exit.m_recoveryIndex), decodedCodeMap);
-        ++exitsIter;
-    }
 }
 
 void JITCompiler::compileEntry()
@@ -793,7 +845,8 @@ void JITCompiler::clearSamplingFlag(int32_t flag)
 }
 #endif
 
+#endif // USE(JSVALUE64)
+
 } } // namespace JSC::DFG
 
-#endif
-#endif
+#endif // ENABLE(DFG_JIT)
