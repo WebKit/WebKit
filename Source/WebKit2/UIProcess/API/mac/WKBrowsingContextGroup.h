@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
 
-@class WKBrowsingContextController;
-@class WKBrowsingContextGroup;
-@class WKProcessGroup;
-@class WKViewData;
+@class WKBrowsingContextGroupData;
 
 WK_EXPORT
-@interface WKView : NSView <NSTextInputClient> {
+@interface WKBrowsingContextGroup : NSObject {
 @private
-    WKViewData *_data;
-    unsigned _unused;
+    WKBrowsingContextGroupData *_data;
 }
 
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
-
-@property(readonly) WKBrowsingContextController *browsingContextController;
-
-@property BOOL drawsBackground;
-@property BOOL drawsTransparentBackground;
+- (id)initWithIdentifier:(NSString *)identifier;
 
 @end

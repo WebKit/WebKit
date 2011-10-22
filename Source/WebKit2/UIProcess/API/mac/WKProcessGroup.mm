@@ -55,10 +55,9 @@
 
     _data = [[WKProcessGroupData alloc] init];
     
-    if (bundleURL) {
-        WKRetainPtr<WKStringRef> bundleURLString = adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL absoluteString]));
-        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(bundleURLString.get()));
-    } else
+    if (bundleURL)
+        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL absoluteString])).get()));
+    else
         _data->_contextRef = adoptWK(WKContextCreate());
 
     return self;

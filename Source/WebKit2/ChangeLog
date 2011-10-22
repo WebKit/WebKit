@@ -1,5 +1,23 @@
 2011-10-21  Sam Weinig  <sam@webkit.org>
 
+        Add WKBrowsingContextGroup which wraps WKPageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=70665
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Added.
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm: Added.
+        (-[WKBrowsingContextGroup initWithIdentifier:]):
+        (-[WKBrowsingContextGroup dealloc]):
+        (-[WKBrowsingContextGroup pageGroupRef]):
+        * UIProcess/API/mac/WKBrowsingContextGroupInternal.h: Added.
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-10-21  Sam Weinig  <sam@webkit.org>
+
         Mark member variables of WebKit2 API @private
         https://bugs.webkit.org/show_bug.cgi?id=70655
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit2/WKBase.h>
+#import "config.h"
+#import "WKBrowsingContextGroup.h"
+#import "WKBrowsingContextGroupInternal.h"
 
-@class WKBrowsingContextController;
-@class WKBrowsingContextGroup;
-@class WKProcessGroup;
-@class WKViewData;
+#import "WKPageGroup.h"
+#import "WKRetainPtr.h"
+#import "WKStringCF.h"
 
-WK_EXPORT
-@interface WKView : NSView <NSTextInputClient> {
-@private
-    WKViewData *_data;
-    unsigned _unused;
+@interface WKBrowsingContextGroupData : NSObject {
+@public
+    WKRetainPtr<WKPageGroupRef> _pageGroupRef;
+}
+@end
+
+@implementation WKBrowsingContextGroupData
+@end
+
+@implementation WKBrowsingContextGroup
+
+- (id)initWithIdentifier:(NSString *)identifier
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _data = [[WKBrowsingContextGroupData alloc] init];
+    _data->_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
+
+    return self;
 }
 
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
+- (void)dealloc
+{
+    [_data release];
+    [super dealloc];
+}
 
-@property(readonly) WKBrowsingContextController *browsingContextController;
+@end
 
-@property BOOL drawsBackground;
-@property BOOL drawsTransparentBackground;
+@implementation WKBrowsingContextGroup (Internal)
+
+- (WKPageGroupRef)pageGroupRef
+{
+    return _data->_pageGroupRef.get();
+}
 
 @end

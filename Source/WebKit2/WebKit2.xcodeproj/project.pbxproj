@@ -692,6 +692,9 @@
 		BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACE5145225C90053F82F /* WKProcessGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */; };
 		BCBAACED145225E30053F82F /* WKProcessGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACE7145225CB0053F82F /* WKProcessGroupInternal.h */; };
+		BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCBAACF51452324F0053F82F /* WKBrowsingContextGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */; };
+		BCBAACF61452324F0053F82F /* WKBrowsingContextGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACF0145232480053F82F /* WKBrowsingContextGroupInternal.h */; };
 		BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */; };
 		BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */; };
 		BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3912125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp */; };
@@ -1654,6 +1657,9 @@
 		BCBAACE5145225C90053F82F /* WKProcessGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessGroup.h; sourceTree = "<group>"; };
 		BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessGroup.mm; sourceTree = "<group>"; };
 		BCBAACE7145225CB0053F82F /* WKProcessGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessGroupInternal.h; sourceTree = "<group>"; };
+		BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroup.h; sourceTree = "<group>"; };
+		BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBrowsingContextGroup.mm; sourceTree = "<group>"; };
+		BCBAACF0145232480053F82F /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
 		BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableDictionary.h; sourceTree = "<group>"; };
 		BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableDictionary.cpp; sourceTree = "<group>"; };
 		BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPageProxy.messages.in; sourceTree = "<group>"; };
@@ -2925,6 +2931,9 @@
 				BCBAAC6C144E61910053F82F /* WKBrowsingContextController.h */,
 				BCBAAC6D144E61920053F82F /* WKBrowsingContextController.mm */,
 				BCBAAC6E144E61920053F82F /* WKBrowsingContextControllerInternal.h */,
+				BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */,
+				BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */,
+				BCBAACF0145232480053F82F /* WKBrowsingContextGroupInternal.h */,
 				BCBAACE5145225C90053F82F /* WKProcessGroup.h */,
 				BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */,
 				BCBAACE7145225CB0053F82F /* WKProcessGroupInternal.h */,
@@ -3912,6 +3921,8 @@
 				BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */,
 				BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */,
 				BCBAACED145225E30053F82F /* WKProcessGroupInternal.h in Headers */,
+				BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */,
+				BCBAACF61452324F0053F82F /* WKBrowsingContextGroupInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4603,6 +4614,7 @@
 				B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */,
 				BCBAAC72144E61990053F82F /* WKBrowsingContextController.mm in Sources */,
 				BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */,
+				BCBAACF51452324F0053F82F /* WKBrowsingContextGroup.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
