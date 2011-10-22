@@ -2200,6 +2200,11 @@ void WebPageProxy::printFrame(uint64_t frameID)
     m_isPerformingDOMPrintOperation = false;
 }
 
+void WebPageProxy::printMainFrame()
+{
+    printFrame(m_mainFrame->frameID());
+}
+
 #if PLATFORM(QT)
 void WebPageProxy::didChangeContentsSize(const IntSize& size)
 {

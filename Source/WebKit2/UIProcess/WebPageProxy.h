@@ -568,6 +568,8 @@ public:
 
     void setShouldSendEventsSynchronously(bool sync) { m_shouldSendEventsSynchronously = sync; };
 
+    void printMainFrame();
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

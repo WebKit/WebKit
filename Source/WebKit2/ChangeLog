@@ -1,3 +1,21 @@
+2011-10-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Clicking a print button in a PDF doesn't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=70663
+        <rdar://problem/9795014>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::printMainFrame): Added a public method
+        that PDFViewController could call.
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView PDFViewPerformPrint:]):
+        (WebKit::PDFViewController::print):
+        Connect PDFView delegate method for printing.
+
 2011-10-21  Sam Weinig  <sam@webkit.org>
 
         Lookup does not work on text using web fonts in WebKit2

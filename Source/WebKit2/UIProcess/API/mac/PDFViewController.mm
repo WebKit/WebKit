@@ -360,6 +360,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     _pdfViewController->savePDFToDownloadsFolder();
 }
 
+- (void)PDFViewPerformPrint:(PDFView *)sender
+{
+    _pdfViewController->print();
+}
+
 @end
 
 namespace WebKit {
@@ -601,6 +606,11 @@ void PDFViewController::linkClicked(const String& url)
     }
     
     page()->linkClicked(url, event);
+}
+
+void PDFViewController::print()
+{
+    page()->printMainFrame();
 }
 
 void PDFViewController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
