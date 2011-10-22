@@ -1,5 +1,19 @@
 2011-10-21  Sam Weinig  <sam@webkit.org>
 
+        Fix crash below CoreIPC::MessageSender<WebKit::WebPage>::send<Messages::WebPageProxy::DidPerformDictionaryLookup>
+        https://bugs.webkit.org/show_bug.cgi?id=70667
+        <rdar://problem/9622186>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        Account for the fact that the options dictionary can be null. This is due to Lookup passing
+        back a null, rather than empty, dictionary when it could not find any interesting characteristics.
+
+2011-10-21  Sam Weinig  <sam@webkit.org>
+
         Add WKBrowsingContextGroup which wraps WKPageGroupRef
         https://bugs.webkit.org/show_bug.cgi?id=70665
 
