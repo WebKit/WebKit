@@ -1,3 +1,16 @@
+2011-10-22  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r92480): Passing uninitialized variable in HTMLElement::calculateAndAdjustDirectionality()
+        https://bugs.webkit.org/show_bug.cgi?id=70582
+
+        Reviewed by Darin Adler.
+
+        No new tests. It's very hard to make a reliable test.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::directionality):
+        Clear *strongDirectionalityTextNode even if hasStrongDirectionality is false.
+
 2011-10-21  Dan Bernstein  <mitz@apple.com>
 
         Caret is drawn in the wrong place in multi-column blocks

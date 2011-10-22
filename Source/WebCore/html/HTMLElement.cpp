@@ -879,8 +879,8 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     if (HTMLTextFormControlElement* textElement = toTextFormControl(const_cast<HTMLElement*>(this))) {
         bool hasStrongDirectionality;
         Unicode::Direction textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
-        if (hasStrongDirectionality && strongDirectionalityTextNode)
-            *strongDirectionalityTextNode = textElement;
+        if (strongDirectionalityTextNode)
+            *strongDirectionalityTextNode = hasStrongDirectionality ? textElement : 0;
         return (textDirection == Unicode::LeftToRight) ? LTR : RTL;
     }
 
