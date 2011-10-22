@@ -29,6 +29,7 @@
 
 #include "ScrollAnimatorMac.h"
 
+#include "BlockExceptions.h"
 #include "FloatPoint.h"
 #include "NSScrollerImpDetails.h"
 #include "PlatformGestureEvent.h"
@@ -297,7 +298,9 @@ static NSSize abs(NSSize size)
 
 - (void)scrollAnimatorDestroyed
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [self stopAnimation];
+    END_BLOCK_OBJC_EXCEPTIONS;
     _animator = 0;
 }
 
@@ -331,10 +334,12 @@ static NSSize abs(NSSize size)
 
 - (void)cancelAnimations
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_verticalKnobAnimation.get() stopAnimation];
     [_horizontalKnobAnimation.get() stopAnimation];
     [_verticalTrackAnimation.get() stopAnimation];
     [_horizontalTrackAnimation.get() stopAnimation];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 - (NSRect)convertRectToBacking:(NSRect)aRect
@@ -435,10 +440,12 @@ static NSSize abs(NSSize size)
 - (void)scrollAnimatorDestroyed
 {
     _animator = 0;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_verticalKnobAnimation.get() scrollAnimatorDestroyed];
     [_horizontalKnobAnimation.get() scrollAnimatorDestroyed];
     [_verticalTrackAnimation.get() scrollAnimatorDestroyed];
     [_horizontalTrackAnimation.get() scrollAnimatorDestroyed];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 @end
@@ -489,10 +496,12 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
 ScrollAnimatorMac::~ScrollAnimatorMac()
 {
 #if USE(SCROLLBAR_PAINTER)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
     [m_scrollbarPainterController.get() setDelegate:nil];
     [m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
     [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
+    END_BLOCK_OBJC_EXCEPTIONS;
 #endif
 }
 
@@ -604,6 +613,8 @@ void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoin
 
 void ScrollAnimatorMac::notifyPositionChanged()
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() contentAreaScrolled];
 #endif
@@ -612,6 +623,8 @@ void ScrollAnimatorMac::notifyPositionChanged()
 
 void ScrollAnimatorMac::contentAreaWillPaint() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() contentAreaWillDraw];
 #endif
@@ -619,6 +632,8 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
 
 void ScrollAnimatorMac::mouseEnteredContentArea() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() mouseEnteredContentArea];
 #endif
@@ -626,6 +641,8 @@ void ScrollAnimatorMac::mouseEnteredContentArea() const
 
 void ScrollAnimatorMac::mouseExitedContentArea() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() mouseExitedContentArea];
 #endif
@@ -633,6 +650,8 @@ void ScrollAnimatorMac::mouseExitedContentArea() const
 
 void ScrollAnimatorMac::mouseMovedInContentArea() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() mouseMovedInContentArea];
 #endif
@@ -640,6 +659,8 @@ void ScrollAnimatorMac::mouseMovedInContentArea() const
 
 void ScrollAnimatorMac::willStartLiveResize()
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() startLiveResize];
 #endif
@@ -647,6 +668,8 @@ void ScrollAnimatorMac::willStartLiveResize()
 
 void ScrollAnimatorMac::contentsResized() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() contentAreaDidResize];
 #endif
@@ -654,6 +677,8 @@ void ScrollAnimatorMac::contentsResized() const
 
 void ScrollAnimatorMac::willEndLiveResize()
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() endLiveResize];
 #endif
@@ -661,6 +686,8 @@ void ScrollAnimatorMac::willEndLiveResize()
 
 void ScrollAnimatorMac::contentAreaDidShow() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() windowOrderedIn];
 #endif
@@ -668,6 +695,8 @@ void ScrollAnimatorMac::contentAreaDidShow() const
 
 void ScrollAnimatorMac::contentAreaDidHide() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() windowOrderedOut];
 #endif
@@ -675,6 +704,8 @@ void ScrollAnimatorMac::contentAreaDidHide() const
 
 void ScrollAnimatorMac::didBeginScrollGesture() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() beginScrollGesture];
 #endif
@@ -682,6 +713,8 @@ void ScrollAnimatorMac::didBeginScrollGesture() const
 
 void ScrollAnimatorMac::didEndScrollGesture() const
 {
+    if (!scrollableArea()->isOnActivePage())
+        return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() endScrollGesture];
 #endif
