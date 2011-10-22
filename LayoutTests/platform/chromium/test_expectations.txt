@@ -3347,7 +3347,7 @@ BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = PASS MISSING
 
 BUGWK70630 SNOWLEOPARD : fast/js/call-base-resolution.html = PASS TEXT CRASH
-BUGCR89474 LEOPARD WIN LINUX: fast/js/call-base-resolution.html = PASS TEXT
+BUGCR89474 LEOPARD WIN LINUX : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
@@ -3794,49 +3794,6 @@ BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 : svg/custom/js-late-gradient-creation.svg = IMAGE PASS
 BUGWK70298 : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
-
-BUGWK70300 MAC : fast/html/details-mouse-click.html = FAIL
-BUGWK70300 SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = FAIL
-BUGWK70300 MAC : fast/table/038-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/auto-with-percent-height-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/border-collapsing/002-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/border-collapsing/004-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/border-collapsing/equal-precedence-resolution-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/height-percent-test-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/rowspan-paint-order-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/table-display-types-vertical.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/basic-vertical-line.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/english-lr-text.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/table-hit-test.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/vertical-font-fallback.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-rtl-extend-line-backward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-rtl-extend-line-backward-p.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-rtl-extend-line-forward-br.html = FAIL
-BUGWK70300 MAC : editing/selection/vertical-rl-rtl-extend-line-forward-p.html = FAIL
-BUGWK70300 MAC : fast/backgrounds/background-leakage-transforms.html = FAIL
-BUGWK70300 MAC : fast/css/focus-ring-multiline-writingmode-vertical.html = FAIL
-BUGWK70300 MAC : fast/css/h1-in-section-elements.html = FAIL
-BUGWK70300 MAC : fast/repaint/repaint-across-writing-mode-boundary.html = FAIL
-BUGWK70300 MAC : fast/repaint/table-writing-modes-h.html = FAIL
-BUGWK70300 MAC : fast/repaint/table-writing-modes-v.html = FAIL
-BUGWK70300 MAC : fast/table/027-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/028-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/040-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/border-collapsing/rtl-border-collapsing-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/colspanMinWidth-vertical.html = FAIL
-BUGWK70300 MAC : fast/table/growCellForImageQuirk-vertical.html = FAIL
-BUGWK70300 SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/fallback-orientation.html = FAIL
-BUGWK70300 MAC : fast/writing-mode/margin-collapse.html = FAIL
-BUGWK70300 SNOWLEOPARD : fast/writing-mode/text-orientation-basic.html = FAIL
 
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS

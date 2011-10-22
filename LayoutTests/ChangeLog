@@ -1,3 +1,22 @@
+2011-10-21  Ojan Vafai  <ojan@chromium.org>
+
+        Fixup test expectations now that http://trac.webkit.org/changeset/98173 has landed.
+
+        * platform/chromium-cg-mac-leopard/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-cg-mac-snowleopard/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/writing-mode/fallback-orientation-expected.png: Added.
+        * platform/chromium-cg-mac/fast/backgrounds/background-leakage-transforms-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/fallback-orientation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-mac/fast/backgrounds/background-leakage-transforms-expected.png: Removed.
+        * platform/chromium-win/fast/backgrounds/background-leakage-transforms-expected.txt: Added.
+        * platform/chromium/fast/backgrounds/background-leakage-transforms-expected.txt: Added.
+        * platform/chromium/fast/writing-mode/fallback-orientation-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [Chromium] Layout Test fast/canvas/webgl/premultiplyalpha-test.html is failing
