@@ -1,3 +1,19 @@
+2011-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Caret is drawn in the wrong place in multi-column blocks
+        https://bugs.webkit.org/show_bug.cgi?id=70662
+
+        Reviewed by Gavin Barraclough.
+
+        * manual-tests/caret-in-columns.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret): Removed the call to offsetForContents(). That function takes
+        a point in local coordinates, whereas this function was applying it to a point in painting root
+        coordinates. The desired effect was only to undo the scroll adjustment done by the caller,
+        paintObject().
+        (WebCore::RenderBlock::paintObject): Pass the original, rather than scroll-adjusted, paint offset
+        to paintCaret().
+
 2011-10-21  Nat Duca  <nduca@chromium.org>
 
         [chromium] Make setVisibility extension- and thread-correct

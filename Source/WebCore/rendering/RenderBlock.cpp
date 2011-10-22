@@ -2549,15 +2549,10 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 
     if (caretPainter == this && (isContentEditable || caretBrowsing)) {
-        // Convert the painting offset into the local coordinate system of this renderer,
-        // to match the localCaretRect computed by the FrameSelection
-        LayoutPoint adjustedPaintOffset = paintOffset;
-        offsetForContents(adjustedPaintOffset);
-
         if (type == CursorCaret)
-            frame()->selection()->paintCaret(paintInfo.context, adjustedPaintOffset, paintInfo.rect);
+            frame()->selection()->paintCaret(paintInfo.context, paintOffset, paintInfo.rect);
         else
-            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, adjustedPaintOffset, paintInfo.rect);
+            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, paintOffset, paintInfo.rect);
     }
 }
 
@@ -2640,8 +2635,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
     if (paintPhase == PaintPhaseForeground) {        
-        paintCaret(paintInfo, scrolledOffset, CursorCaret);
-        paintCaret(paintInfo, scrolledOffset, DragCaret);
+        paintCaret(paintInfo, paintOffset, CursorCaret);
+        paintCaret(paintInfo, paintOffset, DragCaret);
     }
 }
 
