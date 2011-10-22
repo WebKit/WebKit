@@ -5,6 +5,38 @@
 
         Reviewed by Antonio Gomes.
 
+        Change *sd* variable name with *smartData*. Some variables were changed by Bug 69988.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_get):
+        (ewk_frame_uri_set):
+        (ewk_frame_uri_get):
+        (ewk_frame_contents_size_get):
+        (ewk_frame_load_document_finished):
+        (ewk_frame_load_error):
+        (ewk_frame_title_set):
+        (ewk_frame_uri_changed):
+        (ewk_frame_editor_client_selection_changed):
+        (ewk_frame_editor_client_contents_changed):
+        (EWKPrivate::coreFrame):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_pre_render_region):
+        (_ewk_view_smart_pre_render_relative_radius):
+        (_ewk_view_smart_pre_render_cancel):
+        (_ewk_view_smart_disable_render):
+        (_ewk_view_smart_enable_render):
+        (EWKPrivate::corePage):
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_add):
+        (_ewk_view_single_smart_resize):
+
+2011-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Change efl style local variables with WebKit coding Style.
+        https://bugs.webkit.org/show_bug.cgi?id=69988
+
+        Reviewed by Antonio Gomes.
+
         In common with Bug 69073, this is a third step in order to be more compliant with WebKit coding style.
         We have used one-letter| two-letter local variable according to efl style. However, it's
         more difficult for other reviewers to review EFL patches. So, this patch changes efl style

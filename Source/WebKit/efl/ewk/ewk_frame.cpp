@@ -278,8 +278,8 @@ static inline Evas_Smart* _ewk_frame_smart_class_new(void)
 
 Evas_Object* ewk_frame_view_get(const Evas_Object* ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
-    return sd->view;
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
+    return smartData->view;
 }
 
 Eina_Iterator* ewk_frame_children_iterator_new(Evas_Object* ewkFrame)
@@ -310,18 +310,18 @@ Evas_Object* ewk_frame_child_find(Evas_Object* ewkFrame, const char* name)
 
 Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EINA_FALSE);
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
     WebCore::ResourceRequest req(kurl);
-    WebCore::FrameLoader* loader = sd->frame->loader();
+    WebCore::FrameLoader* loader = smartData->frame->loader();
     loader->load(req, false);
     return EINA_TRUE;
 }
 
 const char* ewk_frame_uri_get(const Evas_Object* ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
-    return sd->uri;
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
+    return smartData->uri;
 }
 
 const char* ewk_frame_title_get(const Evas_Object* ewkFrame)
@@ -355,13 +355,13 @@ Eina_Bool ewk_frame_contents_size_get(const Evas_Object* ewkFrame, Evas_Coord* w
         *width = 0;
     if (height)
         *height = 0;
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
-    if (!sd->frame || !sd->frame->view())
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EINA_FALSE);
+    if (!smartData->frame || !smartData->frame->view())
         return EINA_FALSE;
     if (width)
-        *width = sd->frame->view()->contentsWidth();
+        *width = smartData->frame->view()->contentsWidth();
     if (height)
-        *height = sd->frame->view()->contentsHeight();
+        *height = smartData->frame->view()->contentsHeight();
     return EINA_TRUE;
 }
 
@@ -1298,8 +1298,8 @@ void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object* ewkFrame)
 void ewk_frame_load_document_finished(Evas_Object* ewkFrame)
 {
     evas_object_smart_callback_call(ewkFrame, "load,document,finished", 0);
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
-    ewk_view_load_document_finished(sd->view, ewkFrame);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    ewk_view_load_document_finished(smartData->view, ewkFrame);
 }
 
 /**
@@ -1359,8 +1359,8 @@ void ewk_frame_load_error(Evas_Object* ewkFrame, const char* errorDomain, int er
     error.failing_url = failingUrl;
     error.frame = ewkFrame;
     evas_object_smart_callback_call(ewkFrame, "load,error", &error);
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
-    ewk_view_load_error(sd->view, &error);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    ewk_view_load_error(smartData->view, &error);
 }
 
 /**
@@ -1403,10 +1403,10 @@ void ewk_frame_contents_size_changed(Evas_Object* ewkFrame, Evas_Coord width, Ev
 void ewk_frame_title_set(Evas_Object* ewkFrame, const char* title)
 {
     DBG("ewkFrame=%p, title=%s", ewkFrame, title ? title : "(null)");
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
-    if (!eina_stringshare_replace(&sd->title, title))
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    if (!eina_stringshare_replace(&smartData->title, title))
         return;
-    evas_object_smart_callback_call(ewkFrame, "title,changed", (void*)sd->title);
+    evas_object_smart_callback_call(ewkFrame, "title,changed", (void*)smartData->title);
 }
 
 /**
@@ -1562,9 +1562,9 @@ char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
  */
 Eina_Bool ewk_frame_uri_changed(Evas_Object* ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WTF::CString uri(sd->frame->document()->url().string().utf8());
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, EINA_FALSE);
+    WTF::CString uri(smartData->frame->document()->url().string().utf8());
 
     INF("uri=%s", uri.data());
     if (!uri.data()) {
@@ -1572,8 +1572,8 @@ Eina_Bool ewk_frame_uri_changed(Evas_Object* ewkFrame)
         return EINA_FALSE;
     }
 
-    eina_stringshare_replace(&sd->uri, uri.data());
-    evas_object_smart_callback_call(ewkFrame, "uri,changed", (void*)sd->uri);
+    eina_stringshare_replace(&smartData->uri, uri.data());
+    evas_object_smart_callback_call(ewkFrame, "uri,changed", (void*)smartData->uri);
     return EINA_TRUE;
 }
 
@@ -1613,8 +1613,8 @@ WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, 
 void ewk_frame_editor_client_selection_changed(Evas_Object* ewkFrame)
 {
     evas_object_smart_callback_call(ewkFrame, "editorclient,selection,changed", 0);
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
-    ewk_view_editor_client_selection_changed(sd->view);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    ewk_view_editor_client_selection_changed(smartData->view);
 }
 
 /**
@@ -1628,16 +1628,16 @@ void ewk_frame_editor_client_selection_changed(Evas_Object* ewkFrame)
 void ewk_frame_editor_client_contents_changed(Evas_Object* ewkFrame)
 {
     evas_object_smart_callback_call(ewkFrame, "editorclient,contents,changed", 0);
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd);
-    ewk_view_editor_client_contents_changed(sd->view);
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    ewk_view_editor_client_contents_changed(smartData->view);
 }
 
 namespace EWKPrivate {
 
 WebCore::Frame *coreFrame(const Evas_Object *ewkFrame)
 {
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, sd, 0);
-    return sd->frame;
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
+    return smartData->frame;
 }
 
 Evas_Object* kitFrame(const WebCore::Frame* coreFrame)

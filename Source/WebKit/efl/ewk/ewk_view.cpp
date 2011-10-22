@@ -955,21 +955,21 @@ static void _ewk_view_smart_flush(Ewk_View_Smart_Data* smartData)
 
 static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* smartData, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
 {
-    WRN("not supported by engine. sd=%p area=%d,%d+%dx%d, zoom=%f",
+    WRN("not supported by engine. smartDAta=%p area=%d,%d+%dx%d, zoom=%f",
         smartData, x, y, width, height, zoom);
     return EINA_FALSE;
 }
 
 static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data* smartData, unsigned int number, float zoom)
 {
-    WRN("not supported by engine. sd=%p, n=%u zoom=%f",
+    WRN("not supported by engine. smartData=%p, n=%u zoom=%f",
         smartData, number, zoom);
     return EINA_FALSE;
 }
 
 static void _ewk_view_smart_pre_render_cancel(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", smartData);
+    WRN("not supported by engine. smartData=%p", smartData);
 }
 
 static void _ewk_view_zoom_animated_mark_stop(Ewk_View_Smart_Data* smartData)
@@ -1060,13 +1060,13 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const E
 
 static Eina_Bool _ewk_view_smart_disable_render(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", smartData);
+    WRN("not supported by engine. smartData=%p", smartData);
     return EINA_FALSE;
 }
 
 static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* smartData)
 {
-    WRN("not supported by engine. sd=%p", smartData);
+    WRN("not supported by engine. smartData=%p", smartData);
     return EINA_FALSE;
 }
 
@@ -3841,8 +3841,8 @@ namespace EWKPrivate {
 
 WebCore::Page *corePage(const Evas_Object *ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->page;
 }
 

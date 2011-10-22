@@ -39,19 +39,19 @@ static void _ewk_view_single_on_del(void* data, Evas* eventType, Evas_Object* ca
 
 static void _ewk_view_single_smart_add(Evas_Object* ewkSingle)
 {
-    Ewk_View_Smart_Data* sd;
+    Ewk_View_Smart_Data* smartData;
 
     _parent_sc.sc.add(ewkSingle);
 
-    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
-    if (!sd)
+    smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
+    if (!smartData)
         return;
 
-    Evas_Object* clip = evas_object_rectangle_add(sd->base.evas);
+    Evas_Object* clip = evas_object_rectangle_add(smartData->base.evas);
     evas_object_show(clip);
 
     evas_object_event_callback_add
-        (sd->backing_store, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
+        (smartData->backing_store, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
 }
 
 static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* smartData)
@@ -65,21 +65,21 @@ static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data
 
 static void _ewk_view_single_smart_resize(Evas_Object* ewkSingle, Evas_Coord width, Evas_Coord height)
 {
-    Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
     _parent_sc.sc.resize(ewkSingle, width, height);
 
-    if (!sd)
+    if (!smartData)
         return;
 
     // these should be queued and processed in calculate as well!
-    evas_object_image_size_set(sd->backing_store, width, height);
-    if (sd->animated_zoom.zoom.current < 0.00001) {
-        Evas_Object* clip = evas_object_clip_get(sd->backing_store);
+    evas_object_image_size_set(smartData->backing_store, width, height);
+    if (smartData->animated_zoom.zoom.current < 0.00001) {
+        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
         Evas_Coord x, y, cw, ch;
-        evas_object_image_fill_set(sd->backing_store, 0, 0, width, height);
-        evas_object_geometry_get(sd->backing_store, &x, &y, 0, 0);
+        evas_object_image_fill_set(smartData->backing_store, 0, 0, width, height);
+        evas_object_geometry_get(smartData->backing_store, &x, &y, 0, 0);
         evas_object_move(clip, x, y);
-        ewk_frame_contents_size_get(sd->main_frame, &cw, &ch);
+        ewk_frame_contents_size_get(smartData->main_frame, &cw, &ch);
         if (width > cw)
             width = cw;
         if (height > ch)
