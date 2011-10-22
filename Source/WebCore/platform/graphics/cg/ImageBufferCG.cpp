@@ -38,6 +38,7 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
@@ -164,10 +165,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     if (!cgContext)
         return;
 
-    m_context= adoptPtr(new GraphicsContext(cgContext.get()));
+    m_context = adoptPtr(new GraphicsContext(cgContext.get()));
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -height.unsafeGet());
     m_context->setIsAcceleratedContext(accelerateRendering);
+    m_data.m_lastFlushTime = currentTimeMS();
     success = true;
 }
 
@@ -182,6 +184,18 @@ size_t ImageBuffer::dataSize() const
 
 GraphicsContext* ImageBuffer::context() const
 {
+    // Force a flush if last flush was more than 20ms ago
+    if (m_context->isAcceleratedContext()) {
+        double elapsedTime = currentTimeMS() - m_data.m_lastFlushTime;
+        double maxFlushInterval = 20; // in ms
+
+        if (elapsedTime > maxFlushInterval) {
+            CGContextRef context = m_context->platformContext();
+            CGContextFlush(context);
+            m_data.m_lastFlushTime = currentTimeMS();
+        }
+    }
+
     return m_context.get();
 }
 
@@ -212,8 +226,10 @@ NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
         }
     }
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    else
+    else {
         image = wkIOSurfaceContextCreateImage(context()->platformContext());
+        m_data.m_lastFlushTime = currentTimeMS();
+    }
 #endif
 
     return image;
@@ -262,29 +278,37 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
 
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    if (m_context->isAcceleratedContext())
+    if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+        m_data.m_lastFlushTime = currentTimeMS();
+    }
     return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), true);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    if (m_context->isAcceleratedContext())
+    if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+        m_data.m_lastFlushTime = currentTimeMS();
+    }
     return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), false);
 }
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (m_context->isAcceleratedContext())
+    if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+        m_data.m_lastFlushTime = currentTimeMS();
+    }
     m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), true);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (m_context->isAcceleratedContext())
+    if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+        m_data.m_lastFlushTime = currentTimeMS();
+    }
     m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), false);
 }
 

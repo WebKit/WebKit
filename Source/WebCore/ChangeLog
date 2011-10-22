@@ -1,3 +1,23 @@
+2011-10-21  Matthew Delaney  <mdelaney@apple.com>
+
+        Ensure periodic flushing of canvas drawing context
+        https://bugs.webkit.org/show_bug.cgi?id=70646
+
+        Reviewed by Simon Fraser.
+
+        No new tests. No current way to track tests that cause hangs or
+        non-deterministic drops in performance.
+
+        * platform/graphics/cg/ImageBufferDataCG.h: Adds a timestamp of last tracked flush.
+        * platform/graphics/cg/ImageBufferCG.cpp: Ensures periodic flushes on the drawing context.
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::context): Flushes context if we're beyond flush interval.
+        (WebCore::ImageBuffer::copyNativeImage): Updates last flush timestamp.
+        (WebCore::ImageBuffer::getUnmultipliedImageData): Updates last flush timestamp.
+        (WebCore::ImageBuffer::getPremultipliedImageData): Updates last flush timestamp.
+        (WebCore::ImageBuffer::putUnmultipliedImageData): Updates last flush timestamp.
+        (WebCore::ImageBuffer::putPremultipliedImageData): Updates last flush timestamp.
+
 2011-10-21  Adam Barth  <abarth@webkit.org>
 
         Introduce Event::hasInterface to make uses of interfaceName more readable
