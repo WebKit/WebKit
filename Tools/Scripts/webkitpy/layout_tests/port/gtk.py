@@ -76,7 +76,9 @@ class GtkPort(webkit.WebKitPort):
         environment = webkit.WebKitPort.setup_environ_for_server(self, server_name)
         environment['GTK_MODULES'] = 'gail'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
-        environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs/resources/inspector')
+        environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')
+        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('Libraries', 'TestNetscapePlugin')
+        environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
         return environment
 
     def _generate_all_test_configurations(self):
