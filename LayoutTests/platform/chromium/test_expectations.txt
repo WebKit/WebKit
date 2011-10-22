@@ -3689,8 +3689,6 @@ BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH IMAGE
 
-BUGWK68885 MAC CPU-CG : fast/canvas/webgl/premultiplyalpha-test.html = TEXT
-
 BUGWK68886 MAC GPU-CG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
 
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE

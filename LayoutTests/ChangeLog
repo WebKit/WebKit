@@ -1,5 +1,15 @@
 2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        [Chromium] Layout Test fast/canvas/webgl/premultiplyalpha-test.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=68885
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: Removed the test since it has been passing on
+        the bots for at least a week.
+
+2011-10-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed rebaseline.
 
         This test started failing on the bot. As this is a progression, updating the baseline.
