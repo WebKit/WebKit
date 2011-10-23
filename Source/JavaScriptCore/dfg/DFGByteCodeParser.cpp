@@ -2334,7 +2334,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     }
     
     for (size_t i = 0; i < m_constantRemap.size(); ++i)
-        ASSERT(m_constantRemap[i] >= FirstConstantRegisterIndex);
+        ASSERT(m_constantRemap[i] >= static_cast<unsigned>(FirstConstantRegisterIndex));
     
     byteCodeParser->m_inlineStackTop = this;
 }
