@@ -153,7 +153,9 @@ void ResourceRequest::doUpdatePlatformRequest()
         wkSetHTTPPipeliningPriority(cfRequest, toHTTPPipeliningPriority(m_priority));
 
     setHeaderFields(cfRequest, httpHeaderFields());
-    WebCore::setHTTPBody(cfRequest, httpBody());
+    RefPtr<FormData> formData = httpBody();
+    if (formData && !formData->isEmpty())
+        WebCore::setHTTPBody(cfRequest, formData);
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();

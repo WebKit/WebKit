@@ -1,3 +1,19 @@
+2011-10-22  Pratik Solanki  <psolanki@apple.com>
+
+        HTTPBodyStream in NSURLRequest gets lost when using CFNetwork loader
+        https://bugs.webkit.org/show_bug.cgi?id=70583
+        <rdar://problem/10281227>
+
+        Reviewed by Darin Adler.
+
+        Call WebCore::setHTTPBody() only if we actually have a FormData. Unconditionally calling it
+        results in us passing 0 to wkCFURLRequestSetHTTPRequestBodyParts() which resets any input
+        stream specified by the user on the NSURLRequest. This code matches the behavior in the
+        Foundation version of doUpdatePlatformRequest().
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2011-10-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Move all MediaStream and PeerConnection related non-platform files to WebCore/mediastream
