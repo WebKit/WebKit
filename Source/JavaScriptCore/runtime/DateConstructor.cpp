@@ -161,11 +161,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec
     return JSValue::encode(constructDate(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
-ConstructType DateConstructor::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithDateConstructor;

@@ -59,11 +59,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* 
     return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
-ConstructType FunctionConstructor::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType FunctionConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithFunctionConstructor;

@@ -362,11 +362,6 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
-ConstructType JSFunction::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 // ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& constructData)
 {

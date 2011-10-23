@@ -1267,7 +1267,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
     JSFunction* constructor = asFunction(callFrame->callee());
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(constructor->getConstructDataVirtual(constructData) == ConstructTypeJS);
+    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
 #endif
 
     Structure* structure;
@@ -2173,7 +2173,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
 
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(asFunction(stackFrame.callFrame->callee())->getConstructDataVirtual(constructData) == ConstructTypeJS);
+    ASSERT(asFunction(stackFrame.callFrame->callee())->methodTable()->getConstructData(stackFrame.callFrame->callee(), constructData) == ConstructTypeJS);
 #endif
     
     return jitCompileFor(stackFrame, CodeForConstruct);

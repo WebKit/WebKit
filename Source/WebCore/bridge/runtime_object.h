@@ -54,7 +54,6 @@ public:
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
     static CallType getCallData(JSCell*, CallData&);
-    virtual ConstructType getConstructDataVirtual(ConstructData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);

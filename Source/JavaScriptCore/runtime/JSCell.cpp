@@ -59,11 +59,6 @@ CallType JSCell::getCallData(JSCell*, CallData&)
     return CallTypeNone;
 }
 
-ConstructType JSCell::getConstructDataVirtual(ConstructData&)
-{
-    return ConstructTypeNone;
-}
-
 ConstructType JSCell::getConstructData(JSCell*, ConstructData&)
 {
     return ConstructTypeNone;

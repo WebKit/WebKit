@@ -335,12 +335,6 @@ bool JSCallbackObject<Parent>::deletePropertyByIndex(JSCell* cell, ExecState* ex
 }
 
 template <class Parent>
-ConstructType JSCallbackObject<Parent>::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
-template <class Parent>
 ConstructType JSCallbackObject<Parent>::getConstructData(JSCell* cell, ConstructData& constructData)
 {
     JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);

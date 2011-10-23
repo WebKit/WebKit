@@ -1,3 +1,57 @@
+2011-10-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove getConstructDataVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70638
+
+        Reviewed by Darin Adler.
+
+        Removed all declarations and definitions of getConstructDataVirtual.
+        Also replaced all call sites to getConstructDataVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSObjectRef.cpp:
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayConstructor.h:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConstructor.h:
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::getConstructData):
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorConstructor.h:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionConstructor.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSObject.h:
+        (JSC::getConstructData):
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringConstructor.h:
+
 2011-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the SL build.

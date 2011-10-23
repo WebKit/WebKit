@@ -236,11 +236,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
     return JSValue::encode(static_cast<JSNPObject*>(constructor)->callConstructor(exec));
 }
 
-ConstructType JSNPObject::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
 {
     JSNPObject* thisObject = static_cast<JSNPObject*>(cell);

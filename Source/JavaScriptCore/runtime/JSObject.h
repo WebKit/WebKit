@@ -422,6 +422,13 @@ inline CallType getCallData(JSValue value, CallData& callData)
     return result;
 }
 
+inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
+{
+    ConstructType result = value.isCell() ? value.asCell()->methodTable()->getConstructData(value.asCell(), constructData) : ConstructTypeNone;
+    ASSERT(result == ConstructTypeNone || value.isValidCallee());
+    return result;
+}
+
 inline Structure* createEmptyObjectStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
 {
     return JSFinalObject::createStructure(globalData, globalObject, prototype);

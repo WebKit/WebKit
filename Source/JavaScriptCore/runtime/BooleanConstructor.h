@@ -50,7 +50,6 @@ namespace JSC {
 
     private:
         BooleanConstructor(JSGlobalObject*, Structure*);
-        virtual ConstructType getConstructDataVirtual(ConstructData&);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };

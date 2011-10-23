@@ -58,11 +58,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(ExecState* e
     return JSValue::encode(constructBoolean(exec, args));
 }
 
-ConstructType BooleanConstructor::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType BooleanConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithBooleanConstructor;

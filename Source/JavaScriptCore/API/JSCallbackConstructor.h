@@ -58,7 +58,6 @@ protected:
     static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
 private:
-    virtual ConstructType getConstructDataVirtual(ConstructData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
 
     JSClassRef m_class;

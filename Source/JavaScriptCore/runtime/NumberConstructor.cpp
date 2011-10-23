@@ -120,11 +120,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
     return JSValue::encode(object);
 }
 
-ConstructType NumberConstructor::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType NumberConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithNumberConstructor;

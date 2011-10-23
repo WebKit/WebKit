@@ -47,7 +47,6 @@ namespace WebCore {
     private:
         JSOptionConstructor(JSC::Structure*, JSDOMGlobalObject*);
         void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
-        virtual JSC::ConstructType getConstructDataVirtual(JSC::ConstructData&);
         static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     };
 

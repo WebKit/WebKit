@@ -304,11 +304,6 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(ExecState* exec)
     return JSValue::encode(result.isObject() ? static_cast<JSObject*>(result.asCell()) : constructor);
 }
 
-ConstructType RuntimeObject::getConstructDataVirtual(ConstructData& constructData)
-{
-    return getConstructData(this, constructData);
-}
-
 ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& constructData)
 {
     RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);

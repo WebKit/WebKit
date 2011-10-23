@@ -3222,7 +3222,6 @@ sub GenerateConstructorDeclaration
 
     if ($canConstruct) {
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
-        push(@$outputArray, "    virtual JSC::ConstructType getConstructDataVirtual(JSC::ConstructData&);\n");
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
     }
     push(@$outputArray, "};\n\n");
@@ -3339,11 +3338,6 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));\n");
             push(@$outputArray, "}\n\n");
         }
-
-        push(@$outputArray, "ConstructType ${constructorClassName}::getConstructDataVirtual(ConstructData& constructData)\n");
-        push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getConstructData(this, constructData);\n");
-        push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
         push(@$outputArray, "{\n");

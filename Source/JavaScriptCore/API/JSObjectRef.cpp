@@ -454,7 +454,7 @@ bool JSObjectIsConstructor(JSContextRef, JSObjectRef object)
 {
     JSObject* jsObject = toJS(object);
     ConstructData constructData;
-    return jsObject->getConstructDataVirtual(constructData) != ConstructTypeNone;
+    return jsObject->methodTable()->getConstructData(jsObject, constructData) != ConstructTypeNone;
 }
 
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -465,7 +465,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     JSObject* jsObject = toJS(object);
 
     ConstructData constructData;
-    ConstructType constructType = jsObject->getConstructDataVirtual(constructData);
+    ConstructType constructType = jsObject->methodTable()->getConstructData(jsObject, constructData);
     if (constructType == ConstructTypeNone)
         return 0;
 

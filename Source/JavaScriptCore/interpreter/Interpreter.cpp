@@ -4609,7 +4609,7 @@ skip_id_custom_self:
         JSFunction* constructor = asFunction(callFrame->callee());
 #if !ASSERT_DISABLED
         ConstructData constructData;
-        ASSERT(constructor->getConstructDataVirtual(constructData) == ConstructTypeJS);
+        ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
 #endif
 
         Structure* structure;
