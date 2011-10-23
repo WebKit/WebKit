@@ -1,3 +1,15 @@
+2011-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Updated two test results I missed in my last check-in.
+
+        These tests depended on non-deterministic effects of hash order, so I
+        had to update them:
+
+        * http/tests/inspector/search/search-in-resources-expected.txt:
+        * platform/mac/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-10-23  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [GTK] Implement KeyDown function for WebKit2 EventSender.
