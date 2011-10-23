@@ -70,7 +70,7 @@ shouldBe("RegExp.prototype.test", "null");
 
 // Check that once a property is deleted its name is removed from the property name array.
 delete Object.prototype.__defineSetter__;
-shouldBe("String(Object.getOwnPropertyNames(Object.prototype))", '"constructor,valueOf,__lookupGetter__,toLocaleString,__defineGetter__,hasOwnProperty,propertyIsEnumerable,toString,__lookupSetter__,isPrototypeOf"');
+shouldBe("Object.getOwnPropertyNames(Object.prototype).indexOf('__defineSetter__')", "-1");
 
 var successfullyParsed = true;
 

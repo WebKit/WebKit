@@ -1,3 +1,52 @@
+2011-10-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Separated string lifetime bits from character buffer state bits
+        https://bugs.webkit.org/show_bug.cgi?id=70673
+
+        Reviewed by Anders Carlsson.
+        
+        Moved the static/immortal bit into the bottom bit of the refcount, and
+        moved all other bits into the high bits of the hash code.
+        
+        This is the first step toward a new Characters/PassString class, and it
+        makes ref/deref slightly more efficient.
+
+        * create_hash_table:
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::hash): Tweaked the string hashing function to leave
+        the top bits clear, so they can be used as flags.
+        
+        Fixed some small differences between the PERL copy of this function and
+        the C++ copy of this function, which could have in theory caused subtle
+        crashes.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::sharedBuffer):
+        (WTF::StringImpl::createWithTerminatingNullCharacter):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::cost): Renamed s_refCountFlagShouldReportedCost to
+        s_didReportExtraCost, since the original name was both self-contradictory
+        and used as a double-negative.
+
+        (WTF::StringImpl::isIdentifier):
+        (WTF::StringImpl::setIsIdentifier):
+        (WTF::StringImpl::hasTerminatingNullCharacter):
+        (WTF::StringImpl::isAtomic):
+        (WTF::StringImpl::setIsAtomic):
+        (WTF::StringImpl::setHash):
+        (WTF::StringImpl::rawHash):
+        (WTF::StringImpl::hasHash):
+        (WTF::StringImpl::existingHash):
+        (WTF::StringImpl::hash):
+        (WTF::StringImpl::hasOneRef):
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+        (WTF::StringImpl::bufferOwnership):
+        (WTF::StringImpl::isStatic): Moved the static/immortal bit into the bottom
+        bit of the refcount. Now, all lifetime information lives in the refcount
+        field. Moved the other bits into the hash code field.
+
 2011-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining sometimes fails to reset constant references

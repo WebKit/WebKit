@@ -1,3 +1,13 @@
+2011-10-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Separated string lifetime bits from character buffer state bits
+        https://bugs.webkit.org/show_bug.cgi?id=70673
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashValue): Updated for string hashing changes in JavaScriptCore.
+
 2011-10-22  Pratik Solanki  <psolanki@apple.com>
 
         HTTPBodyStream in NSURLRequest gets lost when using CFNetwork loader

@@ -3038,7 +3038,8 @@ sub GenerateHashTable
     push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
 }
 
-# Internal helper
+# Paul Hsieh's SuperFastHash
+# http://www.azillionmonkeys.com/qed/hash.html
 sub GenerateHashValue
 {
     my $object = shift;
@@ -3048,16 +3049,16 @@ sub GenerateHashValue
     # This hash is designed to work on 16-bit chunks at a time. But since the normal case
     # (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
     # were 16-bit chunks, which should give matching results
-
+    
     my $EXP2_32 = 4294967296;
-
+    
     my $hash = 0x9e3779b9;
     my $l    = scalar @chars; #I wish this was in Ruby --- Maks
     my $rem  = $l & 1;
     $l = $l >> 1;
-
+    
     my $s = 0;
-
+    
     # Main loop
     for (; $l > 0; $l--) {
         $hash   += ord($chars[$s]);
@@ -3067,14 +3068,14 @@ sub GenerateHashValue
         $hash += $hash >> 11;
         $hash %= $EXP2_32;
     }
-
+    
     # Handle end case
     if ($rem != 0) {
         $hash += ord($chars[$s]);
         $hash ^= (leftShift($hash, 11)% $EXP2_32);
         $hash += $hash >> 17;
     }
-
+    
     # Force "avalanching" of final 127 bits
     $hash ^= leftShift($hash, 3);
     $hash += ($hash >> 5);
@@ -3083,12 +3084,16 @@ sub GenerateHashValue
     $hash += ($hash >> 15);
     $hash = $hash% $EXP2_32;
     $hash ^= (leftShift($hash, 10)% $EXP2_32);
-
-    # this avoids ever returning a hash code of 0, since that is used to
-    # signal "hash not computed yet", using a value that is likely to be
-    # effectively the same as 0 when the low bits are masked
-    $hash = 0x80000000 if ($hash == 0);
-
+    
+    # Save 6 bits for StringImpl to use as flags.
+    $hash = ($hash >> 6);
+    
+    # This avoids ever returning a hash code of 0, since that is used to
+    # signal "hash not computed yet". Setting the high bit maintains
+    # reasonable fidelity to a hash code of 0 because it is likely to yield
+    # exactly 0 when hash lookup masks out the high bits.
+    $hash = (0x80000000 >> 6) if ($hash == 0);
+    
     return $hash;
 }
 

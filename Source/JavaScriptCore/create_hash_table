@@ -179,7 +179,6 @@ sub calcCompactHashSize()
 
 # Paul Hsieh's SuperFastHash
 # http://www.azillionmonkeys.com/qed/hash.html
-# Ported from UString..
 sub hashValue($) {
   my @chars = split(/ */, $_[0]);
 
@@ -207,7 +206,7 @@ sub hashValue($) {
   }
 
   # Handle end case
-  if ($rem !=0) {
+  if ($rem != 0) {
     $hash += ord($chars[$s]);
     $hash ^= (leftShift($hash, 11)% $EXP2_32);
     $hash += $hash >> 17;
@@ -221,11 +220,15 @@ sub hashValue($) {
   $hash += ($hash >> 15);
   $hash = $hash% $EXP2_32;
   $hash ^= (leftShift($hash, 10)% $EXP2_32);
-  
-  # this avoids ever returning a hash code of 0, since that is used to
-  # signal "hash not computed yet", using a value that is likely to be
-  # effectively the same as 0 when the low bits are masked
-  $hash = 0x80000000  if ($hash == 0);
+
+  # Save 6 bits for StringImpl to use as flags.
+  $hash = ($hash >> 6);
+
+  # This avoids ever returning a hash code of 0, since that is used to
+  # signal "hash not computed yet". Setting the high bit maintains
+  # reasonable fidelity to a hash code of 0 because it is likely to yield
+  # exactly 0 when hash lookup masks out the high bits.
+  $hash = (0x80000000 >> 6) if ($hash == 0);
 
   return $hash;
 }

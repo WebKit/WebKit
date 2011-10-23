@@ -83,13 +83,13 @@ private:
     // Used to construct static strings, which have an special refCount that can never hit zero.
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-    enum StaticStringConstructType { ConstructStaticString };
-    StringImpl(const UChar* characters, unsigned length, StaticStringConstructType)
-        : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
+    enum ConstructStaticStringTag { ConstructStaticString };
+    StringImpl(const UChar* characters, unsigned length, ConstructStaticStringTag)
+        : m_refCount(s_refCountFlagIsStaticString)
         , m_length(length)
         , m_data(characters)
         , m_buffer(0)
-        , m_hash(0)
+        , m_hashAndFlags(s_hashFlagIsIdentifier | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
         // with impunity. The empty string is special because it is never entered into
@@ -99,11 +99,11 @@ private:
 
     // Create a normal string with internal storage (BufferInternal)
     StringImpl(unsigned length)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferInternal)
+        : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data(reinterpret_cast<const UChar*>(this + 1))
         , m_buffer(0)
-        , m_hash(0)
+        , m_hashAndFlags(BufferInternal)
     {
         ASSERT(m_data);
         ASSERT(m_length);
@@ -111,11 +111,11 @@ private:
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
     StringImpl(const UChar* characters, unsigned length)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferOwned)
+        : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data(characters)
         , m_buffer(0)
-        , m_hash(0)
+        , m_hashAndFlags(BufferOwned)
     {
         ASSERT(m_data);
         ASSERT(m_length);
@@ -123,11 +123,11 @@ private:
 
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring)
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferSubstring)
+        : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data(characters)
         , m_substringBuffer(base.leakRef())
-        , m_hash(0)
+        , m_hashAndFlags(BufferSubstring)
     {
         ASSERT(m_data);
         ASSERT(m_length);
@@ -136,23 +136,14 @@ private:
 
     // Used to construct new strings sharing an existing SharedUChar (BufferShared)
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | BufferShared)
+        : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data(characters)
         , m_sharedBuffer(sharedBuffer.leakRef())
-        , m_hash(0)
+        , m_hashAndFlags(BufferShared)
     {
         ASSERT(m_data);
         ASSERT(m_length);
-    }
-
-    // For use only by AtomicString's XXXTranslator helpers.
-    void setHash(unsigned hash)
-    {
-        ASSERT(!isStatic());
-        ASSERT(!m_hash);
-        ASSERT(hash == StringHasher::computeHash(m_data, m_length));
-        m_hash = hash;
     }
 
 public:
@@ -217,7 +208,6 @@ public:
     }
     static PassRefPtr<StringImpl> adopt(StringBuffer&);
 
-    void ref() { m_refCountAndFlags += s_refCountIncrement; }
     unsigned length() const { return m_length; }
     SharedUChar* sharedBuffer();
     const UChar* characters() const { return m_data; }
@@ -228,41 +218,95 @@ public:
         if (bufferOwnership() == BufferSubstring)
             return m_substringBuffer->cost();
 
-        if (m_refCountAndFlags & s_refCountFlagShouldReportedCost) {
-            m_refCountAndFlags &= ~s_refCountFlagShouldReportedCost;
-            return m_length;
-        }
-        return 0;
+        if (m_hashAndFlags & s_hashFlagDidReportCost)
+            return 0;
+
+        m_hashAndFlags |= s_hashFlagDidReportCost;
+        return m_length;
     }
 
-    bool isIdentifier() const { return m_refCountAndFlags & s_refCountFlagIsIdentifier; }
+    bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
     void setIsIdentifier(bool isIdentifier)
     {
         ASSERT(!isStatic());
         if (isIdentifier)
-            m_refCountAndFlags |= s_refCountFlagIsIdentifier;
+            m_hashAndFlags |= s_hashFlagIsIdentifier;
         else
-            m_refCountAndFlags &= ~s_refCountFlagIsIdentifier;
+            m_hashAndFlags &= ~s_hashFlagIsIdentifier;
     }
 
-    bool hasTerminatingNullCharacter() const { return m_refCountAndFlags & s_refCountFlagHasTerminatingNullCharacter; }
+    bool hasTerminatingNullCharacter() const { return m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter; }
 
-    bool isAtomic() const { return m_refCountAndFlags & s_refCountFlagIsAtomic; }
+    bool isAtomic() const { return m_hashAndFlags & s_hashFlagIsAtomic; }
     void setIsAtomic(bool isIdentifier)
     {
         ASSERT(!isStatic());
         if (isIdentifier)
-            m_refCountAndFlags |= s_refCountFlagIsAtomic;
+            m_hashAndFlags |= s_hashFlagIsAtomic;
         else
-            m_refCountAndFlags &= ~s_refCountFlagIsAtomic;
+            m_hashAndFlags &= ~s_hashFlagIsAtomic;
     }
 
-    unsigned hash() const { if (!m_hash) m_hash = StringHasher::computeHash(m_data, m_length); return m_hash; }
-    unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
-    bool hasHash() const { return m_hash; }
+private:
+    // The high bits of 'hash' are always empty, but we prefer to store our flags
+    // in the low bits because it makes them slightly more efficient to access.
+    // So, we shift left and right when setting and getting our hash code.
+    void setHash(unsigned hash) const
+    {
+        ASSERT(!hasHash());
+        ASSERT(hash == StringHasher::computeHash(m_data, m_length)); // Multiple clients assume that StringHasher is the canonical string hash function.
+        ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
+        
+        hash <<= s_flagCount;
+        ASSERT(!(hash & m_hashAndFlags)); // Verify that enough low bits are empty after shift.
+        ASSERT(hash); // Verify that 0 is a valid sentinel hash value.
 
-    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic))) delete this; }
-    ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic)) == s_refCountIncrement; }
+        m_hashAndFlags |= hash; // Store hash with flags in low bits.
+    }
+
+    unsigned rawHash() const
+    {
+        return m_hashAndFlags >> s_flagCount;
+    }
+
+public:
+    bool hasHash() const
+    {
+        return rawHash() != 0;
+    }
+
+    unsigned existingHash() const
+    {
+        ASSERT(hasHash());
+        return rawHash();
+    }
+
+    unsigned hash() const
+    {
+        if (!hasHash())
+            setHash(StringHasher::computeHash(m_data, m_length));
+        return existingHash();
+    }
+
+    inline bool hasOneRef() const
+    {
+        return m_refCount == s_refCountIncrement;
+    }
+
+    inline void ref()
+    {
+        m_refCount += s_refCountIncrement;
+    }
+
+    inline void deref()
+    {
+        if (m_refCount == s_refCountIncrement) {
+            delete this;
+            return;
+        }
+
+        m_refCount -= s_refCountIncrement;
+    }
 
     static StringImpl* empty();
 
@@ -351,24 +395,27 @@ private:
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
     
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
-    bool isStatic() const { return m_refCountAndFlags & s_refCountFlagStatic; }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
 
-    // The bottom 7 bits hold flags, the top 25 bits hold the ref count.
-    // When dereferencing StringImpls we check for the ref count AND the
-    // static bit both being zero - static strings are never deleted.
-    static const unsigned s_refCountMask = 0xFFFFFF80;
-    static const unsigned s_refCountIncrement = 0x80;
-    static const unsigned s_refCountFlagStatic = 0x40;
-    static const unsigned s_refCountFlagHasTerminatingNullCharacter = 0x20;
-    static const unsigned s_refCountFlagIsAtomic = 0x10;
-    static const unsigned s_refCountFlagShouldReportedCost = 0x8;
-    static const unsigned s_refCountFlagIsIdentifier = 0x4;
-    static const unsigned s_refCountMaskBufferOwnership = 0x3;
+    // The bottom bit in the ref count indicates a static (immortal) string.
+    static const unsigned s_refCountFlagIsStaticString = 0x1;
+    static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
-    unsigned m_refCountAndFlags;
+    // The bottom 6 bits in the hash are flags.
+    static const unsigned s_flagCount = 6;
+    static const unsigned s_flagMask = (1u << s_flagCount) - 1;
+    COMPILE_ASSERT(s_flagCount == StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
+
+    static const unsigned s_hashFlagHasTerminatingNullCharacter = 1u << 5;
+    static const unsigned s_hashFlagIsAtomic = 1u << 4;
+    static const unsigned s_hashFlagDidReportCost = 1u << 3;
+    static const unsigned s_hashFlagIsIdentifier = 1u << 2;
+    static const unsigned s_hashMaskBufferOwnership = 1u | (1u << 1);
+
+    unsigned m_refCount;
     unsigned m_length;
     const UChar* m_data;
     union {
@@ -376,7 +423,7 @@ private:
         StringImpl* m_substringBuffer;
         SharedUChar* m_sharedBuffer;
     };
-    mutable unsigned m_hash;
+    mutable unsigned m_hashAndFlags;
 };
 
 bool equal(const StringImpl*, const StringImpl*);

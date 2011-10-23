@@ -29,7 +29,7 @@ PASS Math.tan is null
 PASS RegExp.prototype.compile is regExpPrototypeCompile
 PASS RegExp.prototype.exec is undefined
 PASS RegExp.prototype.test is null
-PASS String(Object.getOwnPropertyNames(Object.prototype)) is "constructor,valueOf,__lookupGetter__,toLocaleString,__defineGetter__,hasOwnProperty,propertyIsEnumerable,toString,__lookupSetter__,isPrototypeOf"
+PASS Object.getOwnPropertyNames(Object.prototype).indexOf('__defineSetter__') is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE

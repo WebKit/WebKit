@@ -31,8 +31,13 @@ static const unsigned stringHashingStartValue = 0x9e3779b9U;
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
 // char* data is interpreted as latin-encoded (zero extended to 16 bits).
+
+// NOTE: This class must stay in sync with the create_hash_table script in
+// JavaScriptCore and the CodeGeneratorJS.pm script in WebCore.
 class StringHasher {
 public:
+    static const unsigned flagCount = 6; // Save 6 bits for StringImpl to use as flags.
+
     inline StringHasher()
         : m_hash(stringHashingStartValue)
         , m_hasPendingCharacter(false)
@@ -76,14 +81,16 @@ public:
         result += result >> 15;
         result ^= result << 10;
 
-        // First bit is used in UStringImpl for m_isIdentifier.
-        result &= 0x7fffffff;
+        // Reserving the high bits for flags perserves most of the hash's value,
+        // since hash lookup typically masks out the high bits anyway.
+        result >>= flagCount;
 
         // This avoids ever returning a hash code of 0, since that is used to
-        // signal "hash not computed yet", using a value that is likely to be
-        // effectively the same as 0 when the low bits are masked.
+        // signal "hash not computed yet". Setting the high bit maintains
+        // reasonable fidelity to a hash code of 0 because it is likely to yield
+        // exactly 0 when hash lookup masks out the high bits.
         if (!result)
-            return 0x40000000;
+            result = 0x80000000 >> flagCount;
 
         return result;
     }

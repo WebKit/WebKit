@@ -168,7 +168,7 @@ SharedUChar* StringImpl::sharedBuffer()
     if (ownership == BufferOwned) {
         ASSERT(!m_sharedBuffer);
         m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).leakRef();
-        m_refCountAndFlags = (m_refCountAndFlags & ~s_refCountMaskBufferOwnership) | BufferShared;
+        m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferShared;
     }
 
     ASSERT(bufferOwnership() == BufferShared);
@@ -1156,8 +1156,7 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
     memcpy(data, string.m_data, length * sizeof(UChar));
     data[length] = 0;
     terminatedString->m_length--;
-    terminatedString->m_hash = string.m_hash;
-    terminatedString->m_refCountAndFlags |= s_refCountFlagHasTerminatingNullCharacter;
+    terminatedString->m_hashAndFlags = (string.m_hashAndFlags & ~s_flagMask) | s_hashFlagHasTerminatingNullCharacter;
     return terminatedString.release();
 }
 

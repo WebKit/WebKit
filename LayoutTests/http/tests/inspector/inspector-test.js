@@ -438,9 +438,9 @@ function runTest(enableWatchDogWhileDebugging)
         }
     }
 
-    var initializationFunctions = [];
+    var initializationFunctions = [ String(initialize_InspectorTest) ];
     for (var name in window) {
-        if (name.indexOf("initialize_") === 0 && typeof window[name] === "function")
+        if (name.indexOf("initialize_") === 0 && typeof window[name] === "function" && name !== "initialize_InspectorTest")
             initializationFunctions.push(window[name].toString());
     }
     var parameters = ["[" + initializationFunctions + "]", test, completeTestCallId];
