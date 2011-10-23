@@ -10,6 +10,7 @@ noinst_PROGRAMS += \
 
 Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/gtk/main.cpp \
+	Tools/WebKitTestRunner/gtk/EventSenderProxyGtk.cpp \
 	Tools/WebKitTestRunner/gtk/PlatformWebViewGtk.cpp \
 	Tools/WebKitTestRunner/gtk/TestControllerGtk.cpp \
 	Tools/WebKitTestRunner/cairo/TestInvocationCairo.cpp \
@@ -22,11 +23,13 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/TestController.cpp \
 	Tools/WebKitTestRunner/TestController.h \
 	Tools/WebKitTestRunner/TestInvocation.cpp \
-	Tools/WebKitTestRunner/TestInvocation.h
+	Tools/WebKitTestRunner/TestInvocation.h \
+	Source/WebCore/platform/gtk/GtkVersioning.c
 
 Programs_WebKitTestRunner_CPPFLAGS = \
 	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
 	-I$(srcdir)/Tools/WebKitTestRunner \
+	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \

@@ -87,18 +87,12 @@ fullscreen/full-screen-remove.html
 fullscreen/full-screen-zIndex-after.html
 plugins/fullscreen-plugins-dont-reload.html
 plugins/keyboard-events.html
-fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/access-key-iframe.html
 fast/dom/hidden-iframe-no-focus.html
-fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
-fast/events/keypress-removed-node.html
-fast/events/attempt-select-all-with-wrong-modifier.html
-fast/events/keyevent-iframe-removed-crash.html
 fast/events/key-events-in-input-text.html
 fast/events/imagemap-norender-crash.html
 fast/events/special-key-events-in-input-text.html
-fast/events/select-element.html
 fast/events/access-key-self-destruct.html
 fast/events/multiline-link-arrow-navigation.html
 fast/events/check-defocus-event-order-when-triggered-by-tab.html
@@ -107,20 +101,16 @@ fast/events/selectionchange-user-initiated.html
 fast/events/scroll-after-click-on-tab-index.html
 fast/events/selectstart-by-arrow-keys.html
 fast/events/tab-is-focusable-assert.html
-fast/events/keydown-keypress-preventDefault.html
-fast/events/keydown-1.html
 fast/events/focusingUnloadedFrame.html
 fast/events/onsearch-enter.html
 fast/events/inputText-never-fired-on-keydown-cancel.html
 fast/events/keydown-numpad-keys.html
-fast/events/select-onchange-crash.html
 fast/events/selectstart-by-arrow-keys-prevent-default.html
 fast/events/onchange-textfield.html
 fast/events/media-element-focus-tab.html
 fast/events/focus-change-crash.html
 fast/events/tabindex-focus-chain.html
 fast/events/node-event-anchor-lock.html
-fast/events/arrow-navigation.html
 fast/events/keydown-keypress-focus-change.html
 fast/events/js-keyboard-event-creation.html
 fast/events/tab-focus-hidden.html
@@ -131,16 +121,9 @@ fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html
 fast/events/onchange-select-popup.html
 fast/events/onchange-searchfield.html
 fast/events/onchange-text-form-field.html
-fast/events/keydown-remove-frame.html
 fast/events/keypress-focus-change.html
-fast/events/keydown-function-keys.html
-fast/events/space-scroll-event.html
-fast/events/arrow-keys-on-body.html
-fast/events/recorded-keydown-event.html
 fast/events/popup-when-select-change.html
 fast/events/tab-imagemap.html
-fast/events/menu-keydown-on-hidden-element.html
-fast/events/anchor-empty-focus.html
 fast/events/key-events-in-input-button.html
 fast/repaint/fixed-move-after-keyboard-scroll.html
 fast/forms/onchange-enter-submit.html
@@ -200,9 +183,7 @@ editing/deleting/delete-ligature-001.html
 editing/deleting/delete-by-word-001.html
 editing/deleting/delete-ligature-002.html
 editing/deleting/skip-virama-001.html
-editing/deleting/forward-delete-key.html
 editing/deleting/delete-by-word-002.html
-editing/deleting/5729680.html
 editing/inserting/typing-tab-designmode-forms.html
 editing/inserting/typing-tab-designmode.html
 editing/undo/undo-deleteWord.html
@@ -215,7 +196,6 @@ editing/input/emacs-ctrl-o.html
 editing/input/scroll-viewport-page-up-down.html
 editing/input/option-page-up-down.html
 editing/input/style-change-during-input.html
-editing/input/page-up-down-scrolls.html
 
 # [GTK] Implement drag and drop support in WebKit2
 # https://bugs.webkit.org/show_bug.cgi?id=63706
@@ -391,7 +371,6 @@ fast/events/ondrop-text-html.html
 fast/events/remove-target-in-mouseup.html
 fast/events/resources/drag-outside-window-frame.html
 fast/events/mouseover-mouseout2.html
-fast/events/node-event-anchor-lock.html
 fast/events/mouseover-button.html
 fast/events/click-focus-anchor.html
 fast/encoding/mailto-always-utf-8.html
@@ -615,10 +594,8 @@ editing/selection/5209984.html
 editing/selection/caret-at-bidi-boundary.html
 editing/selection/fake-drag.html
 editing/selection/paragraph-granularity.html
-editing/selection/5131716-3.html
 editing/selection/after-line-break.html
 editing/selection/anchor-focus3.html
-editing/selection/5057506-2.html
 editing/selection/anchor-focus1.html
 editing/selection/expanding-selections.html
 editing/selection/5232159.html

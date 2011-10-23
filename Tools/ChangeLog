@@ -1,3 +1,23 @@
+2011-10-23  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [GTK] Implement KeyDown function for WebKit2 EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=69410
+
+        Reviewed by Martin Robinson.
+
+        Implement the KeyDown function on Gtk platform.
+
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp: Added.
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::dispatchEvent):
+        (WTR::getModifiers):
+        (WTR::getGDKKeySymForKeyRef):
+        (WTR::EventSenderProxy::keyDown):
+
 2011-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2][GTK] run-launcher script fails after testing WK2 tests

@@ -38,7 +38,7 @@
 #include <cstdio>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(MAC) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
 #include "EventSenderProxy.h"
 #endif
 
@@ -74,7 +74,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
-#if PLATFORM(MAC) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
     , m_eventSenderProxy(new EventSenderProxy(this))
 #endif
 {
@@ -540,7 +540,7 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
 WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
-#if PLATFORM(MAC) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
@@ -565,6 +565,7 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 
+#if PLATFORM(MAC) || PLATFORM(QT)
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown") || WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
             WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
             unsigned button = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonKey.get()))));
@@ -617,7 +618,7 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             m_eventSenderProxy->leapForward(time);
             return 0;
         }
-
+#endif
         ASSERT_NOT_REACHED();
     }
 #endif
