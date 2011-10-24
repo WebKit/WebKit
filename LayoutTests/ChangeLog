@@ -1,3 +1,20 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening rebaselining.
+
+        Updating those baselines as they match Mac and looks like progressions. Linux was needing a wrong
+        rebaseline, so it was not rebaselined.
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/repaint: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint: Added.
+        * platform/chromium-mac-leopard/fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * platform/chromium-win/fast/repaint/table-cell-collapsed-border-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB add should fail adding an inline and passed key simultaneously

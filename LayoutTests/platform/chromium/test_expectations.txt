@@ -1364,7 +1364,7 @@ BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 
 // Fails due to r67862.
-BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
+BUGWK39966 LINUX : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
