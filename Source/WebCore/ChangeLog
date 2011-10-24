@@ -1,3 +1,15 @@
+2011-10-24  Adam Klein  <adamk@chromium.org>
+
+        Optimize Node::isInShadowTree to execute in constant-time
+        https://bugs.webkit.org/show_bug.cgi?id=67686
+
+        Reviewed by Dimitri Glazkov.
+
+        No expected change in behavior, so no new tests.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isInShadowTree):
+
 2011-10-24  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose WebThread::postDelayedTask to CCThread

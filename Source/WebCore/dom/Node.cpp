@@ -1592,10 +1592,7 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
 
 bool Node::isInShadowTree()
 {
-    for (Node* n = this; n; n = n->parentNode())
-        if (n->isShadowRoot())
-            return true;
-    return false;
+    return treeScope() != document();
 }
 
 Element* Node::parentOrHostElement() const
