@@ -121,6 +121,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             container.appendChild(tokens[i]);
         parentElement.insertBefore(container, nextElement);
         return container;
+    },
+
+    populateTextAreaContextMenu: function(contextMenu)
+    {
+        var selection = window.getSelection();
+        if (selection.type !== "Range" || selection.isCollapsed)
+            return;
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add to watch" : "Add to Watch"), this._delegate.addToWatch.bind(this._delegate, selection.toString()));
     }
 }
 

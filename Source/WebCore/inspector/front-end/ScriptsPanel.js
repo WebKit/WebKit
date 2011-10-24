@@ -1275,6 +1275,11 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     {
         var names = this._scriptsPanel._folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
         return names.displayName || "untitled.js";
+    },
+
+    addToWatch: function(expression)
+    {
+        this._scriptsPanel.sidebarPanes.watchExpressions.addExpression(expression);
     }
 }
 

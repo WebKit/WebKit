@@ -106,6 +106,11 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     showContextMenu(event);
 }
 
+static PassOwnPtr<ContextMenuItem> separatorItem()
+{
+    return adoptPtr(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
+}
+
 void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenuProvider> menuProvider)
 {
     m_menuProvider = menuProvider;
@@ -117,6 +122,10 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
     }
 
     m_menuProvider->populateContextMenu(m_contextMenu.get());
+    if (m_hitTestResult.isSelected()) {
+        appendItem(*separatorItem(), m_contextMenu.get());
+        populate();
+    }
     showContextMenu(event);
 }
 
@@ -427,11 +436,6 @@ void ContextMenuController::appendItem(ContextMenuItem& menuItem, ContextMenu* p
     checkOrEnableIfNeeded(menuItem);
     if (parentMenu)
         parentMenu->appendItem(menuItem);
-}
-
-static PassOwnPtr<ContextMenuItem> separatorItem()
-{
-    return adoptPtr(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
 }
 
 void ContextMenuController::createAndAppendFontSubMenu(ContextMenuItem& fontMenuItem)

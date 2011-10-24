@@ -829,7 +829,6 @@ WebInspector.SourceFrame.prototype = {
         this._delegate.requestContent(this._initializeTextViewer.bind(this));
     },
 
-
     shouldShowPopover: function(element) { },
 
     onShowPopover: function(element, showCallback) { },
@@ -920,7 +919,9 @@ WebInspector.SourceFrameDelegate.prototype = {
 
     setScriptSourceIsBeingEdited: function(inEditMode) { },
 
-    suggestedFileName: function() { }
+    suggestedFileName: function() { },
+
+    addToWatch: function() { }
 }
 
 /**

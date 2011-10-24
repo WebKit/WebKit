@@ -293,12 +293,8 @@ WebInspector.TextViewer.prototype = {
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (target)
             this._delegate.populateLineGutterContextMenu(target.lineNumber, contextMenu);
-        else {
-            var selection = this._mainPanel._getSelection();
-            if (selection && !selection.isEmpty())
-                return; // Show default context menu for selection.
+        else
             this._delegate.populateTextAreaContextMenu(contextMenu);
-        }
 
         var fileName = this._delegate.suggestedFileName();
         if (fileName)
