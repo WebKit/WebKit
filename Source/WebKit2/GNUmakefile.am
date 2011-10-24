@@ -1376,7 +1376,7 @@ endif
 
 EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/GNUmakefile.am \
-	$(WebKit2)/UIProcess/API/gtk/docs/webkitgtk-docs.sgml \
-	$(WebKit2)/UIProcess/API/gtk/docs/webkitgtk-sections.txt \
+	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
+	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
 	$(WebKit2)/UIProcess/API/gtk/docs/version.xml.in \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types
