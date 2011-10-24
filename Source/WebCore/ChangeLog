@@ -1,3 +1,11 @@
+2011-10-23  Adam Barth  <abarth@webkit.org>
+
+        Update baselines for run-bindings-tests.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2011-10-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getConstructDataVirtual
