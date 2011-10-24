@@ -3654,10 +3654,10 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, co
 
     object->view = ewkView;
     JSC::JSObject* runtimeObject = (JSC::JSObject*)JSC::Bindings::CInstance::create((NPObject*)object, root)->createRuntimeObject(executeState);
-    JSC::Identifier id = JSC::Identifier(exec, objectName);
+    JSC::Identifier id = JSC::Identifier(executeState, objectName);
 
     JSC::PutPropertySlot slot;
-    window->putVirtual(exec, id, runtimeObject, slot);
+    window->putVirtual(executeState, id, runtimeObject, slot);
     return EINA_TRUE;
 #else
     return EINA_FALSE;

@@ -153,7 +153,7 @@ static bool ewk_js_property_set(NPObject* npObject, NPIdentifier name, const NPV
     bool fail = false;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(npObject, false);
-    EINA_MAGIC_CHECK_OR_RETURN(obj, false);
+    EINA_MAGIC_CHECK_OR_RETURN(object, false);
 
     if (!_NPN_IdentifierIsString(name)) {
         ERR("int NPIdentifier is not supported.");
