@@ -3813,13 +3813,7 @@ BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html
 BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRASH
 BUGWK67031 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
-// r98183 removed test exceptions too aggressively. Add some back.
-
-BUGWK70704 SNOWLEOPARD : fast/css/focus-ring-multiline-writingmode-vertical.html = IMAGE PASS
-BUGWK70704 SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
-BUGWK70704 SNOWLEOPARD : fast/writing-mode/fallback-orientation.html = TEXT
-BUGWK70704 SNOWLEOPARD : fast/backgrounds/background-leakage-transforms.html = TEXT
+BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
 
 // Will rebaseline
 BUGLEVIW : svg/as-object/svg-embedded-in-html-in-iframe.html = FAIL
-
