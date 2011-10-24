@@ -1,3 +1,13 @@
+2011-10-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Crash when running pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=70725
+
+        Reviewed by Chang Shu.
+
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove g_thread_init() calls
