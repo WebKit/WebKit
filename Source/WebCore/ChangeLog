@@ -1,3 +1,15 @@
+2011-10-24  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Fix an ODR violation.
+        https://bugs.webkit.org/show_bug.cgi?id=70753
+
+        Reviewed by Anders Carlsson.
+
+        Both ScrollAnimatorNone and ScrollAnimatorMac define ScrollAnimator::create() on OS X.
+        Remove the unused one.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-10-24  Tim Horton  <timothy_horton@apple.com>
 
         feColorMatrix doesn't use the correct default "matrix" type when no type attribute is specified
