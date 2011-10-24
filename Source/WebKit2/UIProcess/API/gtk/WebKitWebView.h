@@ -27,6 +27,7 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
+#include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebLoaderClient.h>
@@ -110,6 +111,9 @@ webkit_web_view_can_go_back                 (WebKitWebView         *web_view);
 
 WEBKIT_API void
 webkit_web_view_go_forward                  (WebKitWebView         *web_view);
+
+WEBKIT_API WebKitBackForwardList *
+webkit_web_view_get_back_forward_list       (WebKitWebView         *web_view);
 
 WEBKIT_API gboolean
 webkit_web_view_can_go_forward              (WebKitWebView         *web_view);

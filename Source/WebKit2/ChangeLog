@@ -1,5 +1,86 @@
 2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Initial implementation of back forward list for WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69343
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp: Added.
+        (webkitBackForwardListFinalize):
+        (webkit_back_forward_list_init):
+        (webkit_back_forward_list_class_init):
+        (webkitBackForwardListGetOrCreateItem): Helper function that
+        creates a new WebKitBackForwardListItem for the given
+        WebBackForwardListItem or returns it from the cache if it's
+        already cached.
+        (webkitBackForwardListCreateList): Helper function to convert a
+        WKArray of WebBackForwardListItems into a GList of
+        WebKitBackForwardListItems.
+        (webkitBackForwardListCreate): Create a new WebKitBackForwardList.
+        (webkitBackForwardListChanged): Emits changed signal when the back
+        forward list changes.
+        (webkit_back_forward_list_get_current_item):
+        (webkit_back_forward_list_get_back_item):
+        (webkit_back_forward_list_get_forward_item):
+        (webkit_back_forward_list_get_nth_item):
+        (webkit_back_forward_list_get_length):
+        (webkit_back_forward_list_get_back_list):
+        (webkit_back_forward_list_get_back_list_with_limit):
+        (webkit_back_forward_list_get_forward_list):
+        (webkit_back_forward_list_get_forward_list_with_limit):
+        * UIProcess/API/gtk/WebKitBackForwardList.h: Added.
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp: Added.
+        (webkitBackForwardListItemFinalize):
+        (webkit_back_forward_list_item_init):
+        (webkit_back_forward_list_item_class_init):
+        (historyItemsMap): Global cache for WebKitBackForwardListItems.
+        (webkitBackForwardListItemFinalized):
+        (webkitBackForwardListItemGetOrCreate): Helper function that
+        creates a new WebKitBackForwardListItem for the given
+        WebBackForwardListItem or returns it from the global cache if it's
+        already cached.
+        (webkit_back_forward_list_item_get_uri):
+        (webkit_back_forward_list_item_get_title):
+        (webkit_back_forward_list_item_get_original_uri):
+        * UIProcess/API/gtk/WebKitBackForwardListItem.h: Added.
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (didChangeBackForwardList): Call webkitBackForwardListChanged() to
+        notify that the list has changed.
+        (webkitWebLoaderClientAttachLoaderClientToPage): Add
+        implementation for didChangeBackForwardList.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkit_web_view_get_back_forward_list): Return the back forward
+        list of the view.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test.
+        * UIProcess/API/gtk/tests/TestBackForwardList.cpp: Added.
+        (serverCallback):
+        (testBackForwardListNavigation):
+        (testBackForwardListLimitAndCache):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/TestMain.h:
+        (Test::~Test): Check there are no objects leaked.
+        (Test::objectFinalized): Callback called when a GObject is
+        deleted, used to remove the watched object the list.
+        (Test::assertObjectIsDeletedWhenTestFinishes): Add an object to
+        the list of watched objects and add a weak pointer to remove it
+        from the list when the object is finalized. If there aren't
+        objects leaked, the list should be empty when the test finishes.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::WebViewTest): Watch the web view to make sure it's
+        not leaked.
+        * UIProcess/API/gtk/tests/WebViewTest.h: Make WebViewTest inherit
+        from Test class.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitBackForwardList.h and
+        WebKitBackForwardListItem.h.
+        * UIProcess/API/gtk/webkit2marshal.list:
+
+2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add helper function to set the loader client in WebKitWebView
         https://bugs.webkit.org/show_bug.cgi?id=70594
 

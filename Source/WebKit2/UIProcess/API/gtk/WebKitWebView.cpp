@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "WebKitBackForwardListPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
 #include "WebKitWebLoaderClientPrivate.h"
@@ -50,6 +51,7 @@ struct _WebKitWebViewPrivate {
     double estimatedLoadProgress;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
+    GRefPtr<WebKitBackForwardList> backForwardList;
 };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -75,6 +77,8 @@ static void webkitWebViewConstructed(GObject* object)
 
     static GRefPtr<WebKitWebLoaderClient> defaultLoaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, NULL)));
     webkitWebViewSetLoaderClient(webView, defaultLoaderClient.get(), toAPI(page));
+
+    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -461,4 +465,20 @@ gdouble webkit_web_view_get_estimated_load_progress(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     return webView->priv->estimatedLoadProgress;
+}
+
+/**
+ * webkit_web_view_get_back_forward_list:
+ * @web_view: a #WebKitWebView
+ *
+ * Obtains the #WebKitBackForwardList associated with the given #WebKitWebView. The
+ * #WebKitBackForwardList is owned by the #WebKitWebView.
+ *
+ * Returns: (transfer none): the #WebKitBackForwardList
+ */
+WebKitBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->backForwardList.get();
 }

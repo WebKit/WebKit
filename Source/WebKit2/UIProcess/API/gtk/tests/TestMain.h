@@ -20,8 +20,9 @@
 #ifndef TestMain_h
 #define TestMain_h
 
-#include <glib.h>
+#include <glib-object.h>
 #include <JavaScriptCore/GOwnPtr.h>
+#include <JavaScriptCore/HashSet.h>
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
     static void setUp(ClassName* fixture, gconstpointer data) \
@@ -42,6 +43,24 @@ class Test
 {
 public:
     MAKE_GLIB_TEST_FIXTURE(Test);
+
+    ~Test()
+    {
+        g_assert(m_watchedObjects.isEmpty());
+    }
+
+    static void objectFinalized(Test* test, GObject* finalizedObject)
+    {
+        test->m_watchedObjects.remove(finalizedObject);
+    }
+
+    void assertObjectIsDeletedWhenTestFinishes(GObject* object)
+    {
+        m_watchedObjects.add(object);
+        g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(objectFinalized), this);
+    }
+
+    HashSet<GObject*> m_watchedObjects;
 };
 
 #endif // TestMain_h

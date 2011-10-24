@@ -71,6 +71,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 
 libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
 webkit2gtk_headers = \
+	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
@@ -474,6 +476,11 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDefines.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp \

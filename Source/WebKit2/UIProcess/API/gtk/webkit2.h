@@ -23,6 +23,8 @@
 
 #define __WEBKIT2_H_INSIDE__
 
+#include <webkit2/WebKitBackForwardList.h>
+#include <webkit2/WebKitBackForwardListItem.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>

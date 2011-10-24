@@ -24,6 +24,7 @@ WebViewTest::WebViewTest()
     : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(webkit_web_view_new())))
     , m_mainLoop(g_main_loop_new(0, TRUE))
 {
+    assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 }
 
 WebViewTest::~WebViewTest()

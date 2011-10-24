@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebLoaderClient.h"
 
+#include "WebKitBackForwardListPrivate.h"
 #include "WebKitError.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
@@ -125,6 +126,12 @@ static void didChangeProgress(WKPageRef page, const void* clientInfo)
     webkitWebViewSetEstimatedLoadProgress(webView, WKPageGetEstimatedProgress(page));
 }
 
+static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
+    webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(webView), addedItem, removedItems);
+}
+
 void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
 {
     WKPageLoaderClient wkLoaderClient = {
@@ -152,7 +159,7 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
         0, // processDidCrash
-        0, // didChangeBackForwardList
+        didChangeBackForwardList,
         0, // shouldGoToBackForwardListItem
         0 // didFailToInitializePlugin
     };

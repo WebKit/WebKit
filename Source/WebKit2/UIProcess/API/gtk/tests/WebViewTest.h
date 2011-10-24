@@ -23,7 +23,7 @@
 #include "TestMain.h"
 #include <webkit2/webkit2.h>
 
-class WebViewTest {
+class WebViewTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(WebViewTest);
     WebViewTest();
