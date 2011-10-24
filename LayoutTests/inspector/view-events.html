@@ -124,10 +124,26 @@ function test()
         {
             var parentView = new TestView("Parent");
             parentView.markAsRoot();
-            parentView.show(document.body);
-
             var childView = new TestView("Child");
             parentView.show(WebInspector.mainPanelsView.element);
+
+            parentView.doResize();
+            childView.show(parentView.element);
+            parentView.doResize();
+            parentView.detach();
+            parentView.show(WebInspector.mainPanelsView.element);
+            childView.detach();
+            parentView.detach();
+            next();
+        },
+
+        function testEventsHideOnDetach(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            childView.setHideOnDetach();
+            parentView.show(WebInspector.mainPanelsView.element);
+
             parentView.doResize();
             childView.show(parentView.element);
             parentView.doResize();
@@ -141,8 +157,7 @@ function test()
         function testViewCounter(next)
         {
             var parentView = new TestView("Parent");
-            parentView.markAsRoot();
-            parentView.show(document.body);
+            parentView.show(WebInspector.mainPanelsView.element);
 
             var childView = new TestView("Child");
             childView.show(parentView.element);
@@ -164,8 +179,7 @@ function test()
         function testRemoveChild(next)
         {
             var parentView = new TestView("Parent");
-            parentView.markAsRoot();
-            parentView.show(document.body);
+            parentView.show(WebInspector.mainPanelsView.element);
 
             var childView = new TestView("Child");
             childView.show(parentView.element);

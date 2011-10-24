@@ -1,3 +1,15 @@
+2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: make view load CSS files upon show.
+        https://bugs.webkit.org/show_bug.cgi?id=70696
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/view-css-expected.txt: Added.
+        * inspector/view-css.html: Added.
+        * inspector/view-events-expected.txt:
+        * inspector/view-events.html:
+
 2011-10-24  Kosztyo Kristof  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r98199

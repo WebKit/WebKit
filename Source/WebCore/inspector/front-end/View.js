@@ -37,7 +37,11 @@ WebInspector.View = function()
     this._isShowing = false;
     this._children = [];
     this._hideOnDetach = false;
+    this._cssFiles = [];
 }
+
+WebInspector.View._cssFileToVisibleViewCount = {};
+WebInspector.View._cssFileToStyleElement = {};
 
 WebInspector.View.prototype = {
     markAsRoot: function()
@@ -60,32 +64,44 @@ WebInspector.View.prototype = {
         return this._isRoot || (this._parentView && this._parentView.isShowing());
     },
 
+    _callOnVisibleChildren: function(method)
+    {
+        for (var i = 0; i < this._children.length; ++i)
+            if (this._children[i]._visible)
+                method.call(this._children[i]);
+    },
+
+    _processWillShow: function()
+    {
+        this._loadCSSIfNeeded();
+        this._callOnVisibleChildren(this._processWillShow);
+    },
+
     _processWasShown: function()
     {
-        if (!this._parentIsShowing())
-            return;
-
         this._isShowing = true;
         this.restoreScrollPositions();
 
         this.wasShown();
         this.onResize();
-        for (var i = 0; i < this._children.length; ++i)
-            this._children[i]._processWasShown();
+
+        this._callOnVisibleChildren(this._processWasShown);
     },
 
     _processWillHide: function()
     {
-        if (!this._parentIsShowing())
-            return;
-
         this.storeScrollPositions();
 
-        for (var i = 0; i < this._children.length; ++i)
-            this._children[i]._processWillHide();
+        this._callOnVisibleChildren(this._processWillHide);
 
         this.willHide();
         this._isShowing = false;
+    },
+
+    _processWasHidden: function()
+    {
+        this._disableCSSIfNeeded();
+        this._callOnVisibleChildren(this._processWasHidden);
     },
 
     _processOnResize: function()
@@ -94,8 +110,7 @@ WebInspector.View.prototype = {
             return;
 
         this.onResize();
-        for (var i = 0; i < this._children.length; ++i)
-            this._children[i]._processOnResize();
+        this._callOnVisibleChildren(this._processOnResize);
     },
 
     wasShown: function()
@@ -118,34 +133,38 @@ WebInspector.View.prototype = {
     {
         WebInspector.View._assert(parentElement, "Attempt to attach view with no parent element");
 
+        // Update view hierarchy
+        if (this.element.parentElement !== parentElement) {
+            var currentParent = parentElement;
+            while (currentParent && !currentParent.__view)
+                currentParent = currentParent.parentElement;
+
+            if (currentParent) {
+                this._parentView = currentParent.__view;
+                this._parentView._children.push(this);
+                this._isRoot = false;
+            } else
+                WebInspector.View._assert(this._isRoot, "Attempt to attach view to orphan node");
+        } else if (this._visible)
+            return;
+
         this._visible = true;
+        if (this._parentIsShowing())
+            this._processWillShow();
+
         this.element.addStyleClass("visible");
 
-        if (this.element.parentElement === parentElement) {
-            this._processWasShown();
-            return;
+        // Reparent
+        if (this.element.parentElement !== parentElement) {
+            WebInspector.View._incrementViewCounter(parentElement, this.element);
+            if (insertBefore)
+                WebInspector.View._originalInsertBefore.call(parentElement, this.element, insertBefore);
+            else
+                WebInspector.View._originalAppendChild.call(parentElement, this.element);
         }
 
-        // Force legal append
-        WebInspector.View._incrementViewCounter(parentElement, this.element);
-        if (insertBefore)
-            WebInspector.View._originalInsertBefore.call(parentElement, this.element, insertBefore);
-        else
-            WebInspector.View._originalAppendChild.call(parentElement, this.element);
-
-        // Update view hierarchy
-        var currentParent = parentElement;
-        while (currentParent && !currentParent.__view)
-            currentParent = currentParent.parentElement;
-
-        if (currentParent) {
-            this._parentView = currentParent.__view;
-            this._parentView._children.push(this);
-            this._isRoot = false;
-        } else
-            WebInspector.View._assert(this._isRoot, "Attempt to attach view to orphan node");
-
-        this._processWasShown();
+        if (this._parentIsShowing())
+            this._processWasShown();
     },
 
     detach: function()
@@ -154,10 +173,14 @@ WebInspector.View.prototype = {
         if (!parentElement)
             return;
 
-        this._processWillHide();
+        if (this._parentIsShowing())
+            this._processWillHide();
 
         if (this._hideOnDetach) {
             this.element.removeStyleClass("visible");
+            this._visible = false;
+            if (this._parentIsShowing())
+                this._processWasHidden();
             return;
         }
 
@@ -165,15 +188,18 @@ WebInspector.View.prototype = {
         WebInspector.View._decrementViewCounter(parentElement, this.element);
         WebInspector.View._originalRemoveChild.call(parentElement, this.element);
 
+        this._visible = false;
+        if (this._parentIsShowing())
+            this._processWasHidden();
+
         // Update view hierarchy
         if (this._parentView) {
             var childIndex = this._parentView._children.indexOf(this);
             WebInspector.View._assert(childIndex >= 0, "Attempt to remove non-child view");
             this._parentView._children.splice(childIndex, 1);
             this._parentView = null;
-        }
-
-        this._visible = false;
+        } else
+            WebInspector.View._assert(this._isRoot, "Removing non-root view from DOM");
     },
 
     detachChildViews: function()
@@ -222,6 +248,63 @@ WebInspector.View.prototype = {
     doResize: function()
     {
         this._processOnResize();
+    },
+
+    registerRequiredCSS: function(cssFile)
+    {
+        this._cssFiles.push(cssFile);
+    },
+
+    _loadCSSIfNeeded: function()
+    {
+        for (var i = 0; i < this._cssFiles.length; ++i) {
+            var cssFile = this._cssFiles[i];
+
+            var viewsWithCSSFile = WebInspector.View._cssFileToVisibleViewCount[cssFile];
+            WebInspector.View._cssFileToVisibleViewCount[cssFile] = (viewsWithCSSFile || 0) + 1;
+            if (!viewsWithCSSFile)
+                this._doLoadCSS(cssFile);
+        }
+    },
+
+    _doLoadCSS: function(cssFile)
+    {
+        var styleElement = WebInspector.View._cssFileToStyleElement[cssFile];
+        if (styleElement) {
+            styleElement.disabled = false;
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", cssFile, false);
+        xhr.send(null);
+
+        styleElement = document.createElement("style");
+        styleElement.type = "text/css";
+        styleElement.textContent = xhr.responseText;
+        document.head.insertBefore(styleElement, document.head.firstChild);
+
+        WebInspector.View._cssFileToStyleElement[cssFile] = styleElement;
+    },
+
+    _disableCSSIfNeeded: function()
+    {
+        for (var i = 0; i < this._cssFiles.length; ++i) {
+            var cssFile = this._cssFiles[i];
+
+            var viewsWithCSSFile = WebInspector.View._cssFileToVisibleViewCount[cssFile];
+            viewsWithCSSFile--;
+            WebInspector.View._cssFileToVisibleViewCount[cssFile] = viewsWithCSSFile;
+
+            if (!viewsWithCSSFile)
+                this._doUnloadCSS(cssFile);
+        }
+    },
+
+    _doUnloadCSS: function(cssFile)
+    {
+        var styleElement = WebInspector.View._cssFileToStyleElement[cssFile];
+        styleElement.disabled = true;
     },
 
     printViewHierarchy: function()

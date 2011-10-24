@@ -1,5 +1,30 @@
 2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: make view load CSS files upon show.
+        https://bugs.webkit.org/show_bug.cgi?id=70696
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/view-css.html
+
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype._callOnVisibleChildren):
+        (WebInspector.View.prototype._processWillShow):
+        (WebInspector.View.prototype._processWasShown):
+        (WebInspector.View.prototype._processWillHide):
+        (WebInspector.View.prototype._processWasHidden):
+        (WebInspector.View.prototype._processOnResize):
+        (WebInspector.View.prototype.show):
+        (WebInspector.View.prototype.detach):
+        (WebInspector.View.prototype.registerRequiredCSS):
+        (WebInspector.View.prototype._loadCSSIfNeeded):
+        (WebInspector.View.prototype._doLoadCSS):
+        (WebInspector.View.prototype._disableCSSIfNeeded):
+        (WebInspector.View.prototype._doUnloadCSS):
+
+2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: make DataGrid a view
         https://bugs.webkit.org/show_bug.cgi?id=70695
 
