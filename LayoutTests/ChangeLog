@@ -1,3 +1,19 @@
+2011-10-24  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: third chunk of baselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 736 of 743 files for brevity.]
+
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-length-of-neg-666666-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-position-direction-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/positioning/absolute-positioning-no-scrollbar-expected.png: Added.
+        ...
+        * platform/chromium-mac-leopard/fast/lists/ol-display-types-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/lists/ol-start-dynamic-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/lists/olstart-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [chromium] New failing test fast/events/dropzone-002.html
