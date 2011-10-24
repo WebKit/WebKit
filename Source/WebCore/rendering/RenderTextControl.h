@@ -65,8 +65,6 @@ protected:
     virtual void computeLogicalHeight();
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 
-    bool m_placeholderVisible;
-
 private:
     virtual const char* renderName() const { return "RenderTextControl"; }
     virtual bool isTextControl() const { return true; }
