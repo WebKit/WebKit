@@ -1,3 +1,13 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [chromium] New failing test fast/events/dropzone-002.html
+        https://bugs.webkit.org/show_bug.cgi?id=61625
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: The test has been passing
+        on all platforms except leopard for several days.
+
 2011-10-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Adding a new style rule breaks things

@@ -3204,7 +3204,7 @@ BUGADAMK VISTA : http/tests/history/redirect-301.html = PASS TIMEOUT
 
 BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
 
-BUGWK61625 : fast/events/dropzone-002.html = TEXT
+BUGWK61625 LEOPARD : fast/events/dropzone-002.html = TEXT
 
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
