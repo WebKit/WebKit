@@ -118,4 +118,10 @@ void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     }
 }
 
+void QTouchWebView::touchEvent(QTouchEvent* event)
+{
+    forceActiveFocus();
+    QSGItem::touchEvent(event);
+}
+
 #include "moc_qtouchwebview.cpp"

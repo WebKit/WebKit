@@ -25,6 +25,7 @@
 
 #include <QtDeclarative/qsgitem.h>
 
+class QTouchEvent;
 class QTouchWebPage;
 class QTouchWebViewPrivate;
 
@@ -45,6 +46,7 @@ public:
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void touchEvent(QTouchEvent* event);
 
 private:
     Q_PRIVATE_SLOT(d, void _q_viewportUpdated());

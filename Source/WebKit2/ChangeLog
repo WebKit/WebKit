@@ -1,3 +1,19 @@
+2011-10-24  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] WebView does not get focus when being clicked / touched in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=70613
+
+        Make TouchWebView and DesktopWebView take the focus whenever it receives
+        a MouseClick or a TouchEvent.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebView::mousePressEvent):
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebView::touchEvent):
+        * UIProcess/API/qt/qtouchwebview.h:
+
 2011-10-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] [WK2] Memory leaks in WebContextGtk.cpp

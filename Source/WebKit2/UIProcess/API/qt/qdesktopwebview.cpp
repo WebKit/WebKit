@@ -331,6 +331,7 @@ void QDesktopWebView::focusOutEvent(QFocusEvent* event)
 
 void QDesktopWebView::mousePressEvent(QMouseEvent* event)
 {
+    forceActiveFocus();
     this->event(event);
 }
 
