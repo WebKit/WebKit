@@ -90,6 +90,11 @@ void CCThreadImpl::postTask(PassOwnPtr<CCThread::Task> task)
     m_thread->postTask(new CCThreadTaskAdapter(task));
 }
 
+void CCThreadImpl::postDelayedTask(PassOwnPtr<CCThread::Task> task, long long delayMs)
+{
+    m_thread->postDelayedTask(new CCThreadTaskAdapter(task), delayMs);
+}
+
 ThreadIdentifier CCThreadImpl::threadID() const
 {
     return m_threadID;

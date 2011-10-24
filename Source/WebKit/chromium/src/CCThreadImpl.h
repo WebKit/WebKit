@@ -39,7 +39,8 @@ class CCThreadImpl : public WebCore::CCThread {
 public:
     static PassOwnPtr<WebCore::CCThread> create(WebThread*);
     virtual ~CCThreadImpl();
-    void postTask(PassOwnPtr<WebCore::CCThread::Task>);
+    virtual void postTask(PassOwnPtr<WebCore::CCThread::Task>);
+    virtual void postDelayedTask(PassOwnPtr<WebCore::CCThread::Task>, long long delayMs);
     WTF::ThreadIdentifier threadID() const;
 
 private:

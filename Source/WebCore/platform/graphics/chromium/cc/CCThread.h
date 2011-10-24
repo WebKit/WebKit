@@ -47,7 +47,11 @@ public:
         void* m_instance;
     };
 
-    virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
+    // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) = 0;
+
+    // Executes the task after the specified delay.
+    virtual void postDelayedTask(PassOwnPtr<Task>, long long delayMs) = 0;
 
     virtual WTF::ThreadIdentifier threadID() const = 0;
 };
