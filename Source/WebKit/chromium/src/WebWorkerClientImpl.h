@@ -69,7 +69,8 @@ public:
     // process, this will be the main WebKit thread.
     virtual void startWorkerContext(const WebCore::KURL&,
                                     const WTF::String&,
-                                    const WTF::String&);
+                                    const WTF::String&,
+                                    WebCore::WorkerThreadStartMode);
     virtual void terminateWorkerContext();
     virtual void postMessageToWorkerContext(
         PassRefPtr<WebCore::SerializedScriptValue> message,

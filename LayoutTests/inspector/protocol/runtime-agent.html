@@ -28,7 +28,8 @@ function test()
 
             ["RuntimeAgent", "getProperties", result.objectId, true],
             ["RuntimeAgent", "releaseObject", result.objectId],
-            ["RuntimeAgent", "releaseObjectGroup", 'test']];
+            ["RuntimeAgent", "releaseObjectGroup", 'test'],
+            ["RuntimeAgent", "run"]];
 
         InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'objectId', 'className']);
     }

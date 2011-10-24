@@ -380,6 +380,11 @@
                     { "name": "objectGroup", "type": "string", "description": "Symbolic object group name." }
                 ],
                 "description": "Releases all remote objects that belong to a given group."
+            },
+            {
+                "name": "run",
+                "hidden": true,
+                "description": "Tells inspected instance(worker or page) that it can run in case it was started paused."
             }
         ]
     },

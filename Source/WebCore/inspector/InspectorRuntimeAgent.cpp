@@ -140,6 +140,11 @@ void InspectorRuntimeAgent::releaseObjectGroup(ErrorString*, const String& objec
     m_injectedScriptManager->releaseObjectGroup(objectGroup);
 }
 
+void InspectorRuntimeAgent::run(ErrorString*)
+{
+    m_paused = false;
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorRuntimeAgent::setScriptDebugServer(ScriptDebugServer* scriptDebugServer)
 {
@@ -155,11 +160,6 @@ void InspectorRuntimeAgent::pauseWorkerContext(WorkerContext* context)
         result = context->thread()->runLoop().runInMode(context, WorkerDebuggerAgent::debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && m_paused);
-}
-
-void InspectorRuntimeAgent::resume()
-{
-    m_paused = false;
 }
 #endif // ENABLE(WORKERS)
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

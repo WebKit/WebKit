@@ -253,6 +253,22 @@ response:
     id : <number>
 }
 
+-----------------------------------------------------------
+RuntimeAgent.run()
+
+request:
+{
+    method : "Runtime.run"
+    id : <number>
+}
+
+response:
+{
+    result : {
+    }
+    id : <number>
+}
+
 ===========================================================
 Coverage for RuntimeAgent
 {
@@ -261,5 +277,6 @@ Coverage for RuntimeAgent
     getProperties : "checked"
     releaseObject : "checked"
     releaseObjectGroup : "checked"
+    run : "checked"
 }
 

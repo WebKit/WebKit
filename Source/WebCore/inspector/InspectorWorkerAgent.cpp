@@ -188,6 +188,11 @@ void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString*, bool value)
     m_inspectorState->setBoolean(WorkerAgentState::autoconnectToWorkers, value);
 }
 
+bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart()
+{
+    return m_inspectorState->getBoolean(WorkerAgentState::autoconnectToWorkers);
+}
+
 void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy);

@@ -56,6 +56,7 @@ public:
     void clearFrontend();
 
     // Called from InspectorInstrumentation
+    bool shouldPauseDedicatedWorkerOnStart();
     void didStartWorkerContext(WorkerContextProxy*, const KURL&);
     void workerContextTerminated(WorkerContextProxy*);
 

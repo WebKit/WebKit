@@ -1,3 +1,49 @@
+2011-10-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow debugging dedicated worker initialization
+        https://bugs.webkit.org/show_bug.cgi?id=70723
+
+        Now it is possible to pause each new dedicated worker on start. The user
+        needs to select a checkbox and then each newly created dedicated worker
+        will be paused on the first statement until the user resumes it explicitely.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json: resume command is added. It is similar to GDB's run
+        command, i.e. worker execution will be paused until explicit "resume" command is
+        received.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::resume):
+        (WebCore::InspectorRuntimeAgent::pauseWorkerContext):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart): returns true
+        if the user chose to automatically pause all new workers.
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::resume):
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.loaded):
+        (WebInspector.WorkerManager.loadCompleted):
+        (WebInspector.WorkerManager.prototype._workerCreated):
+        (WebInspector.WorkerManager.prototype.openWorkerInspector):
+        (WebInspector.WorkerManager.prototype._openInspectorWindow):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext): additional flag specifying
+        worker initial state(paused/not paused) is added to the factory method. The flag
+        will be carried to the corresponding WorkerThread.
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        * workers/WorkerMessagingProxy.h:
+
 2011-10-21  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Make indent configurable

@@ -47,13 +47,26 @@ WebInspector.WorkerManager.isWorkerFrontend = function()
 WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["dedicatedWorkerId"];
-    if (workerId)
+    if (workerId) {
         WebInspector.WorkerManager._initializeDedicatedWorkerFrontend(workerId);
-    else
+    } else
         WebInspector.workerManager = new WebInspector.WorkerManager();
+}
 
-    if (WebInspector.WorkerManager.isWorkerFrontend())
+WebInspector.WorkerManager.loadCompleted = function()
+{
+    // Make sure script execution of dedicated worker is resumed and then paused
+    // on the first script statement in case we autoattached to it.
+    if (WebInspector.queryParamsObject["workerPaused"]) {
+        DebuggerAgent.pause();
+        RuntimeAgent.run(calculateTitle);
+    } else if (WebInspector.WorkerManager.isWorkerFrontend())
+        calculateTitle();
+
+    function calculateTitle()
+    {
         WebInspector.WorkerManager._calculateWorkerInspectorTitle();
+    }
 }
 
 WebInspector.WorkerManager._initializeDedicatedWorkerFrontend = function(workerId)
@@ -104,7 +117,7 @@ WebInspector.WorkerManager.prototype = {
     _workerCreated: function(workerId, url, inspectorConnected)
      {
         if (inspectorConnected)
-            this._openInspectorWindow(workerId);
+            this._openInspectorWindow(workerId, true);
         this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerAdded, {workerId: workerId, url: url, inspectorConnected: inspectorConnected});
      },
 
@@ -123,13 +136,15 @@ WebInspector.WorkerManager.prototype = {
 
     openWorkerInspector: function(workerId)
     {
-        this._openInspectorWindow(workerId);
+        this._openInspectorWindow(workerId, false);
         WorkerAgent.connectToWorker(workerId);
     },
 
-    _openInspectorWindow: function(workerId)
+    _openInspectorWindow: function(workerId, workerIsPaused)
     {
         var url = window.location.href + "&dedicatedWorkerId=" + workerId;
+        if (workerIsPaused)
+            url += "&workerPaused=true";
         url = url.replace("docked=true&", "");
         // Set location=0 just to make sure the front-end will be opened in a separate window, not in new tab.
         var workerInspectorWindow = window.open(url, undefined, "location=0");

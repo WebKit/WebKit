@@ -34,6 +34,7 @@
 #if ENABLE(WORKERS)
 
 #include "MessagePort.h"
+#include "WorkerThread.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -49,7 +50,7 @@ namespace WebCore {
 
         virtual ~WorkerContextProxy() {}
 
-        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode) = 0;
+        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) = 0;
 
         virtual void terminateWorkerContext() = 0;
 

@@ -442,6 +442,7 @@ WebInspector.loaded = function()
     }
     WebInspector.WorkerManager.loaded();
     WebInspector.doLoadedDone();
+    WebInspector.WorkerManager.loadCompleted();
 }
 
 WebInspector.doLoadedDone = function()

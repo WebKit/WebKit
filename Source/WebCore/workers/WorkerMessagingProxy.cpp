@@ -266,9 +266,9 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
            || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
 }
 
-void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
 {
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, DontPauseWorkerContextOnStart);
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode);
     workerThreadCreated(thread);
     thread->start();
 }
@@ -366,7 +366,7 @@ void WorkerMessagingProxy::connectToInspector(WorkerContextProxy::PageInspector*
         return;
     ASSERT(!m_pageInspector);
     m_pageInspector = pageInspector;
-    m_workerThread->runLoop().postTask(createCallbackTask(connectToWorkerContextInspectorTask, true));
+    m_workerThread->runLoop().postTaskForMode(createCallbackTask(connectToWorkerContextInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
 }
 
 static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)

@@ -75,12 +75,12 @@ public:
     void releaseObject(ErrorString*, const String& objectId);
     void getProperties(ErrorString*, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
+    void run(ErrorString*);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void setScriptDebugServer(ScriptDebugServer*);
 #if ENABLE(WORKERS)
     void pauseWorkerContext(WorkerContext*);
-    void resume();
 #endif
 #endif
 

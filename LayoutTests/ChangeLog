@@ -1,3 +1,13 @@
+2011-10-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: allow debugging dedicated worker initialization
+        https://bugs.webkit.org/show_bug.cgi?id=70723
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+
 2011-10-24  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skip failing test in GTK, added bug 70720. Rebaseline

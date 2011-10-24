@@ -209,7 +209,8 @@ void WorkerInspectorController::dispatchMessageFromFrontend(const String& messag
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void WorkerInspectorController::resume()
 {
-    m_runtimeAgent->resume();
+    ErrorString unused;
+    m_runtimeAgent->run(&unused);
 }
 #endif
 

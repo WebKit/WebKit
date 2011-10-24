@@ -85,9 +85,9 @@ WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker
     return 0;
 }
 
-void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
 {
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, DontPauseWorkerContextOnStart);
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode);
     m_proxy->workerThreadCreated(thread);
     thread->start();
 }

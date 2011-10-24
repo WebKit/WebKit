@@ -780,6 +780,13 @@ void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrum
 }
 
 #if ENABLE(WORKERS)
+bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
+        return workerAgent->shouldPauseDedicatedWorkerOnStart();
+    return false;
+}
+
 void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
