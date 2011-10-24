@@ -1,5 +1,29 @@
 2011-10-24  Sam Weinig  <sam@webkit.org>
 
+        Add URL getters for the WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=70752
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (autoreleased):
+        Added helpers for autoreleasing.
+
+        (-[WKBrowsingContextController activeURL]):
+        Added buy not implemented yet.
+
+        (-[WKBrowsingContextController pendingURL]):
+        (-[WKBrowsingContextController provisionalURL]):
+        (-[WKBrowsingContextController commitedURL]):
+        (-[WKBrowsingContextController unreachableURL]):
+        Added getters.
+
+        (-[WKBrowsingContextController title]):
+        Convert to new autoreleased helper.
+
+2011-10-24  Sam Weinig  <sam@webkit.org>
+
         Add zoom and title support to Objective-C WebKit2 API
         https://bugs.webkit.org/show_bug.cgi?id=70744
 

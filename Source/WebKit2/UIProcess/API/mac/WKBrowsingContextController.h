@@ -72,6 +72,24 @@ WK_EXPORT
 @property(readonly) BOOL canGoBack;
 
 
+#pragma mark Active Load Introspection
+
+/* URL for the active load. This is the URL that should be shown in user interface. */
+@property(readonly) NSURL *activeURL;
+
+/* URL that has been requested to load by the user, but not yet sent. */
+@property(readonly) NSURL *pendingURL;
+
+/* URL for a request that has been sent, but no response has been recieved yet. */
+@property(readonly) NSURL *provisionalURL;
+
+/* URL for a request that has been recieved, and is now being used. */
+@property(readonly) NSURL *commitedURL;
+
+/* URL for a request that had an error, whose error page is now showing. */
+@property(readonly) NSURL *unreachableURL;
+
+
 #pragma mark Active Document Introspection
 
 /* Title of the document associated with the active load. */

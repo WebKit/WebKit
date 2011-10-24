@@ -27,11 +27,27 @@
 #import "WKBrowsingContextController.h"
 #import "WKBrowsingContextControllerInternal.h"
 
+#import "WKFrame.h"
 #import "WKPage.h"
 #import "WKRetainPtr.h"
+#import "WKStringCF.h"
+#import "WKURLCF.h"
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
-#import "WKStringCF.h"
+
+
+static inline NSString *autoreleased(WKStringRef string)
+{
+    WKRetainPtr<WKStringRef> wkString = adoptWK(string);
+    return [(NSString *)WKStringCopyCFString(kCFAllocatorDefault, wkString.get()) autorelease];
+}
+
+static inline NSURL *autoreleased(WKURLRef url)
+{
+    WKRetainPtr<WKURLRef> wkURL = adoptWK(url);
+    return [(NSURL *)WKURLCopyCFURL(kCFAllocatorDefault, wkURL.get()) autorelease];
+}
+
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public
@@ -105,12 +121,41 @@
     return WKPageCanGoBack(self.pageRef);
 }
 
+
+#pragma mark Active Load Introspection
+
+- (NSURL *)activeURL
+{
+    /* FIXME: Implement. */
+    return nil;
+}
+
+- (NSURL *)pendingURL
+{
+    return autoreleased(WKPageCopyPendingAPIRequestURL(self.pageRef));
+}
+
+- (NSURL *)provisionalURL
+{
+    return autoreleased(WKFrameCopyProvisionalURL(WKPageGetMainFrame(self.pageRef)));
+}
+
+- (NSURL *)commitedURL
+{
+    return autoreleased(WKFrameCopyURL(WKPageGetMainFrame(self.pageRef)));
+}
+
+- (NSURL *)unreachableURL
+{
+    return autoreleased(WKFrameCopyUnreachableURL(WKPageGetMainFrame(self.pageRef)));
+}
+
+
 #pragma mark Active Document Introspection
 
 - (NSString *)title
 {
-    WKRetainPtr<WKStringRef> wkTitle = adoptWK(WKPageCopyTitle(self.pageRef));
-    return [(NSString *)WKStringCopyCFString(kCFAllocatorDefault, wkTitle.get()) autorelease];
+    return autoreleased(WKPageCopyTitle(self.pageRef));
 }
 
 #pragma mark Zoom
