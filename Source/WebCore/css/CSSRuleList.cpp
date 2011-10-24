@@ -24,6 +24,7 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -97,15 +98,15 @@ unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
 
 String CSSRuleList::rulesText() const
 {
-    String result;
+    StringBuilder result;
 
     for (unsigned index = 0; index < length(); ++index) {
-        result += "  ";
-        result += item(index)->cssText();
-        result += "\n";
+        result.append("  ");
+        result.append(item(index)->cssText());
+        result.append("\n");
     }
 
-    return result;
+    return result.toString();
 }
 
 } // namespace WebCore

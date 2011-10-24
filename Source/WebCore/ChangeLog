@@ -1,3 +1,19 @@
+2011-10-24  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Use StringBuilder in CSSRuleList::rulesText()/CSSSelectorList::selectorsText()
+        https://bugs.webkit.org/show_bug.cgi?id=70746
+
+        Reviewed by Tony Chang.
+
+        Covered by existing tests.
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::rulesText):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::selectorsText):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::cssText): Use CSSRuleList::rulesText() method instead of explicit loop.
+
 2011-10-24  Michael Saboff  <msaboff@apple.com>
 
         WebKit doesn't build with recent changes to libdispatch

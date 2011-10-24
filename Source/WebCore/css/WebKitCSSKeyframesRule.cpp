@@ -147,14 +147,8 @@ String WebKitCSSKeyframesRule::cssText() const
     result += m_name;
     result += " { \n";
 
-    if (m_lstCSSRules) {
-        unsigned len = m_lstCSSRules->length();
-        for (unsigned i = 0; i < len; i++) {
-            result += "  ";
-            result += m_lstCSSRules->item(i)->cssText();
-            result += "\n";
-        }
-    }
+    if (m_lstCSSRules)
+        result += m_lstCSSRules->rulesText();
 
     result += "}";
     return result;

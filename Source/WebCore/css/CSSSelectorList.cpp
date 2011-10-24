@@ -28,6 +28,7 @@
 #include "CSSSelectorList.h"
 
 #include "CSSParserValues.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -107,15 +108,15 @@ void CSSSelectorList::deleteSelectors()
 
 String CSSSelectorList::selectorsText() const
 {
-    String result;
+    StringBuilder result;
 
     for (CSSSelector* s = first(); s; s = next(s)) {
         if (s != first())
-            result += ", ";
-        result += s->selectorText();
+            result.append(", ");
+        result.append(s->selectorText());
     }
 
-    return result;
+    return result.toString();
 }
 
 template <typename Functor>
