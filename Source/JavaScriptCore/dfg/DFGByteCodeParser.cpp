@@ -78,8 +78,10 @@ private:
     // Helper for min and max.
     bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
     
+    // Handle calls. This resolves issues surrounding inlining and intrinsics.
+    void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int firstArg, int lastArg, unsigned nextOffset);
+    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg, PredictedType prediction);
     // Prepare to parse a block.
@@ -796,7 +798,7 @@ private:
         
         InlineStackEntry* m_caller;
         
-        InlineStackEntry(ByteCodeParser*, CodeBlock*, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart);
+        InlineStackEntry(ByteCodeParser*, CodeBlock*, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart, CodeSpecializationKind);
         
         ~InlineStackEntry()
         {
@@ -837,31 +839,69 @@ private:
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
 
-bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op, CodeSpecializationKind kind)
 {
-    if (!usesResult)
-        return true;
-
-    if (lastArg == firstArg) {
-        set(resultOperand, constantNaN());
-        return true;
-    }
-     
-    if (lastArg == firstArg + 1) {
-        set(resultOperand, getToNumber(firstArg + 1));
-        return true;
-    }
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
     
-    if (lastArg == firstArg + 2) {
-        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
-        return true;
+    NodeIndex callTarget = get(currentInstruction[1].u.operand);
+    enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
+            
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    printf("Slow case count for call at @%lu bc#%u: %u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
+            
+    if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
+        callType = ConstantFunction;
+    else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex))
+        callType = LinkedFunction;
+    else
+        callType = UnknownFunction;
+    if (callType != UnknownFunction) {
+        int argCount = currentInstruction[2].u.operand;
+        int registerOffset = currentInstruction[3].u.operand;
+        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+        int lastArg = firstArg + argCount - 1;
+                
+        // Do we have a result?
+        bool usesResult = false;
+        int resultOperand = 0; // make compiler happy
+        unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
+        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+        PredictedType prediction = PredictNone;
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+            resultOperand = putInstruction[1].u.operand;
+            usesResult = true;
+            prediction = getPrediction(m_graph.size(), nextOffset);
+            nextOffset += OPCODE_LENGTH(op_call_put_result);
+        }
+        JSFunction* expectedFunction;
+        DFG::Intrinsic intrinsic;
+        bool certainAboutExpectedFunction;
+        if (callType == ConstantFunction) {
+            expectedFunction = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget);
+            intrinsic = expectedFunction->executable()->intrinsicFor(kind);
+            certainAboutExpectedFunction = true;
+        } else {
+            ASSERT(callType == LinkedFunction);
+            expectedFunction = m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee.get();
+            intrinsic = expectedFunction->executable()->intrinsicFor(kind);
+            certainAboutExpectedFunction = false;
+        }
+                
+        if (intrinsic != NoIntrinsic) {
+            if (!certainAboutExpectedFunction)
+                addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
+                    
+            if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction))
+                return;
+        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, firstArg, lastArg, nextOffset, kind))
+            return;
     }
-    
-    // Don't handle >=3 arguments for now.
-    return false;
+            
+    addCall(interpreter, currentInstruction, op);
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int firstArg, int lastArg, unsigned nextOffset)
+bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
     if (!expectedFunction)
@@ -890,8 +930,8 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // Does the code block's size match the heuristics/requirements for being
     // an inline candidate?
-    CodeBlock* profiledBlock = executable->profiledCodeBlockFor(CodeForCall);
-    if (!mightInlineFunctionForCall(profiledBlock))
+    CodeBlock* profiledBlock = executable->profiledCodeBlockFor(kind);
+    if (!mightInlineFunctionFor(profiledBlock, kind))
         return false;
     
     // If we get here then it looks like we should definitely inline this code. Proceed
@@ -899,14 +939,14 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Note that the code block we get here is intended to die after handleInlining()
     // returns.
     JSObject* exception;
-    OwnPtr<CodeBlock> codeBlock = executable->produceCodeBlockFor(expectedFunction->scope(), OptimizingCompilation, CodeForCall, exception);
+    OwnPtr<CodeBlock> codeBlock = executable->produceCodeBlockFor(expectedFunction->scope(), OptimizingCompilation, kind, exception);
     if (!codeBlock)
         return false;
     ASSERT(!exception);
     
     // Now that we have the bytecode, check if we really can inline it. This may fail
     // if the code block contains some nasty opcodes.
-    if (!canInlineFunctionForCall(codeBlock.get()))
+    if (!canInlineFunctionFor(codeBlock.get(), kind))
         return false;
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -918,6 +958,8 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // are flushed.
     if (!certainAboutExpectedFunction)
         addToGraph(CheckFunction, OpInfo(expectedFunction), callTargetNodeIndex);
+    
+    // FIXME: Don't flush constants!
     
     flush(callTarget);
     for (int arg = firstArg + 1; arg <= lastArg; ++arg)
@@ -937,7 +979,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
             m_graph.m_blocks[i]->ensureLocals(newNumLocals);
     }
 
-    InlineStackEntry inlineStackEntry(this, codeBlock.get(), profiledBlock, m_graph.m_blocks.size() - 1, (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), (VirtualRegister)m_inlineStackTop->remapOperand(usesResult ? resultOperand : InvalidVirtualRegister), (VirtualRegister)inlineCallFrameStart);
+    InlineStackEntry inlineStackEntry(this, codeBlock.get(), profiledBlock, m_graph.m_blocks.size() - 1, (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), (VirtualRegister)m_inlineStackTop->remapOperand(usesResult ? resultOperand : InvalidVirtualRegister), (VirtualRegister)inlineCallFrameStart, kind);
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
@@ -1037,6 +1079,30 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     printf("Done inlining executable %p, continuing code generation in new block.\n", executable);
 #endif
     return true;
+}
+
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+{
+    if (!usesResult)
+        return true;
+
+    if (lastArg == firstArg) {
+        set(resultOperand, constantNaN());
+        return true;
+    }
+     
+    if (lastArg == firstArg + 1) {
+        set(resultOperand, getToNumber(firstArg + 1));
+        return true;
+    }
+    
+    if (lastArg == firstArg + 2) {
+        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
+        return true;
+    }
+    
+    // Don't handle >=3 arguments for now.
+    return false;
 }
 
 bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg, PredictedType prediction)
@@ -1224,7 +1290,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_callee: {
-            set(currentInstruction[1].u.operand, addToGraph(GetCallee));
+            if (m_inlineStackTop->m_inlineCallFrame)
+                set(currentInstruction[1].u.operand, getDirect(m_inlineStackTop->m_inlineCallFrame->calleeVR));
+            else
+                set(currentInstruction[1].u.operand, addToGraph(GetCallee));
             NEXT_OPCODE(op_get_callee);
         }
 
@@ -1583,7 +1652,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             size_t offset = notFound;
             StructureSet structureSet;
-            if (stubInfo.seen) {
+            if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
                 switch (stubInfo.accessType) {
                 case access_get_by_id_self: {
                     Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
@@ -1954,74 +2023,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(ThrowReferenceError);
             LAST_OPCODE(op_throw_reference_error);
             
-        case op_call: {
-            NodeIndex callTarget = get(currentInstruction[1].u.operand);
-            enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
-            
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for call at @%lu bc#%u: %u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-#endif
-            
-            if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
-                callType = ConstantFunction;
-            else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex))
-                callType = LinkedFunction;
-            else
-                callType = UnknownFunction;
-            if (callType != UnknownFunction) {
-                int argCount = currentInstruction[2].u.operand;
-                int registerOffset = currentInstruction[3].u.operand;
-                int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-                int lastArg = firstArg + argCount - 1;
-                
-                // Do we have a result?
-                bool usesResult = false;
-                int resultOperand = 0; // make compiler happy
-                unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
-                Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-                PredictedType prediction = PredictNone;
-                if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
-                    resultOperand = putInstruction[1].u.operand;
-                    usesResult = true;
-                    prediction = getPrediction(m_graph.size(), nextOffset);
-                    nextOffset += OPCODE_LENGTH(op_call_put_result);
-                }
-                JSFunction* expectedFunction;
-                DFG::Intrinsic intrinsic;
-                bool certainAboutExpectedFunction;
-                if (callType == ConstantFunction) {
-                    expectedFunction = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget);
-                    intrinsic = expectedFunction->executable()->intrinsic();
-                    certainAboutExpectedFunction = true;
-                } else {
-                    ASSERT(callType == LinkedFunction);
-                    expectedFunction = m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee.get();
-                    intrinsic = expectedFunction->executable()->intrinsic();
-                    certainAboutExpectedFunction = false;
-                }
-                
-                if (intrinsic != NoIntrinsic) {
-                    if (!certainAboutExpectedFunction)
-                        addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
-                    
-                    if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
-                        // NEXT_OPCODE() has to be inside braces.
-                        NEXT_OPCODE(op_call);
-                    }
-                } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, firstArg, lastArg, nextOffset)) {
-                    // NEXT_OPCODE() has to be inside braces.
-                    NEXT_OPCODE(op_call);
-                }
-            }
-            
-            addCall(interpreter, currentInstruction, Call);
+        case op_call:
+            handleCall(interpreter, currentInstruction, Call, CodeForCall);
             NEXT_OPCODE(op_call);
-        }
             
-        case op_construct: {
-            addCall(interpreter, currentInstruction, Construct);
+        case op_construct:
+            handleCall(interpreter, currentInstruction, Construct, CodeForConstruct);
             NEXT_OPCODE(op_construct);
-        }
             
         case op_call_put_result:
             NEXT_OPCODE(op_call_put_result);
@@ -2262,7 +2270,7 @@ void ByteCodeParser::buildOperandMapsIfNecessary()
     m_haveBuiltOperandMaps = true;
 }
 
-ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParser, CodeBlock* codeBlock, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart)
+ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParser, CodeBlock* codeBlock, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart, CodeSpecializationKind kind)
     : m_byteCodeParser(byteCodeParser)
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
@@ -2285,7 +2293,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
         inlineCallFrame.calleeVR = calleeVR;
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.numArgumentsIncludingThis = codeBlock->m_numParameters;
-        inlineCallFrame.isCall = true;
+        inlineCallFrame.isCall = isCall(kind);
         byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
         m_inlineCallFrame = &byteCodeParser->m_codeBlock->inlineCallFrames().last();
         
@@ -2412,7 +2420,7 @@ bool ByteCodeParser::parse()
     // Set during construction.
     ASSERT(!m_currentIndex);
     
-    InlineStackEntry inlineStackEntry(this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, InvalidVirtualRegister, InvalidVirtualRegister);
+    InlineStackEntry inlineStackEntry(this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, InvalidVirtualRegister, InvalidVirtualRegister, CodeForCall);
     
     parseCodeBlock();
 

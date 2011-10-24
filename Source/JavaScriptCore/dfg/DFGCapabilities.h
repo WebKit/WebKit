@@ -28,6 +28,7 @@
 
 #include "DFGIntrinsic.h"
 #include "DFGNode.h"
+#include "Executable.h"
 #include "Heuristics.h"
 #include "Interpreter.h"
 #include <wtf/Platform.h>
@@ -58,9 +59,9 @@ inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Heuristics::maximumFunctionForCallInlineCandidateInstructionCount;
 }
-inline bool mightInlineFunctionForConstruct(CodeBlock*)
+inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return false;
+    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForConstructInlineCandidateInstructionCount;
 }
 
 // Opcode checking.
@@ -180,10 +181,6 @@ inline bool canInlineOpcode(OpcodeID opcodeID)
     case op_resolve_base:
     case op_resolve_global:
         
-    // Trivial to support with the copy propagation machine we already have, but the glue
-    // isn't there, yet.
-    case op_get_callee:
-        
     // Inlining doesn't correctly remap regular expression operands.
     case op_new_regexp:
         return false;
@@ -237,6 +234,22 @@ inline bool canInlineFunctionForCall(CodeBlock* codeBlock)
 inline bool canInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
     return mightInlineFunctionForConstruct(codeBlock) && canInlineOpcodes(codeBlock);
+}
+
+inline bool mightInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind)
+{
+    if (kind == CodeForCall)
+        return mightInlineFunctionForCall(codeBlock);
+    ASSERT(kind == CodeForConstruct);
+    return mightInlineFunctionForConstruct(codeBlock);
+}
+
+inline bool canInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind)
+{
+    if (kind == CodeForCall)
+        return canInlineFunctionForCall(codeBlock);
+    ASSERT(kind == CodeForConstruct);
+    return canInlineFunctionForConstruct(codeBlock);
 }
 
 } } // namespace JSC::DFG

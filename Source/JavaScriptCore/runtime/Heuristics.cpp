@@ -45,6 +45,7 @@ unsigned maximumFunctionForCallOptimizationCandidateInstructionCount;
 unsigned maximumFunctionForConstructOptimizationCandidateInstructionCount;
 
 unsigned maximumFunctionForCallInlineCandidateInstructionCount;
+unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
 unsigned maximumInliningDepth;
 
@@ -119,9 +120,10 @@ void initializeHeuristics()
     SET(maximumFunctionForCallOptimizationCandidateInstructionCount,      std::numeric_limits<unsigned>::max());
     SET(maximumFunctionForConstructOptimizationCandidateInstructionCount, std::numeric_limits<unsigned>::max());
     
-    SET(maximumFunctionForCallInlineCandidateInstructionCount, 100);
+    SET(maximumFunctionForCallInlineCandidateInstructionCount, 150);
+    SET(maximumFunctionForConstructInlineCandidateInstructionCount, 80);
     
-    SET(maximumInliningDepth, 3);
+    SET(maximumInliningDepth, 5);
 
     SET(executionCounterValueForOptimizeAfterWarmUp,     -1000);
     SET(executionCounterValueForOptimizeAfterLongWarmUp, -5000);

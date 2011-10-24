@@ -1,3 +1,20 @@
+2011-10-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline constructors
+        https://bugs.webkit.org/show_bug.cgi?id=70675
+
+        Reviewed by Oliver Hunt.
+        
+        Adds test that asserts that register pressure induced by inlining doesn't
+        result in spilling corrupting values.
+
+        * fast/js/dfg-inlining-reg-alloc-expected.txt: Added.
+        * fast/js/dfg-inlining-reg-alloc.html: Added.
+        * fast/js/script-tests/dfg-inlining-reg-alloc.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2011-10-23  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Test expecation change. inspector/elements/edit-dom-actions.html times out since around r98120:98133 (chromium 106751:106770).

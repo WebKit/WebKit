@@ -600,6 +600,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     case CheckMethod:
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
         forNode(node.child1()).filter(m_graph.m_methodCheckData[node.methodCheckDataIndex()].structure);
+        forNode(nodeIndex).set(PredictObjectOther);
         m_haveStructures = true;
         break;
         

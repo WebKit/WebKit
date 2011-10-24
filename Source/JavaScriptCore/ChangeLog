@@ -1,3 +1,50 @@
+2011-10-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline constructors
+        https://bugs.webkit.org/show_bug.cgi?id=70675
+
+        Reviewed by Oliver Hunt.
+        
+        Adds support for inlining constructors. Also fixes two pathologies
+        uncovered along the way: CheckMethod claimed that it never returned a
+        result (causing CheckMethod -> SetLocal -> GetLocal sequences to
+        result in the GetLocal doing OSR exit), and get_by_id parsing never
+        checked if it was hot in slow path. Also fiddled with inlining
+        heuristics; it appears that for now, the more inlining, the happier
+        V8 is. Finally, a bug was uncovered where a silent spill of a boxed
+        integer that had previously been spilled unboxed causes the silent
+        fill to forget to unbox.
+        
+        This appears to be a 4% speed-up on V8 in their harness, or a 1%
+        speed-up in my harness. The difference is due to warm-up: in my
+        harness we see significant amounts of time spent in compilation, but
+        in V8's harness compilation gets amortizes. Profiling indicates that
+        we have the potential for a 5% win from basic optimizations like
+        generating OSR exits lazily and holding onto bytecode longer.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        (JSC::DFG::canInlineOpcode):
+        (JSC::DFG::mightInlineFunctionFor):
+        (JSC::DFG::canInlineFunctionFor):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        * runtime/Executable.h:
+        (JSC::isCall):
+        (JSC::ExecutableBase::intrinsicFor):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-10-23  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove RopeImpl.{h,cpp} from the gyp projects

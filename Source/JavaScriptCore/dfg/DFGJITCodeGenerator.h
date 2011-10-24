@@ -339,6 +339,7 @@ protected:
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
+            ASSERT(isJSInteger(info.registerFormat()));
             if (node.hasConstant()) {
                 ASSERT(isInt32Constant(nodeIndex));
                 m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
@@ -346,7 +347,7 @@ protected:
                 m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
             return;
         }
-
+        
         if (registerFormat == DataFormatCell) {
             if (node.isConstant()) {
                 JSValue value = valueOfJSConstant(nodeIndex);
@@ -366,12 +367,20 @@ protected:
 #if USE(JSVALUE64)
         if (node.hasConstant())
             m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
-        else
+        else if (info.spillFormat() == DataFormatInteger) {
+            ASSERT(registerFormat == DataFormatJSInteger);
+            m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr());
+        } else
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
 #else
         if (node.hasConstant())
             m_jit.emitLoad(valueOfJSConstant(nodeIndex), info.tagGPR(), info.payloadGPR());
-        else
+        else if (info.spillFormat() == DataFormatInteger) {
+            ASSERT(registerFormat == DataFormatJSInteger);
+            m_jit.load32(JITCompiler::payloadFor(spillMe), info.payloadGPR());
+            m_jit.move(Int32(JSValue::Int32Tag), info.tagGPR());
+        } else
             m_jit.emitLoad(nodeIndex, info.tagGPR(), info.payloadGPR());
 #endif
     }

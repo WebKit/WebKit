@@ -36,6 +36,7 @@ extern unsigned maximumFunctionForCallOptimizationCandidateInstructionCount;
 extern unsigned maximumFunctionForConstructOptimizationCandidateInstructionCount;
 
 extern unsigned maximumFunctionForCallInlineCandidateInstructionCount;
+extern unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
 extern unsigned maximumInliningDepth; // Depth of inline stack, so 1 = no inlining, 2 = one level, etc.
 

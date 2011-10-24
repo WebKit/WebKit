@@ -47,6 +47,14 @@ namespace JSC {
     enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
     enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
+    inline bool isCall(CodeSpecializationKind kind)
+    {
+        if (kind == CodeForCall)
+            return true;
+        ASSERT(kind == CodeForConstruct);
+        return false;
+    }
+
     class ExecutableBase : public JSCell {
         friend class JIT;
 
@@ -157,7 +165,15 @@ namespace JSC {
         }
 
 #if ENABLE(DFG_JIT)
+        // Intrinsics are only for calls, currently.
         virtual DFG::Intrinsic intrinsic() const;
+        
+        DFG::Intrinsic intrinsicFor(CodeSpecializationKind kind) const
+        {
+            if (isCall(kind))
+                return intrinsic();
+            return DFG::NoIntrinsic;
+        }
 #endif
 
     protected:
