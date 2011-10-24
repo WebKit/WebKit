@@ -65,8 +65,6 @@ bool CCLayerTreeHost::initialize()
 {
     TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
     if (m_settings.enableCompositorThread) {
-        // Accelerated Painting is not supported in threaded mode. Turn it off.
-        m_settings.acceleratePainting = false;
         // The HUD does not work in threaded mode. Turn it off.
         m_settings.showFPSCounter = false;
         m_settings.showPlatformLayerTree = false;

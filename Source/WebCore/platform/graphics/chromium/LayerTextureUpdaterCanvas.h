@@ -79,7 +79,7 @@ private:
     LayerTextureSubImage m_texSubImage;
 };
 
-#if USE(SKIA) && USE(ACCELERATED_DRAWING)
+#if USE(SKIA)
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
 public:
     static PassRefPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>);
@@ -92,20 +92,10 @@ public:
 
 private:
     explicit LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium>);
-    void deleteFrameBuffer();
-    bool createFrameBuffer();
-    GraphicsContext3D* context() { return m_context; }
-
-    GraphicsContext3D* m_context;
-
-    bool m_createFrameBuffer; // Need to create FBO if true.
+  
     SkPicture m_picture; // Recording canvas.
-    IntSize m_bufferSize; // Frame buffer size.
-    Platform3DObject m_fbo; // Frame buffer id.
-    Platform3DObject m_depthStencilBuffer;
-    OwnPtr<SkCanvas> m_canvas; // GPU accelerated canvas.
 };
-#endif // USE(SKIA) && USE(ACCELERATED_DRAWING)
+#endif // USE(SKIA)
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

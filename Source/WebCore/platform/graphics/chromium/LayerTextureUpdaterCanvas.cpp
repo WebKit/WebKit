@@ -46,6 +46,66 @@
 
 namespace WebCore {
 
+#if USE(SKIA)
+namespace {
+
+class FrameBuffer {
+public:
+    FrameBuffer();
+    ~FrameBuffer();
+
+    SkCanvas* initialize(GraphicsContext3D*, TextureAllocator*, ManagedTexture*);
+
+private:
+    GraphicsContext3D* m_context;
+    Platform3DObject m_fbo;
+    OwnPtr<SkCanvas> m_canvas;
+};
+
+FrameBuffer::FrameBuffer()
+    : m_context(0)
+    , m_fbo(0)
+{
+}
+
+FrameBuffer::~FrameBuffer()
+{
+    m_canvas.clear();
+
+    if (m_fbo)
+        m_context->deleteFramebuffer(m_fbo);
+}
+
+SkCanvas* FrameBuffer::initialize(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture)
+{
+    m_context = context;
+    m_fbo = m_context->createFramebuffer();
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    texture->framebufferTexture2D(m_context, allocator);
+
+    // Create a skia gpu canvas.
+    GrContext* grContext = m_context->grContext();
+    IntSize canvasSize = texture->size();
+    GrPlatformSurfaceDesc targetDesc;
+    targetDesc.reset();
+    targetDesc.fSurfaceType = kTextureRenderTarget_GrPlatformSurfaceType;
+    targetDesc.fRenderTargetFlags = kNone_GrPlatformRenderTargetFlagBit;
+    targetDesc.fWidth = canvasSize.width();
+    targetDesc.fHeight = canvasSize.height();
+    targetDesc.fConfig = kRGBA_8888_GrPixelConfig;
+    targetDesc.fStencilBits = 8;
+    targetDesc.fPlatformTexture = texture->textureId();
+    targetDesc.fPlatformRenderTarget = m_fbo;
+    SkAutoTUnref<GrTexture> target(static_cast<GrTexture*>(grContext->createPlatformSurface(targetDesc)));
+    SkAutoTUnref<SkDevice> device(new SkGpuDevice(grContext, target.get()));
+    m_canvas = adoptPtr(new SkCanvas(device.get()));
+
+    return m_canvas.get();
+}
+
+} // namespace
+#endif // USE(SKIA)
+
 LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChromium> painter)
     : m_painter(painter)
 {
@@ -101,7 +161,7 @@ void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, Te
     m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
 }
 
-#if USE(SKIA) && USE(ACCELERATED_DRAWING)
+#if USE(SKIA)
 PassRefPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
 {
     return adoptRef(new LayerTextureUpdaterSkPicture(painter));
@@ -109,16 +169,11 @@ PassRefPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(Pa
 
 LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter)
     : LayerTextureUpdaterCanvas(painter)
-    , m_context(0)
-    , m_createFrameBuffer(false)
-    , m_fbo(0)
-    , m_depthStencilBuffer(0)
 {
 }
 
 LayerTextureUpdaterSkPicture::~LayerTextureUpdaterSkPicture()
 {
-    deleteFrameBuffer();
 }
 
 LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterSkPicture::sampledTexelFormat(GC3Denum textureFormat)
@@ -129,14 +184,6 @@ LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterSkPicture::sampledTex
 
 void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
 {
-    // Need to recreate FBO if tile-size changed.
-    // Note that we cannot create the framebuffer here because this function does not run in compositor thread
-    // and hence does not have access to compositor context.
-    if (m_bufferSize != tileSize) {
-        m_createFrameBuffer = true;
-        m_bufferSize = tileSize;
-    }
-
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
     GraphicsContext graphicsContext(&platformContext);
@@ -144,116 +191,28 @@ void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, c
     m_picture.endRecording();
 }
 
-void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* compositorContext, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
-    ASSERT(!m_context || m_context == compositorContext);
-    m_context = compositorContext;
-
-    if (m_createFrameBuffer) {
-        deleteFrameBuffer();
-        createFrameBuffer();
-        m_createFrameBuffer = false;
-    }
-    if (!m_fbo)
-        return;
-
-    // Bind texture.
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    texture->framebufferTexture2D(context(), allocator);
-    ASSERT(context()->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
-
     // Make sure SKIA uses the correct GL context.
-    context()->makeContextCurrent();
-
-    GrContext* skiaContext = m_context->grContext();
+    context->makeContextCurrent();
     // Notify SKIA to sync its internal GL state.
-    skiaContext->resetContext();
-    m_canvas->save();
-    m_canvas->clipRect(SkRect(destRect));
+    context->grContext()->resetContext();
+
+    // Create an accelerated canvas to draw on.
+    FrameBuffer buffer;
+    SkCanvas* canvas = buffer.initialize(context, allocator, texture);
+
+    canvas->clipRect(SkRect(destRect));
     // Translate the origin of contentRect to that of destRect.
     // Note that destRect is defined relative to sourceRect.
-    m_canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
-                        contentRect().y() - sourceRect.y() + destRect.y());
-    m_canvas->drawPicture(m_picture);
-    m_canvas->restore();
+    canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
+                      contentRect().y() - sourceRect.y() + destRect.y());
+    canvas->drawPicture(m_picture);
+
     // Flush SKIA context so that all the rendered stuff appears on the texture.
-    skiaContext->flush();
-
-    // Unbind texture.
-    context()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, 0, 0);
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
+    context->grContext()->flush();
 }
-
-void LayerTextureUpdaterSkPicture::deleteFrameBuffer()
-{
-    m_canvas.clear();
-
-    if (m_depthStencilBuffer) {
-        context()->deleteRenderbuffer(m_depthStencilBuffer);
-        m_depthStencilBuffer = 0;
-    }
-    if (m_fbo) {
-        context()->deleteFramebuffer(m_fbo);
-        m_fbo = 0;
-    }
-}
-
-bool LayerTextureUpdaterSkPicture::createFrameBuffer()
-{
-    ASSERT(!m_fbo);
-    ASSERT(!m_bufferSize.isEmpty());
-
-    // SKIA only needs color and stencil buffers, not depth buffer.
-    // But it is very uncommon for cards to support color + stencil FBO config.
-    // The most common config is color + packed-depth-stencil.
-    // Instead of iterating through all possible FBO configs, we only try the
-    // most common one here.
-    // FIXME: Delegate the task of creating frame-buffer to SKIA.
-    // It has all necessary code to iterate through all possible configs
-    // and choose the one most suitable for its purposes.
-    Extensions3D* extensions = context()->getExtensions();
-    if (!extensions->supports("GL_OES_packed_depth_stencil"))
-        return false;
-    extensions->ensureEnabled("GL_OES_packed_depth_stencil");
-
-    // Create and bind a frame-buffer-object.
-    m_fbo = context()->createFramebuffer();
-    if (!m_fbo)
-        return false;
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-
-    // We just need to create a stencil buffer for FBO.
-    // The color buffer (texture) will be provided by tiles.
-    // SKIA does not need depth buffer.
-    m_depthStencilBuffer = context()->createRenderbuffer();
-    if (!m_depthStencilBuffer) {
-        deleteFrameBuffer();
-        return false;
-    }
-    context()->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-    context()->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, Extensions3D::DEPTH24_STENCIL8, m_bufferSize.width(), m_bufferSize.height());
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-
-    // Create a skia gpu canvas.
-    GrContext* skiaContext = m_context->grContext();
-    GrPlatformSurfaceDesc targetDesc;
-    targetDesc.reset();
-    targetDesc.fSurfaceType = kRenderTarget_GrPlatformSurfaceType;
-    targetDesc.fRenderTargetFlags = kNone_GrPlatformRenderTargetFlagBit;
-    targetDesc.fWidth = m_bufferSize.width();
-    targetDesc.fHeight = m_bufferSize.height();
-    targetDesc.fConfig = kRGBA_8888_GrPixelConfig;
-    targetDesc.fStencilBits = 8;
-    targetDesc.fPlatformRenderTarget = m_fbo;
-    SkAutoTUnref<GrRenderTarget> target(static_cast<GrRenderTarget*>(skiaContext->createPlatformSurface(targetDesc)));
-    SkAutoTUnref<SkDevice> device(new SkGpuDevice(skiaContext, target.get()));
-    m_canvas = adoptPtr(new SkCanvas(device.get()));
-
-    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
-    return true;
-}
-#endif // USE(SKIA) && USE(ACCELERATED_DRAWING)
+#endif // USE(SKIA)
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

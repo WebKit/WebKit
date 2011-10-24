@@ -1,3 +1,27 @@
+2011-10-24  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Make accelerated drawing work with threaded compositing
+        https://bugs.webkit.org/show_bug.cgi?id=70656
+
+        Reviewed by James Robinson.
+
+        Make sure that the compositor context is not used outside LayerTextureUpdater::updateTextureRect().
+        Created a FrameBuffer class that wraps skia gpu canvas and manages GL resources.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::FrameBuffer::FrameBuffer::FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::~FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::initialize):
+        (WebCore::LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::~LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::prepareToUpdate):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+
 2011-10-24  Adam Klein  <adamk@chromium.org>
 
         Optimize Node::isInShadowTree to execute in constant-time
