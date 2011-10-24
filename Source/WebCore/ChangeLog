@@ -1,3 +1,16 @@
+2011-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        Unbreak binding generation tests
+        https://bugs.webkit.org/show_bug.cgi?id=70768
+
+        Reviewed by Darin Adler.
+
+        Update the expected output of V8 binding tests to match
+        results c/o https://bugs.webkit.org/show_bug.cgi?id=70065
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::idbKeyCallback):
+
 2011-10-21  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add isTraceEventEnabled to PlatformSupport.

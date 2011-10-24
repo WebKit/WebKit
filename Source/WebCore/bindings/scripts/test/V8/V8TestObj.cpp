@@ -780,18 +780,8 @@ static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.idbKey");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    {
-    RefPtr<IDBKey> key = createIDBKeyFromValue(args[0]);
-    if (UNLIKELY(!key)) {
-        ec = TYPE_MISMATCH_ERR;
-        goto fail;
-    }
+    EXCEPTION_BLOCK(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->idbKey(key);
-    return v8::Handle<v8::Value>();
-    }
-    fail:
-    V8Proxy::setDOMException(ec);
     return v8::Handle<v8::Value>();
 }
 
