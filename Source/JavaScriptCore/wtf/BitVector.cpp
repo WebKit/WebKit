@@ -91,7 +91,7 @@ void BitVector::resizeOutOfLine(size_t numBits)
     OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
     if (isInline()) {
         // Make sure that all of the bits are zero in case we do a no-op resize.
-        *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
+        *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1));
     } else {
         if (numBits > size()) {
             size_t oldNumWords = outOfLineBits()->numWords();
@@ -103,6 +103,7 @@ void BitVector::resizeOutOfLine(size_t numBits)
         OutOfLineBits::destroy(outOfLineBits());
     }
     m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits);
+    ASSERT(!isInline());
 }
 
 #ifndef NDEBUG

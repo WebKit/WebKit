@@ -1,3 +1,34 @@
+2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        BitVector isInline check could fail
+        https://bugs.webkit.org/show_bug.cgi?id=70691
+
+        Reviewed by Geoffrey Garen.
+
+        Current BitVector uses the highest bit of m_bitsOrPointer to indicate
+        whether it's an inlined bit set or a pointer to an outOfLine bit set.
+        This check may fail in case the pointer also has the highest bit set,
+        which is surely possible on IA32 (Linux).
+        In this case the check failure can result in unexpected behaviors,
+        for example if the BitVector is incorrectly determined as having an
+        inlined bit set, then setting a bit exceeding maxInlineBits will wrongly
+        modify the memory adjacent to the BitVector object.
+        This fix is to use the lowest bit of m_bitsOrPointer to indicate inline
+        or outofline, based on the assumption that the pointer to OutOfLineBits
+        should be 4 or 8 byte aligned.
+        We could mark the lowest bit (bit 0) with 1 for inlined bit set,
+        and bits 1~bitsInPointer are used for bit set/test.
+        In this case we need do one bit more shift for bit set/test.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        (WTF::BitVector::quickGet):
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        (WTF::BitVector::makeInlineBits):
+        (WTF::BitVector::isInline):
+
 2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static getOwnPropertySlot to getOwnPropertySlotByIndex
