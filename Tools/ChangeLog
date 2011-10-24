@@ -1,5 +1,16 @@
 2011-10-24  Eric Seidel  <eric@webkit.org>
 
+        Plugin tests are failing after switching WK2 to NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=70760
+
+        Reviewed by Simon Fraser.
+
+        Perpetuate this horrible hack.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2011-10-24  Eric Seidel  <eric@webkit.org>
+
         NRWT doesn't support ORWT's --root option, but should
         https://bugs.webkit.org/show_bug.cgi?id=70416
 

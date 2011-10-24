@@ -110,8 +110,15 @@ class WebKitPort(Port):
         return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output)
 
     def _build_driver(self):
+        # FIXME: We build both DumpRenderTree and WebKitTestRunner for
+        # WebKitTestRunner runs because DumpRenderTree still includes
+        # the DumpRenderTreeSupport module and the TestNetscapePlugin.
+        # These two projects should be factored out into their own
+        # projects.
         try:
-            self._run_script(self._driver_build_script_name())
+            self._run_script("build-dumprendertree")
+            if self.get_option('webkit_test_runner'):
+                self._run_script("build-webkittestrunner")
         except ScriptError:
             _log.error("Failed to build %s" % self.driver_name())
             return False

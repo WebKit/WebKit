@@ -155,12 +155,13 @@ BUG_SKIPPED SKIP : media = FAIL""")
 
         # Make sure when passed --webkit-test-runner web build the right tool.
         port._options = MockOptions(webkit_test_runner=True, configuration="Release")
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\nMOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
         self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
         # Make sure that failure to build returns False.
         port._executive = MockExecutive(should_log=True, should_throw=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
+        # Because WK2 currently has to build both webkittestrunner and DRT, if DRT fails, that's the only one it tries.
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\n"
         self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
     def _assert_config_file_for_platform(self, port, platform, config_file):
