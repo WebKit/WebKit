@@ -1,5 +1,21 @@
 2011-10-24  Levi Weintraub  <leviw@chromium.org>
 
+        Adding Chromium expectations from http://trac.webkit.org/changeset/98263
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-snowleopard/svg/as-object: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-object: Removed.
+        * platform/chromium-linux/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-object: Added.
+        * platform/chromium-mac-snowleopard/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/chromium-win/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/chromium-win/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-10-24  Levi Weintraub  <leviw@chromium.org>
+
         Fixing a collision in Mac results and adding qt results from http://trac.webkit.org/changeset/98263
 
         Unreviewed test expectations update.

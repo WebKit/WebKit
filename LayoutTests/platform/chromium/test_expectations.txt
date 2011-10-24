@@ -3812,6 +3812,3 @@ BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRAS
 BUGWK67031 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
 BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
-
-// Will rebaseline
-BUGLEVIW : svg/as-object/svg-embedded-in-html-in-iframe.html = FAIL
