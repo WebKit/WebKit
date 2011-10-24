@@ -36,8 +36,20 @@
 namespace WebKit {
 
 // In chromium multi-dll build, webkit unittest code are compiled in webkit.dll.
-// This is the API to run all unittests inside webkit.dll.
-WEBKIT_EXPORT int RunAllUnitTests(int argc, char** argv);
+// This means the test suite object needs to be initialized inside WebKit.
+//
+// However, the webkit unittest code needs to also initialize/teardown.
+// This leads to the API here, which has explicit managment of the TestSuite
+// lifetime.
+
+// Initialize the global testSuite object inside webkit.dll
+WEBKIT_EXPORT void InitTestSuite(int argc, char** argv);
+
+// Runs all tests found inside webkit.dll
+WEBKIT_EXPORT int RunAllUnitTests();
+
+// Deletes the global testSuite object inside webkit.dll
+WEBKIT_EXPORT void DeleteTestSuite();
 
 } // namespace WebKit
 

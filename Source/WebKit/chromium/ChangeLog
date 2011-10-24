@@ -1,3 +1,18 @@
+2011-10-24  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Manage webkit_unit_tests TestSuite lifetime explicitly in DLL build
+        https://bugs.webkit.org/show_bug.cgi?id=70688
+
+        Reviewed by Tony Chang.
+
+        * tests/RunAllTests.cpp:
+        (main):
+        * tests/WebUnitTests.cpp:
+        (WebKit::InitTestSuite):
+        (WebKit::RunAllUnitTests):
+        (WebKit::DeleteTestSuite):
+        * tests/WebUnitTests.h:
+
 2011-10-24  Aaron Colwell  <acolwell@chromium.org>
 
         Enable MEDIA_SOURCE feature for Chromium

@@ -32,13 +32,31 @@
 #include "WebUnitTests.h"
 
 #include <base/test/test_suite.h>
+#include <gmock/gmock.h>
+
+static TestSuite* testSuite = 0;
 
 namespace WebKit {
 
-int RunAllUnitTests(int argc, char** argv)
+void InitTestSuite(int argc, char** argv)
 {
-    TestSuite testSuite(argc, argv);
-    return testSuite.Run();
+    ::testing::InitGoogleMock(&argc, argv);
+    testSuite = new TestSuite(argc, argv);
+}
+
+int RunAllUnitTests()
+{
+    ASSERT(testSuite);
+
+    int result = testSuite->Run();
+
+    return result;
+}
+
+void DeleteTestSuite()
+{
+    delete testSuite;
+    testSuite = 0;
 }
 
 } // namespace WebKit

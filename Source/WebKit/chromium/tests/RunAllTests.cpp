@@ -41,22 +41,25 @@
 
 #include <gmock/gmock.h>
 
+// TestSuite must be created before SetUpTestEnvironment so it performs
+// initializations needed by WebKit support. This is slightly complicated by the
+// fact that chromium multi-dll build requires that the TestSuite object be created
+// and run inside webkit.dll.
 int main(int argc, char** argv)
 {
+#if defined(WEBKIT_DLL_UNITTEST)
+    WebKit::InitTestSuite(argc, argv);
+    webkit_support::SetUpTestEnvironmentForUnitTests();
+    int result = WebKit::RunAllUnitTests();
+    webkit_support::TearDownTestEnvironment();
+    WebKit::DeleteTestSuite();
+#else
     ::testing::InitGoogleMock(&argc, argv);
     TestSuite testSuite(argc, argv);
-    // TestSuite must be created before SetUpTestEnvironment so it performs
-    // initializations needed by WebKit support.
     webkit_support::SetUpTestEnvironmentForUnitTests();
-
-#if defined(WEBKIT_DLL_UNITTEST)
-    // For chromium multi-dll build, need to call webkit api to create a
-    // TestSuite instance in webkit.dll and run all tests from there.
-    int result = WebKit::RunAllUnitTests(argc, argv);
-#else
     int result = testSuite.Run();
+    webkit_support::TearDownTestEnvironment();
 #endif
 
-    webkit_support::TearDownTestEnvironment();
     return result;
 }
