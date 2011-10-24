@@ -81,7 +81,7 @@ public:
         result += result >> 15;
         result ^= result << 10;
 
-        // Reserving the high bits for flags perserves most of the hash's value,
+        // Reserving the high bits for flags preserves most of the hash's value,
         // since hash lookup typically masks out the high bits anyway.
         result >>= flagCount;
 
