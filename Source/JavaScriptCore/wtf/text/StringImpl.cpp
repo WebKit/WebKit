@@ -1122,20 +1122,6 @@ WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirec
     return WTF::Unicode::LeftToRight;
 }
 
-// This is a hot function because it's used when parsing HTML.
-PassRefPtr<StringImpl> StringImpl::createStrippingNullCharactersSlowCase(const UChar* characters, unsigned length)
-{
-    StringBuffer strippedCopy(length);
-    unsigned strippedLength = 0;
-    for (unsigned i = 0; i < length; i++) {
-        if (int c = characters[i])
-            strippedCopy[strippedLength++] = c;
-    }
-    ASSERT(strippedLength < length);  // Only take the slow case when stripping.
-    strippedCopy.shrink(strippedLength);
-    return adopt(strippedCopy);
-}
-
 PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer& buffer)
 {
     unsigned length = buffer.length();

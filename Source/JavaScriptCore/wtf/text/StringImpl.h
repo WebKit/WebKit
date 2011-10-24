@@ -193,7 +193,6 @@ public:
 
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data); }
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
-    static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
 
     template<size_t inlineCapacity>
     static PassRefPtr<StringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
@@ -393,8 +392,6 @@ private:
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
     static const unsigned s_copyCharsInlineCutOff = 20;
 
-    static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
-    
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
@@ -456,29 +453,6 @@ static inline bool isSpaceOrNewline(UChar c)
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.
     return c <= 0x7F ? WTF::isASCIISpace(c) : WTF::Unicode::direction(c) == WTF::Unicode::WhiteSpaceNeutral;
-}
-
-// This is a hot function because it's used when parsing HTML.
-inline PassRefPtr<StringImpl> StringImpl::createStrippingNullCharacters(const UChar* characters, unsigned length)
-{
-    ASSERT(characters);
-    ASSERT(length);
-
-    // Optimize for the case where there are no Null characters by quickly
-    // searching for nulls, and then using StringImpl::create, which will
-    // memcpy the whole buffer.  This is faster than assigning character by
-    // character during the loop. 
-
-    // Fast case.
-    int foundNull = 0;
-    for (unsigned i = 0; !foundNull && i < length; i++) {
-        int c = characters[i]; // more efficient than using UChar here (at least on Intel Mac OS)
-        foundNull |= !c;
-    }
-    if (!foundNull)
-        return StringImpl::create(characters, length);
-
-    return StringImpl::createStrippingNullCharactersSlowCase(characters, length);
 }
 
 struct StringHash;

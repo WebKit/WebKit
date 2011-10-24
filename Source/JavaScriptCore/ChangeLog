@@ -1,3 +1,16 @@
+2011-10-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed StringImpl::createStrippingNullCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=70700
+
+        Reviewed by David Levin.
+        
+        It was unused.
+
+        * JavaScriptCore.exp:
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+
 2011-10-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline constructors
