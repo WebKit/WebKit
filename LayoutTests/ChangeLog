@@ -1,3 +1,9 @@
+2011-10-24  Kosztyo Kristof  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r98199
+
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-10-24  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Setting defaultValue should hide an input placeholder.
