@@ -246,11 +246,12 @@ namespace JSC {
 
     public:
         virtual ~CodeBlock();
-        
+
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
-        
+
+#if ENABLE(JIT)
         CodeBlock* baselineVersion()
         {
             CodeBlock* result = replacement();
@@ -262,7 +263,8 @@ namespace JSC {
             ASSERT(result->getJITType() == JITCode::BaselineJIT);
             return result;
         }
-        
+#endif
+
         void visitAggregate(SlotVisitor&);
 
         static void dumpStatistics();
