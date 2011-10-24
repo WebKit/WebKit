@@ -145,6 +145,7 @@ EXPORTS
     ?deleteOwnedPtr@WTF@@YAXPAUHRGN__@@@Z
     ?deleteProperty@JSObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?deleteProperty@JSVariableObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@@Z
+    ?deletePropertyByIndex@JSObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@I@Z
     ?deletePropertyVirtual@JSCell@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deletePropertyVirtual@JSCell@JSC@@UAE_NPAVExecState@2@I@Z
     ?deletePropertyVirtual@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z

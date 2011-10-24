@@ -1,3 +1,11 @@
+2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fixing Windows build
+
+        Unreviewed build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         BitVector isInline check could fail
