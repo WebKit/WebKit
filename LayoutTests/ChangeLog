@@ -1,3 +1,16 @@
+2011-10-24  Filip Pizlo  <fpizlo@apple.com>
+
+        op_new_array_buffer is not inlined correctly
+        https://bugs.webkit.org/show_bug.cgi?id=70770
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-inline-new-array-buffer-expected.txt: Added.
+        * fast/js/dfg-inline-new-array-buffer.html: Added.
+        * fast/js/script-tests/dfg-inline-new-array-buffer.js: Added.
+        (foo):
+        (bar):
+
 2011-10-24  Tim Horton  <timothy_horton@apple.com>
 
         feColorMatrix doesn't use the correct default "matrix" type when no type attribute is specified

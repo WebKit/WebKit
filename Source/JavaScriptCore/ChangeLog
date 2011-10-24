@@ -1,3 +1,15 @@
+2011-10-24  Filip Pizlo  <fpizlo@apple.com>
+
+        op_new_array_buffer is not inlined correctly
+        https://bugs.webkit.org/show_bug.cgi?id=70770
+
+        Reviewed by Oliver Hunt.
+        
+        Disabled inlining of op_new_array_buffer, for now.
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineOpcode):
+
 2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Add boolean speculations to DFG JIT 32_64
