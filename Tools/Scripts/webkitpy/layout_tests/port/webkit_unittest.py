@@ -125,6 +125,11 @@ class WebKitPortTest(port_testcase.PortTestCase):
         port._options = MockOptions(webkit_test_runner=True)
         self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'wk2']))
 
+    def test_root_option(self):
+        port = TestWebKitPort()
+        port._options = MockOptions(root='/foo')
+        self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree")
+
     def test_test_expectations(self):
         # Check that we read both the expectations file and anything in a
         # Skipped file, and that we include the feature and platform checks.

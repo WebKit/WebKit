@@ -252,6 +252,8 @@ def parse_args(args=None):
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",
             help="Use WebKitTestRunner rather than DumpRenderTree."),
+        optparse.make_option("--root", action="store",
+            help="Path to a pre-built root of WebKit (for running tests using a nightly build of WebKit)"),
     ]
 
     old_run_webkit_tests_compat = [

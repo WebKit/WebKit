@@ -885,8 +885,6 @@ class Port(object):
     # The routines below should only be called by routines in this class
     # or any of its subclasses.
     #
-    def _webkit_build_directory(self, args):
-        return self._config.build_directory(args[0])
 
     def _uses_apache(self):
         return True

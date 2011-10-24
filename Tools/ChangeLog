@@ -1,3 +1,19 @@
+2011-10-24  Eric Seidel  <eric@webkit.org>
+
+        NRWT doesn't support ORWT's --root option, but should
+        https://bugs.webkit.org/show_bug.cgi?id=70416
+
+        Reviewed by Dirk Pranke.
+
+        Add support for ORWT's --root option which is used for
+        running tests with a nightly build of WebKit.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+         - webkit_build_path was never called by any code, removed.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-10-24  David Levin  <levin@chromium.org>
 
         check-webkit-style complains about WEBKIT_EXPORT in test/WebUnitTests.h

@@ -440,7 +440,7 @@ chdirWebKit();
 
 if (!defined($root) && !$noBuildDumpTool) {
     # FIXME: We build both DumpRenderTree and WebKitTestRunner for
-    # WebKitTestRunner runs becuase DumpRenderTree still includes
+    # WebKitTestRunner runs because DumpRenderTree still includes
     # the DumpRenderTreeSupport module and the TestNetscapePlugin.
     # These two projects should be factored out into their own
     # projects.

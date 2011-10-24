@@ -125,7 +125,8 @@ class WebKitPort(Port):
         return True
 
     def check_build(self, needs_http):
-        if self.get_option('build') and not self._build_driver():
+        # If we're using a pre-built copy of WebKit (--root), we assume it also includes a build of DRT.
+        if not self.get_option('root') and self.get_option('build') and not self._build_driver():
             return False
         if not self._check_driver():
             return False
@@ -364,8 +365,11 @@ class WebKitPort(Port):
         return tests_to_skip
 
     def _build_path(self, *comps):
-        return self._filesystem.join(self._config.build_directory(
-            self.get_option('configuration')), *comps)
+        # --root is used for running with a pre-built root (like from a nightly zip).
+        build_directory = self.get_option('root')
+        if not build_directory:
+            build_directory = self._config.build_directory(self.get_option('configuration'))
+        return self._filesystem.join(build_directory, *comps)
 
     def _path_to_driver(self):
         return self._build_path(self.driver_name())
