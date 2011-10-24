@@ -1,3 +1,12 @@
+2011-10-24  Ivan Briano  <ivan@profusion.mobi>
+
+        [EFL] Build fix. Add include path to find npapi.h
+        https://bugs.webkit.org/show_bug.cgi?id=70730
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Add include path for npapi.h
+
 2011-10-24  Eric Seidel  <eric@webkit.org>
 
         Plugin tests are failing after switching WK2 to NRWT

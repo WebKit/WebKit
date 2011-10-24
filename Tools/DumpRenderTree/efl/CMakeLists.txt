@@ -59,6 +59,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/graphics/cairo
     ${WEBCORE_DIR}/platform/network
+    ${WEBCORE_DIR}/plugins
     ${WEBCORE_DIR}/rendering
     ${WEBCORE_DIR}/rendering/style
     ${WEBCORE_DIR}/history
