@@ -589,7 +589,7 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    void registeredMutationObserversOfType(Vector<WebKitMutationObserver*>&, WebKitMutationObserver::MutationType);
+    void getRegisteredMutationObserversOfType(Vector<WebKitMutationObserver*>&, WebKitMutationObserver::MutationType);
 
     enum MutationRegistrationResult {
         MutationObserverRegistered,

@@ -1,3 +1,25 @@
+2011-10-24  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Node::registeredMutationObserversOfType should be prefixed by "get"
+        https://bugs.webkit.org/show_bug.cgi?id=70359
+
+        Reviewed by Ojan Vafai.
+
+        This change renames Node::registeredMutationObserversOfType to
+        Node::getRegisteredMutationObserversOfType per the WebKit style guide.
+
+        No tests needed as the change is only method renaming.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::MutationAccumulationRouter::MutationAccumulationRouter::incrementScopingLevel):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/Node.cpp:
+        (WebCore::Node::getRegisteredMutationObserversOfType):
+        * dom/Node.h:
+
 2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename static getOwnPropertySlot to getOwnPropertySlotByIndex

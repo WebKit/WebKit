@@ -245,7 +245,7 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
     }
 
     Vector<WebKitMutationObserver*> observers;
-    target->registeredMutationObserversOfType(observers, WebKitMutationObserver::ChildList);
+    target->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::ChildList);
     if (observers.isEmpty())
         m_accumulations.set(target, 0);
     else

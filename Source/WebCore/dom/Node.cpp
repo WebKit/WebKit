@@ -2711,7 +2711,7 @@ static void addMatchingObservers(HashSet<WebKitMutationObserver*>& observerSet, 
     }
 }
 
-void Node::registeredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
+void Node::getRegisteredMutationObserversOfType(Vector<WebKitMutationObserver*>& observers, WebKitMutationObserver::MutationType type)
 {
     HashSet<WebKitMutationObserver*> observerSet;
     addMatchingObservers(observerSet, mutationObserverEntries(), type);

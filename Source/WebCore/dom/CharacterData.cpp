@@ -194,7 +194,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
 #if ENABLE(MUTATION_OBSERVERS)
     Vector<WebKitMutationObserver*> observers;
-    registeredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
+    getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
     if (!observers.isEmpty()) {
         RefPtr<MutationRecord> mutation = MutationRecord::createCharacterData(this);
         for (size_t i = 0; i < observers.size(); ++i)

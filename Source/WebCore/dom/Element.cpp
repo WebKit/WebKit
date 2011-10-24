@@ -620,7 +620,7 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name)
 {
     Vector<WebKitMutationObserver*> observers;
-    element->registeredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
+    element->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
     if (observers.isEmpty())
         return;
 
