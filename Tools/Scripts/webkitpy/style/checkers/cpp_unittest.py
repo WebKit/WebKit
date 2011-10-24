@@ -4524,11 +4524,15 @@ class WebKitStyleTest(CppStyleTestBase):
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/public/test.h',
                                             webkit_export_error_rules))
+        self.assertEquals('',
+                          self.perform_lint('WEBKIT_EXPORT int foo();\n',
+                                            'WebKit/chromium/tests/test.h',
+                                            webkit_export_error_rules))
         self.assertEquals('WEBKIT_EXPORT should only be used in header files.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/public/test.cpp',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should only appear in the chromium public directory.  [readability/webkit_export] [5]',
+        self.assertEquals('WEBKIT_EXPORT should only appear in the chromium public (or tests) directory.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/src/test.h',
                                             webkit_export_error_rules))

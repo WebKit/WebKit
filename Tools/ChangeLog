@@ -1,3 +1,13 @@
+2011-10-24  David Levin  <levin@chromium.org>
+
+        check-webkit-style complains about WEBKIT_EXPORT in test/WebUnitTests.h
+        https://bugs.webkit.org/show_bug.cgi?id=70747
+
+        Reviewed by Tony Chang.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Allow WEBKIT_EXPORT in tests dir.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Corresponding test.
+
 2011-10-24  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Crash when running pixel tests
