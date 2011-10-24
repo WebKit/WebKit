@@ -87,24 +87,31 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
         char text[16]; // that's a lot of repaints
         snprintf(text, sizeof(text), "%d", layerContents->platformCALayerIncrementRepaintCount());
 
+        CGRect indicatorBox = layerBounds;
+        indicatorBox.size.width = 12 + 10 * strlen(text);
+        indicatorBox.size.height = 27;
         CGContextSaveGState(context);
+        
+        CGContextSetAlpha(context, 0.5);
+        CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
+
         if (isTiledLayer)
-            CGContextSetRGBFillColor(context, 0.0f, 1.0f, 0.0f, 0.8f);
+            CGContextSetRGBFillColor(context, 1, 0.5f, 0, 1);
         else
-            CGContextSetRGBFillColor(context, 1.0f, 0.0f, 0.0f, 0.8f);
+            CGContextSetRGBFillColor(context, 0, 0.5f, 0.25f, 1);
         
-        CGRect aBounds = layerBounds;
+        CGContextFillRect(context, indicatorBox);
+        
+        if (platformLayer->acceleratesDrawing())
+            CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+        else
+            CGContextSetRGBFillColor(context, 1, 1, 1, 1);
 
-        aBounds.size.width = 10 + 12 * strlen(text);
-        aBounds.size.height = 25;
-        CGContextFillRect(context, aBounds);
+        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+        CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
+        CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
         
-        CGContextSetRGBFillColor(context, 0.0f, 0.0f, 0.0f, 1.0f);
-
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0f, -1.0f));
-        CGContextSelectFont(context, "Helvetica", 25, kCGEncodingMacRoman);
-        CGContextShowTextAtPoint(context, aBounds.origin.x + 3.0f, aBounds.origin.y + 20.0f, text, strlen(text));
-        
+        CGContextEndTransparencyLayer(context);
         CGContextRestoreGState(context);        
     }
 

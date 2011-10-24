@@ -306,15 +306,13 @@ void GraphicsLayer::updateDebugIndicators()
     if (GraphicsLayer::showDebugBorders()) {
         if (drawsContent()) {
             if (m_usingTiledLayer)
-                setDebugBorder(Color(0, 255, 0, 204), 2.0f);    // tiled layer: green
+                setDebugBorder(Color(255, 128, 0, 128), 2); // tiled layer: orange
             else
-                setDebugBorder(Color(255, 0, 0, 204), 2.0f);    // normal layer: red
+                setDebugBorder(Color(0, 128, 32, 128), 2); // normal layer: green
         } else if (masksToBounds()) {
-            setDebugBorder(Color(128, 255, 255, 178), 2.0f);    // masking layer: pale blue
-            if (GraphicsLayer::showDebugBorders())
-                setDebugBackgroundColor(Color(128, 255, 255, 52));
+            setDebugBorder(Color(128, 255, 255, 48), 20); // masking layer: pale blue
         } else
-            setDebugBorder(Color(255, 255, 0, 204), 2.0f);      // container: yellow
+            setDebugBorder(Color(255, 255, 0, 192), 2); // container: yellow
     }
 }
 

@@ -1,3 +1,20 @@
+2011-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve debug compositing border colors
+        https://bugs.webkit.org/show_bug.cgi?id=70742
+
+        Reviewed by Dean Jackson.
+
+        Improve the appearance of the debug borders used to indicate compositing:
+        1. Use green for normal layers, orange for tiled layers
+        2. Make the repaint counter translucent
+        3. Change the color of the repaint counter to show when accelerated drawing is enabled.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::updateDebugIndicators):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix make distcheck build
