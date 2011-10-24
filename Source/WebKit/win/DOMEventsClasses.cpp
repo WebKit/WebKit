@@ -31,6 +31,7 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Event.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/ScriptExecutionContext.h>
@@ -111,13 +112,13 @@ IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
     } else if (e->isMouseEvent()) {
         DOMMouseEvent* newEvent = new DOMMouseEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMouseEvent, (void**)&domEvent);
-    } else if (e->isMutationEvent()) {
+    } else if (e->hasInterface(WebCore::eventNames().interfaceForMutationEvent)) {
         DOMMutationEvent* newEvent = new DOMMutationEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMutationEvent, (void**)&domEvent);
-    } else if (e->isOverflowEvent()) {
+    } else if (e->hasInterface(WebCore::eventNames().interfaceForOverflowEvent)) {
         DOMOverflowEvent* newEvent = new DOMOverflowEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMOverflowEvent, (void**)&domEvent);
-    } else if (e->isWheelEvent()) {
+    } else if (e->hasInterface(WebCore::eventNames().interfaceForWheelEvent)) {
         DOMWheelEvent* newEvent = new DOMWheelEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMWheelEvent, (void**)&domEvent);
     } else if (e->isUIEvent()) {

@@ -1,3 +1,10 @@
+2011-10-24  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Windows build by updating to the new interface.
+
+        * DOMEventsClasses.cpp:
+        (DOMEvent::createInstance):
+
 2011-10-18  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(XPATH)
