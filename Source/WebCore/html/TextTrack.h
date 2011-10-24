@@ -55,7 +55,7 @@ class TextTrack : public RefCounted<TextTrack> {
 public:
     static PassRefPtr<TextTrack> create(TextTrackClient* client, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new TextTrack(client, kind, label, language, BaseTextTrack));
+        return adoptRef(new TextTrack(client, kind, label, language));
     }
     virtual ~TextTrack();
 
@@ -76,14 +76,17 @@ public:
     void readyStateChanged();
     void modeChanged();
 
-    enum Type { BaseTextTrack, MutableTextTrack, LoadableTextTrack };
-    Type trackType() { return m_type; }
-
     TextTrackClient* client() { return m_client; }
     void setClient(TextTrackClient* client) { m_client = client; }
 
+    void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
+    void removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
+    
+    virtual void newCuesLoaded();
+    virtual void fetchNewestCues(Vector<TextTrackCue*>&);
+
 protected:
-    TextTrack(TextTrackClient*, const String& kind, const String& label, const String& language, Type trackType);
+    TextTrack(TextTrackClient*, const String& kind, const String& label, const String& language);
 
     void setReadyState(ReadyState);
 
@@ -96,7 +99,6 @@ private:
     TextTrack::ReadyState m_readyState;
     TextTrack::Mode m_mode;
     TextTrackClient* m_client;
-    Type m_type; 
 };
 
 } // namespace WebCore

@@ -290,7 +290,6 @@ DOM_CLASSES = \
     Metadata \
     MetadataCallback \
     MouseEvent \
-    MutableTextTrack \
     MutationCallback \
     MutationEvent \
     MutationRecord \

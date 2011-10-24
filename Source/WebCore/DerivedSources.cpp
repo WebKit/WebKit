@@ -238,9 +238,6 @@
 #include "JSMetadata.cpp"
 #include "JSMetadataCallback.cpp"
 #include "JSMouseEvent.cpp"
-#if ENABLE(VIDEO_TRACK)
-#include "JSMutableTextTrack.cpp"
-#endif
 #include "JSMutationCallback.cpp"
 #include "JSMutationEvent.cpp"
 #include "JSMutationRecord.cpp"

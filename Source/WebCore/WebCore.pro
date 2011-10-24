@@ -1810,7 +1810,6 @@ HEADERS += \
     html/LinkRelAttribute.h \
     html/LoadableTextTrack.h \
     html/MediaDocument.h \
-    html/MutableTextTrack.h \
     html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \
@@ -3522,14 +3521,6 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
             bindings/js/JSJavaScriptCallFrameCustom.cpp \
             bindings/js/ScriptProfiler.cpp \
             bindings/js/JavaScriptCallFrame.cpp
-    }
-}
-
-contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSTextTrackCustom.cpp
     }
 }
 

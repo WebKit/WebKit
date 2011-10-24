@@ -277,7 +277,6 @@ SET(WebCore_IDL_FILES
     html/HTMLVideoElement.idl
     html/ImageData.idl
     html/MediaError.idl
-    html/MutableTextTrack.idl
     html/TextMetrics.idl
     html/TextTrack.idl
     html/TextTrackCue.idl
@@ -2050,7 +2049,6 @@ IF (ENABLE_VIDEO_TRACK)
         html/CueIndex.cpp
         html/HTMLTrackElement.cpp
         html/LoadableTextTrack.cpp
-        html/MutableTextTrack.cpp
         html/TextTrack.cpp
         html/TextTrackCue.cpp
         html/TextTrackCueIndex.cpp

@@ -570,7 +570,6 @@ contains(DEFINES, ENABLE_SVG=1) {
 
 contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
   IDL_BINDINGS += \
-    html/MutableTextTrack.idl \
     html/TextTrack.idl \
     html/TextTrackCue.idl \
     html/TextTrackCueList.idl \

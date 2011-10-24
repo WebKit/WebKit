@@ -1,3 +1,50 @@
+2011-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Drop MutableTextTrack and make TextTrack always mutable
+        https://bugs.webkit.org/show_bug.cgi?id=62890
+
+        The MutableTextTrack type was removed from the spec, all text tracks are now mutable.
+
+        Reviewed by Sam Weinig.
+
+        No new tests needed, the changes just refactor existing code.
+
+        * CMakeLists.txt: Remove all traces of MutableTextTrack.
+        * CodeGenerators.pri: Ditto.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/gobject/GNUmakefile.am: Ditto.
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSTextTrackCustom.cpp: Removed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTrack): Return a TextTrack instead of a MutableTextTrack.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack): Return a TextTrack instead of a MutableTextTrack.
+
+        * html/MutableTextTrack.cpp: Removed.
+        * html/MutableTextTrack.h: Removed.
+        * html/MutableTextTrack.idl: Removed.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Remove Type parameter.
+        (WebCore::TextTrack::addCue): New, moved from MutableTextTrack.
+        (WebCore::TextTrack::removeCue): Ditto.
+        (WebCore::TextTrack::newCuesLoaded): Ditto.
+        (WebCore::TextTrack::fetchNewestCues): Ditto.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::create): Remove Type parameter
+        * html/TextTrack.idl: Add addCue and removeCue.
+
 2011-10-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow debugging dedicated worker initialization

@@ -92,12 +92,9 @@
 		070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756D814239B4B00414161 /* JSTextTrackCue.h */; };
 		070756DF14239B4E00414161 /* JSTextTrackCueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756D914239B4C00414161 /* JSTextTrackCueList.cpp */; };
 		070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756DA14239B4E00414161 /* JSTextTrackCueList.h */; };
-		070756E61423C96A00414161 /* JSMutableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756E41423C96500414161 /* JSMutableTextTrack.cpp */; };
-		070756E71423C96A00414161 /* JSMutableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756E51423C96700414161 /* JSMutableTextTrack.h */; };
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		073A3AE3142BAFE100977A4C /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */; };
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
@@ -4126,8 +4123,6 @@
 		B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */; };
 		B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */; };
 		B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */; };
-		B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */; };
-		B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */; };
 		B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */; };
 		B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E5613A12A0B00846B27 /* TextTrack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */; };
@@ -7069,13 +7064,9 @@
 		070756D814239B4B00414161 /* JSTextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCue.h; sourceTree = "<group>"; };
 		070756D914239B4C00414161 /* JSTextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueList.cpp; sourceTree = "<group>"; };
 		070756DA14239B4E00414161 /* JSTextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCueList.h; sourceTree = "<group>"; };
-		070756E31423C7DF00414161 /* MutableTextTrack.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MutableTextTrack.idl; sourceTree = "<group>"; };
-		070756E41423C96500414161 /* JSMutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutableTextTrack.cpp; sourceTree = "<group>"; };
-		070756E51423C96700414161 /* JSMutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutableTextTrack.h; sourceTree = "<group>"; };
 		0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySlider.h; sourceTree = "<group>"; };
 		070DD8F50F01868000727DEB /* mediaControls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControls.css; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
-		073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
 		0753860014489E9800B78452 /* CachedTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedTextTrack.cpp; sourceTree = "<group>"; };
 		0753860114489E9800B78452 /* CachedTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTextTrack.h; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
@@ -11188,8 +11179,6 @@
 		B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueIndex.h; sourceTree = "<group>"; };
 		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableTextTrack.cpp; sourceTree = "<group>"; };
 		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableTextTrack.h; sourceTree = "<group>"; };
-		B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableTextTrack.cpp; sourceTree = "<group>"; };
-		B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableTextTrack.h; sourceTree = "<group>"; };
 		B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrack.cpp; sourceTree = "<group>"; };
 		B1AD4E5613A12A0B00846B27 /* TextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrack.h; sourceTree = "<group>"; };
 		B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCue.cpp; sourceTree = "<group>"; };
@@ -17221,9 +17210,6 @@
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				F55B3D911251F12D003EF269 /* MonthInputType.cpp */,
 				F55B3D921251F12D003EF269 /* MonthInputType.h */,
-				B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */,
-				B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */,
-				070756E31423C7DF00414161 /* MutableTextTrack.idl */,
 				F55B3D931251F12D003EF269 /* NumberInputType.cpp */,
 				F55B3D941251F12D003EF269 /* NumberInputType.h */,
 				F55B3D951251F12D003EF269 /* PasswordInputType.cpp */,
@@ -17692,8 +17678,6 @@
 				49C7B9831042D2D30009D447 /* JSInt8Array.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
-				070756E41423C96500414161 /* JSMutableTextTrack.cpp */,
-				070756E51423C96700414161 /* JSMutableTextTrack.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
 				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
@@ -19567,7 +19551,6 @@
 				08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */,
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
-				073A3AE2142BAFE100977A4C /* JSTextTrackCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */,
 				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
@@ -23488,7 +23471,6 @@
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
-				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
 				C6F0900A14327B6100685849 /* MutationCallback.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
@@ -24473,7 +24455,6 @@
 				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
 				070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */,
 				070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */,
-				070756E71423C96A00414161 /* JSMutableTextTrack.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxRegionInfo.h in Headers */,
 				59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */,
@@ -26537,7 +26518,6 @@
 				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
-				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
 				C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */,
 				BCF34A3711A231CD00C71804 /* NamedNodeMap.cpp in Sources */,
@@ -27311,8 +27291,6 @@
 				070756D314239A4E00414161 /* JSHTMLTrackElement.cpp in Sources */,
 				070756DD14239B4E00414161 /* JSTextTrackCue.cpp in Sources */,
 				070756DF14239B4E00414161 /* JSTextTrackCueList.cpp in Sources */,
-				070756E61423C96A00414161 /* JSMutableTextTrack.cpp in Sources */,
-				073A3AE3142BAFE100977A4C /* JSTextTrackCustom.cpp in Sources */,
 				A85F22091430377D007CC884 /* JSPopStateEventCustom.cpp in Sources */,
 				319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */,
 				319AE069142D78DD006563A1 /* FilterOperations.cpp in Sources */,

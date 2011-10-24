@@ -38,14 +38,13 @@
 
 namespace WebCore {
 
-TextTrack::TextTrack(TextTrackClient* client, const String& kind, const String& label, const String& language, Type trackType)
+TextTrack::TextTrack(TextTrackClient* client, const String& kind, const String& label, const String& language)
     : m_kind(kind)
     , m_label(label)
     , m_language(language)
     , m_readyState(TextTrack::None)
     , m_mode(TextTrack::Showing)
     , m_client(client)
-    , m_type(trackType)
 {
 }
 
@@ -111,6 +110,28 @@ PassRefPtr<TextTrackCueList> TextTrack::activeCues() const
     // FIXME(62885): Implement.
     return 0;
 }
+
+void TextTrack::addCue(PassRefPtr<TextTrackCue>, ExceptionCode&)
+{
+    // FIXME(62890): Implement.
+    
+}
+
+void TextTrack::removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&)
+{
+    // FIXME(62890): Implement.
+}
+
+void TextTrack::newCuesLoaded()
+{
+    // FIXME(62890): Implement.
+}
+
+void TextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
+{
+    // FIXME(62890): Implement.
+}
+
 
 } // namespace WebCore
 

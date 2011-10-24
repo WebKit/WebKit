@@ -32,7 +32,7 @@
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
-    : TextTrack(trackClient, kind, label, language, TextTrack::LoadableTextTrack)
+    : TextTrack(trackClient, kind, label, language)
     , m_loadingClient(loadingClient)
     , m_isDefault(isDefault)
 {
