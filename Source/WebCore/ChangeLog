@@ -1,3 +1,20 @@
+2011-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        <svg> fails to use explicit width and height inside <html> inside IFRAME
+        https://bugs.webkit.org/show_bug.cgi?id=64823
+
+        Reviewed by Nikolas Zimmermann.
+
+        Checking that embedded SVG is in an SVG document before negotiating size
+        with the host document.
+
+        Test: svg/as-object/svg-embedded-in-html-in-iframe.html
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::isEmbeddedThroughFrameContainingSVGDocument):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+
 2011-10-24  Rafael Weinstein  <rafaelw@chromium.org>
 
         Node::registeredMutationObserversOfType should be prefixed by "get"

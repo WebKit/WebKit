@@ -130,6 +130,15 @@ LayoutUnit RenderSVGRoot::computeIntrinsicHeight(LayoutUnit replacedHeight) cons
     return static_cast<int>(ceilf(replacedHeight * style()->effectiveZoom()));
 }
 
+static inline bool isEmbeddedThroughFrameContainingSVGDocument(const Frame* frame)
+{
+    ASSERT(frame);
+    ASSERT(frame->document());
+    // If our frame has an owner renderer, we're embedded through eg. object/embed/iframe,
+    // but we only negotiate if we're in an SVG document.
+    return !frame->ownerRenderer() || !frame->document()->isSVGDocument();
+}
+
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     LayoutUnit replacedWidth = RenderBox::computeReplacedLogicalWidth(includeMaxWidth);
@@ -137,11 +146,10 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) cons
     if (!frame)
         return computeIntrinsicWidth(replacedWidth);
 
-    // If our frame has an owner renderer, we're embedded through eg. object/embed.
-    RenderPart* ownerRenderer = frame->ownerRenderer();
-    if (!ownerRenderer)
+    if (isEmbeddedThroughFrameContainingSVGDocument(frame))
         return computeIntrinsicWidth(replacedWidth);
 
+    RenderPart* ownerRenderer = frame->ownerRenderer();
     RenderStyle* ownerRendererStyle = ownerRenderer->style();
     ASSERT(ownerRendererStyle);
     ASSERT(frame->contentRenderer());
@@ -179,11 +187,10 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
     if (!frame)
         return computeIntrinsicHeight(replacedHeight);
 
-    // If our frame has an owner renderer, we're embedded through eg. object/embed.
-    RenderPart* ownerRenderer = frame->ownerRenderer();
-    if (!ownerRenderer)
+    if (isEmbeddedThroughFrameContainingSVGDocument(frame))
         return computeIntrinsicHeight(replacedHeight);
 
+    RenderPart* ownerRenderer = frame->ownerRenderer();
     RenderStyle* ownerRendererStyle = ownerRenderer->style();
     ASSERT(ownerRendererStyle);
     ASSERT(frame->contentRenderer());

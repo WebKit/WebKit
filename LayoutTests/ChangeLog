@@ -1,3 +1,17 @@
+2011-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        <svg> fails to use explicit width and height inside <html> inside IFRAME
+        https://bugs.webkit.org/show_bug.cgi?id=64823
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fixing a bug where SVG negotiated size when embedded in html inside an iframe.
+
+        * platform/chromium/test_expectations.txt: Will update with results on other platforms.
+        * platform/mac/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/mac/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt: Added.
+        * svg/as-object/svg-embedded-in-html-in-iframe.html: Added.
+
 2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening rebaselining.

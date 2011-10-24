@@ -3819,3 +3819,7 @@ BUGWK70704 SNOWLEOPARD : fast/css/focus-ring-multiline-writingmode-vertical.html
 BUGWK70704 SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
 BUGWK70704 SNOWLEOPARD : fast/writing-mode/fallback-orientation.html = TEXT
 BUGWK70704 SNOWLEOPARD : fast/backgrounds/background-leakage-transforms.html = TEXT
+
+// Will rebaseline
+BUGLEVIW : svg/as-object/svg-embedded-in-html-in-iframe.html = FAIL
+
