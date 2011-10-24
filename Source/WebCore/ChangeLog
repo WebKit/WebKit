@@ -1,3 +1,9 @@
+2011-10-24  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: [chromium] follow up to 98228 - added missing css.
+
+        * WebCore.gypi:
+
 2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Make CSS files load upon View demand; split inspector.css into views.

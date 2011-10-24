@@ -6386,6 +6386,7 @@
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/elementsPanel.css',
             'inspector/front-end/heapProfiler.css',
+            'inspector/front-end/inspectorCommon.css',
             'inspector/front-end/networkLogView.css',
             'inspector/front-end/networkPanel.css',
             'inspector/front-end/panelEnablerView.css',
