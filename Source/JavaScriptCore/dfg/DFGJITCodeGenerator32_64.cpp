@@ -255,11 +255,11 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
         return true;
     }
 
+    case DataFormatInteger:
     case DataFormatCell:
-    case DataFormatInteger: {
+    case DataFormatBoolean: {
         GPRReg gpr = info.gpr();
         // If the register has already been locked we need to take a copy.
-        // If not, we'll zero extend in place, so mark on the info that this is now type DataFormatInteger, not DataFormatJSInteger.
         if (m_gprs.isLocked(gpr)) {
             payloadGPR = allocate();
             m_jit.move(gpr, payloadGPR);
@@ -268,11 +268,30 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
             m_gprs.lock(gpr);
         }
         tagGPR = allocate();
-        m_jit.move(info.registerFormat() == DataFormatInteger ? JITCompiler::TrustedImm32(JSValue::Int32Tag) : JITCompiler::TrustedImm32(JSValue::CellTag), tagGPR);
+        uint32_t tag = JSValue::EmptyValueTag;
+        DataFormat fillFormat = DataFormatJS;
+        switch (info.registerFormat()) {
+        case DataFormatInteger:
+            tag = JSValue::Int32Tag;
+            fillFormat = DataFormatJSInteger;
+            break;
+        case DataFormatCell:
+            tag = JSValue::CellTag;
+            fillFormat = DataFormatJSCell;
+            break;
+        case DataFormatBoolean:
+            tag = JSValue::BooleanTag;
+            fillFormat = DataFormatJSBoolean;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        m_jit.move(TrustedImm32(tag), tagGPR);
         m_gprs.release(gpr);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderJS);
-        info.fillJSValue(tagGPR, payloadGPR, info.registerFormat() == DataFormatCell ? DataFormatJSCell : DataFormatJSInteger);
+        info.fillJSValue(tagGPR, payloadGPR, fillFormat);
         return true;
     }
 
@@ -302,7 +321,6 @@ bool JITCodeGenerator::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& 
         return true;
     }
         
-    case DataFormatBoolean:
     case DataFormatStorage:
         // this type currently never occurs
         ASSERT_NOT_REACHED();
@@ -941,9 +959,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
     GPRReg argTagGPR = arg.tagGPR();
     GPRReg argPayloadGPR = arg.payloadGPR();
 
-    GPRTemporary resultTag(this, arg);
     GPRTemporary resultPayload(this, arg, false);
-    GPRReg resultTagGPR = resultTag.gpr();
     GPRReg resultPayloadGPR = resultPayload.gpr();
 
     JITCompiler::Jump notCell;
@@ -966,8 +982,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
         done.link(&m_jit);
     }
     
-    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean);
+    booleanResult(resultPayloadGPR, m_compileIndex);
 }
 
 void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
@@ -1115,9 +1130,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
     
     if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2())) {
         GPRResult result(this);
-        GPRResult2 result2(this);
         GPRReg resultPayloadGPR = result.gpr();
-        GPRReg resultTagGPR = result2.gpr();
     
         arg1.use();
         arg2.use();
@@ -1125,12 +1138,9 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         flushRegisters();
         callOperation(helperFunction, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
         
-        m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-        jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+        booleanResult(resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
     } else {
-        GPRTemporary resultTag(this, arg1);
         GPRTemporary resultPayload(this, arg1, false);
-        GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
 
         arg1.use();
@@ -1148,17 +1158,16 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
     
             slowPath.link(&m_jit);
         
-            silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
+            silentSpillAllRegisters(resultPayloadGPR);
             callOperation(helperFunction, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
-            silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
+            silentFillAllRegisters(resultPayloadGPR);
         
             m_jit.andPtr(TrustedImm32(1), resultPayloadGPR);
         
             haveResult.link(&m_jit);
         }
         
-        m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-        jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+        booleanResult(resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
     }
 }
 
@@ -1223,9 +1232,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
     GPRReg arg2TagGPR = arg2.tagGPR();
     GPRReg arg2PayloadGPR = arg2.payloadGPR();
     
-    GPRTemporary resultTag(this, arg1);
     GPRTemporary resultPayload(this, arg1, false);
-    GPRReg resultTagGPR = resultTag.gpr();
     GPRReg resultPayloadGPR = resultPayload.gpr();
     
     arg1.use();
@@ -1241,9 +1248,9 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
 
         notEqualCase.link(&m_jit);
         
-        silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
+        silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEqCell, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
-        silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
+        silentFillAllRegisters(resultPayloadGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
         
@@ -1251,15 +1258,14 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
     } else {
         // FIXME: Add fast paths.
 
-        silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
+        silentSpillAllRegisters(resultPayloadGPR);
         callOperation(operationCompareStrictEq, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR, arg2TagGPR, arg2PayloadGPR);
-        silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
+        silentFillAllRegisters(resultPayloadGPR);
         
         m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
     }
 
-    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+    booleanResult(resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void JITCodeGenerator::emitCall(Node& node)

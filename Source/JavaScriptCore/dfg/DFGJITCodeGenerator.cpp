@@ -473,11 +473,14 @@ void JITCodeGenerator::checkConsistency()
         case DataFormatJSInteger:
         case DataFormatJSDouble:
         case DataFormatJSCell:
+        case DataFormatJSBoolean:
 #if USE(JSVALUE32_64)
             break;
 #endif
         case DataFormatInteger:
-        case DataFormatCell: {
+        case DataFormatCell:
+        case DataFormatBoolean:
+        case DataFormatStorage: {
             GPRReg gpr = info.gpr();
             ASSERT(gpr != InvalidGPRReg);
             if (m_gprs.name(gpr) != virtualRegister) {

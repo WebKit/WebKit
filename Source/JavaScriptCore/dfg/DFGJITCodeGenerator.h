@@ -60,6 +60,7 @@ protected:
 
     // These constants are used to set priorities for spill order for
     // the register allocator.
+#if USE(JSVALUE64)
     enum SpillOrder {
         SpillOrderConstant = 1, // no spill, and cheap fill
         SpillOrderSpilled  = 2, // no spill
@@ -67,9 +68,22 @@ protected:
         SpillOrderCell     = 4, // needs spill
         SpillOrderStorage  = 4, // needs spill
         SpillOrderInteger  = 5, // needs spill and box
+        SpillOrderBoolean  = 5, // needs spill and box
         SpillOrderDouble   = 6, // needs spill and convert
     };
-    
+#elif USE(JSVALUE32_64)
+    enum SpillOrder {
+        SpillOrderConstant = 1, // no spill, and cheap fill
+        SpillOrderSpilled  = 2, // no spill
+        SpillOrderJS       = 4, // needs spill
+        SpillOrderStorage  = 4, // needs spill
+        SpillOrderDouble   = 4, // needs spill
+        SpillOrderInteger  = 5, // needs spill and box
+        SpillOrderCell     = 5, // needs spill and box
+        SpillOrderBoolean  = 5, // needs spill and box
+    };
+#endif
+
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
     
     static const double twoToThe32;
@@ -208,12 +222,11 @@ public:
 #elif USE(JSVALUE32_64)
         if (registerFormat == DataFormatDouble || registerFormat == DataFormatJSDouble)
             m_fprs.release(info.fpr());
-        else if (registerFormat == DataFormatInteger || registerFormat == DataFormatCell || registerFormat == DataFormatStorage)
-            m_gprs.release(info.gpr());
         else if (registerFormat & DataFormatJS) {
             m_gprs.release(info.tagGPR());
             m_gprs.release(info.payloadGPR());
-        }
+        } else if (registerFormat != DataFormatNone)
+            m_gprs.release(info.gpr());
 #endif
     }
 
@@ -288,7 +301,7 @@ protected:
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
         }
 #elif USE(JSVALUE32_64)
-        if (registerFormat == DataFormatInteger)
+        if (registerFormat == DataFormatInteger || registerFormat == DataFormatBoolean)
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
         else if (registerFormat == DataFormatCell)
             m_jit.storePtr(info.gpr(), JITCompiler::payloadFor(spillMe));
@@ -348,6 +361,19 @@ protected:
             return;
         }
         
+        if (registerFormat == DataFormatBoolean) {
+#if USE(JSVALUE64)
+            ASSERT_NOT_REACHED();
+#elif USE(JSVALUE32_64)
+            if (node.hasConstant()) {
+                ASSERT(isBooleanConstant(nodeIndex));
+                m_jit.move(Imm32(valueOfBooleanConstant(nodeIndex)), info.gpr());
+            } else
+                m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
+#endif
+            return;
+        }
+
         if (registerFormat == DataFormatCell) {
             if (node.isConstant()) {
                 JSValue value = valueOfJSConstant(nodeIndex);
@@ -379,7 +405,7 @@ protected:
         else if (info.spillFormat() == DataFormatInteger) {
             ASSERT(registerFormat == DataFormatJSInteger);
             m_jit.load32(JITCompiler::payloadFor(spillMe), info.payloadGPR());
-            m_jit.move(Int32(JSValue::Int32Tag), info.tagGPR());
+            m_jit.move(TrustedImm32(JSValue::Int32Tag), info.tagGPR());
         } else
             m_jit.emitLoad(nodeIndex, info.tagGPR(), info.payloadGPR());
 #endif
@@ -561,20 +587,22 @@ protected:
             return;
         }
         default:
-            // The following code handles JSValues, int32s, and cells.
-            ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat & DataFormatJS);
+            // The following code handles JSValues, int32s, cells and booleans.
+            ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat == DataFormatBoolean || (spillFormat & DataFormatJS));
 
-            if (spillFormat == DataFormatInteger || spillFormat == DataFormatCell) {
-                GPRReg reg = info.gpr();
-                m_jit.store32(reg, JITCompiler::payloadFor(spillMe));
-                // We need to box int32 and cell values ...
-                if (spillFormat == DataFormatInteger)
-                    m_jit.store32(TrustedImm32(JSValue::Int32Tag), JITCompiler::tagFor(spillMe));
-                else // cells
-                    m_jit.store32(TrustedImm32(JSValue::CellTag), JITCompiler::tagFor(spillMe));
-            } else { // JSValue
+            if (spillFormat & DataFormatJS) { // JSValue
                 m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
                 m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
+            } else {
+                GPRReg reg = info.gpr();
+                m_jit.store32(reg, JITCompiler::payloadFor(spillMe));
+                // We need to box int32s, booleans and cells.
+                if (spillFormat == DataFormatInteger)
+                    m_jit.store32(TrustedImm32(JSValue::Int32Tag), JITCompiler::tagFor(spillMe));
+                else if (spillFormat == DataFormatCell)
+                    m_jit.store32(TrustedImm32(JSValue::CellTag), JITCompiler::tagFor(spillMe));
+                else
+                    m_jit.store32(TrustedImm32(JSValue::BooleanTag), JITCompiler::tagFor(spillMe));
             }
             info.spill((DataFormat)(spillFormat | DataFormatJS));
             return;
@@ -847,6 +875,17 @@ protected:
         m_gprs.retain(reg, virtualRegister, SpillOrderCell);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initCell(nodeIndex, node.refCount(), reg);
+    }
+    void booleanResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    {
+        Node& node = at(nodeIndex);
+        if (mode == CallUseChildren)
+            useChildren(node);
+
+        VirtualRegister virtualRegister = node.virtualRegister();
+        m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+        info.initBoolean(nodeIndex, node.refCount(), reg);
     }
 #if USE(JSVALUE64)
     void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)

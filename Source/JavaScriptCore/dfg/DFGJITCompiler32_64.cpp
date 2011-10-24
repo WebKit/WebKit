@@ -110,6 +110,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // specially to minimize code size and execution time.
     bool haveUnboxedInt32InRegisterFile = false;
     bool haveUnboxedCellInRegisterFile = false;
+    bool haveUnboxedBooleanInRegisterFile = false;
     bool haveFPRs = false;
     bool haveConstants = false;
     bool haveUndefined = false;
@@ -132,6 +133,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
                 switch (exit.m_variables[recovery.virtualRegister()].technique()) {
                 case InGPR:
                 case UnboxedInt32InGPR:
+                case UnboxedBooleanInGPR:
                 case InPair:
                 case InFPR:
                     if (!poisonedVirtualRegisters[recovery.virtualRegister()]) {
@@ -151,6 +153,10 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             
         case AlreadyInRegisterFileAsUnboxedCell:
             haveUnboxedCellInRegisterFile = true;
+            break;
+            
+        case AlreadyInRegisterFileAsUnboxedBoolean:
+            haveUnboxedBooleanInRegisterFile = true;
             break;
             
         case InFPR:
@@ -175,7 +181,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     
     // 4) Perform all reboxing of integers and cells, except for those in registers.
 
-    if (haveUnboxedInt32InRegisterFile || haveUnboxedCellInRegisterFile) {
+    if (haveUnboxedInt32InRegisterFile || haveUnboxedCellInRegisterFile || haveUnboxedBooleanInRegisterFile) {
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
             const ValueRecovery& recovery = exit.valueRecovery(index);
             switch (recovery.technique()) {
@@ -185,6 +191,10 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
 
             case AlreadyInRegisterFileAsUnboxedCell:
                 store32(TrustedImm32(JSValue::CellTag), tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
+                break;
+
+            case AlreadyInRegisterFileAsUnboxedBoolean:
+                store32(TrustedImm32(JSValue::BooleanTag), tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
                 break;
 
             default:
@@ -219,6 +229,16 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
                 scratchIndex++;
             } else {
                 store32(TrustedImm32(JSValue::Int32Tag), tagFor((VirtualRegister)operand));
+                store32(recovery.gpr(), payloadFor((VirtualRegister)operand));
+            }
+            break;
+        case UnboxedBooleanInGPR:
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
+                store32(TrustedImm32(JSValue::BooleanTag), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+                store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+                scratchIndex++;
+            } else {
+                store32(TrustedImm32(JSValue::BooleanTag), tagFor((VirtualRegister)operand));
                 store32(recovery.gpr(), payloadFor((VirtualRegister)operand));
             }
             break;
@@ -342,6 +362,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             switch (recovery.technique()) {
             case InGPR:
             case UnboxedInt32InGPR:
+            case UnboxedBooleanInGPR:
             case InFPR:
             case InPair:
                 load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);

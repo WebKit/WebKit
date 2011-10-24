@@ -52,6 +52,9 @@ void ValueSource::dump(FILE* out) const
     case CellInRegisterFile:
         fprintf(out, "Cell");
         break;
+    case BooleanInRegisterFile:
+        fprintf(out, "Bool");
+        break;
     case HaveNode:
         fprintf(out, "Node(%d)", m_nodeIndex);
         break;
@@ -70,11 +73,17 @@ void ValueRecovery::dump(FILE* out) const
     case AlreadyInRegisterFileAsUnboxedCell:
         fprintf(out, "(cell)");
         break;
+    case AlreadyInRegisterFileAsUnboxedBoolean:
+        fprintf(out, "(bool)");
+        break;
     case InGPR:
         fprintf(out, "%%%s", GPRInfo::debugName(gpr()));
         break;
     case UnboxedInt32InGPR:
         fprintf(out, "int32(%%%s)", GPRInfo::debugName(gpr()));
+        break;
+    case UnboxedBooleanInGPR:
+        fprintf(out, "bool(%%%s)", GPRInfo::debugName(gpr()));
         break;
     case InFPR:
         fprintf(out, "%%%s", FPRInfo::debugName(fpr()));
@@ -415,7 +424,8 @@ void SpeculativeJIT::checkArgumentTypes()
             speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, temp.gpr(), TrustedImm32(JSValue::CellTag)));
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), temp.gpr());
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
-        } // FIXME: need boolean predictions, but we currently don't have that support.
+        } else if (isBooleanPrediction(predictedType))
+            speculationCheck(m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::BooleanTag)));
 #endif
     }
 }
@@ -442,6 +452,9 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
 
     case CellInRegisterFile:
         return ValueRecovery::alreadyInRegisterFileAsUnboxedCell();
+
+    case BooleanInRegisterFile:
+        return ValueRecovery::alreadyInRegisterFileAsUnboxedBoolean();
 
     case HaveNode: {
         if (m_jit.isConstant(valueSource.nodeIndex()))

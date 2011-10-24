@@ -948,8 +948,6 @@ public:
         // if we are only interested in the low seven bits, this can be tested with a testb
         if (mask.m_value == -1)
             m_assembler.testl_rr(reg, reg);
-        else if ((mask.m_value & ~0x7f) == 0)
-            m_assembler.testb_i8r(mask.m_value, reg);
         else
             m_assembler.testl_i32r(mask.m_value, reg);
         return Jump(m_assembler.jCC(x86Condition(cond)));

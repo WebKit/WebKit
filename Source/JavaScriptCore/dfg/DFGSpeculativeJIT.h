@@ -72,6 +72,7 @@ enum ValueSourceKind {
     ValueInRegisterFile,
     Int32InRegisterFile,
     CellInRegisterFile,
+    BooleanInRegisterFile,
     HaveNode
 };
 
@@ -101,6 +102,8 @@ public:
             return ValueSource(Int32InRegisterFile);
         if (isArrayPrediction(prediction) || isByteArrayPrediction(prediction))
             return ValueSource(CellInRegisterFile);
+        if (isBooleanPrediction(prediction))
+            return ValueSource(BooleanInRegisterFile);
         return ValueSource(ValueInRegisterFile);
     }
     
@@ -150,9 +153,11 @@ enum ValueRecoveryTechnique {
     // It's already in the register file but unboxed.
     AlreadyInRegisterFileAsUnboxedInt32,
     AlreadyInRegisterFileAsUnboxedCell,
+    AlreadyInRegisterFileAsUnboxedBoolean,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
+    UnboxedBooleanInGPR,
 #if USE(JSVALUE32_64)
     InPair,
 #endif
@@ -196,15 +201,24 @@ public:
         return result;
     }
     
+    static ValueRecovery alreadyInRegisterFileAsUnboxedBoolean()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFileAsUnboxedBoolean;
+        return result;
+    }
+    
     static ValueRecovery inGPR(GPRReg gpr, DataFormat dataFormat)
     {
         ASSERT(dataFormat != DataFormatNone);
 #if USE(JSVALUE32_64)
-        ASSERT(dataFormat == DataFormatInteger || dataFormat == DataFormatCell);
+        ASSERT(dataFormat == DataFormatInteger || dataFormat == DataFormatCell || dataFormat == DataFormatBoolean);
 #endif
         ValueRecovery result;
         if (dataFormat == DataFormatInteger)
             result.m_technique = UnboxedInt32InGPR;
+        else if (dataFormat == DataFormatBoolean)
+            result.m_technique = UnboxedBooleanInGPR;
         else
             result.m_technique = InGPR;
         result.m_source.gpr = gpr;
@@ -263,7 +277,7 @@ public:
     
     GPRReg gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR);
         return m_source.gpr;
     }
     

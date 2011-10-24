@@ -1,3 +1,68 @@
+2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Add boolean speculations to DFG JIT 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=70706
+
+        Reviewed by Filip Pizlo.
+
+        Different from the boolean speculations in DFG 64, the boolean
+        speculations in DFG 32_64 will use a 32bit GPR to hold the primitive
+        boolean instead of a JSBoolean. This choice is not only for
+        performance, but also to save a register as we're short of registers on
+        X86.
+        To accomplish this we make use of DataFormatBoolean, allow a value to
+        be represented as a primitive boolean and converted from/to a
+        JSBoolean.
+        This patch also fixes SpillOrder in 32_64, which should be different
+        from 64, and fixes needDataFormatConversion logic in 32_64.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest32):
+            We don't expect byte test actually as it doesn't work for registers
+            esp..edi on X86.
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::needDataFormatConversion):
+        (JSC::DFG::GenerationInfo::initBoolean):
+        (JSC::DFG::GenerationInfo::gpr):
+        (JSC::DFG::GenerationInfo::fillInteger):
+        (JSC::DFG::GenerationInfo::fillBoolean):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::use):
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::spill):
+        (JSC::DFG::cellResult):
+        (JSC::DFG::booleanResult):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::ValueRecovery::dump):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueSource::forPrediction):
+        (JSC::DFG::ValueRecovery::alreadyInRegisterFileAsUnboxedBoolean):
+        (JSC::DFG::ValueRecovery::inGPR):
+        (JSC::DFG::ValueRecovery::gpr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing Windows build

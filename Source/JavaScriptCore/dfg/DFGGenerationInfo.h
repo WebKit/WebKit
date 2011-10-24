@@ -132,23 +132,16 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
     switch (from) {
     case DataFormatInteger:
     case DataFormatCell:
-        return to != DataFormatInteger && to != DataFormatCell;
+    case DataFormatBoolean:
+        return ((to & DataFormatJS) || to == DataFormatDouble);
     case DataFormatDouble:
     case DataFormatJSDouble:
-        switch (to) {
-        case DataFormatDouble:
-        case DataFormatJS:
-        case DataFormatJSDouble:
-            return false;
-        default:
-            return true;
-        }
+        return (to != DataFormatDouble && to != DataFormatJSDouble);
     case DataFormatJS:
-        return !(to & DataFormatJS);
     case DataFormatJSInteger:
     case DataFormatJSCell:
     case DataFormatJSBoolean:
-        return to != DataFormatJS && to != from;
+        return (!(to & DataFormatJS) || to == DataFormatJSDouble);
     case DataFormatStorage:
         ASSERT(to == DataFormatStorage);
         return false;
@@ -257,6 +250,15 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+    void initBoolean(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
+    {
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = DataFormatBoolean;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.gpr = gpr;
+    }
     void initDouble(NodeIndex nodeIndex, uint32_t useCount, FPRReg fpr)
     {
         ASSERT(fpr != InvalidFPRReg);
@@ -338,7 +340,7 @@ public:
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble); return u.fpr; }
 #elif USE(JSVALUE32_64)
-    GPRReg gpr() { ASSERT(m_registerFormat == DataFormatInteger || m_registerFormat == DataFormatCell || m_registerFormat == DataFormatStorage); return u.gpr; }
+    GPRReg gpr() { ASSERT(!(m_registerFormat & DataFormatJS) && m_registerFormat != DataFormatDouble); return u.gpr; }
     GPRReg tagGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.tagGPR; }
     GPRReg payloadGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.payloadGPR; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble || m_registerFormat == DataFormatJSDouble); return u.fpr; }
@@ -415,6 +417,11 @@ public:
     void fillInteger(GPRReg gpr)
     {
         m_registerFormat = DataFormatInteger;
+        u.gpr = gpr;
+    }
+    void fillBoolean(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatBoolean;
         u.gpr = gpr;
     }
     void fillDouble(FPRReg fpr)
