@@ -1,3 +1,17 @@
+2011-10-24  Alejandro G. Castro  <alex@igalia.com>
+
+        [WK2] [GTK] WebKitTestRunner crashes with heap corruption
+        https://bugs.webkit.org/show_bug.cgi?id=69403
+
+        We did not added autotoolsconfig.h to the config.h file and we
+        were adding Platform.h without the config.h in the
+        WebKitTestRunnerPrefix.h. Added the autotoolsconfig.h include in
+        the Prefix file.
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+
 2011-10-23  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Remove unused code from EWebLauncher
