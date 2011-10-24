@@ -62,13 +62,28 @@ WK_EXPORT
 /* Go to the next page in the back/forward list. */
 - (void)goForward;
 
-/* Returns whether there is a next page in the back/forward list. */
-- (BOOL)canGoForward;
+/* Whether there is a next page in the back/forward list. */
+@property(readonly) BOOL canGoForward;
 
 /* Go to the previous page in the back/forward list. */
 - (void)goBack;
 
-/* Returns whether there is a previous page in the back/forward list. */
-- (BOOL)canGoBack;
+/* Whether there is a previous page in the back/forward list. */
+@property(readonly) BOOL canGoBack;
+
+
+#pragma mark Active Document Introspection
+
+/* Title of the document associated with the active load. */
+@property(readonly) NSString *title;
+
+
+#pragma mark Zoom
+
+/* Sets the text zoom for the active URL. */
+@property CGFloat textZoom;
+
+/* Sets the text zoom for the active URL. */
+@property CGFloat pageZoom;
 
 @end

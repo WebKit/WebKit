@@ -31,6 +31,7 @@
 #import "WKRetainPtr.h"
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
+#import "WKStringCF.h"
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public
@@ -102,6 +103,36 @@
 - (BOOL)canGoBack
 {
     return WKPageCanGoBack(self.pageRef);
+}
+
+#pragma mark Active Document Introspection
+
+- (NSString *)title
+{
+    WKRetainPtr<WKStringRef> wkTitle = adoptWK(WKPageCopyTitle(self.pageRef));
+    return [(NSString *)WKStringCopyCFString(kCFAllocatorDefault, wkTitle.get()) autorelease];
+}
+
+#pragma mark Zoom
+
+- (CGFloat)textZoom
+{
+    return WKPageGetTextZoomFactor(self.pageRef);
+}
+
+- (void)setTextZoom:(CGFloat)textZoom
+{
+    return WKPageSetTextZoomFactor(self.pageRef, textZoom);
+}
+
+- (CGFloat)pageZoom
+{
+    return WKPageGetPageZoomFactor(self.pageRef);
+}
+
+- (void)setPageZoom:(CGFloat)pageZoom
+{
+    return WKPageSetPageZoomFactor(self.pageRef, pageZoom);
 }
 
 @end
