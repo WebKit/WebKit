@@ -1,3 +1,12 @@
+2011-10-24  Aaron Colwell  <acolwell@chromium.org>
+
+        Enable MEDIA_SOURCE feature for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=70745
+
+        Reviewed by David Levin.
+
+        * features.gypi:
+
 2011-10-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow debugging dedicated worker initialization
