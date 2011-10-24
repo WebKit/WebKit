@@ -1,3 +1,15 @@
+2011-10-23  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove GeolocationServiceGtk.{h,cpp} from the gyp projects
+        https://bugs.webkit.org/show_bug.cgi?id=70702
+
+        Reviewed by Kent Tamura.
+
+        platform/gtk/GeolocationServiceGtk.{h,cpp} were removed in r97746, so
+        remove references to these files from the gyp files.
+
+        * WebCore.gypi:
+
 2011-10-23  Andreas Kling  <kling@webkit.org>
 
         Move StyleSheet::addSubresourceStyleURLs() to CSSStyleSheet.

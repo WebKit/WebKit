@@ -3954,8 +3954,6 @@
             'platform/gtk/GOwnPtrGtk.h',
             'platform/gtk/GRefPtrGtk.cpp',
             'platform/gtk/GRefPtrGtk.h',
-            'platform/gtk/GeolocationServiceGtk.cpp',
-            'platform/gtk/GeolocationServiceGtk.h',
             'platform/gtk/GtkPluginWidget.cpp',
             'platform/gtk/GtkPluginWidget.h',
             'platform/gtk/GtkVersioning.h',
