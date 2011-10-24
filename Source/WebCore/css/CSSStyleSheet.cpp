@@ -51,16 +51,6 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
-CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const KURL& baseURL, const String& charset)
-    : StyleSheet(parentSheet, href, baseURL)
-    , m_charset(charset)
-    , m_loadCompleted(false)
-    , m_strictParsing(!parentSheet || parentSheet->useStrictParsing())
-    , m_isUserStyleSheet(parentSheet ? parentSheet->isUserStyleSheet() : false)
-    , m_hasSyntacticallyValidCSSHeader(true)
-{
-}
-
 CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(parentNode, href, baseURL)
     , m_charset(charset)

@@ -26,15 +26,6 @@
 
 namespace WebCore {
 
-StyleSheet::StyleSheet(StyleSheet* parentSheet, const String& originalURL, const KURL& finalURL)
-    : StyleBase(parentSheet)
-    , m_parentNode(0)
-    , m_originalURL(originalURL)
-    , m_finalURL(finalURL)
-    , m_disabled(false)
-{
-}
-
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
     : StyleBase(0)
     , m_parentNode(parentNode)

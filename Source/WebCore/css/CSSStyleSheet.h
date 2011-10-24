@@ -38,7 +38,7 @@ class CSSStyleSheet : public StyleSheet {
 public:
     static PassRefPtr<CSSStyleSheet> create()
     {
-        return adoptRef(new CSSStyleSheet(static_cast<CSSStyleSheet*>(0), String(), KURL(), String()));
+        return adoptRef(new CSSStyleSheet(static_cast<CSSRule*>(0), String(), KURL(), String()));
     }
     static PassRefPtr<CSSStyleSheet> create(Node* ownerNode)
     {
@@ -113,7 +113,6 @@ public:
 
 private:
     CSSStyleSheet(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset);
-    CSSStyleSheet(CSSStyleSheet* parentSheet, const String& originalURL, const KURL& finalURL, const String& charset);
     CSSStyleSheet(CSSRule* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset);
 
     virtual bool isCSSStyleSheet() const { return true; }

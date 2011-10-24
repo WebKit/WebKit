@@ -67,7 +67,6 @@ public:
 
 protected:
     StyleSheet(Node* ownerNode, const String& href, const KURL& finalURL);
-    StyleSheet(StyleSheet* parentSheet, const String& href, const KURL& finalURL);
     StyleSheet(StyleBase* owner, const String& href, const KURL& finalURL);
 
 private:
