@@ -22,8 +22,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 MAJOR_VERSION = 534;
-MINOR_VERSION = 51;
-TINY_VERSION = 24;
+MINOR_VERSION = 52;
+TINY_VERSION = 1;
 FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(TINY_VERSION);
 
 // The bundle version and short version string are set based on the current build configuration, see below.
