@@ -35,6 +35,7 @@
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
 
+#import "WKBrowsingContextLoadDelegate.h"
 
 static inline NSString *autoreleased(WKStringRef string)
 {
@@ -51,7 +52,11 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public
+    // Underlying WKPageRef.
     WKRetainPtr<WKPageRef> _pageRef;
+    
+    // Delegate for load callbacks.
+    id<WKBrowsingContextLoadDelegate> _loadDelegate;
 }
 @end
 
@@ -70,6 +75,19 @@ static inline NSURL *autoreleased(WKURLRef url)
 {
     return _data->_pageRef.get();
 }
+
+#pragma mark Delegates
+
+- (id<WKBrowsingContextLoadDelegate>)loadDelegate
+{
+    return _data->_loadDelegate;
+}
+
+- (void)setLoadDelegate:(id<WKBrowsingContextLoadDelegate>)loadDelegate
+{
+    _data->_loadDelegate = loadDelegate;
+}
+
 
 #pragma mark Loading
 
@@ -185,6 +203,48 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 @implementation WKBrowsingContextController (Internal)
 
+static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    [browsingContext.loadDelegate browsingContextControllerDidStartProvisionalLoad:browsingContext];
+}
+
+static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    [browsingContext.loadDelegate browsingContextControllerDidCommitLoad:browsingContext];
+}
+
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    [browsingContext.loadDelegate browsingContextControllerDidFinishLoad:browsingContext];
+}
+
+static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WKPageRef pageRef)
+{
+    WKPageLoaderClient loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    
+    loaderClient.version = kWKPageLoaderClientCurrentVersion;
+    loaderClient.clientInfo = browsingContext;
+    loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
+    loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+
+    WKPageSetPageLoaderClient(pageRef, &loaderClient);
+}
+
+
 /* This should only be called from associate view. */
 
 - (id)initWithPageRef:(WKPageRef)pageRef
@@ -195,6 +255,8 @@ static inline NSURL *autoreleased(WKURLRef url)
 
     _data = [[WKBrowsingContextControllerData alloc] init];
     _data->_pageRef = pageRef;
+
+    setUpPageLoaderClient(self, pageRef);
 
     return self;
 }

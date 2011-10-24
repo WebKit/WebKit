@@ -1,3 +1,30 @@
+2011-10-24  Sam Weinig  <sam@webkit.org>
+
+        Hook up minimalist load delegate to WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=70764
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadDelegate]):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        Add loadDelegate getter/setter. As per convention, the delegate is not
+        retained.
+
+        (didStartProvisionalLoadForFrame):
+        (didCommitLoadForFrame):
+        (didFinishLoadForFrame):
+        (setUpPageLoaderClient):
+        (-[WKBrowsingContextController initWithPageRef:]):
+        Hookup the delegate to a WKPageLoaderClient.
+
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h: Added.
+        Add load delegate as a proper protocol.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new file.
+
 2011-10-24  Michael Saboff  <msaboff@apple.com>
 
         WebKit doesn't build with recent changes to libdispatch

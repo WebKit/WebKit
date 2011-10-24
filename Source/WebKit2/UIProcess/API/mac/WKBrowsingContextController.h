@@ -27,12 +27,18 @@
 #import <WebKit2/WKBase.h>
 
 @class WKBrowsingContextControllerData;
+@protocol WKBrowsingContextLoadDelegate;
 
 WK_EXPORT
 @interface WKBrowsingContextController : NSObject {
 @private
     WKBrowsingContextControllerData *_data;
 }
+
+#pragma mark Delegates
+
+@property(assign) id<WKBrowsingContextLoadDelegate> loadDelegate;
+
 
 #pragma mark Loading
 
