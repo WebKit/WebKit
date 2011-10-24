@@ -1,5 +1,20 @@
 2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add helper function to set the loader client in WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=70594
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetLoaderClient): Helper function to set the loader
+        client.
+        (webkitWebViewConstructed): Use webkitWebViewSetLoaderClient() to
+        avoid unnecessary checks.
+        (webkit_web_view_set_loader_client): Use
+        webkitWebViewSetLoaderClient().
+
+2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove g_thread_init() calls
         https://bugs.webkit.org/show_bug.cgi?id=70717
 

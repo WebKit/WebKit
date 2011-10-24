@@ -54,15 +54,27 @@ struct _WebKitWebViewPrivate {
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
 
+static void webkitWebViewSetLoaderClient(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
+{
+    webView->priv->loaderClient = loaderClient;
+    webkitWebLoaderClientAttachLoaderClientToPage(loaderClient, wkPage);
+}
+
 static void webkitWebViewConstructed(GObject* object)
 {
+    if (G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed)
+        G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
+
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
 
-    webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), webkitWebContextGetWKContext(priv->context), 0);
+    webkitWebViewBaseCreateWebPage(webViewBase, webkitWebContextGetWKContext(priv->context), 0);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
 
     static GRefPtr<WebKitWebLoaderClient> defaultLoaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, NULL)));
-    webkit_web_view_set_loader_client(webView, defaultLoaderClient.get());
+    webkitWebViewSetLoaderClient(webView, defaultLoaderClient.get(), toAPI(page));
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -235,8 +247,7 @@ void webkit_web_view_set_loader_client(WebKitWebView* webView, WebKitWebLoaderCl
         return;
 
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    webkitWebLoaderClientAttachLoaderClientToPage(loaderClient, toAPI(page));
-    priv->loaderClient = loaderClient;
+    webkitWebViewSetLoaderClient(webView, loaderClient, toAPI(page));
 }
 
 /**
