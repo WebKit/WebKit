@@ -843,8 +843,6 @@ BUGWK53378 LINUX WIN : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 // Since r89233. May need a new baseline.
 // NOTE that this revision was rolled out, but it isn't clear whether we should remove these
 // expectations because it's likely to get checked in again soon.
-BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
-BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/batik/text/textEffect.svg = IMAGE+TEXT

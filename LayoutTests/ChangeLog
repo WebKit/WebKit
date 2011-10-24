@@ -1,3 +1,27 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline of svg/W3C-SVG-1.1-SE/coords-units-03-b.html
+
+        The new baselines all match the existing ones. Not sure if we really pass the test as
+        2 lines should be 200px but at least all the baselines are consistent (within some font
+        differences).
+
+        * platform/chromium-cg-mac-leopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/chromium-cg-mac-snowleopard/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Removed.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Removed.
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+
 2011-10-24  Ojan Vafai  <ojan@chromium.org>
 
         Cleanup some test expectations missed in r98183.
