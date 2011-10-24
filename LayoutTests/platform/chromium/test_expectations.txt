@@ -625,7 +625,7 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
-BUGWK60109 WIN : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 WIN : inspector/elements/edit-dom-actions.html = PASS TEXT TIMEOUT
 BUGWK60109 SLOW LINUX DEBUG : inspector/elements/edit-dom-actions.html = PASS
 
 // -----------------------------------------------------------------
