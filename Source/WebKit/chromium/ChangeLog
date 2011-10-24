@@ -1,3 +1,9 @@
+2011-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-10-21  Nat Duca  <nduca@chromium.org>
 
         [chromium] Make setVisibility extension- and thread-correct
