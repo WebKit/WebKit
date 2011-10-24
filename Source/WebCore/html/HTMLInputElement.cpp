@@ -747,8 +747,10 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         updateType();
     } else if (attr->name() == valueAttr) {
         // We only need to setChanged if the form is looking at the default value right now.
-        if (!hasDirtyValue())
+        if (!hasDirtyValue()) {
+            updatePlaceholderVisibility(false);
             setNeedsStyleRecalc();
+        }
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
     } else if (attr->name() == checkedAttr) {

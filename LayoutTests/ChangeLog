@@ -1,3 +1,17 @@
+2011-10-24  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Setting defaultValue should hide an input placeholder.
+        https://bugs.webkit.org/show_bug.cgi?id=70586
+
+        Reviewed by Kent Tamura.
+
+        This test checks "value" attribute (default value) changing in two
+        ways, one is using setDefault method and another is setAttribute
+        method.
+
+        * fast/forms/placeholder-and-default-value-expected.html: Added. Render text input element with "Default" value.
+        * fast/forms/placeholder-and-default-value.html: Added. Render text input element with placeholder attribute and a script to change default value of input element to "Default" from empty.
+
 2011-10-23  Adam Barth  <abarth@webkit.org>
 
         <img crossorigin> should fail to load when CORS check fails
