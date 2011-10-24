@@ -26,6 +26,8 @@
 
 #include "config.h"
 #include "WebContext.h"
+#include <WebCore/FileSystem.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 #include "ApplicationCacheStorage.h"
 
@@ -46,7 +48,8 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    return WTF::String::fromUTF8(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    GOwnPtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    return WebCore::filenameToString(databaseDirectory.get());
 }
 
 String WebContext::platformDefaultIconDatabasePath() const
@@ -57,7 +60,8 @@ String WebContext::platformDefaultIconDatabasePath() const
 
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
-    return WTF::String::fromUTF8(g_build_filename(g_get_user_data_dir(), "webkit", "localstorage", NULL));
+    GOwnPtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkit", "localstorage", NULL));
+    return WebCore::filenameToString(storageDirectory.get());
 }
 
 } // namespace WebKit

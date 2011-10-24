@@ -1,3 +1,16 @@
+2011-10-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leaks in WebContextGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=70505
+
+        Free the output of g_build_filename()
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+
 2011-10-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getConstructDataVirtual
