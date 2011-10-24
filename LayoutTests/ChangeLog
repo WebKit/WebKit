@@ -1,3 +1,13 @@
+2011-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Fixing a collision in Mac results and adding qt results from http://trac.webkit.org/changeset/98263
+
+        Unreviewed test expectations update.
+
+        * platform/mac/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt: Fixing collision that removes
+        an empty text node.
+        * platform/qt/svg/as-object/svg-embedded-in-html-in-iframe-actual.txt: Added.
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw DATA_ERR on invalid keys, remove null key support
