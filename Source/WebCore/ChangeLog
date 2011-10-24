@@ -1,3 +1,23 @@
+2011-10-23  Adam Barth  <abarth@webkit.org>
+
+        <img crossorigin> should fail to load when CORS check fails
+        https://bugs.webkit.org/show_bug.cgi?id=69732
+
+        Reviewed by Darin Adler.
+
+        When loading an image with the crossorigin attribute, the spec says
+        that we're not supposed to load the image if the CORS check fails.
+        This "fails fast" behavior is intended to help developers understand
+        whether they've configured CORS correctly (instead of only catching the
+        error later when trying to read back the canvas).
+
+        Our new behavior matches the spec and Firefox.
+
+        Test: http/tests/security/img-with-failed-cors-check-fails-to-load.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+
 2011-10-23  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove GeolocationServiceGtk.{h,cpp} from the gyp projects

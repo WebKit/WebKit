@@ -32,6 +32,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "RenderImage.h"
+#include "ScriptCallStack.h"
 
 #if ENABLE(SVG)
 #include "RenderSVGImage.h"
@@ -238,6 +239,16 @@ void ImageLoader::notifyFinished(CachedResource* resource)
 
     if (m_firedLoad)
         return;
+
+    if (m_element->fastHasAttribute(HTMLNames::crossoriginAttr) && !resource->passesAccessControlCheck(m_element->document()->securityOrigin())) {
+        setImage(0);
+
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin image load denied by Cross-Origin Resource Sharing policy."));
+        m_element->document()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String(), 0);
+
+        ASSERT(m_firedLoad);
+        return;
+    }
 
     if (resource->wasCanceled()) {
         m_firedLoad = true;

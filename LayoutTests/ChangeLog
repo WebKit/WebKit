@@ -1,3 +1,16 @@
+2011-10-23  Adam Barth  <abarth@webkit.org>
+
+        <img crossorigin> should fail to load when CORS check fails
+        https://bugs.webkit.org/show_bug.cgi?id=69732
+
+        Reviewed by Darin Adler.
+
+        Test that images loaded with the crossorigin attribute fail to load if
+        the CORS access check doesn't pass.
+
+        * http/tests/security/img-with-failed-cors-check-fails-to-load-expected.txt: Added.
+        * http/tests/security/img-with-failed-cors-check-fails-to-load.html: Added.
+
 2011-10-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline constructors

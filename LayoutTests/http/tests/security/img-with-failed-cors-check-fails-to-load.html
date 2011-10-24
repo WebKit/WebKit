@@ -1,0 +1,16 @@
+<body>
+This test passes if the image below does not load.
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var img = new Image();
+
+img.addEventListener('load', function(event) {
+    alert('FAIL: The image loaded.');
+}, false);
+
+img.crossOrigin = "";
+img.src = "http://localhost:8080/security/resources/red200x100.png";
+document.body.appendChild(img);
+</script>
