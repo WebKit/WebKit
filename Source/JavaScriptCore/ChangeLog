@@ -1,3 +1,57 @@
+2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static getOwnPropertySlot to getOwnPropertySlotByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70271
+
+        Reviewed by Darin Adler.
+
+        Renaming versions of getOwnPropertySlot that use an unsigned as the property
+        name to "getOwnPropertySlotByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlotVirtual):
+        (JSC::Arguments::getOwnPropertySlotByIndex):
+        * runtime/Arguments.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlotVirtual):
+        (JSC::JSArray::getOwnPropertySlotByIndex):
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertySlotVirtual):
+        (JSC::JSByteArray::getOwnPropertySlotByIndex):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertySlotVirtual):
+        (JSC::JSCell::getOwnPropertySlotByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertySlotVirtual):
+        (JSC::JSNotAnObject::getOwnPropertySlotByIndex):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotVirtual):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlotVirtual):
+        (JSC::JSString::getOwnPropertySlotByIndex):
+        * runtime/JSString.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::getOwnPropertySlotVirtual):
+        (JSC::ObjectPrototype::getOwnPropertySlotByIndex):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertySlotVirtual):
+        (JSC::RegExpMatchesArray::getOwnPropertySlotByIndex):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertySlotVirtual):
+        (JSC::StringObject::getOwnPropertySlotByIndex):
+        * runtime/StringObject.h:
+
 2011-10-24  Patrick Gansterer  <paroga@webkit.org>
 
         Interpreter build fix after r98179.

@@ -58,15 +58,15 @@ namespace JSC {
 
         virtual bool getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
         {
-            return getOwnPropertySlot(this, exec, propertyName, slot);
+            return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
         }
 
-        static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+        static bool getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
         {
             RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
-            return JSArray::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+            return JSArray::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
         }
 
         virtual bool getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

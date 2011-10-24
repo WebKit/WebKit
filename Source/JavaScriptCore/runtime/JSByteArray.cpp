@@ -84,10 +84,10 @@ bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
 
 bool JSByteArray::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, propertyName, slot);
+    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
-bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSByteArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
     if (thisObject->canAccessIndex(propertyName)) {

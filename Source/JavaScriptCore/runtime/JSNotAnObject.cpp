@@ -59,10 +59,10 @@ bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, const Identifie
 
 bool JSNotAnObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, propertyName, slot);
+    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
-bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, unsigned, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlotByIndex(JSCell*, ExecState* exec, unsigned, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;

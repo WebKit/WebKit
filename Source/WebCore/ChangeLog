@@ -1,3 +1,26 @@
+2011-10-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename static getOwnPropertySlot to getOwnPropertySlotByIndex
+        https://bugs.webkit.org/show_bug.cgi?id=70271
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Renaming versions of getOwnPropertySlot that use an unsigned as the property
+        name to "getOwnPropertySlotByIndex" in preparation for adding them to the 
+        MethodTable, which requires unique names for each method.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::getSparseIndex):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlotVirtual):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        * bridge/runtime_array.h:
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB add should fail adding an inline and passed key simultaneously

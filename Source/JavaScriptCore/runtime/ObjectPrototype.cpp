@@ -94,15 +94,15 @@ void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& prope
 
 bool ObjectPrototype::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, propertyName, slot);
+    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
-bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool ObjectPrototype::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
     if (thisObject->m_hasNoPropertiesWithUInt32Names)
         return false;
-    return JSNonFinalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    return JSNonFinalObject::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
 }
 
 bool ObjectPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

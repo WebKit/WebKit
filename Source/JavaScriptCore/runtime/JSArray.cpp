@@ -247,10 +247,10 @@ JSArray::~JSArray()
 
 bool JSArray::getOwnPropertySlotVirtual(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, i, slot);
+    return getOwnPropertySlotByIndex(this, exec, i, slot);
 }
 
-bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     JSArray* thisObject = static_cast<JSArray*>(cell);
     ArrayStorage* storage = thisObject->m_storage;
@@ -296,7 +296,7 @@ bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return JSArray::getOwnPropertySlot(thisObject, exec, i, slot);
+        return JSArray::getOwnPropertySlotByIndex(thisObject, exec, i, slot);
 
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }

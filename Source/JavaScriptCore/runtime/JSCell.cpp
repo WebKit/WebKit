@@ -83,10 +83,10 @@ bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier&
 
 bool JSCell::getOwnPropertySlotVirtual(ExecState* exec, unsigned identifier, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, identifier, slot);
+    return getOwnPropertySlotByIndex(this, exec, identifier, slot);
 }
 
-bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned identifier, PropertySlot& slot)
+bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned identifier, PropertySlot& slot)
 {
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.

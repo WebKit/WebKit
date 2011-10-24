@@ -201,8 +201,8 @@ EXPORTS
     ?getOwnPropertyNames@JSObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@JSVariableObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@StringObject@JSC@@UAEXPAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
-    ?getOwnPropertySlot@JSArray@JSC@@SA_NPAVJSCell@2@PAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSGlobalObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
+    ?getOwnPropertySlotByIndex@JSArray@JSC@@SA_NPAVJSCell@2@PAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlotVirtual@JSCell@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlotVirtual@JSCell@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlotVirtual@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z

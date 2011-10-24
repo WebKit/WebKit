@@ -147,10 +147,10 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 
 bool Arguments::getOwnPropertySlotVirtual(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, i, slot);
+    return getOwnPropertySlotByIndex(this, exec, i, slot);
 }
 
-bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
     if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {

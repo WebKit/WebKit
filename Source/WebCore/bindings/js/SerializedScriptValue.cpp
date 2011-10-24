@@ -333,7 +333,7 @@ private:
     {
         PropertySlot slot(array);
         if (isJSArray(&m_exec->globalData(), array)) {
-            if (JSArray::getOwnPropertySlot(array, m_exec, propertyName, slot)) {
+            if (JSArray::getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
                 hasIndex = true;
                 return slot.getValue(m_exec, propertyName);
             }

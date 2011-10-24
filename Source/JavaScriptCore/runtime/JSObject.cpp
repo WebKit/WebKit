@@ -106,10 +106,10 @@ UString JSObject::className() const
 
 bool JSObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, propertyName, slot);
+    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
-bool JSObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     return static_cast<JSObject*>(cell)->getOwnPropertySlotVirtual(exec, Identifier::from(exec, propertyName), slot);
 }

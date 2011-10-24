@@ -257,10 +257,10 @@ bool JSString::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prope
 
 bool JSString::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(this, exec, propertyName, slot);
+    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
-bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSString::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     JSString* thisObject = static_cast<JSString*>(cell);
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
