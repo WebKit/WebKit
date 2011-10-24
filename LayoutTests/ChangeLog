@@ -1,3 +1,17 @@
+2011-10-24  Ojan Vafai  <ojan@chromium.org>
+
+        Some more fixups from http://trac.webkit.org/changeset/98265.
+
+        The leopard bot results are incorrect, but that's because the
+        chromium leopard bots have not compiled in a few days. Once
+        the bots are fixed, we'll need to rebaseline this test again for
+        leopard.
+
+        * platform/chromium-cg-mac-leopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+
 2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline of svg/W3C-SVG-1.1-SE/coords-units-03-b.html
