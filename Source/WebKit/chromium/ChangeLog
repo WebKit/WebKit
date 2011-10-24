@@ -1,3 +1,15 @@
+2011-10-21  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add isTraceEventEnabled to PlatformSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=70618
+
+        Reviewed by Darin Fisher.
+
+        * public/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::isTraceEventEnabled):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::isTraceEventEnabled):
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw DATA_ERR on invalid keys, remove null key support

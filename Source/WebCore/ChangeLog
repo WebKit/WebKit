@@ -1,3 +1,12 @@
+2011-10-21  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add isTraceEventEnabled to PlatformSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=70618
+
+        Reviewed by Darin Fisher.
+
+        * platform/chromium/PlatformSupport.h:
+
 2011-10-24  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Use StringBuilder in CSSRuleList::rulesText()/CSSSelectorList::selectorsText()

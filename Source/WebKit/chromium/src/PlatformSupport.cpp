@@ -935,6 +935,11 @@ void PlatformSupport::paintThemePart(
 
 // Trace Event ----------------------------------------------------------------
 
+bool PlatformSupport::isTraceEventEnabled()
+{
+    return webKitPlatformSupport()->isTraceEventEnabled();
+}
+
 void PlatformSupport::traceEventBegin(const char* name, void* id, const char* extra)
 {
     webKitPlatformSupport()->traceEventBegin(name, id, extra);

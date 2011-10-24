@@ -405,6 +405,7 @@ public:
 #endif
 
     // Trace Event --------------------------------------------------------
+    static bool isTraceEventEnabled();
     static void traceEventBegin(const char* name, void*, const char* extra);
     static void traceEventEnd(const char* name, void*, const char* extra);
 

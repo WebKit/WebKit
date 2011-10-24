@@ -230,6 +230,7 @@ public:
 
     // An event is identified by the pair (name, id). The extra parameter
     // specifies additional data to log with the event.
+    virtual bool isTraceEventEnabled() const { return true; }
     virtual void traceEventBegin(const char* name, void* id, const char* extra) { }
     virtual void traceEventEnd(const char* name, void* id, const char* extra) { }
 
