@@ -78,8 +78,7 @@ static const GOptionEntry commandLineOptions[] =
 
 int main(int argc, char *argv[])
 {
-    if (!g_thread_supported())
-        g_thread_init(NULL);
+    gtk_init(&argc, &argv);
 
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);

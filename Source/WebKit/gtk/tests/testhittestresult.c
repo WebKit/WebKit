@@ -136,7 +136,6 @@ test_webkit_hit_test_result(HitTestResultFixture* fixture, gconstpointer data)
 
 int main(int argc, char** argv)
 {
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");

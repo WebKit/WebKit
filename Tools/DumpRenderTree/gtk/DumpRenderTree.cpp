@@ -1172,7 +1172,6 @@ static void logHandler(const gchar* domain, GLogLevelFlags level, const gchar* m
 
 int main(int argc, char* argv[])
 {
-    g_thread_init(NULL);
     gtk_init(&argc, &argv);
 
     // Some plugins might try to use the GLib logger for printing debug

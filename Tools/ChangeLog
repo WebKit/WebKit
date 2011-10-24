@@ -1,3 +1,20 @@
+2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove g_thread_init() calls
+        https://bugs.webkit.org/show_bug.cgi?id=70717
+
+        Reviewed by Xan Lopez.
+
+        With newer glib it's not needed anymore and with previous versions
+        it was already called by g_type_init().
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main):
+        * GtkLauncher/main.c:
+        (main):
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2011-10-24  Alejandro G. Castro  <alex@igalia.com>
 
         [WK2] [GTK] WebKitTestRunner crashes with heap corruption

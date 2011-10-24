@@ -176,7 +176,6 @@ int main(int argc, char** argv)
     SoupServer* server;
     SoupURI* soup_uri;
 
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     /* Hopefully make test independent of the path it's called from. */

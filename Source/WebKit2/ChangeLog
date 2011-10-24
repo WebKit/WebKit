@@ -1,3 +1,16 @@
+2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove g_thread_init() calls
+        https://bugs.webkit.org/show_bug.cgi?id=70717
+
+        Reviewed by Xan Lopez.
+
+        With newer glib it's not needed anymore and with previous versions
+        it was already called by g_type_init().
+
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (main):
+
 2011-10-24  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] WebView does not get focus when being clicked / touched in MiniBrowser.

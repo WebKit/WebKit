@@ -197,9 +197,6 @@ static void test_dom_domview_dispatch_event(DomDomviewFixture* fixture, gconstpo
 
 int main(int argc, char** argv)
 {
-    if (!g_thread_supported())
-        g_thread_init(NULL);
-
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");

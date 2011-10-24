@@ -400,7 +400,6 @@ int main(int argc, char** argv)
 {
     SoupServer* server;
 
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);

@@ -71,7 +71,6 @@ static void test_webkit_web_plugin_database_get_plugins()
 
 int main(int argc, char** argv)
 {
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");

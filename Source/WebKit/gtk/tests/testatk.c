@@ -1660,7 +1660,6 @@ static void testWebkitAtkTextChangedNotifications()
 
 int main(int argc, char** argv)
 {
-    g_thread_init(0);
     gtk_test_init(&argc, &argv, 0);
 
     g_test_bug_base("https://bugs.webkit.org/");

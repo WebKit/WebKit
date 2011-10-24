@@ -1,3 +1,63 @@
+2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove g_thread_init() calls
+        https://bugs.webkit.org/show_bug.cgi?id=70717
+
+        Reviewed by Xan Lopez.
+
+        With newer glib it's not needed anymore and with previous versions
+        it was already called by g_type_init().
+
+        * tests/testapplicationcache.c:
+        (main):
+        * tests/testatk.c:
+        (main):
+        * tests/testatkroles.c:
+        (main):
+        * tests/testcopyandpaste.c:
+        (main):
+        * tests/testdomdocument.c:
+        (main):
+        * tests/testdomdomwindow.c:
+        (main):
+        * tests/testdomnode.c:
+        (main):
+        * tests/testdownload.c:
+        (main):
+        * tests/testglobals.c:
+        (main):
+        * tests/testhittestresult.c:
+        (main):
+        * tests/testhttpbackend.c:
+        (main):
+        * tests/testkeyevents.c:
+        (main):
+        * tests/testloading.c:
+        (main):
+        * tests/testmimehandling.c:
+        (main):
+        * tests/testnetworkrequest.c:
+        (main):
+        * tests/testnetworkresponse.c:
+        (main):
+        * tests/testwebbackforwardlist.c:
+        (main):
+        * tests/testwebdatasource.c:
+        (main):
+        * tests/testwebframe.c:
+        (main):
+        * tests/testwebhistoryitem.c:
+        (main):
+        * tests/testwebplugindatabase.c:
+        (main):
+        * tests/testwebresource.c:
+        (main):
+        * tests/testwebsettings.c:
+        (main):
+        * tests/testwebview.c:
+        * tests/testwindow.c:
+        (main):
+
 2011-10-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] webkitgtk's pkgconfig file needs to require javascriptcoregtk

@@ -302,7 +302,6 @@ static void test_webkit_atk_get_role_radio_button(AtkRolesFixture* fixture, gcon
 
 int main(int argc, char** argv)
 {
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");

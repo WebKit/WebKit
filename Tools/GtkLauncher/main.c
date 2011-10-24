@@ -392,8 +392,6 @@ int main(int argc, char* argv[])
     };
 
     gtk_init(&argc, &argv);
-    if (!g_thread_supported())
-        g_thread_init(NULL);
 
     GOptionContext *context = g_option_context_new(0);
     g_option_context_add_main_entries(context, commandLineOptions, 0);

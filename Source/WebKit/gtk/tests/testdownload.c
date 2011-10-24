@@ -250,7 +250,6 @@ test_webkit_download_data(void)
 
 int main(int argc, char** argv)
 {
-    g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
     g_test_bug_base("https://bugs.webkit.org/");
