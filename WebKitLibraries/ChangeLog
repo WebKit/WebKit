@@ -1,3 +1,15 @@
+2011-10-24  Michael Saboff  <msaboff@apple.com>
+
+        WebKit doesn't build with recent changes to libdispatch
+        https://bugs.webkit.org/show_bug.cgi?id=70737
+
+        Added new WebKitSystemInterface method CreateVMPressureDispatchOnMainQueue.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-10-21  Jeff Miller  <jeffm@apple.com>
 
         Focus rings are too thin in HiDPI in WebKit2

@@ -445,6 +445,14 @@ NSCursor *WKCursor(const char *name);
 
 #endif
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
+#import <dispatch/dispatch.h>
+
+dispatch_source_t WKCreateVMPressureDispatchOnMainQueue(void);
+
+#endif
+    
 #ifdef __cplusplus
 }
 #endif
