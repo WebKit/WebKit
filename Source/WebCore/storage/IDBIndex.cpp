@@ -93,6 +93,11 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 
 PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    if (key && (key->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->get(key, request, m_transaction->backend(), ec);
     if (ec) {
@@ -104,6 +109,11 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
 
 PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    if (key && (key->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->getKey(key, request, m_transaction->backend(), ec);
     if (ec) {

@@ -1,3 +1,22 @@
+2011-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Throw DATA_ERR on invalid keys, remove null key support
+        https://bugs.webkit.org/show_bug.cgi?id=70065
+
+        Reviewed by Tony Chang.
+
+        Updated expectations now that most tests match spec. Includes change to
+        objectstore-basics test to avoid hitting https://bugs.webkit.org/show_bug.cgi?id=70041
+        since this CL stops hiding that bug.
+
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/invalid-keys-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/open-cursor-expected.txt:
+
 2011-10-24  Ojan Vafai  <ojan@chromium.org>
 
         Some more fixups from http://trac.webkit.org/changeset/98265.

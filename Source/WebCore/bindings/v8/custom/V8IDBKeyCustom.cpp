@@ -42,8 +42,9 @@ v8::Handle<v8::Value> toV8(IDBKey* key)
         return v8::Null();
 
     switch (key->type()) {
-    case IDBKey::NullType:
-        return v8::Null();
+    case IDBKey::InvalidType:
+        ASSERT_NOT_REACHED();
+        return v8::Undefined();
     case IDBKey::NumberType:
         return v8::Number::New(key->number());
     case IDBKey::StringType:

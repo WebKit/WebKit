@@ -185,6 +185,7 @@ function addAgainFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
+    evalAndLog("store.add({x: 'somevalue'}, 'somekey')");
     evalAndExpectException("store.add({x: 'othervalue'}, null)", "webkitIDBDatabaseException.DATA_ERR");
 
     transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
@@ -240,37 +241,17 @@ function removeSuccess()
     shouldBeNull("event.target.result");
     var store = evalAndLog("store = event.target.source");
 
-    try {
-        debug("Passing an invalid key into store.get().");
-        store.get([]);
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into store.get().");
+    evalAndExpectException("store.get([])", "webkitIDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into store.delete().");
-        store.delete([]);
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into store.delete().");
+    evalAndExpectException("store.delete([])", "webkitIDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into store.add().");
-        store.add(null, []);
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into store.add().");
+    evalAndExpectException("store.add(null, [])", "webkitIDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into store.put().");
-        store.put(null, []);
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into store.put().");
+    evalAndExpectException("store.put(null, [])", "webkitIDBDatabaseException.DATA_ERR");
 
     done();
 }

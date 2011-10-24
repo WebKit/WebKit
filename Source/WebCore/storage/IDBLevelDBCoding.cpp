@@ -350,7 +350,8 @@ Vector<char> encodeIDBKey(const IDBKey& key)
     Vector<char> ret;
 
     switch (key.type()) {
-    case IDBKey::NullType:
+    case IDBKey::InvalidType:
+        ASSERT_NOT_REACHED();
         return encodeByte(kIDBKeyNullTypeByte);
     case IDBKey::StringType:
         ret = encodeByte(kIDBKeyStringTypeByte);
@@ -385,7 +386,7 @@ const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& found
     switch (type) {
     case kIDBKeyNullTypeByte:
         // Null.
-        foundKey = IDBKey::createNull();
+        foundKey = IDBKey::createInvalid();
         return p;
     case kIDBKeyStringTypeByte:
         // String.

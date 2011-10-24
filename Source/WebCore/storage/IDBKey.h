@@ -36,10 +36,10 @@ namespace WebCore {
 
 class IDBKey : public ThreadSafeRefCounted<IDBKey> {
 public:
-    static PassRefPtr<IDBKey> createNull()
+    static PassRefPtr<IDBKey> createInvalid()
     {
         RefPtr<IDBKey> idbKey(new IDBKey());
-        idbKey->m_type = NullType;
+        idbKey->m_type = InvalidType;
         return idbKey.release();
     }
 
@@ -71,7 +71,7 @@ public:
 
     // In order of the least to the highest precedent in terms of sort order.
     enum Type {
-        NullType = 0, // FIXME: Phase out support for null keys.
+        InvalidType = 0,
         StringType,
         DateType,
         NumberType

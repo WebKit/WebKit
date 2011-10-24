@@ -68,6 +68,7 @@ PASS event.target.errorCode is webkitIDBDatabaseException.CONSTRAINT_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
+store.add({x: 'somevalue'}, 'somekey')
 Expecting exception from store.add({x: 'othervalue'}, null)
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
@@ -92,13 +93,21 @@ removeSuccess():
 PASS event.target.result is null
 store = event.target.source
 Passing an invalid key into store.get().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Expecting exception from store.get([])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.delete().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Expecting exception from store.delete([])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.add().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Expecting exception from store.add(null, [])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.put().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Expecting exception from store.put(null, [])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -131,7 +131,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
 
-    if (key && (key->type() == IDBKey::NullType)) {
+    if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }
@@ -224,8 +224,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     if (!key)
         return;
 
-    if (key->type() == IDBKey::NullType) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "NULL key is not allowed."));
+    if (key->type() == IDBKey::InvalidType) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Not a valid key."));
         return;
     }
 
@@ -238,8 +238,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             indexKeys.append(indexKey.release());
             continue;
         }
-        if (indexKey->type() == IDBKey::NullType) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is NULL."));
+        if (indexKey->type() == IDBKey::InvalidType) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is not valid."));
             return;
         }
         if (!index->addingKeyAllowed(indexKey.get(), key.get())) { // So problem is that if key() is the same as the old key for this record in this index, then we're not really *adding it*, just updating it...
@@ -301,7 +301,7 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (key->type() == IDBKey::NullType) {
+    if (key->type() == IDBKey::InvalidType) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }

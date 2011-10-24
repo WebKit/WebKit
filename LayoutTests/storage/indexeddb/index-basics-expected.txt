@@ -82,9 +82,9 @@ PASS event.target.result.value.y is "456"
 event.target.result.continue()
 PASS event.target.result === null is true
 Passing an invalid key into indexObject.get().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into indexObject.getKey().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 PASS successfullyParsed is true
 
 TEST COMPLETE

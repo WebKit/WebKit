@@ -95,7 +95,7 @@ void WebIDBKey::assign(const WebIDBKey& value)
 
 void WebIDBKey::assignNull()
 {
-    m_private = IDBKey::createNull();
+    m_private = 0;
 }
 
 void WebIDBKey::assignString(const WebString& string)

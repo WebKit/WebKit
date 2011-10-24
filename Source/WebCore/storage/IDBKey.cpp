@@ -31,7 +31,7 @@
 namespace WebCore {
 
 IDBKey::IDBKey()
-    : m_type(NullType)
+    : m_type(InvalidType)
 {
 }
 
@@ -54,7 +54,8 @@ int IDBKey::compare(const IDBKey* other) const
     case NumberType:
         return (m_number < other->m_number) ? -1 :
                 (m_number > other-> m_number) ? 1 : 0;
-    case NullType:
+    case InvalidType:
+        ASSERT_NOT_REACHED();
         return 0;
     }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBKeyRange.h"
 
+#include "IDBDatabaseException.h"
 #include "IDBKey.h"
 
 #if ENABLE(INDEXED_DATABASE)
@@ -40,24 +41,44 @@ IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, boo
 {
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpValue)
+PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> value = prpValue;
-    return IDBKeyRange::create(value, value, false, false);
+    RefPtr<IDBKey> key = prpKey;
+    if (key && (key->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
+    return IDBKeyRange::create(key, key, false, false);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool open)
+PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
 {
+    if (bound && (bound->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
     return IDBKeyRange::create(bound, 0, open, false);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool open)
+PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
 {
+    if (bound && (bound->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
     return IDBKeyRange::create(0, bound, false, open);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen)
+PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
+    if ((lower && (lower->type() == IDBKey::InvalidType)) || (upper && (upper->type() == IDBKey::InvalidType))) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
     return IDBKeyRange::create(lower, upper, lowerOpen, upperOpen);
 }
 

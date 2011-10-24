@@ -20,7 +20,7 @@ PASS event.target.result.key is 'myKey'
 PASS event.target.result.value is 'myValue'
 
 Passing an invalid key into .continue().
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 
 Opening an empty cursor.
 objectStore.openCursor(keyRange)

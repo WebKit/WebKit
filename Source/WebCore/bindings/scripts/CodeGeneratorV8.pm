@@ -3160,7 +3160,6 @@ sub TypeCanFailConversion
     AddToImplIncludes("ExceptionCode.h") if $type eq "Attr";
     return 1 if $type eq "Attr";
     return 1 if $type eq "VoidCallback";
-    return 1 if $type eq "IDBKey";
     return 0;
 }
 

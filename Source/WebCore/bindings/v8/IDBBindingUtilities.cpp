@@ -40,8 +40,6 @@ namespace WebCore {
 
 PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
 {
-    if (value->IsNull())
-        return IDBKey::createNull();
     if (value->IsNumber() && !isnan(value->NumberValue()))
         return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
@@ -49,7 +47,7 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
     if (value->IsDate())
         return IDBKey::createDate(value->NumberValue());
 
-    return 0; // Signals type error.
+    return IDBKey::createInvalid();
 }
 
 namespace {

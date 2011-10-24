@@ -1,3 +1,19 @@
+2011-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Throw DATA_ERR on invalid keys, remove null key support
+        https://bugs.webkit.org/show_bug.cgi?id=70065
+
+        Reviewed by Tony Chang.
+
+        Part 1 of a two-sided commit. Renames IDBKey::NullType to
+        IDBKey::InvalidType. JS binding yields this type rather
+        than throwing immediately so the correct exception type can
+        be raised. Checks for invalid keys added to front-end classes.
+
+        * src/AssertMatchingEnums.cpp:
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::assignNull):
+
 2011-10-24  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose WebThread::postDelayedTask to CCThread

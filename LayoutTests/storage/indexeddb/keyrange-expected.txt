@@ -208,17 +208,17 @@ PASS keyRange.upper is 'abf'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
 Passing an invalid key into only([])
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into upperBound([])
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into lowerBound([])
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into bound(null, [])
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into bound([],null)
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into bound([], [])
-PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 PASS successfullyParsed is true
 
 TEST COMPLETE

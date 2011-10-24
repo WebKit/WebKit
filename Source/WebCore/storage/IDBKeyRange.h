@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ExceptionCode.h"
 #include "IDBKey.h"
 #include "OptionsObject.h"
 #include <wtf/PassRefPtr.h>
@@ -48,10 +49,29 @@ public:
     bool lowerOpen() const { return m_lowerOpen; }
     bool upperOpen() const { return m_upperOpen; }
 
-    static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value);
-    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, bool open = false);
-    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, bool open = false);
-    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen = false, bool upperOpen = false);
+    static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value, ExceptionCode&);
+
+    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, ExceptionCode& ec)
+    {
+      return lowerBound(bound, false, ec);
+    }
+    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode&);
+
+    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, ExceptionCode& ec)
+    {
+      return upperBound(bound, false, ec);
+    }
+    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode&);
+
+    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, ExceptionCode& ec)
+    {
+      return bound(lower, upper, false, false, ec);
+    }
+    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, ExceptionCode& ec)
+    {
+      return bound(lower, upper, lowerOpen, false, ec);
+    }
+    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
 private:
     IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen);
