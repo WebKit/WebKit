@@ -13,25 +13,40 @@ function test()
 
     function step1()
     {
-        // Click add new rule
+        // Click "Add new rule".
         document.getElementById("add-style-button-test-id").click();
-        InspectorTest.selectNodeAndWaitForStyles("other", step2);
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step2);
     }
 
-    function step2() {
-        // Click add new rule
-        document.getElementById("add-style-button-test-id").click();
-        InspectorTest.selectNodeAndWaitForStyles("inspected", step3);
+    function step2()
+    {
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        var newProperty = section.addNewBlankProperty();
+        newProperty.startEditing();
+        newProperty.nameElement.textContent = "color";
+        newProperty.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        newProperty.valueElement.textContent = "maroon";
+        newProperty.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.selectNodeAndWaitForStyles("other", step3);
     }
 
     function step3()
     {
-        InspectorTest.addResult("After adding new rule (inspected):");
-        InspectorTest.dumpSelectedElementStyles(true, false, true);
-        InspectorTest.selectNodeAndWaitForStyles("other", step4);
+        // Click "Add new rule".
+        document.getElementById("add-style-button-test-id").click();
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step4);
     }
 
     function step4()
+    {
+        InspectorTest.addResult("After adding new rule (inspected):");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.selectNodeAndWaitForStyles("other", step5);
+    }
+
+    function step5()
     {
         InspectorTest.addResult("After adding new rule (other):");
         InspectorTest.dumpSelectedElementStyles(true, false, true);
@@ -44,7 +59,7 @@ function test()
 
 <body onload="runTest()">
 <p>
-Tests that adding a new rule works after sitching nodes.
+Tests that adding a new rule works after switching nodes.
 </p>
 
 <div id="inspected" style="font-size: 12px">Text</div>

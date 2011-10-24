@@ -1,3 +1,23 @@
+2011-10-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Adding a new style rule breaks things
+        https://bugs.webkit.org/show_bug.cgi?id=70721
+
+        Reviewed by Pavel Feldman.
+
+        We had used to swap BlankStylePropertiesSection prototype and recently got rid of this hack,
+        but still had dependencies on the old behavior.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._refreshStyleRules):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        (WebInspector.BlankStylePropertiesSection.prototype.get isBlank):
+        (WebInspector.BlankStylePropertiesSection.prototype.expand):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCancelled):
+        (WebInspector.BlankStylePropertiesSection.prototype.makeNormal):
+
 2011-10-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not force document loading on reload (should happen on demand).

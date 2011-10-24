@@ -375,7 +375,7 @@ WebInspector.StylesSidebarPane.prototype = {
         var styleRules = [];
         for (var i = 0; sections && i < sections.length; ++i) {
             var section = sections[i];
-            if (section instanceof WebInspector.BlankStylePropertiesSection)
+            if (section.isBlank)
                 continue;
             if (section.computedStyle)
                 section.styleRule.style = nodeComputedStyle;
@@ -1307,7 +1307,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
     {
         for (var i = 0; i < sections.length; ++i) {
             var section = sections[i];
-            if (section.computedStyle || section instanceof WebInspector.BlankStylePropertiesSection)
+            if (section.computedStyle || section.isBlank)
                 continue;
 
             for (var j = 0; j < section.uniqueProperties.length; ++j) {
@@ -1355,13 +1355,24 @@ WebInspector.BlankStylePropertiesSection = function(parentPane, defaultSelectorT
 }
 
 WebInspector.BlankStylePropertiesSection.prototype = {
-    expand: function()
+    get isBlank()
     {
-        // Do nothing, blank sections are not expandable.
+        return !this._normal;
     },
 
-    editingSelectorCommitted: function(element, newContent, oldContent, context)
+    expand: function()
     {
+        if (!this.isBlank)
+            WebInspector.StylePropertiesSection.prototype.expand.call(this);
+    },
+
+    editingSelectorCommitted: function(element, newContent, oldContent, context, moveDirection)
+    {
+        if (!this.isBlank) {
+            WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.call(this, element, newContent, oldContent, context, moveDirection);
+            return;
+        }
+
         function successCallback(newRule, doesSelectorAffectSelectedNode)
         {
             var styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
@@ -1374,8 +1385,8 @@ WebInspector.BlankStylePropertiesSection.prototype = {
 
             this.subtitleElement.textContent = WebInspector.UIString("via inspector");
             this.expand();
-            if (this.element.parentElement)  // Might have been detached already.
-                this.addNewBlankProperty().startEditing();
+            if (this.element.parentElement) // Might have been detached already.
+                this._moveEditorFromSelector(moveDirection);
         }
 
         WebInspector.cssModel.addRule(this.pane.node.id, newContent, successCallback.bind(this), this.editingSelectorCancelled.bind(this));
@@ -1383,6 +1394,11 @@ WebInspector.BlankStylePropertiesSection.prototype = {
 
     editingSelectorCancelled: function()
     {
+        if (!this.isBlank) {
+            WebInspector.StylePropertiesSection.prototype.editingSelectorCancelled.call(this);
+            return;
+        }
+
         this.pane.removeSection(this);
     },
 
@@ -1392,6 +1408,9 @@ WebInspector.BlankStylePropertiesSection.prototype = {
         this.styleRule = styleRule;
         this.rule = styleRule.rule;
         this.identifier = styleRule.selectorText + ":via inspector";
+
+        // FIXME: replace this instance by a normal WebInspector.StylePropertiesSection.
+        this._normal = true;
     }
 }
 

@@ -1,4 +1,4 @@
-Tests that adding a new rule works after sitching nodes.
+Tests that adding a new rule works after switching nodes.
 
 Text
 After adding new rule (inspected):
@@ -7,6 +7,7 @@ font-size: 12px;
 
 ======== Matched CSS Rules ========
 [expanded] #inspected { (via inspector)
+color: maroon;
 
 [expanded] div { (user agent stylesheet)
 display: block;
