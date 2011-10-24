@@ -639,12 +639,6 @@ on_browser_del(void *data, Evas *evas, Evas_Object *browser, void *event)
     evas_object_event_callback_del(app->browser, EVAS_CALLBACK_DEL, on_browser_del);
 }
 
-static void
-on_closeWindow(Ecore_Evas *ee)
-{
-    browserDestroy(ee);
-}
-
 static int
 quit(Eina_Bool success, const char *msg)
 {
