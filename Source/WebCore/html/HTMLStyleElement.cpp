@@ -98,22 +98,21 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 {    
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (StyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
+    if (CSSStyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
         styleSheet->addSubresourceStyleURLs(urls);
 }
 
 bool HTMLStyleElement::disabled() const
 {
-    StyleSheet* styleSheet = sheet();
-    if (!styleSheet)
+    if (!m_sheet)
         return false;
 
-    return styleSheet->disabled();
+    return m_sheet->disabled();
 }
 
 void HTMLStyleElement::setDisabled(bool setDisabled)
 {
-    if (StyleSheet* styleSheet = sheet())
+    if (CSSStyleSheet* styleSheet = sheet())
         styleSheet->setDisabled(setDisabled);
 }
 

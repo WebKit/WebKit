@@ -61,8 +61,6 @@ public:
     virtual void styleSheetChanged() { }
 
     virtual KURL completeURL(const String& url) const;
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
-
     virtual bool parseString(const String&, bool strict = true) = 0;
 
 protected:

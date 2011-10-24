@@ -1,5 +1,26 @@
 2011-10-23  Andreas Kling  <kling@webkit.org>
 
+        Move StyleSheet::addSubresourceStyleURLs() to CSSStyleSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=70690
+
+        Reviewed by Antti Koivisto.
+
+        This method isn't part of the StyleSheet DOM interface, nor is it used by
+        XSLStyleSheet, so move it down to CSSStyleSheet and make it non-virtual.
+        Also remove some nearby unneeded casts from CSSStyleSheet* to StyleSheet*.
+
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::isLoading):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs):
+        (WebCore::HTMLStyleElement::disabled):
+        (WebCore::HTMLStyleElement::setDisabled):
+
+2011-10-23  Andreas Kling  <kling@webkit.org>
+
         Remove style sheet constructors that take a style sheet parent.
         https://bugs.webkit.org/show_bug.cgi?id=70692
 
