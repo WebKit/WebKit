@@ -137,6 +137,11 @@ function test()
 
             function step3()
             {
+                InspectorTest.expandElementsTree(step4);
+            }
+
+            function step4()
+            {
                 InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
                 InspectorTest.addResult("Append childElement to rootElement.");
                 waitUntilPausedAndDumpStack(next);

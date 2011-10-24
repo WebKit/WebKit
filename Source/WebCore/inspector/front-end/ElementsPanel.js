@@ -138,6 +138,9 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.updateSelection();
         this.treeOutline.setVisible(true);
 
+        if (!this.treeOutline.rootDOMNode)
+            WebInspector.domAgent.requestDocument();
+
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
     },
@@ -195,8 +198,13 @@ WebInspector.ElementsPanel.prototype = {
         this._reset();
         this.searchCanceled();
 
-        if (!inspectedRootDocument)
+        this.treeOutline.rootDOMNode = inspectedRootDocument;
+
+        if (!inspectedRootDocument) {
+            if (this.isShowing())
+                WebInspector.domAgent.requestDocument();
             return;
+        }
 
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarPanes.domBreakpoints.restoreBreakpoints();

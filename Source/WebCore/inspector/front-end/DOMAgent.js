@@ -726,7 +726,6 @@ WebInspector.DOMAgent.prototype = {
     _documentUpdated: function()
     {
         this._setDocument(null);
-        this.requestDocument();
     },
 
     /**

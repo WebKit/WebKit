@@ -80,11 +80,6 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!this._visible)
             return;
 
-        if (!this.rootDOMNode) {
-            WebInspector.domAgent.requestDocument();
-            return;
-        }
-
         this._updateModifiedNodes();
     },
 

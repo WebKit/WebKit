@@ -1,3 +1,19 @@
+2011-10-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not force document loading on reload (should happen on demand).
+        https://bugs.webkit.org/show_bug.cgi?id=70724
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._documentUpdated):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.wasShown):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.setVisible):
+
 2011-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         Drop MutableTextTrack and make TextTrack always mutable

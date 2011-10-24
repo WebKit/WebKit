@@ -1,3 +1,13 @@
+2011-10-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not force document loading on reload (should happen on demand).
+        https://bugs.webkit.org/show_bug.cgi?id=70724
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/dom-breakpoints.html:
+        * inspector/debugger/error-in-watch-expressions.html:
+
 2011-10-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow debugging dedicated worker initialization
