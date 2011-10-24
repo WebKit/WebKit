@@ -1061,7 +1061,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (range.startLine > range.endLine || (range.startLine === range.endLine && range.startColumn > range.endColumn))
             range = new WebInspector.TextRange(range.endLine, range.endColumn, range.startLine, range.startColumn);
 
-        var newRange = this._setText(range, "\t");
+        var newRange = this._setText(range, WebInspector.settings.textEditorIndent.get());
 
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();

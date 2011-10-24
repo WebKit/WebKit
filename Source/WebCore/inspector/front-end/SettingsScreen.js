@@ -50,6 +50,13 @@ WebInspector.SettingsScreen = function()
         [ WebInspector.StylesSidebarPane.ColorFormat.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show user agent styles"), WebInspector.settings.showUserAgentStyles));
 
+    p = this._appendSection(WebInspector.UIString("Text editor"));
+    p.appendChild(this._createSelectSetting(WebInspector.UIString("Indent"), [
+        [ WebInspector.TextEditorModel.Indent.TwoSpaces, WebInspector.UIString("2 spaces") ],
+        [ WebInspector.TextEditorModel.Indent.FourSpaces, WebInspector.UIString("4 spaces") ],
+        [ WebInspector.TextEditorModel.Indent.EightSpaces, WebInspector.UIString("8 spaces") ],
+        [ WebInspector.TextEditorModel.Indent.TabCharacter, WebInspector.UIString("Tab character") ] ], WebInspector.settings.textEditorIndent));
+
     if (Preferences.canDisableCache) {
         p = this._appendSection(WebInspector.UIString("Network"), true);
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
@@ -65,7 +72,7 @@ WebInspector.SettingsScreen = function()
     if (Preferences.haveExtensions) {
         var handlerSelector = new WebInspector.HandlerSelector(WebInspector.openAnchorLocationRegistry);
         p = this._appendSection(WebInspector.UIString("Extensions"), true);
-        p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in..."), handlerSelector.element));
+        p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in"), handlerSelector.element));
     }
     var table = document.createElement("table");
     table.className = "help-table";
@@ -118,6 +125,35 @@ WebInspector.SettingsScreen.prototype = {
         return p;
     },
 
+    _createSelectSetting: function(name, options, setting)
+    {
+        var fieldsetElement = document.createElement("fieldset");
+        fieldsetElement.textContent = name;
+
+        var select = document.createElement("select");
+        var settingValue = setting.get();
+
+        for (var i = 0; i < options.length; ++i) {
+            var option = options[i];
+            select.add(new Option(option[1], option[0]));
+            if (settingValue === option[0])
+                select.selectedIndex = i;
+
+        }
+
+        function changeListener(e)
+        {
+            setting.set(e.target.value);
+        }
+
+        select.addEventListener("change", changeListener, false);
+        fieldsetElement.appendChild(select);
+
+        var p = document.createElement("p");
+        p.appendChild(fieldsetElement);
+        return p;
+    },
+
     _createRadioSetting: function(name, options, setting)
     {
         var pp = document.createElement("p");
@@ -157,11 +193,12 @@ WebInspector.SettingsScreen.prototype = {
 
     _createCustomSetting: function(name, element)
     {
-        var div = document.createElement("div");
-        var p = div.createChild("p");
-        p.textContent = name;
-        div.appendChild(element);
-        return div;
+        var p = document.createElement("p");
+        var fieldsetElement = document.createElement("fieldset");
+        fieldsetElement.textContent = name;
+        fieldsetElement.appendChild(element);
+        p.appendChild(fieldsetElement);
+        return p;
     }
 };
 

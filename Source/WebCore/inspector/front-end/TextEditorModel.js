@@ -66,6 +66,15 @@ WebInspector.TextEditorModel = function()
     this._undoStack = [];
     this._noPunctuationRegex = /[^ !%&()*+,-.:;<=>?\[\]\^{|}~]+/;
     this._lineBreak = "\n";
+
+    WebInspector.settings.textEditorIndent = WebInspector.settings.createSetting("indent", WebInspector.TextEditorModel.Indent.FourSpaces);
+}
+
+WebInspector.TextEditorModel.Indent = {
+    TwoSpaces: "  ",
+    FourSpaces: "    ",
+    EightSpaces: "        ",
+    TabCharacter: "\t"
 }
 
 WebInspector.TextEditorModel.prototype = {
