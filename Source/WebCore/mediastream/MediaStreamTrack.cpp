@@ -58,6 +58,7 @@ String MediaStreamTrack::kind() const
     }
 
     ASSERT_NOT_REACHED();
+    return audioKind;
 }
 
 String MediaStreamTrack::label() const
