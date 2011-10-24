@@ -1,3 +1,18 @@
+2011-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB add should fail adding an inline and passed key simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=58598
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/mozilla/key-requirements-inline-and-passed.html
+
+        Implement the spec clause: passing a key into add() or put() when
+        the object store has a key path ("inline key") is an error.
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+
 2011-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Improve debug compositing border colors

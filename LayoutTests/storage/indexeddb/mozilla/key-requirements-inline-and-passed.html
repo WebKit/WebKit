@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--
+  original test: http://mxr.mozilla.org/mozilla2.0/source/dom/indexedDB/test/test_key_requirements.html
+  license of original test:
+    " Any copyright is dedicated to the Public Domain.
+      http://creativecommons.org/publicdomain/zero/1.0/ "
+-->
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../fast/js/resources/js-test-post-function.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's behavior adding inline and passed key simultaneously");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("webkitIndexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cleanDatabase()
+{
+    debug("cleanDatabase():");
+    deleteAllObjectStores(db);
+    objectStore = evalAndLog("objectStore = db.createObjectStore('baz', { keyPath: 'id' });");
+    evalAndExpectException("objectStore.add({id: 5}, 5);", "webkitIDBDatabaseException.DATA_ERR");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

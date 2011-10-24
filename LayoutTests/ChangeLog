@@ -1,3 +1,13 @@
+2011-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB add should fail adding an inline and passed key simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=58598
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed.html: Added.
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt: Added.
+
 2011-10-24  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: third chunk of baselines for Chromium-Skia

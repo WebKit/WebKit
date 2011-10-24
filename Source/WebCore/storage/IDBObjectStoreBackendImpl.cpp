@@ -143,6 +143,11 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         return;
     }
 
+    if (key && hasKeyPath && (putMode == AddOnly || putMode == AddOrUpdate)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return;
+    }
+
     // FIXME: This should throw a SERIAL_ERR on structured clone problems.
     // FIXME: This should throw a DATA_ERR when the wrong key/keyPath data is supplied.
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction)))
