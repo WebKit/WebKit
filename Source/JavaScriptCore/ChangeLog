@@ -1,3 +1,15 @@
+2011-10-23  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove RopeImpl.{h,cpp} from the gyp projects
+        https://bugs.webkit.org/show_bug.cgi?id=70703
+
+        Reviewed by Kent Tamura.
+
+        runtime/RopeImpl.{h,cpp} were removed in r97872, remove references
+        to these files from the gyp project files.
+
+        * JavaScriptCore.gypi:
+
 2011-10-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add deleteProperty to the MethodTable
