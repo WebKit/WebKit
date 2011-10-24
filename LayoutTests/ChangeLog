@@ -1,3 +1,12 @@
+2011-10-24  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, skip failing test in GTK, added bug 70720. Rebaseline
+        prototype-inheritance-2.html.
+
+        * platform/gtk/Skipped: skipped fast/events/event-creation.html.
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        Reset expected results after r98199.
+
 2011-10-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Audits hang on pages without img[src] elements
