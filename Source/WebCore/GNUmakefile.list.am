@@ -1276,8 +1276,6 @@ webcore_sources += \
 	Source/WebCore/dom/NodeWithIndex.h \
 	Source/WebCore/dom/Notation.cpp \
 	Source/WebCore/dom/Notation.h \
-	Source/WebCore/dom/OptionElement.cpp \
-	Source/WebCore/dom/OptionElement.h \
 	Source/WebCore/dom/OverflowEvent.cpp \
 	Source/WebCore/dom/OverflowEvent.h \
 	Source/WebCore/dom/PageTransitionEvent.cpp \

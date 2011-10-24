@@ -1,3 +1,44 @@
+2011-10-23  Darin Adler  <darin@apple.com>
+
+        Eliminate OptionElement (second and final part)
+        https://bugs.webkit.org/show_bug.cgi?id=70710
+
+        Reviewed by Kent Tamura.
+
+        * CMakeLists.txt: Removed OptionElement.h and OptionElement.cpp.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/DOMAllInOne.cpp: Ditto.
+
+        * dom/OptionElement.cpp: Removed.
+        * dom/OptionElement.h: Removed.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::saveLastSelection): Eliminate use of the
+        toOptionElement function. Use hasTagName and toHTMLOptionElement instead.
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex): Ditto.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Ditto.
+        (WebCore::HTMLSelectElement::listBoxOnChange): Ditto.
+        (WebCore::HTMLSelectElement::recalcListItems): Ditto.
+        (WebCore::HTMLSelectElement::selectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Ditto.
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation): Ditto.
+        (WebCore::HTMLSelectElement::saveFormControlState): Ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): Ditto.
+        (WebCore::HTMLSelectElement::appendFormData): Ditto.
+        (WebCore::HTMLSelectElement::reset): Ditto.
+        (WebCore::HTMLSelectElement::updateSelectedState): Ditto.
+        (WebCore::HTMLSelectElement::lastSelectedListIndex): Ditto.
+        (WebCore::HTMLSelectElement::typeAheadFind): Ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Ditto.
+
+        * html/HTMLSelectElement.h: Changed the argument type of the
+        deselectItemsWithoutValidation function to HTMLElement* since that's
+        the type of an item in our items vector now.
+
 2011-10-23  Yuzo Fujishima  <yuzo@google.com>
 
         [chromium] Attempt to fix compilation error for Chromium OS.

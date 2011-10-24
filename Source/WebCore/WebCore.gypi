@@ -5255,8 +5255,6 @@
             'dom/NodeWithIndex.h',
             'dom/Notation.cpp',
             'dom/Notation.h',
-            'dom/OptionElement.cpp',
-            'dom/OptionElement.h',
             'dom/OverflowEvent.cpp',
             'dom/OverflowEvent.h',
             'dom/PageTransitionEvent.cpp',

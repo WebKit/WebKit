@@ -75,12 +75,6 @@ static const unsigned maxSelectItems = 10000;
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-// FIXME: Change all the call sites to use hasTagName and toHTMLOptionElement instead.
-static inline HTMLOptionElement* toOptionElement(Element* element)
-{
-    return element->hasTagName(optionTag) ? toHTMLOptionElement(element) : 0;
-}
-
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
     , m_lastCharTime(0)
@@ -532,8 +526,8 @@ void HTMLSelectElement::saveLastSelection()
     m_lastOnChangeSelection.clear();
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        m_lastOnChangeSelection.append(optionElement && optionElement->selected());
+        HTMLElement* element = items[i];
+        m_lastOnChangeSelection.append(element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected());
     }
 }
 
@@ -547,8 +541,8 @@ void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        m_cachedStateForActiveSelection.append(optionElement && optionElement->selected());
+        HTMLElement* element = items[i];
+        m_cachedStateForActiveSelection.append(element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected());
     }
 }
 
@@ -567,16 +561,16 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        if (!optionElement || items[i]->disabled())
+        HTMLElement* element = items[i];
+        if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->disabled())
             continue;
 
         if (i >= start && i <= end)
-            optionElement->setSelectedState(m_activeSelectionState);
+            toHTMLOptionElement(element)->setSelectedState(m_activeSelectionState);
         else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size())
-            optionElement->setSelectedState(false);
+            toHTMLOptionElement(element)->setSelectedState(false);
         else
-            optionElement->setSelectedState(m_cachedStateForActiveSelection[i]);
+            toHTMLOptionElement(element)->setSelectedState(m_cachedStateForActiveSelection[i]);
     }
 
     scrollToSelection();
@@ -599,8 +593,8 @@ void HTMLSelectElement::listBoxOnChange()
     // Update m_lastOnChangeSelection and fire dispatchFormControlChangeEvent.
     bool fireOnChange = false;
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        bool selected = optionElement && optionElement->selected();
+        HTMLElement* element = items[i];
+        bool selected = element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected();
         if (selected != m_lastOnChangeSelection[i])
             fireOnChange = true;
         m_lastOnChangeSelection[i] = selected;
@@ -693,16 +687,16 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             }
         }
 
-        if (HTMLOptionElement* optionElement = toOptionElement(current)) {
+        if (current->hasTagName(optionTag)) {
             m_listItems.append(current);
 
             if (updateSelectedStates && !m_multiple) {
-                if (!foundSelected && (m_size <= 1 || optionElement->selected())) {
-                    foundSelected = optionElement;
+                if (!foundSelected && (m_size <= 1 || toHTMLOptionElement(current)->selected())) {
+                    foundSelected = toHTMLOptionElement(current);
                     foundSelected->setSelectedState(true);
-                } else if (foundSelected && optionElement->selected()) {
+                } else if (foundSelected && toHTMLOptionElement(current)->selected()) {
                     foundSelected->setSelectedState(false);
-                    foundSelected = optionElement;
+                    foundSelected = toHTMLOptionElement(current);
                 }
             }
         }
@@ -727,8 +721,9 @@ int HTMLSelectElement::selectedIndex() const
     // Return the number of the first option selected.
     const Vector<HTMLElement*>& items = listItems();
     for (size_t i = 0; i < items.size(); ++i) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i])) {
-            if (optionElement->selected())
+        HTMLElement* element = items[i];
+        if (element->hasTagName(optionTag)) {
+            if (toHTMLOptionElement(element)->selected())
                 return index;
             ++index;
         }
@@ -747,18 +742,20 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
 
-    Element* excludeElement = 0;
-    if (HTMLOptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
-        excludeElement = items[listIndex];
-        if (m_activeSelectionAnchorIndex < 0 || deselect)
-            setActiveSelectionAnchorIndex(listIndex);
-        if (m_activeSelectionEndIndex < 0 || deselect)
-            setActiveSelectionEndIndex(listIndex);
-        optionElement->setSelectedState(true);
+    HTMLElement* element = 0;
+    if (listIndex >= 0) {
+        element = items[listIndex];
+        if (element->hasTagName(optionTag)) {
+            if (m_activeSelectionAnchorIndex < 0 || deselect)
+                setActiveSelectionAnchorIndex(listIndex);
+            if (m_activeSelectionEndIndex < 0 || deselect)
+                setActiveSelectionEndIndex(listIndex);
+            toHTMLOptionElement(element)->setSelectedState(true);
+        }
     }
 
     if (deselect)
-        deselectItemsWithoutValidation(excludeElement);
+        deselectItemsWithoutValidation(element);
 
     // For the menu list case, this is what makes the selected element appear.
     if (RenderObject* renderer = this->renderer())
@@ -839,15 +836,13 @@ void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
     HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
-void HTMLSelectElement::deselectItemsWithoutValidation(Element* excludeElement)
+void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeElement)
 {
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        if (items[i] == excludeElement)
-            continue;
-
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i]))
-            optionElement->setSelectedState(false);
+        HTMLElement* element = items[i];
+        if (element != excludeElement && element->hasTagName(optionTag))
+            toHTMLOptionElement(element)->setSelectedState(false);
     }
 }
 
@@ -858,8 +853,8 @@ bool HTMLSelectElement::saveFormControlState(String& value) const
     StringBuilder builder;
     builder.reserveCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        bool selected = optionElement && optionElement->selected();
+        HTMLElement* element = items[i];
+        bool selected = element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected();
         builder.append(selected ? 'X' : '.');
     }
     value = builder.toString();
@@ -873,9 +868,10 @@ void HTMLSelectElement::restoreFormControlState(const String& state)
     const Vector<HTMLElement*>& items = listItems();
     size_t length = items.size();
 
-    for (unsigned i = 0; i < length; ++i) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[i]))
-            optionElement->setSelectedState(state[i] == 'X');
+    for (size_t i = 0; i < length; ++i) {
+        HTMLElement* element = items[i];
+        if (element->hasTagName(optionTag))
+            toHTMLOptionElement(element)->setSelectedState(state[i] == 'X');
     }
 
     setOptionsChangedOnRenderer();
@@ -901,9 +897,9 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
     const Vector<HTMLElement*>& items = listItems();
 
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        if (optionElement && optionElement->selected() && !optionElement->disabled()) {
-            list.appendData(name, optionElement->value());
+        HTMLElement* element = items[i];
+        if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected() && !toHTMLOptionElement(element)->disabled()) {
+            list.appendData(name, toHTMLOptionElement(element)->value());
             successful = true;
         }
     }
@@ -921,20 +917,20 @@ void HTMLSelectElement::reset()
 
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
-        HTMLOptionElement* optionElement = toOptionElement(items[i]);
-        if (!optionElement)
+        HTMLElement* element = items[i];
+        if (!element->hasTagName(optionTag))
             continue;
 
         if (items[i]->fastHasAttribute(selectedAttr)) {
             if (selectedOption && !m_multiple)
                 selectedOption->setSelectedState(false);
-            optionElement->setSelectedState(true);
-            selectedOption = optionElement;
+            toHTMLOptionElement(element)->setSelectedState(true);
+            selectedOption = toHTMLOptionElement(element);
         } else
-            optionElement->setSelectedState(false);
+            toHTMLOptionElement(element)->setSelectedState(false);
 
         if (!firstOption)
-            firstOption = optionElement;
+            firstOption = toHTMLOptionElement(element);
     }
 
     if (!selectedOption && firstOption && !m_multiple && m_size <= 1)
@@ -1121,16 +1117,14 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     bool shiftSelect = m_multiple && shift;
     bool multiSelect = m_multiple && multi && !shift;
 
-    Element* clickedElement = listItems()[listIndex];
-    HTMLOptionElement* option = toOptionElement(clickedElement);
-    if (option) {
+    HTMLElement* clickedElement = listItems()[listIndex];
+    if (clickedElement->hasTagName(optionTag)) {
         // Keep track of whether an active selection (like during drag
         // selection), should select or deselect.
-        if (option->selected() && multi)
+        if (toHTMLOptionElement(clickedElement)->selected() && multi)
             m_activeSelectionState = false;
-
         if (!m_activeSelectionState)
-            option->setSelectedState(false);
+            toHTMLOptionElement(clickedElement)->setSelectedState(false);
     }
 
     // If we're not in any special multiple selection mode, then deselect all
@@ -1145,8 +1139,8 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
         setActiveSelectionAnchorIndex(selectedIndex());
 
     // Set the selection state of the clicked option.
-    if (option && !clickedElement->disabled())
-        option->setSelectedState(true);
+    if (clickedElement->hasTagName(optionTag) && !toHTMLOptionElement(clickedElement)->disabled())
+        toHTMLOptionElement(clickedElement)->setSelectedState(true);
 
     // If there was no selectedIndex() for the previous initialization, or If
     // we're doing a single selection, or a multiple selection (using cmd or
@@ -1318,10 +1312,9 @@ int HTMLSelectElement::lastSelectedListIndex() const
 {
     const Vector<HTMLElement*>& items = listItems();
     for (size_t i = items.size(); i;) {
-        if (HTMLOptionElement* optionElement = toOptionElement(items[--i])) {
-            if (optionElement->selected())
-                return i;
-        }
+        HTMLElement* element = items[--i];
+        if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected())
+            return i;
     }
     return -1;
 }
@@ -1384,12 +1377,12 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
     // to use startWith once that is fixed.
     String prefixWithCaseFolded(prefix.foldCase());
     for (int i = 0; i < itemCount; ++i, index = (index + 1) % itemCount) {
-        HTMLOptionElement* optionElement = toOptionElement(items[index]);
-        if (!optionElement || items[index]->disabled())
+        HTMLElement* element = items[index];
+        if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->disabled())
             continue;
 
         // Fold the option string and check if its prefix is equal to the folded prefix.
-        String text = optionElement->textIndentedToRespectGroupLabel();
+        String text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
         if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded)) {
             setSelectedIndex(listToOptionIndex(index), true, false, true);
             if (!usesMenuList())
@@ -1420,11 +1413,14 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
     // If this index is already selected, unselect. otherwise update the selected index.
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(index);
-    if (HTMLOptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
-        if (optionElement->selected())
-            optionElement->setSelectedState(false);
-        else
-            setSelectedIndex(index, false, true, true);
+    if (listIndex >= 0) {
+        HTMLElement* element = items[listIndex];
+        if (element->hasTagName(optionTag)) {
+            if (toHTMLOptionElement(element)->selected())
+                toHTMLOptionElement(element)->setSelectedState(false);
+            else
+                setSelectedIndex(index, false, true, true);
+        }
     }
 
     if (usesMenuList())

@@ -93,7 +93,6 @@
 #include "NodeIterator.cpp"
 #include "NodeRenderingContext.cpp"
 #include "Notation.cpp"
-#include "OptionElement.cpp"
 #include "OverflowEvent.cpp"
 #include "PageTransitionEvent.cpp"
 #include "PendingScript.cpp"

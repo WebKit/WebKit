@@ -576,7 +576,6 @@ SET(WebCore_SOURCES
     dom/NodeIterator.cpp
     dom/NodeRenderingContext.cpp
     dom/Notation.cpp
-    dom/OptionElement.cpp
     dom/OverflowEvent.cpp
     dom/PageTransitionEvent.cpp
     dom/PendingScript.cpp

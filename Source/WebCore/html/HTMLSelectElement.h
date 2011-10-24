@@ -140,7 +140,7 @@ private:
     bool hasPlaceholderLabelOption() const;
 
     void setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange);
-    void deselectItemsWithoutValidation(Element* excludeElement = 0);
+    void deselectItemsWithoutValidation(HTMLElement* excludeElement = 0);
     void parseMultipleAttribute(const Attribute*);
     int lastSelectedListIndex() const;
     void updateSelectedState(int listIndex, bool multi, bool shift);
