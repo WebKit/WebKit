@@ -1,3 +1,12 @@
+2011-10-23  Yuzo Fujishima  <yuzo@google.com>
+
+        [chromium] Test expectation change for "r98183 causes 4 snowleopard tests to fail".
+        https://bugs.webkit.org/show_bug.cgi?id=70704
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-23  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
