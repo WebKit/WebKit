@@ -35,6 +35,7 @@
 WebInspector.TimelinePanel = function()
 {
     WebInspector.Panel.call(this, "timeline");
+    this.registerRequiredCSS("timelinePanel.css");
 
     this.element.appendChild(this._createTopPane());
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);

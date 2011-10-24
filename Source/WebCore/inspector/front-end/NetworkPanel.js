@@ -35,6 +35,7 @@
 WebInspector.NetworkLogView = function()
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("networkLogView.css");
 
     this._allowResourceSelection = false;
     this._resources = [];
@@ -1214,6 +1215,7 @@ WebInspector.NetworkLogView.EventTypes = {
 WebInspector.NetworkPanel = function()
 {
     WebInspector.Panel.call(this, "network");
+    this.registerRequiredCSS("networkPanel.css");
 
     this.createSidebar();
     this._networkLogView = new WebInspector.NetworkLogView();

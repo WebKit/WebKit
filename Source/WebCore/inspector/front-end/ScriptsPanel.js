@@ -31,6 +31,7 @@
 WebInspector.ScriptsPanel = function(presentationModel)
 {
     WebInspector.Panel.call(this, "scripts");
+    this.registerRequiredCSS("scriptsPanel.css");
 
     WebInspector.settings.pauseOnExceptionStateString = WebInspector.settings.createSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
 

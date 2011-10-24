@@ -34,6 +34,8 @@
 WebInspector.ResourceView = function(resource)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("resourceView.css");
+
     this.element.addStyleClass("resource-view");
     this.resource = resource;
 }

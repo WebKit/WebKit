@@ -1,5 +1,35 @@
 2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: Make CSS files load upon View demand; split inspector.css into views.
+        https://bugs.webkit.org/show_bug.cgi?id=70694
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        * inspector/front-end/PanelEnablerView.js:
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        * inspector/front-end/ResourcesPanel.js:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/TextViewer.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/WelcomeView.js:
+        (WebInspector.WelcomeView):
+        * inspector/front-end/auditsPanel.css: Renamed from Source/WebCore/inspector/front-end/audits.css.
+
+2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: make view load CSS files upon show.
         https://bugs.webkit.org/show_bug.cgi?id=70696
 

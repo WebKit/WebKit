@@ -149,8 +149,9 @@
     <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>UglifyJS/parse-js.js</file>
-    <file>audits.css</file>
+    <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
+    <file>elementsPanel.css</file>
     <file>goToLineDialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
@@ -159,8 +160,14 @@
     <file>inspectorSyntaxHighlight.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
+    <file>panelEnablerView.css</file>
     <file>popover.css</file>
+    <file>profilesPanel.css</file>
+    <file>resourceView.css</file>
+    <file>resourcesPanel.css</file>
+    <file>scriptsPanel.css</file>
     <file>textViewer.css</file>
+    <file>timelinePanel.css</file>
     <file>Images/applicationCache.png</file>
     <file>Images/back.png</file>
     <file>Images/breakpointBorder.png</file>

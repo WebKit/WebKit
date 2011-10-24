@@ -30,6 +30,7 @@
 WebInspector.PanelEnablerView = function(identifier, headingText, disclaimerText, buttonTitle)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("panelEnablerView.css");
 
     this.element.addStyleClass("panel-enabler-view");
     this.element.addStyleClass(identifier);

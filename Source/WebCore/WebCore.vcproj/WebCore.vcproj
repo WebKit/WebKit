@@ -68321,7 +68321,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\audits.css"
+					RelativePath="..\inspector\front-end\auditsPanel.css"
 					>
 				</File>
 				<File
@@ -68478,6 +68478,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ElementsPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\elementsPanel.css"
 					>
 				</File>
 				<File
@@ -68673,6 +68677,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\panelEnablerView.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Placard.js"
 					>
 				</File>
@@ -68749,6 +68757,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\resourcesPanel.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourceTimingView.js"
 					>
 				</File>
@@ -68758,6 +68770,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\resourceView.css"
 					>
 				</File>
 				<File
@@ -68778,6 +68794,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ScriptsPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\scriptsPanel.css"
 					>
 				</File>
 				<File
@@ -68898,6 +68918,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\TimelinePanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\timelinePanel.css"
 					>
 				</File>
 				<File

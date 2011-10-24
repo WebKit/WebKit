@@ -91,6 +91,8 @@ WebInspector.ProfileType.prototype = {
 WebInspector.ProfilesPanel = function()
 {
     WebInspector.Panel.call(this, "profiles");
+    this.registerRequiredCSS("heapProfiler.css");
+    this.registerRequiredCSS("profilesPanel.css");
 
     this.createSidebar();
 

@@ -34,6 +34,7 @@
 WebInspector.ResourcesPanel = function(database)
 {
     WebInspector.Panel.call(this, "resources");
+    this.registerRequiredCSS("resourcesPanel.css");
 
     WebInspector.settings.resourcesLastSelectedItem = WebInspector.settings.createSetting("resourcesLastSelectedItem", {});
 

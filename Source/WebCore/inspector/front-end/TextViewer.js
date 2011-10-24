@@ -36,6 +36,7 @@
 WebInspector.TextViewer = function(textModel, platform, url, delegate)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("textViewer.css");
 
     this._textModel = textModel;
     this._textModel.changeListener = this._textChanged.bind(this);

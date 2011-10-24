@@ -32,6 +32,7 @@
 WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("dataGrid.css");
 
     this.element.className = "data-grid";
     this.element.tabIndex = 0;
