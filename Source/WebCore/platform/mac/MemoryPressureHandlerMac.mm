@@ -33,18 +33,8 @@
 #import <wtf/FastMalloc.h>
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#import <dispatch/dispatch.h>
+#import "WebCoreSystemInterface.h"
 #import <notify.h>
-
-#ifndef DISPATCH_SOURCE_TYPE_VM
-#define DISPATCH_SOURCE_TYPE_VM (&_dispatch_source_type_vm)
-DISPATCH_EXPORT const struct dispatch_source_type_s _dispatch_source_type_vm;
-
-enum {
- DISPATCH_VM_PRESSURE = 0x80000000,
-};
-#endif
-
 #endif
 
 namespace WebCore {
@@ -66,7 +56,7 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VM, 0, DISPATCH_VM_PRESSURE, dispatch_get_main_queue());
+        _cache_event_source = wkCreateVMPressureDispatchOnMainQueue();
         if (_cache_event_source) {
             dispatch_set_context(_cache_event_source, this);
             dispatch_source_set_event_handler(_cache_event_source, ^{ memoryPressureHandler().respondToMemoryPressure();});

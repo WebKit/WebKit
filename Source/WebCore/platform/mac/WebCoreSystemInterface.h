@@ -310,6 +310,13 @@ extern CFArrayRef (*wkCFURLRequestCopyHTTPRequestBodyParts)(CFURLRequestRef);
 extern void (*wkCFURLRequestSetHTTPRequestBodyParts)(CFMutableURLRequestRef, CFArrayRef bodyParts);
 extern void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
+    
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#import <dispatch/dispatch.h>
+    
+extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
+    
+#endif
 }
 
 #endif

@@ -1,3 +1,16 @@
+2011-10-24  Michael Saboff  <msaboff@apple.com>
+
+        WebKit doesn't build with recent changes to libdispatch
+        https://bugs.webkit.org/show_bug.cgi?id=70737
+
+        Added initialization for new WebKitSystemInterface function 
+        CreateVMPressureDispatchOnMainQueue.
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-10-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getConstructDataVirtual

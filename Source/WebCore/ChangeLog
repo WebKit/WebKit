@@ -1,3 +1,22 @@
+2011-10-24  Michael Saboff  <msaboff@apple.com>
+
+        WebKit doesn't build with recent changes to libdispatch
+        https://bugs.webkit.org/show_bug.cgi?id=70737
+
+        Added initialization for new WebKitSystemInterface function 
+        CreateVMPressureDispatchOnMainQueue.  Changed MemoryPressureHandler::install
+        to use new function.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.  Moved functionality to WebKitSystemInterface.
+
+        * WebCore.exp.in:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw DATA_ERR on invalid keys, remove null key support

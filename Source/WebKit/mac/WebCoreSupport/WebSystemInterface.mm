@@ -162,5 +162,9 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyCFURLResponseSuggestedFilename);
     INIT(SetCFURLResponseMIMEType);
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    INIT(CreateVMPressureDispatchOnMainQueue);
+#endif
+
     didInit = true;
 }
