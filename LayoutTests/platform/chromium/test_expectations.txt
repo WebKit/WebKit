@@ -576,10 +576,6 @@ BUGCR8630 LINUX WIN : fast/text/font-initial.html = FAIL
 // error in the header of the following test.
 BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
-// Needs eventSender.scalePageBy().
-// These failures are going to be removed as a rebase line after the patch for bug 58013 is landed.
-BUGWK58013 WIN : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
-
 // -----------------------------------------------------------------
 // Inspector tests
 // -----------------------------------------------------------------

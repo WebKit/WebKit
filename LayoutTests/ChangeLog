@@ -1,3 +1,15 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        Bug 58013 has landed 3 months ago and it looks like the rebaseline was forgotten.
+        The new result is consistent with the other platforms.
+
+        * platform/chromium-linux/fast/repaint/scale-page-shrink-expected.txt: Removed.
+        * platform/chromium-win/fast/repaint/scale-page-shrink-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scale-page-shrink-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-24  Filip Pizlo  <fpizlo@apple.com>
 
         op_new_array_buffer is not inlined correctly
