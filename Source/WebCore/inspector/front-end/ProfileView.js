@@ -50,7 +50,7 @@ WebInspector.CPUProfileView = function(profile)
     this.dataGrid = new WebInspector.DataGrid(columns);
     this.dataGrid.addEventListener("sorting changed", this._sortData, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
-    this.element.appendChild(this.dataGrid.element);
+    this.dataGrid.show(this.element);
 
     this.viewSelectElement = document.createElement("select");
     this.viewSelectElement.className = "status-bar-item";
@@ -167,12 +167,6 @@ WebInspector.CPUProfileView.prototype = {
     willHide: function()
     {
         this._currentSearchResultIndex = -1;
-    },
-
-    onResize: function()
-    {
-        if (this.dataGrid)
-            this.dataGrid.updateWidths();
     },
 
     refresh: function()

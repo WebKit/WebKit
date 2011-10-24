@@ -59,7 +59,7 @@ WebInspector.DatabaseTableView.prototype = {
 
     _queryFinished: function(columnNames, values)
     {
-        this.element.removeChildren();
+        this.detachChildViews();
 
         var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (!dataGrid) {
@@ -67,8 +67,7 @@ WebInspector.DatabaseTableView.prototype = {
             this._emptyView.show(this.element);
             return;
         }
-
-        this.element.appendChild(dataGrid.element);
+        dataGrid.show(this.element);
         dataGrid.autoSizeColumns(5);
     },
 

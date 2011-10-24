@@ -72,15 +72,9 @@ WebInspector.DOMStorageItemsView.prototype = {
             return;
 
         this._dataGrid = this._dataGridForDOMStorageEntries(entries);
-        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.show(this.element);
         this._dataGrid.autoSizeColumns(10);
         this.deleteButton.visible = true;
-    },
-
-    onResize: function()
-    {
-        if (this._dataGrid)
-            this._dataGrid.updateWidths();
     },
 
     _dataGridForDOMStorageEntries: function(entries)

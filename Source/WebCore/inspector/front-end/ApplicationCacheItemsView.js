@@ -200,9 +200,8 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         columns[2].aligned = "right";
         columns[2].sortable = true;
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.show(this.element);
         this._dataGrid.addEventListener("sorting changed", this._populateDataGrid, this);
-        this._dataGrid.updateWidths();
     },
 
     _populateDataGrid: function()
@@ -249,12 +248,6 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
         if (!nodeToSelect)
             this._dataGrid.children[0].selected = true;
-    },
-
-    onResize: function()
-    {
-        if (this._dataGrid)
-            this._dataGrid.updateWidths();
     },
 
     _deleteButtonClicked: function(event)

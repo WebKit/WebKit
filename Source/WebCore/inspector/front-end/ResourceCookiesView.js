@@ -58,12 +58,6 @@ WebInspector.ResourceCookiesView.prototype = {
             this._buildCookiesTable();
     },
 
-    onResize: function()
-    {
-        if (this._cookiesTable)
-            this._cookiesTable.updateWidths();
-    },
-
     get _gotCookies()
     {
         return !!(this._resource.requestCookies || this._resource.responseCookies);
@@ -71,12 +65,12 @@ WebInspector.ResourceCookiesView.prototype = {
 
     _buildCookiesTable: function()
     {
-        this.element.removeChildren();
+        this.detachChildViews();
 
         this._cookiesTable = new WebInspector.CookiesTable(null, true);
         this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
         this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
-        this.element.appendChild(this._cookiesTable.element);
+        this._cookiesTable.show(this.element);
     },
 
     _refreshCookies: function()

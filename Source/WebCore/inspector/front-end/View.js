@@ -176,6 +176,13 @@ WebInspector.View.prototype = {
         this._visible = false;
     },
 
+    detachChildViews: function()
+    {
+        var children = this._children.slice();
+        for (var i = 0; i < children.length; ++i)
+            children[i].detach();
+    },
+
     elementsToRestoreScrollPositionsFor: function()
     {
         return [this.element];

@@ -585,27 +585,27 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.containmentDataGrid = new WebInspector.HeapSnapshotContainmentDataGrid();
     this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.containmentDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
-    this.containmentView.element.appendChild(this.containmentDataGrid.element);
+    this.containmentDataGrid.show(this.containmentView.element);
 
     this.constructorsView = new WebInspector.View();
     this.constructorsView.element.addStyleClass("view");
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
     this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.constructorsDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
-    this.constructorsView.element.appendChild(this.constructorsDataGrid.element);
+    this.constructorsDataGrid.show(this.constructorsView.element);
 
     this.diffView = new WebInspector.View();
     this.diffView.element.addStyleClass("view");
     this.diffDataGrid = new WebInspector.HeapSnapshotDiffDataGrid();
     this.diffDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
-    this.diffView.element.appendChild(this.diffDataGrid.element);
+    this.diffDataGrid.show(this.diffView.element);
 
     this.dominatorView = new WebInspector.View();
     this.dominatorView.element.addStyleClass("view");
     this.dominatorDataGrid = new WebInspector.HeapSnapshotDominatorsDataGrid();
     this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.dominatorDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
-    this.dominatorView.element.appendChild(this.dominatorDataGrid.element);
+    this.dominatorDataGrid.show(this.dominatorView.element);
 
     this.retainmentViewHeader = document.createElement("div");
     this.retainmentViewHeader.addStyleClass("retainers-view-header");
@@ -633,7 +633,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.retainmentView.element.addStyleClass("retaining-paths-view");
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainingPathsList();
     this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
-    this.retainmentView.element.appendChild(this.retainmentDataGrid.element);
+    this.retainmentDataGrid.show(this.retainmentView.element);
     this.retainmentView.show(this.element);
     this.retainmentDataGrid.reset();
 
@@ -751,7 +751,6 @@ WebInspector.DetailedHeapshotView.prototype = {
 
         function profileCallback2() {
             this.currentView.show(this.element);
-            this.dataGrid.updateWidths();
         }
     },
 
@@ -762,9 +761,6 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     onResize: function()
     {
-        if (this.dataGrid)
-            this.dataGrid.updateWidths();
-
         var height = this.retainmentView.element.clientHeight;
         this._updateRetainmentViewHeight(height);
     },

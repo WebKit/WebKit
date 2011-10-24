@@ -125,7 +125,6 @@ WebInspector.NetworkLogView.prototype = {
 
     onResize: function()
     {
-        this._dataGrid.updateWidths();
         this._updateOffscreenRows();
     },
 
@@ -188,8 +187,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;
         this._dataGrid.element.addStyleClass("network-log-grid");
         this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
-
-        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.show(this.element);
 
         // Event listeners need to be added _after_ we attach to the document, so that owner document is properly update.
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);

@@ -25,13 +25,14 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
+ * @extends {WebInspector.View}
  * @param {function(WebInspector.DataGridNode, number, string, string)=} editCallback
  * @param {function(WebInspector.DataGridNode)=} deleteCallback
  */
 WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 {
-    this.element = document.createElement("div");
+    WebInspector.View.call(this);
+
     this.element.className = "data-grid";
     this.element.tabIndex = 0;
     this.element.addEventListener("keydown", this._keyDown.bind(this), false);
@@ -484,6 +485,11 @@ WebInspector.DataGrid.prototype = {
         for (var i = 0; i < rootNode.children.length; ++i)
             this._enumerateChildren(rootNode.children[i], result, maxLevel - 1);
         return result;
+    },
+
+    onResize: function()
+    {
+        this.updateWidths();
     },
 
     // Updates the widths of the table, including the positions of the column
@@ -1108,7 +1114,7 @@ WebInspector.DataGrid.ResizeMethod = {
     Last: "last"
 }
 
-WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DataGrid.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor

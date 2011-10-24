@@ -150,7 +150,7 @@ WebInspector.DatabaseQueryView.prototype = {
 
         if (dataGrid) {
             dataGrid.element.addStyleClass("inline");
-            this._appendQueryResult(trimmedQuery, dataGrid.element);
+            this._appendViewQueryResult(trimmedQuery, dataGrid);
             dataGrid.autoSizeColumns(5);
         }
 
@@ -167,16 +167,39 @@ WebInspector.DatabaseQueryView.prototype = {
         else
             var message = WebInspector.UIString("An unexpected error %s occurred.", error.code);
 
-        this._appendQueryResult(query, message, "error");
+        this._appendErrorQueryResult(query, message);
     },
 
     /**
-     * @param {string=} resultClassName
+     * @param {string} query
+     * @param {WebInspector.View} view
      */
-    _appendQueryResult: function(query, result, resultClassName)
+    _appendViewQueryResult: function(query, view)
+    {
+        var resultElement = this._appendQueryResult(query);
+        view.show(resultElement);
+
+        this.promptElement.scrollIntoView(false);
+    },
+
+    /**
+     * @param {string} query
+     * @param {string} errorText
+     */
+    _appendErrorQueryResult: function(query, errorText)
+    {
+        var resultElement = this._appendQueryResult(query);
+        resultElement.addStyleClass("error")
+        resultElement.textContent = errorText;
+
+        this.promptElement.scrollIntoView(false);
+    },
+
+    _appendQueryResult: function(query)
     {
         var element = document.createElement("div");
         element.className = "database-user-query";
+        this.element.insertBefore(element, this.promptElement);
 
         var commandTextElement = document.createElement("span");
         commandTextElement.className = "database-query-text";
@@ -185,20 +208,8 @@ WebInspector.DatabaseQueryView.prototype = {
 
         var resultElement = document.createElement("div");
         resultElement.className = "database-query-result";
-
-        if (resultClassName)
-            resultElement.addStyleClass(resultClassName);
-
-        if (typeof result === "string" || result instanceof String)
-            resultElement.textContent = result;
-        else if (result && result.nodeName)
-            resultElement.appendChild(result);
-
-        if (resultElement.childNodes.length)
-            element.appendChild(resultElement);
-
-        this.element.insertBefore(element, this.promptElement);
-        this.promptElement.scrollIntoView(false);
+        element.appendChild(resultElement);
+        return resultElement;
     }
 }
 

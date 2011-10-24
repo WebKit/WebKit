@@ -1,3 +1,44 @@
+2011-10-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: make DataGrid a view
+        https://bugs.webkit.org/show_bug.cgi?id=70695
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype._createDataGrid):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        (WebInspector.SimpleCookiesTable):
+        (WebInspector.SimpleCookiesTable.prototype.setCookies):
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._showDOMStorageEntries):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.onResize):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        (WebInspector.DatabaseQueryView.prototype._queryError):
+        (WebInspector.DatabaseQueryView.prototype._appendViewQueryResult):
+        (WebInspector.DatabaseQueryView.prototype._appendErrorQueryResult):
+        (WebInspector.DatabaseQueryView.prototype._appendQueryResult):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.wasShown.profileCallback2):
+        (WebInspector.DetailedHeapshotView.prototype.wasShown):
+        (WebInspector.DetailedHeapshotView.prototype.onResize):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.onResize):
+        (WebInspector.NetworkLogView.prototype._createTable):
+        * inspector/front-end/ProfileView.js:
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype._buildCookiesTable):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+
 2011-10-24  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Setting defaultValue should hide an input placeholder.

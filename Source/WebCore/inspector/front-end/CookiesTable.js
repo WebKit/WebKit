@@ -30,11 +30,15 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.View}
  * @param {function(PageAgent.Cookie)=} deleteCallback
  * @param {function()=} refreshCallback
  */
 WebInspector.CookiesTable = function(cookieDomain, expandable, deleteCallback, refreshCallback)
 {
+    WebInspector.View.call(this);
+    this.element.className = "fill";
+
     this._cookieDomain = cookieDomain;
 
     var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
@@ -71,7 +75,7 @@ WebInspector.CookiesTable = function(cookieDomain, expandable, deleteCallback, r
     this._dataGrid.addEventListener("sorting changed", this._rebuildTable, this);
     this._dataGrid.refreshCallback = refreshCallback;
 
-    this.element = this._dataGrid.element;
+    this._dataGrid.show(this.element);
     this._data = [];
 }
 
@@ -211,3 +215,5 @@ WebInspector.CookiesTable.prototype = {
         deleteCallback(node.cookie);
     }
 }
+
+WebInspector.CookiesTable.prototype.__proto__ = WebInspector.View.prototype;
