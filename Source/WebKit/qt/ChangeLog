@@ -1,3 +1,15 @@
+2011-10-24  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        [Qt] fast/events/media-focus-in-standalone-media-document.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=70110
+
+        Reviewed by Simon Hausmann.
+
+        We should check for supported media mime types as well in the MIMETypeRegistry.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canShowMIMEType): check for supported media mime type.
+
 2011-10-21  Luiz Agostini  <luiz.agostini@palm.com>
 
         [Qt] Remote debugging needs QWebInspector to work

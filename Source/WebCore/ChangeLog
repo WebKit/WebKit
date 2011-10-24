@@ -1,3 +1,14 @@
+2011-10-24  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        [Qt] fast/events/media-focus-in-standalone-media-document.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=70110
+
+        Reviewed by Simon Hausmann.
+
+        ExtensionMap should also include media files mapping.
+
+        * platform/qt/MIMETypeRegistryQt.cpp: Added media files mapping.
+
 2011-10-24  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: [chromium] follow up to 98228 - added missing css.
