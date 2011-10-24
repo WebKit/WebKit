@@ -45,7 +45,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_type(FECOLORMATRIX_TYPE_UNKNOWN)
+    , m_type(FECOLORMATRIX_TYPE_MATRIX)
 {
     ASSERT(hasTagName(SVGNames::feColorMatrixTag));
     registerAnimatedPropertiesForSVGFEColorMatrixElement();

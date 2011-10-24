@@ -1,3 +1,18 @@
+2011-10-24  Tim Horton  <timothy_horton@apple.com>
+
+        feColorMatrix doesn't use the correct default "matrix" type when no type attribute is specified
+        https://bugs.webkit.org/show_bug.cgi?id=70035
+        <rdar://problem/10280177>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make feColorMatrix's type attribute be "matrix" by default.
+
+        Test: svg/filters/feColorMatrix-default-type.svg
+
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+
 2011-10-24  Joshua Bell  <jsbell@chromium.org>
 
         Unbreak binding generation tests
