@@ -81,6 +81,9 @@
         "GtkWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/gtk/",
         },
+        "CSS": {
+            "filename": r"Source/WebCore/css/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -102,6 +105,7 @@
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", ],
+        "CSS": [ "macpherson@chromium.org", ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
