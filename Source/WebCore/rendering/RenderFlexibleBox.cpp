@@ -228,6 +228,11 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
     return style()->isLeftToRightDirection();
 }
 
+Length RenderFlexibleBox::flowAwareLogicalWidthLengthForChild(RenderBox* child) const
+{
+    return isHorizontalFlow() ? child->style()->width() : child->style()->height();
+}
+
 bool RenderFlexibleBox::isFlowAwareLogicalHeightAuto() const
 {
     Length height = isHorizontalFlow() ? style()->height() : style()->width();
@@ -493,12 +498,12 @@ Length RenderFlexibleBox::marginEndStyleForChild(RenderBox* child) const
 
 LayoutUnit RenderFlexibleBox::preferredLogicalContentWidthForFlexItem(RenderBox* child) const
 {
-    Length width = isHorizontalFlow() ? child->style()->width() : child->style()->height();
-    if (width.isAuto()) {
+    Length logicalWidthLength = flowAwareLogicalWidthLengthForChild(child);
+    if (logicalWidthLength.isAuto()) {
         LayoutUnit logicalWidth = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return logicalWidth - logicalBorderAndPaddingWidthForChild(child) - logicalScrollbarHeightForChild(child);
     }
-    return isHorizontalFlow() ? child->contentWidth() : child->contentHeight();
+    return logicalWidthLength.calcMinValue(flowAwareContentLogicalWidth());
 }
 
 void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
@@ -554,20 +559,24 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Tree
 
     LayoutUnit flexboxAvailableLogicalWidth = flowAwareContentLogicalWidth();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        // We always have to lay out flexible objects again, since the flex distribution
-        // may have changed, and we need to reallocate space.
-        child->clearOverrideSize();
-        if (!relayoutChildren)
-            child->setChildNeedsLayout(true);
-        child->layoutIfNeeded();
+        if (flowAwareLogicalWidthLengthForChild(child).isAuto()) {
+            child->clearOverrideSize();
+            if (!relayoutChildren)
+                child->setChildNeedsLayout(true);
+            child->layoutIfNeeded();
+        }
 
-        // We can't just use marginStartForChild, et. al. because "auto" needs to be treated as 0.
+        // We set the margins because we want to make sure 'auto' has a margin
+        // of 0 and because if we're not auto sizing, we don't do a layout that
+        // computes the start/end margins.
         if (isHorizontalFlow()) {
-            preferredLogicalWidth += child->style()->marginLeft().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->marginRight().calcMinValue(flexboxAvailableLogicalWidth);
+            child->setMarginLeft(child->style()->marginLeft().calcMinValue(flexboxAvailableLogicalWidth));
+            child->setMarginRight(child->style()->marginRight().calcMinValue(flexboxAvailableLogicalWidth));
+            preferredLogicalWidth += child->marginLeft() + child->marginRight();
         } else {
-            preferredLogicalWidth += child->style()->marginTop().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->marginBottom().calcMinValue(flexboxAvailableLogicalWidth);
+            child->setMarginTop(child->style()->marginTop().calcMinValue(flexboxAvailableLogicalWidth));
+            child->setMarginBottom(child->style()->marginBottom().calcMinValue(flexboxAvailableLogicalWidth));
+            preferredLogicalWidth += child->marginTop() + child->marginBottom();
         }
 
         preferredLogicalWidth += logicalBorderAndPaddingWidthForChild(child);
@@ -670,11 +679,6 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
                 setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderAndPaddingLogicalHeight() + flowAwareMarginLogicalHeightForChild(child) + maxAscent + maxDescent + scrollbarLogicalHeight()));
         } else if (isFlowAwareLogicalHeightAuto())
             setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderAndPaddingLogicalHeight() + flowAwareMarginLogicalHeightForChild(child) + flowAwareLogicalHeightForChild(child) + scrollbarLogicalHeight()));
-
-        if (marginStartStyleForChild(child).isAuto())
-            setFlowAwareMarginStartForChild(child, 0);
-        if (marginEndStyleForChild(child).isAuto())
-            setFlowAwareMarginEndForChild(child, 0);
 
         startEdge += flowAwareMarginStartForChild(child);
 

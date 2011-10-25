@@ -1,3 +1,23 @@
+2011-10-25  Tony Chang  <tony@chromium.org>
+
+        avoid unnecessary layouts of flex items during the flex pass
+        https://bugs.webkit.org/show_bug.cgi?id=70557
+
+        Reviewed by Ojan Vafai.
+
+        If the preferred size of a flex item is provided, we don't need to
+        layout the flex item when computing the preferred size.  This allows
+        us to only call layout on each flex item once in the common case.
+
+        No new tests, covered by existing tests.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::flowAwareLogicalWidthLengthForChild):
+        (WebCore::RenderFlexibleBox::preferredLogicalContentWidthForFlexItem):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidth):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-10-25  Fady Samuel  <fsamuel@chromium.org>
 
         Crash in WebCore::RenderTableSection::addChild due to assert failure

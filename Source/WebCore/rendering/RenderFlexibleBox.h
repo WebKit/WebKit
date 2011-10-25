@@ -58,6 +58,7 @@ private:
     bool isHorizontalFlow() const;
     bool isLeftToRightFlow() const;
     bool isFlowAwareLogicalHeightAuto() const;
+    Length flowAwareLogicalWidthLengthForChild(RenderBox* child) const;
     void setFlowAwareLogicalHeight(LayoutUnit);
     LayoutUnit flowAwareLogicalHeightForChild(RenderBox* child);
     LayoutUnit flowAwareLogicalWidthForChild(RenderBox* child);
