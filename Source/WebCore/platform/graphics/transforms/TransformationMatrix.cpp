@@ -36,6 +36,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
+using namespace std;
+
 namespace WebCore {
 
 //
@@ -532,7 +534,7 @@ TransformationMatrix& TransformationMatrix::flipY()
     return scaleNonUniform(1.0f, -1.0f);
 }
 
-FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p) const
+FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped) const
 {
     // This is basically raytracing. We have a point in the destination
     // plane with z=0, and we cast a ray parallel to the z-axis from that
@@ -546,16 +548,24 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p) const
     // intersection point as a distance d from R0 in units of Rd by:
     // 
     // d = -dot (Pn', R0) / dot (Pn', Rd)
+    if (clamped)
+        *clamped = false;
     
     double x = p.x();
     double y = p.y();
     double z = -(m13() * x + m23() * y + m43()) / m33();
 
+    // FIXME: use multVecMatrix()
     double outX = x * m11() + y * m21() + z * m31() + m41();
     double outY = x * m12() + y * m22() + z * m32() + m42();
 
     double w = x * m14() + y * m24() + z * m34() + m44();
-    if (w != 1 && w != 0) {
+    if (w <= 0) {
+        outX = copysign(numeric_limits<int>::max(), outX);
+        outY = copysign(numeric_limits<int>::max(), outY);
+        if (clamped)
+            *clamped = true;
+    } else if (w != 1) {
         outX /= w;
         outY /= w;
     }
@@ -570,7 +580,37 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
     projectedQuad.setP2(projectPoint(q.p2()));
     projectedQuad.setP3(projectPoint(q.p3()));
     projectedQuad.setP4(projectPoint(q.p4()));
+    
     return projectedQuad;
+}
+
+static float clampEdgeValue(float f)
+{
+    ASSERT(!isnan(f));
+    return min<float>(max<float>(f, -numeric_limits<int>::max() / 2), numeric_limits<int>::max() / 2);
+}
+
+IntRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const
+{
+    FloatRect mappedQuadBounds = projectQuad(q).boundingBox();
+
+    float left = clampEdgeValue(floorf(mappedQuadBounds.x()));
+    float top = clampEdgeValue(floorf(mappedQuadBounds.y()));
+
+    float right;
+    if (isinf(mappedQuadBounds.x()) && isinf(mappedQuadBounds.width()))
+        right = numeric_limits<int>::max() / 2;
+    else
+        right = clampEdgeValue(ceilf(mappedQuadBounds.maxX()));
+
+    float bottom;
+    if (isinf(mappedQuadBounds.y()) && isinf(mappedQuadBounds.height()))
+        bottom = numeric_limits<int>::max() / 2;
+    else
+        bottom = clampEdgeValue(ceilf(mappedQuadBounds.maxY()));
+    
+    return IntRect(clampToInteger(left), clampToInteger(top), 
+                   clampToInteger(right - left), clampToInteger(bottom - top));
 }
 
 FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const

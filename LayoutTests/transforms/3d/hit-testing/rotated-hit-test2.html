@@ -1,12 +1,13 @@
 <html>
 <head>
-  <style type="text/css">
+  <style>
     body {
       margin: 0;
     }
+    
     #container {
-      width: 200px;
-      height: 200px;
+      width: 400px;
+      height: 400px;
       margin: 50px;
       border: 1px solid black;
       -webkit-perspective: 500px;
@@ -21,23 +22,27 @@
     }
     
     #left {
-      -webkit-transform-origin: 10% 50%;
-      -webkit-transform: rotateY(90deg);
+      -webkit-transform: rotateY(-75deg);
+      left: 20px;
+      top: 100px;
     }
 
     #top {
-      -webkit-transform-origin: 50% 10%;
-      -webkit-transform: rotateX(-90deg);
+      -webkit-transform: rotateX(75deg);
+      top: 20px;
+      left: 100px;
     }
 
     #right {
-      -webkit-transform-origin: 90% 50%;
-      -webkit-transform: rotateY(-90deg);
+      -webkit-transform: rotateY(75deg);
+      left: 180px;
+      top: 100px;
     }
 
     #bottom {
-      -webkit-transform-origin: 50% 90%;
-      -webkit-transform: rotateX(90deg);
+      -webkit-transform: rotateX(-75deg);
+      top: 180px;
+      left: 100px;
     }
 
     .box:hover {
@@ -47,14 +52,14 @@
   <script src="resources/hit-test-utils.js"></script>
   <script>
       const hitTestData = [
-        { 'point': [85, 100], 'target' : 'left' },
-        { 'point': [155, 80], 'target' : 'top' },
-        { 'point': [230, 80], 'target' : 'right' },
-        { 'point': [155, 220], 'target' : 'bottom' },
+        { 'point': [170, 250], 'target' : 'left' },
+        { 'point': [260, 170], 'target' : 'top' },
+        { 'point': [330, 250], 'target' : 'right' },
+        { 'point': [260, 330], 'target' : 'bottom' },
         { 'point': [60, 60], 'target' : 'container' },
-        { 'point': [100, 100], 'target' : 'container' },
-        { 'point': [240, 240], 'target' : 'container' },
-        { 'point': [200, 200], 'target' : 'container' },
+        { 'point': [160, 160], 'target' : 'container' },
+        { 'point': [190, 190], 'target' : 'container' },
+        { 'point': [310, 310], 'target' : 'container' },
       ];
       window.addEventListener('load', runTest, false);
   </script>
@@ -69,5 +74,6 @@
 </div>
 
 <div id="results"></div>
+
 </body>
 </html>

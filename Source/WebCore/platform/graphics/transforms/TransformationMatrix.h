@@ -156,9 +156,12 @@ public:
     // a ray perpendicular to the source plane and computing
     // the local x,y position of the point where that ray intersects
     // with the destination plane.
-    FloatPoint projectPoint(const FloatPoint&) const;
+    FloatPoint projectPoint(const FloatPoint&, bool* clamped = 0) const;
     // Projects the four corners of the quad
     FloatQuad projectQuad(const FloatQuad&) const;
+    // Projects the four corners of the quad and takes a bounding box,
+    // while sanitizing values created when the w component is negative.
+    IntRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
 
     double m11() const { return m_matrix[0][0]; }
     void setM11(double f) { m_matrix[0][0] = f; }

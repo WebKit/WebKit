@@ -1,3 +1,39 @@
+2011-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r88580): Cursor fails to change to pointer on embedded Google maps popups
+        https://bugs.webkit.org/show_bug.cgi?id=62797
+
+        Reviewed by Chris Marrin.
+        
+        When hit testing through transformed layers, RenderLayer would simply use
+        the composited bounds of the layer as the localHitTestRect for hit testing sublayers.
+        However, this broke hit testing on pages that have a composited, non-transformed layer
+        which falls outside the bounds of its parent, composited-transformed layer, like Google
+        Maps.
+        
+        Fix by mapping the hitTestRect through transforms. However this is tricky, because
+        mapping a rect into the coordinate system of a layer can result in invalid rectangles
+        when point projection results in a negative w component. Fix TransformationMatrix::projectPoint()
+        to detect this case and replace X and Y with large values, and add boundsOfProjectedQuad(), which 
+        maps rectangles with possibly-infinite location or bounds into rects which are representable
+        in an IntRect.
+
+        Tests: transforms/3d/hit-testing/composited-hit-test.html
+               transforms/3d/hit-testing/rotated-hit-test-with-child.html
+               transforms/3d/hit-testing/rotated-hit-test2.html
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::projectPoint):
+        (WebCore::TransformationMatrix::projectQuad):
+        (WebCore::clampEdgeValue):
+        (WebCore::TransformationMatrix::boundsOfProjectedQuad):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/HitTestingTransformState.cpp:
+        (WebCore::HitTestingTransformState::boundsOfMappedQuad):
+        * rendering/HitTestingTransformState.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2011-10-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Batch up texture uploads so that they can be updated incrementally
