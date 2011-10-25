@@ -57,7 +57,6 @@ VisiblePosition endOfLine(const VisiblePosition &);
 VisiblePosition previousLinePosition(const VisiblePosition &, int lineDirectionPoint);
 VisiblePosition nextLinePosition(const VisiblePosition &, int lineDirectionPoint);
 bool inSameLine(const VisiblePosition &, const VisiblePosition &);
-bool inSameLogicalLine(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfLine(const VisiblePosition &);
 bool isEndOfLine(const VisiblePosition &);
 VisiblePosition logicalStartOfLine(const VisiblePosition &);
