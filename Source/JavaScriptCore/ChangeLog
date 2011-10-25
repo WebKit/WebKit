@@ -1,5 +1,16 @@
 2011-10-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Object-or-other branch speculation may corrupt the state for OSR if the child of the
+        branch is an integer
+        https://bugs.webkit.org/show_bug.cgi?id=70777
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+
+2011-10-24  Filip Pizlo  <fpizlo@apple.com>
+
         op_new_array_buffer is not inlined correctly
         https://bugs.webkit.org/show_bug.cgi?id=70770
 

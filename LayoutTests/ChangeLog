@@ -1,3 +1,17 @@
+2011-10-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Object-or-other branch speculation may corrupt the state for OSR if the child of the
+        branch is an integer
+        https://bugs.webkit.org/show_bug.cgi?id=70777
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-other-branch-expected.txt: Added.
+        * fast/js/dfg-other-branch.html: Added.
+        * fast/js/script-tests/dfg-other-branch.js: Added.
+        (foo):
+        (bar):
+
 2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.

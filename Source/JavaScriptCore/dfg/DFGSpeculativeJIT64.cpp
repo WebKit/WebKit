@@ -682,7 +682,9 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
 void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeIndex);
+    GPRTemporary scratch(this);
     GPRReg valueGPR = value.gpr();
+    GPRReg scratchGPR = scratch.gpr();
     
     MacroAssembler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
     if (needSpeculationCheck)
@@ -692,8 +694,9 @@ void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex tak
     notCell.link(&m_jit);
     
     if (needSpeculationCheck) {
-        m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), valueGPR);
-        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, valueGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+        m_jit.move(valueGPR, scratchGPR);
+        m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), scratchGPR);
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, scratchGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
     }
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
