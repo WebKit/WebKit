@@ -1,3 +1,9 @@
+2011-10-25  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add CSS1 pixel baselines.
+
+        * platform/efl/css1: [...]
+
 2011-10-25  Nate Chapin  <japhet@chromium.org>
 
         Test update for https://bugs.webkit.org/show_bug.cgi?id=61225.
