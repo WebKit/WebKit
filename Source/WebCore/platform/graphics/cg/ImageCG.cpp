@@ -284,9 +284,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     CGContextSetFillColorSpace(context, patternSpace.get());
 
     // FIXME: Really want a public API for this.  It is just CGContextSetBaseCTM(context, CGAffineTransformIdentiy).
-    AffineTransform identity;
-    identity.makeIdentity();
-    ctxt->setBaseCTM(identity);
+    wkSetBaseCTM(context, CGAffineTransformIdentity);
     CGContextSetPatternPhase(context, CGSizeZero);
 
     CGContextSetFillColorWithColor(context, color.get());

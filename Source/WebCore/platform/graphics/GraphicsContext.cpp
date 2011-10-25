@@ -764,4 +764,16 @@ PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& s
     return buffer.release();
 }
 
+#if !USE(CG)
+void GraphicsContext::platformApplyDeviceScaleFactor()
+{
+}
+#endif
+
+void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
+{
+    scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    platformApplyDeviceScaleFactor();
+}
+
 }

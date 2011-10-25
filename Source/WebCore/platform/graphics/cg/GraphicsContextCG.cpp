@@ -1470,11 +1470,6 @@ bool GraphicsContext::isAcceleratedContext() const
     return m_data->m_contextFlags & IsAcceleratedCGContext;
 }
 
-void GraphicsContext::setBaseCTM(const AffineTransform& transform)
-{
-    wkSetBaseCTM(platformContext(), transform);
-}
-
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())
@@ -1595,6 +1590,14 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
         break;
     }
     CGContextSetBlendMode(platformContext(), target);
+}
+
+void GraphicsContext::platformApplyDeviceScaleFactor()
+{
+    // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
+    // Failing to change the base level CTM will cause certain CG features, such as focus rings,
+    // to draw with a scale factor of 1 rather than the actual scale factor.
+    wkSetBaseCTM(platformContext(), getCTM());
 }
 
 }

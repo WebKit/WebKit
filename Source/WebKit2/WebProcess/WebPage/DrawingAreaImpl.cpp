@@ -646,7 +646,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     ASSERT(m_webPage->bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    bitmapSize.scale(m_webPage->corePage()->deviceScaleFactor());
+    float deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    bitmapSize.scale(deviceScaleFactor);
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
         return;
@@ -669,10 +670,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_scrollOffset = IntSize();
 
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
-    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
-#if USE(CG)
-    graphicsContext->setBaseCTM(graphicsContext->getCTM());
-#endif
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     
     updateInfo.updateRectBounds = bounds;
 

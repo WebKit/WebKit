@@ -1,3 +1,20 @@
+2011-10-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70852
+        Setting up a HiDPI base-level GraphicsContext should be more straightforward for 
+        WebKit2
+
+        Reviewed by Dan Bernstein.
+
+        When we need a base-level HiDPI GraphicsContext, call into new GraphicsContext api 
+        GraphicsContext::applyDeviceScaleFactor() rather than manually scaling and 
+        adjusting the base CTM.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates):
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         Plug-ins have to use JavaScript to find out the current device scale factor
