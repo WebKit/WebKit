@@ -1,3 +1,20 @@
+2011-10-25  John Sullivan  <sullivan@apple.com>
+
+        "Open with" item missing from PDF context menu in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=70828
+        <rdar://problem/10034302>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (insertOpenWithDefaultPDFMenuItem):
+        New helper function, extracted from -menuForEvent:. Identical to original code except
+        that it inserts the item at a specified index, rather than always at the end.
+        (-[WKPDFView menuForEvent:]):
+        Now keeps track of whether the Open With item has been inserted while iterating through
+        the PDFKit-supplied menu items looking for a "Copy" item. If a "Copy" item is not found,
+        inserts the Open With item at the top of the context menu.
+
 2011-10-25  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] QDesktopWebView and QTouchWebView should be declared in the meta type system.

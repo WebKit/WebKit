@@ -297,37 +297,55 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return [super hitTest:point];
 }
 
+static void insertOpenWithDefaultPDFMenuItem(NSMenu *menu, NSUInteger index)
+{
+    // Add in an "Open with <default PDF viewer>" item
+    NSString *appName = nil;
+    NSImage *appIcon = nil;
+    
+    _applicationInfoForMIMEType(@"application/pdf", &appName, &appIcon);
+    if (!appName)
+        appName = WEB_UI_STRING("Finder", "Default application name for Open With context menu");
+    
+    // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
+    // disable it using validateUserInterfaceItem.
+    NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Open with %@", "context menu item for PDF"), appName];
+    
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
+    if (appIcon)
+        [item setImage:appIcon];
+    [menu insertItem:item atIndex:index];
+    [item release];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
 
+    bool insertedOpenWithItem = false;
+    
     NSEnumerator *menuItemEnumerator = [[[_pdfView menuForEvent:theEvent] itemArray] objectEnumerator];
     while (NSMenuItem *item = [menuItemEnumerator nextObject]) {
         NSMenuItem *itemCopy = [item copy];
         [menu addItem:itemCopy];
         [itemCopy release];
 
+        if (insertedOpenWithItem)
+            continue;
+        
+        // If a "Copy" item is present, place the "Open With" item just after it, with an intervening separator.
         if ([item action] != @selector(copy:))
             continue;
-
-        // Add in an "Open with <default PDF viewer>" item
-        NSString *appName = nil;
-        NSImage *appIcon = nil;
-
-        _applicationInfoForMIMEType(@"application/pdf", &appName, &appIcon);
-        if (!appName)
-            appName = WEB_UI_STRING("Finder", "Default application name for Open With context menu");
-
-        // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
-        // disable it using validateUserInterfaceItem.
-        NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Open with %@", "context menu item for PDF"), appName];
-
-        item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
-        if (appIcon)
-            [item setImage:appIcon];
+        
         [menu addItem:[NSMenuItem separatorItem]];
-        [menu addItem:item];
-        [item release];
+        insertOpenWithDefaultPDFMenuItem(menu, [menu numberOfItems]);
+        insertedOpenWithItem = true;
+    }
+    
+    if (!insertedOpenWithItem) {
+        // No "Copy" item was found; place the "Open With" item at the top of the menu, with a trailing separator.
+        insertOpenWithDefaultPDFMenuItem(menu, 0);
+        [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
     }
 
     return [menu autorelease];
