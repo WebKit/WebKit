@@ -77,7 +77,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 return;
             }
             showCallback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
-            this._highlightElement.addStyleClass("source-frame-eval-expression");
+            // Popover may have been removed by showCallback().
+            if (this._highlightElement)
+                this._highlightElement.addStyleClass("source-frame-eval-expression");
         }
 
         var selectedCallFrame = this._model.selectedCallFrame;

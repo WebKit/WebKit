@@ -1,3 +1,16 @@
+2011-10-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: JS exception in JavaScriptSourceFrame.onShowPopover/showObjectPopover()
+        https://bugs.webkit.org/show_bug.cgi?id=70812
+
+        Reviewed by Pavel Feldman.
+
+        Check if highlighted element is present while displaying object popover.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.onShowPopover.showObjectPopover):
+        (WebInspector.JavaScriptSourceFrame.prototype.onShowPopover):
+
 2011-10-21  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route Console::time and Console::timeEnd to trace_event
