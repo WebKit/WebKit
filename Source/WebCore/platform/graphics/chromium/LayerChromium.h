@@ -53,6 +53,7 @@ namespace WebCore {
 
 class CCLayerImpl;
 class CCLayerTreeHost;
+class CCTextureUpdater;
 class GraphicsContext3D;
 
 class CCLayerDelegate {
@@ -159,7 +160,7 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
     virtual void paintContentsIfDirty() { }
-    virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*) { }
+    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }

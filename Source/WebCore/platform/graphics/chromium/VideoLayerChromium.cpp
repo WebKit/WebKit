@@ -40,6 +40,7 @@
 #include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCTextureUpdater.h"
 #include "cc/CCVideoLayerImpl.h"
 
 namespace WebCore {
@@ -76,7 +77,7 @@ void VideoLayerChromium::cleanupResources()
         m_textures[i].m_texture.clear();
 }
 
-void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, TextureAllocator* allocator)
+void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
     if (!m_delegate || !m_provider)
         return;
@@ -128,7 +129,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, T
         Texture& texture = m_textures[plane];
         ASSERT(texture.m_texture);
         ASSERT(frame->requiredTextureSize(plane) == texture.m_texture->size());
-        updateTexture(context, allocator, texture, frame->data(plane));
+        updateTexture(context, updater.allocator(), texture, frame->data(plane));
     }
 
     m_planes = frame->planes();

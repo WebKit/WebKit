@@ -50,7 +50,7 @@ public:
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
-    virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*);
+    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual bool drawsContent() const { return true; }
 
     void releaseProvider();

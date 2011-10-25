@@ -67,6 +67,7 @@ private:
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
     bool recreateContextIfNeeded();
     void commitIfNeeded();
+    void doCommit();
     bool doComposite();
 
     // Accessed on main thread only.

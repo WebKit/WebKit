@@ -1,3 +1,60 @@
+2011-10-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Batch up texture uploads so that they can be updated incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=70454
+
+        Reviewed by James Robinson.
+
+        Because texture uploads can sometimes take more than a frame to
+        complete, collect all the uploads that need to occur in a
+        CCTextureUpdater so that we can easily incrementally upload some of
+        them, interleaving input and drawing so that the compositor thread
+        continues to appear responsive during a commit.
+
+        This change doesn't actually interleave the commits, it just pushes
+        the infrastructure for doing so up to the CCProxy level so that a
+        future scheduler can make this decision.
+
+        VideoLayerChromium is the only layer type to not use this system. It
+        needs to be converted to use a texture updater first and it is less of
+        a priority than the tiled layers.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore::CCSingleThreadProxy::doCommit):
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp: Added.
+        (WebCore::CCTextureUpdater::CCTextureUpdater):
+        (WebCore::CCTextureUpdater::~CCTextureUpdater):
+        (WebCore::CCTextureUpdater::append):
+        (WebCore::CCTextureUpdater::update):
+        (WebCore::CCTextureUpdater::clear):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h: Added.
+        (WebCore::CCTextureUpdater::allocator):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::commitOnImplThread):
+
 2011-10-24  Jer Noble  <jer.noble@apple.com>
 
         compositing/video tests time out on Lion

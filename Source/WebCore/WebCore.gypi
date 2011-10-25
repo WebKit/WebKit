@@ -3559,6 +3559,8 @@
             'platform/graphics/chromium/cc/CCScrollController.h',
             'platform/graphics/chromium/cc/CCSingleThreadProxy.cpp',
             'platform/graphics/chromium/cc/CCSingleThreadProxy.h',
+            'platform/graphics/chromium/cc/CCTextureUpdater.cpp',
+            'platform/graphics/chromium/cc/CCTextureUpdater.h',
             'platform/graphics/chromium/cc/CCThread.h',
             'platform/graphics/chromium/cc/CCThreadProxy.cpp',
             'platform/graphics/chromium/cc/CCThreadProxy.h',

@@ -34,6 +34,7 @@
 #include "ManagedTexture.h"
 #include "TextStream.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
 #include <wtf/CurrentTime.h>
 
@@ -150,7 +151,7 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
         isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
 }
 
-void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, TextureAllocator* allocator)
+void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (m_skipsDraw || m_requestedUpdateRect.isEmpty() || !m_tiler->numTiles())
@@ -196,13 +197,12 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, T
             if (paintOffset.y() + destRect.height() > m_paintRect.height())
                 CRASH();
 
-            tile->texture()->bindTexture(context, allocator);
+            tile->texture()->bindTexture(context, updater.allocator());
             const GC3Dint filter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
-            GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
 
-            textureUpdater()->updateTextureRect(context, allocator, tile->texture(), sourceRect, destRect);
+            updater.append(tile->texture(), textureUpdater(), sourceRect, destRect);
             tile->clearDirty();
         }
     }

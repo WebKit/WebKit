@@ -109,22 +109,24 @@ void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
     m_animating = false;
 }
 
+void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
+{
+    ASSERT(CCProxy::isImplThread());
+    TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
+
+    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
+    contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
+}
+
 // This function commits the CCLayerTreeHost to an impl tree. When modifying
 // this function, keep in mind that the function *runs* on the impl thread! Any
 // code that is logically a main thread operation, e.g. deletion of a LayerChromium,
 // should be delayed until the CCLayerTreeHost::commitComplete, which will run
 // after the commit, but on the main thread.
-void CCLayerTreeHost::commitToOnImplThread(CCLayerTreeHostImpl* hostImpl)
+void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
-    TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
     hostImpl->setSourceFrameNumber(frameNumber());
-
-    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
-    contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
-
-    updateCompositorResources(m_updateList, hostImpl->context(), hostImpl->contentsTextureAllocator());
-
     hostImpl->setVisible(m_visible);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
@@ -362,10 +364,10 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     }
 }
 
-void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLayerList, GraphicsContext3D* context, TextureAllocator* allocator)
+void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
-    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+    for (int surfaceIndex = m_updateList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerChromium* renderSurfaceLayer = m_updateList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
@@ -373,13 +375,13 @@ void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLa
             continue;
 
         if (renderSurfaceLayer->maskLayer())
-            updateCompositorResources(renderSurfaceLayer->maskLayer(), context, allocator);
+            updateCompositorResources(renderSurfaceLayer->maskLayer(), context, updater);
 
         if (renderSurfaceLayer->replicaLayer()) {
-            updateCompositorResources(renderSurfaceLayer->replicaLayer(), context, allocator);
+            updateCompositorResources(renderSurfaceLayer->replicaLayer(), context, updater);
             
             if (renderSurfaceLayer->replicaLayer()->maskLayer())
-                updateCompositorResources(renderSurfaceLayer->replicaLayer()->maskLayer(), context, allocator);
+                updateCompositorResources(renderSurfaceLayer->replicaLayer()->maskLayer(), context, updater);
         }
         
         const LayerList& layerList = renderSurface->layerList();
@@ -389,19 +391,19 @@ void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLa
             if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
 
-            updateCompositorResources(layer, context, allocator);
+            updateCompositorResources(layer, context, updater);
         }
     }
 }
 
-void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context, TextureAllocator* allocator)
+void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context, CCTextureUpdater& updater)
 {
     // For normal layers, these conditions should have already been checked while creating the render surface layer lists.
     // For masks and replicas however, we may still need to check them here.
     if (layer->bounds().isEmpty() || !layer->opacity() || !layer->drawsContent())
         return;
 
-    layer->updateCompositorResources(context, allocator);
+    layer->updateCompositorResources(context, updater);
 }
 
 void CCLayerTreeHost::clearPendingUpdate()

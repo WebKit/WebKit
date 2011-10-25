@@ -42,6 +42,7 @@ class GrContext;
 namespace WebCore {
 
 class CCLayerTreeHostImpl;
+class CCTextureUpdater;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
@@ -102,8 +103,9 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
+    void beginCommitOnImplThread(CCLayerTreeHostImpl*);
+    void finishCommitOnImplThread(CCLayerTreeHostImpl*);
     void commitComplete();
-    void commitToOnImplThread(CCLayerTreeHostImpl*);
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didRecreateGraphicsContext(bool success);
@@ -156,6 +158,7 @@ public:
 
     void updateLayers();
 
+    void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     void applyScrollDeltas(const CCScrollUpdateSet&);
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
@@ -168,9 +171,7 @@ private:
     void paintMaskAndReplicaForRenderSurface(LayerChromium*);
 
     void updateLayers(LayerChromium*);
-    void updateCompositorResources(const LayerList&, GraphicsContext3D*, TextureAllocator*);
-    void updateCompositorResources(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
-    void updateMaskResourcesForRenderSurface(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
+    void updateCompositorResources(LayerChromium*, GraphicsContext3D*, CCTextureUpdater&);
     void clearPendingUpdate();
 
     int m_compositorIdentifier;

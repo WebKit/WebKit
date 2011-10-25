@@ -32,6 +32,7 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCScrollController.h"
+#include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WTF;
@@ -147,11 +148,23 @@ void CCSingleThreadProxy::setNeedsAnimate()
 void CCSingleThreadProxy::setNeedsCommit()
 {
     ASSERT(CCProxy::isMainThread());
+    doCommit();
+}
+
+void CCSingleThreadProxy::doCommit()
+{
+    ASSERT(CCProxy::isMainThread());
     // Commit immediately
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitToOnImplThread(m_layerTreeHostImpl.get());
+
+        m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
+        CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
+        m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
+        while (updater.update(m_layerTreeHostImpl->context(), 1)) { }
+        m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
+
         m_layerTreeHostImpl->commitComplete();
 
 #if !ASSERT_DISABLED
@@ -253,17 +266,9 @@ void CCSingleThreadProxy::commitIfNeeded()
 {
     ASSERT(CCProxy::isMainThread());
 
-    // Update
     m_layerTreeHost->updateLayers();
 
-    // Commit
-    {
-        DebugScopedSetImplThread impl;
-        m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitToOnImplThread(m_layerTreeHostImpl.get());
-        m_layerTreeHostImpl->commitComplete();
-    }
-    m_layerTreeHost->commitComplete();
+    doCommit();
 }
 
 bool CCSingleThreadProxy::doComposite()

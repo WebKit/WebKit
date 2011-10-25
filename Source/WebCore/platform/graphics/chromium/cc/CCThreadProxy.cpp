@@ -34,6 +34,7 @@
 #include "cc/CCScheduler.h"
 #include "cc/CCScopedMainThreadProxy.h"
 #include "cc/CCScrollController.h"
+#include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -419,7 +420,13 @@ void CCThreadProxy::commitOnImplThread(CCCompletionEvent* completion)
         return;
     }
     m_layerTreeHostImpl->beginCommit();
-    m_layerTreeHost->commitToOnImplThread(m_layerTreeHostImpl.get());
+
+    m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
+    CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
+    m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
+    while (updater.update(m_layerTreeHostImpl->context(), 1)) { }
+    m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
+
     m_layerTreeHostImpl->commitComplete();
 
     completion->signal();
