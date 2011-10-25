@@ -62,7 +62,6 @@ typedef String ErrorString;
 class InspectorPageAgent {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
-
     enum ResourceType {
         DocumentResource,
         StylesheetResource,
@@ -89,9 +88,9 @@ public:
     // Page API for InspectorFrontend
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
-    void removeAllScriptsToEvaluateOnLoad(ErrorString*);
-    void reload(ErrorString*, const bool* const optionalIgnoreCache);
+    void addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* result);
+    void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
+    void reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad);
     void open(ErrorString*, const String& url, const bool* const inNewWindow);
     void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
@@ -131,7 +130,9 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorState* m_state;
     InspectorFrontend::Page* m_frontend;
-    Vector<String> m_scriptsToEvaluateOnLoad;
+    long m_lastScriptIdentifier;
+    String m_pendingScriptToEvaluateOnLoadOnce;
+    String m_scriptToEvaluateOnLoadOnce;
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;

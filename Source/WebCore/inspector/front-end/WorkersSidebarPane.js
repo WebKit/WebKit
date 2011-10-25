@@ -76,23 +76,35 @@ WebInspector.WorkersSidebarPane.prototype = {
         }
     },
 
-    setInstrumentation: function(enabled)
+    _setInstrumentation: function(enabled)
     {
-        PageAgent.removeAllScriptsToEvaluateOnLoad();
-        if (enabled)
-            PageAgent.addScriptToEvaluateOnLoad("(" + InjectedFakeWorker + ")");
+        if (!enabled === !this._fakeWorkersScriptIdentifier)
+            return;
+
+        if (enabled) {
+            this._enableWorkersCheckbox.disabled = true;
+            function callback(error, identifier)
+            {
+                this._fakeWorkersScriptIdentifier = identifier;
+                this._enableWorkersCheckbox.disabled = false;
+            }
+            PageAgent.addScriptToEvaluateOnLoad("(" + InjectedFakeWorker + ")", callback.bind(this));
+        } else {
+            PageAgent.removeScriptToEvaluateOnLoad(this._fakeWorkersScriptIdentifier);
+            this._fakeWorkersScriptIdentifier = null;
+        }
     },
 
     reset: function()
     {
-        this.setInstrumentation(this._enableWorkersCheckbox.checked);
+        this._setInstrumentation(this._enableWorkersCheckbox.checked);
         this._treeOutline.removeChildren();
         this._workers = {};
     },
 
     _onTriggerInstrument: function(event)
     {
-        this.setInstrumentation(this._enableWorkersCheckbox.checked);
+        this._setInstrumentation(this._enableWorkersCheckbox.checked);
     }
 };
 

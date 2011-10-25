@@ -73,6 +73,7 @@ namespace WebCore {
 
 namespace PageAgentState {
 static const char pageAgentEnabled[] = "resourceAgentEnabled";
+static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -275,6 +276,7 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_injectedScriptManager(injectedScriptManager)
     , m_state(state)
     , m_frontend(0)
+    , m_lastScriptIdentifier(0)
 {
 }
 
@@ -310,18 +312,34 @@ void InspectorPageAgent::disable(ErrorString*)
     m_instrumentingAgents->setInspectorPageAgent(0);
 }
 
-void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)
+void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
 {
-    m_scriptsToEvaluateOnLoad.append(source);
+    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
+    if (!scripts) {
+        scripts = InspectorObject::create();
+        m_state->setObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad, scripts);
+    }
+    // Assure we don't override existing ids -- m_lastScriptIdentifier could get out of sync WRT actual
+    // scripts once we restored the scripts from the cookie during navigation.
+    do {
+        *identifier = String::number(++m_lastScriptIdentifier);
+    } while (scripts->find(*identifier) != scripts->end());
+    scripts->setString(*identifier, source);
 }
 
-void InspectorPageAgent::removeAllScriptsToEvaluateOnLoad(ErrorString*)
+void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString* error, const String& identifier)
 {
-    m_scriptsToEvaluateOnLoad.clear();
+    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
+    if (!scripts || scripts->find(identifier) == scripts->end()) {
+        *error = "Script not found";
+        return;
+    }
+    scripts->remove(identifier);
 }
 
-void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache)
+void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad)
 {
+    m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : "";
     m_page->mainFrame()->loader()->reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
@@ -563,13 +581,20 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (frame == m_page->mainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
-    if (m_scriptsToEvaluateOnLoad.size()) {
-        ScriptState* scriptState = mainWorldScriptState(frame);
-        for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-             it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-            m_injectedScriptManager->injectScript(*it, scriptState);
+    if (!m_frontend)
+        return;
+
+    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
+    if (scripts) {
+        InspectorObject::const_iterator end = scripts->end();
+        for (InspectorObject::const_iterator it = scripts->begin(); it != end; ++it) {
+            String scriptText;
+            if (it->second->asString(&scriptText))
+                m_injectedScriptManager->injectScript(scriptText, mainWorldScriptState(frame));
         }
     }
+    if (!m_scriptToEvaluateOnLoadOnce.isEmpty())
+        m_injectedScriptManager->injectScript(m_scriptToEvaluateOnLoadOnce, mainWorldScriptState(frame));
 }
 
 void InspectorPageAgent::domContentEventFired()
@@ -584,6 +609,10 @@ void InspectorPageAgent::loadEventFired()
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 {
+    if (loader->frame() == m_page->mainFrame()) {
+        m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
+        m_pendingScriptToEvaluateOnLoadOnce = String();
+    }
     m_frontend->frameNavigated(buildObjectForFrame(loader->frame()), loaderId(loader));
 }
 

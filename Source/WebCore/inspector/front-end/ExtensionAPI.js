@@ -489,9 +489,17 @@ function InspectedWindow()
 }
 
 InspectedWindow.prototype = {
-    reload: function(userAgent)
+    reload: function(optionsOrUserAgent)
     {
-        return extensionServer.sendRequest({ command: "reload", userAgent: userAgent });
+        var options = null;
+        if (typeof optionsOrUserAgent === "object")
+            options = optionsOrUserAgent;
+        else if (typeof optionsOrUserAgent === "string") {
+            options = { userAgent: optionsOrUserAgent };
+            console.warn("Passing userAgent as string parameter to inspectedWindow.reload() is deprecated. " +
+                         "Use inspectedWindow.reload({ userAgent: value}) instead.");
+        }
+        return extensionServer.sendRequest({ command: "reload", options: options });
     },
 
     eval: function(expression, callback)

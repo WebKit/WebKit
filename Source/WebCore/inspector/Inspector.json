@@ -140,6 +140,12 @@
                     { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
                 ],
                 "hidden": true
+            },
+            {
+                "id": "ScriptIdentifier",
+                "type": "string",
+                "description": "Unique script identifier.",
+                "hidden": true
             }
         ],
         "commands": [
@@ -156,16 +162,23 @@
                 "parameters": [
                     { "name": "scriptSource", "type": "string" }
                 ],
+                "returns": [
+                    { "name": "identifier", "$ref": "ScriptIdentifier", "description": "Identifier of the added script." }
+                ],
                 "hidden": true
             },
             {
-                "name": "removeAllScriptsToEvaluateOnLoad",
+                "name": "removeScriptToEvaluateOnLoad",
+                "parameters": [
+                    { "name": "identifier", "$ref": "ScriptIdentifier" }
+                ],
                 "hidden": true
             },
             {
                 "name": "reload",
                 "parameters": [
-                    { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." }
+                    { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." },
+                    { "name": "scriptToEvaluateOnLoad", "type": "string", "optional": true, "description": "If set, the script will be injected into all frames of the inspected page after reload." }
                 ],
                 "description": "Reloads given page optionally ignoring the cache."
             },

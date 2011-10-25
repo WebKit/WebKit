@@ -282,10 +282,15 @@ WebInspector.ExtensionServer.prototype = {
 
     _onReload: function(message)
     {
-        if (typeof message.userAgent === "string")
-            NetworkAgent.setUserAgentOverride(message.userAgent);
-
-        PageAgent.reload(false);
+        var options = message.options || {};
+        NetworkAgent.setUserAgentOverride(typeof options.userAgent === "string" ? options.userAgent : "");
+        var injectedScript;
+        if (options.injectedScript) {
+            // Wrap client script into anonymous function, return another anonymous function that
+            // returns empty object for compatibility with InjectedScriptManager on the backend.
+            injectedScript = "((function(){" + options.injectedScript + "})(),function(){return {}})";
+        }
+        PageAgent.reload(false, injectedScript);
         return this._status.OK();
     },
 

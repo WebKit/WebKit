@@ -1,3 +1,36 @@
+2011-10-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] allow extensions to specify script to be injected on reload
+        https://bugs.webkit.org/show_bug.cgi?id=70600
+
+        Reviewed by Pavel Feldman.
+
+        - change webInspector.inspectedPage.reload() to accept multiple options in an object
+        - add an ability to inject a script upon a page reload
+        - return script id in addScriptToEvaluateOnLoad()
+        - provide removeScriptToEvaluateOnLoad()
+        - store scripts to evaluate on load in inspector state cookie
+
+        Test: inspector/extensions/extensions-reload.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::restore):
+        (WebCore::InspectorPageAgent::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::removeScriptToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::removeAllScriptsToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.InspectedWindow.prototype.reload):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.setInstrumentation.callback):
+        (WebInspector.WorkersSidebarPane.prototype.setInstrumentation):
+
 2011-10-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: print expired message count before remaining messages.
