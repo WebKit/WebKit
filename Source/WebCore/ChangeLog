@@ -1,3 +1,30 @@
+2011-10-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resources panel: display the current search match index in the toolbar.
+        https://bugs.webkit.org/show_bug.cgi?id=66050
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/search/resources-search-match-index.html
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.performSearch.callback):
+        (WebInspector.ResourcesPanel.prototype.performSearch):
+        (WebInspector.ResourcesPanel.prototype._showSearchResult.callback):
+        (WebInspector.ResourcesPanel.prototype._showSearchResult):
+        (WebInspector.BaseStorageTreeElement.prototype.get searchMatchesCount):
+        (WebInspector.ResourcesSearchController):
+        (WebInspector.ResourcesSearchController.prototype.nextSearchResult):
+        (WebInspector.ResourcesSearchController.prototype.previousSearchResult):
+        (WebInspector.ResourcesSearchController.prototype._searchResult):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.next):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.previous):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype.matchIndex):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._elementSearchMatchesCount):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traverseNext):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traversePrevious):
+        * inspector/front-end/treeoutline.js:
+
 2011-10-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: JS exception in JavaScriptSourceFrame.onShowPopover/showObjectPopover()

@@ -887,6 +887,13 @@ TreeElement.prototype.onpopulate = function()
     // Overriden by subclasses.
 }
 
+/**
+ * @param {boolean} skipHidden
+ * @param {(TreeOutline|TreeElement)=} stayWithin
+ * @param {boolean=} dontPopulate
+ * @param {Object=} info
+ * @return {TreeElement}
+ */
 TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate, info)
 {
     if (!dontPopulate && this.hasChildren)
@@ -922,6 +929,11 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
     return (skipHidden ? (element.revealed() ? element.nextSibling : null) : element.nextSibling);
 }
 
+/**
+ * @param {boolean} skipHidden
+ * @param {boolean=} dontPopulate
+ * @return {TreeElement}
+ */
 TreeElement.prototype.traversePreviousTreeElement = function(skipHidden, dontPopulate)
 {
     var element = skipHidden ? (this.revealed() ? this.previousSibling : null) : this.previousSibling;

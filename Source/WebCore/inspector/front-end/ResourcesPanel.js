@@ -646,7 +646,7 @@ WebInspector.ResourcesPanel.prototype = {
             }
 
             WebInspector.searchController.updateSearchMatchesCount(totalMatchesCount, this);
-            this._searchController = new WebInspector.ResourcesSearchController(this.resourcesListTreeElement);
+            this._searchController = new WebInspector.ResourcesSearchController(this.resourcesListTreeElement, totalMatchesCount);
 
             if (this.sidebarTree.selectedTreeElement && this.sidebarTree.selectedTreeElement.searchMatchesCount)
                 this.jumpToNextSearchResult();
@@ -694,6 +694,7 @@ WebInspector.ResourcesPanel.prototype = {
                 return; // User has selected another view while we were searching.
             if (this._lastSearchResultIndex != -1)
                 this.visibleView.jumpToSearchResult(this._lastSearchResultIndex);
+            WebInspector.searchController.updateCurrentMatchIndex(searchResult.currentMatchIndex, this);
         }
 
         // Then run SourceFrame search if needed and jump to search result index when done.
@@ -892,6 +893,11 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this._titleText = titleText;
         if (this.titleElement)
             this.titleElement.textContent = this._titleText;
+    },
+
+    get searchMatchesCount()
+    {
+        return 0;
     },
 
     isEventWithinDisclosureTriangle: function(event)
@@ -1588,20 +1594,26 @@ WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototy
 
 /**
  * @constructor
+ * @param {WebInspector.BaseStorageTreeElement} rootElement
+ * @param {number} matchesCount
  */
-WebInspector.ResourcesSearchController = function(rootElement)
+WebInspector.ResourcesSearchController = function(rootElement, matchesCount)
 {
     this._root = rootElement;
+    this._matchesCount = matchesCount;
     this._traverser = new WebInspector.SearchResultsTreeElementsTraverser(rootElement);
     this._lastTreeElement = null;
     this._lastIndex = -1;
 }
 
 WebInspector.ResourcesSearchController.prototype = {
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} currentTreeElement
+     */
     nextSearchResult: function(currentTreeElement)
     {
         if (!currentTreeElement)
-            return this._searchResult(this._traverser.first(), 0);
+            return this._searchResult(this._traverser.first(), 0, 1);
 
         if (!currentTreeElement.searchMatchesCount)
             return this._searchResult(this._traverser.next(currentTreeElement), 0);
@@ -1610,35 +1622,55 @@ WebInspector.ResourcesSearchController.prototype = {
             return this._searchResult(currentTreeElement, 0);
 
         if (this._lastIndex == currentTreeElement.searchMatchesCount - 1)
-            return this._searchResult(this._traverser.next(currentTreeElement), 0);
+            return this._searchResult(this._traverser.next(currentTreeElement), 0, this._currentMatchIndex % this._matchesCount + 1);
 
-        return this._searchResult(currentTreeElement, this._lastIndex + 1);
+        return this._searchResult(currentTreeElement, this._lastIndex + 1, this._currentMatchIndex + 1);
     },
 
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} currentTreeElement
+     */
     previousSearchResult: function(currentTreeElement)
     {
         if (!currentTreeElement) {
             var treeElement = this._traverser.last();
-            return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);
+            return this._searchResult(treeElement, treeElement.searchMatchesCount - 1, this._matchesCount);
         }
 
-        if (currentTreeElement.searchMatchesCount && this._lastTreeElement === currentTreeElement && this._lastIndex > 0)
-            return this._searchResult(currentTreeElement, this._lastIndex - 1);
+        if (currentTreeElement.searchMatchesCount && this._lastTreeElement === currentTreeElement) {
+            if (this._lastIndex > 0)
+                return this._searchResult(currentTreeElement, this._lastIndex - 1, this._currentMatchIndex - 1);
+            else {
+                var treeElement = this._traverser.previous(currentTreeElement);
+                var currentMatchIndex = this._currentMatchIndex - 1 ? this._currentMatchIndex - 1 : this._matchesCount;
+                return this._searchResult(treeElement, treeElement.searchMatchesCount - 1, currentMatchIndex);
+            }
+        }
 
         var treeElement = this._traverser.previous(currentTreeElement)
         return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);
     },
 
-    _searchResult: function(treeElement, index)
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} treeElement
+     * @param {number} index
+     * @param {number=} currentMatchIndex
+     * @return {Object}
+     */
+    _searchResult: function(treeElement, index, currentMatchIndex)
     {
         this._lastTreeElement = treeElement;
         this._lastIndex = index;
-        return {treeElement: treeElement, index: index};
+        if (!currentMatchIndex)
+            currentMatchIndex = this._traverser.matchIndex(treeElement, index);
+        this._currentMatchIndex = currentMatchIndex;
+        return {treeElement: treeElement, index: index, currentMatchIndex: currentMatchIndex};
     }
 }
 
 /**
  * @constructor
+ * @param {WebInspector.BaseStorageTreeElement} rootElement
  */
 WebInspector.SearchResultsTreeElementsTraverser = function(rootElement)
 {
@@ -1646,49 +1678,96 @@ WebInspector.SearchResultsTreeElementsTraverser = function(rootElement)
 }
 
 WebInspector.SearchResultsTreeElementsTraverser.prototype = {
+    /**
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     first: function()
     {
         return this.next(this._root);
     },
 
+    /**
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     last: function()
     {
         return this.previous(this._root);
     },
 
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} startTreeElement
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     next: function(startTreeElement)
     {
         var treeElement = startTreeElement;
         do {
             treeElement = this._traverseNext(treeElement) || this._root;
-        } while (treeElement != startTreeElement && !this._elementHasSearchResults(treeElement));
+        } while (treeElement != startTreeElement && !this._elementSearchMatchesCount(treeElement));
         return treeElement;
     },
 
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} startTreeElement
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     previous: function(startTreeElement)
     {
         var treeElement = startTreeElement;
         do {
             treeElement = this._traversePrevious(treeElement) || this._lastTreeElement();
-        } while (treeElement != startTreeElement && !this._elementHasSearchResults(treeElement));
+        } while (treeElement != startTreeElement && !this._elementSearchMatchesCount(treeElement));
         return treeElement;
     },
 
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} startTreeElement
+     * @param {number} index
+     * @return {number}
+     */
+    matchIndex: function(startTreeElement, index)
+    {
+        var matchIndex = 1;
+        var treeElement = this._root;
+        while (treeElement != startTreeElement) {
+            matchIndex += this._elementSearchMatchesCount(treeElement);
+            treeElement = this._traverseNext(treeElement) || this._root;
+            if (treeElement === this._root)
+                return 0;
+        }
+        return matchIndex + index;
+    },
+
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} treeElement
+     * @return {number}
+     */
+    _elementSearchMatchesCount: function(treeElement)
+    {
+        return treeElement.searchMatchesCount;
+    },
+
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} treeElement
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     _traverseNext: function(treeElement)
     {
-        return treeElement.traverseNextTreeElement(false, this._root, true);
+        return /** @type {WebInspector.BaseStorageTreeElement} */ treeElement.traverseNextTreeElement(false, this._root, true);
     },
 
-    _elementHasSearchResults: function(treeElement)
-    {
-        return treeElement instanceof WebInspector.FrameResourceTreeElement && treeElement.searchMatchesCount;
-    },
-
+    /**
+     * @param {WebInspector.BaseStorageTreeElement} treeElement
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     _traversePrevious: function(treeElement)
     {
-        return treeElement.traversePreviousTreeElement(false, this._root, true);
+        return /** @type {WebInspector.BaseStorageTreeElement} */ treeElement.traversePreviousTreeElement(false, true);
     },
 
+    /**
+     * @return {WebInspector.BaseStorageTreeElement}
+     */
     _lastTreeElement: function()
     {
         var treeElement = this._root;
