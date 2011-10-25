@@ -1,3 +1,12 @@
+2011-10-25  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Removing test from Skipped list. Test passes: html5lib/runner.html
+        https://bugs.webkit.org/show_bug.cgi?id=53030
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt/Skipped:
+
 2011-10-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] allow extensions to specify script to be injected on reload

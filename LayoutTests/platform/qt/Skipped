@@ -1861,9 +1861,6 @@ svg/zoom/page/zoom-zoom-coords.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=53843
 media/video-frame-accurate-seek.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=53030
-html5lib/runner.html 
-
 # [Qt]  fast/notifications/notifications-document-close-crash.html fails after r77738
 # https://bugs.webkit.org/show_bug.cgi?id=53868
 fast/notifications/notifications-document-close-crash.html
