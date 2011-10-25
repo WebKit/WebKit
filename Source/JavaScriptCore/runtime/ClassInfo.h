@@ -52,6 +52,12 @@ namespace JSC {
 
         typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
         DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
+
+        typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
+
+        typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
+        GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \
@@ -62,6 +68,8 @@ namespace JSC {
         &ClassName::putByIndex, \
         &ClassName::deleteProperty, \
         &ClassName::deletePropertyByIndex, \
+        &ClassName::getOwnPropertySlot, \
+        &ClassName::getOwnPropertySlotByIndex, \
     }, \
     sizeof(ClassName)
 

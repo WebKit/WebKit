@@ -64,10 +64,11 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
 
-private:
-    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+
+private:
+    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
     OwnPtr<Bindings::MethodList> _methodList;
