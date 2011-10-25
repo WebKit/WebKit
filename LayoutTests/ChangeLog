@@ -1,3 +1,10 @@
+2011-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        inspector/cookie-parser.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=62662
+
+        * platform/qt/Skipped: Skip one more test because of this bug: inspector/evaluate-in-page.html.
+
 2011-10-25  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Remove from Skipped list. Test passes: fast/transforms/scrollIntoView-transformed.html

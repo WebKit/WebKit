@@ -2441,6 +2441,7 @@ http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
 # https://bugs.webkit.org/show_bug.cgi?id=62662
 inspector/cookie-parser.html
 inspector/cookie-resource-match.html
+inspector/evaluate-in-page.html
 
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
