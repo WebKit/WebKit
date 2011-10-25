@@ -1,3 +1,11 @@
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fixing Windows build after r98367
+
+        Unreviewed build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-10-25  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Add missing DFG file entries to the make lists for GTK and Qt ports
