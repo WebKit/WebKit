@@ -1,3 +1,12 @@
+2011-10-25  Vamshikrishna Yellenki  <vamshi@motorola.com>
+
+        [WK2]Critical warning while building WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=70591
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/WebPage/WebPage.cpp: Included DataObjectGtk.h to avoid warnings for GTK
+
 2011-10-24  Sam Weinig  <sam@webkit.org>
 
         Simplify url accessors on WKBrowsingContextController

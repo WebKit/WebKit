@@ -128,6 +128,10 @@
 #include <QMimeData>
 #endif
 
+#if PLATFORM(GTK)
+#include "DataObjectGtk.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
