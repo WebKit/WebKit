@@ -141,7 +141,7 @@ public:
     virtual void reshape(int width, int height) = 0;
 
     // GL_CHROMIUM_setVisibility - Changes the visibility of the backbuffer
-    virtual void setVisibilityCHROMIUM(bool visible) { }
+    virtual void setVisibilityCHROMIUM(bool visible) = 0;
 
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;
