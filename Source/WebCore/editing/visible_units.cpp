@@ -318,17 +318,6 @@ bool isStartOfWord(const VisiblePosition& p)
 
 // ---------
 
-static VisiblePosition positionAvoidingFirstPositionInTable(const VisiblePosition& c)
-{
-    // return table offset 0 instead of the first VisiblePosition inside the table
-    VisiblePosition previous = c.previous();
-    if (isLastPositionBeforeTable(previous) && isEditablePosition(previous.deepEquivalent()))
-        return previous;
-
-    return c;
-}
-    
-
 enum LineEndpointComputationMode { UseLogicalOrdering, UseInlineBoxOrdering };
 static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpointComputationMode mode)
 {
@@ -341,8 +330,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
         if (p.deprecatedNode()->renderer() && p.deprecatedNode()->renderer()->isRenderBlock() && !p.deprecatedEditingOffset())
-            return positionAvoidingFirstPositionInTable(c);
-        
+            return c;
+
         return VisiblePosition();
     }
 
@@ -372,9 +361,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         }
     }
 
-    if (startNode->isTextNode())
-        return positionAvoidingFirstPositionInTable(Position(static_cast<Text*>(startNode), toInlineTextBox(startBox)->start()));
-    return positionAvoidingFirstPositionInTable(positionBeforeNode(startNode));
+    return startNode->isTextNode() ? Position(static_cast<Text*>(startNode), toInlineTextBox(startBox)->start())
+        : positionBeforeNode(startNode);
 }
 
 static VisiblePosition startOfLine(const VisiblePosition& c, LineEndpointComputationMode mode)

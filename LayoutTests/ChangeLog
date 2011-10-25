@@ -1,3 +1,16 @@
+2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moving to the start of line should not place the caret outside of the table
+        https://bugs.webkit.org/show_bug.cgi?id=70757
+
+        Reviewed by Chang Shu.
+
+        Added a test to move the caret to lineboundaries in the first and the last table cell.
+        The caret should remain inside a table cell.
+
+        * editing/selection/table-lineboundary-expected.txt: Added.
+        * editing/selection/table-lineboundary.html: Added.
+
 2011-10-25  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Make successfullyParsed optional
