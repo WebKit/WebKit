@@ -2,6 +2,14 @@
 
         Unreviewed gardening.
 
+        The old rebaseline looked wrong and did not match the other baselines. This is now corrected.
+
+        * platform/chromium-cg-mac-leopard/fast/backgrounds/background-leakage-transforms-expected.png: Removed.
+
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
         Partial rebaselining of fast/css/focus-ring-multiline-writingmode-vertical.html as it looks like it progressed
         on some platforms.
 
