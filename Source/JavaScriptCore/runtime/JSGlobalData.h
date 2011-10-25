@@ -188,7 +188,19 @@ namespace JSC {
         SmallStrings smallStrings;
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
-        
+        CodeBlock* codeBlockBeingCompiled;
+        void startedCompiling(CodeBlock* codeBlock)
+        {
+            ASSERT(!codeBlockBeingCompiled);
+            codeBlockBeingCompiled = codeBlock;
+        }
+
+        void finishedCompiling(CodeBlock* codeBlock)
+        {
+            ASSERT_UNUSED(codeBlock, codeBlock == codeBlockBeingCompiled);
+            codeBlockBeingCompiled = 0;
+        }
+
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
 #endif

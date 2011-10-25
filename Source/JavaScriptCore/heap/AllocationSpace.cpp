@@ -44,7 +44,7 @@ inline void* AllocationSpace::tryAllocate(MarkedSpace::SizeClass& sizeClass)
 void* AllocationSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
 {
 #if COLLECT_ON_EVERY_ALLOCATION
-    collectAllGarbage();
+    m_heap->collectAllGarbage();
     ASSERT(m_heap->m_operationInProgress == NoOperation);
 #endif
     

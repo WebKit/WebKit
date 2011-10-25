@@ -219,6 +219,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
+    m_globalData->startedCompiling(m_codeBlock);
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
 
@@ -289,6 +290,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
+    m_globalData->startedCompiling(m_codeBlock);
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
 
@@ -450,6 +452,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
+    m_globalData->startedCompiling(m_codeBlock);
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);
 
@@ -470,6 +473,11 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
     codeBlock->adoptVariables(variables);
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     preserveLastVar();
+}
+
+BytecodeGenerator::~BytecodeGenerator()
+{
+    m_globalData->finishedCompiling(m_codeBlock);
 }
 
 RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)

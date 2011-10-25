@@ -1,3 +1,29 @@
+2011-10-24  Oliver Hunt  <oliver@apple.com>
+
+        Crash in void JSC::validateCell<JSC::RegExp*>(JSC::RegExp*)
+        https://bugs.webkit.org/show_bug.cgi?id=70689
+
+        Reviewed by Filip Pizlo.
+
+        While performing codegen we need to make the GlobalData explicitly
+        aware of the codeblock being compiled, as compilation may trigger GC
+        and CodeBlock holds GC values, but has not yet been assigned to its
+        owner executable.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::~BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * heap/AllocationSpace.cpp:
+        (JSC::AllocationSpace::allocateSlowCase):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::startedCompiling):
+        (JSC::JSGlobalData::finishedCompiling):
+
 2011-10-24  Filip Pizlo  <fpizlo@apple.com>
 
         Object-or-other branch speculation may corrupt the state for OSR if the child of the

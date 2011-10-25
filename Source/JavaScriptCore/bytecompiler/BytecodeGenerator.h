@@ -96,6 +96,8 @@ namespace JSC {
         BytecodeGenerator(FunctionBodyNode*, ScopeChainNode*, SymbolTable*, CodeBlock*, CompilationKind);
         BytecodeGenerator(EvalNode*, ScopeChainNode*, SymbolTable*, EvalCodeBlock*, CompilationKind);
 
+        ~BytecodeGenerator();
+        
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
 

@@ -600,7 +600,12 @@ void Heap::markRoots(bool fullGC)
         }
     }
 #endif
-
+    
+    if (CodeBlock* codeBlock = m_globalData->codeBlockBeingCompiled) {
+        GCPHASE(VisitActiveCodeBlock);
+        codeBlock->visitAggregate(visitor);
+    }
+    
     {
         GCPHASE(VisitMachineRoots);
         visitor.append(machineThreadRoots);
