@@ -20,6 +20,10 @@
 #t { -webkit-mask-image: url("url(t)"); }
 #u { -webkit-border-image: url("url(u)") 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url("url(v)") 1 2 3 4 fill stretch round; }
+#w { content: url("w\0d\
+w"); /* URL string contains twice newline */ }
+#x { content: url(" x x	x "); } /* URL string contains space and tab */
+#y { content: url( y\20y\9y ); } /* URL string contains space and tab */
 </style>
 
 <script>
@@ -94,6 +98,9 @@ function runTest()
 #t { -webkit-mask-image: url('url(t)'); }
 #u { -webkit-border-image: url('url(u)') 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url('url(v)') 1 2 3 4 fill stretch round; }
+#w { content: url(ww); }
+#x { content: url(x%20xx); }
+#y { content: url(y%20yy); }
 </pre>
 
 <script>

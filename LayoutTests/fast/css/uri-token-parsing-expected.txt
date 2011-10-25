@@ -24,6 +24,9 @@ Rules from the stylesheet:
 #t { -webkit-mask-image: url('url(t)'); }
 #u { -webkit-border-image: url('url(u)') 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url('url(v)') 1 2 3 4 fill stretch round; }
+#w { content: url(ww); }
+#x { content: url(x%20xx); }
+#y { content: url(y%20yy); }
 Expected result:
 
 #a { content: url(c); }
@@ -46,4 +49,7 @@ Expected result:
 #t { -webkit-mask-image: url('url(t)'); }
 #u { -webkit-border-image: url('url(u)') 1 2 3 4 fill stretch round; }
 #v { -webkit-mask-box-image: url('url(v)') 1 2 3 4 fill stretch round; }
+#w { content: url(ww); }
+#x { content: url(x%20xx); }
+#y { content: url(y%20yy); }
 
