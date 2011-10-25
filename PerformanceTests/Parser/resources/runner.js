@@ -73,6 +73,7 @@ function runLoop()
         window.setTimeout(run, 0);
     } else {
         logStatistics(times);
+        window.doneFunction();
     }
 }
 
@@ -91,10 +92,11 @@ function run() {
     runLoop()
 }
 
-function start(runCount, runFunction, loopsPerRun) {
+function start(runCount, runFunction, loopsPerRun, doneFunction) {
     window.runCount = runCount;
     window.runFunction = runFunction;
     window.loopsPerRun = loopsPerRun || 10;
+    window.doneFunction = doneFunction || function() {};
 
     log("Running " + runCount + " times");
     runLoop();

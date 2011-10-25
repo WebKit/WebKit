@@ -1,5 +1,17 @@
 2011-10-25  Adam Barth  <abarth@webkit.org>
 
+        EventTargetFactory.in is not sorted
+        https://bugs.webkit.org/show_bug.cgi?id=70855
+
+        Reviewed by Eric Seidel.
+
+        This patch sorts the file.  I was not able to measure a performance
+        difference using the microbenchmark included with this patch.
+
+        * dom/EventTargetFactory.in:
+
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Windows build.  Windows mashes all these files into
         one, which doesn't respect the compilation unit rules of C++.
 

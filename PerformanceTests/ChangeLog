@@ -1,3 +1,18 @@
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
+        EventTargetFactory.in is not sorted
+        https://bugs.webkit.org/show_bug.cgi?id=70855
+
+        Reviewed by Eric Seidel.
+
+        Add a microbenchmark for wrapping event target.
+
+        * Bindings: Added.
+        * Bindings/event-target-wrapper.html: Added.
+        * Parser/resources/runner.js:
+        (runLoop):
+            - Let the user of the harness get a callback when the test is done.
+
 2011-10-04  Eric Seidel  <eric@webkit.org>
 
         Update html5-full-render.html to load the HTML5 spec incrementally, closer to how the browser would
