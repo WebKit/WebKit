@@ -336,7 +336,7 @@ void WebIconDatabase::didRemoveAllIcons()
 void WebIconDatabase::didImportIconURLForPageURL(const WTF::String& pageURL)
 {
     MutexLocker locker(m_notificationMutex);
-    m_notificationQueue.append(pageURL.threadsafeCopy());
+    m_notificationQueue.append(pageURL.isolatedCopy());
     scheduleNotificationDelivery();
 }
 

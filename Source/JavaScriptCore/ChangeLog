@@ -1,5 +1,12 @@
 2011-10-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: removed some cases of threadsafeCopy() that I missed in
+        my previous patch.
+
+        * JavaScriptCore.order:
+
+2011-10-24  Geoffrey Garen  <ggaren@apple.com>
+
         Removed SharedUChar and tightened language around its previous uses
         https://bugs.webkit.org/show_bug.cgi?id=70698
 

@@ -1,3 +1,15 @@
+2011-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: removed some cases of threadsafeCopy() that I missed in
+        my previous patch.
+
+        * WebDatabaseManager.cpp:
+        (DidModifyOriginData::dispatchToMainThread):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::initToResumeWithBundle):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::didImportIconURLForPageURL):
+
 2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         threadsafeCopy has been renamed to isolatedCopy.
