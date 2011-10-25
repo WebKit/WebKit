@@ -1,3 +1,16 @@
+2011-10-25  Anna Cavender  <annacc@chromium.org>
+
+        Enable running of track layout tests for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=70803
+
+        Reviewed by Adam Barth.
+        
+        Make DumpRenderTree/TestShell always run with track enabled
+        (equivalent of --enable-video-track).
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2011-10-25  Vamshikrishna Yellenki  <vamshi@motorola.com>
 
         [WK2]Main window never gets focus using TAB key in WebKit2 GTK+.

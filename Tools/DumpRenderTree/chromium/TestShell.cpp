@@ -121,6 +121,7 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
     WebRuntimeFeatures::enableMediaStream(true);
     WebRuntimeFeatures::enableWebAudio(true); 
+    WebRuntimeFeatures::enableVideoTrack(true);
 
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
