@@ -1,3 +1,15 @@
+2011-10-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Fix bug summary when rolling Chromium DEPS to LKGR.
+        https://bugs.webkit.org/show_bug.cgi?id=69917
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/roll.py:
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+
 2011-10-24  Ivan Briano  <ivan@profusion.mobi>
 
         [EFL] Build fix. Add include path to find npapi.h

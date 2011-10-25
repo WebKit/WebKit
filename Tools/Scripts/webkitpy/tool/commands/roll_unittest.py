@@ -48,3 +48,16 @@ Committed r49824: <http://trac.webkit.org/changeset/49824>
 ERROR: Unable to update Chromium DEPS
 """
         self.assert_execute_outputs(RollChromiumDEPS(), [5764], options=options, expected_stderr=expected_stderr, expected_exception=SystemExit)
+
+
+class PostRollCommandsTest(CommandsTest):
+    def test_prepare_state(self):
+        postroll = PostChromiumDEPSRoll()
+        options = MockOptions()
+        tool = MockTool()
+        lkgr_state = postroll._prepare_state(options, [None, "last-known good revision"], tool)
+        self.assertEquals(None, lkgr_state["chromium_revision"])
+        self.assertEquals("Roll Chromium DEPS to last-known good revision", lkgr_state["bug_title"])
+        revision_state = postroll._prepare_state(options, ["1234", "r1234"], tool)
+        self.assertEquals("1234", revision_state["chromium_revision"])
+        self.assertEquals("Roll Chromium DEPS to r1234", revision_state["bug_title"])

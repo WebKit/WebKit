@@ -163,7 +163,7 @@ class RollChromiumDEPS(IRCCommand):
         tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
 
         try:
-            bug_id = sheriff.post_chromium_deps_roll(revision)
+            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             tool.irc().post("%s: Created DEPS roll: %s" % (nick, bug_url))
         except ScriptError, e:
