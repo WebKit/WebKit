@@ -64,10 +64,8 @@ module xml {
 
         attribute boolean withCredentials
             setter raises(DOMException);
-        // void open(in DOMString method, in DOMString url);
-        // void open(in DOMString method, in DOMString url, in boolean async);
-        // void open(in DOMString method, in DOMString url, in boolean async, in DOMString user);
-        [Custom] void open(in DOMString method, in DOMString url, in boolean async, in DOMString user, in DOMString password)
+
+        [Custom] void open(in DOMString method, in DOMString url, in [Optional] boolean async, in [Optional] DOMString user, in [Optional] DOMString password)
             raises(DOMException);
 
         void setRequestHeader(in DOMString header, in DOMString value)

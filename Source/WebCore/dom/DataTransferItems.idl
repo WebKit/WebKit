@@ -38,7 +38,7 @@ module core {
 #endif
     ] DataTransferItems {
         readonly attribute long length;
-        DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index) getter;
+        DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index);
 
         void clear();
         void add(in [Optional=CallWithDefaultValue] DOMString data, 

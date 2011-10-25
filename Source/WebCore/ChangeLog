@@ -1,3 +1,17 @@
+2011-10-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Fix several minor problems in idls.
+        https://bugs.webkit.org/show_bug.cgi?id=70811
+
+        Reviewed by Adam Barth.
+
+        This patch does not have any effect on generated bindings.
+
+        * dom/DataTransferItems.idl:
+        * page/History.idl:
+        * storage/IDBIndex.idl:
+        * xml/XMLHttpRequest.idl:
+
 2011-10-25  Nate Chapin  <japhet@chromium.org>
 
         Make DocumentThreadableLoader a CachedResourceClient.
