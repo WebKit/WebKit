@@ -1,3 +1,18 @@
+2011-10-25  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: fourth chunk of baselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 728 of 734 files for brevity.]
+
+        * platform/chromium-mac-leopard/fast/lists/ordered-list-with-no-ol-tag-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/lists/scrolled-marker-paint-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/media: Added.
+        ...
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-tref-01-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png: Added.
+
 2011-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: redesign workers sidebar pane
