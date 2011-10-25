@@ -75,6 +75,7 @@
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
+            'tests/ScrollAnimatorNoneTest.cpp',
             'tests/TilingDataTest.cpp',
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',
@@ -97,10 +98,6 @@
                     'tests/WebPageNewSerializerTest.cpp',
                     'tests/WebPageSerializerTest.cpp',
                 ],
-            }],
-            ['OS!="mac"', {
-              # Mac uses ScrollAnimatorMac instead of ScrollAnimatorNone.
-              'tests/ScrollAnimatorNoneTest.cpp',
             }],
             ['toolkit_uses_gtk == 1', {
                 'webkit_unittest_files': [

@@ -1,3 +1,15 @@
+2011-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98294 and r98306.
+        http://trac.webkit.org/changeset/98294
+        http://trac.webkit.org/changeset/98306
+        https://bugs.webkit.org/show_bug.cgi?id=70790
+
+        the first patch broke chromium-mac and the second gclient
+        (Requested by jchaffraix on #webkit).
+
+        * WebKit.gypi:
+
 2011-10-24  Nico Weber  <thakis@chromium.org>
 
         [chromium] Try to fix mac build after r98294
