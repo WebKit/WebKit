@@ -6,6 +6,7 @@
     div.section { display: table-row-group; }
     div.cell { display: table-cell; width: 50px; height: 50px; background-color: blue; }
     div.row { display: table-row; }
+    div.test { background-color: green; width: 50px; height: 50px; }
 </style>
 
 <div class="table" id="table-1">
@@ -18,23 +19,23 @@
 </div>
 
 <script>
-    function createSpan()
+    function createDiv()
     {
-      var spanElement = document.createElement("span");
-      spanElement.appendChild(document.createTextNode("Some text."));
-      return spanElement;
+      var divElement = document.createElement("div");
+      divElement.setAttribute("class", "test");
+      return divElement;
     }
 
-    function insertSpan(tableID, beforeID)
+    function insertDiv(tableID, beforeID)
     {
         var tableRow = document.getElementById(tableID);
         var before = document.getElementById(beforeID);
-        tableRow.insertBefore(createSpan(), before);
+        tableRow.insertBefore(createDiv(), before);
     }
 
     document.body.offsetTop;
 
-    insertSpan("row-1", "cell-2");
+    insertDiv("row-1", "cell-2");
 </script>
 </body>
 </html>

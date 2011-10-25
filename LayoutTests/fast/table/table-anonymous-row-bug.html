@@ -5,35 +5,36 @@
     div.table { display: table; }
     div.cell { display: table-cell; width: 50px; height: 50px; background-color: blue; }
     div.row { display: table-row; }
+    div.test { background-color: green; width: 50px; height: 50px; }
 </style>
 
 <div class="table" id="table-1">
     <div class="row" id="row-1">
-      <div class="cell">Cell 1</div>
+      <div class="cell"></div>
     </div>
     <div class="row" id="row-2">
-      <div class="cell">Cell 2</div>
+      <div class="cell"></div>
     </div>
 </div>
 
 <script>
-    function createSpan()
+    function createDiv()
     {
-      var spanElement = document.createElement("span");
-      spanElement.appendChild(document.createTextNode("Some text."));
-      return spanElement;
+      var divElement = document.createElement("div");
+      divElement.setAttribute("class", "test");
+      return divElement;
     }
 
-    function insertSpan(tableID, beforeID)
+    function insertDiv(tableID, beforeID)
     {
         var table = document.getElementById(tableID);
         var before = document.getElementById(beforeID);
-        table.insertBefore(createSpan(), before);
+        table.insertBefore(createDiv(), before);
     }
 
     document.body.offsetTop;
 
-    insertSpan("table-1", "row-2");
+    insertDiv("table-1", "row-2");
 </script>
 </body>
 </html>

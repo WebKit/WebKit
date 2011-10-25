@@ -1,3 +1,20 @@
+2011-10-25  Fady Samuel  <fsamuel@chromium.org>
+
+        Made Table tests for Bug 70678 Platform Independent
+        https://bugs.webkit.org/show_bug.cgi?id=70850
+
+        Reviewed by Adam Barth.
+
+        * fast/table/table-anonymous-cell-bug-expected.png: Added.
+        * fast/table/table-anonymous-cell-bug-expected.txt:
+        * fast/table/table-anonymous-cell-bug.html:
+        * fast/table/table-anonymous-row-bug-expected.png: Added.
+        * fast/table/table-anonymous-row-bug-expected.txt:
+        * fast/table/table-anonymous-row-bug.html:
+        * fast/table/table-anonymous-section-bug-expected.png: Added.
+        * fast/table/table-anonymous-section-bug-expected.txt:
+        * fast/table/table-anonymous-section-bug.html:
+
 2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving to the start of line should not place the caret outside of the table
