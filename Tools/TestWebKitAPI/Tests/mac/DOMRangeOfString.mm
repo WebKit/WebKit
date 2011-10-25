@@ -68,6 +68,12 @@ TEST(WebKit1, DOMRangeOfString)
     resultRange = [webView.get() DOMRangeOfString:@"stack" relativeTo:needleRange options:WebFindOptionsBackwards];
     EXPECT_EQ(nil, resultRange);
 
+    resultRange = [webView.get() DOMRangeOfString:@"n" relativeTo:needleRange options:0];
+    EXPECT_EQ(36, resultRange.startOffset);
+
+    resultRange = [webView.get() DOMRangeOfString:@"n" relativeTo:needleRange options:WebFindOptionsStartInSelection];
+    EXPECT_EQ(28, resultRange.startOffset);
+
     RetainPtr<WebView> otherWebView(AdoptNS, [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     DOMRange *foreignRange = [[[otherWebView.get() mainFrame] DOMDocument] createRange];
     resultRange = [webView.get() DOMRangeOfString:@"needle" relativeTo:foreignRange options:0];

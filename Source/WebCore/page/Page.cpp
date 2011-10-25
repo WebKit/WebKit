@@ -522,7 +522,7 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : mainFrame();
     Frame* startFrame = frame;
     do {
-        if (RefPtr<Range> resultRange = frame->editor()->rangeOfString(target, frame == startFrame ? referenceRange : 0, (options & ~WrapAround) | StartInSelection))
+        if (RefPtr<Range> resultRange = frame->editor()->rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
             return resultRange.release();
 
         frame = incrementFrame(frame, !(options & Backwards), shouldWrap);

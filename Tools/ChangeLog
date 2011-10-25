@@ -1,3 +1,12 @@
+2011-10-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10337033> DOMRangeOfString:relativeTo:options has problems with -webkit-user-select: none
+
+        Reviewed by Adam Roben.
+
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.mm:
+        (TestWebKitAPI::TEST):
+
 2011-10-25  Eric Seidel  <eric@webkit.org>
 
         WIN: editing tests fail under NRWT because editing delegate callbacks aren't stripped

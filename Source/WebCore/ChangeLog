@@ -1,3 +1,15 @@
+2011-10-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10337033> DOMRangeOfString:relativeTo:options has problems with -webkit-user-select: none
+
+        Reviewed by Adam Roben.
+
+        Test: added to TestWebKitAPI/Tests/mac/DOMRangeOfString.mm
+
+        * page/Page.cpp:
+        (WebCore::Page::rangeOfString): This function was incorrectly adding the StartInSelection option to
+        the initial search.
+
 2011-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: redesign workers sidebar pane
