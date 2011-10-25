@@ -1,3 +1,12 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        Add a new baseline for snow-leopard.
+
+        * platform/chromium-mac-snowleopard/svg/filters: Added.
+        * platform/chromium-mac-snowleopard/svg/filters/feColorMatrix-default-type-expected.png: Added.
+
 2011-10-24  Ben Wells  <benwells@chromium.org>
 
         Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
