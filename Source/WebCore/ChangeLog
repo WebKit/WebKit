@@ -1,3 +1,22 @@
+2011-10-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Get rid of optional parameters in the middle in IDLs.
+        https://bugs.webkit.org/show_bug.cgi?id=70816
+
+        Reviewed by Adam Barth.
+
+        Optional parameters in the middle are prohibited by WebIDL spec.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateArgumentsCountCheck):
+        (GenerateImplementation):
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * page/DOMWindow.idl:
+
 2011-10-25  Chris Evans  <cevans@google.com>
 
         Manage the CSS property array length correctly

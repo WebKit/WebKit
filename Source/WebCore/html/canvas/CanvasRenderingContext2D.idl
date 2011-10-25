@@ -157,7 +157,9 @@ module html {
             raises (DOMException);
         CanvasPattern createPattern(in HTMLImageElement image, in [ConvertNullToNullString] DOMString repetitionType)
             raises (DOMException);
-        void putImageData(in ImageData imagedata, in float dx, in float dy, in [Optional] float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+        void putImageData(in ImageData imagedata, in float dx, in float dy)
+            raises(DOMException);
+        void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
         ImageData createImageData(in ImageData imagedata)
             raises (DOMException);
