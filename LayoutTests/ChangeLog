@@ -1,3 +1,18 @@
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        Partial rebaselining of fast/css/focus-ring-multiline-writingmode-vertical.html as it looks like it progressed
+        on some platforms.
+
+        * platform/chromium-cg-mac-leopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Removed.
+        * platform/chromium-cg-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Removed.
+        * platform/chromium-cg-mac/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Removed.
+        * platform/chromium/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Removed.
+
 2011-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r88580): Cursor fails to change to pointer on embedded Google maps popups
