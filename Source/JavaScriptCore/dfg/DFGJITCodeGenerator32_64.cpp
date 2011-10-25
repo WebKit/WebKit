@@ -76,12 +76,26 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
     case DataFormatJS:
     case DataFormatCell:
     case DataFormatJSCell:
-    case DataFormatJSInteger:
     case DataFormatBoolean:
     case DataFormatJSBoolean:
     case DataFormatStorage:
         // Should only be calling this function if we know this operand to be integer.
         ASSERT_NOT_REACHED();
+
+    case DataFormatJSInteger: {
+        GPRReg tagGPR = info.tagGPR();
+        GPRReg payloadGPR = info.payloadGPR();
+        m_gprs.lock(tagGPR);
+        m_jit.jitAssertIsJSInt32(tagGPR);
+        m_gprs.unlock(tagGPR);
+        m_gprs.lock(payloadGPR);
+        m_gprs.release(tagGPR);
+        m_gprs.release(payloadGPR);
+        m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
+        info.fillInteger(payloadGPR);
+        returnFormat = DataFormatInteger;
+        return payloadGPR;
+    }
 
     case DataFormatInteger: {
         GPRReg gpr = info.gpr();

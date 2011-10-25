@@ -1,3 +1,16 @@
+2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG JIT 32_64 - fillInteger should accept DataFormatJSInteger
+        https://bugs.webkit.org/show_bug.cgi?id=70798
+
+        Reviewed by Filip Pizlo.
+
+        When filling an integer for a known integer node (not speculated), it
+        should accept DataFormatJSInteger as well.
+
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+
 2011-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: removed some cases of threadsafeCopy() that I missed in
