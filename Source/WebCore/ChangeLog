@@ -1,3 +1,13 @@
+2011-10-25  Chris Evans  <cevans@google.com>
+
+        Manage the CSS property array length correctly
+        https://bugs.webkit.org/show_bug.cgi?id=70783
+
+        Reviewed by Adam Barth.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty): don't allow max length to get out of sync with the buffer.
+
 2011-10-25  Tony Chang  <tony@chromium.org>
 
         avoid unnecessary layouts of flex items during the flex pass

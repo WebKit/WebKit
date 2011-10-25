@@ -613,9 +613,9 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
 {
     OwnPtr<CSSProperty> prop(adoptPtr(new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand)));
     if (m_numParsedProperties >= m_maxParsedProperties) {
+        if (m_numParsedProperties > (UINT_MAX / sizeof(CSSProperty*)) - 32)
+            CRASH();  // Avoid inconsistencies with rollbackLastProperties.
         m_maxParsedProperties += 32;
-        if (m_maxParsedProperties > UINT_MAX / sizeof(CSSProperty*))
-            return;
         m_parsedProperties = static_cast<CSSProperty**>(fastRealloc(m_parsedProperties,
             m_maxParsedProperties * sizeof(CSSProperty*)));
     }
