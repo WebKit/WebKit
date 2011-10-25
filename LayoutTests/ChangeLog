@@ -1,3 +1,10 @@
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: Marking a test as timing
+        out.
+
 2011-10-25  Fady Samuel  <fsamuel@chromium.org>
 
         Crash in WebCore::RenderTableSection::addChild due to assert failure
