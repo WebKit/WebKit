@@ -1,3 +1,9 @@
+2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo.
+
+        * bindings/v8/JavaScriptCallFrame.h:
+
 2011-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Removed SharedUChar and tightened language around its previous uses

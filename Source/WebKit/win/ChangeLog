@@ -1,3 +1,10 @@
+2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        threadsafeCopy has been renamed to isolatedCopy.
+
+        * WebDatabaseManager.cpp:
+        (DidModifyOriginData::dispatchToMainThread):
+
 2011-10-24  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix Windows build by updating to the new interface.
