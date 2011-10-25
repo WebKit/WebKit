@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

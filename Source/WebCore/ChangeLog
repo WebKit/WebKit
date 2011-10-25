@@ -1,5 +1,12 @@
 2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Include ThreadSafeRefCounted.h since the class declared in this header file
+        inherits from ThreadSafeRefCounted.
+
+        * storage/IDBIndexBackendInterface.h:
+
+2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo.
 
         * bindings/v8/JavaScriptCallFrame.h:
