@@ -1,3 +1,13 @@
+2011-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+        make-script-test-wrappers should not look outside fast/js
+        https://bugs.webkit.org/show_bug.cgi?id=66357
+
+        Reviewed by Maciej Stachowiak.
+
+        * Scripts/make-script-test-wrappers: Don't look for template files everywhere, only support
+        fast/js.
+
 2011-10-25  Adam Barth  <abarth@webkit.org>
 
         Add a --make option to update-webkit to engage the Makefile-based build system

@@ -48,7 +48,7 @@ my $result = GetOptions(
 );
 
 if (!$result || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [path ...]\n";
+    print STDERR basename($0) . " [-h|--help]\n";
     exit 1;
 }
 
@@ -124,18 +124,13 @@ sub directoryFilter
 }
 
 sub findTemplateFiles(@) {
-    my @args = @_;
     my @templateFiles;
-
-    push @args, "LayoutTests" if scalar(@args) == 0;
-
-    my @paths = map { -f $_ ? dirname($_) : $_ } @args;
 
     my $fileFilter = sub {
         push @templateFiles, $File::Find::name if $_ eq "TEMPLATE.html";
     };
 
-    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, @paths);
+    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, "LayoutTests/fast/js");
 
     return @templateFiles;
 }
