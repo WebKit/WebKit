@@ -1,3 +1,18 @@
+2011-10-25  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: fifth chunk of baselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 736 of 742 files for brevity.]
+
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-2-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-3-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-4-expected.png: Added.
+        ...
+        * platform/chromium-mac-leopard/transitions: Added.
+        * platform/chromium-mac-leopard/transitions/default-timing-function-expected.png: Added.
+        * platform/chromium-mac-leopard/transitions/svg-text-shadow-transition-expected.png: Added.
+
 2011-10-25  Arko Saha  <arko@motorola.com>
 
         Microdata: itemtype attribute should be space-separated list to allow multiple types
