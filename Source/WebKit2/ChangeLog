@@ -1,3 +1,16 @@
+2011-10-25  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] QDesktopWebView and QTouchWebView should be declared in the meta type system.
+        https://bugs.webkit.org/show_bug.cgi?id=70693
+
+        This change allows us to use the template based features of the meta type system
+        such as using the WebView classes as types for QVariant.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebview.h:
+
 2011-10-25  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Remove redundant setPageIsVisible() API

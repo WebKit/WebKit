@@ -131,6 +131,7 @@ private:
     QDesktopWebViewPrivate *d;
 };
 
+QML_DECLARE_TYPE(QDesktopWebView)
 Q_DECLARE_METATYPE(QDesktopWebView::NavigationPolicy)
 
 #endif /* qdesktopwebview_h */

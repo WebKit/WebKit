@@ -59,4 +59,6 @@ private:
     QTouchWebViewPrivate *d;
 };
 
+QML_DECLARE_TYPE(QTouchWebView)
+
 #endif /* qtouchwebview_h */
