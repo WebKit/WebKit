@@ -46,6 +46,11 @@ private:
     
     virtual bool isURLAttribute(Attribute*) const;
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
     AtomicString m_name;
 };
 

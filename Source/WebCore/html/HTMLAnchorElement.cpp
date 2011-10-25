@@ -586,4 +586,16 @@ void handleLinkClick(Event* event, Document* document, const String& url, const 
     frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NoReferrer : SendReferrer);
 }
 
+#if ENABLE(MICRODATA)
+String HTMLAnchorElement::itemValueText() const
+{
+    return getURLAttribute(hrefAttr);
+}
+
+void HTMLAnchorElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(hrefAttr, value, ec);
+}
+#endif
+
 }

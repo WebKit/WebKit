@@ -402,6 +402,11 @@ private:
 
     virtual void* preDispatchEventHandler(Event*);
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const;
+    virtual void setItemValueText(const String&, ExceptionCode&);
+#endif
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;

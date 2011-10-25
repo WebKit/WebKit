@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemProp and itemProp.length must be read-only.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemprop: 'foo'});
+shouldBeTrue("element.itemProp = 'test'; element.itemProp.toString() == 'foo'");
+shouldBeFalse("element.itemProp.contains('test')");
+
+shouldBeTrue("element.itemProp.length = 0; element.itemProp.length == 1");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

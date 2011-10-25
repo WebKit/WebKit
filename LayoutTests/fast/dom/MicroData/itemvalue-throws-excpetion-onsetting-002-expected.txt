@@ -1,0 +1,71 @@
+This test ensures that writing to itemValue must throw an INVALID_ACCESS_ERR error if the element does not have an itemprop attribute.
+
+Testing 'meta' element's behavior.
+Created element of type: meta
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'audio' element's behavior.
+Created element of type: audio
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'embed' element's behavior.
+Created element of type: embed
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'iframe' element's behavior.
+Created element of type: iframe
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'img' element's behavior.
+Created element of type: img
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'source' element's behavior.
+Created element of type: source
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'track' element's behavior.
+Created element of type: track
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'video' element's behavior.
+Created element of type: video
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'a' element's behavior.
+Created element of type: a
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'area' element's behavior.
+Created element of type: area
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'link' element's behavior.
+Created element of type: link
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'object' element's behavior.
+Created element of type: object
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'div' element's behavior.
+Created element of type: div
+Set attribute: content, value: testContent
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

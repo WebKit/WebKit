@@ -163,4 +163,16 @@ bool HTMLIFrameElement::isURLAttribute(Attribute* attr) const
     return attr->name() == srcAttr;
 }
 
+#if ENABLE(MICRODATA)
+String HTMLIFrameElement::itemValueText() const
+{
+    return getURLAttribute(srcAttr);
+}
+
+void HTMLIFrameElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(srcAttr, value, ec);
+}
+#endif
+
 }

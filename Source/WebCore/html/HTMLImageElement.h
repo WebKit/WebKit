@@ -102,6 +102,11 @@ private:
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     AtomicString m_name;

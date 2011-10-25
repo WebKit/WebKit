@@ -1,0 +1,12 @@
+This test ensures that itemValue must reflect the content attribute on meta element.
+
+Created element of type: meta
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS metaElement.itemValue is 'test'
+PASS metaElement.itemValue is 'retest'
+PASS metaElement.content is 'bar'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

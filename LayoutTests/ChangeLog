@@ -1,3 +1,58 @@
+2011-10-24  Arko Saha  <arko@motorola.com>
+
+        Microdata: Add itemprop, itemref, itemvalue attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=69839
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test-cases for Microdata itemprop, itemref, itemvalue attributes.
+
+        * fast/dom/MicroData/002-expected.txt:
+        * fast/dom/MicroData/002.html:
+        * fast/dom/MicroData/003-expected.txt:
+        * fast/dom/MicroData/003.html:
+        * fast/dom/MicroData/005-expected.txt:
+        * fast/dom/MicroData/005.html:
+        * fast/dom/MicroData/006-expected.txt:
+        * fast/dom/MicroData/009.html:
+        * fast/dom/MicroData/itemprop-add-remove-tokens-expected.txt: Added.
+        * fast/dom/MicroData/itemprop-add-remove-tokens.html: Added.
+        * fast/dom/MicroData/itemprop-for-an-element-must-be-correct-expected.txt: Added.
+        * fast/dom/MicroData/itemprop-for-an-element-must-be-correct.html: Added.
+        * fast/dom/MicroData/itemprop-must-be-read-only-expected.txt: Added.
+        * fast/dom/MicroData/itemprop-must-be-read-only.html: Added.
+        * fast/dom/MicroData/itemprop-reflected-by-itemProp-property-expected.txt: Added.
+        * fast/dom/MicroData/itemprop-reflected-by-itemProp-property.html: Added.
+        * fast/dom/MicroData/itemref-add-remove-tokens-expected.txt: Added.
+        * fast/dom/MicroData/itemref-add-remove-tokens.html: Added.
+        * fast/dom/MicroData/itemref-attribute-reflected-by-itemRef-property-expected.txt: Added.
+        * fast/dom/MicroData/itemref-attribute-reflected-by-itemRef-property.html: Added.
+        * fast/dom/MicroData/itemref-for-an-element-must-be-correct-expected.txt: Added.
+        * fast/dom/MicroData/itemref-for-an-element-must-be-correct.html: Added.
+        * fast/dom/MicroData/itemref-must-be-read-only-expected.txt: Added.
+        * fast/dom/MicroData/itemref-must-be-read-only.html: Added.
+        * fast/dom/MicroData/itemvalue-reflects-data-attr-on-object-element-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-reflects-data-attr-on-object-element.html: Added.
+        * fast/dom/MicroData/itemvalue-reflects-href-attr-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-reflects-href-attr.html: Added.
+        * fast/dom/MicroData/itemvalue-reflects-src-attribute-on-img-element-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-reflects-src-attribute-on-img-element.html: Added.
+        * fast/dom/MicroData/itemvalue-reflects-the-content-attr-on-meta-element-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-reflects-the-content-attr-on-meta-element.html: Added.
+        * fast/dom/MicroData/itemvalue-reflects-the-src-attr-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-reflects-the-src-attr.html: Added.
+        * fast/dom/MicroData/itemvalue-returns-element-itself-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-returns-element-itself.html: Added.
+        * fast/dom/MicroData/itemvalue-returns-null-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-returns-null.html: Added.
+        * fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-001-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-001.html: Added.
+        * fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-002-expected.txt: Added.
+        * fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-002.html: Added.
+        * fast/dom/MicroData/resources/microdata-common.js:
+        (createElement):
+        (runTest):
+
 2011-10-24  Filip Pizlo  <fpizlo@apple.com>
 
         Object-or-other branch speculation may corrupt the state for OSR if the child of the

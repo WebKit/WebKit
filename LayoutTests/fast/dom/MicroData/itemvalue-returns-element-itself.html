@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must return the element itself if the element has an itemscope attribute</p>
+<div id="console"></div>
+<script>
+var testElement;
+function runTest(tagName) {
+    debug("Testing '" + tagName + "' element's behavior.");
+    testElement = createElement(tagName, {itemscope: 'itemscope', itemprop: 'foo', content: 'test'});
+    shouldBe("testElement.itemValue", "testElement");
+    debug('');
+}
+
+runTest('meta');
+runTest('audio');
+runTest('embed');
+runTest('iframe');
+runTest('img');
+runTest('source');
+runTest('track');
+runTest('video');
+runTest('a');
+runTest('area');
+runTest('link');
+runTest('object');
+runTest('div');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemValue must be null if the element does not have an itemprop attribute</p>
+<div id="console"></div>
+<script>
+shouldBeTrue("createElement('meta', {content: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('audio', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('embed', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('iframe', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('img', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('source', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('track', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('video', {src: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('a', {href: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('area', {href: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('link', {href: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('object', {data: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('time', {}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('time', {datetime: 'test'}).itemValue == null");
+debug('');
+shouldBeTrue("createElement('div', {}, 'test').itemValue == null");
+debug('');
+shouldBeTrue("createElement('madeuponthespot', {}, 'test').itemValue == null");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

@@ -25,12 +25,20 @@
 
 #include "StyledElement.h"
 
+#if ENABLE(MICRODATA)
+#include "DOMSettableTokenList.h"
+#endif
+
 namespace WebCore {
 
 class DocumentFragment;
 class HTMLCollection;
 class HTMLFormElement;
-                       
+
+#if ENABLE(MICRODATA)
+class MicroDataItemValue;
+#endif
+
 class HTMLElement : public StyledElement {
 public:
     static PassRefPtr<HTMLElement> create(const QualifiedName& tagName, Document*);
@@ -81,6 +89,14 @@ public:
 
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
+#if ENABLE(MICRODATA)
+    PassRefPtr<DOMSettableTokenList> itemRef() const;
+    PassRefPtr<DOMSettableTokenList> itemProp() const;
+
+    void setItemValue(const String&, ExceptionCode&);
+    PassRefPtr<MicroDataItemValue> itemValue() const;
+#endif
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 
@@ -107,6 +123,17 @@ private:
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
+
+#if ENABLE(MICRODATA)
+    void setItemProp(const String&);
+    void setItemRef(const String&);
+
+    virtual String itemValueText() const;
+    virtual void setItemValueText(const String&, ExceptionCode&);
+
+    mutable RefPtr<DOMSettableTokenList> m_itemProp;
+    mutable RefPtr<DOMSettableTokenList> m_itemRef;
+#endif
 };
 
 inline HTMLElement* toHTMLElement(Node* node)

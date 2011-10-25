@@ -94,6 +94,11 @@ private:
     void addPendingSheet(PendingSheetType);
     void removePendingSheet();
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
 private:
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
 

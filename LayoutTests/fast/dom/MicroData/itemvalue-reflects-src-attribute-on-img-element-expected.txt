@@ -1,0 +1,12 @@
+This test ensures that itemValue must reflect the src attribute on img element.
+
+Created element of type: img
+Set attribute: itemprop, value: foo
+Set attribute: src, value: green.jpg
+PASS imgElement.itemValue is imgElement.src
+PASS imgElement.itemValue is imgElement.src
+PASS imgElement.src is imgElement.itemValue
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,6 +51,10 @@
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(MICRODATA)
+#include "MicroDataItemValue.h"
+#endif
 
 namespace WebCore {
 
@@ -197,6 +202,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         } else if (equalIgnoringCase(value, "false"))
             addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueNone);
 #if ENABLE(MICRODATA)
+    } else if (attr->name() == itempropAttr) {
+        setItemProp(attr->value());
+    } else if (attr->name() == itemrefAttr) {
+        setItemRef(attr->value());
     } else if (attr->name() == itemtypeAttr) {
         itemTypeAttributeChanged();
 #endif
@@ -983,6 +992,71 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
         }
     }
 }
+
+#if ENABLE(MICRODATA)
+PassRefPtr<DOMSettableTokenList> HTMLElement::itemProp() const
+{
+    if (!m_itemProp)
+        m_itemProp = DOMSettableTokenList::create();
+
+    return m_itemProp;
+}
+
+void HTMLElement::setItemProp(const String& value)
+{
+    if (!m_itemProp)
+        m_itemProp = DOMSettableTokenList::create();
+
+    m_itemProp->setValue(value);
+}
+
+PassRefPtr<DOMSettableTokenList> HTMLElement::itemRef() const
+{
+    if (!m_itemRef)
+        m_itemRef = DOMSettableTokenList::create();
+
+    return m_itemRef;
+}
+
+void HTMLElement::setItemRef(const String& value)
+{
+    if (!m_itemRef)
+        m_itemRef = DOMSettableTokenList::create();
+
+    m_itemRef->setValue(value);
+}
+
+void HTMLElement::setItemValue(const String& value, ExceptionCode& ec)
+{
+    if (!hasAttribute(itempropAttr) || hasAttribute(itemscopeAttr)) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    setItemValueText(value, ec);
+}
+
+PassRefPtr<MicroDataItemValue> HTMLElement::itemValue() const
+{
+    if (!hasAttribute(itempropAttr))
+        return 0;
+
+    if (hasAttribute(itemscopeAttr))
+        return MicroDataItemValue::createFromNode(const_cast<HTMLElement* const>(this));
+
+    return MicroDataItemValue::createFromString(itemValueText());
+}
+
+String HTMLElement::itemValueText() const
+{
+    return textContent(true);
+}
+
+void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setTextContent(value, ec);
+}
+#endif
 
 } // namespace WebCore
 

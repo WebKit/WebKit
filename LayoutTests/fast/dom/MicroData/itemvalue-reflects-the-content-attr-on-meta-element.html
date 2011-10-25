@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must reflect the content attribute on meta element.</p>
+<div id="console"></div>
+<script>
+var metaElement = createElement('meta', {itemprop: 'foo',content: 'test'});
+shouldBe('metaElement.itemValue', "'test'");
+metaElement.content = 'retest';
+shouldBe('metaElement.itemValue', "'retest'");
+metaElement.itemValue = 'bar';
+shouldBe('metaElement.content', "'bar'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

@@ -1,0 +1,31 @@
+This tests that itemProp attribute must update correctly when token have been added or removed.
+
+Created element of type: div
+itemProp.add must reflect correctly.
+PASS element.itemProp.length == 2 is true
+PASS element.itemProp.toString() == 'foo FOO' is true
+PASS element.itemProp[0] is 'foo'
+PASS element.itemProp[1] is 'FOO'
+
+itemProp.add must not make any changes if an existing token is added.
+PASS element.itemProp.length == 2 is true
+PASS element.itemProp.toString() == 'foo FOO' is true
+
+itemProp.remove must reflect correctly.
+PASS element.itemProp.length == 1 is true
+PASS element.itemProp.contains('foo') is false
+PASS element.itemProp.toString() == 'FOO' is true
+
+itemProp.remove must not make any changes if a non-existing token is removed.
+PASS element.itemProp.length == 1 is true
+PASS element.itemProp.contains('foo') is false
+PASS element.itemProp.toString() == 'FOO' is true
+
+itemProp.length must be 0 when all tokens are removed.
+PASS element.itemProp.length == 0 is true
+PASS element.itemProp.contains('foo') is false
+PASS element.itemProp.contains('FOO') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

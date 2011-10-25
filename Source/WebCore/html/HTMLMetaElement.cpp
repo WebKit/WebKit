@@ -94,4 +94,16 @@ String HTMLMetaElement::name() const
     return getAttribute(nameAttr);
 }
 
+#if ENABLE(MICRODATA)
+String HTMLMetaElement::itemValueText() const
+{
+    return getAttribute(contentAttr);
+}
+
+void HTMLMetaElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(contentAttr, value, ec);
+}
+#endif
+
 }

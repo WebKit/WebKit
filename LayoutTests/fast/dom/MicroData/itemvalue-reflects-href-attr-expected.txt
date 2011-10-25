@@ -1,0 +1,30 @@
+This test ensures that itemValue must reflect the href attribute if the element is an a, area, or link element.
+
+Testing 'a' element's behavior.
+Created element of type: a
+Set attribute: itemprop, value: foo
+Set attribute: href, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.href is 'http://example.com/'
+
+Testing 'area' element's behavior.
+Created element of type: area
+Set attribute: itemprop, value: foo
+Set attribute: href, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.href is 'http://example.com/'
+
+Testing 'link' element's behavior.
+Created element of type: link
+Set attribute: itemprop, value: foo
+Set attribute: href, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.href is 'http://example.com/'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

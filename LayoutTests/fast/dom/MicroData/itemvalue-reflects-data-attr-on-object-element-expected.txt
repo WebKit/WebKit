@@ -1,0 +1,12 @@
+This test ensures that itemValue must reflect the data attribute on object element.
+
+Created element of type: object
+Set attribute: itemprop, value: foo
+Set attribute: data, value: http://example.org/
+PASS objectElement.itemValue is 'http://example.org/'
+PASS objectElement.itemValue is 'http://example.net/'
+PASS objectElement.data is 'http://example.com/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

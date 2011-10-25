@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test that the itemProp should be correct for an element that has itemProp attribute.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemprop: 'foo bar FOO FOo'});
+
+shouldBeTrue("element.itemProp.length == 4");
+shouldBeTrue("element.itemProp.toString() == 'foo bar FOO FOo'");
+shouldBeTrue("element.itemProp.item(0) == 'foo'");
+shouldBeTrue("element.itemProp.item(1) == 'bar'");
+shouldBeTrue("element.itemProp[0] == 'foo'");
+shouldBeTrue("element.itemProp[1] == 'bar'");
+shouldBeTrue("element.itemProp.contains('bar')");
+
+debug("<br>itemProp should return case-sensitive strings.");
+shouldBeTrue("element.itemProp.item(2) == 'FOO'");
+shouldBeTrue("element.itemProp[2] == 'FOO'");
+shouldBeTrue("element.itemProp.item(3) == 'FOo'");
+shouldBeTrue("element.itemProp[2] == 'FOo'");
+
+debug("<br>itemProp should not contain an undefined token.");
+shouldBeFalse("element.itemProp.contains('test')");
+
+debug("<br>itemProp.length should be 0 if element doesn't have any tokens.");
+var element1 = createElement('div', {itemprop: ''});
+shouldBeTrue("element1.itemProp.length == 0");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

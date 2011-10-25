@@ -1,0 +1,31 @@
+This tests that itemRef attribute must update correctly when token have been added or removed.
+
+Created element of type: div
+itemRef.add must reflect correctly.
+PASS element.itemRef.length == 2 is true
+PASS element.itemRef.toString() is 'foo FOO'
+PASS element.itemRef[0] is 'foo'
+PASS element.itemRef[1] is 'FOO'
+
+itemRef.add must not make any changes if an existing token is added.
+PASS element.itemRef.length == 2 is true
+PASS element.itemRef.toString() is 'foo FOO'
+
+itemRef.remove must reflect correctly.
+PASS element.itemRef.length == 1 is true
+PASS element.itemRef.toString() is 'FOO'
+PASS element.itemRef.contains('foo') is false
+
+itemRef.remove must not make any changes if a non-existing token is removed.
+PASS element.itemRef.length == 1 is true
+PASS element.itemRef.toString() is 'FOO'
+PASS element.itemRef.contains('foo') is false
+
+itemRef.length must be 0 when all tokens are removed.
+PASS element.itemRef.length == 0 is true
+PASS element.itemRef.contains('foo') is false
+PASS element.itemRef.contains('FOO') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

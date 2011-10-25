@@ -554,4 +554,16 @@ HTMLFormElement* HTMLObjectElement::virtualForm() const
     return FormAssociatedElement::form();
 }
 
+#if ENABLE(MICRODATA)
+String HTMLObjectElement::itemValueText() const
+{
+    return getURLAttribute(dataAttr);
+}
+
+void HTMLObjectElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(dataAttr, value, ec);
+}
+#endif
+
 }

@@ -102,6 +102,11 @@ private:
 
     virtual const AtomicString& formControlName() const;
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
     AtomicString m_id;
     String m_classId;
     bool m_docNamedItem : 1;

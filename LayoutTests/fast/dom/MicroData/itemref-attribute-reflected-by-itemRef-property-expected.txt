@@ -1,0 +1,12 @@
+This test ensures that the itemref attribute must be reflected by the .itemRef property.
+
+Created element of type: div
+Set attribute: itemref, value: foo bar
+PASS element.itemRef is defined.
+PASS element.itemRef.length == 2 is true
+PASS element.itemRef.toString() == 'foo bar' is true
+PASS element.itemRef.toString() == '' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

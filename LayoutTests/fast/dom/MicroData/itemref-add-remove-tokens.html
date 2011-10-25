@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemRef attribute must update correctly when token have been added or removed.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+debug("itemRef.add must reflect correctly.");
+element.itemRef.add('foo');
+element.itemRef.add('FOO');
+shouldBeTrue("element.itemRef.length == 2");
+shouldBe("element.itemRef.toString()", "'foo FOO'");
+shouldBe("element.itemRef[0]", "'foo'");
+shouldBe("element.itemRef[1]", "'FOO'");
+
+debug("<br>itemRef.add must not make any changes if an existing token is added.");
+element.itemRef.add('foo');
+shouldBeTrue("element.itemRef.length == 2");
+shouldBe("element.itemRef.toString()", "'foo FOO'");
+
+debug("<br>itemRef.remove must reflect correctly.");
+element.itemRef.remove('foo');
+shouldBeTrue("element.itemRef.length == 1");
+shouldBe("element.itemRef.toString()", "'FOO'");
+shouldBeFalse("element.itemRef.contains('foo')");
+
+debug("<br>itemRef.remove must not make any changes if a non-existing token is removed.");
+element.itemRef.remove('foo');
+shouldBeTrue("element.itemRef.length == 1");
+shouldBe("element.itemRef.toString()", "'FOO'");
+shouldBeFalse("element.itemRef.contains('foo')");
+
+debug("<br>itemRef.length must be 0 when all tokens are removed.");
+element.itemRef.remove('FOO');
+shouldBeTrue("element.itemRef.length == 0");
+shouldBeFalse("element.itemRef.contains('foo')");
+shouldBeFalse("element.itemRef.contains('FOO')");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

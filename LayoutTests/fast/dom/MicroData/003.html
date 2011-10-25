@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/microdata-common.js"></script>
 </head>
 <body>
 <p>This test ensures that live NodeList must notice when itemscope attribute changes.</p>
 <div itemscope itemtype="http://example.com/foo" id="one"></div>
 <div itemscope itemtype="http://example.com/bar" id="two"></div>
+<div id="console"></div>
 <script>
 var one = document.getElementById('one');
 var two = document.getElementById('two');
@@ -29,7 +31,8 @@ runTest(document.getItems(), [one], "Set element.itemScope to false should notic
 two.itemScope = true;
 runTest(document.getItems(), [one, two], "Set element.itemScope to true should notice in the NodeList");
 
-document.write("<br>TEST COMPLETE");
+var successfullyParsed = true;
 </script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

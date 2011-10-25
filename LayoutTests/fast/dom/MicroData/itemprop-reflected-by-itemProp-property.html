@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that the itemprop attribute must be reflected by the .itemProp property.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemprop: 'http://example.com/foo'});
+
+shouldBeDefined("element.itemProp");
+shouldBe("element.itemProp.toString()", "'http://example.com/foo'");
+
+element.removeAttribute('itemProp');
+shouldBe("element.itemProp.toString()", "''");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

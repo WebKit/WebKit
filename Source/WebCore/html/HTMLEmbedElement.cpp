@@ -277,4 +277,16 @@ void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
     addSubresourceURL(urls, document()->completeURL(getAttribute(srcAttr)));
 }
 
+#if ENABLE(MICRODATA)
+String HTMLEmbedElement::itemValueText() const
+{
+    return getURLAttribute(srcAttr);
+}
+
+void HTMLEmbedElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(srcAttr, value, ec);
+}
+#endif
+
 }

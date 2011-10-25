@@ -150,7 +150,19 @@ void HTMLTrackElement::textTrackLoadingCompleted(LoadableTextTrack*, bool loadin
     ExceptionCode ec = 0;
     dispatchEvent(Event::create(loadingFailed ? eventNames().errorEvent : eventNames().loadEvent, false, false), ec);
 }
-    
+
+#if ENABLE(MICRODATA)
+String HTMLTrackElement::itemValueText() const
+{
+    return getURLAttribute(srcAttr);
+}
+
+void HTMLTrackElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(srcAttr, value, ec);
+}
+#endif
+
 }
 
 #endif

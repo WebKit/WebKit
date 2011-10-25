@@ -1,0 +1,11 @@
+This tests that itemProp and itemProp.length must be read-only.
+
+Created element of type: div
+Set attribute: itemprop, value: foo
+PASS element.itemProp = 'test'; element.itemProp.toString() == 'foo' is true
+PASS element.itemProp.contains('test') is false
+PASS element.itemProp.length = 0; element.itemProp.length == 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

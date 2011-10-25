@@ -2,8 +2,8 @@ This tests that document.getItems must locate items when parameters are separate
 This test also ensure that document.getItems must ignore duplicated tokens.
 
 PASS document.getItems(' http://example.com/foo http://example.com/bar ').length == 2 is true
-PASS document.getItems(' http://example.com/foo data:text/plain ').length == 2 is true
-PASS document.getItems(' http://example.com/foo data:text/plain http://example.com/foo').length == 2 is true
+PASS document.getItems(' http://example.com/foo  data:text/plain  ').length == 2 is true
+PASS document.getItems('  http://example.com/foo  data:text/plain  http://example.com/foo').length == 2 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

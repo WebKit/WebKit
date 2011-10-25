@@ -3,5 +3,7 @@ This tests that live NodeList must notice when itemtype changes.
 This test page contain two microdata items: PASS
 NodeList must notice on remove attribute itemtype: PASS
 NodeList must notice on set attribute itemtype: PASS
+PASS successfullyParsed is true
 
 TEST COMPLETE
+

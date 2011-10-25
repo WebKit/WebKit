@@ -58,7 +58,12 @@ private:
     virtual bool isFocusable() const;
     virtual void updateFocusAppearance(bool /*restorePreviousSelection*/);
     virtual void setFocus(bool);
-    
+
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
     enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const LayoutSize&) const;
     void invalidateCachedRegion();

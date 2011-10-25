@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test that the itemRef should be correct for an element that has itemRef attribute.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemref: 'foo bar FOO FOo'});
+
+shouldBeTrue("element.itemRef.length == 4");
+shouldBeTrue("element.itemRef.toString() == 'foo bar FOO FOo'");
+shouldBeTrue("element.itemRef.item(0) == 'foo'");
+shouldBeTrue("element.itemRef.item(1) == 'bar'");
+shouldBeTrue("element.itemRef[0] == 'foo'");
+shouldBeTrue("element.itemRef[1] == 'bar'");
+shouldBeTrue("element.itemRef.contains('bar')");
+shouldBeTrue("element.itemRef.contains('foo')");
+
+debug("<br>itemRef should return case-sensitive strings.");
+shouldBeTrue("element.itemRef.item(2) == 'FOO'");
+shouldBeTrue("element.itemRef[2] == 'FOO'");
+shouldBeTrue("element.itemRef.item(3) == 'FOo'");
+shouldBeTrue("element.itemRef[3] == 'FOo'");
+
+debug("<br>itemRef should not contain an undefined token.");
+shouldBeFalse("element.itemRef.contains('test')");
+
+debug("<br>itemRef.length should be 0 if element has not tokens.");
+var element1 = createElement('div', {itemRef: ''});
+shouldBeTrue("element1.itemRef.length == 0");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

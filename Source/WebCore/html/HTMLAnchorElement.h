@@ -125,6 +125,11 @@ private:
     static EventType eventType(Event*);
     bool treatLinkAsLiveForEventType(EventType) const;
 
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
+
     RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown : 1;
     uint32_t m_linkRelations : 31;

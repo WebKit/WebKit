@@ -29,9 +29,24 @@
 #include "Document.h"
 #include "HTMLFormElement.h"
 
+#if ENABLE(MICRODATA)
+#include "MicroDataItemValue.h"
+#endif
+
 namespace WebCore {
 
 using namespace JSC;
+
+#if ENABLE(MICRODATA)
+static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MicroDataItemValue* itemValue)
+{
+    if (!itemValue)
+        return jsNull();
+    if (itemValue->isNode())
+        return toJS(exec, globalObject, itemValue->getNode());
+    return jsString(exec, itemValue->getString());
+}
+#endif
 
 ScopeChainNode* JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChainNode* scope) const
 {
@@ -47,5 +62,21 @@ ScopeChainNode* JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain
     // The element is on top, searched first.
     return scope->push(asObject(toJS(exec, globalObject(), element)));
 }
+
+#if ENABLE(MICRODATA)
+JSValue JSHTMLElement::itemValue(ExecState* exec) const
+{
+    HTMLElement* element = impl();
+    return toJS(exec, globalObject(), WTF::getPtr(element->itemValue()));
+}
+
+void JSHTMLElement::setItemValue(ExecState* exec, JSValue value)
+{
+    HTMLElement* imp = impl();
+    ExceptionCode ec = 0;
+    imp->setItemValue(valueToStringWithNullCheck(exec, value), ec);
+    setDOMException(exec, ec);
+}
+#endif
 
 } // namespace WebCore

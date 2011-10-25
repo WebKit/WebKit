@@ -32,9 +32,9 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 
-using namespace HTMLNames;
-
 namespace WebCore {
+
+using namespace HTMLNames;
 
 MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames)
     : DynamicNodeList(rootNode)

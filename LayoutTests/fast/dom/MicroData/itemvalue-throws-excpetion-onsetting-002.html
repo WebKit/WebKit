@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that writing to itemValue must throw an INVALID_ACCESS_ERR error if the element does not have an itemprop attribute.</p>
+<div id="console"></div>
+<script>
+var exceptionCode;
+function runTest(tagName)
+{
+    debug("Testing '" + tagName + "' element's behavior.");
+    exceptionCode = undefined;
+    testElement = createElement(tagName, {content: 'testContent'});
+    try {
+        testElement.itemValue = 'test'
+    } catch (exception) {
+        exceptionCode = exception.code;
+    }
+
+    if (exceptionCode == DOMException.INVALID_ACCESS_ERR)
+        debug("TEST SUCCEEDED: Got the expected exception (" + exceptionCode + ") INVALID_ACCESS_ERR.<br>");
+    else
+        debug("TEST FAILED: Should've thrown INVALID_ACCESS_ERR but threw " + exceptionCode + ".<br>");
+}
+
+runTest('meta');
+runTest('audio');
+runTest('embed');
+runTest('iframe');
+runTest('img');
+runTest('source');
+runTest('track');
+runTest('video');
+runTest('a');
+runTest('area');
+runTest('link');
+runTest('object');
+runTest('div');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

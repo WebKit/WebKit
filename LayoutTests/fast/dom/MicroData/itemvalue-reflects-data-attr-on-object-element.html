@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must reflect the data attribute on object element.</p>
+<div id="console"></div>
+<script>
+var objectElement = createElement('object', {itemprop: 'foo', data: 'http://example.org/'});
+shouldBe('objectElement.itemValue', "'http://example.org/'");
+objectElement.data = 'http://example.net/';
+shouldBe('objectElement.itemValue', "'http://example.net/'");
+objectElement.itemValue = 'http://example.com/';
+shouldBe('objectElement.data', "'http://example.com/'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

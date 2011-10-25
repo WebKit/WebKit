@@ -448,4 +448,16 @@ void HTMLLinkElement::setSizes(const String& value)
     m_sizes->setValue(value);
 }
 
+#if ENABLE(MICRODATA)
+String HTMLLinkElement::itemValueText() const
+{
+    return getURLAttribute(hrefAttr);
+}
+
+void HTMLLinkElement::setItemValueText(const String& value, ExceptionCode& ec)
+{
+    setAttribute(hrefAttr, value, ec);
+}
+#endif
+
 } // namespace WebCore

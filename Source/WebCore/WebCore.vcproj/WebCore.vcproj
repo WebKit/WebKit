@@ -57406,6 +57406,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\MicroDataItemValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MicroDataItemValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\Metadata.h"
 				>
 			</File>

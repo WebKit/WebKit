@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemProp attribute must update correctly when token have been added or removed.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+debug("itemProp.add must reflect correctly.");
+element.itemProp.add('foo');
+element.itemProp.add('FOO');
+shouldBeTrue("element.itemProp.length == 2");
+shouldBeTrue("element.itemProp.toString() == 'foo FOO'");
+shouldBe("element.itemProp[0]", "'foo'");
+shouldBe("element.itemProp[1]", "'FOO'");
+
+debug("<br>itemProp.add must not make any changes if an existing token is added.");
+element.itemProp.add('foo');
+shouldBeTrue("element.itemProp.length == 2");
+shouldBeTrue("element.itemProp.toString() == 'foo FOO'");
+
+debug("<br>itemProp.remove must reflect correctly.");
+element.itemProp.remove('foo');
+shouldBeTrue("element.itemProp.length == 1");
+shouldBeFalse("element.itemProp.contains('foo')")
+shouldBeTrue("element.itemProp.toString() == 'FOO'");
+
+debug("<br>itemProp.remove must not make any changes if a non-existing token is removed.");
+element.itemProp.remove('foo');
+shouldBeTrue("element.itemProp.length == 1");
+shouldBeFalse("element.itemProp.contains('foo')");
+shouldBeTrue("element.itemProp.toString() == 'FOO'");
+
+debug("<br>itemProp.length must be 0 when all tokens are removed.");
+element.itemProp.remove('FOO');
+shouldBeTrue("element.itemProp.length == 0");
+shouldBeFalse("element.itemProp.contains('foo')");
+shouldBeFalse("element.itemProp.contains('FOO')");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

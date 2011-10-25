@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemRef and itemRef.length must be read-only.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemref: 'foo'});
+shouldBeTrue("element.itemref = 'test'; element.itemRef.toString() == 'foo'");
+shouldBeFalse("element.itemRef.contains('test')");
+
+shouldBeTrue("element.itemRef.length = 0; element.itemRef.length == 1");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

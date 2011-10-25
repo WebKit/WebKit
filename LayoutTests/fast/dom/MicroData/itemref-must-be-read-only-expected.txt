@@ -1,0 +1,11 @@
+This tests that itemRef and itemRef.length must be read-only.
+
+Created element of type: div
+Set attribute: itemref, value: foo
+PASS element.itemref = 'test'; element.itemRef.toString() == 'foo' is true
+PASS element.itemRef.contains('test') is false
+PASS element.itemRef.length = 0; element.itemRef.length == 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

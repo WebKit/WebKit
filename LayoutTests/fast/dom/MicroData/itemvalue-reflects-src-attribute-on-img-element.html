@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must reflect the src attribute on img element.</p>
+<div id="console"></div>
+<script>
+var imgElement = createElement('img', {itemprop: 'foo', src: 'green.jpg'});
+shouldBe('imgElement.itemValue', 'imgElement.src');
+imgElement.src = 'red.jpg';
+shouldBe('imgElement.itemValue', "imgElement.src");
+imgElement.itemValue = 'blue.jpeg';
+shouldBe('imgElement.src', "imgElement.itemValue");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

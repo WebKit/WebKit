@@ -1,0 +1,11 @@
+This test ensures that the itemprop attribute must be reflected by the .itemProp property.
+
+Created element of type: div
+Set attribute: itemprop, value: http://example.com/foo
+PASS element.itemProp is defined.
+PASS element.itemProp.toString() is 'http://example.com/foo'
+PASS element.itemProp.toString() is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

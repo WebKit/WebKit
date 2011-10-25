@@ -1,0 +1,97 @@
+This test ensures that itemValue must return the element itself if the element has an itemscope attribute
+
+Testing 'meta' element's behavior.
+Created element of type: meta
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'audio' element's behavior.
+Created element of type: audio
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'embed' element's behavior.
+Created element of type: embed
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'iframe' element's behavior.
+Created element of type: iframe
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'img' element's behavior.
+Created element of type: img
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'source' element's behavior.
+Created element of type: source
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'track' element's behavior.
+Created element of type: track
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'video' element's behavior.
+Created element of type: video
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'a' element's behavior.
+Created element of type: a
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'area' element's behavior.
+Created element of type: area
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'link' element's behavior.
+Created element of type: link
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'object' element's behavior.
+Created element of type: object
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+Testing 'div' element's behavior.
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+PASS testElement.itemValue is testElement
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

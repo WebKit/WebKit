@@ -6,7 +6,11 @@ document.getItems() with empty string in the aurgument: PASS
 document.getItems() with 'http://example.com/foo' itemtype in the aurgument: PASS
 document.getItems() with 'http://example.com/bar' itemtype in the aurgument: PASS
 document.getItems() with 'http://example.com/f1' itemtype in the aurgument: PASS
+Created element of type: div
+Set attribute: itemscope, value: itemscope
 Newly appended item should be noticed in the NodeList: PASS
 Removing item should be noticed in the NodeList: PASS
+PASS successfullyParsed is true
 
 TEST COMPLETE
+

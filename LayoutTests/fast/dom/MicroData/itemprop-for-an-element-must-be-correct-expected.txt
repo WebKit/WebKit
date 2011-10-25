@@ -1,0 +1,29 @@
+This test that the itemProp should be correct for an element that has itemProp attribute.
+
+Created element of type: div
+Set attribute: itemprop, value: foo bar FOO FOo
+PASS element.itemProp.length == 4 is true
+PASS element.itemProp.toString() == 'foo bar FOO FOo' is true
+PASS element.itemProp.item(0) == 'foo' is true
+PASS element.itemProp.item(1) == 'bar' is true
+PASS element.itemProp[0] == 'foo' is true
+PASS element.itemProp[1] == 'bar' is true
+PASS element.itemProp.contains('bar') is true
+
+itemProp should return case-sensitive strings.
+PASS element.itemProp.item(2) == 'FOO' is true
+PASS element.itemProp[2] == 'FOO' is true
+PASS element.itemProp.item(3) == 'FOo' is true
+FAIL element.itemProp[2] == 'FOo' should be true. Was false.
+
+itemProp should not contain an undefined token.
+PASS element.itemProp.contains('test') is false
+
+itemProp.length should be 0 if element doesn't have any tokens.
+Created element of type: div
+Set attribute: itemprop, value: 
+PASS element1.itemProp.length == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

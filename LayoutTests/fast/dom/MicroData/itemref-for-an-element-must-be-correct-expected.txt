@@ -1,0 +1,30 @@
+This test that the itemRef should be correct for an element that has itemRef attribute.
+
+Created element of type: div
+Set attribute: itemref, value: foo bar FOO FOo
+PASS element.itemRef.length == 4 is true
+PASS element.itemRef.toString() == 'foo bar FOO FOo' is true
+PASS element.itemRef.item(0) == 'foo' is true
+PASS element.itemRef.item(1) == 'bar' is true
+PASS element.itemRef[0] == 'foo' is true
+PASS element.itemRef[1] == 'bar' is true
+PASS element.itemRef.contains('bar') is true
+PASS element.itemRef.contains('foo') is true
+
+itemRef should return case-sensitive strings.
+PASS element.itemRef.item(2) == 'FOO' is true
+PASS element.itemRef[2] == 'FOO' is true
+PASS element.itemRef.item(3) == 'FOo' is true
+PASS element.itemRef[3] == 'FOo' is true
+
+itemRef should not contain an undefined token.
+PASS element.itemRef.contains('test') is false
+
+itemRef.length should be 0 if element has not tokens.
+Created element of type: div
+Set attribute: itemRef, value: 
+PASS element1.itemRef.length == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

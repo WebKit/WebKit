@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must reflect the src attribute if the element is an audio, embed, iframe, source, track, or video element.</p>
+<div id="console"></div>
+<script>
+var testElement;
+function runTest(tagName)
+{
+    debug("Testing '" + tagName + "' element's behavior.");
+    testElement = createElement(tagName, {itemprop: 'foo', src: 'http://example.org/'});
+    shouldBe("testElement.itemValue", "'http://example.org/'");
+    testElement.src = 'http://example.net/';
+    shouldBe("testElement.itemValue", "'http://example.net/'");
+    testElement.itemValue = 'http://example.com/';
+    shouldBe("testElement.src", "'http://example.com/'");
+    debug('');
+}
+
+runTest('audio');
+runTest('embed');
+runTest('iframe');
+runTest('source');
+runTest('track');
+runTest('video');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

@@ -1,0 +1,54 @@
+This test ensures that itemValue must reflect the src attribute if the element is an audio, embed, iframe, source, track, or video element.
+
+Testing 'audio' element's behavior.
+Created element of type: audio
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+Testing 'embed' element's behavior.
+Created element of type: embed
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+Testing 'iframe' element's behavior.
+Created element of type: iframe
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+Testing 'source' element's behavior.
+Created element of type: source
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+Testing 'track' element's behavior.
+Created element of type: track
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+Testing 'video' element's behavior.
+Created element of type: video
+Set attribute: itemprop, value: foo
+Set attribute: src, value: http://example.org/
+PASS testElement.itemValue is 'http://example.org/'
+PASS testElement.itemValue is 'http://example.net/'
+PASS testElement.src is 'http://example.com/'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

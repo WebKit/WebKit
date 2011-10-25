@@ -803,6 +803,7 @@ SET(WebCore_SOURCES
     html/LabelsNodeList.cpp
     html/LinkRelAttribute.cpp
     html/MediaDocument.cpp
+    html/MicroDataItemValue.cpp
     html/MonthInputType.cpp
     html/NumberInputType.cpp
     html/PasswordInputType.cpp

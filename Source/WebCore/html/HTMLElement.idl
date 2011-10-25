@@ -70,6 +70,16 @@ module html {
                  attribute [Conditional=MICRODATA, Reflect] DOMString itemType;
                  attribute [Conditional=MICRODATA, Reflect] DOMString itemId;
 
+        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemRef;
+        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemProp;
+
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+                 attribute [Conditional=MICRODATA, Custom] DOMObject itemValue
+                     setter raises(DOMException);
+#endif
+#endif
+
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute DOMString titleDisplayString;
 #endif

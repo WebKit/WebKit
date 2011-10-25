@@ -1,3 +1,124 @@
+2011-10-24  Arko Saha  <arko@motorola.com>
+
+        Microdata: Add itemprop, itemref, itemvalue attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=69839
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/dom/MicroData/itemprop-add-remove-tokens.html
+               fast/dom/MicroData/itemprop-for-an-element-must-be-correct.html
+               fast/dom/MicroData/itemprop-must-be-read-only.html
+               fast/dom/MicroData/itemprop-reflected-by-itemProp-property.html
+               fast/dom/MicroData/itemref-add-remove-tokens.html
+               fast/dom/MicroData/itemref-attribute-reflected-by-itemRef-property.html
+               fast/dom/MicroData/itemref-for-an-element-must-be-correct.html
+               fast/dom/MicroData/itemref-must-be-read-only.html
+               fast/dom/MicroData/itemvalue-reflects-data-attr-on-object-element.html
+               fast/dom/MicroData/itemvalue-reflects-href-attr.html
+               fast/dom/MicroData/itemvalue-reflects-src-attribute-on-img-element.html
+               fast/dom/MicroData/itemvalue-reflects-the-content-attr-on-meta-element.html
+               fast/dom/MicroData/itemvalue-reflects-the-src-attr.html
+               fast/dom/MicroData/itemvalue-returns-element-itself.html
+               fast/dom/MicroData/itemvalue-returns-null.html
+               fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-001.html
+               fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-002.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSHTMLElement::itemValue):
+        (WebCore::JSHTMLElement::setItemValue):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8HTMLElement::itemValueAccessorGetter):
+        (WebCore::V8HTMLElement::itemValueAccessorSetter):
+        * dom/MicroDataItemList.cpp:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::itemValueText):
+        (WebCore::HTMLAnchorElement::setItemValueText):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::itemValueText):
+        (WebCore::HTMLAreaElement::setItemValueText):
+        * html/HTMLAreaElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::HTMLElement::itemProp): Returns element's itemprop content attribute.
+        (WebCore::HTMLElement::setItemProp): Sets itemprop value on changing elemet's
+        itemprop attribute.
+        (WebCore::HTMLElement::itemRef): Returns element's itemref content attribute.
+        (WebCore::HTMLElement::setItemRef): Sets itemref value on changing elemet's
+        itemref attribute.
+        (WebCore::HTMLElement::setItemValue): Sets element's itemvalue. If the element has no
+        itemprop attribute or if element has an itemscope attribute, it throws INVALID_ACCESS_ERR
+        exception.
+        (WebCore::HTMLElement::itemValue): Returns the elements itemvalue.
+
+        If the element has no itemprop attribute it returns null.
+        If the element has an itemscope attribute, it returns the element itself.
+        If the element is a meta element: It acts as it would if it was reflecting the element's
+        content content attribute.
+        If the element is an audio, embed, iframe, img, source, track, or video element: It acts
+        as it would if it was reflecting the element's src content attribute.
+        If the element is an a, area, or link element: It act as it would if it was reflecting the
+        href content attribute.
+        If the element is an object element: It acts as  it would if it was reflecting the element's
+        data content attribute.
+
+        (WebCore::HTMLElement::itemValueText):
+        (WebCore::HTMLElement::setItemValueText):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::itemValueText):
+        (WebCore::HTMLEmbedElement::setItemValueText):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::itemValueText):
+        (WebCore::HTMLIFrameElement::setItemValueText):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::itemValueText):
+        (WebCore::HTMLImageElement::setItemValueText):
+        * html/HTMLImageElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::itemValueText):
+        (WebCore::HTMLLinkElement::setItemValueText):
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::itemValueText):
+        (WebCore::HTMLMediaElement::setItemValueText):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::itemValueText):
+        (WebCore::HTMLMetaElement::setItemValueText):
+        * html/HTMLMetaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::itemValueText):
+        (WebCore::HTMLObjectElement::setItemValueText):
+        * html/HTMLObjectElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::itemValueText):
+        (WebCore::HTMLSourceElement::setItemValueText):
+        * html/HTMLSourceElement.h:
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::itemValueText):
+        (WebCore::HTMLTrackElement::setItemValueText):
+        * html/HTMLTrackElement.h:
+        * html/MicroDataItemValue.cpp: Added.
+        (WebCore::MicroDataItemValue::MicroDataItemValue):
+        (WebCore::MicroDataItemValue::createFromString):
+        (WebCore::MicroDataItemValue::createFromNode):
+        * html/MicroDataItemValue.h: Added.
+        (WebCore::MicroDataItemValue::isNode):
+        (WebCore::MicroDataItemValue::getNode):
+        (WebCore::MicroDataItemValue::getString):
+
 2011-10-24  Joseph Pecoraro  <joepeck@webkit.org>
 
         Remove unused instance variable

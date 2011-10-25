@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemValue must reflect the href attribute if the element is an a, area, or link element.</p>
+<div id="console"></div>
+<script>
+var testElement;
+function runTest(tagName)
+{
+    debug("Testing '" + tagName + "' element's behavior.");
+    testElement = createElement(tagName, {itemprop: 'foo', href: 'http://example.org/'});
+    shouldBe("testElement.itemValue", "'http://example.org/'");
+    testElement.href = 'http://example.net/';
+    shouldBe("testElement.itemValue", "'http://example.net/'");
+    testElement.itemValue = 'http://example.com/';
+    shouldBe("testElement.href", "'http://example.com/'");
+    debug('');
+}
+
+runTest('a');
+runTest('area');
+runTest('link');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html

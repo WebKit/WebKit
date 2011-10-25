@@ -1,0 +1,66 @@
+This tests that itemValue must be null if the element does not have an itemprop attribute
+
+Created element of type: meta
+Set attribute: content, value: test
+PASS createElement('meta', {content: 'test'}).itemValue == null is true
+
+Created element of type: audio
+Set attribute: src, value: test
+PASS createElement('audio', {src: 'test'}).itemValue == null is true
+
+Created element of type: embed
+Set attribute: src, value: test
+PASS createElement('embed', {src: 'test'}).itemValue == null is true
+
+Created element of type: iframe
+Set attribute: src, value: test
+PASS createElement('iframe', {src: 'test'}).itemValue == null is true
+
+Created element of type: img
+Set attribute: src, value: test
+PASS createElement('img', {src: 'test'}).itemValue == null is true
+
+Created element of type: source
+Set attribute: src, value: test
+PASS createElement('source', {src: 'test'}).itemValue == null is true
+
+Created element of type: track
+Set attribute: src, value: test
+PASS createElement('track', {src: 'test'}).itemValue == null is true
+
+Created element of type: video
+Set attribute: src, value: test
+PASS createElement('video', {src: 'test'}).itemValue == null is true
+
+Created element of type: a
+Set attribute: href, value: test
+PASS createElement('a', {href: 'test'}).itemValue == null is true
+
+Created element of type: area
+Set attribute: href, value: test
+PASS createElement('area', {href: 'test'}).itemValue == null is true
+
+Created element of type: link
+Set attribute: href, value: test
+PASS createElement('link', {href: 'test'}).itemValue == null is true
+
+Created element of type: object
+Set attribute: data, value: test
+PASS createElement('object', {data: 'test'}).itemValue == null is true
+
+Created element of type: time
+PASS createElement('time', {}).itemValue == null is true
+
+Created element of type: time
+Set attribute: datetime, value: test
+PASS createElement('time', {datetime: 'test'}).itemValue == null is true
+
+Created element of type: div
+PASS createElement('div', {}, 'test').itemValue == null is true
+
+Created element of type: madeuponthespot
+PASS createElement('madeuponthespot', {}, 'test').itemValue == null is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

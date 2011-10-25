@@ -52,6 +52,11 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
+
+#if ENABLE(MICRODATA)
+    virtual String itemValueText() const OVERRIDE;
+    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
+#endif
 };
 
 }

@@ -758,6 +758,7 @@ SOURCES += \
     html/LabelsNodeList.cpp \
     html/LinkRelAttribute.cpp \
     html/MediaDocument.cpp \
+    html/MicroDataItemValue.cpp \
     html/MonthInputType.cpp \
     html/NumberInputType.cpp \
     html/PasswordInputType.cpp \
@@ -1810,6 +1811,8 @@ HEADERS += \
     html/LinkRelAttribute.h \
     html/LoadableTextTrack.h \
     html/MediaDocument.h \
+    html/MicroDataItemValue.h \
+    html/MutableTextTrack.h \
     html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/microdata-common.js"></script>
 </head>
 <body>
@@ -13,7 +14,7 @@
 <div itemscope itemtype="http://example.com/foo" id="three">
 <div itemscope itemtype="http://example.com/f1" id="four"></div>
 </div>
-
+<div id="console"></div>
 <script>
 var one = document.getElementById('one');
 var two = document.getElementById('two');
@@ -26,7 +27,7 @@ runTest(document.getItems('http://example.com/foo'), [one, three], "document.get
 runTest(document.getItems('http://example.com/bar'), [two], "document.getItems() with 'http://example.com/bar' itemtype in the aurgument");
 runTest(document.getItems('http://example.com/f1'), [four], "document.getItems() with 'http://example.com/f1' itemtype in the aurgument");
 
-var element = createElem('div', {itemscope:'itemscope'});
+var element = createElement('div', {itemscope:'itemscope'});
 
 // Append newly created item to body
 document.body.appendChild(element);
@@ -36,7 +37,8 @@ runTest(document.getItems(), [one, two, three, four, element], "Newly appended i
 document.body.removeChild(element);
 runTest(document.getItems(), [one, two, three, four], "Removing item should be noticed in the NodeList");
 
-document.write("<br>TEST COMPLETE");
+var successfullyParsed = true;
 </script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

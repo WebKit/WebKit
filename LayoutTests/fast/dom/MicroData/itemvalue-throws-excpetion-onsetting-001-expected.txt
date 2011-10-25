@@ -1,0 +1,97 @@
+This test ensures that writing to itemValue must throw an INVALID_ACCESS_ERR error if the element has an itemscope attribute.
+
+Testing 'meta' element's behavior.
+Created element of type: meta
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'audio' element's behavior.
+Created element of type: audio
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'embed' element's behavior.
+Created element of type: embed
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'iframe' element's behavior.
+Created element of type: iframe
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'img' element's behavior.
+Created element of type: img
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'source' element's behavior.
+Created element of type: source
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'track' element's behavior.
+Created element of type: track
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'video' element's behavior.
+Created element of type: video
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'a' element's behavior.
+Created element of type: a
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'area' element's behavior.
+Created element of type: area
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'link' element's behavior.
+Created element of type: link
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'object' element's behavior.
+Created element of type: object
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+Testing 'div' element's behavior.
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+Set attribute: itemprop, value: foo
+Set attribute: content, value: test
+TEST SUCCEEDED: Got the expected exception (15) INVALID_ACCESS_ERR.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
