@@ -1465,7 +1465,7 @@
 
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see
-            # the specific exclusions in the "sources!" list below.
+            # the specific exclusions in the "exclude" list below.
             ['include', 'rendering/RenderThemeMac\\.mm$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
             ['include', 'platform/graphics/mac/ComplexTextControllerCoreText\\.mm$'],
@@ -1505,6 +1505,10 @@
             ['exclude', 'platform/graphics/cg/ImageSourceCG\\.cpp$'],
             ['exclude', 'platform/graphics/cg/PDFDocumentImage\\.cpp$'],
 
+            # Mac uses only ScrollAnimatorMac.
+            ['exclude', 'platform/ScrollAnimatorNone\\.cpp$'],
+            ['exclude', 'platform/ScrollAnimatorNone\\.h$'],
+
             ['include', '/chrome/junk\\.txt$'],
           ],
         },{ # OS!="mac"
@@ -1518,7 +1522,7 @@
           'sources/': [
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see
-            # the specific exclusions in the "sources!" list below.
+            # the specific exclusions in the "exclude" list below.
             ['include', 'platform/graphics/mac/GraphicsContextMac\\.mm$'],
 
             # Chromium Mac does not use skia.

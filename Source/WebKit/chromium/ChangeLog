@@ -1,3 +1,14 @@
+2011-10-25  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Try to fix mac build after r98294
+        https://bugs.webkit.org/show_bug.cgi?id=70753
+
+        Remove test for ScrollAnimatorNone on mac.
+
+        Unreviewed, build fix.
+
+        * WebKit.gypi:
+
 2011-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Removed SharedUChar and tightened language around its previous uses
