@@ -1,3 +1,10 @@
+2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK and Windows rebaselines after r98199.
+
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline after r98293.

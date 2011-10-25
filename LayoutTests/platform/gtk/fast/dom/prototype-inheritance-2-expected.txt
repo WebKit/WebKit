@@ -182,12 +182,12 @@ PASS NodeListConstructor from inner.document.forms.testForm.constructor
 PASS NodeListPrototype from inner.document.forms.testForm.__proto__
 PASS NodePrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__.__proto__
 PASS Object from inner.document.location.__proto__.__proto__
-PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.3
+PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0
 PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins
 PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.constructor
 PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.__proto__
 PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0.constructor
-PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.3.__proto__
+PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0.__proto__
 PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
 PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
 PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
