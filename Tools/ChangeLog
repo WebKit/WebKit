@@ -1,3 +1,15 @@
+2011-10-25  Eric Seidel  <eric@webkit.org>
+
+        WIN: editing tests fail under NRWT because editing delegate callbacks aren't stripped
+        https://bugs.webkit.org/show_bug.cgi?id=64471
+
+        Reviewed by Adam Roben.
+
+        Speculative fix.
+
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+
 2011-10-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Fix bug summary when rolling Chromium DEPS to LKGR.

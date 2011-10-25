@@ -94,3 +94,14 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_version('win-xp', 'xp')
         self._assert_version('win-vista', 'vista')
         self._assert_version('win-7sp0', '7sp0')
+
+    def test_compare_text(self):
+        expected = "EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\nfoo\nEDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n"
+        port = self.make_port()
+        self.assertFalse(port.compare_text(expected, "foo\n"))
+        self.assertTrue(port.compare_text(expected, "foo"))
+        self.assertTrue(port.compare_text(expected, "bar"))
+
+        # This hack doesn't exist in WK2.
+        port._options = MockOptions(webkit_test_runner=True)
+        self.assertTrue(port.compare_text(expected, "foo\n"))

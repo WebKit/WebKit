@@ -72,6 +72,20 @@ class WinPort(ApplePort):
         ApplePort.__init__(self, **kwargs)
         self._operating_system = 'win'
 
+    def compare_text(self, expected_text, actual_text):
+        # Sanity was restored in WK2, so we don't need this hack there.
+        if self.get_option('webkit_test_runner'):
+            return ApplePort.compare_text(self, expected_text, actual_text)
+
+        # This is a hack (which dates back to ORWT).
+        # Windows does not have an EDITING DELEGATE, so we strip any EDITING DELEGATE
+        # messages to make more of the tests pass.
+        # It's possible more of the ports might want this and this could move down into WebKitPort.
+        delegate_regexp = re.compile("^EDITING DELEGATE: .*?\n", re.MULTILINE)
+        expected_text = delegate_regexp.sub("", expected_text)
+        actual_text = delegate_regexp.sub("", actual_text)
+        return expected_text != actual_text
+
     def baseline_search_path(self):
         try:
             fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
