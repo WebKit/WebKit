@@ -1,3 +1,17 @@
+2011-10-25  Antoine Labour  <piman@chromium.org>
+
+        Fix teardown in Web*LayerImpl, and add tests for Web*Layer
+        https://bugs.webkit.org/show_bug.cgi?id=70431
+
+        Reviewed by James Robinson.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::~WebLayerImpl):
+
 2011-10-25  Adam Barth  <abarth@webkit.org>
 
         EventTarget.h shouldn't need to know about every feature and ifdef

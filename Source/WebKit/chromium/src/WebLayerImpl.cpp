@@ -43,6 +43,7 @@ WebLayerImpl::WebLayerImpl(WebLayerClient* client) : LayerChromium(this), m_clie
 
 WebLayerImpl::~WebLayerImpl()
 {
+    setDelegate(0);
 }
 
 bool WebLayerImpl::drawsContent() const
