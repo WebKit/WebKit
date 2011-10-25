@@ -1,3 +1,9 @@
+2011-10-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline after r98293.
+
+        * platform/chromium-win/svg/filters/feColorMatrix-default-type-expected.png: Added.
+
 2011-10-24  Arko Saha  <arko@motorola.com>
 
         Microdata: Add itemprop, itemref, itemvalue attributes.
