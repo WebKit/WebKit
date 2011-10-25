@@ -1,3 +1,15 @@
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
+        Add a --make option to update-webkit to engage the Makefile-based build system
+        https://bugs.webkit.org/show_bug.cgi?id=70847
+
+        Reviewed by Dimitri Glazkov.
+
+        I can never remember what crazy environment variables I'm supposed to
+        set to tell GYP what to do.
+
+        * Scripts/update-webkit:
+
 2011-10-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Force layout when sending events.
