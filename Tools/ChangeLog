@@ -1,3 +1,22 @@
+2011-10-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Force layout when sending events.
+        https://bugs.webkit.org/show_bug.cgi?id=70357
+
+        Reviewed by Antonio Gomes.
+
+        Some tests such as editing/input/page-up-down-scrolls.html rely on the
+        scrollbars being properly set up during the onload events.
+        Document::implicitClose(), however, dispatches the onload events before
+        calling FrameView::layout(), so these tests usually fail.
+
+        We now do the same as the GTK+ and Chromium ports and manually force the
+        layout when dispatching events.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (sendMouseEvent):
+        (keyDownCallback):
+
 2011-10-25  Daniel Bates  <dbates@rim.com>
 
         build-webkit --clean should only clean build directory for CMake-based ports

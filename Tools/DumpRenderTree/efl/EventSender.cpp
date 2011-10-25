@@ -129,6 +129,8 @@ static bool sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, E
 {
     unsigned timeStamp = 0;
 
+    DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
+
     setEvasModifiers(evas, modifiers);
     if (event & EvasMouseEventMove)
         evas_event_feed_mouse_move(evas, gLastMousePositionX, gLastMousePositionY, timeStamp++, 0);
@@ -423,6 +425,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (!keyName)
         keyName = cCharacter.data();
 
+    DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
     evas_event_feed_key_down(evas, keyName, keyName, keyName, 0, 0, 0);
     evas_event_feed_key_up(evas, keyName, keyName, keyName, 0, 1, 0);
 
