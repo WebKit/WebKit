@@ -1,3 +1,18 @@
+2011-10-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] GtkAdjustment watcher updates adjustments too lazily
+        https://bugs.webkit.org/show_bug.cgi?id=70180
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Increase the priority of the GtkAdjustments update in GtkAdjustmentWatcher. This
+        means that adjustments will more quickly represent the state of the WebKitWebView
+        when it scrolls. This fixes out-of-sync scrollbars and some visual artifacts.
+
+        * WebCoreSupport/GtkAdjustmentWatcher.cpp:
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater): Use a timeout
+        with the default priority.
+
 2011-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove g_thread_init() calls

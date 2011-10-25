@@ -83,9 +83,8 @@ void GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater() const
     // The fact that this method was called means that we need to update the scrollbars, but at the
     // time of invocation they are not updated to reflect the scroll yet. We set a short timeout
     // here, which means that they will be updated as soon as WebKit returns to the main loop.
-    m_updateAdjustmentCallbackId = g_timeout_add_full(G_PRIORITY_HIGH_IDLE + 10, 0,
-                                                      reinterpret_cast<GSourceFunc>(updateAdjustmentCallback), 
-                                                      const_cast<void*>(static_cast<const void*>(this)), 0);
+    m_updateAdjustmentCallbackId = g_timeout_add(0, reinterpret_cast<GSourceFunc>(updateAdjustmentCallback),
+                                                 const_cast<void*>(static_cast<const void*>(this)));
 }
 
 static void adjustmentValueChangedCallback(GtkAdjustment* adjustment, GtkAdjustmentWatcher* watcher)
