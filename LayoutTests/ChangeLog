@@ -1,3 +1,11 @@
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt: Mark another test
+        as crashing. Moved 2 tests together as they hit the same ASSERT
+        on the bots.
+
 2011-10-25  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Add CSS1 pixel baselines.
