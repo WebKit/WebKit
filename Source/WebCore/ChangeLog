@@ -1,3 +1,9 @@
+2011-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Chromium build fix: #include window.h for HANDLE.
+
+        * platform/graphics/opentype/OpenTypeUtilities.h:
+
 2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Include ThreadSafeRefCounted.h since the class declared in this header file
