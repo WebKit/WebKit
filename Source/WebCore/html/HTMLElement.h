@@ -92,6 +92,7 @@ public:
 #if ENABLE(MICRODATA)
     PassRefPtr<DOMSettableTokenList> itemRef() const;
     PassRefPtr<DOMSettableTokenList> itemProp() const;
+    PassRefPtr<DOMSettableTokenList> itemType() const;
 
     void setItemValue(const String&, ExceptionCode&);
     PassRefPtr<MicroDataItemValue> itemValue() const;
@@ -127,12 +128,14 @@ private:
 #if ENABLE(MICRODATA)
     void setItemProp(const String&);
     void setItemRef(const String&);
+    void setItemType(const String&);
 
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);
 
     mutable RefPtr<DOMSettableTokenList> m_itemProp;
     mutable RefPtr<DOMSettableTokenList> m_itemRef;
+    mutable RefPtr<DOMSettableTokenList> m_itemType;
 #endif
 };
 

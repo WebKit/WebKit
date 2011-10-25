@@ -1,3 +1,19 @@
+2011-10-25  Arko Saha  <arko@motorola.com>
+
+        Microdata: itemtype attribute should be space-separated list to allow multiple types
+        https://bugs.webkit.org/show_bug.cgi?id=70501
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/MicroData/006.html:
+        * fast/dom/MicroData/007.html:
+        * fast/dom/MicroData/getitems-multiple-itemtypes-expected.txt: Added.
+        * fast/dom/MicroData/getitems-multiple-itemtypes.html: Added.
+        * fast/dom/MicroData/itemtype-add-remove-tokens-expected.txt: Added.
+        * fast/dom/MicroData/itemtype-add-remove-tokens.html: Added.
+        * fast/dom/MicroData/itemtype-attribute-test-expected.txt: Added.
+        * fast/dom/MicroData/itemtype-attribute-test.html: Added.
+
 2011-10-25  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: fourth chunk of baselines for Chromium-Skia

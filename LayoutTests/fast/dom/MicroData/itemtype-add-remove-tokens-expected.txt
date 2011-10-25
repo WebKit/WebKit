@@ -1,0 +1,33 @@
+This tests that itemType attribute must update correctly when token have been added or removed.
+
+Created element of type: div
+itemType.add must reflect correctly.
+PASS element.itemType.length == 2 is true
+PASS element.itemType.toString() == 'http://example.com/foo http://example.com/FOO' is true
+PASS element.itemType[0] is 'http://example.com/foo'
+PASS element.itemType[1] is 'http://example.com/FOO'
+PASS element.itemType.item(0) is 'http://example.com/foo'
+PASS element.itemType.item(1) is 'http://example.com/FOO'
+
+itemType.add must not make any changes if an existing token is added.
+PASS element.itemType.length == 2 is true
+PASS element.itemType.toString() == 'http://example.com/foo http://example.com/FOO' is true
+
+itemType.remove must reflect correctly.
+PASS element.itemType.length == 1 is true
+PASS element.itemType.contains('http://example.com/foo') is false
+PASS element.itemType.toString() == 'http://example.com/FOO' is true
+
+itemType.remove must not make any changes if remove is called for a token that doesn't exist.
+PASS element.itemType.length == 1 is true
+PASS element.itemType.contains('http://example.com/foo') is false
+PASS element.itemType.toString() == 'http://example.com/FOO' is true
+
+itemType.length must be 0 when all tokens are removed.
+PASS element.itemType.length == 0 is true
+PASS element.itemType.contains('http://example.com/foo') is false
+PASS element.itemType.contains('http://example.com/FOO') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

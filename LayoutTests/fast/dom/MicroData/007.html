@@ -14,7 +14,7 @@
 <div itemscope id="five"></div>
 <div id="console"></div>
 <script>
-var nodeList = document.getItems('http://example.com/bar data:text/plain, http://example.com/foo');
+var nodeList = document.getItems();
 
 shouldBe("nodeList[0].id", "'one'");
 shouldBe("nodeList[1].id", "'two'");

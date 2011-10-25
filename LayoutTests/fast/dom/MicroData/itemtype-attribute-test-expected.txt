@@ -1,0 +1,20 @@
+itemType attribute simple test.
+
+Created element of type: div
+Set attribute: itemtype, value: http://example.com/foo
+
+The itemType attribute must be defined.
+PASS element.itemType is defined.
+PASS element.itemType.toString() is 'http://example.com/foo'
+
+itemType and itemType.length must be read-only.
+PASS element.itemType = 'http://example.com/test'; element.itemType.toString() == 'http://example.com/foo' is true
+PASS element.itemType.contains('http://example.com/test') is false
+PASS element.itemType.length = 0; element.itemType.length == 1 is true
+
+removeAttribute('itemType') must reflect correctly.
+PASS element.itemType.toString() is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

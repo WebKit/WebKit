@@ -1,0 +1,10 @@
+document.getItems() with multiple itemtypes: PASS
+document.getItems() with multiple itemtypes: PASS
+document.getItems() with 'http://example.com/foo' itemtype in the aurgument: PASS
+document.getItems() with 'http://example.com/bar' itemtype in the aurgument: PASS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test ensures that document.getItems() returns nodes that match all the types specified in the method's argument.
+
+

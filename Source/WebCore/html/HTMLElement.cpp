@@ -207,6 +207,7 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == itemrefAttr) {
         setItemRef(attr->value());
     } else if (attr->name() == itemtypeAttr) {
+        setItemType(attr->value());
         itemTypeAttributeChanged();
 #endif
     }
@@ -1055,6 +1056,22 @@ String HTMLElement::itemValueText() const
 void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
 {
     setTextContent(value, ec);
+}
+
+PassRefPtr<DOMSettableTokenList> HTMLElement::itemType() const
+{
+    if (!m_itemType)
+        m_itemType = DOMSettableTokenList::create();
+
+    return m_itemType;
+}
+
+void HTMLElement::setItemType(const String& value)
+{
+    if (!m_itemType)
+        m_itemType = DOMSettableTokenList::create();
+
+    m_itemType->setValue(value);
 }
 #endif
 

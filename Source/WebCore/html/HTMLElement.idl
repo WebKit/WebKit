@@ -67,7 +67,7 @@ module html {
                  attribute boolean spellcheck;
 
                  attribute [Conditional=MICRODATA, Reflect] boolean itemScope;
-                 attribute [Conditional=MICRODATA, Reflect] DOMString itemType;
+        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemType;
                  attribute [Conditional=MICRODATA, Reflect] DOMString itemId;
 
         readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemRef;

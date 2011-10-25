@@ -7,9 +7,9 @@
 <p>This tests that document.getItems must locate items when parameters are separated by spaces.
 <br>This test also ensure that document.getItems must ignore duplicated tokens.
 </p>
-<div itemscope itemtype="http://example.com/foo"></div>
-<div itemscope itemtype="http://example.com/bar">
-<div itemscope itemtype="data:text/plain"></div>
+<div itemscope itemtype="http://example.com/foo http://example.com/bar data:text/plain"></div>
+<div itemscope itemtype="http://example.com/bar http://example.com/foo">
+<div itemscope itemtype="data:text/plain http://example.com/foo"></div>
 </div>
 <div id="console"></div>
 <script>

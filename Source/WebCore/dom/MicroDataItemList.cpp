@@ -60,7 +60,7 @@ bool MicroDataItemList::nodeMatches(Element* testNode) const
     if (!m_typeNames.size())
         return true;
 
-    return m_typeNames.contains(testElement->fastGetAttribute(itemtypeAttr));
+    return testElement->itemType()->tokens().containsAll(m_typeNames);
 }
 
 } // namespace WebCore

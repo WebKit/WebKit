@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>itemType attribute simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemtype: 'http://example.com/foo'});
+
+debug("<br>The itemType attribute must be defined.");
+shouldBeDefined("element.itemType");
+shouldBe("element.itemType.toString()", "'http://example.com/foo'");
+
+debug("<br>itemType and itemType.length must be read-only.");
+shouldBeTrue("element.itemType = 'http://example.com/test'; element.itemType.toString() == 'http://example.com/foo'");
+shouldBeFalse("element.itemType.contains('http://example.com/test')");
+shouldBeTrue("element.itemType.length = 0; element.itemType.length == 1");
+
+debug("<br>removeAttribute('itemType') must reflect correctly.");
+element.removeAttribute('itemType');
+shouldBe("element.itemType.toString()", "''");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

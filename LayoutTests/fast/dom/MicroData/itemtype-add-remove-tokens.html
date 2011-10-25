@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemType attribute must update correctly when token have been added or removed.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+debug("itemType.add must reflect correctly.");
+element.itemType.add('http://example.com/foo');
+element.itemType.add('http://example.com/FOO');
+
+shouldBeTrue("element.itemType.length == 2");
+shouldBeTrue("element.itemType.toString() == 'http://example.com/foo http://example.com/FOO'");
+shouldBe("element.itemType[0]", "'http://example.com/foo'");
+shouldBe("element.itemType[1]", "'http://example.com/FOO'");
+shouldBe("element.itemType.item(0)", "'http://example.com/foo'");
+shouldBe("element.itemType.item(1)", "'http://example.com/FOO'");
+
+debug("<br>itemType.add must not make any changes if an existing token is added.");
+element.itemType.add('http://example.com/foo');
+shouldBeTrue("element.itemType.length == 2");
+shouldBeTrue("element.itemType.toString() == 'http://example.com/foo http://example.com/FOO'");
+
+debug("<br>itemType.remove must reflect correctly.");
+element.itemType.remove('http://example.com/foo');
+shouldBeTrue("element.itemType.length == 1");
+shouldBeFalse("element.itemType.contains('http://example.com/foo')")
+shouldBeTrue("element.itemType.toString() == 'http://example.com/FOO'");
+
+debug("<br>itemType.remove must not make any changes if remove is called for a token that doesn't exist.");
+element.itemType.remove('http://example.com/foo');
+shouldBeTrue("element.itemType.length == 1");
+shouldBeFalse("element.itemType.contains('http://example.com/foo')");
+shouldBeTrue("element.itemType.toString() == 'http://example.com/FOO'");
+
+debug("<br>itemType.length must be 0 when all tokens are removed.");
+element.itemType.remove('http://example.com/FOO');
+shouldBeTrue("element.itemType.length == 0");
+shouldBeFalse("element.itemType.contains('http://example.com/foo')");
+shouldBeFalse("element.itemType.contains('http://example.com/FOO')");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

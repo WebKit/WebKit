@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that document.getItems() returns nodes that match all the types specified in the method's argument.</p>
+
+<div itemscope itemtype="http://example.com/foo http://example.com/bar" id="one"></div>
+<div itemscope itemtype="http://example.com/foo" id="two"></div>
+
+<script>
+var one = document.getElementById('one');
+var two = document.getElementById('two');
+
+runTest(document.getItems('http://example.com/foo http://example.com/bar'), [one], "document.getItems() with multiple itemtypes");
+runTest(document.getItems('http://example.com/bar http://example.com/foo'), [one], "document.getItems() with multiple itemtypes");
+runTest(document.getItems('http://example.com/foo'), [one, two], "document.getItems() with 'http://example.com/foo' itemtype in the aurgument");
+runTest(document.getItems('http://example.com/bar'), [one], "document.getItems() with 'http://example.com/bar' itemtype in the aurgument");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

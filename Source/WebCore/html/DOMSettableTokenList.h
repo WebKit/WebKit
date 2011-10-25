@@ -55,6 +55,7 @@ public:
     virtual String toString() const { return value(); }
 
     String value() const { return m_value; }
+    const SpaceSplitString& tokens() const { return m_tokens; }
     void setValue(const String&);
 
 private:
