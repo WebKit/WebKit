@@ -701,6 +701,21 @@ EAPI Eina_Bool    ewk_frame_feed_focus_in(Evas_Object *o);
 EAPI Eina_Bool    ewk_frame_feed_focus_out(Evas_Object *o);
 
 /**
+ * Gets the geometry, relative to the frame, of the focused element in the
+ * document.
+ *
+ * @param o frame object containing the focused element
+ * @param x pointer where to store the X value of the geometry, may be @c 0
+ * @param x pointer where to store the Y value of the geometry, may be @c 0
+ * @param x pointer where to store width of the geometry, may be @c 0
+ * @param x pointer where to store height of the geometry, may be @c 0
+ *
+ * @return @c EINA_TRUE if the frame contains the currently focused element and
+ * its geometry was correctly fetched, @c EINA_FALSE in any other case
+ */
+EAPI Eina_Bool ewk_frame_focused_element_geometry_get(const Evas_Object *o, int *x, int *y, int *w, int *h);
+
+/**
  * Feeds the mouse wheel event to the frame.
  *
  * @param o frame object to feed the mouse wheel event

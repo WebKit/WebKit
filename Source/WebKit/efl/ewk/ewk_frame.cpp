@@ -826,6 +826,27 @@ Eina_Bool ewk_frame_feed_focus_out(Evas_Object* ewkFrame)
     return EINA_FALSE;
 }
 
+Eina_Bool ewk_frame_focused_element_geometry_get(const Evas_Object *ewkFrame, int *x, int *y, int *w, int *h)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EINA_FALSE);
+    WebCore::Document* document = smartData->frame->document();
+    if (!document)
+        return EINA_FALSE;
+    WebCore::Node* focusedNode = document->focusedNode();
+    if (!focusedNode)
+        return EINA_FALSE;
+    WebCore::IntRect nodeRect = focusedNode->getRect();
+    if (x)
+        *x = nodeRect.x();
+    if (y)
+        *y = nodeRect.y();
+    if (w)
+        *w = nodeRect.width();
+    if (h)
+        *h = nodeRect.height();
+    return EINA_TRUE;
+}
+
 Eina_Bool ewk_frame_feed_mouse_wheel(Evas_Object* ewkFrame, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EINA_FALSE);
