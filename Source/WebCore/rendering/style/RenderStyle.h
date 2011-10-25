@@ -1518,6 +1518,7 @@ private:
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
+    const Color& invalidColor() const { static Color invalid; return invalid; }
     const Color& borderLeftColor() const { return surround->border.left().color(); }
     const Color& borderRightColor() const { return surround->border.right().color(); }
     const Color& borderTopColor() const { return surround->border.top().color(); }

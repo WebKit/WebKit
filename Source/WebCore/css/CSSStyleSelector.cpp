@@ -2362,13 +2362,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 
     // check lookup table for implementations and use when available
-    if (ApplyPropertyBase* handler = m_applyProperty.propertyHandler(property)) {
+    const PropertyHandler& handler = m_applyProperty.propertyHandler(property);
+    if (handler.isValid()) {
         if (isInherit)
-            handler->applyInheritValue(this);
+            handler.applyInheritValue(this);
         else if (isInitial)
-            handler->applyInitialValue(this);
+            handler.applyInitialValue(this);
         else
-            handler->applyValue(this, value);
+            handler.applyValue(this, value);
         return;
     }
 

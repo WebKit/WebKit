@@ -1,3 +1,116 @@
+2011-10-24  Luke Macpherson   <macpherson@chromium.org>
+
+        REGRESSION(80893): HTML5 spec takes 2s longer to load due to time spent in CSSStyleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=68944
+
+        Reviewed by Antti Koivisto.
+
+        No new tests / Covered by existing tests.
+
+        Removes all virtual dispatch from CSSStyleApplyProperty by converting to use static function pointers for dispatch.
+        Uses class templates instead of function templates to allow default parameters and also to share parameter declarations across static functions.
+        All constructor parameters become template parameters. This improves the level of compiler optimization that can be achieved.
+        Overall this achieved a ~2% overall speedup on run-safari PerformanceTests/Parser/html5-full-render.html,
+        and profiling showed a reduction in the time spent inside CSSStyleSelector::applyProperty().
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyExpanding::applyInheritValue):
+        (WebCore::ApplyPropertyExpanding::applyInitialValue):
+        (WebCore::ApplyPropertyExpanding::applyValue):
+        (WebCore::ApplyPropertyExpanding::createHandler):
+        (WebCore::ApplyPropertyDefaultBase::setValue):
+        (WebCore::ApplyPropertyDefaultBase::value):
+        (WebCore::ApplyPropertyDefaultBase::initial):
+        (WebCore::ApplyPropertyDefaultBase::applyInheritValue):
+        (WebCore::ApplyPropertyDefaultBase::applyInitialValue):
+        (WebCore::ApplyPropertyDefaultBase::applyValue):
+        (WebCore::ApplyPropertyDefaultBase::createHandler):
+        (WebCore::ApplyPropertyDefault::setValue):
+        (WebCore::ApplyPropertyDefault::applyValue):
+        (WebCore::ApplyPropertyDefault::createHandler):
+        (WebCore::ApplyPropertyStyleImage::applyValue):
+        (WebCore::ApplyPropertyStyleImage::createHandler):
+        (WebCore::ApplyPropertyAuto::setValue):
+        (WebCore::ApplyPropertyAuto::value):
+        (WebCore::ApplyPropertyAuto::hasAuto):
+        (WebCore::ApplyPropertyAuto::setAuto):
+        (WebCore::ApplyPropertyAuto::applyInheritValue):
+        (WebCore::ApplyPropertyAuto::applyInitialValue):
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyAuto::createHandler):
+        (WebCore::defaultInitialColor):
+        (WebCore::ApplyPropertyColor::applyInheritValue):
+        (WebCore::ApplyPropertyColor::applyInitialValue):
+        (WebCore::ApplyPropertyColor::applyValue):
+        (WebCore::ApplyPropertyColor::createHandler):
+        (WebCore::ApplyPropertyDirection::applyValue):
+        (WebCore::ApplyPropertyDirection::createHandler):
+        (WebCore::ApplyPropertyLength::setValue):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyLength::createHandler):
+        (WebCore::ApplyPropertyString::setValue):
+        (WebCore::ApplyPropertyString::applyValue):
+        (WebCore::ApplyPropertyString::createHandler):
+        (WebCore::ApplyPropertyBorderRadius::setValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::createHandler):
+        (WebCore::ApplyPropertyFillLayer::applyInheritValue):
+        (WebCore::ApplyPropertyFillLayer::applyInitialValue):
+        (WebCore::ApplyPropertyFillLayer::applyValue):
+        (WebCore::ApplyPropertyFillLayer::createHandler):
+        (WebCore::ApplyPropertyComputeLength::setValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyComputeLength::createHandler):
+        (WebCore::ApplyPropertyFont::applyInheritValue):
+        (WebCore::ApplyPropertyFont::applyInitialValue):
+        (WebCore::ApplyPropertyFont::applyValue):
+        (WebCore::ApplyPropertyFont::createHandler):
+        (WebCore::ApplyPropertyFontWeight::applyValue):
+        (WebCore::ApplyPropertyFontWeight::createHandler):
+        (WebCore::ApplyPropertyCounter::emptyFunction):
+        (WebCore::ApplyPropertyCounter::applyValue):
+        (WebCore::ApplyPropertyCounter::createHandler):
+        (WebCore::ApplyPropertyCursor::applyInheritValue):
+        (WebCore::ApplyPropertyCursor::applyInitialValue):
+        (WebCore::ApplyPropertyCursor::applyValue):
+        (WebCore::ApplyPropertyCursor::createHandler):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInheritValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInitialValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::createHandler):
+        (WebCore::ApplyPropertyAnimation::setValue):
+        (WebCore::ApplyPropertyAnimation::value):
+        (WebCore::ApplyPropertyAnimation::test):
+        (WebCore::ApplyPropertyAnimation::clear):
+        (WebCore::ApplyPropertyAnimation::initial):
+        (WebCore::ApplyPropertyAnimation::map):
+        (WebCore::ApplyPropertyAnimation::accessAnimations):
+        (WebCore::ApplyPropertyAnimation::animations):
+        (WebCore::ApplyPropertyAnimation::applyInheritValue):
+        (WebCore::ApplyPropertyAnimation::applyInitialValue):
+        (WebCore::ApplyPropertyAnimation::applyValue):
+        (WebCore::ApplyPropertyAnimation::createHandler):
+        (WebCore::ApplyPropertyOutlineStyle::applyInheritValue):
+        (WebCore::ApplyPropertyOutlineStyle::applyInitialValue):
+        (WebCore::ApplyPropertyOutlineStyle::applyValue):
+        (WebCore::ApplyPropertyOutlineStyle::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleApplyProperty.h:
+        (WebCore::PropertyHandler::PropertyHandler):
+        (WebCore::PropertyHandler::applyInheritValue):
+        (WebCore::PropertyHandler::applyInitialValue):
+        (WebCore::PropertyHandler::applyValue):
+        (WebCore::PropertyHandler::isValid):
+        (WebCore::PropertyHandler::inheritFunction):
+        (WebCore::PropertyHandler::initialFunction):
+        (WebCore::PropertyHandler::applyFunction):
+        (WebCore::CSSStyleApplyProperty::propertyHandler):
+        (WebCore::CSSStyleApplyProperty::setPropertyHandler):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::invalidColor):
+
 2011-10-24  Ben Wells  <benwells@chromium.org>
 
         Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
