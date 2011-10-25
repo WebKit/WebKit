@@ -37,10 +37,10 @@
                         break;
                     case "canplaythrough":
                         checkLayers("Displaying poster", false);
-                        video.play();
+                        video.currentTime = 0.5;
                         break;
-                    case "playing":
-                        checkLayers("Playing movie", true);
+                    case "seeked":
+                        checkLayers("Displaying movie", true);
                         if (window.layoutTestController)
                             layoutTestController.notifyDone();
                         break;
@@ -56,7 +56,7 @@
     </head>
     <body>
     
-        <video oncanplaythrough="layerTest()" onplaying="layerTest()"></video>
+        <video oncanplaythrough="layerTest()" onseeked="layerTest()"></video>
         
         <p>A &lt;video&gt; should not have a layer until playback begins.<br>
         This test can not be run manually, it requires layoutTestController.layerTreeAsText.</p>

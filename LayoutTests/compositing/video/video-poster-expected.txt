@@ -7,7 +7,7 @@ No src, no poster
 Displaying poster 
   PASS: wants layers = false, has layers = false
 
-Playing movie 
+Displaying movie 
   PASS: wants layers = true, has layers = true
 
 

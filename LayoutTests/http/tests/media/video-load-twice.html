@@ -17,13 +17,13 @@
     function firstCanPlayThrough() {
         document.body.removeChild(video);
         createVideo();
-        waitForEvent('canplaythrough', endTest);
+        waitForEventOnce('canplaythrough', endTest);
         run("video.src = file");
     }
 
     function init() {
         createVideo();
-        waitForEvent('canplaythrough', firstCanPlayThrough);
+        waitForEventOnce('canplaythrough', firstCanPlayThrough);
         run("video.src = file");
     }
 </script>

@@ -1,3 +1,19 @@
+2011-10-24  Jer Noble  <jer.noble@apple.com>
+
+        compositing/video tests time out on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=70448
+
+        Reviewed by Simon Fraser.
+
+        * compositing/video/video-poster.html: Seek, instead of play, to trigger
+            creation of a layer
+        * http/tests/media/video-load-twice.html: Use waitForEventOnce so that
+            canPlayThrough listener is triggered only once.
+        * media/video-test.js: Add a new function, waitForEventOnce.
+        (waitForEventOnce):
+        (waitForEvent._eventCallback):
+        (waitForEvent):
+
 2011-10-25  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: fifth chunk of baselines for Chromium-Skia

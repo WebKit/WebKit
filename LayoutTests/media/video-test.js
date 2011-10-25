@@ -127,15 +127,23 @@ function run(testFuncString)
     }
 }
 
+function waitForEventOnce(eventName, func, endit)
+{
+    waitForEvent(eventName, func, endit, true)
+}
+
 function waitForEventAndEnd(eventName, funcString)
 {
     waitForEvent(eventName, funcString, true)
 }
 
-function waitForEvent(eventName, func, endit)
+function waitForEvent(eventName, func, endit, oneTimeOnly)
 {
     function _eventCallback(event)
     {
+        if (oneTimeOnly)
+            mediaElement.removeEventListener(eventName, _eventCallback, true);
+
         consoleWrite("EVENT(" + eventName + ")");
 
         if (func)

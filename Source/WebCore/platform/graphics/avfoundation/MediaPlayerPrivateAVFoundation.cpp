@@ -530,6 +530,12 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 {
     m_loadingMetadata = false;
     tracksChanged();
+
+    // AVFoundation will not return true for firstVideoFrameAvailable until
+    // an AVPlayerLayer has been added to the AVPlayerItem, so call prepareForRendering()
+    // here to trigger allocation of a AVPlayerLayer.
+    if (m_cachedHasVideo)
+        prepareForRendering();
 }
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
