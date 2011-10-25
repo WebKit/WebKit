@@ -563,6 +563,19 @@ static GtkWidget* createMessageDialog(GtkWindow *parent, GtkMessageType type, Gt
     return dialog;
 }
 
+static void focus(WKPageRef page, const void *clientInfo)
+{
+    BrowserWindow *window = BROWSER_WINDOW(clientInfo);
+    gtk_widget_grab_focus(GTK_WIDGET(window->webView));
+} 
+
+static void unfocus(WKPageRef page, const void *clientInfo)
+{
+    BrowserWindow *window = BROWSER_WINDOW(clientInfo);
+    if (gtk_widget_is_toplevel(GTK_WIDGET(window)))
+        gtk_window_set_focus(GTK_WINDOW(window), NULL);
+} 
+
 static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo)
 {
     GtkWidget *dialog = createMessageDialog(GTK_WINDOW(clientInfo), GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, message, frame);
@@ -621,8 +634,8 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         showPage,
         closePage,
         0,      /* takeFocus */
-        0,      /* focus */
-        0,      /* unfocus */
+        focus,
+        unfocus,
         runJavaScriptAlert,
         runJavaScriptConfirm,
         runJavaScriptPrompt,
