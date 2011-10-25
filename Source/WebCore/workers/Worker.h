@@ -54,7 +54,7 @@ namespace WebCore {
         static PassRefPtr<Worker> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
         virtual ~Worker();
 
-        virtual Worker* toWorker() { return this; }
+        virtual const AtomicString& interfaceName() const;
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode&);
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);

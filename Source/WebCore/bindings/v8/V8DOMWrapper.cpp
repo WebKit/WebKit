@@ -35,6 +35,8 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "DOMDataStore.h"
 #include "DocumentLoader.h"
+#include "EventTargetHeaders.h"
+#include "EventTargetInterfaces.h"
 #include "FrameLoaderClient.h"
 #include "Notification.h"
 #include "V8AbstractEventListener.h"
@@ -331,114 +333,20 @@ v8::Handle<v8::Object> V8DOMWrapper::getWrapperSlow(Node* node)
     return domNodeMap.get(node);
 }
 
+#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
+    if (eventNames().interfaceFor##interfaceName == desiredInterface) \
+        return toV8(static_cast<interfaceName*>(target));
+
 // A JS object of type EventTarget is limited to a small number of possible classes.
-// Check EventTarget.h for new type conversion methods
 v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target)
 {
     if (!target)
         return v8::Null();
 
-#if ENABLE(SVG)
-    if (SVGElementInstance* instance = target->toSVGElementInstance())
-        return toV8(instance);
-#endif
+    AtomicString desiredInterface = target->interfaceName();
+    DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
-#if ENABLE(WORKERS)
-    if (Worker* worker = target->toWorker())
-        return toV8(worker);
-
-    if (DedicatedWorkerContext* workerContext = target->toDedicatedWorkerContext())
-        return toV8(workerContext);
-#endif // WORKERS
-
-#if ENABLE(SHARED_WORKERS)
-    if (SharedWorker* sharedWorker = target->toSharedWorker())
-        return toV8(sharedWorker);
-
-    if (SharedWorkerContext* sharedWorkerContext = target->toSharedWorkerContext())
-        return toV8(sharedWorkerContext);
-#endif // SHARED_WORKERS
-
-#if ENABLE(NOTIFICATIONS)
-    if (Notification* notification = target->toNotification())
-        return toV8(notification);
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    if (IDBDatabase* idbDatabase = target->toIDBDatabase())
-        return toV8(idbDatabase);
-    if (IDBRequest* idbRequest = target->toIDBRequest())
-        return toV8(idbRequest);
-    if (IDBTransaction* idbTransaction = target->toIDBTransaction())
-        return toV8(idbTransaction);
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-    if (WebSocket* webSocket = target->toWebSocket())
-        return toV8(webSocket);
-#endif
-
-    if (Node* node = target->toNode())
-        return toV8(node);
-
-    if (DOMWindow* domWindow = target->toDOMWindow())
-        return toV8(domWindow);
-
-    // XMLHttpRequest is created within its JS counterpart.
-    if (XMLHttpRequest* xmlHttpRequest = target->toXMLHttpRequest()) {
-        v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(xmlHttpRequest);
-        ASSERT(!wrapper.IsEmpty());
-        return wrapper;
-    }
-
-    // MessagePort is created within its JS counterpart
-    if (MessagePort* port = target->toMessagePort()) {
-        v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(port);
-        ASSERT(!wrapper.IsEmpty());
-        return wrapper;
-    }
-
-    if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload()) {
-        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(upload);
-        ASSERT(!wrapper.IsEmpty());
-        return wrapper;
-    }
-
-    if (DOMApplicationCache* domAppCache = target->toDOMApplicationCache())
-        return toV8(domAppCache);
-
-    if (EventSource* eventSource = target->toEventSource())
-        return toV8(eventSource);
-
-#if ENABLE(BLOB)
-    if (FileReader* fileReader = target->toFileReader())
-        return toV8(fileReader);
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-    if (FileWriter* fileWriter = target->toFileWriter())
-        return toV8(fileWriter);
-#endif
-
-#if ENABLE(WEB_AUDIO)
-    if (JavaScriptAudioNode* jsAudioNode = target->toJavaScriptAudioNode())
-        return toV8(jsAudioNode);
-    if (AudioContext* audioContext = target->toAudioContext())
-        return toV8(audioContext);
-#endif    
-
-#if ENABLE(MEDIA_STREAM)
-    if (LocalMediaStream* stream = target->toLocalMediaStream())
-        return toV8(stream);
-
-    if (MediaStream* stream = target->toMediaStream())
-        return toV8(stream);
-
-    if (PeerConnection* peerConnection = target->toPeerConnection())
-        return toV8(peerConnection);
-#endif
-
-    ASSERT(0);
+    ASSERT_NOT_REACHED();
     return notHandledByInterceptor();
 }
 

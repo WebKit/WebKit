@@ -63,8 +63,8 @@ public:
     virtual void uninitialize();
 
     // EventTarget
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual JavaScriptAudioNode* toJavaScriptAudioNode();
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
     virtual EventTargetData* ensureEventTargetData()  { return &m_eventTargetData; }
 

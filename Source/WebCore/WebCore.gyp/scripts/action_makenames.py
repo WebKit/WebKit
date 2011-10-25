@@ -129,7 +129,7 @@ def main(args):
              or inputBasename.endswith('attrs.in'):
             assert attrInput == None
             attrInput = inputAbsPosix
-        elif inputBasename.endswith('EventFactory.in'):
+        elif inputBasename.endswith('EventFactory.in') or inputBasename.endswith('EventTargetFactory.in'):
             eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):
             options.append(inputAbsPosix)

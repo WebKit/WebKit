@@ -684,6 +684,9 @@ DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore
 DerivedSources/WebCore/EventFactory.cpp DerivedSources/WebCore/EventHeaders.h DerivedSources/WebCore/EventInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventFactory.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventFactory.in --outputDir "$(GENSOURCES_WEBCORE)"
 
+DerivedSources/WebCore/EventTargetHeaders.h DerivedSources/WebCore/EventTargetInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventTargetFactory.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventTargetFactory.in --outputDir "$(GENSOURCES_WEBCORE)"
+
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
 	$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json

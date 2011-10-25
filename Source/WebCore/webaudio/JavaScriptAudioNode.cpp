@@ -119,11 +119,6 @@ void JavaScriptAudioNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-JavaScriptAudioNode* JavaScriptAudioNode::toJavaScriptAudioNode()
-{
-    return this;
-}
-
 void JavaScriptAudioNode::process(size_t framesToProcess)
 {
     // Discussion about inputs and outputs:
@@ -260,6 +255,11 @@ void JavaScriptAudioNode::reset()
         m_inputBuffers[i]->zero();
         m_outputBuffers[i]->zero();
     }
+}
+
+const AtomicString& JavaScriptAudioNode::interfaceName() const
+{
+    return eventNames().interfaceForJavaScriptAudioNode;
 }
 
 ScriptExecutionContext* JavaScriptAudioNode::scriptExecutionContext() const

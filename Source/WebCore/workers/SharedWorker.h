@@ -45,6 +45,8 @@ namespace WebCore {
 
         MessagePort* port() const { return m_port.get(); }
 
+        virtual const AtomicString& interfaceName() const;
+
     private:
         SharedWorker(ScriptExecutionContext*);
 

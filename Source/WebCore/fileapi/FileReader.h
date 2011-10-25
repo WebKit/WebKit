@@ -85,7 +85,7 @@ public:
     virtual bool hasPendingActivity() const;
 
     // EventTarget
-    virtual FileReader* toFileReader() { return this; }
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
     // FileReaderLoaderClient

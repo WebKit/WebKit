@@ -84,6 +84,11 @@ void DOMApplicationCache::swapCache(ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
 }
 
+const AtomicString& DOMApplicationCache::interfaceName() const
+{
+    return eventNames().interfaceForDOMApplicationCache;
+}
+
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
     if (m_frame)

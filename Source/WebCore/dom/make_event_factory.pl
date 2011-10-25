@@ -47,6 +47,7 @@ sub printHeadersFile($);
 my $eventsFile = "";
 my $outputDir = ".";
 my %parsedEvents = ();
+my $namespace;
 
 require Config;
 
@@ -61,9 +62,9 @@ die "You must specify --events <file>" unless length($eventsFile);
 
 my %events = %{readEvents($eventsFile)};
 
-printFactoryFile("$outputDir/EventFactory.cpp");
-printMacroFile("$outputDir/EventInterfaces.h");
-printHeadersFile("$outputDir/EventHeaders.h");
+printFactoryFile("$outputDir/${namespace}Factory.cpp") if $namespace eq "Event";
+printMacroFile("$outputDir/${namespace}Interfaces.h");
+printHeadersFile("$outputDir/${namespace}Headers.h");
 
 sub defaultEventPropertyHash
 {
@@ -89,7 +90,8 @@ sub parametersHandler
 {
     my ($parameter, $value) = @_;
 
-    die "Unknown parameter $parameter for events\n" unless $parameter eq "namespace";
+    die "Unknown parameter $parameter\n" unless $parameter eq "namespace";
+    $namespace = $value;
 }
 
 sub readNames($$$)
@@ -124,6 +126,16 @@ sub interfaceForEvent($)
     return $interfaceName;
 }
 
+sub toMacroStyle($)
+{
+    my ($camelCase) = @_;
+
+    return "EVENT" if $camelCase eq "Event";
+    return "EVENT_TARGET" if $camelCase eq "EventTarget";
+
+    die "Ok, you got me. This script is really just a giant hack.";
+}
+
 sub printFactoryFile($)
 {
     my $path = shift;
@@ -134,13 +146,13 @@ sub printFactoryFile($)
     printLicenseHeader($F);
 
     print F "#include \"config.h\"\n";
-    print F "#include \"EventFactory.h\"\n";
+    print F "#include \"${namespace}Factory.h\"\n";
     print F "\n";
-    print F "#include \"EventHeaders.h\"\n";
+    print F "#include \"${namespace}Headers.h\"\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
-    print F "PassRefPtr<Event> EventFactory::create(const String& eventType)\n";
+    print F "PassRefPtr<$namespace> ${namespace}Factory::create(const String& type)\n";
     print F "{\n";
 
     for my $eventName (sort keys %parsedEvents) {
@@ -148,7 +160,7 @@ sub printFactoryFile($)
         my $interfaceName = interfaceForEvent($eventName);
 
         print F "#if ENABLE($conditional)\n" if $conditional;
-        print F "    if (eventType == \"$eventName\")\n";
+        print F "    if (type == \"$eventName\")\n";
         print F "        return ${interfaceName}::create();\n";
         print F "#endif\n" if $conditional;
     }
@@ -169,8 +181,8 @@ sub printMacroFile($)
 
     printLicenseHeader($F);
 
-    print F "#ifndef EventInterfaces_h\n";
-    print F "#define EventInterfaces_h\n";
+    print F "#ifndef ${namespace}Interfaces_h\n";
+    print F "#define ${namespace}Interfaces_h\n";
     print F "\n";
 
     my %unconditionalInterfaces = ();
@@ -190,34 +202,36 @@ sub printMacroFile($)
         }
     }
 
+    my $macroStyledNamespace = toMacroStyle($namespace);
+
     for my $conditional (sort keys %interfacesByConditional) {
         print F "#if ENABLE($conditional)\n";
-        print F "#define DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
 
         for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
             next if defined($unconditionalInterfaces{$interface});
             print F "    macro($interface) \\\n";
         }
 
-        print F "// End of DOM_EVENT_INTERFACES_FOR_EACH_$conditional\n";
+        print F "// End of DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional\n";
         print F "#else\n";
-        print F "#define DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro)\n";
+        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro)\n";
         print F "#endif\n";
         print F "\n";
     }
 
-    print F "#define DOM_EVENT_INTERFACES_FOR_EACH(macro) \\\n";
+    print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH(macro) \\\n";
     print F "    \\\n";
     for my $interface (sort keys %unconditionalInterfaces) {
             print F "    macro($interface) \\\n";
     }
     print F "    \\\n";
     for my $conditional (sort keys %interfacesByConditional) {
-        print F "    DOM_EVENT_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+        print F "    DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
     }
 
     print F "\n";
-    print F "#endif // EventInterfaces_h\n";
+    print F "#endif // ${namespace}Interfaces_h\n";
 
     close F;
 }
@@ -231,8 +245,8 @@ sub printHeadersFile($)
 
     printLicenseHeader($F);
 
-    print F "#ifndef EventHeaders_h\n";
-    print F "#define EventHeaders_h\n";
+    print F "#ifndef ${namespace}Headers_h\n";
+    print F "#define ${namespace}Headers_h\n";
     print F "\n";
 
     my %includedInterfaces = ();
@@ -255,7 +269,7 @@ sub printHeadersFile($)
     }
 
     print F "\n";
-    print F "#endif // EventHeaders_h\n";
+    print F "#endif // ${namespace}Headers_h\n";
 
     close F;
 }
@@ -267,7 +281,7 @@ sub printLicenseHeader($)
     print F "/*
  * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
  *
- * This file was generated by the dom/make_events.pl script.
+ * This file was generated by the dom/make_event_factory.pl script.
  *
  * Copyright (C) 2011 Google Inc.  All rights reserved.
  *

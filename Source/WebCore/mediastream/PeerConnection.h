@@ -79,9 +79,7 @@ public:
     virtual void remoteStreamRemoved(MediaStreamDescriptor*);
 
     // EventTarget
-    virtual PeerConnection* toPeerConnection();
-
-    // EventTarget implementation.
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     // ActiveDOMObject

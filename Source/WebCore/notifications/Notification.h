@@ -83,13 +83,13 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
-    
+
         using RefCounted<Notification>::ref;
         using RefCounted<Notification>::deref;
-    
+
         // EventTarget interface
+        virtual const AtomicString& interfaceName() const;
         virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
-        virtual Notification* toNotification() { return this; }
 
         // ActiveDOMObject interface
         virtual void contextDestroyed();

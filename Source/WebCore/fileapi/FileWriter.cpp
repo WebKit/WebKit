@@ -65,6 +65,11 @@ FileWriter::~FileWriter()
         stop();
 }
 
+const AtomicString& FileWriter::interfaceName() const
+{
+    return eventNames().interfaceForFileWriter;
+}
+
 bool FileWriter::hasPendingActivity() const
 {
     return m_readyState == WRITING || ActiveDOMObject::hasPendingActivity();

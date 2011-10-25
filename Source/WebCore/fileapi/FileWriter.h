@@ -76,7 +76,7 @@ public:
     virtual void stop();
 
     // EventTarget
-    virtual FileWriter* toFileWriter() { return this; }
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<FileWriterBase>::ref;

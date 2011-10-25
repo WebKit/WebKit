@@ -587,6 +587,7 @@ all : \
     CSSValueKeywords.h \
     ColorData.cpp \
     EventFactory.cpp \
+    EventTargetInterfaces.h \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
@@ -847,10 +848,13 @@ XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
 
 # --------
  
-# Register event constructors
+# Register event constructors and targets
 
-EventFactory.cpp : dom/make_event_factory.pl dom/EventFactory.in
+EventFactory.cpp EventHeaders.h EventInterfaces.h : dom/make_event_factory.pl dom/EventFactory.in
 	perl -I $(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventFactory.in
+
+EventTargetHeaders.h EventTargetInterfaces.h : dom/make_event_factory.pl dom/EventTargetFactory.in
+	perl -I $(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventTargetFactory.in
 
 # --------
  

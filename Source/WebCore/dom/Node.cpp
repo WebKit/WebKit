@@ -575,6 +575,11 @@ void Node::setShadowHost(Element* host)
     setParent(host);
 }
 
+Node* Node::toNode()
+{
+    return this;
+}
+
 HTMLInputElement* Node::toInputElement()
 {
     // If one of the below ASSERTs trigger, you are calling this function
@@ -2514,7 +2519,10 @@ Node* Node::enclosingLinkEventParentOrSelf()
     return 0;
 }
 
-// --------
+const AtomicString& Node::interfaceName() const
+{
+    return eventNames().interfaceForNode;
+}
 
 ScriptExecutionContext* Node::scriptExecutionContext() const
 {

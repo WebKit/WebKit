@@ -85,6 +85,11 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
+const AtomicString& Worker::interfaceName() const
+{
+    return eventNames().interfaceForWorker;
+}
+
 // FIXME: remove this when we update the ObjC bindings (bug #28774).
 void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
 {

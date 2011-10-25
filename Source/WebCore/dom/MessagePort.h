@@ -82,9 +82,8 @@ namespace WebCore {
 
         void contextDestroyed();
 
+        virtual const AtomicString& interfaceName() const;
         virtual ScriptExecutionContext* scriptExecutionContext() const;
-
-        virtual MessagePort* toMessagePort() { return this; }
 
         void dispatchMessages();
 

@@ -46,6 +46,11 @@ DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& us
 {
 }
 
+const AtomicString& DedicatedWorkerContext::interfaceName() const
+{
+    return eventNames().interfaceForDedicatedWorkerContext;
+}
+
 // FIXME: remove this when we update the ObjC bindings (bug #28774).
 void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)
 {

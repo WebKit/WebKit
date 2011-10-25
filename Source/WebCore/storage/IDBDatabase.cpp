@@ -218,6 +218,11 @@ void IDBDatabase::stop()
     m_stopped = true;
 }
 
+const AtomicString& IDBDatabase::interfaceName() const
+{
+    return eventNames().interfaceForIDBDatabase;
+}
+
 ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

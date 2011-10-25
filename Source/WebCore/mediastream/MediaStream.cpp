@@ -64,11 +64,6 @@ MediaStream::ReadyState MediaStream::readyState() const
     return m_descriptor->ended() ? ENDED : LIVE;
 }
 
-MediaStream* MediaStream::toMediaStream()
-{
-    return this;
-}
-
 void MediaStream::streamEnded()
 {
     if (readyState() == ENDED)
@@ -77,6 +72,11 @@ void MediaStream::streamEnded()
     m_descriptor->setEnded();
 
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+}
+
+const AtomicString& MediaStream::interfaceName() const
+{
+    return eventNames().interfaceForMediaStream;
 }
 
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const

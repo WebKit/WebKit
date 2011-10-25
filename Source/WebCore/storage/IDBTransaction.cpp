@@ -138,6 +138,11 @@ bool IDBTransaction::hasPendingActivity() const
     return !m_finished || ActiveDOMObject::hasPendingActivity();
 }
 
+const AtomicString& IDBTransaction::interfaceName() const
+{
+    return eventNames().interfaceForIDBTransaction;
+}
+
 ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

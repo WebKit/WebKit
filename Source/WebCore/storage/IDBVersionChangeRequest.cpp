@@ -48,6 +48,11 @@ IDBVersionChangeRequest::~IDBVersionChangeRequest()
 {
 }
 
+const AtomicString& IDBVersionChangeRequest::interfaceName() const
+{
+    return eventNames().interfaceForIDBVersionChangeRequest;
+}
+
 void IDBVersionChangeRequest::onBlocked()
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);

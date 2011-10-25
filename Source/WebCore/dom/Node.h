@@ -535,10 +535,10 @@ public:
 
     unsigned short compareDocumentPosition(Node*);
 
-    virtual Node* toNode() { return this; }
-
+    virtual Node* toNode();
     virtual HTMLInputElement* toInputElement();
 
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

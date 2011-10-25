@@ -446,9 +446,19 @@ DOMWindow::~DOMWindow()
     removeAllBeforeUnloadEventListeners(this);
 }
 
+const AtomicString& DOMWindow::interfaceName() const
+{
+    return eventNames().interfaceForDOMWindow;
+}
+
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
 {
     return document();
+}
+
+DOMWindow* DOMWindow::toDOMWindow()
+{
+    return this;
 }
 
 PassRefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)

@@ -54,7 +54,8 @@ namespace WebCore {
         virtual void importScripts(const Vector<String>& urls, ExceptionCode&);
 
         // EventTarget
-        virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }
+        virtual const AtomicString& interfaceName() const;
+
         void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
         void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
         // FIXME: remove this when we update the ObjC bindings (bug #28774).

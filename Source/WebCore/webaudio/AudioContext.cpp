@@ -731,14 +731,14 @@ void AudioContext::handleDirtyAudioNodeOutputs()
     m_dirtyAudioNodeOutputs.clear();
 }
 
+const AtomicString& AudioContext::interfaceName() const
+{
+    return eventNames().interfaceForAudioContext;
+}
+
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const
 {
     return document();
-}
-
-AudioContext* AudioContext::toAudioContext()
-{
-    return this;
 }
 
 void AudioContext::startRendering()

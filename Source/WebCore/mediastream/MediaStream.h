@@ -60,8 +60,8 @@ public:
 
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 
-    // EventTarget implementation.
-    virtual MediaStream* toMediaStream();
+    // EventTarget
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     using RefCounted<MediaStream>::ref;

@@ -261,6 +261,11 @@ void IDBRequest::onBlocked()
     ASSERT_NOT_REACHED();
 }
 
+const AtomicString& IDBRequest::interfaceName() const
+{
+    return eventNames().interfaceForIDBRequest;
+}
+
 ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

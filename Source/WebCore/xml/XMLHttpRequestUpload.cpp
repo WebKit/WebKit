@@ -41,6 +41,11 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
 {
 }
 
+const AtomicString& XMLHttpRequestUpload::interfaceName() const
+{
+    return eventNames().interfaceForXMLHttpRequestUpload;
+}
+
 ScriptExecutionContext* XMLHttpRequestUpload::scriptExecutionContext() const
 {
     return m_xmlHttpRequest->scriptExecutionContext();

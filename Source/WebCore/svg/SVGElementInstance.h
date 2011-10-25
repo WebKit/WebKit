@@ -47,6 +47,7 @@ public:
 
     virtual ~SVGElementInstance();
 
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
@@ -139,7 +140,6 @@ private:
     SVGElementInstance(SVGUseElement*, SVGUseElement*, PassRefPtr<SVGElement> originalElement);
 
     virtual Node* toNode() { return shadowTreeElement(); }
-    virtual SVGElementInstance* toSVGElementInstance() { return this; }
 
     void appendChild(PassRefPtr<SVGElementInstance> child);
     void setShadowTreeElement(SVGElement*);

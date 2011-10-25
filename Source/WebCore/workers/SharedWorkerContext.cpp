@@ -59,6 +59,11 @@ SharedWorkerContext::~SharedWorkerContext()
 {
 }
 
+const AtomicString& SharedWorkerContext::interfaceName() const
+{
+    return eventNames().interfaceForSharedWorkerContext;
+}
+
 SharedWorkerThread* SharedWorkerContext::thread()
 {
     return static_cast<SharedWorkerThread*>(Base::thread());

@@ -407,6 +407,11 @@ void WebSocket::setBinaryType(const String& binaryType, ExceptionCode& ec)
     return;
 }
 
+const AtomicString& WebSocket::interfaceName() const
+{
+    return eventNames().interfaceForWebSocket;
+}
+
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

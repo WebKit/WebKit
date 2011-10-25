@@ -62,6 +62,11 @@ FileReader::~FileReader()
     terminate();
 }
 
+const AtomicString& FileReader::interfaceName() const
+{
+    return eventNames().interfaceForFileReader;
+}
+
 bool FileReader::hasPendingActivity() const
 {
     return m_state == LOADING || ActiveDOMObject::hasPendingActivity();

@@ -104,6 +104,11 @@ PassRefPtr<Notification> Notification::create(const NotificationContents& conten
     return adoptRef(new Notification(contents, context, ec, provider));
 }
 
+const AtomicString& Notification::interfaceName() const
+{
+    return eventNames().interfaceForNotification;
+}
+
 void Notification::show() 
 {
 #if PLATFORM(QT)

@@ -236,9 +236,9 @@ void PeerConnection::remoteStreamRemoved(MediaStreamDescriptor* streamDescriptor
     dispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
 }
 
-PeerConnection* PeerConnection::toPeerConnection()
+const AtomicString& PeerConnection::interfaceName() const
 {
-    return this;
+    return eventNames().interfaceForPeerConnection;
 }
 
 ScriptExecutionContext* PeerConnection::scriptExecutionContext() const

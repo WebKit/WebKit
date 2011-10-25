@@ -186,6 +186,11 @@ void EventSource::close()
     m_state = CLOSED;
 }
 
+const AtomicString& EventSource::interfaceName() const
+{
+    return eventNames().interfaceForEventSource;
+}
+
 ScriptExecutionContext* EventSource::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

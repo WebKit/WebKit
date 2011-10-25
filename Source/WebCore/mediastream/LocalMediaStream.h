@@ -40,8 +40,8 @@ public:
 
     void stop();
 
-    // EventTarget.
-    virtual LocalMediaStream* toLocalMediaStream();
+    // EventTarget
+    virtual const AtomicString& interfaceName() const;
 
 private:
     LocalMediaStream(ScriptExecutionContext*, const MediaStreamSourceVector&);

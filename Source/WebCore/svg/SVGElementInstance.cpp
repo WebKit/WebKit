@@ -121,6 +121,11 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     element->document()->updateLayoutIgnorePendingStylesheets();
 }
 
+const AtomicString& SVGElementInstance::interfaceName() const
+{
+    return eventNames().interfaceForSVGElementInstance;
+}
+
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const
 {
     return m_element->document();

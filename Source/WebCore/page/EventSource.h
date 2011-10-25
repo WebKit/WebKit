@@ -75,7 +75,7 @@ namespace WebCore {
         using RefCounted<EventSource>::ref;
         using RefCounted<EventSource>::deref;
 
-        virtual EventSource* toEventSource() { return this; }
+        virtual const AtomicString& interfaceName() const;
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         virtual void stop();

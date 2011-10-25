@@ -259,7 +259,7 @@ private:
         // Since close() stops the thread event loop, this should not ever get called while closing.
         ASSERT(!workerContext->isClosing());
         ASSERT(workerContext->isSharedWorkerContext());
-        workerContext->toSharedWorkerContext()->dispatchEvent(createConnectEvent(port));
+        workerContext->dispatchEvent(createConnectEvent(port));
     }
 
     OwnPtr<MessagePortChannel> m_channel;

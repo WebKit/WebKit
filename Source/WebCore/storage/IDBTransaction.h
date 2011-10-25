@@ -74,7 +74,7 @@ public:
     virtual void onComplete();
 
     // EventTarget
-    virtual IDBTransaction* toIDBTransaction() { return this; }
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool dispatchEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }

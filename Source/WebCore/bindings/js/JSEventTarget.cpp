@@ -28,6 +28,8 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "EventTargetHeaders.h"
+#include "EventTargetInterfaces.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
 #include "JSEventListener.h"
@@ -105,94 +107,28 @@ using namespace JSC;
 
 namespace WebCore {
 
+#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
+    if (eventNames().interfaceFor##interfaceName == desiredInterface) \
+        return toJS(exec, globalObject, static_cast<interfaceName*>(target));
+
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* target)
 {
     if (!target)
         return jsNull();
 
-    if (EventSource* eventSource = target->toEventSource())
-        return toJS(exec, globalObject, eventSource);
+    AtomicString desiredInterface = target->interfaceName();
 
-#if ENABLE(SVG)
-    // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
-    if (SVGElementInstance* instance = target->toSVGElementInstance())
-        return toJS(exec, globalObject, instance);
-#endif
-    
-    if (Node* node = target->toNode())
-        return toJS(exec, globalObject, node);
-
-    if (DOMWindow* domWindow = target->toDOMWindow())
-        return toJS(exec, globalObject, domWindow);
-
-    if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
-        return toJS(exec, globalObject, xhr);
-
-    if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload())
-        return toJS(exec, globalObject, upload);
-
-    if (DOMApplicationCache* cache = target->toDOMApplicationCache())
-        return toJS(exec, globalObject, cache);
-
-    if (MessagePort* messagePort = target->toMessagePort())
-        return toJS(exec, globalObject, messagePort);
-
+    // FIXME: Why can't we use toJS for these cases?
 #if ENABLE(WORKERS)
-    if (Worker* worker = target->toWorker())
-        return toJS(exec, globalObject, worker);
-
-    if (DedicatedWorkerContext* workerContext = target->toDedicatedWorkerContext())
-        return toJSDOMGlobalObject(workerContext, exec);
+    if (eventNames().interfaceForDedicatedWorkerContext == desiredInterface)
+        return toJSDOMGlobalObject(static_cast<DedicatedWorkerContext*>(target), exec);
 #endif
-
 #if ENABLE(SHARED_WORKERS)
-    if (SharedWorker* sharedWorker = target->toSharedWorker())
-        return toJS(exec, globalObject, sharedWorker);
-
-    if (SharedWorkerContext* workerContext = target->toSharedWorkerContext())
-        return toJSDOMGlobalObject(workerContext, exec);
+    if (eventNames().interfaceForSharedWorkerContext == desiredInterface)
+        return toJSDOMGlobalObject(static_cast<SharedWorkerContext*>(target), exec);
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-    if (Notification* notification = target->toNotification())
-        return toJS(exec, globalObject, notification);
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    if (IDBDatabase* idbDatabase = target->toIDBDatabase())
-        return toJS(exec, globalObject, idbDatabase);
-
-    if (IDBRequest* idbRequest = target->toIDBRequest())
-        return toJS(exec, globalObject, idbRequest);
-
-    if (IDBTransaction* idbTransaction = target->toIDBTransaction())
-        return toJS(exec, globalObject, idbTransaction);
-#endif
-
-#if ENABLE(WEB_AUDIO)
-    if (JavaScriptAudioNode* jsAudioNode = target->toJavaScriptAudioNode())
-        return toJS(exec, globalObject, jsAudioNode);
-    if (AudioContext* audioContext = target->toAudioContext())
-        return toJS(exec, globalObject, audioContext);
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-    if (WebSocket* webSocket = target->toWebSocket())
-        return toJS(exec, globalObject, webSocket);
-#endif
-
-#if ENABLE(BLOB)
-    if (FileReader* fileReader = target->toFileReader())
-        return toJS(exec, globalObject, fileReader);
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-    if (LocalMediaStream* stream = target->toLocalMediaStream())
-        return toJS(exec, globalObject, stream);
-
-    if (MediaStream* stream = target->toMediaStream())
-        return toJS(exec, globalObject, stream);
-#endif
+    DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
     ASSERT_NOT_REACHED();
     return jsNull();

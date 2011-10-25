@@ -1,0 +1,27 @@
+namespace="EventTarget"
+
+EventSource
+MessagePort
+Node
+DOMWindow
+XMLHttpRequest
+XMLHttpRequestUpload
+DOMApplicationCache
+SVGElementInstance conditional=SVG
+Worker conditional=WORKERS
+DedicatedWorkerContext conditional=WORKERS
+SharedWorker conditional=SHARED_WORKERS
+SharedWorkerContext conditional=SHARED_WORKERS
+AudioContext conditional=WEB_AUDIO
+JavaScriptAudioNode conditional=WEB_AUDIO
+WebSocket conditional=WEB_SOCKETS
+Notification conditional=NOTIFICATIONS
+FileReader conditional=BLOB
+FileWriter conditional=FILE_SYSTEM
+IDBDatabase conditional=INDEXED_DATABASE
+IDBRequest conditional=INDEXED_DATABASE
+IDBTransaction conditional=INDEXED_DATABASE
+IDBVersionChangeRequest conditional=INDEXED_DATABASE
+MediaStream conditional=MEDIA_STREAM
+LocalMediaStream conditional=MEDIA_STREAM
+PeerConnection conditional=MEDIA_STREAM

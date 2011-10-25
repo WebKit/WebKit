@@ -86,7 +86,7 @@ void WorkerScriptController::initScript()
         Strong<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype(*m_globalData, JSDedicatedWorkerContextPrototype::create(*m_globalData, 0, dedicatedContextPrototypeStructure));
         Structure* structure = JSDedicatedWorkerContext::createStructure(*m_globalData, 0, dedicatedContextPrototype.get());
 
-        m_workerContextWrapper.set(*m_globalData, JSDedicatedWorkerContext::create(*m_globalData, structure, m_workerContext->toDedicatedWorkerContext()));
+        m_workerContextWrapper.set(*m_globalData, JSDedicatedWorkerContext::create(*m_globalData, structure, static_cast<DedicatedWorkerContext*>(m_workerContext)));
         workerContextPrototypeStructure->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
         dedicatedContextPrototypeStructure->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
         ASSERT(structure->globalObject() == m_workerContextWrapper);
@@ -100,7 +100,7 @@ void WorkerScriptController::initScript()
         Strong<JSSharedWorkerContextPrototype> sharedContextPrototype(*m_globalData, JSSharedWorkerContextPrototype::create(*m_globalData, 0, sharedContextPrototypeStructure));
         Structure* structure = JSSharedWorkerContext::createStructure(*m_globalData, 0, sharedContextPrototype.get());
 
-        m_workerContextWrapper.set(*m_globalData, JSSharedWorkerContext::create(*m_globalData, structure, m_workerContext->toSharedWorkerContext()));
+        m_workerContextWrapper.set(*m_globalData, JSSharedWorkerContext::create(*m_globalData, structure, static_cast<SharedWorkerContext*>(m_workerContext)));
         workerContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
         sharedContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
 #endif

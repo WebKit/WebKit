@@ -1,3 +1,15 @@
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
+        EventTarget.h shouldn't need to know about every feature and ifdef
+        https://bugs.webkit.org/show_bug.cgi?id=70659
+
+        Reviewed by Darin Adler.
+
+        This cast isn't needed because dispatchEvent is a virtual function.
+
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::connectTask):
+
 2011-10-25  Michal Mocny  <mmocny@google.com>
 
         [chromium] WebGraphicsContext3D setVisibilityCHROMIUM extension changed to pure virtual.

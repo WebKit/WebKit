@@ -343,11 +343,6 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (WebCore::Node* node = eventTarget->toNode())
         return kit(node);
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-    if (WebCore::SVGElementInstance* svgElementInstance = eventTarget->toSVGElementInstance())
-        return kit(svgElementInstance);
-#endif
-
     // We don't have an ObjC binding for XMLHttpRequest.
 
     return nil;

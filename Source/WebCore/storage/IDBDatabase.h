@@ -82,9 +82,8 @@ public:
     virtual void stop();
 
     // EventTarget
-    virtual IDBDatabase* toIDBDatabase() { return this; }
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-
 
     void open();
     void enqueueEvent(PassRefPtr<Event>);

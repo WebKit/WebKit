@@ -39,6 +39,9 @@ public:
 
     virtual void onBlocked();
 
+    // EventTarget
+    virtual const AtomicString& interfaceName() const;
+
     DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);
 
 private:

@@ -159,6 +159,11 @@ void MessagePort::contextDestroyed()
     m_scriptExecutionContext = 0;
 }
 
+const AtomicString& MessagePort::interfaceName() const
+{
+    return eventNames().interfaceForMessagePort;
+}
+
 ScriptExecutionContext* MessagePort::scriptExecutionContext() const
 {
     return m_scriptExecutionContext;

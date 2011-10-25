@@ -85,8 +85,10 @@ namespace WebCore {
         static PassRefPtr<DOMWindow> create(Frame* frame) { return adoptRef(new DOMWindow(frame)); }
         virtual ~DOMWindow();
 
-        virtual DOMWindow* toDOMWindow() { return this; }
+        virtual const AtomicString& interfaceName() const;
         virtual ScriptExecutionContext* scriptExecutionContext() const;
+
+        virtual DOMWindow* toDOMWindow();
 
         Frame* frame() const { return m_frame; }
         void disconnectFrame();

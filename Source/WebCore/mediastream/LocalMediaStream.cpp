@@ -65,9 +65,9 @@ LocalMediaStream::~LocalMediaStream()
 {
 }
 
-LocalMediaStream* LocalMediaStream::toLocalMediaStream()
+const AtomicString& LocalMediaStream::interfaceName() const
 {
-    return this;
+    return eventNames().interfaceForLocalMediaStream;
 }
 
 } // namespace WebCore

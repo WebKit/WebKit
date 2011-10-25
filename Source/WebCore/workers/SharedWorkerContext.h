@@ -52,7 +52,7 @@ namespace WebCore {
         virtual bool isSharedWorkerContext() const { return true; }
 
         // EventTarget
-        virtual SharedWorkerContext* toSharedWorkerContext() { return this; }
+        virtual const AtomicString& interfaceName() const;
 
         // Setters/Getters for attributes in SharedWorkerContext.idl
         DEFINE_ATTRIBUTE_EVENT_LISTENER(connect);

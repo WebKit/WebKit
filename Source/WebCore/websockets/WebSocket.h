@@ -90,9 +90,9 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
     // EventTarget
-    virtual WebSocket* toWebSocket() { return this; }
-
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
+
     virtual void contextDestroyed();
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);

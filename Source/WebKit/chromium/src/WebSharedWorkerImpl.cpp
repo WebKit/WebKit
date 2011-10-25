@@ -92,7 +92,7 @@ void WebSharedWorkerImpl::connectTask(ScriptExecutionContext* context, PassOwnPt
     ASSERT(context->isWorkerContext());
     WorkerContext* workerContext = static_cast<WorkerContext*>(context);
     ASSERT(workerContext->isSharedWorkerContext());
-    workerContext->toSharedWorkerContext()->dispatchEvent(createConnectEvent(port));
+    workerContext->dispatchEvent(createConnectEvent(port));
 }
 
 void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long)
