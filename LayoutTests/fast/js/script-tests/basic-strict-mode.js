@@ -192,5 +192,3 @@ aGlobal = false;
 shouldBeTrue("(function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
 aGlobal = false;
 shouldBeTrue("(function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
-
-var successfullyParsed = true;

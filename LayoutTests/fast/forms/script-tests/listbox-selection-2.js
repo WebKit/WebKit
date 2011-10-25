@@ -85,5 +85,3 @@ shouldBe('selectionPattern("sl2")', '"010"');
 
 mouseDownOnSelect("sl2", 2);
 shouldBe('selectionPattern("sl2")', '"001"');
-
-var successfullyParsed = true;

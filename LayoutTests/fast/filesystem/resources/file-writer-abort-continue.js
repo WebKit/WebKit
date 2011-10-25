@@ -135,4 +135,3 @@ setupAndRunTest(2*1024*1024, 'file-writer-abort',
                     writer = fileWriter;
                     runTest(0, 1);
                 });
-var successfullyParsed = true;

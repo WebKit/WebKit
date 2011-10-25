@@ -1684,5 +1684,3 @@ shouldBe("i.apply(null, new Array(65536))", "65536");
 shouldThrow("i.apply(null, new Array(65537))");
 shouldThrow("i.apply(null, new Array(65537))");
 shouldThrow("i.apply(null, bigArray)");
-
-var successfullyParsed = true;

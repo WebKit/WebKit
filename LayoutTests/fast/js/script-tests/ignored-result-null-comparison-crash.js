@@ -17,5 +17,3 @@ function notEqualToNullTest(a)
 }
 
 shouldBeTrue("notEqualToNullTest()");
-
-var successfullyParsed = true;

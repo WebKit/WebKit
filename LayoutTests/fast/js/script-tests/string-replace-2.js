@@ -18,5 +18,3 @@ shouldBe("testString.replace(/([aeiou])([a-z])/g, function Capitalize(orig,re1,r
 shouldBe("testString.replace(/(.*)/g, function replaceWithDollars(matchGroup) { return '$1'; })", "\"$1$1\"");
 shouldBe("testString.replace(/(.)(.*)/g, function replaceWithMultipleDollars(matchGroup) { return '$1$2'; })", "\"$1$2\"");
 shouldBe("testString.replace(/(.)(.*)/, function checkReplacementArguments() { return arguments.length; })", "\"5\"");
-
-var successfullyParsed = true;

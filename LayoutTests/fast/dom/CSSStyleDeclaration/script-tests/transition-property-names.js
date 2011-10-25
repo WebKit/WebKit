@@ -9,5 +9,3 @@ shouldBe("element.style.webkitTransitionProperty", "'height'");
 
 element.style.webkitTransitionProperty = "opacity";
 shouldBe("element.style.webkitTransitionProperty", "'opacity'");
-
-var successfullyParsed = true;

@@ -6,5 +6,3 @@ try {
     eval('"\\');
 } catch (ex) {
 }
-
-var successfullyParsed = true;

@@ -11,5 +11,3 @@ arr[2] = arr;
 arr[3] = obj;
 
 shouldBe("arr.join()", "'1,2,,**'");
-
-successfullyParsed = true;

@@ -20,5 +20,3 @@ function f()
 }
 
 shouldBe("f()", "undefined");
-
-var successfullyParsed = true;

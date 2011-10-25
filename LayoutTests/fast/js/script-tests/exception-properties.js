@@ -21,5 +21,3 @@ try {
     shouldBe('Object.getPrototypeOf(nativeError).name', '"RangeError"');
     shouldBe('Object.getPrototypeOf(nativeError).message', '""');
 }
-
-successfullyParsed = true;

@@ -13,5 +13,3 @@ for (var i = 0; i < cases.length; ++i) {
   shouldBe("canonicalize('" + test_vector + "')",
            "'" + expected_result + "'");
 }
-
-var successfullyParsed = true;

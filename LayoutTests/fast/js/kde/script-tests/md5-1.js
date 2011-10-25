@@ -387,4 +387,3 @@ function MD5(entree)
 }
 
 shouldBe("MD5('kde')", "'186cf28b76f2264e9fea8fcf91cb4f5d'");
-successfullyParsed = true

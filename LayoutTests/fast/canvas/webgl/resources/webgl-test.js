@@ -28,7 +28,6 @@ function nonKhronosFrameworkNotifyDone() {
 }
 
 function finishTest() {
-  successfullyParsed = true;
   var epilogue = document.createElement("script")
   epilogue.onload = function() {
     if (window.nonKhronosFrameworkNotifyDone) {

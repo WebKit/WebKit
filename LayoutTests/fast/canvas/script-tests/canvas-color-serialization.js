@@ -243,5 +243,3 @@ trySettingColorWithSetter("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0)'");
 
 shouldBe("tryClearShadowAfterSettingColor('red')", "'rgba(0, 0, 0, 0)'");
 shouldBe("tryClearShadowAfterSettingColor('rgba(0, 5, 10, 0.4)')", "'rgba(0, 0, 0, 0)'");
-
-var successfullyParsed = true;

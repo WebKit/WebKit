@@ -14,5 +14,3 @@ shouldBe("unevalf(eval(unevalf(f2)))", "unevalf(f2)");
 shouldBe("unevalf(eval(unevalf(f3)))", "unevalf(f3)");
 shouldBe("unevalf(eval(unevalf(f4)))", "unevalf(f4)");
 shouldBe("unevalf(f2) != unevalf(f3)", "true");
-
-var successfullyParsed = true;

@@ -21,12 +21,17 @@ navigator.geolocation.getCurrentPosition(function(p) {
 
     // Yield to allow for the error callback to be invoked. The timer
     // must be started before the exception is thrown.
-    window.setTimeout(finishJSTest, 0);
+    window.setTimeout(assertWeGotException, 0);
     throw new Error('Exception in success callback');
 }, function(e) {
     testFailed('Error callback invoked unexpectedly');
     finishJSTest();
 });
 
+function assertWeGotException()
+{
+    shouldHaveHadError();
+    finishJSTest();
+}
+
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

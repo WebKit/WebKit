@@ -8,5 +8,3 @@ shouldThrow("1/*\n*/-->");
 shouldBeUndefined("-->");
 shouldBeUndefined("/**/-->");
 shouldBeUndefined("/*\n*/-->");
-
-var successfullyParsed = true;

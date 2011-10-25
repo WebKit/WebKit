@@ -25,5 +25,3 @@ labels = document.getElementById("id4").labels;
 shouldBe('labels.length', '1');
 document.getElementById("l4").htmlFor = "";
 shouldBe('labels.length', '0');
-
-var successfullyParsed = true;

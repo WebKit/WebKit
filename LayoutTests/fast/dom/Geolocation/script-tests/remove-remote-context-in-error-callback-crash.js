@@ -28,4 +28,3 @@ iframe.src = 'resources/remove-remote-context-in-error-callback-crash-inner.html
 document.body.appendChild(iframe);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

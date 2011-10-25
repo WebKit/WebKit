@@ -12,4 +12,3 @@ onpageshow = function(event) {
 }
 
 var jsTestIsAsync = true;
-var successfullyParsed = true;

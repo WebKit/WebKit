@@ -367,8 +367,6 @@ shouldBe("nonNumericPolicy('window.resizeTo(0, x)')", "'any type allowed'");
 window.resizeTo(10000, 10000);
 document.body.removeChild(testElementContainer);
 
-var successfullyParsed = true;
-
 /*
 
 Here are other examples of numeric types in function parameters and settable attributes that we could test:

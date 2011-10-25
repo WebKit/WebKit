@@ -30,5 +30,3 @@ window.onload = function() {
     } else
         debug("This test requires DumpRenderTree.");
 }
-
-var successfullyParsed = true;

@@ -225,5 +225,3 @@ function checkWebTimingAfterLoad()
 
 jsTestIsAsync = true;
 checkTimingBeforeLoad();
-
-var successfullyParsed = true;

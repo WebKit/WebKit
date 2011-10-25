@@ -61,5 +61,3 @@ test("[\\S\\sф ]", "Проверка \\r\\n", 0);
 
 test("[^z]", "Проверка \\r\\n", 0);
 test("[^ф]", "Проверка \\r\\n", 0);
-
-var successfullyParsed = true;

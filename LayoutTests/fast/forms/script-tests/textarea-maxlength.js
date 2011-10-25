@@ -151,5 +151,3 @@ createFocusedTextAreaWithMaxLength('invalid');
 textArea.value = '';
 document.execCommand('insertText', false, 'ABC');
 shouldBe('textArea.value', '"ABC"');
-
-var successfullyParsed = true;

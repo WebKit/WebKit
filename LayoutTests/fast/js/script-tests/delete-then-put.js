@@ -23,5 +23,3 @@ debug("define getter named c");
 a.__defineGetter__("c", function() { return 3 });
 shouldBe("props(a)", "'a,b,d,e,c'");
 debug("");
-
-var successfullyParsed = true;

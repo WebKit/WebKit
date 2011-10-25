@@ -44,5 +44,3 @@ test("\\109", "\x089");
 test("\\1009", "\x409");
 
 test("\\99", "99");
-
-var successfullyParsed = true;

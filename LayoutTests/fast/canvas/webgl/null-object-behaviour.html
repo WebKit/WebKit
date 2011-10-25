@@ -70,9 +70,6 @@ shouldGenerateGLError(context, context.INVALID_OPERATION, "context.getBufferPara
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 1, 1, 0, context.RGBA, context.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]))");
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.NEAREST)");
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.getTexParameter(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER)");
-
-
-successfullyParsed = true;
 </script>
 
 <script src="../../js/resources/js-test-post.js"></script>

@@ -31,4 +31,3 @@ function checkPosition(p) {
 
 navigator.geolocation.getCurrentPosition(checkPosition);
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

@@ -35,5 +35,3 @@ shouldBeEqualToString('testComputedStyle("1")', "none");
 shouldBeEqualToString('testComputedStyle("1.2")', "none");
 shouldBeEqualToString('testComputedStyle("-1")', "none");
 shouldBeEqualToString('testComputedStyle("12px")', "none");
-
-successfullyParsed = true;

@@ -22,7 +22,6 @@ function onTouchEnd()
     shouldBeFalse("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color') == 'rgba(11, 22, 33, 0)'")
     shouldBeNonNull("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color')");
     // Notify the test done.
-    successfullyParsed = true;
     isSuccessfullyParsed();
     layoutTestController.notifyDone();
 }

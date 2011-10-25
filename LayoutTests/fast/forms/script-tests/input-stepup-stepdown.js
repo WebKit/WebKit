@@ -122,5 +122,3 @@ shouldThrow('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"
 shouldThrow('input.stepDown(0)', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
 shouldThrow('input.stepUp()', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
 shouldThrow('input.stepUp(0)', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
-
-var successfullyParsed = true;

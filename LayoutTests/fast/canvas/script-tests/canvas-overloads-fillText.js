@@ -11,5 +11,3 @@ shouldThrow("ctx.fillText('moo',0)", "NotEnoughArguments");
 shouldBe("ctx.fillText('moo',0,0)", "undefined");
 shouldBe("ctx.fillText('moo',0,0,0)", "undefined");
 shouldBe("ctx.fillText('moo',0,0,0,0)", "undefined");
-
-var successfullyParsed = true;

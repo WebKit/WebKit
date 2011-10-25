@@ -18,4 +18,3 @@ iframe.src = 'resources/callback-to-remote-context-inner.html';
 document.body.appendChild(iframe);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

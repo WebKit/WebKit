@@ -80,4 +80,3 @@ iframe.src = "resources/page-scaled-mouse-click-iframe-inner.html";
 document.body.insertBefore(iframe, document.body.firstChild);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

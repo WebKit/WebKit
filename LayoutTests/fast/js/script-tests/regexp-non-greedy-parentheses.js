@@ -10,5 +10,3 @@ shouldBe('"abbc".match(/(a)??(b+)??c/)', '["abbc", "a", "bb"]');
 shouldBe('"ac".match(/(a)??(b)??c/)', '["ac", "a", undefined]');
 shouldBe('"abc".match(/(a(b)??)??c/)', '["abc", "ab", "b"]');
 shouldBe('"ac".match(/(a(b)??)??c/)', '["ac", "a", undefined]');
-
-var successfullyParsed = true;

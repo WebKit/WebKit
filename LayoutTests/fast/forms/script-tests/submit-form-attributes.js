@@ -193,5 +193,3 @@ shouldBe('button.formTarget', '"100"');
 shouldBe('button.getAttribute("formTarget")', '"100"');
 button.setAttribute('formTarget', 281);
 shouldBe('button.formTarget', '"281"');
-
-var successfullyParsed = true;

@@ -160,5 +160,3 @@ with1Result = with1();
 shouldBe("with1Result", "5");
 with2Result = with2();
 shouldBe("with2Result", "5");
-
-var successfullyParsed = true;

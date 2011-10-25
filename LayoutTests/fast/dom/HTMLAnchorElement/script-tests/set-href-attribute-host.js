@@ -112,5 +112,3 @@ debug("Set host to a URL with tel: protocol");
 a.href = "tel:+1-816-555-1212";
 a.host = "+1-800-555-1212";
 shouldBe("a.href", "'tel:+1-816-555-1212'");
-
-var successfullyParsed = true;

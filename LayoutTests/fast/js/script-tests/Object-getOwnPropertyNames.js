@@ -110,5 +110,3 @@ var expectedGlobalPropertyNames = [
 
 for (var i = 0; i < expectedGlobalPropertyNames.length; ++i)
     shouldBeTrue("globalPropertyNames.indexOf('" + expectedGlobalPropertyNames[i] + "') != -1");
-
-var successfullyParsed = true;

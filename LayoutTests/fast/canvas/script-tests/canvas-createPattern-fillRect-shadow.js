@@ -162,5 +162,3 @@ function checkPixels() {
     shouldBe('d[2]', '0');
     shouldBeAround('d[3]', '29');
 }
-
-var successfullyParsed = true;

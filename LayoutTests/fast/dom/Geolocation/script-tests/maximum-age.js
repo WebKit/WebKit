@@ -80,4 +80,3 @@ function testZeroMaximumAgeError() {
 }
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

@@ -50,5 +50,3 @@ delete testArray[19];
 
 lastIndex = testArray.lastIndexOf(undefined);
 shouldBe('lastIndex', '-1');
-
-var successfullyParsed = true;

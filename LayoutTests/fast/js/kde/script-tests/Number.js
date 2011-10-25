@@ -473,4 +473,3 @@ shouldBe("Number(0).toPrecision(18)","\"0.00000000000000000\"");
 shouldBe("Number(0).toPrecision(19)","\"0.000000000000000000\"");
 shouldBe("Number(0).toPrecision(20)","\"0.0000000000000000000\"");
 shouldBe("Number(0).toPrecision(21)","\"0.00000000000000000000\"");
-successfullyParsed = true

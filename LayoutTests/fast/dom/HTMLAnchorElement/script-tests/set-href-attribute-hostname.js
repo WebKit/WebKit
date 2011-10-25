@@ -68,5 +68,3 @@ debug("Set hostname to undefined");
 a.href = "https://www.mydomain.com:8080/path/";
 a.hostname = undefined;
 shouldBe("a.href", "'https://undefined:8080/path/'");
-
-var successfullyParsed = true;

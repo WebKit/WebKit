@@ -8,5 +8,3 @@ shouldBe("canvas.getContext('This is clearly not a valid context name.')", "null
 shouldBe("canvas.getContext('2d\0')", "null");
 shouldBe("canvas.getContext('2\uFF44')", "null");
 shouldBe("canvas.getContext('2D')", "null");
-
-var successfullyParsed = true;

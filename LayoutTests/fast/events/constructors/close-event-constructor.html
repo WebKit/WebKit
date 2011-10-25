@@ -82,8 +82,6 @@ shouldBe("new CloseEvent('eventType', { bubbles: true, cancelable: true, wasClea
 shouldBe("new CloseEvent('eventType', { bubbles: true, cancelable: true, wasClean: true, code : 12345, reason: 'koakuma' }).wasClean", "true");
 shouldBe("new CloseEvent('eventType', { bubbles: true, cancelable: true, wasClean: true, code : 12345, reason: 'koakuma' }).code", "12345");
 shouldBeEqualToString("new CloseEvent('eventType', { bubbles: true, cancelable: true, wasClean: true, code : 12345, reason: 'koakuma' }).reason", "koakuma");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

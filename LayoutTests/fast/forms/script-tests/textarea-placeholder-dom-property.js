@@ -11,5 +11,3 @@ shouldBeEqualToString('textarea.value', '');
 textarea.placeholder = 'p2';
 shouldBeEqualToString('textarea.getAttribute("placeholder")', 'p2');
 shouldBeEqualToString('textarea.placeholder', 'p2');
-
-var successfullyParsed = true;

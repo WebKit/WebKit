@@ -40,4 +40,3 @@ childFrame.contentWindow.addEventListener('deviceorientation', childFrameListene
 window.addEventListener('deviceorientation', mainFrameListener);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

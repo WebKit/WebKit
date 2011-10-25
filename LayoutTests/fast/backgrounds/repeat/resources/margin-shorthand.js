@@ -14,5 +14,3 @@ function iconMarginValue()
 }
 
 shouldBe('iconMarginValue()', '"null"');
-
-var successfullyParsed = true;

@@ -57,5 +57,3 @@ if (window.eventSender) {
 } else {
     debug("This test requires DumpRenderTree.  To manually test, 1) focus on the textarea above and push numpad keys without locking NumLock and 2) see if the location= value is 3 (DOM_KEY_LOCATION_NUMPAD specified in DOM level 3).");
 }
-
-var successfullyParsed = true;

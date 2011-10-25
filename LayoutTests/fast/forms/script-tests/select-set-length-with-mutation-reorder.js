@@ -32,5 +32,3 @@ sel.length = 2;
 shouldBe('sel.length', '2');
 shouldBe('sel.options.item(0).id', '"a"');
 shouldBe('sel.options.item(1).id', '"b"');
-
-var successfullyParsed = true;

@@ -204,5 +204,3 @@ shouldBe("resultArray[2].item", "mediaList.item(2)");
 debug("");
 
 document.body.removeChild(testingGround);
-
-var successfullyParsed = true;

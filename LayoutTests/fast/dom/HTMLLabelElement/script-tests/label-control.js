@@ -61,5 +61,3 @@ debug("Test label with 'for' attribute which is not a labelable form control - o
 document.write("<label for='optionId' id='test13'><input id='inputId13'></label><option id='optionId'></option>");
 shouldBe("document.getElementById('test13').htmlFor", "'optionId'");
 shouldBe("document.getElementById('test13').control", "null");
-
-var successfullyParsed = true;

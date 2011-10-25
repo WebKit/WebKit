@@ -85,5 +85,3 @@ shouldBe("regex23.exec('ax')", "null");
 var regex24 = /(?=a|b?)c/;
 shouldBe("regex24.exec('x')", "null");
 
-var successfullyParsed = true;
-

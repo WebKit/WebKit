@@ -52,5 +52,3 @@ shouldBe("String.prototype.toLocaleLowerCase.call(1224)", '"1224"');
 shouldBe("String.prototype.toLocaleUpperCase.call(1224)", '"1224"');
 shouldBe("String.prototype.trim.call(1224)", '"1224"');
 Number.prototype.toString = numberPrototypeToString;
-
-var successfullyParsed = true;

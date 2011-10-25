@@ -20,5 +20,3 @@ shouldBe("XMLHttpRequest.OPENED", "1");
 shouldBe("XMLHttpRequest.HEADERS_RECEIVED", "2");
 shouldBe("XMLHttpRequest.LOADING", "3");
 shouldBe("XMLHttpRequest.DONE", "4");
-
-var successfullyParsed = true;

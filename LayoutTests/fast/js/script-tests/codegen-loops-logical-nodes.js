@@ -1055,5 +1055,3 @@ function float_dowhile_not_and_lesseq()
     } while (!(a <= 1.1 && a <= 1.1))
     return false;
 }
-
-var successfullyParsed = true;

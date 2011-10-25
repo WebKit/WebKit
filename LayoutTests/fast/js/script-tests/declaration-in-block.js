@@ -4,5 +4,3 @@ description(
 
 if (0) { var b; }
 var a = b;
-
-var successfullyParsed = true;

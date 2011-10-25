@@ -34,7 +34,7 @@ PASS newWin.locationbar.visible is true
 PASS newWin.locationbar.visible is false
 PASS newWin.locationbar.visible is true
 PASS newWin.locationbar.visible is false
-PASS window.successfullyParsed is true
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

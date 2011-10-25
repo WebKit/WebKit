@@ -3,5 +3,3 @@ description(
 );
 
 debug(-parseFloat("NAN(ffffeeeeeff0f)"));
-
-var successfullyParsed = true;

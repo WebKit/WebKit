@@ -28,5 +28,3 @@ y = 0;
 y = y--;
 shouldBe("y", "0");
 
-var successfullyParsed = true;
-

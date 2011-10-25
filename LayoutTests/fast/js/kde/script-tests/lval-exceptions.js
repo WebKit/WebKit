@@ -48,5 +48,3 @@ function fnShouldNotThrow(f)
     testFailed(f + " threw an exception " + e + " when no exception expected");
   }
 }
-
-var successfullyParsed = true;

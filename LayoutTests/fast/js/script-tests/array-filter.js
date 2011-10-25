@@ -75,4 +75,3 @@ shouldBe("([0,1,2,3,4]).filter(filterLog(passEven))", "[0,2,4]");
 shouldBe("(mixPartialAndFast).filter(filterLog(passAfter5))", "[5,6,7,8,9,sparseArrayLength-1]");
 
 shouldBe("[1,2,3].filter(function(i,j,k,l,m){ return m=!m; })", "[1,2,3]")
-successfullyParsed = true;

@@ -58,5 +58,3 @@ for (var i = 0; i < attributes.length; ++i) {
         + "e.getAttribute('" + contentAttribute + "')",
         "''");
 }
-
-var successfullyParsed = true;

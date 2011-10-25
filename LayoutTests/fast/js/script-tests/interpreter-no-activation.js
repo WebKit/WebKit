@@ -15,5 +15,3 @@ function f2(a,b,c,d) {
 }
 shouldBeTrue("f2(true)");
 testPassed("Didn't crash");
-
-var successfullyParsed = true;

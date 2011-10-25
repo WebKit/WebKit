@@ -159,5 +159,3 @@ shouldBe("testSetStrokeColor('0, 1, 0, 0.8')", "translucentGreen");
 shouldBe("testSetStrokeColor('0, 0, 0, 1, 1')", "'#1a1a1a'");                  // This test is expected to fail on older versions of Mac OS X.
 shouldBe("testSetStrokeColor('0, 0, 0, 1, 0.8')", "'rgba(25, 25, 25, 0.8)'");  // Ditto.
 shouldBe("testSetStrokeColor('0, 0, 0, 1, 0')", "transparent");
-
-var successfullyParsed = true;

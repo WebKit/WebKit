@@ -56,5 +56,3 @@ walker.currentNode = testElement.querySelectorAll('#B3')[0];
 shouldBe("walker.previousNode(); walker.currentNode.id", "'B2'");
 shouldBe("walker.previousNode(); walker.currentNode.id", "'C1'");
 shouldBe("walker.previousNode(); walker.currentNode.id", "'A1'");
-
-var successfullyParsed = true;

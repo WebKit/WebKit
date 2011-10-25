@@ -47,8 +47,6 @@ shouldBe("new HashChangeEvent('eventType', { bubbles: true, cancelable: true, ol
 shouldBe("new HashChangeEvent('eventType', { bubbles: true, cancelable: true, oldURL: 'doremi', newURL: 'andre' }).cancelable", "true");
 shouldBeEqualToString("new HashChangeEvent('eventType', { bubbles: true, cancelable: true, oldURL: 'doremi', newURL: 'andre' }).oldURL", "doremi");
 shouldBeEqualToString("new HashChangeEvent('eventType', { bubbles: true, cancelable: true, oldURL: 'doremi', newURL: 'andre' }).newURL", "andre");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

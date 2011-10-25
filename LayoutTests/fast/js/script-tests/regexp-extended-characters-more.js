@@ -5,5 +5,3 @@ description(
 shouldBe('"foo\\xa0\\xa0\\xa0".replace(/\\xa0*/, "")', '"foo\\xa0\\xa0\\xa0"');
 shouldBe('"foo\\xa0\\xa0\\xa0".replace(/\\xa0+/, "")', '"foo"');
 shouldBe('"foo\\xa0\\xa0\\xa0".replace(/\\xa0*$/, "")', '"foo"');
-
-var successfullyParsed = true;

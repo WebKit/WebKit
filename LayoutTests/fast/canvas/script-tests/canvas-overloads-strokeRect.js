@@ -11,5 +11,3 @@ shouldBe("ctx.strokeRect(0, 0)", "undefined");
 shouldBe("ctx.strokeRect(0, 0, 0)", "undefined");
 shouldBe("ctx.strokeRect(0, 0, 0, 0)", "undefined");
 shouldBe("ctx.strokeRect(0, 0, 0, 0, 0)", "undefined");
-
-var successfullyParsed = true;

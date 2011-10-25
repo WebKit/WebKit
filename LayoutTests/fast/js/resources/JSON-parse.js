@@ -572,5 +572,4 @@ for (var i = 0; i < tests.length; i++) {
         debug(e);
     }
 }
-successfullyParsed = true;
 

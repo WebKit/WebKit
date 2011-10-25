@@ -154,5 +154,3 @@ var textareaWith8pxPaddingAndScrollbarSizesStandards = {clientWidth: 68 - scroll
 testTextareasForDocument(standardsIframe.contentWindow.document, 'CSS1Compat',
                          textareaSizesStandards, textareaWithScrollSizesStandards,
                          textareaWith8pxPaddingSizesStandards, textareaWith8pxPaddingAndScrollbarSizesStandards);
-
-var successfullyParsed = true;

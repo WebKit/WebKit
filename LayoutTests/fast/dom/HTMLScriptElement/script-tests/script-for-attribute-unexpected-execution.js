@@ -10,5 +10,3 @@ document.write('<script for="  WINDOW  " event="  ONLOAD()  ">testPassed(\'for=W
 document.write('<script for="window" event="onresize">testFailed(\'for=window event=onresize\');</script>');
 document.write('<script for="document" event="onload">testFailed(\'for=document event=onload\');</script>');
 document.write('<script for="document" event="onclick">testFailed(\'for=document event=onclick\');</script>');
-
-var successfullyParsed = true;

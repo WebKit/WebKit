@@ -32,5 +32,3 @@ shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.
 shouldBeUndefined("context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false)");
 shouldBeUndefined("context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)");
 shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, video)");
-
-successfullyParsed = true;

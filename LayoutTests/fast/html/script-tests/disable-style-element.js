@@ -35,5 +35,3 @@ shouldBeFalse('otherStyle.disabled');
 
 
 document.body.removeChild(testElement);
-
-successfullyParsed = true;

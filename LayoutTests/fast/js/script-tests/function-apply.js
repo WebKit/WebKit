@@ -293,5 +293,3 @@ shouldThrow("var a = []; a.length = 0xFFFFFFFF; [].constructor.apply('', a).leng
 
 // ES5 permits apply with array-like objects.
 shouldBe("(function(a,b,c,d){ return d ? -1 : (a+b+c); }).apply(undefined, {length:3, 0:100, 1:20, 2:3})", '123');
-
-var successfullyParsed = true;

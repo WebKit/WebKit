@@ -62,8 +62,6 @@ locationSx = contextA.getUniformLocation(programS, "u_struct.x");
 locationArray0 = contextA.getUniformLocation(programS, "u_array[0]");
 shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.uniform1i(locationSx, 3)");
 shouldBe("contextA.getUniform(programS, locationSx)", "3");
-
-successfullyParsed = true;
 </script>
 
 <script src="../../js/resources/js-test-post.js"></script>

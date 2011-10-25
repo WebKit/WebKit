@@ -13,5 +13,3 @@ shouldBeTrue('input.hasAttribute("incremental")');
 
 input.incremental = false;
 shouldBeFalse('input.hasAttribute("incremental")');
-
-var successfullyParsed = true;

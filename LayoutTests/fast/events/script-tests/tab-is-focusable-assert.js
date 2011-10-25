@@ -14,5 +14,3 @@ if (window.eventSender)
     eventSender.keyDown('\t');
 
 testPassed('No crash');
-
-var successfullyParsed = true;

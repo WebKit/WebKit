@@ -259,5 +259,3 @@ shouldBeEqualToString('typeof element.classList', 'object');
 shouldEvaluateTo('element.classList.constructor', 'DOMTokenList');
 
 shouldBeTrue('element.classList === element.classList');
-
-var successfullyParsed = true;

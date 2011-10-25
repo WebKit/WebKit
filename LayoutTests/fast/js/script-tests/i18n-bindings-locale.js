@@ -147,5 +147,3 @@ localeTests = function() {
         allTests[test]();
     }
 })();
-
-var successfullyParsed = true;

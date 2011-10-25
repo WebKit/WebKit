@@ -42,8 +42,6 @@ function failFrameLoaded()
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
-
-var successfullyParsed = true;
 </script>
 <iframe src="about:blank" id="pass" name="passFrame" onload="passFrameLoaded()"></iframe>
 <iframe src="about:blank" id="fail" name="failFrame" onload="failFrameLoaded()"></iframe>

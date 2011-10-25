@@ -39,5 +39,3 @@ i2.formNoValidate = "something";
 shouldBe("i2.hasAttribute('formNoValidate')", "true");
 shouldBe("i2.getAttribute('formNoValidate')", "''");
 shouldBe("i2.formNoValidate", "true");
-
-var successfullyParsed = true;

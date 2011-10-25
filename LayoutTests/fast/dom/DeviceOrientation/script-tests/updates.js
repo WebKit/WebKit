@@ -34,4 +34,3 @@ setMockOrientation(1.1, 2.2, 3.3);
 window.addEventListener('deviceorientation', firstListener);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

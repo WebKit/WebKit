@@ -45,5 +45,3 @@ function gc()
     } catch (e) {
     }
 })();
-
-var successfullyParsed = true;

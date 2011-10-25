@@ -89,5 +89,3 @@ shouldBe('fontSizeAttributeEffect("a")', 'null');
 
 var arabicIndicDigitOne = String.fromCharCode(0x661);
 shouldBe('fontSizeAttributeEffect(arabicIndicDigitOne)', 'null');
-
-var successfullyParsed = true;

@@ -34,5 +34,3 @@ sendKeyEvent(higher, 'Down');
 shouldBe('higher.value', 'higher.max');
 
 parent.innerHTML = '';
-
-var successfullyParsed = true;

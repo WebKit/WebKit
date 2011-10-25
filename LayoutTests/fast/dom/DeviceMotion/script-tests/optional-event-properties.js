@@ -116,5 +116,3 @@ shouldBeTrue("event.rotationRate.alpha == null");
 shouldBeTrue("event.rotationRate.beta == null");
 shouldBeTrue("event.rotationRate.gamma == 3");
 shouldBeTrue("event.interval == null");
-
-window.successfullyParsed = true;

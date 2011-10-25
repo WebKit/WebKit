@@ -34,5 +34,3 @@ table.tHead.appendChild(tr1);
 shouldBe("table.rows[0]", "table.tHead.firstChild");
 shouldBe("table.rows.length", "2");
 shouldBe("table.rows[1]", "table.tBodies[0].firstChild");
-
-var successfullyParsed = true;

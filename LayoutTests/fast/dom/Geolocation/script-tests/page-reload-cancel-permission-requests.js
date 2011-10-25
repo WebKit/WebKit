@@ -40,5 +40,3 @@ if (!isReload) {
     iframe.src = 'resources/page-reload-cancel-permission-requests-inner.html';
     document.body.appendChild(iframe);
 }
-
-window.successfullyParsed = true;

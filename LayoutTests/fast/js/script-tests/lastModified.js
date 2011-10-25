@@ -3,5 +3,3 @@ description(
 );
 
 shouldBeTrue("'lastModified' in document");
-
-var successfullyParsed = true;

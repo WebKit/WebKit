@@ -15,5 +15,3 @@ shouldBe('(new RegExp("[a-\u0100]")).exec("a").toString()', '"a"');
 shouldBe('(new RegExp("[\u0100]")).exec("\u0100").toString()', '"\u0100"');
 shouldBe('(new RegExp("[\u0100-\u0101]")).exec("\u0100").toString()', '"\u0100"');
 shouldBe('(new RegExp("\u0100")).exec("\u0100").toString()', '"\u0100"');
-
-var successfullyParsed = true;

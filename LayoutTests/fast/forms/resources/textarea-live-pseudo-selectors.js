@@ -101,5 +101,3 @@ el.maxLength = 5;
 shouldBe(elBackground, 'invalidColor');
 el.maxLength = 10;
 shouldBe(elBackground, 'validColor');
-
-var successfullyParsed = true;

@@ -4,5 +4,3 @@ description(
 
 shouldBe('"abc".slice(0)', '"abc"');
 shouldBe('"abc".slice(0, Infinity)', '"abc"');
-
-var successfullyParsed = true;

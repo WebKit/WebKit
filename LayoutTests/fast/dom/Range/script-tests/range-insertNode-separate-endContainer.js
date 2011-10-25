@@ -34,5 +34,3 @@ shouldBeEqualToString("r.toString()", "PQRXYZABC")
 
 // clean up after ourselves
 document.body.removeChild(p);
-
-var successfullyParsed = true;

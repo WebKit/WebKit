@@ -67,5 +67,3 @@ shouldBe("o8.numSets", "0");
 ({getter:"foo", b:"bar"});
 testObj=({get getter(){return 'getter was called.'}, b: 'bar'})
 shouldBe("typeof testObj.getter", "'string'");
-
-var successfullyParsed = true;

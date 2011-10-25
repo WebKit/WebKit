@@ -5,5 +5,3 @@ description(
 var r = document.createRange();
 shouldBeTrue("r.cloneContents() != undefined");
 shouldBeTrue("r.cloneContents() != null");
-
-var successfullyParsed = true;

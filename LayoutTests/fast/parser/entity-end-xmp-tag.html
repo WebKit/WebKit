@@ -12,8 +12,6 @@ description("Test parsing of entity-escaped &lt;/xmp&gt; tag for <a href=\"https
 
 var expectedResult = '&lt;' + '/xmp>';
 shouldBe('document.getElementById("myxmp").textContent', 'expectedResult');
-
-successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

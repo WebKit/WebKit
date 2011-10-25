@@ -26,5 +26,3 @@ gc();
 
 // Test that the classList wrapper persisted the GC and still has the custom property.
 shouldEvaluateTo('d.classList.life', 42);
-
-var successfullyParsed = true;

@@ -25,8 +25,6 @@ shouldBe('input.setAttribute("max", "10"); input.value', '"10"');
 
 debug("value attribute should not change the value after you set a value")
 shouldBe('input.value = 10; input.setAttribute("value", "5"); input.value', '"10"');
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

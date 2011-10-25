@@ -51,5 +51,3 @@ window.onload = function () {
                   + 'for(var i = 0; i < constructors.length; i++) if(window[constructors[i]])'
                   + 'window[constructors[i]].cachedOnOwnerDocument = true;</script>';
 }
-
-successfullyParsed = true;

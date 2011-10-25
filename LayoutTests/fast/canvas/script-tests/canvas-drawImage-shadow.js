@@ -160,5 +160,3 @@ function checkPixels() {
     shouldBe('d[2]', '0');
     shouldBe('d[3]', '0');
 }
-
-var successfullyParsed = true;

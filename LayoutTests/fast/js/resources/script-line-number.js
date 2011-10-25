@@ -22,5 +22,3 @@ function assertErrorOnLine(error, expectedLine)
 {
     shouldBe(stringify(getLineFromError(error)), stringify(expectedLine));
 }
-
-var successfullyParsed = true;

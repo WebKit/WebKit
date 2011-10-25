@@ -54,5 +54,3 @@ function t2() {
 }
 
 t2();
-
-successfullyParsed = true;

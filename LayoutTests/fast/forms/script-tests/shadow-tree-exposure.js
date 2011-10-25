@@ -71,5 +71,3 @@ shouldBe("getSelection().type", "'Range'");
 document.body.removeChild(container);
 
 debug("");
-
-var successfullyParsed = true;

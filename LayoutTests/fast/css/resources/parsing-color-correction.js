@@ -18,5 +18,3 @@ shouldBe('test("-webkit-color-correction: srgb;")', '"srgb"');
 shouldBe('test("-webkit-color-correction: apple;")', 'null');
 shouldBe('test("-webkit-color-correction: 15;")', 'null');
 shouldBe('test("-webkit-color-correction: auto;")', 'null');
-
-var successfullyParsed = true;

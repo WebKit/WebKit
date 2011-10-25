@@ -25,5 +25,3 @@ shouldBeEqualToString('output.defaultValue', 'another defaultValue');
 shouldBeEqualToString('output.value', 'another defaultValue');
 shouldBeEqualToString('output.innerText', 'another defaultValue');
 shouldBeEqualToString('output.innerHTML', 'another defaultValue');
-
-var successfullyParsed = true;

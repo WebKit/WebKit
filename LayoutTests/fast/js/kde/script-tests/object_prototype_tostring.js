@@ -25,4 +25,3 @@ shouldBe("_error.toString()","\"[object Error]\"");
 var _function = new Function();
 _function.toString = Object.prototype.toString;
 shouldBe("_function.toString()","\"[object Function]\"");
-successfullyParsed = true

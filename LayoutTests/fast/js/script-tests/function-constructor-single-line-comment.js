@@ -6,5 +6,3 @@ shouldBeTrue("(new Function('return true//'))()");
 shouldBeTrue("(new Function('return true;//'))()");
 shouldBeTrue("(new Function('a', 'return a//'))(true)");
 shouldBeTrue("(new Function('a', 'return a;//'))(true)");
-
-var successfullyParsed = true;

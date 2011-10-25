@@ -45,5 +45,3 @@ shouldBeFalse("regexp.test('c')");
 regexp = /^[\c]]$/;
 debug("\nTesting regexp: " + regexp);
 shouldBeTrue("regexp.test('c]')");
-
-var successfullyParsed = true;

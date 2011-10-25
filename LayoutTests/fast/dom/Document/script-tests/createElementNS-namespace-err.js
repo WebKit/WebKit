@@ -172,5 +172,3 @@ runNSTests(allNoNSTests, xhtmlDoc, "createElement");
 debug("XML createElement tests:")
 var xmlDoc = document.implementation.createDocument("http://www.example.com/foo", "example", null);
 runNSTests(allNoNSTests, xmlDoc, "createElement");
-
-var successfullyParsed = true;

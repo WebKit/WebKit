@@ -27,5 +27,3 @@ shouldBe("imgdata[64]", "255");
 shouldBe("imgdata[65]", "0");
 shouldBe("imgdata[66]", "0");
 shouldBe("imgdata[67]", "255");
-
-successfullyParsed = true;

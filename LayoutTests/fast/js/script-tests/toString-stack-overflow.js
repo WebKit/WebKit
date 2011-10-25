@@ -7,5 +7,3 @@ for(var i=1; i<10000; i++)
   ary=[ary, i];
 
 shouldThrow("ary.toString()");
-
-var successfullyParsed = true;

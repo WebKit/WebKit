@@ -10,5 +10,3 @@ shouldThrow("ctx.strokeText('moo',0)", "NotEnoughArguments");
 shouldBe("ctx.strokeText('moo',0,0)", "undefined");
 shouldBe("ctx.strokeText('moo',0,0,0)", "undefined");
 shouldBe("ctx.strokeText('moo',0,0,0,0)", "undefined");
-
-var successfullyParsed = true;

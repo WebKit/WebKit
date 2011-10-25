@@ -8,5 +8,3 @@ var shouldBeUndefined = (function(){
 })();
 
 shouldBe('shouldBeUndefined', 'undefined');
-
-var successfullyParsed = true;

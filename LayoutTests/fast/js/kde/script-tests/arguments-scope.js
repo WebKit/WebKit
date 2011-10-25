@@ -47,5 +47,3 @@ test1();
 test2(42);
 test3();
 test4();
-
-var successfullyParsed = true;

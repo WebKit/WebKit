@@ -8,5 +8,3 @@ try {
 } catch (e) {
 }
 shouldBeFalse("getterCalled");
-
-var successfullyParsed = true;

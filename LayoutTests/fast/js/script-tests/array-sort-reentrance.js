@@ -15,5 +15,3 @@ function compareFn2(a, b) {
 }
 
 numbers2.sort(compareFn2);
-
-var successfullyParsed = true;

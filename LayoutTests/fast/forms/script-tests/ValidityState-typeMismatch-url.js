@@ -80,5 +80,3 @@ if (strictHost) {
 
 // Disabled
 expectValid('invalid', true);
-
-var successfullyParsed = true;

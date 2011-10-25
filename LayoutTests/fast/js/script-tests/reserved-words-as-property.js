@@ -74,5 +74,3 @@ for (var i = 0; i < unreservedWords.length; i++)
 // test access via window.
 var yield = 42;
 shouldBeTrue("window.yield === 42");
-
-var successfullyParsed = true;

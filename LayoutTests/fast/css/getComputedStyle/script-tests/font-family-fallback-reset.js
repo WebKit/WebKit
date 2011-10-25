@@ -15,5 +15,3 @@ shouldBeEqualToString("window.getComputedStyle(timesDiv, null).fontFamily", "foo
 shouldBeEqualToString("window.getComputedStyle(cursiveDiv, null).fontFamily", "cursive");
 
 document.body.removeChild(wrapperDiv);
-
-var successfullyParsed = true;

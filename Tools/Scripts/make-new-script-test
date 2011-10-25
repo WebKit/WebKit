@@ -94,16 +94,13 @@ sub writeTestFile
 <meta charset="utf-8">
 <link rel="stylesheet" href="$relativePathToSharedSources/js-test-style.css">
 <script src="$relativePathToSharedSources/js-test-pre.js"></script>
-<title></title>
 </head>
 <body>
-<p>TEST DESCRIPTION HERE</p>
-<div id="console"></div>
 <script>
 
-// Your test script here. Feel free to modify surrounding HTML code if necessary.
+description("TEST DESCRIPTION HERE");
 
-var successfullyParsed = true;
+// Your test script here. Feel free to modify surrounding HTML code if necessary.
 
 </script>
 <script src="$relativePathToSharedSources/js-test-post.js"></script>

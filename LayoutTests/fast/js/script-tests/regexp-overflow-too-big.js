@@ -12,5 +12,3 @@ for (var i = 0; i < 18; ++i)
     complexInput += "a";
 
 shouldBe('new RegExp(complexPattern + complexPattern).exec(complexInput + complexInput)', 'null'); // Too big
-
-var successfullyParsed = true;

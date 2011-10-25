@@ -70,5 +70,3 @@ shouldBeEqualToString('test("ltr", "-webkit-border-end: 10px solid red", "border
 shouldBeEqualToString('test("rtl", "-webkit-border-end: 10px solid red", "border-left-color")', 'rgb(255, 0, 0)');
 shouldBeEqualToString('test("rtl", "-webkit-border-end: 10px solid red", "border-left-style")', 'solid');
 shouldBeEqualToString('test("rtl", "-webkit-border-end: 10px solid red", "border-left-width")', '10px');
-
-successfullyParsed = true;

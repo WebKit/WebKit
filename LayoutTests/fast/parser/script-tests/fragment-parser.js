@@ -31,5 +31,3 @@ shouldBe("parse('<html><base>')", "['','<html><body></body></html>']");
 shouldBe("parse('<html><div>')", "['<div></div>','<html><body></body></html>']");
 shouldBe("parse('<frameset>')", "['','<html><body></body></html>']");
 shouldBe("parse('<html>x', true)", "['x','no document element']");
-
-var successfullyParsed = true;

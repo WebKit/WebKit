@@ -16,5 +16,3 @@ shouldThrow("ctx.getImageData(10, 10, undefined, 10)", '"Error: NOT_SUPPORTED_ER
 shouldThrow("ctx.getImageData(10, 10, 10, undefined)", '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow("ctx.getImageData(10, 10, 0, 10)", '"Error: INDEX_SIZE_ERR: DOM Exception 1"');
 shouldThrow("ctx.getImageData(10, 10, 10, 0)", '"Error: INDEX_SIZE_ERR: DOM Exception 1"');
-
-successfullyParsed = true;

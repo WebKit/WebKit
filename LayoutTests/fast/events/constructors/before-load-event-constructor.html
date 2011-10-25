@@ -45,8 +45,6 @@ shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: {valueOf: functio
 shouldBe("new BeforeLoadEvent('eventType', { bubbles: true, cancelable: true, url: 'doremi' }).bubbles", "true");
 shouldBe("new BeforeLoadEvent('eventType', { bubbles: true, cancelable: true, url: 'doremi' }).cancelable", "true");
 shouldBe("new BeforeLoadEvent('eventType', { bubbles: true, cancelable: true, url: 'doremi' }).url", "'doremi'");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

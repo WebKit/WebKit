@@ -19,5 +19,3 @@ shouldBe("bar(6, 0)", "10");
 shouldBe("bar(6, 1)", "15");
 shouldBe("bar(6, false)", "10");
 shouldBe("bar(6, true)", "15");
-
-var successfullyParsed = true;

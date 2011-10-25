@@ -29,5 +29,3 @@ shouldBeEqualToString("r.toString()", "ABCDE3")
 
 // clean up after ourselves
 document.body.removeChild(p);
-
-var successfullyParsed = true;

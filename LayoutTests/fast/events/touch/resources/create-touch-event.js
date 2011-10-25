@@ -13,5 +13,3 @@ catch (e)
 {
     testFailed("An exception was thrown: " + e.message);
 }
-
-successfullyParsed = true;

@@ -33,8 +33,6 @@ var CHILD23 = CHILD22.nextSibling;
     result = document.evaluate(".//@id[string()='22']/parent::*", ROOT, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     checkSnapshot("//@id[string()='22']/parent::*", result, [CHILD22]);
 
-    var successfullyParsed = true;
-
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

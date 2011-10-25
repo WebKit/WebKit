@@ -96,5 +96,3 @@ SubwayData = [
 ];
 
 SubwayData.sort(natcompare)
-
-successfullyParsed = true;

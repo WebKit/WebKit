@@ -62,5 +62,3 @@ testNextEvent('divElement', 'focus');
 
 document.body.removeChild(divElement);
 document.body.removeChild(iframeElement);
-
-var successfullyParsed = true;

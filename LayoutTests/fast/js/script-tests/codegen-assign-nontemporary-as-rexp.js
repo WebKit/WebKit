@@ -31,5 +31,3 @@ function assign_as_rexp_2() {
 };
 
 shouldBe("assign_as_rexp_2()", "'PASS'");
-
-var successfullyParsed = true;

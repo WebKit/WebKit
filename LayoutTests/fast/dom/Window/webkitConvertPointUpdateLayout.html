@@ -2,7 +2,7 @@
   <head>
     <title>webkitConvertPointFromNodeToPage Test</title>
     <script src="../../js/resources/js-test-pre.js"></script>
-
+    <script src="../../js/resources/js-test-post-function.js"></script>
     <style type="text/css" media="screen">
 
       #test {
@@ -28,14 +28,11 @@
         y = Math.round(p.y);
         shouldBe('x', 60 + "");
         shouldBe('y', 70 + "");
-
-        shouldBeTrue("successfullyParsed");
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
+        
+        isSuccessfullyParsed();
       }
       
-      window.addEventListener('load', doTest, false);
-
-      successfullyParsed = true;
+      window.onload = doTest;
     </script>
 
   </head>

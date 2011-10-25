@@ -72,5 +72,3 @@ shouldBe("RegExp.prototype.test", "null");
 delete Object.prototype.__defineSetter__;
 shouldBe("Object.getOwnPropertyNames(Object.prototype).indexOf('__defineSetter__')", "-1");
 
-var successfullyParsed = true;
-

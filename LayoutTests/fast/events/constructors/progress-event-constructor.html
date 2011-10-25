@@ -70,8 +70,6 @@ shouldBe("new ProgressEvent('eventType', { bubbles: true, cancelable: true, leng
 shouldBe("new ProgressEvent('eventType', { bubbles: true, cancelable: true, lengthComputable: true, loaded: 12345, total: 12345 }).lengthComputable", "true");
 shouldBe("new ProgressEvent('eventType', { bubbles: true, cancelable: true, lengthComputable: true, loaded: 12345, total: 12345 }).loaded", "12345");
 shouldBe("new ProgressEvent('eventType', { bubbles: true, cancelable: true, lengthComputable: true, loaded: 12345, total: 12345 }).total", "12345");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

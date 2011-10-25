@@ -23,5 +23,3 @@ shouldBeTrue('output.checkValidity()');
 output.setCustomValidity('This should not be affected.');
 shouldBeEqualToString('output.validationMessage', '');
 shouldBeTrue('output.checkValidity()');
-
-var successfullyParsed = true;

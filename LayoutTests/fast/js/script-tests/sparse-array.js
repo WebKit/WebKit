@@ -17,5 +17,3 @@ shouldBe('array[50000]', '100');
 shouldBe('array[50001]', 'undefined');
 
 debug('');
-
-successfullyParsed = true;

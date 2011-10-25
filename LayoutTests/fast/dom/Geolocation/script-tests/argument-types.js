@@ -117,5 +117,4 @@ test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeou
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {timeout:"string"})', false);
 
 window.jsTestIsAsync = false;
-window.successfullyParsed = true;
 

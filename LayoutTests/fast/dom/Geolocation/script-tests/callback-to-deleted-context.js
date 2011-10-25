@@ -17,4 +17,3 @@ iframe.src = 'resources/callback-to-deleted-context-inner1.html';
 document.body.appendChild(iframe);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

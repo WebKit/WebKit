@@ -24,5 +24,3 @@ shouldBe("var ctr = 3; var x = (function Named(a,b){ if(--ctr) return 2 * Named(
 
 debug("regression test where kjs regarded an anonymous function declaration (which is illegal) as a FunctionExpr");
 shouldBe('var hadError = 0; try { eval("function(){ return 2; };"); } catch(e) { hadError = 1; }; hadError;', "1");
-
-var successfullyParsed = true;

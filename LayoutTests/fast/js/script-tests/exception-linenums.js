@@ -69,5 +69,3 @@ delete eval;
 eval = realEval;
 shouldBe("typeof e.sourceURL", '"string"');
 shouldBe("e.line", '64');
-
-var successfullyParsed = true;

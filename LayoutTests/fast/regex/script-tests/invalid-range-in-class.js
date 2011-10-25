@@ -25,5 +25,3 @@ shouldBe('/[\\d\\-\\d]+/.exec("1-3xy");', '["1-3"]');
 
 // A hyphen after a character-class is not invalid.
 shouldBe('/[\\d-]+/.exec("1-3xy")', '["1-3"]');
-
-var successfullyParsed = true;

@@ -32,5 +32,3 @@ eatRegisters(0);
 gc();
 
 shouldBe('testClosure()', '"success"');
-
-var successfullyParsed = true;

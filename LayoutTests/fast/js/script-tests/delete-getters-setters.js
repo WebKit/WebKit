@@ -97,5 +97,3 @@ o8.__defineGetter__("a", function() {});
 o8.__defineGetter__("b", function() {});
 delete o8.b;
 shouldThrow("o8.a.property");
-
-var successfullyParsed = true;

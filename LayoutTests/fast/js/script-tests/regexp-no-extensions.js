@@ -44,5 +44,3 @@ shouldBe('/(x)[\\1q]/.exec("xxq").toString()', '"xq,x"');
 shouldBe('/(x)[\\1q]/.exec("xx" + String.fromCharCode(1)).toString()', '"x" + String.fromCharCode(1) + ",x"');
 
 debug('');
-
-var successfullyParsed = true;

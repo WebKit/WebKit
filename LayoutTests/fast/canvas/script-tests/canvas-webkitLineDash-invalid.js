@@ -31,5 +31,3 @@ shouldBe("trySettingLineDashOffset(Infinity)", "1.5");
 shouldBe("trySettingLineDashOffset(-Infinity)", "1.5");
 shouldBe("trySettingLineDashOffset(NaN)", "1.5");
 shouldBe("trySettingLineDashOffset('string')", "1.5");
-
-var successfullyParsed = true;

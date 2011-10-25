@@ -9,4 +9,3 @@ function test() {
 }
 
 shouldBeTrue("test.toString().match('for *[(]j *in *index[)]') != null");
-var successfullyParsed = true;

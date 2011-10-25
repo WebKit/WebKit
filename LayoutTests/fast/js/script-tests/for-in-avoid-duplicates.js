@@ -18,5 +18,3 @@ for (var prop in obj) {
 }
 
 shouldBe("i", "2");
-
-var successfullyParsed = true;

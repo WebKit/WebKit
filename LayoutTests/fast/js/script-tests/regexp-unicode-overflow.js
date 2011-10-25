@@ -11,5 +11,3 @@ function createRegExs() {
 }
 
 createRegExs();
-
-var successfullyParsed = true;

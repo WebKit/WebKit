@@ -13,5 +13,3 @@ shouldBe('String("ǰ").toUpperCase()', '"J̌"');
 shouldBe('String("ﬃ").toUpperCase()', '"FFI"');
 shouldBe('String("FFI").toLowerCase()', '"ffi"');
 shouldBe('String("Ĳ").toLowerCase()', '"ĳ"');
-
-successfullyParsed = true;

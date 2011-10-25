@@ -38,5 +38,3 @@ shouldBe("('' + twoChar + twoChar + twoChar).replace('aa', 'bb')", "'bbaaaa'");
 shouldBe("('' + twoChar + twoChar + twoChar).replace('a', 'bb')", "'bbaaaaa'");
 
 shouldBe("'\"'.replace(/([^\\])?([\"'])/g, '$1\\$2')", "'\"'");
-
-var successfullyParsed = true;

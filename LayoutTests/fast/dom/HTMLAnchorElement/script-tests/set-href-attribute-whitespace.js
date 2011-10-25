@@ -45,5 +45,3 @@ shouldBe("a.hostname", "'www.mydomain.com'");
 debug("Set href that starts and ends with a combination of newlines, spaces and tabs");
 a.href = "\n \t\r \nhttps://www.mydomain.com/path/testurl.html?key=value\n \t\r \n";
 shouldBe("a.hostname", "'www.mydomain.com'");
-
-var successfullyParsed = true;

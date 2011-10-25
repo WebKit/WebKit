@@ -13,4 +13,3 @@ shouldBe("ReferenceError.length","1");
 shouldBe("SyntaxError.length","1");
 shouldBe("TypeError.length","1");
 shouldBe("URIError.length","1");
-successfullyParsed = true

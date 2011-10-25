@@ -16,5 +16,3 @@ shouldBeNull("xhr.upload.onload");
 shouldBeNull("xhr.upload.onloadstart");
 shouldBeNull("xhr.upload.onprogress");
 
-var successfullyParsed = true;
-

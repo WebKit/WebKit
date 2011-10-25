@@ -10,5 +10,3 @@ shouldBeEqualToString('computedStyle[computedStyle.length]', '');
 shouldBeUndefined('computedStyle[-1]')
 
 document.documentElement.removeChild(element);
-
-successfullyParsed = true;

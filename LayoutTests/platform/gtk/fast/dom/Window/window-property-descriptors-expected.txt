@@ -362,6 +362,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'devicePixelRatio') is 'obje
 PASS typeof Object.getOwnPropertyDescriptor(window, 'document') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'encodeURI') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'encodeURIComponent') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'errorMessage') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'escape') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'escapeHTML') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'eval') is 'object'

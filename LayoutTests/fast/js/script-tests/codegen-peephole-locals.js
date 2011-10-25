@@ -81,5 +81,3 @@ function for_less_test()
 }
 
 shouldBeTrue("for_less_test()");
-
-var successfullyParsed = true;

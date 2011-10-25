@@ -103,5 +103,3 @@ if (this.webkitRequestFileSystem) {
     helper.join(asyncTest1);
 } else
     debug("This test requires FileSystem API support.");
-
-var successfullyParsed = true;

@@ -251,9 +251,6 @@ var doc = (new DOMParser).parseFromString(
     'application/xml');
 test(doc, doc.documentElement, "child::*[self::chapter or self::appendix][position()=last()]", [doc.getElementsByTagName("chapter")[1]]);
 
-
-var successfullyParsed = true;
-
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

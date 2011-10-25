@@ -21,5 +21,3 @@ shouldBe('testURL("lowsrc", " " + url)', 'url');
 shouldBe('testURL("longDesc", url)', 'url');
 shouldBe('testURL("longDesc", "\\n" + url)', 'url');
 shouldBe('testURL("longDesc", " " + url)', 'url');
-
-var successfullyParsed = true;

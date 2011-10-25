@@ -9,4 +9,3 @@ document.execCommand('insertText', false, '1234');
 shouldBe('input.value', '"1234"');
 
 input.parentNode.removeChild(input);
-var successfullyParsed = true;

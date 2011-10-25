@@ -23,4 +23,3 @@ shouldBeTrue("Object.create(null, DescriptorWithConfigurableGetter).foo");
 shouldBeTrue("Object.create(null, DescriptorWithWritableGetter).foo");
 shouldBeTrue("Object.create(null, DescriptorWithGetGetter).foo");
 shouldBeTrue("Object.create(null, DescriptorWithSetGetter).foo");
-successfullyParsed = true;

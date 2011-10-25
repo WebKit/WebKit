@@ -211,5 +211,3 @@ el.required = false;
 shouldBe(elBackground, 'validColor');
 el.required = true;
 shouldBe(elBackground, 'invalidColor');
-
-var successfullyParsed = true;

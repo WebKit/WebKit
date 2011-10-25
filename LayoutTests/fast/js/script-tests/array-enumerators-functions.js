@@ -120,5 +120,3 @@ for (var f = 0; f < functions.length; f++) {
         }
     }
 }
-
-successfullyParsed = true;

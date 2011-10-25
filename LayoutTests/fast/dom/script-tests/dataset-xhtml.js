@@ -90,5 +90,3 @@ shouldBe("testForIn(['data-foo', 'data-bar', 'data-baz'])", "3");
 shouldBe("testForIn(['data-foo', 'data-bar', 'dataFoo'])", "2");
 shouldBe("testForIn(['data-foo', 'data-bar', 'style'])", "2");
 shouldBe("testForIn(['data-foo', 'data-bar', 'data-'])", "3");
-
-var successfullyParsed = true;

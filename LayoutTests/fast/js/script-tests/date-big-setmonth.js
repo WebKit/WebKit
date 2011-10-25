@@ -5,5 +5,3 @@ description(
 var d = new Date(1970, 0, 1);
 d.setMonth(128);
 shouldBe("d.valueOf()", "new Date(1980, 8, 1).valueOf()");
-
-var successfullyParsed = true;

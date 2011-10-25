@@ -34,5 +34,3 @@ a=({});
 a*=a*a*a;
 
 gc();
-
-var successfullyParsed = true;

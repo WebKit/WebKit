@@ -51,8 +51,6 @@ debug('Step attribute value and string representation:');
 shouldBe('input.step = "1"; setValueAsDateAndGetValue(0, 0, 0, 0)', '"00:00:00"');
 // If the step attribute value is 0.001 second and the millisecond part is 0, we should show the millisecond part.
 shouldBe('input.step = "0.001"; setValueAsDateAndGetValue(0, 0, 0, 0)', '"00:00:00.000"');
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

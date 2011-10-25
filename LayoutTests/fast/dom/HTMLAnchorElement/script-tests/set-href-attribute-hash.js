@@ -66,5 +66,3 @@ shouldBe("a.href", "'foo:bar#hash'");
 } catch(e) {
 debug("Exception: " + e.description);
 }
-
-var successfullyParsed = true;

@@ -97,5 +97,3 @@ shouldBe("parse('rgba(0, 0, 0, 0.996)')", "'RGBA[0, 0, 0, 254]'");
 shouldBe("parse('rgba(0, 0, 0, 0.997)')", "'RGBA[0, 0, 0, 255]'");
 shouldBe("parse('rgba(0, 0, 0, 0.998)')", "'RGBA[0, 0, 0, 255]'");
 shouldBe("parse('rgba(0, 0, 0, 0.999)')", "'RGBA[0, 0, 0, 255]'");
-
-var successfullyParsed = true;

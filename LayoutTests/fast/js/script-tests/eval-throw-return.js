@@ -29,5 +29,3 @@ shouldBe('eval("try{1; var i = 0; do { ++i; 2; throw \\"\\"; } while(i!=1);} cat
 shouldBe('eval("1; try{2; throwOnReturn();} catch(e){}")', "2");
 shouldBe('eval("1; twoFunc();")', "undefined");
 shouldBe('eval("1; with ( { a: 0 } ) { 2; }")', "2");
-
-var successfullyParsed = true;

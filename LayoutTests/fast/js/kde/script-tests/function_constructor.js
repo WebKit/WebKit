@@ -8,4 +8,3 @@ shouldBe("myfunc.toString == Function.prototype.toString","true");
 
 //printValue("myfunc"); = "(Internal function)" ### should display code
 //printValue("myfunc.prototype.constructor"); = "(Internal function)" ### should display code
-successfullyParsed = true

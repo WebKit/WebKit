@@ -51,5 +51,3 @@ test1();
 
 shouldBeFalse("gotWrongCatch");
 shouldBe("(stackLevel)", "(level - 1)");
-
-var successfullyParsed = true;

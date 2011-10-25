@@ -32,5 +32,3 @@ shouldBeTrue("passed1");
 shouldBeTrue("passed2");
 shouldBeTrue("passed3");
 shouldBeTrue("passed4");
-
-successfullyParsed = true;

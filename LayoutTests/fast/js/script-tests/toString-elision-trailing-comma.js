@@ -106,6 +106,3 @@ testToStringAndLength("f13", 2);
 testToStringAndLength("f14", 3);
 testToStringAndLength("f15", 2);
 testToStringAndLength("f16", 3);
-
-
-var successfullyParsed = true;

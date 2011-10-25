@@ -28,5 +28,3 @@ shouldBe("imgdata[0]", "255");
 shouldBe("imgdata[1]", "0");
 shouldBe("imgdata[2]", "0");
 shouldBe("imgdata[3]", "255");
-
-var successfullyParsed = true;

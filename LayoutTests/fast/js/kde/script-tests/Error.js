@@ -9,4 +9,3 @@ shouldBe("(new Error('msg')).name", "'Error'");
 shouldBe("Object.prototype.toString.apply(Error())", "'[object Error]'");
 shouldBe("Object.prototype.toString.apply(Error)", "'[object Function]'");
 shouldBe("Object.prototype.toString.apply(EvalError)", "'[object Function]'");
-successfullyParsed = true

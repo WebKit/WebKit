@@ -21,5 +21,3 @@ shouldBe("noChild.querySelectorAll('div').length", "0");
 
 shouldBeTrue("correctNode.webkitMatchesSelector('div')");
 shouldBeTrue("correctNode.webkitMatchesSelector('#testId')");
-
-var successfullyParsed = true;

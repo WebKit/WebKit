@@ -53,4 +53,3 @@ for (var a = [1,2,3], length = a.length, i = 0; i < length; i++) {
   list += a[i];
 }
 shouldBe("list", "'123'");
-successfullyParsed = true

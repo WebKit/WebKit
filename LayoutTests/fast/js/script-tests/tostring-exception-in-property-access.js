@@ -31,4 +31,3 @@ try {
     testPassed("PASS: Exception caught -- " + e);
 }
 shouldBe('localTest', "'Did not assign to result when subscript threw.'");
-var successfullyParsed = true;

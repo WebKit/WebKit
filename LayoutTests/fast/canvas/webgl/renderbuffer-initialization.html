@@ -77,8 +77,6 @@ if (gl) {
     // Testing buffer clearing won't change the clear values.
     var clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
     shouldBe("clearColor", "[1, 0, 0, 1]");
-
-    successfullyParsed = true;
 } else
     testFailed('canvas.getContext() failed');
 </script>

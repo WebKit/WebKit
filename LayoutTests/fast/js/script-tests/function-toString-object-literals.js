@@ -38,5 +38,3 @@ shouldThrow("compileAndSerialize('a = { -NaN: null }')");
 shouldThrow("compileAndSerialize('a = { -0: null }')");
 shouldThrow("compileAndSerialize('a = { -0.0: null }')");
 shouldThrow("compileAndSerialize('a = { -Infinity: null }')");
-
-var successfullyParsed = true;

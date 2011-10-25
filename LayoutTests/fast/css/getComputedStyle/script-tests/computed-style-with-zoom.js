@@ -80,5 +80,3 @@ var testData = [
 ];
 
 testData.forEach(testProperty);
-
-successfullyParsed = true;

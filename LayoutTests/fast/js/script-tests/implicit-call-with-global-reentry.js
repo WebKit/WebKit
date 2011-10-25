@@ -22,5 +22,3 @@ var testVar = "FAIL";
 shouldBe("testObject.toStringTest(); testVar;", '"PASS"');
 var testVar = "FAIL";
 shouldBe("testObject.valueOfTest(); testVar;", '"PASS"');
-
-successfullyParsed = true;

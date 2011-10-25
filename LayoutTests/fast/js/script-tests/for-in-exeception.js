@@ -21,5 +21,3 @@ function test(func) {
 shouldBeUndefined("test(throwUndefinedException)");
 shouldBeUndefined("test(throwNullException)");
 shouldThrow("test(throwStringException)");
-
-var successfullyParsed = true;

@@ -28,5 +28,3 @@ checkValueAsNumber('submit');
 checkValueAsNumber('tel');
 checkValueAsNumber('text');
 checkValueAsNumber('url');
-
-var successfullyParsed = true;

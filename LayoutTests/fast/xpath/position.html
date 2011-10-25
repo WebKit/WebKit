@@ -78,8 +78,6 @@ ROOT2.innerHTML = '<p num="1"></p><p num="2" type="warning"></p><p num="3" type=
     shouldBe("document.evaluate('p[@type=\"warning\"][5]/@num', ROOT2, null, XPathResult.STRING_TYPE, null).stringValue", "'6'");
     shouldBe("document.evaluate('p[5][@type=\"warning\"]/@num', ROOT2, null, XPathResult.STRING_TYPE, null).stringValue", "'5'");
 
-    var successfullyParsed = true;
-
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

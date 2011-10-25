@@ -3,5 +3,3 @@ description(
 );
 
 shouldBe('String.fromCharCode(88)', '"X"');
-
-var successfullyParsed = true;

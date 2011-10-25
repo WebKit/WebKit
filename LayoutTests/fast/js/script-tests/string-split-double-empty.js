@@ -4,5 +4,3 @@ description(
 
 shouldBe('"".split(/s+/)', '[""]');
 shouldBe('"".split(/s+/)', '[""]');
-
-var successfullyParsed = true;

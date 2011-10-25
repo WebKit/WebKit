@@ -46,5 +46,3 @@ check("telephone", "text");
 check("url", "url");
 check("uri", "text");
 
-var successfullyParsed = true;
-

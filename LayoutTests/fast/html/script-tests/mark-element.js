@@ -21,5 +21,3 @@ function getWeight(id) {
 shouldBe('getWeight("mark2")', '"bold"');
 shouldBe('getWeight("span1")', '"bold"');
 document.body.removeChild(testParent);
-
-var successfullyParsed = true;

@@ -45,5 +45,3 @@ debug("Set port to URL with foo: protocol");
 a.href = "foo://bar/";
 a.port = 50;
 shouldBe("a.href", "'foo://bar:50/'");
-
-var successfullyParsed = true;

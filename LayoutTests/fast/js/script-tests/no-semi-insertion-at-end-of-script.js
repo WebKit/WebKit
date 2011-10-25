@@ -2,5 +2,3 @@ description("Test to make sure we don't automatically insert semicolons at the e
 
 shouldThrow("if (0)");
 shouldThrow("eval('if (0)')");
-
-var successfullyParsed = true;

@@ -175,5 +175,3 @@ for (var t = 0; t < testList.length; ++t) {
     var message = {testNum: t, testData: currentTest[1]};
     window.postMessage(message, '*');
 }
-
-successfullyParsed = true;

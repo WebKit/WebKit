@@ -64,5 +64,3 @@ context.rect(0, 0, 50, 50);
 context.restore();
 context.fill();
 pixelShouldBe(75, 75, [0, 128, 0, 255]);
-
-var successfullyParsed = true;

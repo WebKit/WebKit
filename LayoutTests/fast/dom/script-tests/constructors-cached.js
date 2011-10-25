@@ -16,5 +16,3 @@ for (var i = 0; i < ctors.length; i++) {
         testFailed("Testing " + ctor + " threw " + e);
     }
 }
-
-successfullyParsed = true;

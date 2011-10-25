@@ -6,5 +6,3 @@ test.sort(function (v1, v2) {
 });
 
 shouldBe("String(test)", "'1,2,3'");
-
-var successfullyParsed = true;

@@ -89,5 +89,3 @@ shouldBe('canFind("зайка", "заика")', 'false');
 shouldBe('canFind("заика", "зайка")', 'false');
 
 debug('');
-
-var successfullyParsed = true;

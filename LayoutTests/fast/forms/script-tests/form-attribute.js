@@ -131,5 +131,3 @@ container.removeChild(owner);
 shouldBe('inputElement.form', 'null');
 container.appendChild(owner);
 shouldBe('inputElement.form', 'owner');
-
-var successfullyParsed = true;

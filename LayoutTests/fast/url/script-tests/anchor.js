@@ -16,5 +16,3 @@ for (var i = 0; i < cases.length; ++i) {
   shouldBe("canonicalize('http://www.example.com/#" + cases[i][0] + "')",
            "'http://www.example.com/#" + cases[i][1] + "'");
 }
-
-var successfullyParsed = true;

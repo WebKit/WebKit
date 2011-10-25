@@ -27,5 +27,3 @@ for (var i = 0; i < cases.length; ++i) {
 }
   // Invalid -- UTF-8 encoded surrogate value.
 shouldBeFalse("canonicalize('mailto:\xed\xa0\x80') == 'mailto:%EF%BF%BD'");
-                         
-var successfullyParsed = true;

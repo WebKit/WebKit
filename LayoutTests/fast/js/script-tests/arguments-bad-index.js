@@ -12,5 +12,3 @@ shouldBe('indexArguments("1 ", "a")', 'undefined');
 shouldBe('indexArguments(0xDEADBEEF)', 'undefined');
 shouldBe('indexArguments(0xFFFFFFFF)', 'undefined');
 
-var successfullyParsed = true;
-

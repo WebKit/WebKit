@@ -4,5 +4,3 @@ description(
 
 shouldBeUndefined('"x"[10]');
 shouldBeFalse('"x".hasOwnProperty(10)');
-
-var successfullyParsed = true;

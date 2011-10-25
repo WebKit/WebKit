@@ -37,5 +37,3 @@ function finishTest() {
 }
 
 jsTestIsAsync = true;
-
-var successfullyParsed = true;

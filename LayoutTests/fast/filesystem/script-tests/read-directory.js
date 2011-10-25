@@ -93,5 +93,3 @@ if (window.webkitRequestFileSystem) {
     window.jsTestIsAsync = true;
 } else
     debug("This test requires FileSystem API support.");
-
-window.successfullyParsed = true;

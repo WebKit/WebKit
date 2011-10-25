@@ -35,5 +35,3 @@ shouldBe("imageBorderWidth('10q')", "10");
 shouldBe("imageBorderWidth(' 10q')", "10");
 shouldBe("imageBorderWidth('10q ')", "10");
 shouldBe("imageBorderWidth(' 10q ')", "10");
-
-var successfullyParsed = true;

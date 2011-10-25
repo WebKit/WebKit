@@ -66,8 +66,6 @@
         var decompiledFunction = eval("(function () {  " + tests[test] + ";})").toString().replace(/\n/g, "");
         shouldBe("decompiledFunction", "'function () {  " + tests[test] + ";}'");
     }
-
-    var successfullyParsed = true;
 </script>
 <script src="resources/js-test-post.js"></script>
 </body>

@@ -75,4 +75,3 @@ shouldBe("myfunc.propertyIsEnumerable('length')","false");
 shouldBe("myfunc.propertyIsEnumerable('someproperty')","true");
 shouldBe("checkEnumerable(myfunc,'length')","false");
 shouldBe("checkEnumerable(myfunc,'someproperty')","true");
-successfullyParsed = true

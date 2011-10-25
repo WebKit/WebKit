@@ -32,5 +32,3 @@ shouldBe("b.author", "'Fred'");                  // outpus "Fred"
 ///////////////////////////////////////////////////////
 
 shouldBe("delete Boolean.prototype", "false");
-
-successfullyParsed = true

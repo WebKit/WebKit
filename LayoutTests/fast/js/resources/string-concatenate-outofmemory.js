@@ -48,5 +48,3 @@ try {
 } catch (o) {
     ensureStringIsUsable('append', 's', s);
 }
-
-var successfullyParsed = true;

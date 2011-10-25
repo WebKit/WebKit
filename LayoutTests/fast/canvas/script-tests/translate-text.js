@@ -42,5 +42,3 @@ ctx.fillStyle = 'rgb(0,0,0)';
 ctx.fillRect(0, 0, 500, 50);
 
 pixelShouldBe(ctx, 0, 0, "[0,255,0,255]");
-
-var successfullyParsed = true;

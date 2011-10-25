@@ -49,5 +49,3 @@ shouldBe("attr.ownerElement.tagName", "'P'");
 attr.value = 'c';
 
 shouldBe("attr.value", "'c'");
-
-var successfullyParsed = true;

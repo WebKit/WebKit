@@ -252,5 +252,3 @@ shouldBe("regexp58.exec('badbc')", "['a']");
 var regexp59 = /(X(?:.(?!X))*?Y)|(Y(?:.(?!Y))*?Z)/g;
 shouldBe("'Y aaa X Match1 Y aaa Y Match2 Z'.match(regexp59)", "['X Match1 Y','Y Match2 Z']");
 
-var successfullyParsed = true;
-

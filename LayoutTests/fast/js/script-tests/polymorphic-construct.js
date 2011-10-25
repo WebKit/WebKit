@@ -27,5 +27,3 @@ for (var i = 0; i < 3; ++i) {
     shouldBe("construct(Bar).field", "'bar'");
     shouldBe("construct(Baz).field", "'baz'");
 }
-
-var successfullyParsed = true;

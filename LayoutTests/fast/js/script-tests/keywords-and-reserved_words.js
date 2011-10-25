@@ -111,5 +111,3 @@ shouldBe('classifyIdentifier("protected")', '"strict"');
 shouldBe('classifyIdentifier("public")', '"strict"');
 shouldBe('classifyIdentifier("static")', '"strict"');
 shouldBe('classifyIdentifier("yield")', '"strict"');
-
-var successfullyParsed = true;

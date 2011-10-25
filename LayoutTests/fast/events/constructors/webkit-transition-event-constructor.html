@@ -68,8 +68,6 @@ shouldBe("new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: tr
 shouldBe("new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).cancelable", "true");
 shouldBe("new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).propertyName", "'doremi'");
 shouldBe("new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).elapsedTime", "123.45");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

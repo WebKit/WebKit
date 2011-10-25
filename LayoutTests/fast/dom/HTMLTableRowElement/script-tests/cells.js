@@ -52,5 +52,3 @@ shouldBe('checkHeaderCellNesting("td")', '1');
 shouldBe('checkHeaderCellNesting("th")', '1');
 
 debug('');
-
-var successfullyParsed = true;

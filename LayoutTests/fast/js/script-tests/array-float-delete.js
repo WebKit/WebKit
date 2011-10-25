@@ -7,5 +7,3 @@ a[1]     = "before";
 a['1.0'] = "after";  
 delete a['1.0'];  
 shouldBe("a[1]", '"before"');
-
-successfullyParsed = true;

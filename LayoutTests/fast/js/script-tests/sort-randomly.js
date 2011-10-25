@@ -20,5 +20,3 @@ for (var attempt = 0; attempt < 100; ++attempt) {
         arr[i] = new RandomObject;
     arr.sort();
 }
-
-var successfullyParsed = true;

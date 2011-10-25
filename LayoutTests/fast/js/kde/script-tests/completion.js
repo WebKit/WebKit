@@ -23,5 +23,3 @@ val = eval("14; function f() {}");
 shouldBe("val", "14");
 val = eval("15; var v = 0");
 shouldBe("val", "15");
-
-successfullyParsed = true

@@ -49,5 +49,3 @@ re.compile(/a/g);
 shouldBe("re.lastIndex", "0");
 re.exec("aaa");
 shouldBe("re.lastIndex", "1");
-
-var successfullyParsed = true;

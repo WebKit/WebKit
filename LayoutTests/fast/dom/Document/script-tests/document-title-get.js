@@ -24,5 +24,3 @@ document.title = "   lots of \r whitespace and \n\n\n    \t    newlines \t";
 shouldBeEqualToString("document.title", "lots of whitespace and newlines");
 
 debug('Test with various length strings');
-
-var successfullyParsed = true;

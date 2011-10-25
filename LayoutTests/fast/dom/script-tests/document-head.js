@@ -7,5 +7,3 @@ shouldBeTrue("document.head !== 1");
 
 document.documentElement.removeChild(document.head);
 shouldBeNull("document.head");
-
-var successfullyParsed = true;

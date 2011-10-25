@@ -52,5 +52,3 @@ for (i = 0; i < values.length; ++i) {
         shouldBe(expression, ((i == j) ^ (exceptionMap[expression] || exceptionMap[reversed])) ? "true" : "false");
     }
 }
-
-var successfullyParsed = true;

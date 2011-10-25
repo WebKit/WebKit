@@ -28,5 +28,3 @@ checkConstructorName("String");
 checkConstructorName("SyntaxError");
 checkConstructorName("TypeError");
 checkConstructorName("URIError");
-
-var successfullyParsed = true;

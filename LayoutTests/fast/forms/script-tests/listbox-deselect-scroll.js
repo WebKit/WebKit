@@ -43,5 +43,3 @@ var scrollBeforeClick = sl.scrollTop;
 mouseDownOnSelect("sl", 3, "addSelectionKey");
 shouldBe('sl.scrollTop', 'scrollBeforeClick');
 shouldBe('selectionPattern(sl)', '"11111110111"');
-
-var successfullyParsed = true;

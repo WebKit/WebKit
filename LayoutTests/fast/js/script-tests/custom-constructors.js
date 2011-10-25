@@ -55,5 +55,3 @@ shouldBeEqualToString("new Audio().src", "");
 shouldBeEqualToString("new Audio().preload", "auto");
 shouldBeEqualToString("new Audio('http://localhost/someurl').src", "http://localhost/someurl");
 shouldBeEqualToString("new Audio('http://localhost/someurl').preload", "auto");
-
-var successfullyParsed = true;

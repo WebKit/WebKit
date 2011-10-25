@@ -139,5 +139,3 @@ shouldBe("(new XMLSerializer).serializeToString(node)", '"<div myAttrib=\\"XXX\\
 shouldBe("node.getAttributeNode('myAttrib').name", '"myAttrib"');
 shouldBe("node.getAttributeNode('myattrib').name", '"myAttrib"');
 shouldBe("attrib.name", '"myAttrib"');
-
-successfullyParsed = true;

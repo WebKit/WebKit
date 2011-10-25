@@ -110,5 +110,3 @@ expectedInputEventCount++;
 
 shouldBe("expectedInputEventCount", "actualInputEventCount");
 clearTestTarget();
-
-successfullyParsed = true;

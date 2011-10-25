@@ -307,4 +307,3 @@ shouldBe("new Date('00/00/2006').toString()", "new Date('Nov 30 2005').toString(
 shouldBe("new Date('01/452/2006').toString()", "new Date('Mar 28 2007').toString()");
 
 debug("End Of Test");
-successfullyParsed = true

@@ -12,4 +12,3 @@ shouldBe("testFileEntry.toURL()", "'filesystem:file:///temporary/testFileEntry.t
 
 removeAllInDirectorySync(fileSystem.root);
 finishJSTest();
-var successfullyParsed = true;

@@ -59,5 +59,4 @@ window.getSelection().setBaseAndExtent(targetEditable, 0, targetEditable, 0);
 test(targetEditable);
 
 targetRoot.style.display = "none";
-var successfullyParsed = true;
 

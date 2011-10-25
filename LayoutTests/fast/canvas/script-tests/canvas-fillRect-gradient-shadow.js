@@ -195,5 +195,3 @@ shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeSmaller('d[3]', '15');
-
-var successfullyParsed = true;

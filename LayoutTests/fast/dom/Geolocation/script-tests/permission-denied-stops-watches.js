@@ -33,4 +33,3 @@ navigator.geolocation.watchPosition(function(p) {
 
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

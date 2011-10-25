@@ -9,4 +9,3 @@ shouldBe("x.__proto__", "originalProto");
 
 x.someProperty = 1;
 debug('If we got to this point then we did not crash and the test has passed.');
-var successfullyParsed = true;

@@ -10,4 +10,3 @@ shouldBe("var i = 1; i >>= 2", "0");
 shouldBe("var i = -8; i >>= 24", "-1");
 shouldBe("var i = 8; i >>>= 2", "2");
 shouldBe("var i = -8; i >>>= 24", "255");
-successfullyParsed = true

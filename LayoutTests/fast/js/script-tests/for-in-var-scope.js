@@ -17,5 +17,3 @@ func();
 
 shouldBe("i", "'start i'");
 shouldBe("j", "'propName'");
-
-var successfullyParsed = true;

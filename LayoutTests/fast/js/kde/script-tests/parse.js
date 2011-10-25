@@ -40,5 +40,3 @@ shouldThrow("var \\u0030;");
 shouldThrow("var test = { }; test.i= 0; test.i\\u002b= 1; test.i;");
 
 shouldBe("var test = { }; test.i= 0; test.i\u002b= 1; test.i;", "1");
-
-successfullyParsed = true

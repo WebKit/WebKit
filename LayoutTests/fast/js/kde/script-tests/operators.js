@@ -478,5 +478,3 @@ shouldBeTrue("'a' in { a:1, b:2 }");
 // Those 2 lines don't parse in Netscape...
 shouldBe("(new Boolean()) instanceof Boolean", "true");
 shouldBe("(new Boolean()) instanceof Number", "false");
-
-var successfullyParsed = true;

@@ -5,5 +5,3 @@ shouldBeFalse("/=/.test('')");
 shouldBeTrue("/=/.test('=')");
 shouldBe("'='.match(/=/)", "['=']");
 shouldBe("'='.match(/\\=/)", "['=']");
-
-var successfullyParsed = true;

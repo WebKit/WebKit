@@ -87,5 +87,3 @@ getTestProperty(test5);
 shouldBe("getTestProperty(test5)", '"on prototype\'s prototype"');
 test5.prop = "on self";
 shouldBe("getTestProperty(test5)", '"on self"');
-
-successfullyParsed = true;

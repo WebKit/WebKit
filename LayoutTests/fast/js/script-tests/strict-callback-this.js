@@ -101,5 +101,3 @@ shouldBe('testArrayPrototypeEvery(nonstrictThrowThisString)', 'globalObjectStrin
 shouldBe('testArrayPrototypeForEach(nonstrictThrowThisString)', 'globalObjectString');
 shouldBe('testArrayPrototypeSome(nonstrictThrowThisString)', 'globalObjectString');
 shouldBe('testStringPrototypeReplace(nonstrictThrowThisString)', 'globalObjectString');
-
-var successfullyParsed = true;

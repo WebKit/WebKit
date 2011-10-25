@@ -14,8 +14,6 @@ XPath substring function does not correctly handle non-positive values for the p
     shouldBe("document.evaluate(\"substring('abcde', 0, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcd'");
     shouldBe("document.evaluate(\"substring('abcde', -2, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'ab'");
 
-    var successfullyParsed = true;
-
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

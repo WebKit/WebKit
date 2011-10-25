@@ -13,4 +13,3 @@ window.addEventListener('deviceorientation', function() {
 hasAddEventListenerReturned = true;
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

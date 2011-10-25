@@ -47,5 +47,3 @@ for (var x in constructorNames) {
 
     shouldBe("" + name + ".toString()", expectedConstructorName);
 }
-
-var successfullyParsed = true;

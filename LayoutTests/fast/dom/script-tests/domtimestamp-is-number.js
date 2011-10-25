@@ -9,6 +9,4 @@ function do_check(e) {
   shouldBeTrue("timestamp == Number(timestamp)");
   finishJSTest();
 }
-
-window.successfullyParsed = true;
 window.jsTestIsAsync = true;

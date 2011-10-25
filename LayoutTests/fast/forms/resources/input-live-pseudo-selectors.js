@@ -113,5 +113,3 @@ el.step = '2';
 shouldBe(elBackground, 'invalidColor');
 el.step = '0.5';
 shouldBe(elBackground, 'validColor');
-
-var successfullyParsed = true;

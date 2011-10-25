@@ -34,5 +34,3 @@ document.getElementById("div1").appendChild(label);
 label.appendChild(document.getElementById("id4"));
 shouldBe('labels.length', '1');
 
-var successfullyParsed = true;
-

@@ -105,5 +105,3 @@ Math.myprop=true; // adding a custom property to the math object (why not?)
 list=""
 for ( var i in Math ) { list += i + ','; }
 shouldBe("list","'myprop,'");
-
-successfullyParsed = true

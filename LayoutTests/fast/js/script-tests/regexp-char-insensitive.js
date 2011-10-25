@@ -22,5 +22,3 @@ shouldBe("'PAS\u00C5'.replace(/\u00C5/ig, 'S')", "'PASS'");
 
 shouldBe("'PASS'.replace(/\u00E5/ig, '%C3%A5')", "'PASS'");
 shouldBe("'PASS'.replace(/\u00C5/ig, '%C3%A5')", "'PASS'");
-
-var successfullyParsed = true;

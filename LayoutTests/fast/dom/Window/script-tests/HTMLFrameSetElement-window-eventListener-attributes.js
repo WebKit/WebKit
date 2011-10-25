@@ -63,5 +63,3 @@ shouldBe("window.onunload", "frameSet.onunload");
 window.onunload = null;
 
 gc();
-
-var successfullyParsed = true;

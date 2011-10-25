@@ -36,5 +36,3 @@ shouldBe('getStyleValue("figcaption4","font-weight")', '"bold"');
 shouldBe('getStyleValue("span1","font-weight")', '"bold"');
 document.body.removeChild(testParent);
 
-var successfullyParsed = true;
-

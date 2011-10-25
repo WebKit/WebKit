@@ -73,5 +73,3 @@ function testSwitch4(v) {
 };
 
 shouldBe("testSwitch4(0)", "'ab'");
-
-successfullyParsed = true

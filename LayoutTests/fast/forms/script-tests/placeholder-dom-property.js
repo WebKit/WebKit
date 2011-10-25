@@ -10,5 +10,3 @@ shouldBeEqualToString("input.placeholder", 'p1');
 input.placeholder = 'p2';
 shouldBeEqualToString("input.getAttribute('placeholder')", 'p2');
 shouldBeEqualToString("input.placeholder", 'p2');
-
-var successfullyParsed = true;

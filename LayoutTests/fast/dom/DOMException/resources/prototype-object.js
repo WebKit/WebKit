@@ -15,5 +15,3 @@ shouldBeEqualToString("e.constructor.toString()", "[object DOMExceptionConstruct
 shouldBe("e.constructor", "window.DOMException");
 shouldBe("e.HIERARCHY_REQUEST_ERR", "e.constructor.HIERARCHY_REQUEST_ERR");
 shouldBe("e.HIERARCHY_REQUEST_ERR", "3");
-
-var successfullyParsed = true;

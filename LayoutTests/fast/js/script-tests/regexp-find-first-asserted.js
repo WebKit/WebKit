@@ -6,5 +6,3 @@ shouldBe('/.*<body>(.*)<\\/body>.*/.exec("foo<body>bar</body>baz").toString()', 
 shouldBe('/\\s*<!--([\s\S]*)\\/\\/\\s*-->\\s*/.exec("<!--// -->").toString()', '"<!--// -->,"');
 
 debug('');
-
-var successfullyParsed = true;

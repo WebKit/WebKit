@@ -20,8 +20,6 @@ function runTest()
 
     document.getElementById("subframe").style.display= 'none';
 }
-
-window.successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 <iframe id="subframe" onload="runTest()" src="data:text/html,<div id='div'></div>"></iframe>

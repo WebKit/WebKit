@@ -12,5 +12,3 @@ shouldBe("a.port", "''");
 debug("Empty port should be empty");
 a.href = "http://example.com:/";
 shouldBe("a.port", "''");
-
-var successfullyParsed = true;

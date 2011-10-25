@@ -76,5 +76,3 @@ function checkWithFunctions(encodeFunction, decodeFunction)
 
 checkWithFunctions("encodeURI", "decodeURI");
 checkWithFunctions("encodeURIComponent", "decodeURIComponent");
-
-successfullyParsed = true;

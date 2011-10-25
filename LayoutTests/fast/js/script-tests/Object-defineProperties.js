@@ -11,5 +11,3 @@ shouldBe("JSON.stringify(Object.defineProperties({property:'foo'},{property:{val
 emptyObject={};
 shouldThrow("Object.defineProperties(emptyObject, {foo:{value: true}, bar:{get:function(){}, writable:true}})");
 shouldBeFalse("'foo' in emptyObject");
-
-successfullyParsed = true;

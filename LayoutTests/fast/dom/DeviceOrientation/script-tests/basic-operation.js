@@ -19,4 +19,3 @@ window.addEventListener('deviceorientation', function(e) {
 });
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

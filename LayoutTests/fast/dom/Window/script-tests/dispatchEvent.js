@@ -38,5 +38,3 @@ event.initEvent("myEvent", false, false);
 window.dispatchEvent(event);
 shouldBeTrue("useCaptureDispatched");
 shouldBeTrue("nonUseCaptureDispatched");
-
-var successfullyParsed = true;

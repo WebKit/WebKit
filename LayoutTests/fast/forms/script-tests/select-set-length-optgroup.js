@@ -26,5 +26,3 @@ sel.insertBefore(document.createElement('option'), og);
 sel.length = 1;
 shouldBe('sel.length', '1');
 shouldBe('og.childElementCount', '0');
-
-var successfullyParsed = true;

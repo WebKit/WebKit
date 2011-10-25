@@ -12,5 +12,3 @@ shouldThrow("Object.prototype.valueOf.call(undefined)");
 shouldThrow("Object.prototype.hasOwnProperty.call(undefined, 'hasOwnProperty')");
 shouldThrow("Object.prototype.propertyIsEnumerable.call(undefined, 'propertyIsEnumerable')");
 shouldThrow("Object.prototype.isPrototypeOf.call(undefined, this)");
-
-var successfullyParsed = true;

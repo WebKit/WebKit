@@ -172,5 +172,3 @@ for (var attr in htmlAttrs) {
 
 // test a nonexistent attr
 shouldBe('isCaseSensitive("foobar")', "true");
-
-var successfullyParsed = true;

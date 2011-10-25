@@ -11,5 +11,3 @@ for (var i = 0; i < 250000; i++) {
 }
 
 gc();
-
-successfullyParsed = true;

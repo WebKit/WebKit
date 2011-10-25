@@ -43,4 +43,3 @@ function maybeFinishTest() {
 window.addEventListener('deviceorientation', firstListener);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

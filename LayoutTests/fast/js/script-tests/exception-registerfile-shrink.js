@@ -6,5 +6,3 @@ eval('try { throw 0; } catch(e) {}');
 
 var x = new String();
 '' + escape(x.substring(0, 1));
-
-var successfullyParsed = true;

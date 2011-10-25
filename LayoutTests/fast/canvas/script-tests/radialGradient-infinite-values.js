@@ -22,5 +22,3 @@ shouldThrow("ctx.createRadialGradient(0, -Infinity, 100, 0, 0, 100)", "'Error: N
 shouldThrow("ctx.createRadialGradient(NaN, 0, 100, 0, 0, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createRadialGradient(Infinity, 0, 100, 0, 0, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createRadialGradient(-Infinity, 0, 100, 0, 0, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
-
-var successfullyParsed = true;

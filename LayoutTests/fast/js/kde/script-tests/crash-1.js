@@ -6,4 +6,3 @@ try {
 } catch (e) {
   debug("OK. Caught an exception.");
 }
-successfullyParsed = true

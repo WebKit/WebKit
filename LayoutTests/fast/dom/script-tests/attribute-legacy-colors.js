@@ -59,4 +59,3 @@ for(var i = 0; i < tests.length; i++) {
 	shouldBe("document.body.bgColor='" + t + "';getComputedStyle(document.body).backgroundColor;", "'rgb(" + e[0] + ", " + e[1] + ", " + e[2] + ")'");
 }
 })();
-successfullyParsed = true;

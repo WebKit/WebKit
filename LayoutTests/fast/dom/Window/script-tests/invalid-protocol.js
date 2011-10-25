@@ -25,5 +25,3 @@ shouldBe("a.href", "'http://www.apple.com/'");
 
 a.protocol = "https://foobar";
 shouldBe("a.href", "'https://www.apple.com/'");
-
-successfullyParsed = true;

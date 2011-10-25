@@ -4,5 +4,3 @@ description(
 
 shouldBe("({}).toString.call(Error.prototype)", '"[object Error]"');
 shouldBe("({}).toString.call(RangeError.prototype)", '"[object Error]"');
-
-var successfullyParsed = true;

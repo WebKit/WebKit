@@ -36,5 +36,3 @@ shouldBe("rows[6]", "table.getElementsByTagName('tr')[4]");
 shouldBe("table.childNodes[2]", "table.getElementsByTagName('tr')[5]");
 shouldBe("rows[1]", "table.getElementsByTagName('tr')[5]");
 shouldBe("table.tBodies.length", "0");
-
-var successfullyParsed = true;

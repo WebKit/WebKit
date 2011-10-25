@@ -101,5 +101,3 @@ testReferenceError();
 testFunctionError();
 testMathFunctionError();
 testWhileAbortion();
-
-successfullyParsed = true

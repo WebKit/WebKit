@@ -5,5 +5,3 @@ description(
 );
 
 shouldBe("(function() { __proto__.testVariable = 'found'; return window.testVariable; })()", "'found'");
-
-successfullyParsed = true;

@@ -56,5 +56,3 @@ shouldBe('total', '200');
 // Check that we don't assert when method_check is applied to a non-JSFunction
 for (var i = 0; i < 10000; i++)
     Array.constructor(1);
-
-var successfullyParsed = true;

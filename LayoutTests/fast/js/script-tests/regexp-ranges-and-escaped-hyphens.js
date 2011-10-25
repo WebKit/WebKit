@@ -50,5 +50,3 @@ shouldBe('regexp03b.toString()', '"+,-"');
 // The actual bug reported.
 var bug21232 = (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test('@');
 shouldBe('bug21232', 'false');
-
-var successfullyParsed = true;

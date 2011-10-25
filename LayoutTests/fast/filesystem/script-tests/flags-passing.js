@@ -98,5 +98,3 @@ if (window.webkitRequestFileSystem) {
     webkitRequestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
-
-window.successfullyParsed = true;

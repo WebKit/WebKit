@@ -42,5 +42,3 @@ shouldBe("ueuf1", "uf1");
 shouldBe("ueuf2", "uf2");
 shouldBe("ueuf3", "uf3");
 shouldBe("ueuf4", "uf4");
-
-var successfullyParsed = true;

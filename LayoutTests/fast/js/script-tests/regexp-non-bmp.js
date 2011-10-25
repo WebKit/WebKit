@@ -19,5 +19,3 @@ shouldBe('/.{1,2}/.exec("!!" + String.fromCharCode(0xA1)).toString().length', '2
 shouldBe('/./.exec("")', 'null');
 
 debug('');
-
-var successfullyParsed = true;

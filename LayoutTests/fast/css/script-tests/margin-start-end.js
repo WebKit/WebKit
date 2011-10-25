@@ -30,5 +30,3 @@ shouldBeEqualToString('test("rtl", "-webkit-margin-start", "10px", "margin-right
 shouldBeEqualToString('test("rtl", "-webkit-margin-end", "20px", "margin-left")', '20px');
 shouldBeEqualToString('test("rtl", "margin-right", "10px", "-webkit-margin-start")', '10px');
 shouldBeEqualToString('test("rtl", "margin-left", "20px", "-webkit-margin-end")', '20px');
-
-successfullyParsed = true;

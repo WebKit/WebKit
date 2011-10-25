@@ -42,7 +42,6 @@ function waitForStylesheetLoad()
 
     if (document.defaultView.getComputedStyle(document.getElementById('description'), null).color == "rgb(0, 128, 0)") {
         shouldBe("document.defaultView.getComputedStyle(document.getElementById('description'), null).color", "'rgb(0, 128, 0)'");
-        window.successfullyParsed = true;
         isSuccessfullyParsed();
         if (window.layoutTestController) {
             window.layoutTestController.notifyDone();

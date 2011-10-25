@@ -17,8 +17,6 @@ description("Test that CSS stylesheets lacking wrappers are pruned from detached
 var rule = getMatchedCSSRules(document.getElementById("test-element")).item(0);
 document.documentElement.removeChild(document.head);
 shouldBe("rule.parentStyleSheet", "null");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

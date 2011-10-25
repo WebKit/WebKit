@@ -10,5 +10,3 @@ document.body.appendChild(iframe);
 iframe.contentDocument.write('<script>top.doTest(/a/)</script>');
 iframe.contentDocument.close();
 document.write('DONE');
-
-var successfullyParsed = true;

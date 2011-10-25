@@ -75,5 +75,3 @@ shouldBe("computedFontCSSValue('10px/100% sans-serif')", "'normal normal normal 
 shouldBe("computedFontCSSValue('10px/100px sans-serif')", "'normal normal normal 10px/100px sans-serif'");
 shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'normal normal normal 10px/normal sans-serif'");
 shouldBe("computedFontCSSValue('10px/normal sans-serif')", "'normal normal normal 10px/normal sans-serif'");
-
-var successfullyParsed = true;

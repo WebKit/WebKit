@@ -7,5 +7,3 @@ shouldBe("s.getBoundingClientRect().height", "0");
 shouldBe("s.getBoundingClientRect().width", "0");
 
 document.body.removeChild(s);
-
-var successfullyParsed = true;

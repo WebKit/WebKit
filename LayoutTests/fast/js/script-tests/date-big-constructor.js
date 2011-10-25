@@ -21,5 +21,3 @@ for (var i = 0; i < 36; i++) {
 for (var i = 0; i < 36; i++) {
   shouldBe('Date.UTC(2005, ' + i + ', 1)', expectedUTC[i].toString());
 }
-
-var successfullyParsed = true;

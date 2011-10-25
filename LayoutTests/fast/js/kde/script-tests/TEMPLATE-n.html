@@ -8,6 +8,9 @@
 description("KDE JS Test");
 </script>
 <script src="YOUR_JS_FILE_HERE"></script>
-<script src="../resources/js-test-post-n.js"></script>
+<script>
+shouldHaveHadError("SyntaxError");
+</script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

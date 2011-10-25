@@ -12,5 +12,3 @@ shouldBe('stringProperties[1]', '"1"');
 shouldBe('stringProperties[2]', '"2"');
 shouldBe('stringProperties[3]', '"3"');
 shouldBe('stringProperties[4]', '"4"');
-
-var successfullyParsed = true;

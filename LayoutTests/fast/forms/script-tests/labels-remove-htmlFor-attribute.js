@@ -30,5 +30,3 @@ shouldBe('labels.length', '1');
 label.removeAttribute("for");
 shouldBe('labels.length', '0');
 
-var successfullyParsed = true;
-

@@ -158,4 +158,3 @@ shouldBe("overrideVar", "1");
 var overrideVar2 = 1;
 var overrideVar2 = 2;
 shouldBe("overrideVar2", "2");
-successfullyParsed = true

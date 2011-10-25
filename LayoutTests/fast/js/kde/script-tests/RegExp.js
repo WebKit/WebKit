@@ -156,4 +156,3 @@ shouldBe("/(?:)/.toString()", "'/(?:)/'");
 shouldBe("/(?:)/.source", "'(?:)'");
 
 debug("Done.");
-successfullyParsed = true

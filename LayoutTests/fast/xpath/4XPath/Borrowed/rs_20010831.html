@@ -25,8 +25,6 @@ test = '<foo>\
     nodeset = doc.evaluate('//bar[2]/text()', doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
     shouldBe('nodeset.singleNodeValue.nodeValue', '"<cdatatext>"')
 
-    var successfullyParsed = true;
-
 </script>
 <script src="../../../js/resources/js-test-post.js"></script>
 </body>

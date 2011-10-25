@@ -32,4 +32,3 @@ iframe.src = 'resources/disconnected-frame-already-inner1.html';
 document.body.appendChild(iframe);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

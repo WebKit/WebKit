@@ -121,4 +121,3 @@ for (var i = 0; i < tests.length; i++) {
     context.fillRect(0,0,100,50);
     tests[i]();
 }
-var successfullyParsed = true;

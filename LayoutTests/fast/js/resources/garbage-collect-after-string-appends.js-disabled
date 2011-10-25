@@ -35,5 +35,3 @@ if (jsObjCount <= 500 && jsObjCount > 0)
     testPassed("Garbage Collector triggered")
 else
     testFailed("Garbage Collector NOT triggered. Number of JSObjects: " + jsObjCount);
-
-var successfullyParsed = true;

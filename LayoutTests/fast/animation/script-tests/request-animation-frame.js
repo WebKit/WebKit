@@ -16,8 +16,6 @@ setTimeout(function() {
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
-var successfullyParsed = true;
-
 setTimeout(function() {
     isSuccessfullyParsed();
     if (window.layoutTestController)

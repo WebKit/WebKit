@@ -81,5 +81,3 @@ shouldBe("trySettingShadowOffsetY(NaN)", "1.5");
 shouldBe("trySettingShadowOffsetY('string')", "1.5");
 shouldBe("trySettingShadowOffsetY(true)", "1");
 shouldBe("trySettingShadowOffsetY(false)", "0");
-
-var successfullyParsed = true;

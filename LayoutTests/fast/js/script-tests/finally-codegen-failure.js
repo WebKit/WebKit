@@ -19,5 +19,3 @@ shouldBeTrue("f()")
 
 shouldBeTrue("(function () { var a = true; try { return a; } finally { a = false; }})()");
 shouldThrow("(function () { var a = 'PASS'; try { throw a; } finally { a = 'FAIL'; }})()");
-
-successfullyParsed = true;

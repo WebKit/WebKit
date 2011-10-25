@@ -227,5 +227,3 @@ regexp = /a|/gm;
 debug("\nTesting regexp: " + regexp);
 shouldBeTrue("regexp.test('|')");
 shouldBe("regexp.lastIndex", "0");
-
-var successfullyParsed = true;

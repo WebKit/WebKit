@@ -66,5 +66,3 @@ shouldBe("testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'c'
 shouldBe("testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'a', backward)", "'10003, 10004'");
 shouldBe("testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'b', backward)", "'10004, 10005'");
 shouldBe("testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'c', backward)", "'10005, 10006'");
-
-var successfullyParsed = true;

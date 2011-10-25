@@ -14,5 +14,3 @@ var mediaRule = styleSheet.cssRules[0];
 var childRule = mediaRule.cssRules[0];
 
 shouldBe("childRule.parentRule", "mediaRule")
-
-var successfullyParsed = true;

@@ -121,6 +121,3 @@ var foo = "This is a test.";
 var bar = foo.link( "javascript:foo( 'This ', 'is ', 'a test' )");
 var html = "<a href=\"javascript:foo( 'This ', 'is ', 'a test' )\">This is a test.</a>"
 shouldBe("bar", "html");
-
-
-successfullyParsed = true

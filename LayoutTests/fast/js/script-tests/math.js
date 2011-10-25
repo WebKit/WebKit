@@ -234,5 +234,3 @@ shouldBe("Math.tan(0)", "0");
 shouldBe("Math.tan(-0)", "-0");
 shouldBe("Math.tan(Infinity)", "NaN");
 shouldBe("Math.tan(-Infinity)", "NaN");
-
-successfullyParsed = true;

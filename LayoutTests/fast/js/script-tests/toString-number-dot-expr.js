@@ -189,5 +189,3 @@ function testToString(fn)
 
 for(var i = 1; i < 6; ++i)
     testToString("f" + i);
-
-var successfullyParsed = true;

@@ -233,5 +233,3 @@ rectcanvas.width = 10;
 rectcanvas.height = 20;
 var rectbuffer = rectcanvas.getContext("2d");
 rectbuffer.putImageData(smallbuffer, 0, 10);
-
-var successfullyParsed = true;

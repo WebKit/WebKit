@@ -44,5 +44,3 @@ for (var i = 0; i < cases.length; ++i) {
 }
 
 setBaseURL(originalBaseURL);
-
-var successfullyParsed = true;

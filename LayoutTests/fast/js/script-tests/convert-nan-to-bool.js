@@ -65,5 +65,3 @@ shouldBe("(function(){var Undefined = undefined; return Undefined-- ? true : fal
 shouldBe("(function(){var Undefined = undefined; return Undefined++ ? true : false})()", "false");
 shouldBe("(function(){var Undefined = undefined; return --Undefined ? true : false})()", "false");
 shouldBe("(function(){var Undefined = undefined; return ++Undefined ? true : false})()", "false");
-
-var successfullyParsed = true;

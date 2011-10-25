@@ -201,5 +201,3 @@ shouldBe("text.prefix", "null");
 shouldBe("text.nodeValue", "'foo'");
 shouldBe("text.data", "'foo'");
 shouldBe("text.attributes", "null");
-
-var successfullyParsed = true;

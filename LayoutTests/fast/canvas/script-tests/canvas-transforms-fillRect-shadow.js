@@ -129,5 +129,3 @@ shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '36');
-
-var successfullyParsed = true;

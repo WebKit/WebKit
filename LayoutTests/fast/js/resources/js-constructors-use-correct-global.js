@@ -12,5 +12,3 @@ for (var i = 0; i < constructors.length; i++) {
     
     }
 }
-
-successfullyParsed = true;

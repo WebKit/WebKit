@@ -37,5 +37,3 @@ shouldBe("first.nextElementSibling.nextElementSibling", "null");
 shouldBe("last.previousElementSibling", "first");
 shouldBe("last.previousElementSibling.previousElementSibling", "null");
 shouldBe("children.childElementCount", "2");
-
-var successfullyParsed = true;

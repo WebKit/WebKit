@@ -129,6 +129,3 @@ testToStringAndReturn("typeof_should_preserve_parens", "'a'", 1, "'number'");
 testToStringAndReturn("typeof_should_preserve_parens1", "'a'", 1, "'number'");
 testToStringAndReturn("typeof_should_preserve_parens2", "'a'", 1, "'number'");
 testToStringAndReturn("typeof_should_preserve_parens_multi", "'a'", 1, "'number'");
-
-
-var successfullyParsed = true;

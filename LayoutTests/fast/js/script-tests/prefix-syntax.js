@@ -19,5 +19,3 @@ shouldBe('++((window["x"]))', '10');
 shouldThrow('++(y, x)');
 shouldThrow('++(true ? x : y)');
 shouldThrow('++++x');
-
-var successfullyParsed = true;

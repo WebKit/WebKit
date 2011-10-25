@@ -9,5 +9,3 @@ o3.__proto__ = o2;
 o1.__proto__ = null;  // just for sanity's sake
 
 shouldThrow("o1.__proto__ = o3");
-
-var successfullyParsed = true;

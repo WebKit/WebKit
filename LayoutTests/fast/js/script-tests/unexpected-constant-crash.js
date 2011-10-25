@@ -5,5 +5,3 @@ description(
 var r = / /;
 var s;
 delete s;
-
-var successfullyParsed = true;

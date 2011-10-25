@@ -16,5 +16,3 @@ while (i < 5000) {
 }
 
 shouldBe('o.x', '242')
-
-successfullyParsed = true;

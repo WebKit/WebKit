@@ -370,5 +370,3 @@ try {
      shouldBe("foo", "'PASS'");
      shouldBe("bar", "'PASS'");
 }
-
-var successfullyParsed = true;

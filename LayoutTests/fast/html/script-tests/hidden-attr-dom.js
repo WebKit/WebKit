@@ -26,5 +26,3 @@ debug('Changes via IDL attribute are reflected in the core DOM:');
 
 shouldBe('(h3.hidden = false, h3.getAttribute("hidden"))', 'null');
 shouldBe('(h3.hidden = true, h3.getAttribute("hidden"))', '""');
-
-var successfullyParsed = true;

@@ -46,5 +46,3 @@ shouldBeEqualToString("(0.1).toExponential()", "1e-1");
 shouldBeEqualToString("(0.9).toExponential()", "9e-1");
 shouldBeEqualToString("(0.9999).toExponential()", "9.999e-1");
 shouldBeEqualToString("(0.9999).toExponential(2)", "1.00e+0");
-
-var successfullyParsed = true;

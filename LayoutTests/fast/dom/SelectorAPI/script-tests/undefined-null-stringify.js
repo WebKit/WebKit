@@ -19,5 +19,3 @@ shouldBe("document.querySelectorAll(undefined).item(0)", "undefinedNode");
 
 shouldBeTrue("nullNode.webkitMatchesSelector(null)");
 shouldBeTrue("undefinedNode.webkitMatchesSelector(undefined)");
-
-var successfullyParsed = true;

@@ -52,5 +52,3 @@ var throwingRadix = { valueOf: function(){ state = "throwingRadix"; throw null; 
 var throwingString = { toString: function(){ state = "throwingString"; throw null; } };
 shouldBe("state = null; try { parseInt('123', throwingRadix); } catch (e) {} state;", '"throwingRadix"');
 shouldBe("state = null; try { parseInt(throwingString, throwingRadix); } catch (e) {} state;", '"throwingString"');
-
-var successfullyParsed = true;

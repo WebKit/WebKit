@@ -6,5 +6,3 @@ var failMessage = "FAIL";
 var temp = failMessage || failMessage;
 var result = 1 < 2 || false;
 shouldBeTrue("result");
-
-var successfullyParsed = true;

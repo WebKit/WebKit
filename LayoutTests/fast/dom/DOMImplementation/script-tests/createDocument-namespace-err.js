@@ -142,5 +142,3 @@ shouldBeEqualToString("document.implementation.createDocument().toString()", "[o
 shouldBeEqualToString("document.implementation.createDocument(\"http://www.example.com\").toString()", "[object Document]");
 
 runNSTests(allNSTests, document.implementation, "createDocument");
-
-var successfullyParsed = true;

@@ -61,5 +61,3 @@ function tryDoWhileTest()
 }
 
 shouldBeTrue("tryDoWhileTest()");
-
-var successfullyParsed = true;

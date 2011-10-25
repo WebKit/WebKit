@@ -1,3 +1,30 @@
+2011-10-25  Erik Arvidsson  <arv@chromium.org>
+
+        JS Test Harness: Make successfullyParsed optional
+        https://bugs.webkit.org/show_bug.cgi?id=70784
+
+        Reviewed by Ojan Vafai.
+
+        This makes "successfullyParsed = true" optional in favor of tracking syntax errors
+        using window.onerror.
+
+        * fast/*: Remove successfullyParsed.
+        * fast/dom/Window/new-window-opener.html: Cleanup.
+        * fast/dom/Window/resources/window-appendages-cleared-results.html:
+        * fast/dom/Window/webkitConvertPoint.html: Ditto.
+        * fast/dom/Window/webkitConvertPointUpdateLayout.html: Ditto.
+        * fast/js/kde/evil-n.html: This is now a normal test since it is not supposed to fail.
+        * fast/js/kde/garbage-n-expected.txt:
+        * fast/js/kde/garbage-n.html: Use shouldHaveHadError instead of js-test-post-n.js
+        * fast/js/kde/string-1-n.html: Ditto.
+        * fast/js/kde/string-2-n.html: Ditto.
+        * fast/js/resources/js-test-post-async.js: Ensure we didn't get an error.
+        * fast/js/resources/js-test-post-function.js: Ditto.
+        * fast/js/resources/js-test-post-n.js: Removed.
+        * fast/js/resources/js-test-pre.js: Added shouldHaveHadError function that can be used to assert that the
+                                            error message is what was expected.
+                                            Ensure we didn't get an error in finistJSTest.
+
 2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More gardening.

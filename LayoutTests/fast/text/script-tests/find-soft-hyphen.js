@@ -30,5 +30,3 @@ shouldBe('canFind("a" + hyphen + "b", "a" + softHyphen + "b")', 'false');
 shouldBe('canFind("a-b", "a" + softHyphen + "b")', 'false');
 
 document.getElementById("console").style.removeProperty("display");
-
-var successfullyParsed = true;

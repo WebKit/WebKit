@@ -8,5 +8,3 @@ document.body.appendChild(inputForProgress);
 var inputForMeter = document.createElement("input");
 inputForMeter.setAttribute("style", "-webkit-appearance: meter;");
 document.body.appendChild(inputForMeter);
-
-successfullyParsed = true;

@@ -39,5 +39,3 @@ shouldBeTrue("test(Array.prototype.map)");
 shouldBeTrue("test(Array.prototype.filter)");
 shouldBeTrue("test(Array.prototype.reduce)");
 shouldBeTrue("test(Array.prototype.reduceRight)");
-
-successfullyParsed = true;

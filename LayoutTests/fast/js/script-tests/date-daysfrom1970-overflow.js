@@ -7,5 +7,3 @@ shouldBe('Date.UTC(1970, 0, 1, 0, 0, 0, 0)', '0');
 
 d = new Date(-20000000, 0, 1);
 shouldBe('d.getTime()', 'NaN');
-
-var successfullyParsed = true;

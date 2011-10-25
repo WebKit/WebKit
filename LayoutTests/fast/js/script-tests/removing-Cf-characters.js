@@ -26,5 +26,3 @@ shouldBe('eval(\'"\uFEFF"\').charCodeAt(0)', '0xFEFF');
 shouldBe('+'+eval("\"\uFEFF\"")+'+1 /* BOM between the +\'s */', '1');
 
 shouldThrow('var ZWJ_I‍nside;');
-
-successfullyParsed = true;

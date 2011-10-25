@@ -34,5 +34,3 @@ shouldBe("imgdata1.data.length", "800");
 shouldBe("imgdata1.data.length", "imgdata2.data.length");
 shouldBe("imgdata2.data.length", "imgdata3.data.length");
 shouldBe("imgdata3.data.length", "imgdata4.data.length");
-
-var successfullyParsed = true;

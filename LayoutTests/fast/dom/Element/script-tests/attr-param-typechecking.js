@@ -16,5 +16,3 @@ shouldThrow('element.setAttributeNodeNS("style");');
 shouldThrow('element.setAttributeNodeNS(null);');
 shouldThrow('element.setAttributeNodeNS(undefined);');
 shouldThrow('element.setAttributeNodeNS(new Object);');
-
-var successfullyParsed = true;

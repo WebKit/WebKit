@@ -14,5 +14,3 @@ function dontSort(w, x, y)
 
 shouldBe("[3,1,5,2,4].sort(doSort)", "[1,2,3,4,5]");
 shouldBe("[3,1,5,2,4].sort(dontSort)", "[3,1,5,2,4]");
-
-var successfullyParsed = true;

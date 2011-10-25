@@ -23,5 +23,3 @@ if (window.eventSender) {
 } else {
     document.getElementById('console').innerHTML = '<p>No eventSender. <p>Manual test instruction: Click the upper button of the first input field, then click the upper button of the second input field.  Confirm that the second input field value is changed.';
 }
-
-var successfullyParsed = true;

@@ -30,5 +30,3 @@ shouldBeTrue('verify(65536)');
 
 prepare(120000);
 shouldBeTrue('verify(120000)');
-
-successfullyParsed = true;

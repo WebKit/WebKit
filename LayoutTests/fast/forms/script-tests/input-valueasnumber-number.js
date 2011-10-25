@@ -67,5 +67,3 @@ shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"Error: NOT_SUPPORTED_ER
 shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-
-var successfullyParsed = true;

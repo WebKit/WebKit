@@ -17,8 +17,6 @@ XPath substring function is broken when passing NaN as the position parameter.</
 
     shouldBe("document.evaluate(\"substring('12345', number(\'NaN\'), number(\'NaN\'))\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
 
-    var successfullyParsed = true;
-
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

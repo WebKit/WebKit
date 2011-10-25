@@ -35,5 +35,3 @@ shouldBeTrue('testForwardSlash("x\\/x/x", "x\\/x\\/x");');
 shouldBeTrue('testForwardSlash("x/x\\/x", "x\\/x\\/x");');
 shouldBeTrue('testForwardSlash("x\\/x\\/x", "x\\/x\\/x");');
 
-var successfullyParsed = true;
-

@@ -61,5 +61,3 @@ function leftComplexRightThis(a)
 
 shouldBeNaN("leftComplexRightThis(2)");
 shouldBe("leftComplexRightThis.call(2, 2)", "12");
-
-var successfullyParsed = true;

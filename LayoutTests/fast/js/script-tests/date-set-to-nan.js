@@ -448,5 +448,3 @@ for (var x in dateFunctionNameRoots)
 {
     testDateFunction(dateFunctionNameRoots[x], dateFunctionParameterNum[x]);
 }
-
-var successfullyParsed = true;

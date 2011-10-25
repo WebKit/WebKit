@@ -73,5 +73,3 @@ iframeDocument.write("<!DocType html><html><body>test</body></html>");
 shouldBeEqualToString("iframeDocument.compatMode", "BackCompat");
 
 document.body.removeChild(iframe);
-
-var successfullyParsed = true;

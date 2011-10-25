@@ -2,5 +2,3 @@ description("Test for correct handling of exceptions from instanceof and 'new' e
 
 shouldThrow("new {}.undefined");
 shouldThrow("1 instanceof {}.undefined");
-
-successfullyParsed = true;

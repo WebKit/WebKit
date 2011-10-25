@@ -85,4 +85,3 @@ test('navigator.webkitGetUserMedia("video", emptyFunction, Infinity)', true);
 test('navigator.webkitGetUserMedia("video", emptyFunction, -Infinity)', true);
 
 window.jsTestIsAsync = false;
-window.successfullyParsed = true;

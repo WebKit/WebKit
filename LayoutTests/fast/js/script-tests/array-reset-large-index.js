@@ -10,5 +10,3 @@ array[10002] = "b";
 
 shouldBe('array[10001]', '5');
 shouldBe('array[10002]', '"b"');
-
-var successfullyParsed = true;

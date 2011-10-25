@@ -91,6 +91,3 @@ shouldBe("RegExp.prototype.exec.__proto__","Function.prototype");
 shouldBe("RegExp.prototype.test.__proto__","Function.prototype");
 shouldBe("RegExp.prototype.toString.__proto__","Function.prototype");
 shouldBe("Error.prototype.toString.__proto__","Function.prototype");
-
-
-successfullyParsed = true

@@ -27,5 +27,3 @@ shouldBe("parseInt(-Infinity)", "NaN");
 shouldBe("parseInt(Infinity)", "NaN");
 
 shouldBe("parseInt(-0.6).toString()", "'0'");
-
-var successfullyParsed = true;

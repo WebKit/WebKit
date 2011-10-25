@@ -18,5 +18,3 @@ xmlChunk.documentElement.normalize();
 debug('After normalize');
 shouldBe('serializer.serializeToString(xmlChunk)', '"<foo>This is some text before the CDATA<![CDATA[This is some <bold>markup</bold> inside of a CDATA]]>This is some text after the CDATA</foo>"');
 shouldBe('xmlChunk.documentElement.childNodes.length', '3');
-
-var successfullyParsed = true;

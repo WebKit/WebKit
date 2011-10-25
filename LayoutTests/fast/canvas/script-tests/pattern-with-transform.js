@@ -53,5 +53,3 @@ ctx.fillStyle = pattern;
 ctx.translate(20, 20);
 ctx.fillRect(0, 0, 10, 10);
 pixelShouldBe(ctx, 20, 20, "greenPixel");
-
-var successfullyParsed = true;

@@ -17,5 +17,3 @@ shouldBe("walker.nextNode(); walker.currentNode.id", "'B1'");
 shouldBe("walker.nextNode(); walker.currentNode.id", "'C1'");
 shouldBe("walker.nextNode(); walker.currentNode.id", "'B2'");
 shouldBe("walker.previousNode(); walker.currentNode.id", "'C1'");
-
-var successfullyParsed = true;

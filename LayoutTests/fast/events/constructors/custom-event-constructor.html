@@ -36,8 +36,6 @@ shouldBe("new CustomEvent('eventType', { get detail() { return true; } }).detail
 
 // Detail throws an exeception.
 shouldThrow("new CustomEvent('eventType', { get detail() { throw 'Custom Error'; } })");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

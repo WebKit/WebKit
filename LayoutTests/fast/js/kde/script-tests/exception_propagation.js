@@ -420,4 +420,3 @@ catch (e) {
 }
 shouldBe("set_inside_with_cantconverttoobject","4");
 // ### test case, sw
-successfullyParsed = true

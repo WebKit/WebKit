@@ -18,5 +18,3 @@ var gradient = ctx.createLinearGradient(0, 0, 0, 100);
 shouldBeUndefined("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
 var gradient = ctx.createRadialGradient(0, 0, 0, 100, 0, 0);
 shouldBeUndefined("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
-
-var successfullyParsed = true;

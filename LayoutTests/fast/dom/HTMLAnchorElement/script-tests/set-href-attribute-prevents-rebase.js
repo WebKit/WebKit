@@ -115,4 +115,3 @@ debug('');
 
 
 base.href = '';
-var successfullyParsed = true;

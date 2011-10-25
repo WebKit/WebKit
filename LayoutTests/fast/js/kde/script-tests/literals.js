@@ -12,4 +12,3 @@ shouldBe("01", "1");
 shouldBe("010", "8");
 shouldBe("09", "9");
 shouldBe("019", "19");
-successfullyParsed = true

@@ -11,5 +11,3 @@ for (var i = 0; i < 3; ++i) {
     shouldBeTrue("array instanceof Array");
     shouldBe("array.length", "100");
 }
-
-var successfullyParsed = true;

@@ -152,5 +152,3 @@ testDateParse("Dec 25, 1995, 13:30", "819898200000 + timeZoneOffset");
 testDateParse("Dec 25,1995,13:30", "819898200000 + timeZoneOffset");
 
 testDateParse("Mon Jun 20 11:00:00 CDT 2011", "1308585600000");
-
-var successfullyParsed = true;

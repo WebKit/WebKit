@@ -12,8 +12,6 @@ description("Test parsing of entity-escaped &lt;/iframe&gt; tag for <a href=\"ht
 
 var expectedResult = '<' + '/iframe>';
 shouldBe('document.getElementById("myiframe").textContent', 'expectedResult');
-
-successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

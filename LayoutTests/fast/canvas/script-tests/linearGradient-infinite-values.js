@@ -16,5 +16,3 @@ shouldThrow("ctx.createLinearGradient(0, -Infinity, 100, 100)", "'Error: NOT_SUP
 shouldThrow("ctx.createLinearGradient(NaN, 0, 100, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createLinearGradient(Infinity, 0, 100, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createLinearGradient(-Infinity, 0, 100, 100)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
-
-var successfullyParsed = true;

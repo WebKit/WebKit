@@ -33,5 +33,3 @@ shouldBe("f.elements.length", "1");
 shouldBe("f.elements[0]", "i");
 shouldBe("f.elements.first", "undefined");
 shouldBe("f.elements.second", "i");
-
-var successfullyParsed = true;

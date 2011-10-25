@@ -48,7 +48,6 @@ function touchEndHandler()
 
     if (++endCount == 2)
     {
-        successfullyParsed = true;
         layoutTestController.notifyDone();
         isSuccessfullyParsed();
     }

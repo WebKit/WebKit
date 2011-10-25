@@ -18,5 +18,3 @@ testNoValues.sort(function(a, b) {return a < b;});
 shouldBe("testNoValues.length", "10110");
 shouldBe("testNoValues[9999]", "undefined");
 shouldBe("testNoValues[10000]", "undefined");
-
-var successfullyParsed = true;

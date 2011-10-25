@@ -7,5 +7,3 @@ function mod(b) {
 }
 
 shouldBeNaN("mod(0)");
-
-var successfullyParsed = true;

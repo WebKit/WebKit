@@ -20,5 +20,3 @@ shouldBeTrue("({set a(){}, get a(){}}), true");
 shouldBeTrue("(function(){({a:1, a:1, a:1})}), true");
 shouldBeTrue("(function(){({get a(){}, set a(){}})}), true");
 shouldBeTrue("(function(){({set a(){}, get a(){}})}), true");
-
-var successfullyParsed = true;

@@ -89,6 +89,4 @@ for (j = 0; i < testData.length + extensionOffset; ++i, ++j)
 for (j = extensionOffset; i < writer.length; ++i, ++j)
     assert(contents.charCodeAt(i) == testData.charCodeAt(j));
 testPassed("Overlapped write 3 verified.");
-
-var successfullyParsed = true;
 finishJSTest();

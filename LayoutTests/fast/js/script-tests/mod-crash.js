@@ -37,5 +37,3 @@ function nonSpeculativeModReuse(argument)
 }
 
 shouldBe("nonSpeculativeModReuse(0.5)", "1");
-
-var successfullyParsed = true;

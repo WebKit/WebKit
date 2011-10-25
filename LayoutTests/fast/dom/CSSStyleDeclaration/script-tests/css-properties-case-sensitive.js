@@ -37,5 +37,3 @@ shouldBe("element.style.posZIndex", "1");
 shouldBe("element.style.PosZIndex", "1");
 shouldBeUndefined("element.style.poszIndex");
 shouldBeUndefined("element.style.PoszIndex");
-
-var successfullyParsed = true;

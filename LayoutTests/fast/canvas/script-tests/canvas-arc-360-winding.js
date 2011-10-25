@@ -37,5 +37,3 @@ data = imageData.data;
 shouldBe("data[0]", "0");
 shouldBe("data[1]", "0");
 shouldBe("data[2]", "0");
-
-var successfullyParsed = true;

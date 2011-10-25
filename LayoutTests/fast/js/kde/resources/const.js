@@ -14,4 +14,3 @@ for (var v = 0;;) {
 }
 
 // ### check for forbidden redeclaration
-successfullyParsed = true

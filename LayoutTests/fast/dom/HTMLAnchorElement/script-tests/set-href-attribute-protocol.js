@@ -76,5 +76,3 @@ debug("Set protocol to undefined");
 a.href = "https://www.mydomain.com/path/";
 a.protocol = undefined;
 shouldBe("a.href", "'undefined://www.mydomain.com/path/'");
-
-var successfullyParsed = true;

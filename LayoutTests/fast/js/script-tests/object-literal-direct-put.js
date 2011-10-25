@@ -10,5 +10,3 @@ shouldBeTrue("({__proto__: {__proto__: {a:false}}, a:true}).a");
 shouldBeTrue("({__proto__: {__proto__: {set a() {throw 'Should not call setter'; }}}, a:true}).a");
 shouldBeTrue("({__proto__: {__proto__: {get a() {throw 'Should not reach getter'; }}}, a:true}).a");
 shouldBeTrue("({__proto__: {__proto__: {get a() {throw 'Should not reach getter'; }, b:true}}, a:true}).b");
-
-var successfullyParsed = true;

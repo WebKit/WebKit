@@ -17,5 +17,3 @@ function test2(a, a, a, a, a, a, b) {
 }
 
 shouldBe('test2("success", "success", "success", "success", "success", "success", "success")()', '"success"');
-
-var successfullyParsed = true;

@@ -70,5 +70,3 @@ shouldBeTrue("testFunction(subclass2)");
 proto.test = false
 subclass2.test = true;
 shouldBeTrue("testFunction(subclass2)");
-
-successfullyParsed = true;

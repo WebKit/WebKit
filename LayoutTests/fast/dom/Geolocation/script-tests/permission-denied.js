@@ -18,4 +18,3 @@ navigator.geolocation.getCurrentPosition(function(p) {
 });
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

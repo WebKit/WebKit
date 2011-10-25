@@ -44,4 +44,3 @@ function maybeFinishTest(p) {
 }
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

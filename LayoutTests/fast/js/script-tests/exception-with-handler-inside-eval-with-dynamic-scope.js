@@ -30,5 +30,3 @@ function runTest() {
     eval("try { throw ''; } catch (e) { result = test; shouldBe('result', '\"outer scope\"'); }");
 }
 runTest();
-
-var successfullyParsed = true;

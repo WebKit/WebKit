@@ -19,5 +19,3 @@ shouldBe('test("-webkit-transform-origin: 10px 10px 10px", "-webkit-transform-or
 shouldBe('test("-webkit-transform-origin: left top 10%", "-webkit-transform-origin")', 'null');
 shouldBe('test("-webkit-transform-origin: left top 10px", "-webkit-transform-origin")', '"0% 0% 10px"');
 shouldBe('test("-webkit-transform-origin: left top left", "-webkit-transform-origin")', 'null');
-
-var successfullyParsed = true;

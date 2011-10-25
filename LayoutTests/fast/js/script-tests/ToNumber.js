@@ -169,5 +169,3 @@ shouldBe("+('1' + hairSpace + '1')", "NaN");
 shouldBe("+('1' + narrowNoBreakSpace + '1')", "NaN");
 shouldBe("+('1' + mediumMathematicalSpace + '1')", "NaN");
 shouldBe("+('1' + ideographicSpace + '1')", "NaN");
-
-var successfullyParsed = true;

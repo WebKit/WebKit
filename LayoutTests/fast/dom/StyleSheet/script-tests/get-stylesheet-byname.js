@@ -4,5 +4,3 @@ var styleElement = document.createElement("style");
 styleElement.setAttribute("id", "test");
 document.head.appendChild(styleElement);
 shouldBe('document.styleSheets["test"]', 'styleElement.sheet');
-    
-var successfullyParsed = true;

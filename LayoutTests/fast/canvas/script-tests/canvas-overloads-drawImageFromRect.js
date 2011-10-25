@@ -19,5 +19,3 @@ shouldBe("ctx.drawImageFromRect(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "unde
 shouldBe("ctx.drawImageFromRect(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
 shouldBe("ctx.drawImageFromRect(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
 shouldBe("ctx.drawImageFromRect(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
-
-var successfullyParsed = true;

@@ -32,5 +32,3 @@ function testForIn() {
 
 testForIn();
 shouldBe("g", "'foo'"); //Before the eval, g was in outer scope, but not after!
-
-var successfullyParsed = true;

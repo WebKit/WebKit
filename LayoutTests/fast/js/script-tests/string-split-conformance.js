@@ -71,5 +71,3 @@ for (var i in testCode)
 var separatorToStringCalled = "ToString not called on the separator";
 shouldBe("'hello'.split({toString:function(){return 'e';}})", '["h", "llo"]');
 shouldBe("var a = 'hello'.split({toString:function(){separatorToStringCalled='OKAY';return 'e';}},0); a.push(separatorToStringCalled); a", '["OKAY"]');
-
-var successfullyParsed = true;

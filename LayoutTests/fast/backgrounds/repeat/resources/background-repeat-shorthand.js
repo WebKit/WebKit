@@ -47,6 +47,3 @@ shouldBe('getShorthand("-webkit-mask-repeat", "icon2")', '"null"');
 shouldBe('getShorthand("-webkit-mask-position-x", "icon2")', '"null"');
 shouldBe('getShorthand("-webkit-mask-position-y", "icon2")', '"null"');
 shouldBe('getShorthand("-webkit-mask-repeat", "icon2")', '"null"');
-
-
-var successfullyParsed = true;

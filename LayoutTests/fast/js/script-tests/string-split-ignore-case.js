@@ -3,5 +3,3 @@ description(
 );
 
 shouldBe('"1s2S3".split(/s/i).toString()', '"1,2,3"');
-
-var successfullyParsed = true;

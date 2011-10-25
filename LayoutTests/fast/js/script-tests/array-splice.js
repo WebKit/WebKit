@@ -31,5 +31,3 @@ shouldBe("arr.splice(2, -1)", "[]")
 shouldBe("arr", "['a','b','c']");
 shouldBe("arr.splice(2, 100)", "['c']")
 shouldBe("arr", "['a','b']");
-
-var successfullyParsed = true;

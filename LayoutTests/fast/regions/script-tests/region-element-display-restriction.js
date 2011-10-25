@@ -27,5 +27,3 @@ shouldBeTrue('createRegionElement("div", "compact")');
 shouldBeFalse('createRegionElement("div", "inline")');
 shouldBeFalse('createRegionElement("div", "table")');
 shouldBeFalse('createRegionElement("div", "inline-table")');
-
-successfullyParsed = true;

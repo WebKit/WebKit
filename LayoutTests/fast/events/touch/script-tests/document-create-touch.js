@@ -48,6 +48,4 @@ shouldBe("badParamsTouch.webkitRadiusX", "0");
 shouldBe("badParamsTouch.webkitRadiusY", "0");
 shouldBeNaN("badParamsTouch.webkitRotationAngle");
 shouldBeNaN("badParamsTouch.webkitForce");
-
-successfullyParsed = true;
 isSuccessfullyParsed();

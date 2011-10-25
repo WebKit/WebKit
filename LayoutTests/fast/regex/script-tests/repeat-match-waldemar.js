@@ -29,5 +29,3 @@ shouldBe('/(?:a*?)?/.exec("")', '[""]');
 shouldBe('/(?:a*?)*/.exec("aa")', '["aa"]');
 shouldBe('/(?:a*?)*/.exec("a")', '["a"]');
 shouldBe('/(?:a*?)*/.exec("")', '[""]');
-
-var successfullyParsed = true;

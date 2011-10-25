@@ -55,11 +55,15 @@ function check(prop) {
     checkValue(name, original);
 }
 
+var originalWindowOnError = window.onerror;
+window.onerror = null;
+
 for (var i = 0; i < propertyInfo.length; ++i) {
     check(propertyInfo[i]);
 }
 
-var successfullyParsed = true;
+window.onerror = originalWindowOnError ;
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -81,5 +81,3 @@ shouldBeFalse('textarea.validity.tooLong');
 parent.firstChild.innerHTML = 'abcdef';
 shouldBe('textarea.value', '"abcdef"');
 shouldBeFalse('textarea.validity.tooLong');
-
-var successfullyParsed = true;

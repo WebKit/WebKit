@@ -121,4 +121,3 @@ shouldBe("String.prototype.link.length","1");
 shouldBe("Number.prototype.toString.length", "1");
 shouldBe("Number.prototype.valueOf.length", "0");
 shouldBe("Number.prototype.toFixed.length", "1");
-successfullyParsed = true

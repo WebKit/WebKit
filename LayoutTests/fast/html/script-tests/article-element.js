@@ -39,5 +39,3 @@ selection.collapse();
 shouldBe('document.getElementById("span2").parentNode.nodeName', '"ARTICLE"');
 document.body.removeChild(editable);
 
-var successfullyParsed = true;
-

@@ -103,5 +103,3 @@ shouldBe("binlineRe.toString()", "bevalFromExplicitRe.toString()")
 shouldBe("binlineRe.exec(bsample)[0]", "'bm|p'")
 shouldBe("bevalInlineRe.exec(bsample)[0]", "'bm|p'")
 shouldBe("bexplicitRe.exec(bsample)[0]", "'bm|p'")
-
-var successfullyParsed = true;

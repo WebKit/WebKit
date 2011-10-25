@@ -10,5 +10,3 @@ shouldThrow("ctx.createImageData(10, Infinity)", '"Error: NOT_SUPPORTED_ERR: DOM
 shouldThrow("ctx.createImageData(10, -Infinity)", '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow("ctx.createImageData(NaN, 10)", '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 shouldThrow("ctx.createImageData(10, NaN)", '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-
-successfullyParsed = true;

@@ -42,5 +42,3 @@ shouldBe("imgdata[1]", "0");
 shouldBe("imgdata[2]", "0");
 
 ctx.clearRect(0, 0, 1, 1);
-
-var successfullyParsed = true;

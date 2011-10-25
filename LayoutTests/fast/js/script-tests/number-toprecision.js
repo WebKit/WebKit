@@ -40,5 +40,3 @@ shouldThrow("(1234.567).toPrecision(nan)"); // nan is treated like 0
 shouldBeEqualToString("posInf.toPrecision()", "Infinity");
 shouldBeEqualToString("negInf.toPrecision()", "-Infinity");
 shouldBeEqualToString("nan.toPrecision()", "NaN");
-
-var successfullyParsed = true;

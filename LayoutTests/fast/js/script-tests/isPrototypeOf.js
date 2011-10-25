@@ -15,5 +15,3 @@ function ObjectC() {}
 ObjectC.prototype = new ObjectB();
 var objc = new ObjectC();
 shouldBeTrue("ObjectA.prototype.isPrototypeOf(objc)");
-
-var successfullyParsed = true;

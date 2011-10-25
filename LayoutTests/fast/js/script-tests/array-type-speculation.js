@@ -40,5 +40,3 @@ runWithPredicates([[true, true, "\"\\\"foo\\\"\""], [true, false, "\"\\\"foo\\\"
 runWithPredicates([[false, false, "\"undefined\""], [true, false, "\"\\\"foo\\\"\""], [false, true, "\"undefined\""], [true, true, "\"\\\"foo\\\"\""]]);
 runWithPredicates([[true, true, "\"\\\"foo\\\"\""], [false, true, "\"undefined\""], [true, false, "\"\\\"foo\\\"\""], [false, false, "\"undefined\""]]);
 runWithPredicates([[false, false, "\"undefined\""], [false, true, "\"undefined\""], [true, false, "\"\\\"foo\\\"\""], [true, true, "\"\\\"foo\\\"\""]]);
-
-var successfullyParsed = true;

@@ -16,5 +16,3 @@ for (var i=1;i<=5;i++)
     var div = document.getElementById("invalid"+i);
     shouldBe("getComputedStyle(div, null).color", "black");
 }
-
-var successfullyParsed = true;

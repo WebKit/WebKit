@@ -21,5 +21,3 @@ if (query.indexOf('submitted=true') == -1) {
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
-
-var successfullyParsed = true;

@@ -67,5 +67,3 @@ p.setAttribute("max", " 10");
 shouldBe("p.value", "0");
 shouldBe("p.max", "1");
 shouldBe("p.position", "0");
-
-var successfullyParsed = true;

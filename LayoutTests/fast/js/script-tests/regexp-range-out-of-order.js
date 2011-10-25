@@ -5,5 +5,3 @@ description(
 );
 
 shouldThrow('/^[\s{-.\[\]\(\)]$/');
-
-var successfullyParsed = true;

@@ -13,5 +13,3 @@ shouldBe("sel.collapseToStart()", "undefined");
 shouldBe("sel.collapseToEnd()", "undefined");
 
 document.body.removeChild(textNode);
-
-var successfullyParsed = true;

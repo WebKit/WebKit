@@ -4,5 +4,3 @@ description(
 
 var a, b;
 (function () { return a - b; })();
-
-var successfullyParsed = true;

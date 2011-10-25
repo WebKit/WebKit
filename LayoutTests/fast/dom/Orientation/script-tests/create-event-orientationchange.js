@@ -14,5 +14,3 @@ try {
 } catch(e) {
     document.getElementById('result').innerHTML = "FAIL... orientationChange event doesn't appear to be enabled or implemented.";
 }
-
-window.successfullyParsed = true;

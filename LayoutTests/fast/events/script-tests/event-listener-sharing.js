@@ -42,5 +42,3 @@ function clickHandler() {
     
     shouldBe("clickCount", "100");
 })();
-
-var successfullyParsed = true;

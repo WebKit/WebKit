@@ -17,5 +17,3 @@ var imgdata = imageData.data;
 shouldBe("imgdata[0]", "0");
 shouldBe("imgdata[1]", "128");
 shouldBe("imgdata[2]", "0");
-
-var successfullyParsed = true;

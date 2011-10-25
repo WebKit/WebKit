@@ -64,7 +64,6 @@ function declareTouchMove(div_id)
 
         if (++totalTouchMoveCount == 6)
         {
-            successfullyParsed = true;
             layoutTestController.notifyDone();
             isSuccessfullyParsed();
         }

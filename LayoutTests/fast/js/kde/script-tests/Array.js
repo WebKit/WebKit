@@ -210,5 +210,3 @@ function testToString() {
   RegExp.prototype.toString = backupRegExpToString;
   RegExp.prototype.toLocaleString = backupRegExpToLocaleString;
 }
-
-successfullyParsed = true

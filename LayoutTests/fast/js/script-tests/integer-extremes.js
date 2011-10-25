@@ -140,5 +140,3 @@ for (var valueBits = 8; valueBits <= 128; valueBits++) {
     shouldBe("max.toString()", answers[valueBits-8][2]);
     shouldBe("(max + 1).toString()", answers[valueBits-8][3]);
 }
-
-var successfullyParsed = true;

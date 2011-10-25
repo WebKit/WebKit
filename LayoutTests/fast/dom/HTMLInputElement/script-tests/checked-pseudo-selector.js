@@ -15,5 +15,3 @@ shouldBeTrue("input1.checked");
 
 // cleanup
 document.body.removeChild(input1);
-
-var successfullyParsed = true;

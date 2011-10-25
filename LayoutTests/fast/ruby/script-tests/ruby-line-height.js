@@ -15,5 +15,3 @@ document.body.appendChild(div);
 shouldBeEqualToString("getLineHeight('p')", "48px");
 shouldBeEqualToString("getLineHeight('r')", "normal");
 shouldBeEqualToString("getLineHeight('t')", "normal");
-
-var successfullyParsed = true;

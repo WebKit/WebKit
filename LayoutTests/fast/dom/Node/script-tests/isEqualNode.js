@@ -9,5 +9,3 @@ var docTypeDifferentSystemID = document.implementation.createDocumentType('html'
 shouldBeTrue("docTypeAllSet.isEqualNode(docTypeAllSet2)");
 shouldBeFalse("docTypeAllSet.isEqualNode(docTypeDifferentPublicID)");
 shouldBeFalse("docTypeAllSet.isEqualNode(docTypeDifferentSystemID)");
-
-var successfullyParsed = true;

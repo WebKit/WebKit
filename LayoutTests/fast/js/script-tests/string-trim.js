@@ -69,5 +69,4 @@ for (var i = 0; i < testValues.length; i++) {
     shouldBe("trimLeft.call("+testValues[i]+")", "'"+eval(testValues[i])+"'");
     shouldBe("trimRight.call("+testValues[i]+")", "'"+eval(testValues[i])+"'");
 }
-var successfullyParsed = true;
 

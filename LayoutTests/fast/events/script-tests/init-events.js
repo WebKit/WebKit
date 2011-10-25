@@ -224,5 +224,3 @@ shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, null, 1001').p
 shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').elapsedTime", "1001");
 
 // WheelEvent has no init function yet; roughly speaking, we are waiting for that part of DOM 3 to stabilize.
-
-var successfullyParsed = true;

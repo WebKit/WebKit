@@ -3,5 +3,3 @@ description('This tests that items in a NodeList cannot be called indexed using 
 var nodeList = document.getElementsByTagName('div');
 shouldThrow("nodeList(0)");
 
-var successfullyParsed = true;
-

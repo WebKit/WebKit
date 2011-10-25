@@ -5,5 +5,3 @@ description(
 shouldBe("(new Date(1970, 0, 1)).getHours()", "0");
 shouldBe("(new Date(1969, 8, 1)).getHours()", "0");
 shouldBe("(new Date(1969, 9, 28)).getHours()", "0");
-
-var successfullyParsed = true;

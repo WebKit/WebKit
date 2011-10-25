@@ -10,8 +10,6 @@ description("Test parsing of entity-escaped &lt;/title&gt; tag for <a href=\"htt
 
 var expectedResult = '<' + '/title>';
 shouldBe('document.getElementById("mytitle").textContent', 'expectedResult');
-
-successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

@@ -144,5 +144,3 @@ shouldBeTrue('postDecTest();');
 
 shouldBeTrue('primitiveThisTest.call(1);');
 shouldBeTrue('strictThisTest.call(1);');
-
-successfullyParsed = true;

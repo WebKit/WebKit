@@ -38,4 +38,3 @@ for (var i = 0; i < functionNames.length; i++) {
     eval(testFunctionName + " = " + functionNames[i]);
     shouldThrow(testFunctionName + "()", '"TypeError: Type error"');
 }
-var successfullyParsed = true;

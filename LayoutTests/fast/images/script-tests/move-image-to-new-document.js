@@ -47,5 +47,3 @@ function testNextType()
 }
 
 testNextType();
-
-var successfullyParsed = true;

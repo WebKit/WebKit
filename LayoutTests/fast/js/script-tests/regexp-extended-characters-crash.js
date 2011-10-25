@@ -11,5 +11,3 @@ shouldBe('new RegExp("[\u4e00-\u9fa5]").toString()', '/[\u4e00-\u9fa5]/.toString
 
 // test first char < 255, last char > 255
 shouldBe('new RegExp("[\u0001-\u1f4d]").toString()', '/[\u0001-\u1f4d]/.toString()');
-    
-var successfullyParsed = true;

@@ -42,5 +42,3 @@ function test() {
 }
 
 test();
-
-var successfullyParsed = true;

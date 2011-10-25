@@ -29,5 +29,3 @@ shouldBe('test("-webkit-background-size: 5em ;")', '"80px 80px"');
 
 shouldBe('test("background-size: 100 100 100;")', '"auto"');
 shouldBe('test("background-size: coconut;")', '"auto"');
-
-var successfullyParsed = true;

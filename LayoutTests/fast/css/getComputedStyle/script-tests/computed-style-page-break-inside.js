@@ -11,5 +11,3 @@ shouldBe("window.getComputedStyle(parent).getPropertyCSSValue('page-break-inside
 shouldBe("window.getComputedStyle(child).getPropertyCSSValue('page-break-inside').getStringValue()", '"auto"');
 
 document.body.removeChild(parent);
-
-var successfullyParsed = true;

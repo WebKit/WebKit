@@ -23,5 +23,3 @@ shouldBe("document.querySelectorAll('ul#testid').length", "0");
 shouldBe("document.querySelectorAll('ul #testid').length", "0");
 shouldBe("document.querySelectorAll('#testid[attr]').length", "0");
 shouldBe("document.querySelectorAll('#testid:not(div)').length", "0");
-
-var successfullyParsed = true;

@@ -59,5 +59,3 @@ stackOverflowTest();
 
 // Blow the stack recursing with arguments
 shouldThrow("recurseArguments.apply(null, new Array(50000))");
-
-var successfullyParsed = true;

@@ -40,5 +40,3 @@ debug('');
 shouldBe('checkRowNesting("tr")', '1');
 
 debug('');
-
-var successfullyParsed = true;

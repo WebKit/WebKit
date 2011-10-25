@@ -20,5 +20,3 @@ try {
     caughtException = true;
 }
 shouldBeFalse('caughtException');
-
-var successfullyParsed = true;

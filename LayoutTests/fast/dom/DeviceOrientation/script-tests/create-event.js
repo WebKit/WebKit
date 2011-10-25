@@ -17,5 +17,3 @@ shouldBeTrue("typeof event.cancelable == 'boolean'");
 shouldBeTrue("typeof event.alpha == 'object'");
 shouldBeTrue("typeof event.beta == 'object'");
 shouldBeTrue("typeof event.gamma == 'object'");
-
-window.successfullyParsed = true;

@@ -19,5 +19,3 @@ shouldBeTrue("typeof event.acceleration == 'object'");
 shouldBeTrue("typeof event.accelerationIncludingGravity == 'object'");
 shouldBeTrue("typeof event.rotationRate == 'object'");
 shouldBeTrue("typeof event.interval == 'object'");
-
-window.successfullyParsed = true;

@@ -45,5 +45,3 @@ debug("Set search to empty string");
 a.href = "https://www.mydomain.com/path/?key=value";
 a.search = "";
 shouldBe("a.href", "'https://www.mydomain.com/path/?'");
-
-var successfullyParsed = true;

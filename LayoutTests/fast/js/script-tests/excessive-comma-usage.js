@@ -18,5 +18,3 @@ commaExpressionTestString += ";return true;";
 shouldBeTrue("new Function(initializerTestString)()");
 shouldBeTrue("new Function(declarationTestString)()");
 shouldBeTrue("new Function(commaExpressionTestString)()");
-
-successfullyParsed = true;

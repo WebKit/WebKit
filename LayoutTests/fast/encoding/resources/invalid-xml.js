@@ -39,5 +39,3 @@ var iframe = document.createElement("iframe");
 document.body.appendChild(iframe);
 iframe.onload = runEncodingTest;
 runNextTest();
-
-var successfullyParsed = true;

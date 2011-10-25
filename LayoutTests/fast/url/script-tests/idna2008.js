@@ -48,5 +48,3 @@ for (var i = 0; i < cases.length; ++i) {
   shouldBe("canonicalize('http://" + test_vector + "/')",
            "'http://" + expected_result + "/'");
 }
-
-var successfullyParsed = true;

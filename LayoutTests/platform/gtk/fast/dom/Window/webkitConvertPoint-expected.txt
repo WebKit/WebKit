@@ -26,9 +26,6 @@ This test exercises the webkitConvertPointFromNodeToPage() function
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Test parameter passing - should not crash
 PASS Missing parameter test
 Test did not crash and therefore was successful
@@ -194,6 +191,7 @@ FAIL y should be 526. Was 538.
 Round Trip of (5,40)
 PASS x is 5
 PASS y is 40
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

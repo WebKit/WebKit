@@ -19,5 +19,3 @@ shouldBe('test("text-rendering: geometricPrecision;")', '"geometricprecision"');
 shouldBeNull('test("text-rendering: auto auto;")');
 shouldBeNull('test("text-rendering: optimizeCoconuts;")');
 shouldBeNull('test("text-rendering: 15;")');
-
-var successfullyParsed = true;

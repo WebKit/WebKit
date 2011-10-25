@@ -15,5 +15,3 @@ shouldBeEqualToString("normalizedFunctionString(div.onclick.toString())", "funct
 var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 path.setAttribute("onclick", "test();");
 shouldBeEqualToString("normalizedFunctionString(path.onclick.toString())", "function onclick(evt) {test();}");
-
-var successfullyParsed = true;

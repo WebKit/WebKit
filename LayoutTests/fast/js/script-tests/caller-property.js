@@ -18,5 +18,3 @@ var childHasCallerWhenCalledFromWithinParent = parent();
 shouldBe('childHasCallerWhenExecutingGlobalCode', 'false');
 shouldBe('childHasCallerWhenCalledWithoutParent', 'false');
 shouldBe('childHasCallerWhenCalledFromWithinParent', 'true')
-
-var successfullyParsed = true;

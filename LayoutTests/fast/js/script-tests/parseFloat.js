@@ -73,5 +73,3 @@ shouldBe("parseFloat(hairSpace + '1')", "1");
 shouldBe("parseFloat(narrowNoBreakSpace + '1')", "1");
 shouldBe("parseFloat(mediumMathematicalSpace + '1')", "1");
 shouldBe("parseFloat(ideographicSpace + '1')", "1");
-
-var successfullyParsed = true;

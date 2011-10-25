@@ -5,5 +5,3 @@ description(
 var re = /^b|^cd/;
 var str = "abcd";
 shouldBe('re.test(str)', 'false');
-
-var successfullyParsed = true;

@@ -66,5 +66,3 @@ ctx.setTransform(1, 0, 0, 1, 0, 0);
 ctx.fill();
 
 testPixel(50, 50, 0, 128, 0);
-
-successfullyParsed = true;

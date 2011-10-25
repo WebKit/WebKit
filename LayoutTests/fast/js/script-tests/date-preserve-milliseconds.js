@@ -19,6 +19,3 @@ d.setMinutes(45, 40);
 shouldBe("d.getMilliseconds()", oldValue.toString());
 d.setSeconds(50);
 shouldBe("d.getMilliseconds()", oldValue.toString());
-
-
-var successfullyParsed = true;

@@ -145,8 +145,6 @@
     debug("Testing - moveBy: Bad x and y input");
     shouldBe('window.screenY', 'screen.availTop * 4'); // FIXME this should just be screen.availTop
     shouldBe('window.screenX', 'screen.availLeft');
-
-    var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

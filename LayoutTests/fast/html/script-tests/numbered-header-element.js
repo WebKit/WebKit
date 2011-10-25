@@ -237,5 +237,3 @@ shouldBeFalse('test2.parentNode.id == "test1"');
 shouldBeTrue('test2.parentNode.id == "test0"');
 
 document.body.removeChild(testParent);
-
-var successfullyParsed = true;

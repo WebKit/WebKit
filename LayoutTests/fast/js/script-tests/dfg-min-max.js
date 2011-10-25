@@ -38,5 +38,3 @@ shouldBe("doMax(NaN, 1.5)", "NaN");
 shouldBe("doMax(NaN, 2.5)", "NaN");
 
 shouldBe("doMax(NaN, NaN)", "NaN");
-
-var successfullyParsed = true;

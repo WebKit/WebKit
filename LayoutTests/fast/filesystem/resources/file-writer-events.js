@@ -99,4 +99,3 @@ function runTest(unusedFileEntry, fileWriter) {
 }
 var jsTestIsAsync = true;
 setupAndRunTest(2*1024*1024, 'file-writer-events', runTest);
-var successfullyParsed = true;

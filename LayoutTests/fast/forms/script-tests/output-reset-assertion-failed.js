@@ -40,5 +40,3 @@ form.reset();
 form.reset();
 testPassed('Not crashed');
 document.body.removeChild(form);
-
-var successfullyParsed = true;

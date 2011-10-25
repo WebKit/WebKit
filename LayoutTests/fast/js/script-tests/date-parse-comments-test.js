@@ -73,5 +73,3 @@ testDateParse("(Sat) Wed (Nov) Dec (Nov) 25 1995 1:30 GMT", "819855000000");
 testDateParse("Wed (comment 1) (comment 2) Dec 25 1995 1:30 GMT", "819855000000");
 testDateParse("Wed(comment 1) (comment 2) Dec 25 1995 1:30 GMT", "819855000000");
 testDateParse("We(comment 1) (comment 2) Dec 25 1995 1:30 GMT", "819855000000");
-
-var successfullyParsed = true;

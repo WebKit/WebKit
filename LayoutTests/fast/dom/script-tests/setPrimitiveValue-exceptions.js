@@ -55,5 +55,3 @@ checkThrows(style);
 
 var computedStyle = window.getComputedStyle(element, null);
 checkThrows(computedStyle);
-
-successfullyParsed = true;

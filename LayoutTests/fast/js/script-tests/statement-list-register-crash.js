@@ -13,5 +13,3 @@ function f()
 }
 
 shouldBeTrue("f()");
-
-var successfullyParsed = true;

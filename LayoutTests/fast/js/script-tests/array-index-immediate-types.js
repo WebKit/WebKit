@@ -19,5 +19,3 @@ function putSelf(array, index)
 
 shouldBeTrue("putSelf([0], 0);");
 shouldBeTrue("putSelf([0], 1/9);");
-
-successfullyParsed = true;

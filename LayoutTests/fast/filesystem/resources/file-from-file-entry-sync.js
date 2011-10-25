@@ -17,4 +17,3 @@ shouldBe("testFile.size", "0");
 
 removeAllInDirectorySync(fileSystem.root);
 finishJSTest();
-var successfullyParsed = true;

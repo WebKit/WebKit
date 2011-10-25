@@ -18,5 +18,3 @@ caught = true;
 }
 
 shouldBeTrue("caught");
-
-var successfullyParsed = true;

@@ -23,5 +23,3 @@ for (var i = 0; i < testValues.length; i++) {
 shouldBe("imageData.data['foo']='garbage',imageData.data['foo']", "'garbage'");
 shouldBe("imageData.data[-1]='garbage',imageData.data[-1]", "'garbage'");
 shouldBe("imageData.data[17]='garbage',imageData.data[17]", "undefined");
-
-var successfullyParsed = true;

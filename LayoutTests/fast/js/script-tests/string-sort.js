@@ -16,5 +16,3 @@ shouldBeInThisOrder(["0", "A"]);
 shouldBeInThisOrder(["-", "0"]);
 shouldBeInThisOrder([" ", "-"]);
 shouldBeInThisOrder(["A", "ABC"]);
-
-var successfullyParsed = true;

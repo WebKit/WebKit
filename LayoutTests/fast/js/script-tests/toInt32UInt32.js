@@ -3585,5 +3585,3 @@ shouldBe("1/0 >>> 0", "0");
 shouldBe("1/-0 >>> 0", "0");
 shouldBe("Number.NaN >>> 0", "0");
 shouldBe("Number.NaN*-1 >>> 0", "0");
-
-successfullyParsed = true;

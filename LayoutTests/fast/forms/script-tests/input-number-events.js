@@ -41,5 +41,3 @@ if (window.eventSender) {
 } else {
   document.getElementById('console').innerHTML = 'No eventSender';
 }
-
-var successfullyParsed = true;

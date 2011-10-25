@@ -96,5 +96,3 @@ container.insertBefore(textarea, fieldset);
 shouldBe('checkOrder([textarea, fieldset, input, keygen, object, output, select])', '"OK"');
 container.appendChild(button);
 shouldBe('checkOrder([textarea, fieldset, input, keygen, object, output, select, button])', '"OK"');
-
-var successfullyParsed = true;

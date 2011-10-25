@@ -154,5 +154,3 @@ shouldBe("getComputedStyle(cell, '').borderTopColor", "red");
 shouldBe("getComputedStyle(cell, '').borderBottomColor", "red");
 
 document.body.removeChild(table);
-
-var successfullyParsed = true;

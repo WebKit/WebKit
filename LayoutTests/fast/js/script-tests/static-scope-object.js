@@ -18,5 +18,3 @@ function throwingFunctionAsException() {
 }
 
 shouldBe("throwingFunctionAsException()", 'globalObject');
-
-successfullyParsed = true;

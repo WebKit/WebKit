@@ -40,8 +40,6 @@ shouldBe('textarea.value = "script-updated"; textarea.value', '"script-updated"'
 shouldBe('textarea.removeChild(textarea.firstChild); textarea.appendChild(document.createTextNode("default 5")); textarea.value', '"script-updated"');
 shouldBe('form.reset(); textarea.value', '"default 5"');
 shouldBe('textarea.removeChild(textarea.firstChild); textarea.appendChild(document.createTextNode("default 6")); textarea.value', '"default 6"');
-
-var successfullyParsed = true;
 form.innerHTML = '';
 </script>
 

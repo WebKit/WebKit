@@ -36,5 +36,3 @@ evalAndLog("event.initDeviceOrientationEvent('', false, false, null, null, null)
 shouldBeTrue("event.alpha == null");
 shouldBeTrue("event.beta == null");
 shouldBeTrue("event.gamma == null");
-
-window.successfullyParsed = true;

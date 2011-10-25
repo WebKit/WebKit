@@ -28,5 +28,3 @@ shouldThrow("walker.firstChild();");
 shouldBe("walker.currentNode.id", "'root'")
 shouldThrow("walker.nextNode();walker.currentNode.id");
 shouldBe("walker.currentNode.id", "'root'")
-
-var successfullyParsed = true;

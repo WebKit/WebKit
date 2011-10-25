@@ -43,5 +43,3 @@ shouldBe("predictBooleanArgument(1)", "\"yes\"");
 shouldBe("predictBooleanArgument(2)", "\"yes\"");
 shouldBe("predictBooleanArgument(3)", "\"yes\"");
 shouldBe("predictBooleanArgument(4)", "\"yes\"");
-
-var successfullyParsed = true;

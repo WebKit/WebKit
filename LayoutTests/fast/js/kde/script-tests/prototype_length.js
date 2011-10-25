@@ -34,4 +34,3 @@ shouldBe("foundFunctionPrototypeLength","false");
 var foundStringPrototypeLength = false;
 for (i in String.prototype) { if (i == "length") foundStringPrototypeLength = true; }
 shouldBe("foundStringPrototypeLength","false");
-successfullyParsed = true

@@ -106,5 +106,3 @@ for (var i = 0; i < cases.length; ++i)
             shouldBe('"' + item[0] + '".charCodeAt(' + item[1] + ')', result[1]);
     }
 }
-
-var successfullyParsed = true;

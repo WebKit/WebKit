@@ -77,5 +77,3 @@ shouldThrow("(1234.567).toFixed(negInf)");
 shouldBeEqualToString("posInf.toFixed()", "Infinity");
 shouldBeEqualToString("negInf.toFixed()", "-Infinity");
 shouldBeEqualToString("nan.toFixed()", "NaN");
-
-var successfullyParsed = true;

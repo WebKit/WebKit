@@ -111,5 +111,3 @@ result = (function() {
 })();
 
 shouldBe(result.toString(), "1");
-
-var successfullyParsed = true;

@@ -69,5 +69,3 @@ for (var i = 0; i < functionNames.length; i++) {
     shouldBe("cachedFunctions["+i+"]()", functionNames[i]);
     shouldBe("cachedFunctions["+i+"]()", functionNames[i]);
 }
-
-successfullyParsed = true;

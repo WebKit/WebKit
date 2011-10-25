@@ -15,5 +15,3 @@ try {
         shouldBe("f()", "0");
     }).apply();
 }
-
-var successfullyParsed = true;

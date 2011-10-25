@@ -20,5 +20,3 @@ if (tryMimeType("image/jpeg") == "image/jpeg") {
     shouldBe("tryMimeType('imAgE/jPEg')", "'image/jpeg'");
     shouldBe("tryMimeType('IMAGE/JPEG')", "'image/jpeg'");
 }
-
-var successfullyParsed = true;

@@ -56,5 +56,3 @@ test1();
 shouldBeTrue("gotRightCatch");
 shouldBeFalse("gotWrongCatch1");
 shouldBeFalse("gotWrongCatch2");
-
-var successfullyParsed = true;

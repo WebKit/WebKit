@@ -69,5 +69,3 @@ check('1.2e10');
 
 // Disabled
 check('invalid', true);
-
-var successfullyParsed = true;

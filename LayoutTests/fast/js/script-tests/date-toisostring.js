@@ -21,5 +21,3 @@ shouldBe("new Date('1 January 100000 UTC').toISOString()", "'+100000-01-01T00:00
 shouldBe("new Date('1 January -1 UTC').toISOString()", "'-000001-01-01T00:00:00.000Z'");
 shouldBe("new Date('10 March 2000 UTC').toISOString()", "'2000-03-10T00:00:00.000Z'");
 shouldBeTrue('throwsRangeError("new Date(NaN).toISOString()")');
-
-successfullyParsed = true;

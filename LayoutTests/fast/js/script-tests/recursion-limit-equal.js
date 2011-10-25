@@ -2,8 +2,6 @@ description('Tests hitting the recursion limit with equality comparisons. At one
 
 ch = 0;
 
-var successfullyParsed = true;
-
 function test()
 {
     if (ch == 0)

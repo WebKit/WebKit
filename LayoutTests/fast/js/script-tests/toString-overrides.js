@@ -40,4 +40,3 @@ Number.prototype.toString = backupNumberToString;
 Number.prototype.toLocaleString = backupNumberToLocaleString;
 RegExp.prototype.toString = backupRegExpToString;
 RegExp.prototype.toLocaleString = backupRegExpToLocaleString;
-var successfullyParsed = true;

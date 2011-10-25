@@ -80,5 +80,3 @@ shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}),
 shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {set: setter1})");
 shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {get: getter1}).foo", "'called getter1'");
 shouldThrow("Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {set: setter1}).foo='test'", "'called setter1'");
-
-successfullyParsed = true;

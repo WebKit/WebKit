@@ -22,6 +22,3 @@ debug("<br>Testing previousSibling")
 walker = document.createTreeWalker(testElement, NodeFilter.SHOW_ELEMENT, filter, false);
 walker.currentNode = testElement.querySelectorAll('#B3')[0];
 shouldBe("walker.previousSibling(); walker.currentNode.id", "'B1'");
-
-
-var successfullyParsed = true;

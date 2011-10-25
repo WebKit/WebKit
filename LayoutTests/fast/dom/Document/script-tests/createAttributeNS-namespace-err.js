@@ -127,5 +127,3 @@ shouldBeEqualToString("document.createAttributeNS().toString()", "[object Attr]"
 shouldBeEqualToString("document.createAttributeNS(\"http://www.example.com\").toString()", "[object Attr]");
 
 runNSTests();
-
-var successfullyParsed = true;

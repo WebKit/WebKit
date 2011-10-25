@@ -107,5 +107,3 @@ negative_test("polygon(10px)");
 negative_test("polygon(nonzero,10px)");
 negative_test("polygon(evenodd,12px)");
 negative_test("polygon(10px, 20px, 30px, 40px, 40px, 50px)");
-
-var successfullyParsed = true;

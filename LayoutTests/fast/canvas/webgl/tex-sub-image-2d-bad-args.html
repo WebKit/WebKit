@@ -56,8 +56,6 @@ gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGB, gl.UNSIGNED_BYTE, c);
 glErrorShouldBe(gl, gl.INVALID_OPERATION, "format not same as original RGBA 4_4_4_4");
 gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGBA, gl.UNSIGNED_BYTE, c);
 glErrorShouldBe(gl, gl.INVALID_OPERATION, "type not same as original RGBA 4_4_4_4");
-
-successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -32,4 +32,3 @@ debug("Main page opening resources/window-close-popup.html");
 otherWindow = window.open("resources/window-close-popup.html");
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

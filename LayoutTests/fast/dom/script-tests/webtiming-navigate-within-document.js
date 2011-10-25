@@ -34,5 +34,3 @@ function loadHandler()
 window.addEventListener("load", loadHandler, false);
 
 jsTestIsAsync = true;
-
-var successfullyParsed = true;

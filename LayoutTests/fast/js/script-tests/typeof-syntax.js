@@ -24,5 +24,3 @@ shouldBe('typeof window["nonexistent"]', "'undefined'");
 shouldBe('typeof (nonexistent)', "'undefined'");
 shouldBe('typeof (window.nonexistent)', "'undefined'");
 shouldBe('typeof (window["nonexistent"])', "'undefined'");
-
-successfullyParsed = true;

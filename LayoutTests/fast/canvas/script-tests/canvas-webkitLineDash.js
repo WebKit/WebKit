@@ -20,5 +20,3 @@ lineDash = ctx.webkitLineDash;
 shouldBe('lineDash[0]', '15');
 shouldBe('lineDash[1]', '10');
 shouldBe('ctx.webkitLineDashOffset', '5');
-
-var successfullyParsed = true;

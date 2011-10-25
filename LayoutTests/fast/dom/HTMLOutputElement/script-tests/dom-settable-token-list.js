@@ -250,5 +250,3 @@ shouldBeEqualToString('typeof element.htmlFor', 'object');
 shouldEvaluateTo('element.htmlFor.constructor', 'DOMSettableTokenList');
 
 shouldBeTrue('element.htmlFor === element.htmlFor');
-
-var successfullyParsed = true;

@@ -91,5 +91,3 @@ function isNotUndefined(element, index, array) {
 shouldBeTrue("arr.every(isNotUndefined)");
 arr = new Array(20);
 shouldBeTrue("arr.every(isNotUndefined)");
-
-successfullyParsed = true;

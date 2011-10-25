@@ -124,8 +124,6 @@ shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data:
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[0]", "channel.port1");
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[1]", "channel.port2");
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[2]", "channel.port2");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

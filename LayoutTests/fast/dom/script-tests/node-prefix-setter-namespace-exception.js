@@ -19,7 +19,3 @@ shouldThrow("document.createElementNS('foo', 'bar').prefix = 'xml'");
 shouldThrow("document.createAttribute('attr').prefix = 'xmlns'");
 shouldThrow("document.createAttributeNS('foo', 'attr').prefix = 'xmlns'");
 shouldThrow("document.createAttribute('xmlns').prefix = 'foo'");
-
-
-
-var successfullyParsed = true;

@@ -38,5 +38,3 @@ var didNotCrash = true;
 })();
 
 shouldBeTrue("didNotCrash");
-
-var successfullyParsed = true;

@@ -15,4 +15,3 @@ shouldBeTrue("'geolocation' in navigator");
 shouldBeTrue("navigator.hasOwnProperty('geolocation')");
 
 window.jsTestIsAsync = false;
-window.successfullyParsed = true;

@@ -68,5 +68,3 @@ shouldBe("setArea('poly', '100, 100, 200, 100, 200, 200'); checkForArea(300, 300
 shouldBe("setArea('default', ''); checkForArea(300, 300)", "true");
 
 document.body.removeChild(image);
-
-var successfullyParsed = true;

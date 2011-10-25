@@ -123,5 +123,3 @@ shouldBe('selectionPattern("sl13")', '"11110"');
 debug("14) Select a range with the keyboard");
 keyDownOnSelect("sl14", "downArrow", "rangeSelectionKey");
 shouldBe('selectionPattern("sl14")', '"01100"');
-
-var successfullyParsed = true;

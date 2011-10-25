@@ -7,6 +7,3 @@ var accessLocal = (function() { var pass = false; return (function() { return ev
 
 shouldBeTrue("accessGlobal()");
 shouldBeTrue("accessLocal()");
-
-
-var successfullyParsed = true;

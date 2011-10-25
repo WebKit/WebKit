@@ -30,5 +30,3 @@ shouldBe('labels.length', '0');
 label.htmlFor = "id4";
 shouldBe('labels.length', '1');
 
-var successfullyParsed = true;
-

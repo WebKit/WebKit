@@ -28,5 +28,3 @@ shouldBeTrue("typeof window.ondeviceorientation == 'object'");
 shouldBeTrue("hasOnDeviceOrientationProperty()");
 shouldBeTrue("'ondeviceorientation' in window");
 shouldBeTrue("window.hasOwnProperty('ondeviceorientation')");
-
-window.successfullyParsed = true;

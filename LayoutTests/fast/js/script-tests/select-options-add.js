@@ -325,5 +325,3 @@ shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
-
-successfullyParsed = true;

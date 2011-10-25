@@ -5,5 +5,3 @@ description(
 mystring = 'hello\
 there';  
 shouldBe('mystring', '"hellothere"');
-
-var successfullyParsed = true;

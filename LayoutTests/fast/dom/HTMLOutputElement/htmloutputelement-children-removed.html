@@ -14,7 +14,6 @@ description('Test that a live list is updated after the child of an HTMLOutputEl
     document.getElementById("parentOutput").removeChild(document.getElementById("first"));
     debug("The number of spans after removal is " + list.length);
     shouldBeTrue('list.length == beforeLength - 1');
-    var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

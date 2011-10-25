@@ -33,5 +33,3 @@ var iframeBody = iframeDoc.body;
 shouldBeFalse("document.contains(iframeDoc)");
 shouldBeTrue("iframeDoc.contains(iframeBody)");
 shouldBeFalse("document.contains(iframeBody)");
-
-var successfullyParsed = true;

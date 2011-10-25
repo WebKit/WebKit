@@ -41,6 +41,4 @@ if (window.eventSender) {
     // Should not have triggered the events.
     shouldEvaluateTo('handleTextareaOnInputCallCount', 1);
     shouldEvaluateTo('handleDivOnInputCallCount', 1);
-    
-    successfullyParsed = true;
 }

@@ -86,5 +86,3 @@ function test5()
 }
 
 shouldBe("test5()", "1");
-
-var successfullyParsed = true;

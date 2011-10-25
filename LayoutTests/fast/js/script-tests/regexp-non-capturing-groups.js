@@ -17,5 +17,3 @@ shouldBe('"y".replace(/(x)?y/, "$1")', '""');
 shouldBe('"y".replace(/(x)?\\1y/, function($0, $1){ return String($1); })', '"undefined"');
 shouldBe('"y".replace(/(x)?y/, function($0, $1){ return String($1); })', '"undefined"');
 shouldBe('"y".replace(/(x)?y/, function($0, $1){ return $1; })', '"undefined"');
-
-var successfullyParsed = true;

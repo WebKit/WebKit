@@ -17,5 +17,3 @@ var s2 = "<p>p</p>";
 shouldBe('s2.match(/<((\\/([^>]+)>)|(([^>]+)>))\\5/)', '["<p>p","p>",undefined,undefined,"p>","p"]');
 shouldBe('s2.match(/<((ABC>)|(\\/([^>]+)>)|(([^>]+)>))\\6/)', '["<p>p","p>",undefined,undefined,undefined,"p>","p"]');
 shouldBe('s2.match(/<(a|\\/p|.+?)>\\1/)', '["<p>p","p"]');
-
-var successfullyParsed = true;

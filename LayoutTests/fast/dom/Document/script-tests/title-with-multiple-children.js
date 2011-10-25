@@ -26,5 +26,3 @@ var expected = "This title is set by property";
 document.title = expected;
 shouldBe("document.title", "expected");
 shouldBe("titleElement.text", "expected");
-
-var successfullyParsed = true;

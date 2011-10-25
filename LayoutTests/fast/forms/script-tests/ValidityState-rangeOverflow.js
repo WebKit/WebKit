@@ -62,5 +62,3 @@ checkOverflow('101', '100');
 
 // Disabled
 checkNotOverflow('101', '1E+2', true);
-
-var successfullyParsed = true;

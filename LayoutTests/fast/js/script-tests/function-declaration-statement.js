@@ -158,5 +158,3 @@ function labelTest()
 }
 
 shouldBeTrue("labelTest()");
-
-var successfullyParsed = true;

@@ -13,5 +13,3 @@ shouldBe("(1).thisType()", "'object'");
 shouldBe("(2.3).thisType()", "'object'");
 shouldBe("'xxx'.thisType()", "'object'");
 shouldBe("(false).thisType()", "'object'");
-
-successfullyParsed = true;

@@ -66,5 +66,3 @@ debug('');
 shouldBe('checkNoBodyRowNesting("tr")', '1');
 
 debug('');
-
-var successfullyParsed = true;

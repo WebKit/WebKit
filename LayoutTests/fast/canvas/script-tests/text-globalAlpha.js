@@ -8,4 +8,3 @@ ctx.fillText("A",50,50);
 var imageData = ctx.getImageData(63, 22, 1, 1);
 var imgdata = imageData.data;
 shouldBeTrue("imgdata[3] == 127 || imgdata[3] == 128");
-var successfullyParsed = true;

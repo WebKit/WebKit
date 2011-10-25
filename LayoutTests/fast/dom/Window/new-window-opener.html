@@ -3,6 +3,7 @@
 <head>
     <title>New Window Opener Test</title>
     <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="../../js/resources/js-test-post-function.js"></script>
 </head>
 
 <body>
@@ -72,7 +73,9 @@
         nextTest();
         function nextTest() {
             if (testNum == lastTest) {
-                finished();
+                isSuccessfullyParsed();
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
                 return;
             } else if (testNum == 0) {
                 debug("");
@@ -110,16 +113,6 @@
                 setTimeout(doneHandler, 1);
             }    
         }
-
-        function finished() {
-            shouldBeTrue("window.successfullyParsed");
-            debug('<br><span class="pass">TEST COMPLETE</span>');
-
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-
-        successfullyParsed = true;
 
     </script>
 </body>

@@ -43,5 +43,3 @@ for (var j = 0; j < 3; ++j) {
 // Make sure that all rows are identical.
 compareRows(ctx, 0, 100, 600, 100);
 compareRows(ctx, 0, 200, 600, 100);
-
-var successfullyParsed = true;

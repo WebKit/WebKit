@@ -29,6 +29,3 @@ if (window.layoutTestController)
     window.setTimeout(function() {
         layoutTestController.display();
     });
-
-
-var successfullyParsed = true;

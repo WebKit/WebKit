@@ -70,8 +70,6 @@ function runTest()
     debug("Checking upper left corner");
     wtu.checkCanvasRect(gl, 1, 1, 2, 2, color,
                         "shouldBe " + color);
-
-    successfullyParsed = true;
     var epilogue = document.createElement("script");
     epilogue.onload = finish;
     epilogue.src = "../../js/resources/js-test-post.js";

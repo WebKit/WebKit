@@ -23,5 +23,3 @@ for (var i = 0; i < cases.length; ++i) {
 // Unspecified port should mean always keep the port.
 shouldBe("canonicalize('foobar://www.example.com:80/')",
          "'foobar://www.example.com:80/'");
-
-var successfullyParsed = true;

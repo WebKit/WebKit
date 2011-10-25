@@ -109,5 +109,3 @@ shouldBe("[0, , 2, 3].lastIndexOf('peekaboo')", "1");
 shouldBe("[0, undefined, 2, 3].lastIndexOf()", "1");
 
 delete Object.prototype[1];
-
-var successfullyParsed = true;

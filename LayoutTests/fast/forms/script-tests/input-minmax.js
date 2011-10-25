@@ -77,5 +77,3 @@ input.setAttribute('min', '');
 input.setAttribute('max', '');
 shouldBe('input.min', '""');
 shouldBe('input.max', '""');
-
-var successfullyParsed = true;

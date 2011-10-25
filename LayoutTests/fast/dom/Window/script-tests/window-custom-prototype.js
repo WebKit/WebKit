@@ -16,5 +16,3 @@ shouldBe("__proto__ = 'a string'; __proto__", "null");
 shouldBe("__proto__ = anotherObject; __proto__", "anotherObject");
 shouldBe("__proto__ = originalWindowPrototype; __proto__", "originalWindowPrototype");
 shouldBe("anotherObject.__proto__ = window; anotherObject.__proto__", "window");
-
-var successfullyParsed = true;

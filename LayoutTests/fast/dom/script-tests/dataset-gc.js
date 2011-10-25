@@ -26,5 +26,3 @@ gc();
 
 // Test that the custom property persisted the GC.
 shouldBe("d.dataset.customProperty", "'1'");
-
-var successfullyParsed = true;

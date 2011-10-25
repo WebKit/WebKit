@@ -31,5 +31,3 @@ shouldBeEqualToString("select2.options.test[1].value", "Value2");
 // Clean up after ourselves
 document.body.removeChild(select1);
 document.body.removeChild(select2);
-
-successfullyParsed = true;

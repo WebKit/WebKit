@@ -11,5 +11,3 @@ shouldBeFalse("typeof o == false");
 shouldBeFalse("typeof o == 1");
 shouldBeFalse("typeof o == 1.0");
 shouldBeFalse("typeof o == { }");
-
-successfullyParsed = true;

@@ -20,7 +20,6 @@ function touchEventCallback() {
         // If we've got here, we can safely say we were successfully parsed :) We need to
         // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
         // footer message.
-        successfullyParsed = true;
         isSuccessfullyParsed();
         layoutTestController.notifyDone();
     }
@@ -104,5 +103,3 @@ if (window.eventSender) {
 } else {
     debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
 }
-
-var successfullyParsed = true;

@@ -28,5 +28,3 @@ shouldBeTrue("typeof window.ondevicemotion == 'object'");
 shouldBeTrue("hasOnDeviceMotionProperty()");
 shouldBeTrue("'ondevicemotion' in window");
 shouldBeTrue("window.hasOwnProperty('ondevicemotion')");
-
-window.successfullyParsed = true;

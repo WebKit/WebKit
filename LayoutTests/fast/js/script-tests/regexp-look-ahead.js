@@ -4,5 +4,3 @@ description(
 
 shouldBe('"ab".match(/a(?=b|c)/)', '["a"]');
 shouldBe('"abd".match(/a(?=c|b)|d/)', '["a"]');
-
-var successfullyParsed = true;

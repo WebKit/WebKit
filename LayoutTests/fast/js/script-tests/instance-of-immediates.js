@@ -38,5 +38,3 @@ testSet("Constructor", { "1":shouldBeFalse, "{}":shouldBeFalse, "obj":shouldBeFa
 // Test that behaviour is the same as for test set 4.
 Constructor.prototype = null;
 testSet("Constructor", { "1":shouldBeFalse, "{}":shouldThrow, "obj":shouldThrow });
-
-var successfullyParsed = true;

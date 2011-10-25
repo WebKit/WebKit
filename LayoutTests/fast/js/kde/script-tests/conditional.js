@@ -7,4 +7,3 @@ var a = 1;
 if ( undefined )
   a = 2;
 shouldBe("/*var a=1;if (undefined) a = 2;*/ a", "1");
-successfullyParsed = true

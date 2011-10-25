@@ -32,5 +32,3 @@ if (errors.length) {
 } else {
     testPassed("Passed all tests (or skipped all tests if your timezone isn't PST/PDT)");
 }
-
-var successfullyParsed = true;

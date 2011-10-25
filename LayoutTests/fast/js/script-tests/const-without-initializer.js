@@ -9,5 +9,3 @@ shouldBe('f', 'undefined');
 f = 10;
 
 shouldBe('f', 'undefined');
-
-var successfullyParsed = true;

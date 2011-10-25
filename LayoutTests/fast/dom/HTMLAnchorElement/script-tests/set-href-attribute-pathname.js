@@ -67,5 +67,3 @@ debug("Set pathname to a URL with non-hierarchical protocol");
 a.href = "tel:+1800-555-1212";
 a.pathname = "the-path";
 shouldBe("a.href", "'tel:+1800-555-1212'");
-
-var successfullyParsed = true;

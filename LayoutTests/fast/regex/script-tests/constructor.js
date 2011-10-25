@@ -7,5 +7,3 @@ shouldBeTrue("re !== new RegExp(re)");
 shouldThrow("re === RegExp(re,'i')");
 shouldThrow("re !== new RegExp(re,'i')");
 
-var successfullyParsed = true;
-

@@ -48,5 +48,3 @@ pixelShouldBe(ctx, 1, 1, [0, 255, 0, 255]);
 pixelShouldBe(ctx, 98, 1, [0, 255, 0, 255]);
 pixelShouldBe(ctx, 1, 48, [0, 255, 0, 255]);
 pixelShouldBe(ctx, 98, 48, [0, 255, 0, 255]);
-
-var successfullyParsed = true;

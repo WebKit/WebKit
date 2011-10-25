@@ -16,5 +16,3 @@ eval(f.toString());
 
 eval(g.toString());
 shouldBe("g().toString()", "['a', 'b', 'c'].toString()");
-
-var successfullyParsed = true;

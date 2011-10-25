@@ -37,5 +37,3 @@ shouldBeEqualToString('test("rtl", "-webkit-padding-start", "10px", "padding-rig
 shouldBeEqualToString('test("rtl", "-webkit-padding-end", "20px", "padding-left")', '20px');
 shouldBeEqualToString('test("rtl", "padding-right", "10px", "-webkit-padding-start")', '10px');
 shouldBeEqualToString('test("rtl", "padding-left", "20px", "-webkit-padding-end")', '20px');
-
-successfullyParsed = true;

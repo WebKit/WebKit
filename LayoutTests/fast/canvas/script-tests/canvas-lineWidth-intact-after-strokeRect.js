@@ -36,5 +36,3 @@ shouldBe("imgdata[2]", "0");
 shouldBe("imgdata[3]", "255");
 
 document.body.appendChild(ctx.canvas)
-
-var successfullyParsed = true;

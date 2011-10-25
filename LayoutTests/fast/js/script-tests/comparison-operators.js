@@ -69,5 +69,3 @@ doTest('Zero', '0', 0);
 doTest('1', 'Zero', 1);
 doTest('0', 'One', -1);
 doTest('One', '0', 1);
-
-successfullyParsed = true;

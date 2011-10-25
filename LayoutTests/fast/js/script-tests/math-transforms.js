@@ -60,6 +60,3 @@ for (var name1 in values) {
         shouldBe("+values." + name1 + " - +values." + name2, stringify(values[name1] - values[name2]));
     }
 }
-
-
-var successfullyParsed = true;

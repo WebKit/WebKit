@@ -228,5 +228,3 @@ shouldBe("select2.options.length", "2");
 shouldBe("select2.selectedIndex", "0");
 shouldBe("select2.options[1].value", "'P'");
 debug("");
-
-successfullyParsed = true;

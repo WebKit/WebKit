@@ -19,4 +19,3 @@ var watchId = navigator.geolocation.watchPosition(function() {
 
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

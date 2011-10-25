@@ -135,5 +135,3 @@ shouldBe("regexp12.exec('first\\nblah2\\nblah3')", "['blah3']");
 var regexp13 = /.*\n\d+.*/;
 shouldBe("regexp13.exec('abc\\n123')", "['abc\\n123']");
 
-var successfullyParsed = true;
-

@@ -10,5 +10,3 @@ shouldThrow("++g()", "'ReferenceError: Prefix ++ operator applied to value that 
 shouldThrow("--g()", "'ReferenceError: Prefix -- operator applied to value that is not a reference.'");
 shouldThrow("g() = 1", "'ReferenceError: Left side of assignment is not a reference.'");
 shouldThrow("g() += 1", "'ReferenceError: Left side of assignment is not a reference.'");
-
-var successfullyParsed = true;

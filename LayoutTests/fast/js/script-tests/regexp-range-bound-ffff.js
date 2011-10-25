@@ -5,5 +5,3 @@ description(
 );
 
 shouldBe('("A".match(/[\u0001-\uFFFF]/i) == "A")', 'true');
-
-var successfullyParsed = true;

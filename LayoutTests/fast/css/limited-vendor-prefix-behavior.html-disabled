@@ -29,8 +29,6 @@ shouldBe("document.getElementById('test-limited-apple').style.getPropertyValue('
 
 shouldBe("document.getElementById('test-limited-apple').style.appleLineClamp", "'10%'");
 shouldBe("document.getElementById('test-limited-apple').style.appleUserDrag", "undefined");
-
-var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script> 
 </body> 

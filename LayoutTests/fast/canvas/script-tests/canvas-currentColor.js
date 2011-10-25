@@ -85,5 +85,3 @@ shouldBe("tryRadialGradientColor('currentColor')", "'0,0,0,255'");
 // Last but not least, verify that we're case insensitive
 shouldBe("ctx.shadowColor = '#f00'; ctx.shadowColor", "'#ff0000'");
 shouldBe("ctx.shadowColor = 'CURRENTCOLOR'; ctx.shadowColor", "'#123456'");
-
-var successfullyParsed = true;

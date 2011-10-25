@@ -293,5 +293,3 @@ function complexIsFunctionStrictTest()
     return "%d".replace(/%d/, replace_formats);
 }
 shouldBe("complexIsFunctionStrictTest()", "'PASS'");
-
-var successfullyParsed = true;

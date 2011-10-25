@@ -38,5 +38,4 @@ for (; i < writer.length; ++i)
     assert(!contents.charCodeAt(i));
 
 testPassed("Truncate extension verified.");
-var successfullyParsed = true;
 finishJSTest();

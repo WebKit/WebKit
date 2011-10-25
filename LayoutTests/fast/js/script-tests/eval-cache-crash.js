@@ -13,5 +13,3 @@ with ({a : "second"}) {
 }
 
 shouldBe("second", "'second'");
-
-var successfullyParsed = true;

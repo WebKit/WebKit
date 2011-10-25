@@ -12,5 +12,3 @@ shouldBe("para.textContent", "'ABC'");
 textB.replaceWholeText("XYZ");
 shouldBe("textB.wholeText", "'XYZ'");
 shouldBe("para.textContent", "'XYZC'");
-
-var successfullyParsed = true;

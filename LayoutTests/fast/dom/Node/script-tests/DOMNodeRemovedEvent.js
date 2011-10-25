@@ -8,5 +8,3 @@ document.body.addEventListener("DOMNodeRemoved", function () { count++; }, false
 document.body.removeChild(div);
 
 shouldBe("count", "1");
-
-var successfullyParsed = true;

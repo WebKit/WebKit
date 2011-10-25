@@ -30,5 +30,3 @@ for (var j = 0; j < fonts.length; j++) {
     printElementWidth('textarea', fonts[j]);
     debug('');
 }
-
-var successfullyParsed = true;

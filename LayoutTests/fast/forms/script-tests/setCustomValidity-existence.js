@@ -23,5 +23,3 @@ shouldBe('typeof document.getElementsByTagName("textarea")[0].setCustomValidity'
 shouldBe('typeof document.getElementsByTagName("output")[0].setCustomValidity', '"function"');
 shouldBe('typeof document.getElementsByTagName("object")[0].setCustomValidity', '"function"');
 shouldBe('typeof document.getElementsByTagName("keygen")[0].setCustomValidity', '"function"');
-
-var successfullyParsed = true;

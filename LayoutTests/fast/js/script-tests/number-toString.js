@@ -68,5 +68,3 @@ shouldBeEqualToString("negInf.toString()", "-Infinity");
 shouldBeEqualToString("nan.toString()", "NaN");
 
 shouldBeEqualToString('"" + -0.0', "0");
-
-var successfullyParsed = true;

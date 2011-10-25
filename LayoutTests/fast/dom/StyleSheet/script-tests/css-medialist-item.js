@@ -12,5 +12,3 @@ shouldBeNull('mediaList[2]');
 shouldBeUndefined('mediaList[-1]')
 
 document.documentElement.removeChild(styleElement);
-
-successfullyParsed = true;

@@ -33,5 +33,3 @@ shouldThrow("div.style.getPropertyCSSValue('color').getFloatValue(CSSPrimitiveVa
 shouldThrow("div.style.getPropertyCSSValue('color').getStringValue()", "invalidAccessError");
 shouldThrow("div.style.getPropertyCSSValue('color').getCounterValue()", "invalidAccessError");
 shouldThrow("div.style.getPropertyCSSValue('color').getRectValue()", "invalidAccessError");
-
-var successfullyParsed = true;

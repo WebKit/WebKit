@@ -8,5 +8,3 @@ shouldBe("(function(){return }).toString()", "'function () {return; }'");
 shouldBe("(function(){return" + "\n" + "}).toString()", "'function () {return;" + "\\n" + "}'");
 shouldBe("(function(){}).toString()", "'function () {}'");
 shouldBe("(function(){ }).toString()", "'function () { }'");
-
-var successfullyParsed = true;

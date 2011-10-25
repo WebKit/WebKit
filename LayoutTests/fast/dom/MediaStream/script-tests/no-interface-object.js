@@ -28,4 +28,3 @@ test('NavigatorUserMediaSuccessCallback');
 test('NavigatorUserMediaErrorCallback');
 
 window.jsTestIsAsync = false;
-window.successfullyParsed = true;

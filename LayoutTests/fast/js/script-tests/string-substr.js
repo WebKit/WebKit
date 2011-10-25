@@ -41,5 +41,3 @@ shouldBe("'bar'.substr(-4, 3)", "'bar'");
 shouldBe("'bar'.substr(-4, 4)", "'bar'");
 
 shouldBe("'GMAIL_IMP=bf-i%2Fd-0-0%2Ftl-v'.substr(10)", "'bf-i%2Fd-0-0%2Ftl-v'");
-
-var successfullyParsed = true;

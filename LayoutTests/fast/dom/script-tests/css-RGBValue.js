@@ -7,5 +7,3 @@ element.style.color = "rgb(10, 20, 30)";
 shouldBe("window.getComputedStyle(element, '').getPropertyCSSValue('color').getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "10");
 shouldBe("window.getComputedStyle(element, '').getPropertyCSSValue('color').getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "20");
 shouldBe("window.getComputedStyle(element, '').getPropertyCSSValue('color').getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "30");
-
-successfullyParsed = true;

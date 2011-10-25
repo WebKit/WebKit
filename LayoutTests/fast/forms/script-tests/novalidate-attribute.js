@@ -32,5 +32,3 @@ f2.noValidate = "something";
 shouldBe("f2.hasAttribute('noValidate')", "true");
 shouldBe("f2.getAttribute('noValidate')", "''");
 shouldBe("f2.noValidate", "true");
-
-var successfullyParsed = true;

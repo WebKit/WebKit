@@ -51,5 +51,3 @@ shouldBeEqualToString('testNotInherited("auto", "auto")', "auto");
 shouldBeEqualToString('testNotInherited("auto", "child-flow")', "child-flow");
 shouldBeEqualToString('testNotInherited("parent-flow", "auto")', "auto");
 shouldBeEqualToString('testNotInherited("parent-flow", "child-flow")', "child-flow");
-
-successfullyParsed = true;

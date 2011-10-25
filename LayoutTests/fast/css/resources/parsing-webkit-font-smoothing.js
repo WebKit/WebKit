@@ -19,5 +19,3 @@ shouldBe('test("-webkit-font-smoothing: subpixel-antialiased;")', '"subpixel-ant
 shouldBe('test("-webkit-font-smoothing: apple;")', 'null');
 shouldBe('test("-webkit-font-smoothing: 15;")', 'null');
 shouldBe('test("-webkit-font-smoothing: auto auto;")', 'null');
-
-var successfullyParsed = true;

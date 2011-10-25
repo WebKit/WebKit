@@ -61,5 +61,3 @@ shouldBe("ctx.isPointInPath(29, 19)", "true");
 ctx.strokeStyle = 'green';
 ctx.stroke();
 ctx.restore();
-
-var successfullyParsed = true;

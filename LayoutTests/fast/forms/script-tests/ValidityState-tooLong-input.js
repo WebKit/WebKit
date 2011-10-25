@@ -66,5 +66,3 @@ input.setSelectionRange(5, 5);
 document.execCommand('delete');
 shouldBeTrue('input.validity.tooLong');
 shouldBeFalse('input.type = "number"; input.validity.tooLong');
-
-var successfullyParsed = true;

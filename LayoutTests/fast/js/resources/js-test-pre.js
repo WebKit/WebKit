@@ -2,7 +2,7 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText(window.enablePixelTesting);
 
-var description, debug;
+var description, debug, successfullyParsed, errorMessage;
 
 (function() {
 
@@ -90,6 +90,11 @@ var description, debug;
     }
     
     insertStyleSheet();
+
+    window.onerror = function(message)
+    {
+        errorMessage = message;
+    };
 
 })();
 
@@ -360,6 +365,20 @@ function shouldThrow(_a, _e)
     testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
 
+function shouldHaveHadError(message)
+{
+    if (errorMessage) {
+        if (!message)
+            testPassed("Got expected error");
+        else if (errorMessage.indexOf(message) !== -1)
+            testPassed("Got expected error: '" + message + "'");
+        else
+            testFailed("Unexpexted error '" + message + "'");
+    } else
+        testFailed("Missing expexted error");
+    errorMessage = undefined;
+}
+
 function gc() {
     if (typeof GCController !== "undefined")
         GCController.collect();
@@ -383,6 +402,9 @@ function finishJSTest()
     wasFinishJSTestCalled = true;
     if (!window.wasPostTestScriptParsed)
         return;
+    if (!errorMessage)
+        successfullyParsed = true;
+    // FIXME: Remove this and only report unexpected syntax errors.
     shouldBeTrue("successfullyParsed");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
     if (window.jsTestIsAsync && window.layoutTestController)

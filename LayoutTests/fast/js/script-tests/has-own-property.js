@@ -9,5 +9,3 @@ shouldBeTrue("''.hasOwnProperty('length')");
 shouldBeFalse("({foo : 'yum'}).hasOwnProperty('bar')");
 shouldBeFalse("({foo : 'yum'}).hasOwnProperty('toString')");
 shouldBeFalse("''.hasOwnProperty('toString')");
-
-var successfullyParsed = true;

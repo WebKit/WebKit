@@ -63,5 +63,3 @@ for (var p in unreservedWords) {
 }
 
 debug("");
-
-var successfullyParsed = true;

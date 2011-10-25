@@ -15,5 +15,3 @@ var d512 = doc.getElementById("d512");
 shouldBe("d512.parentNode === d510", "true");
 shouldBe("d511.parentNode === d510", "true");
 shouldBe("d512.previousSibling === d511", "true");
-
-var successfullyParsed = true;

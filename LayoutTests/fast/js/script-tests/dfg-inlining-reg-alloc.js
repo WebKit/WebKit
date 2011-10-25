@@ -141,5 +141,3 @@ for (var i = 0; i < 1000; ++i) {
     shouldBe("o.b", "bar(2 * i, i)");
     shouldBe("o.c", "i");
 }
-
-var successfullyParsed = true;

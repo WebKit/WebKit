@@ -47,5 +47,3 @@ dispatchWheelEvent(input, 0, 1);
 shouldBe('input.value', '"0"');
 
 parent.parentNode.removeChild(parent);
-
-var successfullyParsed = true;

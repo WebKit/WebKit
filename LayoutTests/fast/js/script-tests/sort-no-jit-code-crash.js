@@ -21,5 +21,3 @@ h(g);
 h(g);
 h(g);
 h(f);
-
-var successfullyParsed = true;

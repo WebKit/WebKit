@@ -8,4 +8,3 @@ shouldBeTrue('!!/(a)\1/');
 shouldBeTrue('!!/(a)\1{1,3}/');
 
 testPassed("No crashes, yay!")
-successfullyParsed = true;

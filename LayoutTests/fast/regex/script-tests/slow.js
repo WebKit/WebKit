@@ -3,5 +3,3 @@ description(
 );
 
 shouldBe('/(?:[^(?!)]||){23}z/.test("/(?:[^(?!)]||){23}z/")', 'false');
-
-var successfullyParsed = true;

@@ -51,5 +51,3 @@ shouldBe("w.lastChild()", "subTree");
 
 // Cleanup
 document.body.removeChild(subTree);
-
-var successfullyParsed = true;

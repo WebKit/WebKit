@@ -12,5 +12,3 @@ shouldBe('"" + typeof(r.responseText)', '"string"');
 shouldBe('typeof(r.responseText) + ""', '"string"');
 shouldBe('String(typeof(r.responseText))', '"string"');
 shouldBe('String(typeof(r.responseText))', 'typeof(r.responseText)');
-
-successfullyParsed = true;

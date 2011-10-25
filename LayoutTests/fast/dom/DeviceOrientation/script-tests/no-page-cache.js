@@ -21,4 +21,3 @@ debug("Main page opening resources/cached-page-1.html");
 window.open("resources/cached-page-1.html");
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

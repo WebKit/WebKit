@@ -75,5 +75,3 @@ for (var i = 0; i < protoPropertyNames.length; ++i) {
         continue;
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window, '" + protoPropertyNames[i] + "')");
 }
-
-var successfullyParsed = true;

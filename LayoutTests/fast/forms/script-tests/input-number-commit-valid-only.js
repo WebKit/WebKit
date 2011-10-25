@@ -20,5 +20,3 @@ document.execCommand('SelectAll', false, null);
 document.execCommand('InsertText', false, '');
 input.blur();
 shouldBe('input.value', '""');
-
-var successfullyParsed = true;

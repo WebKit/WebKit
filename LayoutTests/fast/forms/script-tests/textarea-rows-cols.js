@@ -114,5 +114,3 @@ textarea = parent.firstChild;
 shouldBe('textarea.cols', 'defaultCols');
 shouldBe('textarea.offsetWidth', 'defaultWidth');
 shouldBe('textarea.offsetHeight', 'defaultHeight');
-
-var successfullyParsed = true;

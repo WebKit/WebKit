@@ -8,5 +8,3 @@ shouldBe('document.querySelector("input[type=number]:in-range").id', '"number1"'
 shouldBe('document.querySelector("input[type=range]:in-range").id', '"range1"');
 shouldBe('document.querySelector("input[type=date]:in-range").id', '"date1"');
 shouldBe('document.querySelectorAll(":in-range").length', '3');
-
-var successfullyParsed = true;

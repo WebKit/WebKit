@@ -322,5 +322,3 @@ function overwroteArgumentsInDynamicScope3() {
 shouldBeTrue("overwroteArgumentsInDynamicScope1()");
 shouldBeTrue("overwroteArgumentsInDynamicScope2()");
 shouldBeTrue("overwroteArgumentsInDynamicScope3()");
-
-var successfullyParsed = true;

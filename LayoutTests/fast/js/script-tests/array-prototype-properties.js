@@ -24,5 +24,3 @@ shouldThrow("Array.prototype.filter.call(undefined, toString)");
 shouldThrow("Array.prototype.reduce.call(undefined, toString)");
 shouldThrow("Array.prototype.reduceRight.call(undefined, toString)");
 shouldThrow("Array.prototype.map.call(undefined, toString)");
-
-var successfullyParsed = true;

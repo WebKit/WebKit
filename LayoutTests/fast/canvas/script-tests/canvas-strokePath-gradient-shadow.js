@@ -160,4 +160,3 @@ test(shouldBe, 275, 900,  0, 0, 0, 0);
 test(shouldBe, 400, 1025, 0, 0, 0, 0);
 
 print(' ');
-var successfullyParsed = true;

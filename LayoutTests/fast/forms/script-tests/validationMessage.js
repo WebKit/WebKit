@@ -79,5 +79,3 @@ var happyKeygen = document.createElement("keygen");
 happySelect.name = "keygen";
 form.appendChild(happyKeygen);
 shouldBe("happyKeygen.validationMessage", "''");
-
-var successfullyParsed = true;

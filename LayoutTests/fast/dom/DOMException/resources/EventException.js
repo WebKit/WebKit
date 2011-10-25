@@ -15,5 +15,3 @@ shouldBeEqualToString("e.constructor.toString()", "[object EventExceptionConstru
 shouldBe("e.constructor", "window.EventException");
 shouldBe("e.UNSPECIFIED_EVENT_TYPE_ERR", "e.constructor.UNSPECIFIED_EVENT_TYPE_ERR");
 shouldBe("e.UNSPECIFIED_EVENT_TYPE_ERR", "0");
-
-var successfullyParsed = true;

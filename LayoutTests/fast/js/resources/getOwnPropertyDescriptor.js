@@ -94,5 +94,3 @@ for (var property in Object.getOwnPropertyDescriptor(objectWithSetter, "setter")
 i = 0;
 for (var property in Object.getOwnPropertyDescriptor(objectWithAccessor, "accessor"))
     shouldBe('property', accessorOrder[i++]);
-
-successfullyParsed = true;

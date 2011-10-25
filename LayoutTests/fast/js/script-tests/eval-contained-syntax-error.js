@@ -10,5 +10,3 @@ try {
     else
         debug("FAIL: e.line should be 6 but instead is " + e.line + ".");
 }
-
-var successfullyParsed = true;

@@ -29,5 +29,3 @@ shouldBe("element.scrollTop", "80");
 if (window.layoutTestController) {
     document.getElementById("main").innerHTML = "";
 }
-
-var successfullyParsed = true;

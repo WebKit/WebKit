@@ -8,5 +8,3 @@ shouldBe('s.match(/^abc/m)', '["abc"]');
 shouldBeNull('s.match(/(^|X)abc/)');
 shouldBe('s.match(/(^|X)abc/m)', '["abc",""]');
 shouldBe('s.match(/(^a|Xa)bc/m)', '["abc","a"]');
-
-var successfullyParsed = true;

@@ -37,5 +37,3 @@ shouldBe('test("background: url() padding-box", "background-clip")', '"padding-b
 shouldBe('test("background: url() padding-box border-box", "background-clip")', '"border-box"');
 shouldBe('test("background: repeat content-box border-box url() ", "background-clip")', '"border-box"');
 shouldBe('test("background: padding-box blue content-box url() repeat scroll ", "background-clip")', '"content-box"');
-
-var successfullyParsed = true;

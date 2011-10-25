@@ -8,6 +8,3 @@ function testLog() { testPassed(this); }
     arguments; // reify the arguments object.
     Function.prototype.call.apply(testLog, arguments);
 })('Did not crash using apply', 0, 0); // needs 3+ arguments
-
-
-var successfullyParsed = true;

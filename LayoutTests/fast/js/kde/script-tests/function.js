@@ -222,4 +222,3 @@ function functionWithVarOverride(a) {
 }
 
 shouldBe("functionWithVarOverride(1)", "2");
-successfullyParsed = true

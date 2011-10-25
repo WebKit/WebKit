@@ -40,5 +40,3 @@ shouldBe('"' + paths.join(',') + '"', '"/a,/b,/c,/d2,/e,/f"');
 shouldBe("dirsCount", "3");
 removeAllInDirectorySync(fileSystem.root);
 finishJSTest();
-
-var successfullyParsed = true;

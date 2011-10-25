@@ -32,5 +32,3 @@ shouldBe('input.step', '"256"');
 shouldBe('input.getAttribute("step")', '"256"');
 input.setAttribute('step', 256);
 shouldBe('input.step', '"256"');
-
-var successfullyParsed = true;

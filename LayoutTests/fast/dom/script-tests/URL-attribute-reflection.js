@@ -66,5 +66,3 @@ shouldBe("testURLReflection('src', 'video')", "'URL'");
 
 shouldBe("testURLReflection('longDesc', 'img')", "'URL'");
 shouldBe("testURLReflection('lowsrc', 'img')", "'URL'");
-
-var successfullyParsed = true;

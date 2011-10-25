@@ -10,5 +10,3 @@ shouldBeFalse("/\\2(...)$/.test('abcabc')");
 shouldBeFalse("/\\2(...)$/.test('abc')");
 shouldBeTrue("/\\1?(...)$/.test('abc')");
 shouldBeTrue("/\\1?(...)$/.test('abc')");
-
-var successfullyParsed = true;

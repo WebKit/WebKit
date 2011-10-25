@@ -17,5 +17,3 @@ var Foo3 = { Bar: new Function("")};
 var f3 = new Foo3.Bar();
 shouldBe("f3.constructor", "Foo3.Bar");
 shouldBe("typeof f3.constructor", '"function"');
-
-var successfullyParsed = true;

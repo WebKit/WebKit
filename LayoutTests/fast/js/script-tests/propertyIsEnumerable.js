@@ -17,5 +17,3 @@ shouldBeTrue("global.propertyIsEnumerable ('aFunctionDecl')");
 shouldBeFalse("global.propertyIsEnumerable ('Math')");
 shouldBeFalse("global.propertyIsEnumerable ('NaN')");
 shouldBeFalse("global.propertyIsEnumerable ('undefined')");
-
-var successfullyParsed = true;

@@ -10,7 +10,7 @@ h2 { -webkit-column-span: all; }
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-	layoutTestController.waitUntilDone();
+    layoutTestController.waitUntilDone();
 }
 
 function runTest()
@@ -22,9 +22,8 @@ function runTest()
     gc();
     document.body.innerHTML = "PASS";
 
-	var successfullyParsed = true;
-	if (window.layoutTestController)
-   	    layoutTestController.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 setTimeout("runTest()", 0);

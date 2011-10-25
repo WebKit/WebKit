@@ -209,5 +209,3 @@ shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = (1, 2)')", "'const a
 shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2), b = (1, 2)')", "'const a = (1, 2), b = (1, 2)'");
 
 shouldBe("compileAndSerialize('(function () { new (a.b()).c })')", "'(function () { new (a.b()).c })'");
-
-var successfullyParsed = true;

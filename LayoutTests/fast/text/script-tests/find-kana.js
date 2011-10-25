@@ -163,5 +163,3 @@ shouldBe('canFind(latinCapitalLetterAWithGrave + katakanaLetterA, decomposedLati
 shouldBe('canFind(latinCapitalLetterAWithGrave + katakanaLetterSmallA, decomposedLatinCapitalLetterAWithGrave + katakanaLetterA)', 'false');
 
 debug('');
-
-var successfullyParsed = true;

@@ -12,5 +12,3 @@ shouldBe('input.validity.patternMismatch', 'false');
 input.type = 'text';
 shouldBe('input.validity.patternMismatch', 'true');
 
-var successfullyParsed = true;
-

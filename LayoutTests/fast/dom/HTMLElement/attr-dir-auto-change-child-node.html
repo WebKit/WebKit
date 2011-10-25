@@ -28,8 +28,6 @@ child2.innerHTML="מקור השם עברית";
 el.insertBefore(child2, child);
 shouldBe("document.defaultView.getComputedStyle(el, null).getPropertyValue('border-right-color')", "'rgb(0, 128, 0)'");
 el.style.display = "none";
-
-window.successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -10,5 +10,3 @@ shouldBe("var error = new Error; error.name = error; error.message = error; erro
 
 // RegExp (source)
 shouldBe("var regexp = /a/; regexp.source = regexp; regexp + ''", "'/a/'");
-
-var successfullyParsed = true;

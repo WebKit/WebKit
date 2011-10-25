@@ -59,5 +59,3 @@ f instanceof P;
 shouldBeFalse('boundFunctionPrototypeAccessed');
 
 shouldBe('Function.bind.length', '1');
-
-var successfullyParsed = true;

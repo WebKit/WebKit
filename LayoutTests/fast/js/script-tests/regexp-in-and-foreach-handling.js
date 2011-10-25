@@ -47,5 +47,3 @@ for (var i in tests) {
     shouldBe('testForEachFunction(' + i + ')', tests[i][2]);
 }
 
-var successfullyParsed = true;
-

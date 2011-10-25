@@ -82,5 +82,3 @@ debug('');
 debug('Keygen element');
 parent.innerHTML = '<form><keygen></form>';
 shouldBeFalse('document.getElementsByTagName("keygen")[0].willValidate');
-
-var successfullyParsed = true;

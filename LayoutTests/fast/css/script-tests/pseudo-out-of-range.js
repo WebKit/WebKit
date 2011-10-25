@@ -16,5 +16,3 @@ document.getElementById("date1").value = "2010-12-28";
 shouldBe('document.querySelector("input[type=number]:out-of-range")', 'null');
 shouldBe('document.querySelector("input[type=date]:out-of-range")', 'null');
 shouldBe('document.querySelectorAll(":out-of-range").length', '0');
-
-var successfullyParsed = true;

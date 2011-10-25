@@ -96,5 +96,3 @@ function runTests(tests, createFunctionName)
 shouldBeEqualToString("document.implementation.createDocumentType('foo').toString()", "[object DocumentType]");
 shouldBeEqualToString("document.implementation.createDocumentType('foo', null).toString()", "[object DocumentType]");
 runTests(allTests, "createDocumentType");
-
-var successfullyParsed = true;

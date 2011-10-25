@@ -149,5 +149,3 @@ shouldBe('owner.elements[2]', 'inner1');
 shouldBe('owner.elements[3]', 'inner2');
 shouldBe('owner.elements[4]', 'after1');
 shouldBe('owner.elements[5]', 'after2');
-
-var successfullyParsed = true;

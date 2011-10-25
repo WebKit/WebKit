@@ -40,5 +40,3 @@ selection.collapse();
 shouldBe('document.getElementById("span2").parentNode.nodeName', '"HGROUP"');
 document.body.removeChild(editable);
 
-var successfullyParsed = true;
-

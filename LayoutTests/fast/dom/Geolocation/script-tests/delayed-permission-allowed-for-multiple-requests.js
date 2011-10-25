@@ -48,4 +48,3 @@ function maybeFinishTest() {
 }
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

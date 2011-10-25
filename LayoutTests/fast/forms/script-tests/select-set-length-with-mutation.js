@@ -14,5 +14,3 @@ shouldBe('sel.length', '100');
 
 sel.length = 180;
 shouldBe('sel.length', '180');
-
-var successfullyParsed = true;

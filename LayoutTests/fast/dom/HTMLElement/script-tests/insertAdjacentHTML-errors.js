@@ -7,5 +7,3 @@ shouldBeUndefined("div.insertAdjacentHTML('afterEnd', 'text')");
 
 shouldThrow("div.insertAdjacentHTML('FOO', 'text')", '"Error: SYNTAX_ERR: DOM Exception 12"');
 shouldThrow("document.documentElement.insertAdjacentHTML('afterEnd', 'text')", '"Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7"');
-
-var successfullyParsed = true;

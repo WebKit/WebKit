@@ -28,7 +28,6 @@ function onFrameLoad()
     }
 
     shouldBe('iframe.contentDocument.URL', '"about:blank?"');
-    successfullyParsed = true;
     isSuccessfullyParsed();
     if (window.layoutTestController)
         window.layoutTestController.notifyDone();

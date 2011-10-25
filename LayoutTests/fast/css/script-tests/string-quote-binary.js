@@ -28,5 +28,3 @@ for (var i = 0; i < inputs.length; ++i) {
     testElement.style.fontFamily = inputs[i];
     shouldBeEqualToString('testElement.style.fontFamily', expected[i]);
 }
-
-successfullyParsed = true;

@@ -123,4 +123,3 @@ shouldBeFalse("div.hasAttribute('foo')");
 shouldBeUndefined("delete div.dataset.Bar; div.dataset.Bar");
 
 debug("");
-var successfullyParsed = true;

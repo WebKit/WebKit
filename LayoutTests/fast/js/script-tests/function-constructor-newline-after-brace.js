@@ -29,5 +29,3 @@ function addToFunctionWithArgument(oldFunction, name)
 
 var g1 = addToFunctionWithArgument(null, "g1");
 addToFunctionWithArgument(g1, "g2");
-
-var successfullyParsed = true;

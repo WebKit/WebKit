@@ -5,6 +5,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Test of webkitConvertPointFromNodeToPage function</title>
     <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="../../js/resources/js-test-post-function.js"></script>
     <style type="text/css" media="screen">
       body {
           height: 1000px;
@@ -142,23 +143,14 @@
             runTest("Test 12", "test12", 168, 428, 184, 446);
             runTest("Test 13", "test13", 28, 486, 33, 526);
             
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
-
-            if (window.layoutTestController)    
-                window.layoutTestController.notifyDone();
+            isSuccessfullyParsed();
         }
 
-        function pageLoaded()
-        {
-            if (window.layoutTestController)    
-                window.layoutTestController.waitUntilDone();
-            setTimeout(run, 0);
-        }
-        successfullyParsed = true;
-        
+        window.onload = run;
+
     </script>
     </head>
-    <body onload="pageLoaded()">
+    <body>
         <h1 id="test1">Test 1 - This is a H1 heading.</h1>
         <p id="test2">Test 2 - This is a simple paragraph.</p>
         <p id="test3">Test 3 - This is a paragraph with a <b>nested</b> element.</p>
@@ -193,5 +185,4 @@
         <div id="description"></div>
         <div id="console"></div>
     </body>
-    <script src="../../js/resources/js-test-post.js"></script>
 </html>

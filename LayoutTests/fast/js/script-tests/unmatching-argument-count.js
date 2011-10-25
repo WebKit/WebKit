@@ -16,4 +16,3 @@ shouldBe('eval("f(1, 2, 3)")', '"1, 2, 3"');
 shouldBe('eval("f(1, 2, 3, 4)")', '"1, 2, 3, 4"');
 shouldBe('eval("f(1, 2, 3, 4, 5)")', '"1, 2, 3, 4, 5"');
 shouldBe('eval("f(1, 2, 3, 4, 5, 6)")', '"1, 2, 3, 4, 5, 6"');
-successfullyParsed = true;

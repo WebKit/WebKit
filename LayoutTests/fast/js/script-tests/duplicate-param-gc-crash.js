@@ -45,5 +45,3 @@ eatRegisters(0);
 gc();
 
 shouldBe('test2Closure()', '"success"');
-
-var successfullyParsed = true;

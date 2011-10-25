@@ -87,5 +87,3 @@ shouldBe("getColor(10,10)", "[255,0,0,255]");
 shouldBe("getColor(99,51)", "[0,128,0,255]");
 shouldBe("getColor(50,50)", "[0,128,0,255]");
 ctx.clearRect(0, 0, 300, 300);
-
-var successfullyParsed = true;

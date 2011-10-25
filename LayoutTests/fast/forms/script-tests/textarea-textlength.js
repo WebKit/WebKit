@@ -26,5 +26,3 @@ textArea.innerHTML = '&#x3055;&#x3099;';
 // Opera 10 returns 2, and IE's .value.length is 2.
 shouldBe('textArea.textLength', '2');
 
-var successfullyParsed = true;
-

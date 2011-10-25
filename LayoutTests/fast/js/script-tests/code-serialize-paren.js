@@ -3,5 +3,3 @@ description(
 )
 
 shouldBeTrue("(function () { return (x + y) * z; }).toString().search('return.*\\(') < 0");
-
-var successfullyParsed = true;

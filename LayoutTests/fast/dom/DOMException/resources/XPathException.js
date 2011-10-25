@@ -19,5 +19,3 @@ shouldBe("e.constructor", "window.XPathException");
 shouldBe("e.TYPE_ERR", "e.constructor.TYPE_ERR");
 shouldBe("e.INVALID_EXPRESSION_ERR", "51");
 shouldBe("e.TYPE_ERR", "52");
-
-var successfullyParsed = true;

@@ -32,5 +32,3 @@ shouldBe('input.pattern', '"256"');
 shouldBe('input.getAttribute("pattern")', '"256"');
 input.setAttribute('pattern', 256);
 shouldBe('input.pattern', '"256"');
-
-var successfullyParsed = true;

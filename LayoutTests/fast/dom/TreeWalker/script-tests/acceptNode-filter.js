@@ -77,5 +77,3 @@ var filter = {
 walker = document.createTreeWalker(testElement, NodeFilter.SHOW_ELEMENT, filter, false);
 
 shouldBe("walker.firstChild(); walker.currentNode.id", "'A1'");
-
-var successfullyParsed = true;

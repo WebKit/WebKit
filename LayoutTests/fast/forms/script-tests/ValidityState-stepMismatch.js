@@ -62,5 +62,3 @@ shouldBe('input.type = "submit"; input.validity.stepMismatch', 'false');
 shouldBe('input.type = "tel"; input.validity.stepMismatch', 'false');
 shouldBe('input.type = "url"; input.validity.stepMismatch', 'false');
 shouldBe('input.type = "file"; input.validity.stepMismatch', 'false');
-
-var successfullyParsed = true;

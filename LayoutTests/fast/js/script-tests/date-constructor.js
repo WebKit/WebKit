@@ -57,5 +57,3 @@ shouldBe('testStr', '\"1234567\"');
 testStr = "";
 Date.UTC(year, month, date, hours, minutes, seconds, ms);
 shouldBe('testStr', '\"1234567\"');
-
-var successfullyParsed = true;

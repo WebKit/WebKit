@@ -32,5 +32,3 @@ shouldBeFalse("returnConditionalRegExpLiteral(false) === returnConditionalRegExp
 shouldBeFalse("returnConditionalRegExpLiteral(true) === returnConditionalRegExpLiteral(false)");
 returnRegExpLiteral().someAddedProperty = true;
 shouldBeUndefined("returnRegExpLiteral().someAddedProperty");
-
-var successfullyParsed = true;

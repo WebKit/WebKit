@@ -15,4 +15,3 @@ shouldBeTrue("'webkitGetUserMedia' in navigator");
 shouldBeFalse("navigator.hasOwnProperty('webkitGetUserMedia')");
 
 window.jsTestIsAsync = false;
-window.successfullyParsed = true;

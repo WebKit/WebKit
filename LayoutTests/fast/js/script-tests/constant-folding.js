@@ -466,5 +466,3 @@ shouldBe('1 / -0', '-Infinity');
 shouldBe('1 / - 0', '-Infinity');
 shouldBe('1 / - -0', 'Infinity');
 shouldBe('1 / - - -0', '-Infinity');
-
-var successfullyParsed = true;

@@ -25,5 +25,3 @@ function attemptScroll(x, y)
 shouldBe("attemptScroll(0, 0)", "'0,0'");
 shouldBe("attemptScroll(50, 50)", "'50,50'");
 shouldBe("attemptScroll(-50, -50)", "'0,0'");
-
-var successfullyParsed = true;

@@ -111,4 +111,3 @@ test(shouldBeAround, 300, 900, 255, 0, 0, 31);
 test(shouldBeAround, 500, 900, 255, 0, 0, 31);
 
 print(' ');
-var successfullyParsed = true;

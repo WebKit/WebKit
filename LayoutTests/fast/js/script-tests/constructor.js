@@ -18,5 +18,3 @@ shouldBeTrue("nodeList.constructor.prototype === window.NodeList.prototype");
 var mutationEvent = document.createEvent("MutationEvent");
 shouldBeTrue("mutationEvent.constructor === window.MutationEvent");
 shouldBeTrue("mutationEvent.constructor.prototype.__proto__ === window.Event.prototype");
-
-var successfullyParsed = true;

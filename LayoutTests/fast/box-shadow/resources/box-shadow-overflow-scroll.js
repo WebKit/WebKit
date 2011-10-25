@@ -32,5 +32,3 @@ shouldBe("element.scrollTop", "40+50+60");
 if (window.layoutTestController) {
     document.getElementById("main").innerHTML = "";
 }
-
-var successfullyParsed = true;

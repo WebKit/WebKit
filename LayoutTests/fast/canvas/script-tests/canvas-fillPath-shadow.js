@@ -110,5 +110,3 @@ shouldBe('data[0]', '255');
 shouldBe('data[1]', '0');
 shouldBe('data[2]', '0');
 shouldNotBe('data[3]', '255');
-
-var successfullyParsed = true;

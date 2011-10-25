@@ -20,5 +20,3 @@ shouldBe('((window["x"])) = 10; x', '10');
 shouldThrow('(y, x) = "FAIL";'); 
 shouldThrow('(true ? x : y) = "FAIL";'); 
 shouldThrow('x++ = "FAIL";');
-
-var successfullyParsed = true;

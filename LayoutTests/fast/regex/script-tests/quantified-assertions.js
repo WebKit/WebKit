@@ -25,5 +25,3 @@ shouldBeTrue("regexp.test('b')");
 shouldBe("regexp.lastIndex", "0");
 
 shouldBeTrue('/^(?=a)?b$/.test("b")');
-
-var successfullyParsed = true;

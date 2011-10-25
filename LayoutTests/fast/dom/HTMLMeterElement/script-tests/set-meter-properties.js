@@ -125,6 +125,3 @@ shouldBe("m.low", "0");
 shouldBe("m.high", "1");
 shouldBe("m.optimum", "0.5");
 
-
-var successfullyParsed = true;
-

@@ -119,5 +119,3 @@ shouldBeEqualToString('output.defaultValue', 'defaultValue');
 shouldBeEqualToString('output.value', 'aValue');
 shouldBeEqualToString('output.innerText', 'aValue');
 shouldBeEqualToString('output.innerHTML', 'aValue');
-
-var successfullyParsed = true;

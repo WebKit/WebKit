@@ -16,5 +16,3 @@ shouldBe("e.constructor", "window.RangeException");
 shouldBe("e.INVALID_NODE_TYPE_ERR", "e.constructor.INVALID_NODE_TYPE_ERR");
 shouldBe("e.BAD_BOUNDARYPOINTS_ERR", "1");
 shouldBe("e.INVALID_NODE_TYPE_ERR", "2");
-
-var successfullyParsed = true;

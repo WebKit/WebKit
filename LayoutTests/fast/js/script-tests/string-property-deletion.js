@@ -15,5 +15,3 @@ shouldBe('delete str[0.0]', 'false');
 shouldBe('delete str[0.1]', 'true');
 shouldBe('delete str[\'0.0\']', 'true');
 shouldBe('delete str.foo', 'true');
-
-var successfullyParsed = true;

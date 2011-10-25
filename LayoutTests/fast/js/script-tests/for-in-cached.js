@@ -72,5 +72,3 @@ function cacheClearing() {
 }
 
 cacheClearing()
-
-var successfullyParsed = true;

@@ -50,6 +50,3 @@ createTest("var o = {a:1, b:2, c:3}; for(var i in o) { o = %value%; o[i]; }");
 for (var i = 0; i < tests.length; i++) {
     try { tests[i](); } catch(e) {}
 }
-
-
-var successfullyParsed = true;

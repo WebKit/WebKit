@@ -19,5 +19,3 @@ var manyBracketsRegExp = new RegExp(regexp);
 shouldBe("'hello'.match(manyBracketsRegExp)", "manyHellosArray");
 
 debug('');
-
-var successfullyParsed = true;

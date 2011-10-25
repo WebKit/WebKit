@@ -14,5 +14,3 @@ shouldBeFalse("Array.isArray('a string')");
 shouldBeFalse("Array.isArray({})");
 shouldBeFalse("Array.isArray({length: 5})");
 shouldBeFalse("Array.isArray({__proto__: Array.prototype, length:1, 0:1, 1:2})");
-
-successfullyParsed = true;

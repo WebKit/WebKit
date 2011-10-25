@@ -63,6 +63,3 @@ shouldBe('owner.elements[19].id', "'object1'");
 shouldBe('owner.elements[20].id', "'output1'");
 shouldBe('owner.elements[21].id', "'select1'");
 shouldBe('owner.elements[22].id', "'textarea1'");
-
-
-var successfullyParsed = true;

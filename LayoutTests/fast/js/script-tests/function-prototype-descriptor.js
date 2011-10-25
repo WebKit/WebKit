@@ -24,5 +24,3 @@ test(b);
 function c() {}
 shouldThrow("Object.defineProperty(c, 'prototype', { get: function(){} })");
 test(c);
-
-var successfullyParsed = true;

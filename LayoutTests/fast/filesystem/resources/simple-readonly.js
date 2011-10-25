@@ -46,4 +46,3 @@ function successCallback(fs) {
 
 var jsTestIsAsync = true;
 evalAndLog("webkitRequestFileSystem(TEMPORARY, 100, successCallback, errorCallback)");
-var successfullyParsed = true;

@@ -14,5 +14,3 @@ shouldBe("ary1.toString()", "'1,2,3,4,'");
 
 ary1.push(5);
 shouldBe("ary1.toString()", "'1,2,3,4,,5'");
-
-var successfullyParsed = true;

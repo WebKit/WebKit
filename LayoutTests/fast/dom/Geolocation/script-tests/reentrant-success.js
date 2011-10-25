@@ -51,4 +51,3 @@ function continueTest() {
 }
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

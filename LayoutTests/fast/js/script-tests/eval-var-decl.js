@@ -22,5 +22,3 @@ try {
     thirdEvalResult = "Threw exception!";
 }
 shouldBeTrue("thirdEvalResult");
-
-var successfullyParsed = true;

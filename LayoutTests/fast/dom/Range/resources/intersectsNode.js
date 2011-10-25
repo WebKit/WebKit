@@ -145,5 +145,3 @@ debug("");
     
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
-
-successfullyParsed = true;

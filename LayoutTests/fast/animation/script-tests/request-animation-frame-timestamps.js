@@ -30,8 +30,6 @@ setTimeout(function() {
     shouldBeDefined("firstTimestamp");
 }, 100);
 
-var successfullyParsed = true;
-
 setTimeout(function() {
     isSuccessfullyParsed();
     if (window.layoutTestController)

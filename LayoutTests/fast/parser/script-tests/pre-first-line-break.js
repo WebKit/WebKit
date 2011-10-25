@@ -40,5 +40,3 @@ shouldBe("roundTrip('<div><a></a></div>')", "'<div><a></a></div>'");
 shouldBe("roundTrip('<div><a>\\n</a></div>')", "'<div><a>\\n</a></div>'");
 shouldBe("roundTrip('<div>\\n<a></a></div>')", "'<div>\\n<a></a></div>'");
 shouldBe("roundTrip('<div>\\n<a>\\n</a></div>')", "'<div>\\n<a>\\n</a></div>'");
-
-var successfullyParsed = true;

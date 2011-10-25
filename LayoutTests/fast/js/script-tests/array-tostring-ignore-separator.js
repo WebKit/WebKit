@@ -7,5 +7,3 @@ a[0] = 5;
 a[1] = 3;  
 //Shouldn't use argument for toString  
 shouldBe("a.toString('!')", "'5,3'");
-
-successfullyParsed = true;

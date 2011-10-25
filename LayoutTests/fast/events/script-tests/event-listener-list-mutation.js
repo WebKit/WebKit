@@ -46,5 +46,3 @@ TestMutation(0, 2, "0 1");
 debug("predecessor removal:");
 TestMutation(2, 0, "0 1 2");
 TestMutation(2, 1, "0 1 2");
-
-var successfullyParsed = true;

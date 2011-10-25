@@ -21,5 +21,3 @@ shouldBeEqualToString("fontSizeForFamilies('foo')", '16px');
 shouldBeEqualToString("fontSizeForFamilies('foo, monospace')", '16px');
 
 document.body.removeChild(testSpan);
-
-var successfullyParsed = true;

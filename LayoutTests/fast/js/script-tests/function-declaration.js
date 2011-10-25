@@ -5,5 +5,3 @@ description(
 shouldBeUndefined("eval('function f(){return true;}')");
 shouldBeTrue("eval('function f(){return true;};f')()");
 shouldThrow("eval('function(){return false;}')()");
-
-successfullyParsed = true;

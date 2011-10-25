@@ -58,5 +58,3 @@ inputs[2].checked = true;
 shouldBeFalse('inputs[0].validity.valueMissing');
 shouldBeFalse('inputs[1].validity.valueMissing');
 shouldBeFalse('inputs[2].validity.valueMissing');
-
-var successfullyParsed = true;

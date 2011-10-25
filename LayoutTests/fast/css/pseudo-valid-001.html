@@ -24,8 +24,6 @@ description("This test performs a check for the :valid CSS selector on various i
 v = document.getElementsByName("victim");
 for (i = 0; i < v.length; i++)
     shouldBe("document.defaultView.getComputedStyle(v[i], null).getPropertyValue('background-color')", "'rgb(0, 255, 0)'");
-
-var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

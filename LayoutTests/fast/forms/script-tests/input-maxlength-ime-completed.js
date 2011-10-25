@@ -10,5 +10,3 @@ textInputController.insertText('abcd');  // Debug WebKit crashed by this without
 // In Release WebKit, input.value was 'ab' though the user-visible value was 'abcd'.
 document.execCommand('SelectAll');
 shouldBe('document.getSelection().toString()', '"ab"');
-
-var successfullyParsed = true;

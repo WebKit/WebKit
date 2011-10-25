@@ -73,4 +73,3 @@ shouldBeFalse("isFinite(parseFloat('Infinity'))");
 shouldBeFalse("delete NaN");
 shouldBeFalse("delete Infinity");
 shouldBeFalse("delete undefined");
-successfullyParsed = true

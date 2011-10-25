@@ -37,5 +37,3 @@ try {
 }
 
 debug(message);
-
-var successfullyParsed = true;

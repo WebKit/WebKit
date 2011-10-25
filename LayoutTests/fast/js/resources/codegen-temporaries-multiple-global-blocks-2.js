@@ -39,5 +39,3 @@ var o8 = { a: 1 };
 var v8 = o8;
 v8["a"] += assign8();
 shouldBe("o8.a", "2");
-
-var successfullyParsed = true;

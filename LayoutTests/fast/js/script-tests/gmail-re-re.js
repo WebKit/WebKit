@@ -34,5 +34,3 @@ shouldBe('cy("Ответ: Hello")', '"Hello"');
 
 var regex = /^([^#<\u2264]+)([#<\u2264])(.*)$/;
 shouldBe('regex.exec("24#Midnight").toString()', '"24#Midnight,24,#,Midnight"');
-
-var successfullyParsed = true;

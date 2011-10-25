@@ -52,4 +52,3 @@ window1 = window.open("resources/iframe-reparenting-new-page-1.html", "_blank");
 window1.addEventListener("load", window1Loaded, false);
 
 var jsTestIsAsync = true;
-var successfullyParsed = true;

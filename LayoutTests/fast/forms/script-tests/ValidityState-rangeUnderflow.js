@@ -64,5 +64,3 @@ checkUnderflow('101', '200');
 
 // Disabled
 checkNotUnderflow('99', '1E+2', true);
-
-var successfullyParsed = true;

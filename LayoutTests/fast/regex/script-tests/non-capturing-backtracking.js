@@ -4,5 +4,3 @@ description(
 
 var re = /(?:a*)a/;
 shouldBe("re.exec('a')", "['a']");
-
-var successfullyParsed = true;

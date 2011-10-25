@@ -228,7 +228,3 @@ shouldBeFalse("if ( p5  >  NaN) true; else false;");
 shouldBeFalse("if (NaN  >  NaN) true; else false;");
 shouldBeFalse("if (p5  >=  NaN) true; else false;");
 shouldBeFalse("if (NaN  >= NaN) true; else false;");
-
-
-
-successfullyParsed = true;

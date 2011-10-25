@@ -61,5 +61,3 @@ ctx.fillStyle = "green";
 ctx.fillRect(20, 20, 10, 10);
 
 pixelShouldBe(ctx, 20, 20, "greenPixel");
-
-var successfullyParsed = true;

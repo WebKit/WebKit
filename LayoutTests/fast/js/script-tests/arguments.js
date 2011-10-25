@@ -561,5 +561,3 @@ shouldBe("descriptor.value", '"one"');
 shouldBe("descriptor.writable", 'true');
 shouldBe("descriptor.enumerable", 'true');
 shouldBe("descriptor.configurable", 'true');
-
-var successfullyParsed = true;

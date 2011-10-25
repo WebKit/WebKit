@@ -11,5 +11,3 @@ shouldBeEqualToString('style[1]', '');
 shouldBeUndefined('style[-1]')
 
 document.documentElement.removeChild(element);
-
-successfullyParsed = true;

@@ -4,4 +4,3 @@ description(
 
 debugger
 debugger;
-var successfullyParsed = true;

@@ -21,5 +21,3 @@ shouldBe("tryToSetPrototype(window.HTMLElement, null)", "false");
 shouldBe("tryToSetPrototype(window.HTMLElement, undefined)", "false");
 shouldBe("tryToSetPrototype(window.HTMLElement, 1)", "false");
 shouldBe("tryToSetPrototype(window.HTMLElement, window.Object.prototype)", "false");
-
-var successfullyParsed = true;

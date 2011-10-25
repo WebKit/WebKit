@@ -8,5 +8,3 @@ description(
 shouldThrow("/TA[])]/.exec('TA]')");
 shouldBe("/[]/.exec('')", "null");
 shouldBe("/(\\3)(\\1)(a)/.exec('cat').toString()", "'a,,,a'");
-
-var successfullyParsed = true;

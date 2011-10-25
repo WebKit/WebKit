@@ -179,6 +179,3 @@ emailCheck("\u000C,\u000C,\u000C", ",,", expectInvalid, multiple);
 emailCheck("\u000D,\u000D,\u000D", ",,", expectInvalid, multiple);
 emailCheck("\u2003,\u2003,\u2003", "\u2003,\u2003,\u2003", expectInvalid, multiple);
 emailCheck("\u3000,\u3000,\u3000", "\u3000,\u3000,\u3000", expectInvalid, multiple);
-
-
-var successfullyParsed = true;

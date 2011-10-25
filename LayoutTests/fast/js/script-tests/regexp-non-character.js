@@ -16,5 +16,3 @@ shouldBe('"y".match(/[\\uFFFE]/)', 'null');
 shouldBe('"y".match(/[\\uFFFF]/)', 'null');
 shouldBe('"y".match(/[\\u10FFFF]/)', 'null');
 shouldBe('"y".match(/[\\u110000]/)', 'null');
-
-var successfullyParsed = true;

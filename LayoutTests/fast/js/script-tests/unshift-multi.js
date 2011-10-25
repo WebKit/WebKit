@@ -41,5 +41,3 @@ shouldBe('unshift2(10)', '["a", "b", "a", "b", "a", "b", "a", "b", "a", "b", "a"
 shouldBe('unshift5(1)', '["a", "b", "c", "d", "e"]');
 shouldBe('unshift5(2)', '["a", "b", "c", "d", "e", "a", "b", "c", "d", "e"]');
 shouldBe('unshift5(6)', '["a", "b", "c", "d", "e", "a", "b", "c", "d", "e", "a", "b", "c", "d", "e", "a", "b", "c", "d", "e", "a", "b", "c", "d", "e", "a", "b", "c", "d", "e"]');
-                            
-var successfullyParsed = true;

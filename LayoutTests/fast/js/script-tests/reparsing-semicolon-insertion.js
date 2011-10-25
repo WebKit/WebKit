@@ -29,5 +29,3 @@ shouldBeUndefined("commaParenTest()");
 function commaParenThrowTest() { (x) }
 
 shouldThrow("commaParenThrowTest()");
-
-var successfullyParsed = true;

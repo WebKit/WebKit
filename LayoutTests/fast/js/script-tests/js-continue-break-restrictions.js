@@ -33,6 +33,3 @@ shouldBeUndefined("if(0){ L:A:while(0) continue L; }")
 shouldBeUndefined("if(0){ A:L:while(0) continue L; }")
 shouldThrow("if(0){ A:while(0) L:continue L; }")
 shouldBeUndefined("if(0){ L:while(0) A:continue L; }")
-
-
-var successfullyParsed = true;

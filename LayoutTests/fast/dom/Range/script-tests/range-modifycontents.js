@@ -94,6 +94,3 @@ shouldBe("r.startContainer", "c");
 shouldBe("r.endContainer", "c");
 shouldBeTrue("r.collapsed");
 shouldBe("r.commonAncestorContainer", "c");
-
-
-var successfullyParsed = true;

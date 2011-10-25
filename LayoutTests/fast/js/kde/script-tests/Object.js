@@ -16,4 +16,3 @@ shouldBe("(new Object('s')).valueOf()", "'s'");
 shouldBe("String(Object())", "'[object Object]'");
 shouldBe("Object().toString()", "'[object Object]'");
 shouldBe("String(Object().valueOf())", "'[object Object]'");
-successfullyParsed = true

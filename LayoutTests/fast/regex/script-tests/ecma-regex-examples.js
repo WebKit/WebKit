@@ -37,5 +37,3 @@ shouldBe('regex11.exec("baaabac")', '["aba", "a"]');
 
 var regex12 = /(.*?)a(?!(a+)b\2c)\2(.*)/;
 shouldBe('regex12.exec("baaabaac")', '["baaabaac", "ba", undefined, "abaac"]');
-
-var successfullyParsed = true;

@@ -70,5 +70,3 @@ shouldThrow("JSON.stringify(array, returnCycleObjectFor1)");
 
 shouldThrow("JSON.stringify(object, returnCycleArrayFor1)");
 shouldThrow("JSON.stringify(array, returnCycleArrayFor1)");
-
-successfullyParsed = true;

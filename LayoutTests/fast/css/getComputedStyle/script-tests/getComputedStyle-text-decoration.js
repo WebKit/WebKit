@@ -22,5 +22,3 @@ expect('computed style of text decoration should be CSSValueList', computedStyle
 expect('computed style of text decoration should be separated by a single space', computedStyle.getPropertyCSSValue('text-decoration').cssText, "underline line-through");
 
 document.body.removeChild(testContainer);
-
-var successfullyParsed = true;

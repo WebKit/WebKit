@@ -29,5 +29,3 @@ if (result == 0) {
 
 // Clean up after ourselves
 document.body.removeChild(div);
-
-var successfullyParsed = true;

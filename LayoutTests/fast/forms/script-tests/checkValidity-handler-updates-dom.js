@@ -84,4 +84,3 @@ document.getElementById('i1').addEventListener('invalid', handler1, false);
 shouldBeTrue('document.getElementById("f1").checkValidity()');
 
 parent.innerHTML = '';
-var successfullyParsed = true;

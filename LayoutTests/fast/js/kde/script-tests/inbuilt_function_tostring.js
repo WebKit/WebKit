@@ -169,4 +169,3 @@ shouldBe("StripSpaces(RegExp.prototype.test.toString())","\"functiontest(){[nati
 shouldBe("StripSpaces(RegExp.prototype.toString.toString())","\"functiontoString(){[nativecode]}\"");
 
 shouldBe("StripSpaces(Error.prototype.toString.toString())","\"functiontoString(){[nativecode]}\"");
-successfullyParsed = true

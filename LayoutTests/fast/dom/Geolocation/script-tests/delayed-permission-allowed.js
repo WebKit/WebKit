@@ -24,4 +24,3 @@ navigator.geolocation.getCurrentPosition(function() {
 window.setTimeout(allowPermission, 100);
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

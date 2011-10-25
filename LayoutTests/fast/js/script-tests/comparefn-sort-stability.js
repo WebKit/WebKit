@@ -29,5 +29,3 @@ shouldBe('arr[0]', 'sortArr[0]');
 shouldBe('arr[1]', 'sortArr[2]');
 shouldBe('arr[2]', 'sortArr[1]');
 shouldBe('arr[3]', 'sortArr[3]');
-
-var successfullyParsed = true;

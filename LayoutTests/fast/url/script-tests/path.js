@@ -90,5 +90,3 @@ for (var i = 0; i < cases.length; ++i) {
   shouldBe("canonicalize('http://example.com" + test_vector + "')",
            "'http://example.com" + expected_result + "'");
 }
-
-var successfullyParsed = true;

@@ -504,5 +504,4 @@ for (var i = 0; i < tests.length; i++) {
             shouldBe('tests[i](nativeJSON)',  "tests[i](JSON)");
     }catch(e){}
 }
-successfullyParsed = true;
 

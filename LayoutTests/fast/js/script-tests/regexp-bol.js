@@ -24,5 +24,3 @@ shouldBe('/(?:(?:^|Y)X)|(X)/.exec("aYXbcd")', '["YX",undefined]');
 shouldBe('/(?:(?:^|Y)X)|(X)/.exec("abYXcd")', '["YX",undefined]');
 shouldBe('/(?:(?:^|Y)X)|(X)/.exec("abcYXd")', '["YX",undefined]');
 shouldBe('/(?:(?:^|Y)X)|(X)/.exec("abcdYX")', '["YX",undefined]');
-
-var successfullyParsed = true;

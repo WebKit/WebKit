@@ -52,5 +52,3 @@ shouldBe("catchTest()", "'foo'");
 shouldBe("catchTest2()", "'baz'");
 shouldBe("withTest()", "'foo'");
 shouldBe("withTest2()", "'baz'");
-
-var successfullyParsed = true;

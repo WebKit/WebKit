@@ -35,5 +35,3 @@ shouldBe('test("font-variant", "all")', '"all"');
 shouldThrow('test("font-variant", "all, normal")', '"TypeError: \'null\' is not an object (evaluating \'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText\')"');
 shouldThrow('test("font-variant", "small-caps, all")', '"TypeError: \'null\' is not an object (evaluating \'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText\')"');
 shouldThrow('test("font-variant", "")', '"TypeError: \'null\' is not an object (evaluating \'style.sheet.rules[0].style.getPropertyCSSValue(property).cssText\')"');
-
-var successfullyParsed = true;

@@ -8,5 +8,3 @@ shouldBe("var foo = { 'bar' : 'YES', }; foo.bar", "'YES'");
 shouldBe("var foo = { 'bar' : 'YES' , }; foo.bar", "'YES'");
 shouldThrow("var foo = { , 'bar' : 'YES' }; foo.bar");
 shouldThrow("var foo = { 'bar' : 'YES',, }; foo.bar");
-
-var successfullyParsed = true;

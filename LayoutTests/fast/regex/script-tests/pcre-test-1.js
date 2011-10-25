@@ -6062,5 +6062,3 @@ shouldBe('input0.match(regexGlobal9);', 'results');
 //var input0 = "a\nxb\n";
 //var results = ["x"];
 //shouldBe('regex615.exec(input0);', 'results');
-
-var successfullyParsed = true;

@@ -8,5 +8,3 @@ shouldBe('"test\string with CR"', '"teststring with CR"');
 
 shouldBe('"test\
 string with LF"', '"teststring with LF"');
-
-var successfullyParsed = true;

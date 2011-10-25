@@ -40,5 +40,3 @@ shouldBe("document.head.appendChild(base3), clean(anchor.href)", "'http://domain
 document.head.removeChild(base);
 document.head.removeChild(base2);
 document.head.removeChild(base3);
-
-var successfullyParsed = true;

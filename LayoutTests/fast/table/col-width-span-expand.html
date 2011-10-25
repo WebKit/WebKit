@@ -16,7 +16,6 @@ function runTest()
     description("This tests <a href='http://webkit.org/b/14858'>Bug 14858: &lt;col&gt; width ignored when not tied to a single cell</a>.");
     shouldBe("window.getComputedStyle(testCell).width", "'250px'");
     shouldBe("window.getComputedStyle(testTable).width", "'500px'");
-    successfullyParsed = true;
     isSuccessfullyParsed();
 }
         </script>

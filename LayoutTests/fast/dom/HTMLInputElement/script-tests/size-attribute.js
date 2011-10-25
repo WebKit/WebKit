@@ -31,5 +31,3 @@ shouldBe('sizeAttributeEffect("a")', '20');
 var arabicIndicDigitOne = String.fromCharCode(0x661);
 shouldBe('sizeAttributeEffect(arabicIndicDigitOne)', '20');
 shouldBe('sizeAttributeEffect("2" + arabicIndicDigitOne)', '2');
-
-var successfullyParsed = true;

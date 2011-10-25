@@ -18,5 +18,3 @@ shouldThrow("ctx.setShadow(0, 0, 0, 0, 0, 0)", "TypeError");
 shouldBe("ctx.setShadow(0, 0, 0, 0, 0, 0, 0)", "undefined");
 shouldBe("ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
 shouldThrow("ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
-
-var successfullyParsed = true;

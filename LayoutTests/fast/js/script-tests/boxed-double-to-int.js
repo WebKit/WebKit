@@ -13,5 +13,3 @@ shouldBe("boxedDoubleToInt(3, 4)", "4.5");
 shouldBe("boxedDoubleToInt(5, 6)", "7.5");
 shouldBe("boxedDoubleToInt(7, 8)", "8.5");
 shouldBe("boxedDoubleToInt(9, 10)", "11.5");
-
-var successfullyParsed = true;

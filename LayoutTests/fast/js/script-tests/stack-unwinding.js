@@ -40,6 +40,3 @@ try {
     testPassed("Exception thrown and caught");
 }
 
-
-successfullyParsed = true;
-

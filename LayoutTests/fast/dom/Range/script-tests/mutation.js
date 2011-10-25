@@ -294,5 +294,3 @@ shouldBe('description(range)', '"section,0 -> section,0: "');
 // Test Range.extractContents cases?
 // Test Range.surroundContents cases?
 // Test Text.replaceWholeText cases?
-
-var successfullyParsed = true;

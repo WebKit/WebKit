@@ -38,5 +38,3 @@ function test() {
     pixelShouldBe(50, 50, [0, 128, 0, 255]);
 }
 test();
-
-var successfullyParsed = true;

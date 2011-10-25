@@ -28,5 +28,3 @@ cancelListener.handleEvent = function(event) {
 shouldBeTrue('input.addEventListener("invalid", cancelListener, false); !input.checkValidity() && invalidFired');
 // form.checkValidity() also should be false.
 shouldBeTrue('invalidFired = false; !form.checkValidity() && invalidFired');
-
-var successfullyParsed = true;

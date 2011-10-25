@@ -11,5 +11,3 @@ shouldBe('/(|ab)*/.exec("ab")', '["ab","ab"]');
 shouldBe('/(?:(|ab)*)/.exec("ab")', '["ab","ab"]');
 shouldBe('/(?:(|ab)+)/.exec("ab")', '["ab","ab"]');
 shouldBe('/(|ab)+/.exec("abab")', '["abab","ab"]');
-
-var successfullyParsed = true;

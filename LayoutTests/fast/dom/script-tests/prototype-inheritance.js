@@ -77,5 +77,3 @@ for (var x = 0; x < windowProperites.length; x++) {
 }
 
 document.body.removeChild(subframe);
-
-var successfullyParsed = true;

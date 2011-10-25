@@ -80,8 +80,6 @@ shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message
 shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).message", "sakuranbo");
 shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).filename", "amaenbo");
 shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).lineno", "12345");
-
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -54,5 +54,3 @@ walker = document.createTreeWalker(testElement, NodeFilter.SHOW_ELEMENT, rejectB
 walker.currentNode = testElement.querySelectorAll('#B3')[0];
 shouldBe("walker.previousNode(); walker.currentNode.id", "'B2'");
 shouldBe("walker.previousNode(); walker.currentNode.id", "'A1'");
-
-var successfullyParsed = true;

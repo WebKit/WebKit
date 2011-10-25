@@ -156,4 +156,3 @@ shouldBe('stepUpExplicitBounds(-100, null, 3, 3)', '"5"');
 shouldBe('stepDownExplicitBounds(-100, null, 3, 3)', '"2"');
 
 debug('');
-var successfullyParsed = true;

@@ -53,5 +53,3 @@ if (window.eventSender) {
     eventSender.scalePageBy(0.5, 0, 0);
     testEvents(0, "setPageScale(0.5)", "click(20, 20)");
 }
-
-var successfullyParsed = true;

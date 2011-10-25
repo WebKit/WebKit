@@ -11,5 +11,3 @@ function test(a) {
 }
 
 shouldBe('test()()', '"success"');
-
-var successfullyParsed = true;

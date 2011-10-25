@@ -16,4 +16,3 @@ f(cacheableDictionary);
 f(cacheableDictionary);
 f(cacheableDictionary);
 f(cacheableDictionary);
-successfullyParsed = true;

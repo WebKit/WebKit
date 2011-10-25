@@ -14,5 +14,3 @@ A[0] = 0;
 A[0] = resize(A);
 
 shouldBe(getZerothEntry(A).toString(), "1");
-
-var successfullyParsed = true;

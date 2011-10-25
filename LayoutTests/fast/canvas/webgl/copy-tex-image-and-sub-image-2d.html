@@ -165,8 +165,6 @@ function runTest(antialias)
     runTestIteration(true);
     debug("Testing with antialias off");
     runTestIteration(false);
-
-    successfullyParsed = true;
     var epilogue = document.createElement("script");
     epilogue.onload = finish;
     epilogue.src = "../../js/resources/js-test-post.js";

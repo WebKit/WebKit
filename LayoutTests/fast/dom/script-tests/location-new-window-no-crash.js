@@ -57,5 +57,3 @@ if (window.layoutTestController) {
     }
     doneHandler();
 }
-
-var successfullyParsed = true;

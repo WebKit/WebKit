@@ -17,5 +17,3 @@ for (var i = 33; i < 128; ++i)
     shouldBe("allowsBreakBefore(" + i + ")", unallowedBreaks.indexOf(i) >= 0 ? "false" : "true");
 
 document.body.removeChild(div);
-
-var successfullyParsed = true;

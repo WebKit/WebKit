@@ -21,5 +21,3 @@ element = document.getElementById("nest2");
 element.scrollTop = 108;
 element.lastChild.data='meroL ipsum';
 shouldBe("element.scrollTop", "108");
-
-successfullyParsed = true;

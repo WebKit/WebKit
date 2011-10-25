@@ -32,5 +32,3 @@ debug('');
 shouldBe('checkTBodyNesting("tbody")', '1');
 
 debug('');
-
-var successfullyParsed = true;

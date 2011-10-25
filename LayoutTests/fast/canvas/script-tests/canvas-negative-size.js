@@ -97,5 +97,3 @@ tryHeight("1", "1");
 tryHeight("'+7'", "7");
 tryHeight("'-7'", "150");
 tryHeight("'123'", "123");
-
-var successfullyParsed = true;

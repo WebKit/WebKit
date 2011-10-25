@@ -11,4 +11,3 @@ document.body.onload = function() {
 }
 
 window.jsTestIsAsync = true;
-window.successfullyParsed = true;

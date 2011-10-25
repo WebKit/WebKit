@@ -83,8 +83,6 @@ function runTest(image)
     runOneIteration(image, false, false, green, red);
     runOneIteration(image, true, true, red, green);
     runOneIteration(image, true, false, green, red);
-
-    successfullyParsed = true;
     var epilogue = document.createElement("script");
     epilogue.onload = finish;
     epilogue.src = "../../js/resources/js-test-post.js";

@@ -15,5 +15,3 @@ shouldBe("root.querySelectorAll('div').item(0)", "correctNode");
 
 shouldBeNull("noChild.querySelector('div')");
 shouldBe("noChild.querySelectorAll('div').length", "0");
-
-var successfullyParsed = true;

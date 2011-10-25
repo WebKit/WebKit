@@ -84,5 +84,3 @@ shouldBeInvalid('2009');
 
 // Disabled
 shouldBeValid('2009-09', true);
-
-var successfullyParsed = true;

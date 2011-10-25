@@ -30,4 +30,3 @@ function lotto() {
     return eval('j');
 }
 shouldBe("lotto()", "0");
-successfullyParsed = true

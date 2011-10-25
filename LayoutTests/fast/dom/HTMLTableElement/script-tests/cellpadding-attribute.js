@@ -35,5 +35,3 @@ shouldBe('cellPaddingAttributeEffect("a")', '"0px"');
 var arabicIndicDigitOne = String.fromCharCode(0x661);
 shouldBe('cellPaddingAttributeEffect(arabicIndicDigitOne)', '"0px"');
 shouldBe('cellPaddingAttributeEffect("2" + arabicIndicDigitOne)', '"2px"');
-
-var successfullyParsed = true;

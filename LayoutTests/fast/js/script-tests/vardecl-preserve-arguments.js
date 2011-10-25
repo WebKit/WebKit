@@ -174,6 +174,3 @@ shouldBe("'" + typeof arguments + "'", "'undefined'");
 var arguments = [3,2];
 shouldBe("'" + typeof arguments + "'", "'object'");
 shouldBe("" + arguments.length, "2");
-
-
-var successfullyParsed = true;

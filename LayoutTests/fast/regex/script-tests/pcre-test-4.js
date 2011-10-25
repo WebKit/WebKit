@@ -1144,5 +1144,3 @@ shouldBe('input1.match(regexGlobal29);', 'results');
 //var input2 = "a\u0100b";
 //var results = null;
 //shouldBe('regex90.exec(input2);', 'results');
-
-var successfullyParsed = true;

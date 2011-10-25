@@ -43,5 +43,3 @@ shouldBeTrue("test(Array.prototype.splice)");
 shouldBeTrue("test(Array.prototype.unshift)");
 shouldBeTrue("test(Array.prototype.indexOf)");
 shouldBeTrue("test(Array.prototype.lastIndexOf)");
-
-successfullyParsed = true;

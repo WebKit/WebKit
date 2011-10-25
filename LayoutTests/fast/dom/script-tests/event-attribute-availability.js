@@ -71,5 +71,3 @@ for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
 for (var i = 0; i < bodyAndFrameSetProperties.length; ++i) {
     shouldBeTrue("'" + bodyAndFrameSetProperties[i] + "' in frameSet");
 }
-
-successfullyParsed = true;

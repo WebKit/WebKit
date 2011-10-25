@@ -17,5 +17,3 @@ shouldBe('labels.item(1).id', '"l13"');
 
 labels = document.getElementById("id4").labels;
 shouldBe('labels.item(1).id', '"l14"');
-
-var successfullyParsed = true;

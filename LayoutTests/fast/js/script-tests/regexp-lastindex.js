@@ -10,5 +10,3 @@ shouldBe('while (match = re.exec("  abcdefg")) accumulate += match + "; "; accum
 var re = new RegExp(/\d/g);
 accumulate = "";
 shouldBe('while (match = re.exec("123456789")) accumulate += match + "; "; accumulate', '"1; 2; 3; 4; 5; 6; 7; 8; 9; "');
-
-var successfullyParsed = true;

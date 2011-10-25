@@ -10,10 +10,10 @@
 <script>
 description("Test parsing of entity-escaped &lt;/script&gt; tag for <a href=\"https://bugs.webkit.org/show_bug.cgi?id=7931\">Bug 7931: Escaped elements within a textarea block can cause the textarea box to be closed prematurely</a>");
 
+shouldHaveHadError("SyntaxError");
+
 var expectedResult = '&lt;' + '/script>';
 shouldBe('document.getElementById("myscript").textContent', 'expectedResult');
-
-successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

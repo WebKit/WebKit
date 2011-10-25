@@ -98,6 +98,3 @@ testFor("1", true, undefined, true, "1");
 testFor("1", true, 0, false, "false");
 
 testUsingSetAttributes();
-
-
-var successfullyParsed = true;

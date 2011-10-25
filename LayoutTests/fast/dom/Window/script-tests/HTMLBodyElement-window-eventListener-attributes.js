@@ -62,5 +62,3 @@ shouldBe("window.onunload", "document.body.onunload");
 window.onunload = null;
 
 gc();
-
-var successfullyParsed = true;

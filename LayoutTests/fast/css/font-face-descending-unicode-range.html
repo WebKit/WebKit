@@ -22,8 +22,6 @@
 description("Interval unicode-ranges that descend are invalid and omitted. Without any valid ranges, the descriptor is omitted. As a result, the @font-face rule in this file is applied to all characters. This test passes if the following i's and X's are shown in Courier and they have the same length on screen. As of r62096, opening this file causes a crash instead.");
 
 shouldBe("document.getElementById('i_s').offsetWidth", "document.getElementById('x_s').offsetWidth");
-
-var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

@@ -40,5 +40,3 @@ testException("undefined.a += 5", 0, 9, 11, "'undefined' is not an object (evalu
 testException("undefined[0] += 5", 0, 9, 12, "'undefined' is not an object (evaluating 'undefined[0]')");
 testException("({b:undefined}).b.a += 5", 0, 17, 19, "'undefined' is not an object (evaluating '({b:undefined}).b.a')");
 testException("({b:undefined}).b[0] += 5", 0, 17, 20, "'undefined' is not an object (evaluating '({b:undefined}).b[0]')");
-
-var successfullyParsed = true;

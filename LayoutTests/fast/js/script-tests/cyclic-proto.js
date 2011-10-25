@@ -6,5 +6,3 @@ x = {};
 originalProto = x.__proto__;
 shouldThrow('x.__proto__ = x;');
 shouldBe("x.__proto__", "originalProto");
-
-var successfullyParsed = true;

@@ -44,5 +44,3 @@ image.onload = function() {
     finishJSTest();
 }
 image.src = "resources/cmyk-jpeg.jpg";
-
-var successfullyParsed = true;

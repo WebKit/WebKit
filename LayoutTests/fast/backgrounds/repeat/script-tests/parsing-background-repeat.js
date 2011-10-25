@@ -32,5 +32,3 @@ shouldBe('test("background: purple url(resources/gradient.gif) space 25 25")', '
 
 shouldBe('test("background-repeat: 45;")', 'null');
 shouldBe('test("background-repeat: coconut;")', 'null');
-
-var successfullyParsed = true;

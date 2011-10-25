@@ -20,5 +20,3 @@ shouldBe("myFunction.aliasedCall(null)", '[this, "myFunction", undefined]');
 shouldBe("myFunction.aliasedCall(undefined)", '[this, "myFunction", undefined]');
 shouldBe("myFunctionWithCall.call(myObject, 'arg1')", '[myFunctionWithCall, "myFunctionWithCall.call", myObject]');
 shouldBe("myFunctionWithCall.aliasedCall(myObject, 'arg1')", '[myObject, "myFunctionWithCall", "arg1"]');
-
-var successfullyParsed = true;

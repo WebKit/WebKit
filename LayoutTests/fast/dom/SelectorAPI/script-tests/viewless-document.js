@@ -24,5 +24,3 @@ shouldBeTrue("p1.webkitMatchesSelector('p')");
 shouldBeTrue("s1.webkitMatchesSelector('p span')");
 shouldBeTrue("s2.webkitMatchesSelector('#s2')");
 shouldBeTrue("d1.webkitMatchesSelector('.d1')");
-
-var successfullyParsed = true;

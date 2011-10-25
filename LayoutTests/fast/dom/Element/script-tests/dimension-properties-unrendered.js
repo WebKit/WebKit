@@ -13,5 +13,3 @@ shouldBe("testDiv.scrollLeft", "0");
 shouldBe("testDiv.scrollTop", "0");
 shouldBe("testDiv.scrollWidth", "0");
 shouldBe("testDiv.scrollHeight", "0");
-
-var successfullyParsed = true;

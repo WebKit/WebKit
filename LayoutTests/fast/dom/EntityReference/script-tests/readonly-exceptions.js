@@ -29,5 +29,3 @@ childrenBeforeFailedAppend = entityReference.childNodes.length;
 shouldBe("childrenBeforeFailedAppend", "1");
 shouldThrow("entityReference.insertBefore(text, entityReference.firstChild)");
 shouldBe("entityReference.childNodes.length", "childrenBeforeFailedAppend");
-
-var successfullyParsed = true;

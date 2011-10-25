@@ -50,5 +50,3 @@ shouldBe('test("webkitMaskPosition", "-webkit-mask-image: none, none, none, none
 shouldBe('test("webkitMaskPositionX", "-webkit-mask-image: none, none, none, none, none; -webkit-mask-position-x: 20px, 10%, right, left, center;")', '"20px, 10%, 100%, 0%, 50%"');
 shouldBe('test("webkitMaskPositionY", "-webkit-mask-image: none, none, none, none, none; -webkit-mask-position-y: 20px, 10%, bottom, top, center;")', '"20px, 10%, 100%, 0%, 50%"');
 shouldBe('test("webkitMaskComposite", "-webkit-mask-image: none, none, none; -webkit-mask-composite: source-over, copy, destination-in")', '"source-over, copy, destination-in"');
-
-var successfullyParsed = true;

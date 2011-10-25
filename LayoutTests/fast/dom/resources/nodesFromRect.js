@@ -54,5 +54,3 @@ function getBottomFor(element)
   var rect = element.getBoundingClientRect();
   return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt(rect.bottom)};
 }
-
-var successfullyParsed = true;
