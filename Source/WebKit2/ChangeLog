@@ -1,3 +1,56 @@
+2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins have to use JavaScript to find out the current device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=67225
+        <rdar://problem/10048258>
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Initialize m_contentsScaleFactor.
+
+        * PluginProcess/PluginControllerProxy.h:
+        Add contentsScaleFactor member function and m_contentsScaleFactor member variable.
+
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        Add contentsScaleFactor to the creation parameters.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::contentsScaleFactor):
+        Return the cached m_contentsScaleFactor.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle getting the scale factor by calling NetscapePlugin::contentsScaleFactor.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::contentsScaleFactor):
+        Ask the plug-in controller for the contents scale factor.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add contentsScaleFactor pure virtual member function.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        Set contentsScaleFactor in the creation parameters.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::contentsScaleFactor):
+        Get the device scale factor from the page.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add contentsScaleFactor().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor):
+        Bail if the scale factor didn't change.
+
 2011-10-25  Sam Weinig  <sam@webkit.org>
 
         Flesh out WKBrowsingContextLoadDelegate a bit

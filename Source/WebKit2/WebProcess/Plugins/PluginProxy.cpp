@@ -101,6 +101,9 @@ bool PluginProxy::initialize(const Parameters& parameters)
 #if USE(ACCELERATED_COMPOSITING)
     creationParameters.isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
 #endif
+#if PLATFORM(MAC)
+    creationParameters.contentsScaleFactor = controller()->contentsScaleFactor();
+#endif
 
     bool result = false;
     uint32_t remoteLayerClientID = 0;
@@ -375,7 +378,6 @@ void PluginProxy::sendComplexTextInput(const String& textInput)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::SendComplexTextInput(textInput), m_pluginInstanceID);
 }
-
 #endif
 
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)

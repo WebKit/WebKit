@@ -179,6 +179,11 @@ mach_port_t NetscapePlugin::compositingRenderServerPort()
     return controller()->compositingRenderServerPort();
 }
 
+double NetscapePlugin::contentsScaleFactor()
+{
+    return controller()->contentsScaleFactor();
+}
+
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 

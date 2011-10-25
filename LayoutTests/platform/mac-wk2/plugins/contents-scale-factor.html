@@ -1,0 +1,50 @@
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+function createTestPlugin(testName)
+{
+    var plugin = document.createElement("embed");
+    plugin.type = "application/x-webkit-test-netscape";
+    plugin.setAttribute('test', testName);
+
+    return plugin;
+}
+
+function runTest() 
+{
+    if (!window.layoutTestController) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+
+    layoutTestController.waitUntilDone();
+
+    plugin1 = createTestPlugin('contents-scale-factor');
+    document.body.appendChild(plugin1);
+    
+    shouldBe("plugin1.contentsScaleFactor", "1.0");
+
+    // Now change the backing scale factor.
+    layoutTestController.setBackingScaleFactor(2, function() {
+    
+        plugin2 = createTestPlugin('contents-scale-factor');
+        document.body.appendChild(plugin2);
+    
+        shouldBe("plugin2.contentsScaleFactor", "2.0");
+
+        layoutTestController.notifyDone();
+    });
+}
+</script>
+
+<script>
+description("Tests that plug-ins can query for the contents scale factor")
+
+
+successfullyParsed = true;
+</script>

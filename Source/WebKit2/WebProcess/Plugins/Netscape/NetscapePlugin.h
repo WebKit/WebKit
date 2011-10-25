@@ -63,6 +63,7 @@ public:
     bool hasHandledAKeyDownEvent() const { return m_hasHandledAKeyDownEvent; }
 
     mach_port_t compositingRenderServerPort();
+    double contentsScaleFactor();
 
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;

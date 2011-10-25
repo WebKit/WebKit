@@ -1,3 +1,16 @@
+2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins have to use JavaScript to find out the current device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=67225
+        <rdar://problem/10048258>
+
+        Reviewed by Darin Adler.
+
+        Add tests.
+
+        * platform/mac-wk2/plugins/contents-scale-factor-expected.txt: Added.
+        * platform/mac-wk2/plugins/contents-scale-factor.html: Added.
+
 2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More unreviewed gardening.

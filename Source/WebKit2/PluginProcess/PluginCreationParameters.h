@@ -62,6 +62,11 @@ struct PluginCreationParameters {
     // Whether accelerated compositing is enabled.
     bool isAcceleratedCompositingEnabled;
 #endif
+
+#if PLATFORM(MAC)
+    // The current contents scale factor that this plug-in should have.
+    float contentsScaleFactor;
+#endif
 };
 
 } // namespace WebKit

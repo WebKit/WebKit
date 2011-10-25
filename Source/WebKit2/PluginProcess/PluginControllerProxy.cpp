@@ -70,6 +70,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
     , m_isComplexTextInputEnabled(false)
+    , m_contentsScaleFactor(creationParameters.contentsScaleFactor)
 #endif
     , m_windowNPObject(0)
     , m_pluginElementNPObject(0)

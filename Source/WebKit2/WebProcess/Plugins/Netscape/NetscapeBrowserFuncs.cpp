@@ -460,6 +460,12 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = plugin->isAcceleratedCompositingEnabled();
             break;
         }
+        case NPNVcontentsScaleFactor: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            *(double*)value = plugin->contentsScaleFactor();
+            break;
+        }
         case NPNVsupportsCocoaBool:
             // Always claim to support the Cocoa event model.
             *(NPBool*)value = true;
