@@ -66,68 +66,71 @@ struct _WebKitWebViewClass {
 };
 
 WEBKIT_API GType
-webkit_web_view_get_type                    (void);
+webkit_web_view_get_type                     (void);
 
 WEBKIT_API GtkWidget *
-webkit_web_view_new                         (void);
+webkit_web_view_new                          (void);
 
 WEBKIT_API GtkWidget *
-webkit_web_view_new_with_context            (WebKitWebContext      *context);
+webkit_web_view_new_with_context             (WebKitWebContext          *context);
 
 WEBKIT_API WebKitWebContext *
-webkit_web_view_get_context                 (WebKitWebView         *web_view);
+webkit_web_view_get_context                  (WebKitWebView             *web_view);
 
 WEBKIT_API WebKitWebLoaderClient *
-webkit_web_view_get_loader_client           (WebKitWebView         *web_view);
+webkit_web_view_get_loader_client            (WebKitWebView             *web_view);
 
 WEBKIT_API void
-webkit_web_view_set_loader_client           (WebKitWebView         *web_view,
-                                             WebKitWebLoaderClient *loader_client);
+webkit_web_view_set_loader_client            (WebKitWebView             *web_view,
+                                              WebKitWebLoaderClient     *loader_client);
 
 WEBKIT_API void
-webkit_web_view_load_uri                    (WebKitWebView         *web_view,
-                                             const gchar           *uri);
+webkit_web_view_load_uri                     (WebKitWebView             *web_view,
+                                              const gchar               *uri);
 
 WEBKIT_API void
-webkit_web_view_load_alternate_html         (WebKitWebView         *web_view,
-                                             const gchar           *content,
-                                             const gchar           *base_uri,
-                                             const gchar           *unreachable_uri);
+webkit_web_view_load_alternate_html          (WebKitWebView             *web_view,
+                                              const gchar               *content,
+                                              const gchar               *base_uri,
+                                              const gchar               *unreachable_uri);
 
 WEBKIT_API void
-webkit_web_view_stop_loading                (WebKitWebView         *web_view);
+webkit_web_view_stop_loading                 (WebKitWebView             *web_view);
 
 WEBKIT_API void
-webkit_web_view_reload                      (WebKitWebView         *web_view);
+webkit_web_view_reload                       (WebKitWebView             *web_view);
 
 WEBKIT_API void
-webkit_web_view_reload_bypass_cache         (WebKitWebView         *web_view);
-
-WEBKIT_API void
-webkit_web_view_go_back                     (WebKitWebView         *web_view);
-
-WEBKIT_API gboolean
-webkit_web_view_can_go_back                 (WebKitWebView         *web_view);
-
-WEBKIT_API void
-webkit_web_view_go_forward                  (WebKitWebView         *web_view);
-
-WEBKIT_API WebKitBackForwardList *
-webkit_web_view_get_back_forward_list       (WebKitWebView         *web_view);
-
-WEBKIT_API gboolean
-webkit_web_view_can_go_forward              (WebKitWebView         *web_view);
-
-WEBKIT_API const gchar *
-webkit_web_view_get_custom_charset          (WebKitWebView         *web_view);
-
-WEBKIT_API void
-webkit_web_view_set_custom_charset          (WebKitWebView         *web_view,
-                                             const gchar           *charset);
+webkit_web_view_reload_bypass_cache          (WebKitWebView             *web_view);
 
 WEBKIT_API gdouble
-webkit_web_view_get_estimated_load_progress (WebKitWebView         *web_vew);
+webkit_web_view_get_estimated_load_progress  (WebKitWebView             *web_vew);
 
+WEBKIT_API void
+webkit_web_view_go_back                      (WebKitWebView             *web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_go_back                  (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_go_forward                   (WebKitWebView             *web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_go_forward               (WebKitWebView             *web_view);
+
+WEBKIT_API WebKitBackForwardList *
+webkit_web_view_get_back_forward_list        (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_go_to_back_forward_list_item (WebKitWebView             *web_view,
+                                              WebKitBackForwardListItem *list_item);
+
+WEBKIT_API const gchar *
+webkit_web_view_get_custom_charset           (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_custom_charset           (WebKitWebView             *web_view,
+                                              const gchar               *charset);
 
 G_END_DECLS
 

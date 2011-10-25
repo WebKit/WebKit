@@ -230,6 +230,12 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     items[0] = itemPage1;
     BackForwardListTest::checkList(test->m_list, BackForwardListTest::Backward, items, 1);
     g_assert(!webkit_back_forward_list_get_forward_list(test->m_list));
+
+    test->m_changedFlags = BackForwardListTest::CurrentItem;
+    webkit_web_view_go_to_back_forward_list_item(test->m_webView, itemPage1);
+    test->waitUntilLoadFinished();
+
+    g_assert(itemPage1 == webkit_back_forward_list_get_current_item(test->m_list));
 }
 
 static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpointer)

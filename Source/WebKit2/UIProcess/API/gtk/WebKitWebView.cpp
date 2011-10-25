@@ -482,3 +482,21 @@ WebKitBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webV
 
     return webView->priv->backForwardList.get();
 }
+
+/**
+ * webkit_web_view_go_to_back_forward_list_item:
+ * @web_view: a #WebKitWebView
+ * @list_item: a #WebKitBackForwardListItem
+ *
+ * Loads the specific history item @list_item.
+ * You can monitor the status of the load operation using the
+ * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ */
+void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKitBackForwardListItem* listItem)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem));
+
+    WKPageGoToBackForwardListItem(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))),
+                                  webkitBackForwardListItemGetWKItem(listItem));
+}

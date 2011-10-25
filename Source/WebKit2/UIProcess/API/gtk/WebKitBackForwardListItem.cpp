@@ -93,6 +93,11 @@ WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WKBackForwardLis
     return listItem;
 }
 
+WKBackForwardListItemRef webkitBackForwardListItemGetWKItem(WebKitBackForwardListItem* listItem)
+{
+    return listItem->priv->wkListItem.get();
+}
+
 /**
  * webkit_back_forward_list_item_get_uri:
  * @back_forward_list_item: a #WebKitBackForwardListItem

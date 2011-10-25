@@ -1,3 +1,19 @@
+2011-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add go_to_back_forward_list_item() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=69825
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        (webkitBackForwardListItemGetWKItem):
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_go_to_back_forward_list_item):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/TestBackForwardList.cpp:
+        (testBackForwardListNavigation):
+
 2011-10-25  Vamshikrishna Yellenki  <vamshi@motorola.com>
 
         [WK2]Critical warning while building WebKit2 GTK+
