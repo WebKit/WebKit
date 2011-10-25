@@ -1,3 +1,14 @@
+2011-10-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Chromium] Audits panel context menu for links not working properly
+        https://bugs.webkit.org/show_bug.cgi?id=70813
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditResultView):
+        (WebInspector.AuditResultView.prototype._contextMenuEventFired):
+
 2011-10-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resources panel: display the current search match index in the toolbar.
