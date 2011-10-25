@@ -2067,10 +2067,6 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 # https://bugs.webkit.org/show_bug.cgi?id=58313
 inspector/styles/styles-disable-then-enable.html
 
-# [Qt] fast/transforms/scrollIntoView-transformed.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=58559
-fast/transforms/scrollIntoView-transformed.html
-
 # Stuff Kling broke while happy-hacking DRT (r84010, r84012)
 fast/css/font-face-repeated-url.html
 

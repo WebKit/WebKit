@@ -1,5 +1,14 @@
 2011-10-25  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt] Remove from Skipped list. Test passes: fast/transforms/scrollIntoView-transformed.html
+        https://bugs.webkit.org/show_bug.cgi?id=58559
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt/Skipped:
+
+2011-10-25  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt] Removing test from Skipped list. Test passes: html5lib/runner.html
         https://bugs.webkit.org/show_bug.cgi?id=53030
 
