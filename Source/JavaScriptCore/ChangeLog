@@ -1,3 +1,22 @@
+2011-10-25  Oliver Hunt  <oliver@apple.com>
+
+        Need to support marking of multiple nested codeblocks when compiling
+        https://bugs.webkit.org/show_bug.cgi?id=70832
+
+        Reviewed by Gavin Barraclough.
+
+        When inlining a function we end up with multiple codeblocks being
+        compiled at the same time, so we need to support a list of live
+        codeblocks.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::startedCompiling):
+        (JSC::JSGlobalData::finishedCompiling):
+
 2011-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG JIT 32_64 - fillInteger should accept DataFormatJSInteger

@@ -188,17 +188,16 @@ namespace JSC {
         SmallStrings smallStrings;
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
-        CodeBlock* codeBlockBeingCompiled;
+        Vector<CodeBlock*> codeBlocksBeingCompiled;
         void startedCompiling(CodeBlock* codeBlock)
         {
-            ASSERT(!codeBlockBeingCompiled);
-            codeBlockBeingCompiled = codeBlock;
+            codeBlocksBeingCompiled.append(codeBlock);
         }
 
         void finishedCompiling(CodeBlock* codeBlock)
         {
-            ASSERT_UNUSED(codeBlock, codeBlock == codeBlockBeingCompiled);
-            codeBlockBeingCompiled = 0;
+            ASSERT_UNUSED(codeBlock, codeBlock == codeBlocksBeingCompiled.last());
+            codeBlocksBeingCompiled.removeLast();
         }
 
 #if ENABLE(ASSEMBLER)

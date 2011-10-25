@@ -601,9 +601,10 @@ void Heap::markRoots(bool fullGC)
     }
 #endif
     
-    if (CodeBlock* codeBlock = m_globalData->codeBlockBeingCompiled) {
+    if (m_globalData->codeBlocksBeingCompiled.size()) {
         GCPHASE(VisitActiveCodeBlock);
-        codeBlock->visitAggregate(visitor);
+        for (size_t i = 0; i < m_globalData->codeBlocksBeingCompiled.size(); i++)
+            m_globalData->codeBlocksBeingCompiled[i]->visitAggregate(visitor);
     }
     
     {

@@ -179,7 +179,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
-    , codeBlockBeingCompiled(0)
 #if ENABLE(ASSEMBLER)
     , executableAllocator(*this)
 #endif
