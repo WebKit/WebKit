@@ -99,7 +99,13 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
 {
-    /* FIXME: Implement. */
+    if (![URL isFileURL])
+        return;
+
+    /* FIXME: Implement restrictions. */
+
+    WKRetainPtr<WKURLRef> wkURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)URL));
+    WKPageLoadURL(self.pageRef, wkURL.get());
 }
 
 - (void)stopLoading

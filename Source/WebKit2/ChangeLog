@@ -1,3 +1,13 @@
+2011-10-25  Sam Weinig  <sam@webkit.org>
+
+        Make loadFileURL:restrictToFilesWithin: work, albeit, without the correct
+        restrictions for now.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]):
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         PDF SUBFRAMES: Incomplete repaint after pinch to zoom
