@@ -301,6 +301,45 @@ void LayerRendererChromium::drawLayers()
         copyOffscreenTextureToDisplay();
 }
 
+void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
+{
+    TRACE_EVENT("LayerRendererChromium::drawLayersOntoRenderSurfaces", this, 0);
+    
+    // Update the contents of the render surfaces. We traverse the render surfaces
+    // from back to front to guarantee that nested render surfaces get rendered in
+    // the correct order.
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        renderSurface->setSkipsDraw(true);
+
+        if (!renderSurface->layerList().size())
+            continue;
+
+        // Skip completely transparent render surfaces.
+        if (!renderSurface->drawOpacity())
+            continue;
+
+        if (useRenderSurface(renderSurface)) {
+            renderSurface->setSkipsDraw(false);
+
+            if (renderSurfaceLayer != rootDrawLayer) {
+                GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+                GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
+                GLC(m_context.get(), m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
+                GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+            }
+
+            const CCLayerList& layerList = renderSurface->layerList();
+            for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
+                drawLayer(layerList[layerIndex].get(), renderSurface);
+        }
+    }
+}
+
+
 void LayerRendererChromium::drawLayersInternal()
 {
     if (viewportSize().isEmpty() || !rootLayer())
@@ -354,40 +393,7 @@ void LayerRendererChromium::drawLayersInternal()
     GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
-    // Update the contents of the render surfaces. We traverse the array from
-    // back to front to guarantee that nested render surfaces get rendered in the
-    // correct order.
-    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
-        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
-        ASSERT(renderSurface);
-
-        renderSurface->setSkipsDraw(true);
-
-        // Render surfaces whose drawable area has zero width or height
-        // will have no layers associated with them and should be skipped.
-        if (!renderSurface->layerList().size())
-            continue;
-
-        // Skip completely transparent render surfaces.
-        if (!renderSurface->drawOpacity())
-            continue;
-
-        if (useRenderSurface(renderSurface)) {
-            renderSurface->setSkipsDraw(false);
-
-            if (renderSurfaceLayer != rootDrawLayer) {
-                GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-                GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
-                GLC(m_context.get(), m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
-                GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
-            }
-
-            const CCLayerList& layerList = renderSurface->layerList();
-            for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
-                drawLayer(layerList[layerIndex].get(), renderSurface);
-        }
-    }
+    drawLayersOntoRenderSurfaces(rootDrawLayer, renderSurfaceLayerList);
 
     if (m_headsUpDisplay->enabled()) {
         GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
@@ -570,42 +576,16 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
         return;
     }
 
-    if (!layer->drawsContent())
-        return;
-
-    if (!layer->opacity())
-        return;
-
-    if (layer->bounds().isEmpty())
-        return;
-
-    IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
-    if (layer->usesLayerScissor()) {
-        IntRect scissorRect = layer->scissorRect();
-        targetSurfaceRect.intersect(scissorRect);
-        if (targetSurfaceRect.isEmpty())
-            return;
-        setScissorToRect(scissorRect);
-    } else
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-
-    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), layer->drawTransform());
-    visibleLayerRect.move(toSize(layer->scrollPosition()));
+    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<CCLayerImpl>(layer);
     layer->setVisibleLayerRect(visibleLayerRect);
 
-    // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
-    // This second condition is checked by computing the transformed normal of the layer.
-    if (!layer->doubleSided()) {
-        FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
-        FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
-        FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
-        FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
-        FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
-        FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
-        FloatPoint3D zAxis = xAxis.cross(yAxis);
-        if (zAxis.z() < 0)
-            return;
-    }
+    if (visibleLayerRect.isEmpty())
+        return;
+
+    if (layer->usesLayerScissor())
+        setScissorToRect(layer->scissorRect());
+    else
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
     layer->draw(this);
 

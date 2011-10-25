@@ -161,6 +161,7 @@ private:
     bool initialize();
 
     void drawLayersInternal();
+    void drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
     void drawLayer(CCLayerImpl*, CCRenderSurface*);
 
     ManagedTexture* getOffscreenLayerTexture();

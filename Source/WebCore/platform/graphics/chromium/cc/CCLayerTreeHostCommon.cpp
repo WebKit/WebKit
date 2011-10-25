@@ -61,21 +61,6 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
     return layerRect;
 }
 
-IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(const IntRect& targetSurfaceRect, const IntSize& bounds, const IntSize& contentBounds, const TransformationMatrix& tilingTransform)
-{
-    if (targetSurfaceRect.isEmpty() || contentBounds.isEmpty())
-        return targetSurfaceRect;
-
-    const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
-    TransformationMatrix transform = tilingTransform;
-
-    transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
-                              bounds.height() / static_cast<double>(contentBounds.height()));
-    transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
-
-    return calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
-}
-
 static bool isScaleOrTranslation(const TransformationMatrix& m)
 {
     return !m.m12() && !m.m13() && !m.m14()
@@ -83,6 +68,39 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
            && !m.m31() && !m.m32() && !m.m43()
            && m.m44();
 
+}
+
+template<typename LayerType>
+bool layerShouldBeSkipped(LayerType* layer)
+{
+    // Layers can be skipped if any of these conditions are met.
+    //   - does not draw content.
+    //   - is transparent
+    //   - has empty bounds
+    //   - the layer is not double-sided, but its back face is visible.
+    //
+    // Some additional conditions need to be computed at a later point after the recursion is finished.
+    //   - the intersection of render surface content and layer scissor is empty
+    //   - the visibleLayerRect is empty
+
+    if (!layer->drawsContent() || !layer->opacity() || layer->bounds().isEmpty())
+        return true;
+
+    // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
+    // This second condition is checked by computing the transformed normal of the layer.
+    if (!layer->doubleSided()) {
+        FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
+        FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
+        FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
+        FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
+        FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
+        FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
+        FloatPoint3D zAxis = xAxis.cross(yAxis);
+        if (zAxis.z() < 0)
+            return true;
+    }
+
+    return false;
 }
 
 // Recursively walks the layer tree starting at the given node and computes all the
@@ -329,9 +347,12 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
     LayerList& descendants = (layer->renderSurface() ? layer->renderSurface()->layerList() : layerList);
-    descendants.append(layer);
 
-    unsigned thisLayerIndex = descendants.size() - 1;
+    // Any layers that are appended after this point are in the layer's subtree and should be included in the sorting process.
+    unsigned sortingStartIndex = descendants.size();
+
+    if (!layerShouldBeSkipped(layer))
+        descendants.append(layer);
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
         LayerType* child = layer->children()[i].get();
@@ -408,8 +429,8 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     // If preserves-3d then sort all the descendants in 3D so that they can be
     // drawn from back to front. If the preserves-3d property is also set on the parent then
     // skip the sorting as the parent will sort all the descendants anyway.
-    if (layer->preserves3D() && (!layer->parent() || !layer->parent()->preserves3D()))
-        sortLayers(&descendants.at(thisLayerIndex), descendants.end(), layerSorter);
+    if (descendants.size() && layer->preserves3D() && (!layer->parent() || !layer->parent()->preserves3D()))
+        sortLayers(&descendants.at(sortingStartIndex), descendants.end(), layerSorter);
 }
 
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)

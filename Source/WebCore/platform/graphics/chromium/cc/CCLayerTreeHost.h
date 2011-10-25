@@ -165,9 +165,12 @@ private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
 
     void paintLayerContents(const LayerList&);
+    void paintMaskAndReplicaForRenderSurface(LayerChromium*);
+
     void updateLayers(LayerChromium*);
     void updateCompositorResources(const LayerList&, GraphicsContext3D*, TextureAllocator*);
     void updateCompositorResources(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
+    void updateMaskResourcesForRenderSurface(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
     void clearPendingUpdate();
 
     int m_compositorIdentifier;

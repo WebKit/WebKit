@@ -296,14 +296,38 @@ static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLay
     }
 }
 
+void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer)
+{
+    // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
+    // in code, we already know that at least something will be drawn into this render surface, so the
+    // mask and replica should be painted.
+
+    if (renderSurfaceLayer->maskLayer()) {
+        renderSurfaceLayer->maskLayer()->setLayerTreeHost(this);
+        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+    }
+
+    LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
+    if (replicaLayer) {
+
+        IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerChromium>(renderSurfaceLayer);
+
+        replicaLayer->setLayerTreeHost(this);
+        paintContentsIfDirty(replicaLayer, visibleLayerRect);
+
+        if (replicaLayer->maskLayer()) {
+            replicaLayer->maskLayer()->setLayerTreeHost(this);
+            paintContentsIfDirty(replicaLayer->maskLayer(), IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
+        }
+    }
+}
+
 void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-
-        renderSurfaceLayer->setLayerTreeHost(this);
 
         // Render surfaces whose drawable area has zero width or height
         // will have no layers associated with them and should be skipped.
@@ -312,6 +336,9 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
         if (!renderSurface->drawOpacity())
             continue;
+
+        renderSurfaceLayer->setLayerTreeHost(this);
+        paintMaskAndReplicaForRenderSurface(renderSurfaceLayer);
 
         const LayerList& layerList = renderSurface->layerList();
         ASSERT(layerList.size());
@@ -325,39 +352,12 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
             layer->setLayerTreeHost(this);
 
-            if (!layer->opacity())
-                continue;
-
-            if (layer->maskLayer())
-                layer->maskLayer()->setLayerTreeHost(this);
-            if (layer->replicaLayer()) {
-                layer->replicaLayer()->setLayerTreeHost(this);
-                if (layer->replicaLayer()->maskLayer())
-                    layer->replicaLayer()->maskLayer()->setLayerTreeHost(this);
-            }
-
-            if (layer->bounds().isEmpty())
-                continue;
-
-            IntRect defaultContentRect = IntRect(rootLayer()->scrollPosition(), viewportSize());
-
-            IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : defaultContentRect;
-            if (layer->usesLayerScissor())
-                targetSurfaceRect.intersect(layer->scissorRect());
-            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), layer->drawTransform());
-
-            visibleLayerRect.move(toSize(layer->scrollPosition()));
+            ASSERT(layer->opacity());
+            ASSERT(!layer->bounds().isEmpty());
+            
+            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerChromium>(layer);
+            
             paintContentsIfDirty(layer, visibleLayerRect);
-
-            if (LayerChromium* maskLayer = layer->maskLayer())
-                paintContentsIfDirty(maskLayer, IntRect(IntPoint(), maskLayer->contentBounds()));
-
-            if (LayerChromium* replicaLayer = layer->replicaLayer()) {
-                paintContentsIfDirty(replicaLayer, visibleLayerRect);
-
-                if (LayerChromium* replicaMaskLayer = replicaLayer->maskLayer())
-                    paintContentsIfDirty(replicaMaskLayer, IntRect(IntPoint(), replicaMaskLayer->contentBounds()));
-            }
         }
     }
 }
@@ -372,6 +372,16 @@ void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLa
         if (!renderSurface->layerList().size() || !renderSurface->drawOpacity())
             continue;
 
+        if (renderSurfaceLayer->maskLayer())
+            updateCompositorResources(renderSurfaceLayer->maskLayer(), context, allocator);
+
+        if (renderSurfaceLayer->replicaLayer()) {
+            updateCompositorResources(renderSurfaceLayer->replicaLayer(), context, allocator);
+            
+            if (renderSurfaceLayer->replicaLayer()->maskLayer())
+                updateCompositorResources(renderSurfaceLayer->replicaLayer()->maskLayer(), context, allocator);
+        }
+        
         const LayerList& layerList = renderSurface->layerList();
         ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
@@ -386,19 +396,12 @@ void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLa
 
 void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context, TextureAllocator* allocator)
 {
-    if (layer->bounds().isEmpty())
+    // For normal layers, these conditions should have already been checked while creating the render surface layer lists.
+    // For masks and replicas however, we may still need to check them here.
+    if (layer->bounds().isEmpty() || !layer->opacity() || !layer->drawsContent())
         return;
 
-    if (!layer->opacity())
-        return;
-
-    if (layer->maskLayer())
-        updateCompositorResources(layer->maskLayer(), context, allocator);
-    if (layer->replicaLayer())
-        updateCompositorResources(layer->replicaLayer(), context, allocator);
-
-    if (layer->drawsContent())
-        layer->updateCompositorResources(context, allocator);
+    layer->updateCompositorResources(context, allocator);
 }
 
 void CCLayerTreeHost::clearPendingUpdate()
