@@ -27,6 +27,7 @@
 #import "WKBrowsingContextController.h"
 #import "WKBrowsingContextControllerInternal.h"
 
+#import "WKErrorCF.h"
 #import "WKFrame.h"
 #import "WKPage.h"
 #import "WKRetainPtr.h"
@@ -34,6 +35,7 @@
 #import "WKURLCF.h"
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
+#import <wtf/RetainPtr.h>
 
 #import "WKBrowsingContextLoadDelegate.h"
 
@@ -203,7 +205,30 @@ static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WK
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-    [browsingContext.loadDelegate browsingContextControllerDidStartProvisionalLoad:browsingContext];
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidStartProvisionalLoad:)])
+        [browsingContext.loadDelegate browsingContextControllerDidStartProvisionalLoad:browsingContext];
+}
+
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:)])
+        [browsingContext.loadDelegate browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:browsingContext];
+}
+
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailProvisionalLoad:withError:)]) {
+        RetainPtr<CFErrorRef> cfError(AdoptCF, WKErrorCopyCFError(kCFAllocatorDefault, error));
+        [browsingContext.loadDelegate browsingContextControllerDidFailProvisionalLoad:browsingContext withError:(NSError *)cfError.get()];
+    }
 }
 
 static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -212,7 +237,8 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-    [browsingContext.loadDelegate browsingContextControllerDidCommitLoad:browsingContext];
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
+        [browsingContext.loadDelegate browsingContextControllerDidCommitLoad:browsingContext];
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -221,19 +247,35 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-    [browsingContext.loadDelegate browsingContextControllerDidFinishLoad:browsingContext];
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFinishLoad:)])
+        [browsingContext.loadDelegate browsingContextControllerDidFinishLoad:browsingContext];
+}
+
+static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailLoad:withError:)]) {
+        RetainPtr<CFErrorRef> cfError(AdoptCF, WKErrorCopyCFError(kCFAllocatorDefault, error));
+        [browsingContext.loadDelegate browsingContextControllerDidFailLoad:browsingContext withError:(NSError *)cfError.get()];
+    }
 }
 
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WKPageRef pageRef)
 {
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    
+
     loaderClient.version = kWKPageLoaderClientCurrentVersion;
     loaderClient.clientInfo = browsingContext;
     loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
+    loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
+    loaderClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
     loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFailLoadWithErrorForFrame = didFailLoadWithErrorForFrame;
 
     WKPageSetPageLoaderClient(pageRef, &loaderClient);
 }

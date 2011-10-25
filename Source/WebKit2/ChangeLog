@@ -1,3 +1,22 @@
+2011-10-25  Sam Weinig  <sam@webkit.org>
+
+        Flesh out WKBrowsingContextLoadDelegate a bit
+        https://bugs.webkit.org/show_bug.cgi?id=70846
+
+        Add didReceiveServerRedirectForProvisionalLoad, didFailProvisionalLoad
+        and didFailLoad.
+
+        Reviewed by Anders Carlsson.
+
+        Test: WKBrowsingContextLoadDelegateTest
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        (setUpPageLoaderClient):
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h:
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure when zooming a PDF in an iframe

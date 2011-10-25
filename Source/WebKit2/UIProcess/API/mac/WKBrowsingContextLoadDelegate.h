@@ -34,10 +34,19 @@
 /* Sent when the provisional load begins. */
 - (void)browsingContextControllerDidStartProvisionalLoad:(WKBrowsingContextController *)sender;
 
+/* Sent if a server-side redirect was recieved. */
+- (void)browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:(WKBrowsingContextController *)sender;
+
+/* Sent if the provional load fails. */
+- (void)browsingContextControllerDidFailProvisionalLoad:(WKBrowsingContextController *)sender withError:(NSError *)error;
+
 /* Sent when the load gets committed. */
 - (void)browsingContextControllerDidCommitLoad:(WKBrowsingContextController *)sender;
 
 /* Sent when the load completes. */
 - (void)browsingContextControllerDidFinishLoad:(WKBrowsingContextController *)sender;
+
+/* Sent if the commited load fails. */
+- (void)browsingContextControllerDidFailLoad:(WKBrowsingContextController *)sender withError:(NSError *)error;
 
 @end
