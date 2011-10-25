@@ -4757,10 +4757,7 @@ void RenderBlock::adjustForColumns(LayoutSize& offset, const LayoutPoint& point)
         if (!isHorizontalWritingMode())
             sliceRect = sliceRect.transposedRect();
         
-        // If we have a flipped blocks writing mode, then convert the column so that it's coming from the after edge (either top or left edge).
-        adjustStartEdgeForWritingModeIncludingColumns(sliceRect);
-        
-        LayoutUnit logicalOffset = style()->isFlippedBlocksWritingMode() ? (colCount - 1 - i) * colLogicalHeight : i * colLogicalHeight;
+        LayoutUnit logicalOffset = i * colLogicalHeight;
 
         // Now we're in the same coordinate space as the point.  See if it is inside the rectangle.
         if (isHorizontalWritingMode()) {

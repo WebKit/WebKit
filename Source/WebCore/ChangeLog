@@ -1,3 +1,20 @@
+2011-10-25  Dan Bernstein  <mitz@apple.com>
+
+        Caret can be positioned or repainted incorrectly in flipped-blocks multi-column blocks
+        https://bugs.webkit.org/show_bug.cgi?id=70851
+
+        Reviewed by Dave Hyatt.
+
+        * manual-tests/caret-in-columns-flipped.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForColumns): Removed flipped-blocks writing mode considerations
+        from this function, since not all callers were expecting it to account for flippedness. This makes
+        it similar to adjustRectForColumns() in not adjusting for flippedness.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer): In the columns case, account for flipped-blocks modes
+        by first mapping the point and the offset to non-flipped, non-columns space, then adjusting for
+        columns, then flipping.
+
 2011-10-25  Michal Mocny  <mmocny@google.com>
 
         LayerRendererChromium::setVisible called needlessly without a visibility change

@@ -1422,15 +1422,15 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
         offset += relativePositionOffset();
 
     if (!isInline() || isReplaced()) {
-        if (style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
-            if (o->hasColumns()) {
-                LayoutRect columnRect(frameRect());
-                toRenderBlock(o)->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
-                offset += LayoutSize(columnRect.location().x(), columnRect.location().y());
-                columnRect.moveBy(point);
-                o->adjustForColumns(offset, columnRect.location());
-            } else
-                offset += topLeftLocationOffset();
+        if (style()->position() != AbsolutePosition && style()->position() != FixedPosition && o->hasColumns()) {
+            RenderBlock* block = toRenderBlock(o);
+            LayoutRect columnRect(frameRect());
+            block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
+            offset += toSize(columnRect.location());
+            IntPoint columnPoint = block->flipForWritingModeIncludingColumns(point + offset);
+            offset = toSize(block->flipForWritingModeIncludingColumns(LayoutPoint(offset)));
+            o->adjustForColumns(offset, columnPoint);
+            offset = block->flipForWritingMode(offset);
         } else
             offset += topLeftLocationOffset();
     }
