@@ -49,6 +49,10 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 Console::Console(Frame* frame)
@@ -304,10 +308,18 @@ void Console::profileEnd(const String& title, ScriptState* state, PassRefPtr<Scr
 void Console::time(const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(page(), title);
+#if PLATFORM(CHROMIUM)
+    if (PlatformSupport::isTraceEventEnabled())
+        PlatformSupport::traceEventBegin(title.utf8().data(), 0, 0);
+#endif
 }
 
 void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
 {
+#if PLATFORM(CHROMIUM)
+    if (PlatformSupport::isTraceEventEnabled())
+        PlatformSupport::traceEventEnd(title.utf8().data(), 0, 0);
+#endif
     InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
 }
 

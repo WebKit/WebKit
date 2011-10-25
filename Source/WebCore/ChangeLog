@@ -1,3 +1,14 @@
+2011-10-21  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route Console::time and Console::timeEnd to trace_event
+        https://bugs.webkit.org/show_bug.cgi?id=70620
+
+        Reviewed by Pavel Feldman.
+
+        * page/Console.cpp:
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+
 2011-10-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] allow extensions to specify script to be injected on reload
