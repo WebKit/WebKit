@@ -344,13 +344,7 @@ TEST_F(GestureRecognizerTest, DISABLED_doubleTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
-#if OS(MAC_OS_X)
-#define MAYBE_doubleTapGestureIncompleteTest DISABLED_doubleTapGestureIncompleteTest
-#else
-#define MAYBE_doubleTapGestureIncompleteTest doubleTapGestureIncompleteTest
-#endif
-
-TEST_F(GestureRecognizerTest, MAYBE_doubleTapGestureIncompleteTest)
+TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
@@ -379,13 +373,7 @@ TEST_F(GestureRecognizerTest, MAYBE_doubleTapGestureIncompleteTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
-#if OS(MAC_OS_X)
-#define MAYBE_doubleTapGestureIncompleteDueToSecondClickPositionTest DISABLED_doubleTapGestureIncompleteDueToSecondClickPositionTest
-#else
-#define MAYBE_doubleTapGestureIncompleteDueToSecondClickPositionTest doubleTapGestureIncompleteDueToSecondClickPositionTest
-#endif
-
-TEST_F(GestureRecognizerTest, MAYBE_doubleTapGestureIncompleteDueToSecondClickPositionTest)
+TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteDueToSecondClickPositionTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
@@ -435,13 +423,7 @@ TEST_F(GestureRecognizerTest, tapDownWithoutTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
-#if OS(MAC_OS_X)
-#define MAYBE_tapDownWithTapGestureTest DISABLED_tapDownWithTapGestureTest
-#else
-#define MAYBE_tapDownWithTapGestureTest tapDownWithTapGestureTest
-#endif
-
-TEST_F(GestureRecognizerTest, MAYBE_tapDownWithTapGestureTest)
+TEST_F(GestureRecognizerTest, tapDownWithTapGestureTest)
 {
     InspectableGestureRecognizerChromium gm;
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
@@ -467,13 +449,8 @@ TEST_F(GestureRecognizerTest, MAYBE_tapDownWithTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
-#if OS(WINDOWS) || OS(MAC_OS_X)
-#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest DISABLED_noDoubleTapGestureBecauseOfInterTouchIntervalTest
-#else
-#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest noDoubleTapGestureBecauseOfInterTouchIntervalTest
-#endif
 
-TEST_F(GestureRecognizerTest, MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest)
+TEST_F(GestureRecognizerTest, noDoubleTapGestureBecauseOfInterTouchIntervalTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);

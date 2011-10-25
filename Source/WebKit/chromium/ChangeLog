@@ -1,3 +1,13 @@
+2011-10-25  Gene Girard  <girard@chromium.org>
+
+        Re-enable touch tests (from 66577)
+        https://bugs.webkit.org/show_bug.cgi?id=70351
+
+        Reviewed by Adam Barth.
+
+        * tests/InnerGestureRecognizerTest.cpp:
+        (TEST_F):
+
 2011-10-25  Nat Duca  <nduca@chromium.org>
 
         Unreviewed. Rolled DEPS.
