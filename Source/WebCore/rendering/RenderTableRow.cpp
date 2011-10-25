@@ -106,8 +106,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* cell = beforeChild->previousSibling();
-            if (cell && cell->isTableCell()) {
-                ASSERT(cell->isAnonymous());
+            if (cell && cell->isTableCell() && cell->isAnonymous()) {
                 cell->addChild(child);
                 return;
             }

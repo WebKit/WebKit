@@ -1,3 +1,21 @@
+2011-10-25  Fady Samuel  <fsamuel@chromium.org>
+
+        Crash in WebCore::RenderTableSection::addChild due to assert failure
+        https://bugs.webkit.org/show_bug.cgi?id=70678
+
+        Reviewed by David Hyatt.
+
+        If the child being added is not a Section/Row/Cell, and the previous sibling is not anonymous, 
+        we need to create a new anonymous Section/Row/Cell respectively, instead of failing an
+        assert.
+
+        * fast/table/table-anonymous-cell-bug-expected.txt: Added.
+        * fast/table/table-anonymous-cell-bug.html: Added.
+        * fast/table/table-anonymous-row-bug-expected.txt: Added.
+        * fast/table/table-anonymous-row-bug.html: Added.
+        * fast/table/table-anonymous-section-bug-expected.txt: Added.
+        * fast/table/table-anonymous-section-bug.html: Added.
+
 2011-10-25  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Add new uri tokenizer tests

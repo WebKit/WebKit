@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: ahem; -webkit-font-smoothing: none;">
+<style>
+    div.table { display: table; }
+    div.section { display: table-row-group; }
+</style>
+
+<div class="table" id="table-1">
+    <div class="section" id="tbody-1">
+    </div>
+    <div class="section" id="tbody-2">
+    </div>
+</div>
+
+<script>
+    function createSpan()
+    {
+      var spanElement = document.createElement("span");
+      spanElement.appendChild(document.createTextNode("Some text."));
+      return spanElement;
+    }
+
+    function insertSpan(tableID, beforeID)
+    {
+        var table = document.getElementById(tableID);
+        var before = document.getElementById(beforeID);
+        table.insertBefore(createSpan(), before);
+    }
+
+    document.body.offsetTop;
+
+    insertSpan("table-1", "tbody-2");
+</script>
+</body>
+</html>

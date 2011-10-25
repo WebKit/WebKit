@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x132
+  RenderBlock {HTML} at (0,0) size 800x132
+    RenderBody {BODY} at (8,8) size 784x116
+      RenderTable {DIV} at (0,0) size 160x116
+        RenderTableSection (anonymous) at (0,0) size 160x116
+          RenderTableRow {DIV} at (0,0) size 160x50
+            RenderTableCell {DIV} at (0,0) size 160x16 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 96x16
+                text run at (0,0) width 96: "Cell 1"
+          RenderTableRow (anonymous) at (0,50) size 160x16
+            RenderTableCell (anonymous) at (0,50) size 160x16 [r=1 c=0 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 160x16
+                RenderText {#text} at (0,0) size 160x16
+                  text run at (0,0) width 160: "Some text."
+          RenderTableRow {DIV} at (0,66) size 160x50
+            RenderTableCell {DIV} at (0,66) size 160x16 [bgcolor=#0000FF] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 96x16
+                text run at (0,0) width 96: "Cell 2"

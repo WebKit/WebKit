@@ -186,8 +186,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 
     if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
         RenderObject* section = beforeChild->previousSibling();
-        if (section && section->isTableSection()) {
-            ASSERT(section->isAnonymous());
+        if (section && section->isTableSection() && section->isAnonymous()) {
             section->addChild(child);
             return;
         }
