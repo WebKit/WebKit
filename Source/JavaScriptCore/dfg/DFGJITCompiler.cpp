@@ -610,17 +610,18 @@ void JITCompiler::compileBody()
 
     linkOSRExits(speculative);
 
-    // Iterate over the m_calls vector, checking for exception checks,
-    // and linking them to here.
-    for (unsigned i = 0; i < m_calls.size(); ++i) {
-        Jump& exceptionCheck = m_calls[i].m_exceptionCheck;
+    // Iterate over the m_calls vector, checking for jumps to link.
+    bool didLinkExceptionCheck = false;
+    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
+        Jump& exceptionCheck = m_exceptionChecks[i].m_exceptionCheck;
         if (exceptionCheck.isSet()) {
             exceptionCheck.link(this);
-            ++m_exceptionCheckCount;
+            didLinkExceptionCheck = true;
         }
     }
+
     // If any exception checks were linked, generate code to lookup a handler.
-    if (m_exceptionCheckCount) {
+    if (didLinkExceptionCheck) {
         // lookupExceptionHandler is passed two arguments, exec (the CallFrame*), and
         // an identifier for the operation that threw the exception, which we can use
         // to look up handler information. The identifier we use is the return address
@@ -628,7 +629,7 @@ void JITCompiler::compileBody()
         // available on the stack, just below the stack pointer!
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         peek(GPRInfo::argumentGPR1, -1);
-        m_calls.append(CallRecord(call(), lookupExceptionHandler));
+        m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
         // and the address of the handler in returnValueGPR2.
         jump(GPRInfo::returnValueGPR2);
@@ -643,19 +644,15 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 #endif
 
     // Link all calls out from the JIT code to their respective functions.
-    for (unsigned i = 0; i < m_calls.size(); ++i) {
-        if (m_calls[i].m_function.value())
-            linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
-    }
+    for (unsigned i = 0; i < m_calls.size(); ++i)
+        linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
     if (m_codeBlock->needsCallReturnIndices()) {
-        m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionCheckCount);
-        for (unsigned i = 0; i < m_calls.size(); ++i) {
-            if (m_calls[i].m_handlesExceptions) {
-                unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_calls[i].m_call);
-                unsigned exceptionInfo = m_calls[i].m_codeOrigin.bytecodeIndex;
-                m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
-            }
+        m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionChecks.size());
+        for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
+            unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
+            unsigned exceptionInfo = m_exceptionChecks[i].m_codeOrigin.bytecodeIndex;
+            m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
         }
     }
 

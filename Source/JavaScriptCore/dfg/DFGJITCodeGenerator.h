@@ -1550,7 +1550,7 @@ protected:
 
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        return m_jit.appendCallWithExceptionCheck(function, at(m_compileIndex).codeOrigin);
+        return m_jit.addExceptionCheck(m_jit.appendCall(function), at(m_compileIndex).codeOrigin);
     }
     JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, GPRReg result)
     {

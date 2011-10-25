@@ -63,47 +63,44 @@ struct SpeculationFailureDebugInfo {
 };
 #endif
 
-// === CallRecord ===
+// === CallLinkRecord ===
 //
-// A record of a call out from JIT code to a helper function.
-// Every CallRecord contains a reference to the call instruction & the function
-// that it needs to be linked to. Calls that might throw an exception also record
-// the Jump taken on exception (unset if not present), and ExceptionInfo (presently
-// an unsigned, bytecode index) used to recover handler/source info.
-struct CallRecord {
-    // Constructor for a call with no exception handler.
-    CallRecord(MacroAssembler::Call call, FunctionPtr function)
+// A record of a call out from JIT code that needs linking to a helper function.
+// Every CallLinkRecord contains a reference to the call instruction & the function
+// that it needs to be linked to.
+struct CallLinkRecord {
+    CallLinkRecord(MacroAssembler::Call call, FunctionPtr function)
         : m_call(call)
         , m_function(function)
-        , m_handlesExceptions(false)
-    {
-    }
-
-    // Constructor for a call with an exception handler.
-    CallRecord(MacroAssembler::Call call, FunctionPtr function, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin)
-        : m_call(call)
-        , m_function(function)
-        , m_exceptionCheck(exceptionCheck)
-        , m_codeOrigin(codeOrigin)
-        , m_handlesExceptions(true)
-    {
-    }
-
-    // Constructor for a call that may cause exceptions, but which are handled
-    // through some mechanism other than the in-line exception handler.
-    CallRecord(MacroAssembler::Call call, FunctionPtr function, CodeOrigin codeOrigin)
-        : m_call(call)
-        , m_function(function)
-        , m_codeOrigin(codeOrigin)
-        , m_handlesExceptions(true)
     {
     }
 
     MacroAssembler::Call m_call;
     FunctionPtr m_function;
+};
+
+// === CallExceptionRecord ===
+//
+// A record of a call out from JIT code that might throw an exception.
+// Calls that might throw an exception also record the Jump taken on exception
+// (unset if not present) and code origin used to recover handler/source info.
+struct CallExceptionRecord {
+    CallExceptionRecord(MacroAssembler::Call call, CodeOrigin codeOrigin)
+        : m_call(call)
+        , m_codeOrigin(codeOrigin)
+    {
+    }
+
+    CallExceptionRecord(MacroAssembler::Call call, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin)
+        : m_call(call)
+        , m_exceptionCheck(exceptionCheck)
+        , m_codeOrigin(codeOrigin)
+    {
+    }
+
+    MacroAssembler::Call m_call;
     MacroAssembler::Jump m_exceptionCheck;
     CodeOrigin m_codeOrigin;
-    bool m_handlesExceptions;
 };
 
 // === JITCompiler ===
@@ -120,7 +117,6 @@ public:
         : m_globalData(globalData)
         , m_graph(dfg)
         , m_codeBlock(codeBlock)
-        , m_exceptionCheckCount(0)
     {
     }
 
@@ -209,39 +205,36 @@ public:
     }
 
     // Notify the JIT of a call that does not require linking.
-    void notifyCall(Call call, CodeOrigin codeOrigin)
+    void notifyCall(Call functionCall, CodeOrigin codeOrigin)
     {
-        m_calls.append(CallRecord(call, FunctionPtr(), codeOrigin));
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, codeOrigin));
     }
 
     // Add a call out from JIT code, without an exception check.
     Call appendCall(const FunctionPtr& function)
     {
         Call functionCall = call();
-        m_calls.append(CallRecord(functionCall, function));
-        // FIXME: should be able to JIT_ASSERT here that globalData->exception is null on return back to JIT code.
+        m_calls.append(CallLinkRecord(functionCall, function));
         return functionCall;
     }
 
     // Add a call out from JIT code, with an exception check.
-    Call appendCallWithExceptionCheck(const FunctionPtr& function, CodeOrigin codeOrigin)
+    Call addExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
-        Call functionCall = call();
 #if USE(JSVALUE64)
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
 #elif USE(JSVALUE32_64)
         Jump exceptionCheck = branch32(NotEqual, AbsoluteAddress(reinterpret_cast<char*>(&globalData()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
 #endif
-        m_calls.append(CallRecord(functionCall, function, exceptionCheck, codeOrigin));
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
         return functionCall;
     }
     
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
-    Call appendCallWithFastExceptionCheck(const FunctionPtr& function, CodeOrigin codeOrigin)
+    Call addFastExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
-        Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
-        m_calls.append(CallRecord(functionCall, function, exceptionCheck, codeOrigin));
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
         return functionCall;
     }
     
@@ -466,8 +459,8 @@ private:
     
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.
-    Vector<CallRecord> m_calls;
-    unsigned m_exceptionCheckCount;
+    Vector<CallLinkRecord> m_calls;
+    Vector<CallExceptionRecord> m_exceptionChecks;
     
     // JIT code map for OSR entrypoints.
     Label m_startOfCode;

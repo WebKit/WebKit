@@ -1,3 +1,34 @@
+2011-10-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Separate out function linking & exception check data structures.
+        https://bugs.webkit.org/show_bug.cgi?id=70858
+
+        Reviewed by Oliver Hunt.
+
+        This will make it easier to refactor the callOperation methods to spilt the value
+        representation specific handling from the cpu/calling-convention implementation.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::appendCallWithExceptionCheck):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::CallLinkRecord::CallLinkRecord):
+        (JSC::DFG::CallExceptionRecord::CallExceptionRecord):
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::notifyCall):
+        (JSC::DFG::JITCompiler::appendCall):
+        (JSC::DFG::JITCompiler::addExceptionCheck):
+        (JSC::DFG::JITCompiler::addFastExceptionCheck):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+
 2011-10-25  Filip Pizlo  <fpizlo@apple.com>
 
         Tiered compilation may introduce dangling pointers in constant buffers
