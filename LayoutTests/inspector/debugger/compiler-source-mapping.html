@@ -73,6 +73,18 @@ function test()
             checkMapping(0, 0, "example.js", 0, 0, mapping);
             checkMapping(0, 2, "example.js", 0, 2, mapping);
             next();
+        },
+
+        function testEmptyLine(next)
+        {
+            var mappingPayload = {
+                "mappings":"AAAA;;;CACA",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping(mappingPayload);
+            checkMapping(0, 0, "example.js", 0, 0, mapping);
+            checkReverseMapping(3, 1, "example.js", 1, mapping);
+            next();
         }
     ]);
 };

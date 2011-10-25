@@ -1,3 +1,13 @@
+2011-10-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: fix empty line handling in source maps.
+        https://bugs.webkit.org/show_bug.cgi?id=70726
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseMappings):
+
 2011-10-25  Justin Schuh  <jschuh@chromium.org>
 
         Check for empty string in parseArcFlag

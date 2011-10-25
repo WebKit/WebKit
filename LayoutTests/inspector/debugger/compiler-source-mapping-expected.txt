@@ -5,3 +5,5 @@ Running: testSimpleMapping
 
 Running: testNoMappingEntry
 
+Running: testEmptyLine
+

@@ -151,7 +151,19 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         var sourceURL = this._sources[0];
         var reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
 
-        do {
+        while (true) {
+            if (stringCharIterator.peek() === ",")
+                stringCharIterator.next();
+            else {
+                while (stringCharIterator.peek() === ";") {
+                    lineNumber += 1;
+                    columnNumber = 0;
+                    stringCharIterator.next();
+                }
+                if (!stringCharIterator.hasNext())
+                    break;
+            }
+
             columnNumber += this._decodeVLQ(stringCharIterator);
             if (!this._isSeparator(stringCharIterator.peek())) {
                 var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
@@ -169,12 +181,7 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
                 if (!reverseMappings[sourceLineNumber])
                     reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
             }
-
-            if (stringCharIterator.next() === ";") {
-                lineNumber += 1;
-                columnNumber = 0;
-            }
-        } while(stringCharIterator.hasNext());
+        }
     },
 
     _isSeparator: function(char)
