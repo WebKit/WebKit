@@ -1,3 +1,14 @@
+2011-10-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Debugger fails when there is an invalid watch expression.
+        https://bugs.webkit.org/show_bug.cgi?id=70718
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/error-in-watch-expressions.html:
+        * inspector/debugger/watch-expressions-panel-switch-expected.txt: Added.
+        * inspector/debugger/watch-expressions-panel-switch.html: Added.
+
 2011-10-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: fix empty line handling in source maps.
