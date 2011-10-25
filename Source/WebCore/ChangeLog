@@ -1,3 +1,15 @@
+2011-10-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: keep old source mapping when new one could not be loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=70729
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping.didCreateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didLoadSourceMapping):
+
 2011-10-25  Sachin Puranik  <sachin.puranik@motorola.com>
 
         Double number step=.5 should be considered valid in <input type="number" step=".5">

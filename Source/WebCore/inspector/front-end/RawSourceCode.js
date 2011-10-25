@@ -159,6 +159,8 @@ WebInspector.RawSourceCode.prototype = {
         function didCreateSourceMapping(sourceMapping)
         {
             this._updatingSourceMapping = false;
+            if (!sourceMapping)
+                return;
             if (!this._updateNeeded)
                 this._saveSourceMapping(sourceMapping);
             else
@@ -187,6 +189,11 @@ WebInspector.RawSourceCode.prototype = {
              */
             function didLoadSourceMapping(compilerSourceMapping)
             {
+                if (!compilerSourceMapping) {
+                    delete this._compilerSourceMappingProvider;
+                    callback(null);
+                    return;
+                }
                 var uiSourceCodeList = [];
                 var sourceURLs = compilerSourceMapping.sources();
                 for (var i = 0; i < sourceURLs.length; ++i) {

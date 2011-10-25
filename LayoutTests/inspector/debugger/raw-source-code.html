@@ -400,6 +400,25 @@ function test()
                 InspectorTest.assertEquals("<content of source2.js>", content);
                 next();
             }
+        },
+
+        function testCompilerSourceMappingCouldNotBeLoaded(next)
+        {
+            var compilerSourceMappingProviderMock = { loadSourceMapping: function(callback) { callback(null); } };
+
+            var script = createScriptMock("compiled.js", 0, 0, true, "<script source>");
+            var rawSourceCode = createRawSourceCode(script, null);
+            var uiSourceCodeList;
+
+            waitForSourceMappingEvent(rawSourceCode, checkMapping);
+            rawSourceCode.setCompilerSourceMappingProvider(compilerSourceMappingProviderMock);
+
+            function checkMapping()
+            {
+                InspectorTest.assertTrue(false, "Should not be reached.");
+            }
+
+            next();
         }
     ]);
 };

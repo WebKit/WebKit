@@ -15,3 +15,5 @@ Running: testFormattingWithPendingResource
 
 Running: testCompilerSourceMapping
 
+Running: testCompilerSourceMappingCouldNotBeLoaded
+
