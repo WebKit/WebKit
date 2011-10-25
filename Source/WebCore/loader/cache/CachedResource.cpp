@@ -59,9 +59,9 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
             return ResourceLoadPriorityHigh;
         case CachedResource::Script:
         case CachedResource::FontResource:
+        case CachedResource::RawResource:
             return ResourceLoadPriorityMedium;
         case CachedResource::ImageResource:
-        case CachedResource::RawResource:
             return ResourceLoadPriorityLow;
 #if ENABLE(LINK_PREFETCH)
         case CachedResource::LinkPrefetch:
@@ -87,6 +87,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
     , m_lastDecodedAccessTime(0)
+    , m_loadFinishTime(0)
     , m_encodedSize(0)
     , m_decodedSize(0)
     , m_accessCount(0)

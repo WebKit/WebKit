@@ -31,8 +31,9 @@
 #ifndef DocumentThreadableLoader_h
 #define DocumentThreadableLoader_h
 
+#include "CachedRawResource.h"
+#include "CachedResourceHandle.h"
 #include "FrameLoaderTypes.h"
-#include "SubresourceLoaderClient.h"
 #include "ThreadableLoader.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -48,7 +49,7 @@ namespace WebCore {
     class SecurityOrigin;
     class ThreadableLoaderClient;
 
-    class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {
+    class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private CachedRawResourceClient  {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static void loadResourceSynchronously(Document*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
@@ -73,21 +74,21 @@ namespace WebCore {
 
         DocumentThreadableLoader(Document*, ThreadableLoaderClient*, BlockingBehavior, const ResourceRequest&, const ThreadableLoaderOptions&);
 
-        virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
-        virtual void didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
+        void clearResource();
 
-        virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
-        virtual void didReceiveData(SubresourceLoader*, const char*, int dataLength);
-        virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int dataLength);
-        virtual void didFinishLoading(SubresourceLoader*, double);
-        virtual void didFail(SubresourceLoader*, const ResourceError&);
-
+        // CachedRawResourceClient
+        virtual void dataSent(CachedResource*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
+        virtual void responseReceived(CachedResource*, const ResourceResponse&);
+        virtual void dataReceived(CachedResource*, const char* data, int dataLength);
+        virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&);
+        virtual void notifyFinished(CachedResource*);
 #if PLATFORM(CHROMIUM)
-        virtual void didDownloadData(SubresourceLoader*, int dataLength);
+        virtual void dataDownloaded(CachedResource*, int);
 #endif
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didFinishLoading(unsigned long identifier, double finishTime);
+        void didFail(const ResourceError&);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
         void preflightSuccess();
@@ -98,7 +99,7 @@ namespace WebCore {
 
         SecurityOrigin* securityOrigin() const;
 
-        RefPtr<SubresourceLoader> m_loader;
+        CachedResourceHandle<CachedRawResource> m_resource;
         ThreadableLoaderClient* m_client;
         Document* m_document;
         ThreadableLoaderOptions m_options;

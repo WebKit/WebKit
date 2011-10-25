@@ -31,19 +31,19 @@
 #include "config.h"
 #include "DocumentThreadableLoader.h"
 
-#include "AuthenticationChallenge.h"
+#include "CachedRawResource.h"
+#include "CachedResourceLoader.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Document.h"
 #include "DocumentThreadableLoaderClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "ResourceHandle.h"
-#include "ResourceLoadScheduler.h"
+#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
-#include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
+#include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
 #if ENABLE(INSPECTOR)
@@ -63,7 +63,7 @@ void DocumentThreadableLoader::loadResourceSynchronously(Document* document, con
 PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document* document, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
 {
     RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options));
-    if (!loader->m_loader)
+    if (!loader->m_resource)
         loader = 0;
     return loader.release();
 }
@@ -133,31 +133,39 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const R
 
 DocumentThreadableLoader::~DocumentThreadableLoader()
 {
-    if (m_loader)
-        m_loader->clearClient();
+    if (m_resource)
+        m_resource->removeClient(this);
 }
 
 void DocumentThreadableLoader::cancel()
 {
-    if (!m_loader)
-        return;
-
-    m_loader->cancel();
-    m_loader->clearClient();
-    m_loader = 0;
+    if (m_client) {
+        ResourceError error(errorDomainWebKitInternal, 0, m_resource->url(), "Load cancelled");
+        error.setIsCancellation(true);
+        didFail(error);
+    }
+    clearResource();
     m_client = 0;
 }
 
 void DocumentThreadableLoader::setDefersLoading(bool value)
 {
-    if (m_loader)
-        m_loader->setDefersLoading(value);
+    if (m_resource)
+        m_resource->setDefersLoading(value);
 }
 
-void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void DocumentThreadableLoader::clearResource()
+{
+    if (m_resource) {
+        m_resource->removeClient(this);
+        m_resource = 0;
+    }
+}
+
+void DocumentThreadableLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
+    ASSERT_UNUSED(resource, resource == m_resource);
 
     if (!isAllowedRedirect(request.url())) {
         RefPtr<DocumentThreadableLoader> protect(this);
@@ -169,18 +177,17 @@ void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, Resour
     }
 }
 
-void DocumentThreadableLoader::didSendData(SubresourceLoader* loader, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void DocumentThreadableLoader::dataSent(CachedResource* resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
-
+    ASSERT_UNUSED(resource, resource == m_resource);
     m_client->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
+void DocumentThreadableLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
-    ASSERT(loader == m_loader);
-    didReceiveResponse(loader->identifier(), response);
+    ASSERT_UNUSED(resource, resource == m_resource);
+    didReceiveResponse(m_resource->identifier(), response);
 }
 
 void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
@@ -223,10 +230,10 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     }
 }
 
-void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const char* data, int dataLength)
+void DocumentThreadableLoader::dataReceived(CachedResource* resource, const char* data, int dataLength)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
+    ASSERT_UNUSED(resource, resource == m_resource);
 
 #if ENABLE(INSPECTOR)
     if (m_preflightRequestIdentifier)
@@ -240,23 +247,18 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     m_client->didReceiveData(data, dataLength);
 }
 
-void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int dataLength)
+void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
-
-    // Preflight data should be invisible to clients.
-    if (m_actualRequest)
-        return;
-
-    m_client->didReceiveCachedMetadata(data, dataLength);
-}
-
-void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double finishTime)
-{
-    ASSERT(loader == m_loader);
-    ASSERT(m_client);
-    didFinishLoading(loader->identifier(), finishTime);
+    ASSERT_UNUSED(resource, resource == m_resource);
+        
+    if (m_resource && (m_resource->errorOccurred() || m_resource->wasCanceled())) {
+        ResourceError error("Network Request Failed", 0, m_resource->url(), "Resource failed to load");
+        if (m_resource->wasCanceled())
+            error.setIsCancellation(true);
+        didFail(error);
+    } else
+        didFinishLoading(m_resource->identifier(), m_resource->loadFinishTime());
 }
 
 void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
@@ -274,12 +276,8 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double
         m_client->didFinishLoading(identifier, finishTime);
 }
 
-void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const ResourceError& error)
+void DocumentThreadableLoader::didFail(const ResourceError& error)
 {
-    ASSERT(m_client);
-    // m_loader may be null if we arrive here via SubresourceLoader::create in the ctor
-    ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
-
 #if ENABLE(INSPECTOR)
     if (m_preflightRequestIdentifier)
         InspectorInstrumentation::didFailLoading(m_document->frame(), m_document->frame()->loader()->documentLoader(), m_preflightRequestIdentifier, error);
@@ -294,6 +292,8 @@ void DocumentThreadableLoader::preflightSuccess()
     actualRequest.swap(m_actualRequest);
 
     actualRequest->setHTTPOrigin(securityOrigin()->toString());
+
+    clearResource();
 
     // It should be ok to skip the security check since we already asked about the preflight request.
     loadRequest(*actualRequest, SkipSecurityCheck);
@@ -324,19 +324,19 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
             options.shouldBufferData = BufferData;
         }
 
+        ResourceRequest newRequest(request);
 #if ENABLE(INSPECTOR)
         if (m_actualRequest) {
-            ResourceRequest newRequest(request);
             // Because willSendRequest only gets called during redirects, we initialize the identifier and the first willSendRequest here.
             m_preflightRequestIdentifier = m_document->frame()->page()->progress()->createUniqueIdentifier();
             ResourceResponse redirectResponse = ResourceResponse();
             InspectorInstrumentation::willSendRequest(m_document->frame(), m_preflightRequestIdentifier, m_document->frame()->loader()->documentLoader(), newRequest, redirectResponse);
         }
 #endif
-
-        // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
-        m_loader = 0;
-        m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, options);
+        ASSERT(!m_resource);
+        m_resource = m_document->cachedResourceLoader()->requestRawResource(newRequest, options);
+        if (m_resource)
+            m_resource->addClient(this);
         return;
     }
     
@@ -367,7 +367,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     const char* bytes = static_cast<const char*>(data.data());
     int len = static_cast<int>(data.size());
-    didReceiveData(0, bytes, len);
+    dataReceived(0, bytes, len);
 
     didFinishLoading(identifier, 0.0);
 }

@@ -1,3 +1,46 @@
+2011-10-25  Nate Chapin  <japhet@chromium.org>
+
+        Make DocumentThreadableLoader a CachedResourceClient.
+        This will allow us to cache ThreadableLoaderClients as
+        appropriate in a later patch.
+        https://bugs.webkit.org/show_bug.cgi?id=61225
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, no functionality change intended.
+
+        * WebCore.gypi:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::notifyFinished): CachedResourceClients don't send separate callbacks
+            for didFail() and didFinishLoading(), so we need to differentiate here.
+        (WebCore::DocumentThreadableLoader::loadRequest): Call CachedResourceLoader::requestRawResource()
+            instead of ResourceLoadScheduler::scheduleSubresourceLoad().
+        * loader/DocumentThreadableLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data): Handle the complexity of some ThreadableLoaderClients setting
+            DoNotBufferData in ResoureLoaderOptions. If the DataBufferingPolicy is BufferData, then the
+            'data' input parameter will contain all data received so far, and we need to determine the
+            incremental data to forward to the clients. If the policy is DoNotBufferData, 'data' is just
+            the incremental data.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::preloadResult):
+        (WebCore::CachedResource::didSendData):
+        (WebCore::CachedResource::didDownloadData):
+        (WebCore::CachedResource::setLoadFinishTime):
+        (WebCore::CachedResource::loadFinishTime):
+        * loader/cache/CachedResourceClient.h: Add several new callbacks needed by DocumentThreadableLoader.
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::didReceiveResponse): CachedResource::setResponse() can now cancel
+            the request, so protect appropriately.
+        * loader/cache/CachedResourceRequest.h:
+        * loader/chromium/CachedRawResourceChromium.cpp: Added (plumb didDownloadData() to DocumentThreadableLoader).
+        * loader/chromium/CachedResourceRequestChromium.cpp: Added (plumb didDownloadData() to DocumentThreadableLoader).
+        * loader/chromium/DocumentThreadableLoaderChromium.cpp:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponse): Protect before setting response, since it might kill us.
+
 2011-10-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Get rid of optional parameters in the middle in IDLs.

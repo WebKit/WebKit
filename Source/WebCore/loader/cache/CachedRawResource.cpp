@@ -37,19 +37,85 @@ namespace WebCore {
 
 CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest)
     : CachedResource(resourceRequest, RawResource)
+    , m_dataLength(0)
 {
 }
 
 void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    m_data = data;
+    CachedResourceHandle<CachedRawResource> protect(this);
+    if (data) {
+        // If we are buffering data, then we are saving the buffer in m_data and need to manually
+        // calculate the incremental data. If we are not buffering, then m_data will be null and
+        // the buffer contains only the incremental data.
+        size_t previousDataLength = (m_options.shouldBufferData == BufferData) ? m_dataLength : 0;
+        ASSERT(data->size() >= previousDataLength);
+        const char* incrementalData = data->data() + previousDataLength;
+        size_t incrementalDataLength = data->size() - previousDataLength;
+
+        if (incrementalDataLength) {
+            CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+            while (CachedRawResourceClient* c = w.next())
+                c->dataReceived(this, incrementalData, incrementalDataLength);
+        }
+    }
+    
+    if (m_options.shouldBufferData == BufferData) {
+        m_dataLength = data ? data->size() : 0;
+        m_data = data;
+    }
     CachedResource::data(m_data, allDataReceived);
+}
+
+void CachedRawResource::didAddClient(CachedResourceClient* c)
+{
+    if (m_data) {
+        static_cast<CachedRawResourceClient*>(c)->responseReceived(this, m_response);
+        static_cast<CachedRawResourceClient*>(c)->dataReceived(this, m_data->data(), m_data->size());
+    }
+    CachedResource::didAddClient(c);
 }
 
 void CachedRawResource::allClientsRemoved()
 {
     if (m_request)
         m_request->cancel();
+}
+
+void CachedRawResource::willSendRequest(ResourceRequest& request, const ResourceResponse& response)
+{
+    if (!response.isNull()) {
+        CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+        while (CachedRawResourceClient* c = w.next())
+            c->redirectReceived(this, request, response);
+    }
+    CachedResource::willSendRequest(request, response);
+}
+
+void CachedRawResource::setResponse(const ResourceResponse& response)
+{
+    CachedResource::setResponse(response);
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next())
+        c->responseReceived(this, m_response);
+}
+
+void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next())
+        c->dataSent(this, bytesSent, totalBytesToBeSent);
+}
+
+void CachedRawResource::setDefersLoading(bool defers)
+{
+    if (m_request)
+        m_request->setDefersLoading(defers);
+}
+
+unsigned long CachedRawResource::identifier() const
+{
+    return m_request ? m_request->identifier() : 0;
 }
 
 } // namespace WebCore

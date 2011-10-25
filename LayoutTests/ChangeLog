@@ -1,3 +1,14 @@
+2011-10-25  Nate Chapin  <japhet@chromium.org>
+
+        Test update for https://bugs.webkit.org/show_bug.cgi?id=61225.
+        Due to changes in the implementation of DocumentThreadableLoader (and
+        therefore XHR), this test will have empty (rather than null) content
+        if we go over the length limit.
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/inspector/network/network-content-replacement-xhr-expected.txt:
+
 2011-10-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Get rid of optional parameters in the middle in IDLs.

@@ -24,18 +24,53 @@
 #define CachedRawResource_h
 
 #include "CachedResource.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
 
 class CachedRawResource : public CachedResource {
 public:
     CachedRawResource(ResourceRequest&);
+
+    // FIXME: AssociatedURLLoader shouldn't be a DocumentThreadableLoader and therefore shouldn't
+    // use CachedRawResource. However, it is, and it needs to be able to defer loading.
+    // This can be fixed by splitting CORS preflighting out of DocumentThreacableLoader.
+    virtual void setDefersLoading(bool);
     
+    // FIXME: This is exposed for the InpsectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
+    unsigned long identifier() const;
+
 private:
+    virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
     virtual void allClientsRemoved();
+
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
+    virtual void setResponse(const ResourceResponse&);
+    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
+#if PLATFORM(CHROMIUM)
+    virtual void didDownloadData(int);
+#endif
+
+    size_t m_dataLength;
+};
+
+
+class CachedRawResourceClient : public CachedResourceClient {
+public:
+    virtual ~CachedRawResourceClient() { }
+    static CachedResourceClientType expectedType() { return RawResourceType; }
+    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
+
+    virtual void dataSent(CachedResource*, unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
+    virtual void responseReceived(CachedResource*, const ResourceResponse&) { }
+    virtual void dataReceived(CachedResource*, const char* /* data */, int /* length */) { }
+    virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) { }
+#if PLATFORM(CHROMIUM)
+    virtual void dataDownloaded(CachedResource*, int) { }
+#endif
 };
 
 }
