@@ -71,6 +71,7 @@ private:
     virtual void setOverlapTestResult(bool);
 
     bool setWidgetGeometry(const IntRect&);
+    bool updateWidgetGeometry();
 
     RefPtr<Widget> m_widget;
     FrameView* m_frameView;

@@ -1,3 +1,29 @@
+2011-10-24  Anders Carlsson  <andersca@apple.com>
+
+        It should be possible for Widget subclasses to control whether transforms affect the frame rect
+        https://bugs.webkit.org/show_bug.cgi?id=70787
+
+        Reviewed by Sam Weinig.
+
+        Currently RenderWidget sets the frame rect of it's hosted widget to the bounding box of the transformed
+        content box rect (unless the Widget is a frame view). It should be possible for Widget subclasses to override
+        this behavior and have the frame rect set to the absolute content box without any transforms applied.
+
+        * platform/Widget.h:
+        (WebCore::Widget::transformsAffectFrameRect):
+        Add new member function.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetGeometry):
+        Move shared code from setWidget and updateWidgetPosition out into a new function. If transformsAffectFrameRect returns 
+        false, just set the frame rect to the absolute content box.
+
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        Call updateWidgetGeometry.
+
+        * rendering/RenderWidget.h:
+
 2011-10-24  Arko Saha  <arko@motorola.com>
 
         Microdata: Add itemprop, itemref, itemvalue attributes.

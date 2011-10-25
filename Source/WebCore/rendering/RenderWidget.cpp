@@ -166,6 +166,21 @@ bool RenderWidget::setWidgetGeometry(const IntRect& frame)
     return boundsChanged;
 }
 
+bool RenderWidget::updateWidgetGeometry()
+{
+    IntRect contentBox = contentBoxRect();
+    if (!m_widget->transformsAffectFrameRect())
+        return setWidgetGeometry(absoluteContentBox());
+
+    IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
+    if (m_widget->isFrameView()) {
+        contentBox.setLocation(absoluteContentBox.location());
+        return setWidgetGeometry(contentBox);
+    }
+
+    return setWidgetGeometry(absoluteContentBox);
+}
+
 void RenderWidget::setWidget(PassRefPtr<Widget> widget)
 {
     if (widget == m_widget)
@@ -183,15 +198,9 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         // widget immediately, but we have to have really been fully constructed (with a non-null
         // style pointer).
         if (style()) {
-            if (!needsLayout()) {
-                IntRect contentBox = contentBoxRect();
-                IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-                if (m_widget->isFrameView()) {
-                    contentBox.setLocation(absoluteContentBox.location());
-                    setWidgetGeometry(contentBox);
-                } else
-                    setWidgetGeometry(absoluteContentBox);
-            }
+            if (!needsLayout())
+                updateWidgetGeometry();
+
             if (style()->visibility() != VISIBLE)
                 m_widget->hide();
             else {
@@ -321,14 +330,7 @@ void RenderWidget::updateWidgetPosition()
     if (!m_widget || !node()) // Check the node in case destroy() has been called.
         return;
 
-    IntRect contentBox = contentBoxRect();
-    IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    bool boundsChanged;
-    if (m_widget->isFrameView()) {
-        contentBox.setLocation(absoluteContentBox.location());
-        boundsChanged = setWidgetGeometry(contentBox);
-    } else
-        boundsChanged = setWidgetGeometry(absoluteContentBox);
+    bool boundsChanged = updateWidgetGeometry();
     
     // if the frame bounds got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size
