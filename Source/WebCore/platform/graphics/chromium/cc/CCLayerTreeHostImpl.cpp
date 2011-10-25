@@ -48,6 +48,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_sourceFrameNumber(-1)
     , m_frameNumber(0)
     , m_settings(settings)
+    , m_visible(true)
 {
     ASSERT(CCProxy::isImplThread());
 }
@@ -128,6 +129,10 @@ void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
 
 void CCLayerTreeHostImpl::setVisible(bool visible)
 {
+    if (m_visible == visible)
+        return;
+    m_visible = visible;
+
     if (m_layerRenderer)
         m_layerRenderer->setVisible(visible);
 }

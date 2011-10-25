@@ -109,6 +109,7 @@ private:
     RefPtr<CCLayerImpl> m_rootLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;
+    bool m_visible;
 };
 
 };

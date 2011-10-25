@@ -1,3 +1,17 @@
+2011-10-25  Michal Mocny  <mmocny@google.com>
+
+        LayerRendererChromium::setVisible called needlessly without a visibility change
+        https://bugs.webkit.org/show_bug.cgi?id=70766
+
+        Reviewed by Kenneth Russell.
+
+        Check that visibility has actually changed before calling LayerRendererChromium::setVisible
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::setVisible):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(97821): HistoryController::itemsAreClones crashes a lot
