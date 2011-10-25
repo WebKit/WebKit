@@ -59,7 +59,6 @@ class Frame;
 class HTMLInputElement;
 class IntRect;
 class KeyboardEvent;
-class MutationObserverEntry;
 class NSResolver;
 class NamedNodeMap;
 class NameNodeList;
@@ -81,6 +80,8 @@ class SVGUseElement;
 #endif
 class TagNodeList;
 class TreeScope;
+
+struct MutationObserverEntry;
 
 typedef int ExceptionCode;
 

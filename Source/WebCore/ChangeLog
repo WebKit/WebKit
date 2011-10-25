@@ -1,3 +1,15 @@
+2011-10-25  Adam Klein  <adamk@chromium.org>
+
+        Forward declare MutationObserverEntry as a struct to fix clang build
+        https://bugs.webkit.org/show_bug.cgi?id=70853
+
+        Reviewed by Ryosuke Niwa.
+
+        Node.h forward declared MutationObserverEntry as a class, and clang
+        complains if the two declarations don't match.
+
+        * dom/Node.h:
+
 2011-10-25  Dan Bernstein  <mitz@apple.com>
 
         Caret can be positioned or repainted incorrectly in flipped-blocks multi-column blocks
