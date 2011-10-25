@@ -1,3 +1,12 @@
+2011-10-24  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening, add missing result after r98309.
+
+        * platform/qt/svg/as-object/svg-embedded-in-html-in-iframe-expected.png: Added.
+        * platform/qt/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt: Added.
+        * platform/qt/svg/filters/feColorMatrix-default-type-expected.png: Added.
+        * platform/qt/svg/filters/feColorMatrix-default-type-expected.txt: Added.
+
 2011-10-24  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION (r97865): broke plugins/resize-from-plugin.html on GTK
