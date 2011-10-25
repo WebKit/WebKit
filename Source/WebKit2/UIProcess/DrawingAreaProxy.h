@@ -77,8 +77,6 @@ public:
 
     virtual void waitForBackingStoreUpdateOnNextPaint() { }
 
-    virtual void setPageIsVisible(bool isVisible) = 0;
-
     const WebCore::IntSize& size() const { return m_size; }
     void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 

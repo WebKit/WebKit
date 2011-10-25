@@ -44,6 +44,9 @@ public:
 
     QTouchWebPage *page();
 
+protected Q_SLOTS:
+    void onVisibleChanged();
+
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
     virtual void touchEvent(QTouchEvent* event);

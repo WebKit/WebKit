@@ -55,7 +55,6 @@ private:
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
     virtual void visibilityDidChange();
-    virtual void setPageIsVisible(bool);
     virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();
 

@@ -1,3 +1,37 @@
+2011-10-25  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Remove redundant setPageIsVisible() API
+        https://bugs.webkit.org/show_bug.cgi?id=70520
+
+        Use DrawingAreaProxy::visibilityDidChange() instead of DrawingAreaProxy::setPageIsVisible()
+        Remove DrawingAreaProxy::setPageIsVisible(), not used anymore.
+        This change disables the ability of suspending and resuming painting for TiledDrawingAreaProxy.
+        However, TiledDrawingAreaProxy is about to be deprecated by using DrawingAreaProxyImpl
+        as the UI process drawing area proxy for tiled based rendering.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPagePrivate::setPage):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebView::QTouchWebView):
+        (QTouchWebView::touchEvent):
+        (QTouchWebView::onVisibleChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::deviceScaleFactorDidChange):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add go_to_back_forward_list_item() to WebKit2 GTK+ API

@@ -696,9 +696,4 @@ void QtWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& args
     m_viewInterface->didReceiveViewportArguments(args);
 }
 
-void QtWebPageProxy::setPageIsVisible(bool isVisible)
-{
-    m_webPageProxy->drawingArea()->setPageIsVisible(isVisible);
-}
-
 #include "moc_QtWebPageProxy.cpp"

@@ -47,7 +47,6 @@ PassOwnPtr<TiledDrawingAreaProxy> TiledDrawingAreaProxy::create(PlatformWebView*
 TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeTiled, webPageProxy)
     , m_isWaitingForDidSetFrameNotification(false)
-    , m_isVisible(true)
     , m_webView(webView)
 {
 }
@@ -91,29 +90,6 @@ void TiledDrawingAreaProxy::sizeDidChange()
 void TiledDrawingAreaProxy::deviceScaleFactorDidChange()
 {
     notImplemented();
-}
-
-void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
-{
-    WebPageProxy* page = this->page();
-
-    if (isVisible == m_isVisible)
-        return;
-
-    m_isVisible = isVisible;
-    if (!page || !page->isValid())
-        return;
-
-    if (!m_isVisible) {
-        // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->send(Messages::DrawingArea::SuspendPainting(), page->pageID());
-        return;
-    }
-
-    // The page is now visible.
-    page->process()->send(Messages::DrawingArea::ResumePainting(), page->pageID());
-
-    // FIXME: We should request a full repaint here if needed.
 }
 
 } // namespace WebKit

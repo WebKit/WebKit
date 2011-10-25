@@ -170,8 +170,6 @@ public:
 
     QWKHistory* history() const;
 
-    void setPageIsVisible(bool);
-
 public Q_SLOTS:
     void webActionTriggered(bool checked);
 

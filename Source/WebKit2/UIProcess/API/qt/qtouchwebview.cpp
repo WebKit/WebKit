@@ -97,6 +97,7 @@ QTouchWebView::QTouchWebView(QSGItem* parent)
     , d(new QTouchWebViewPrivate(this))
 {
     setFlags(QSGItem::ItemClipsChildrenToShape);
+    connect(this, SIGNAL(visibleChanged()), SLOT(onVisibleChanged()));
 }
 
 QTouchWebView::~QTouchWebView()
@@ -122,6 +123,13 @@ void QTouchWebView::touchEvent(QTouchEvent* event)
 {
     forceActiveFocus();
     QSGItem::touchEvent(event);
+}
+
+void QTouchWebView::onVisibleChanged()
+{
+    WebPageProxy* pageProxy = toImpl(d->page.pageRef());
+
+    pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 #include "moc_qtouchwebview.cpp"

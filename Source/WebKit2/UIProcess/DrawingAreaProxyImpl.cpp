@@ -139,10 +139,6 @@ void DrawingAreaProxyImpl::visibilityDidChange()
 #endif
 }
 
-void DrawingAreaProxyImpl::setPageIsVisible(bool)
-{
-}
-
 void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
     if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)

@@ -75,9 +75,6 @@ Q_SIGNALS:
     void loadFailed(QTouchWebPage::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
 
-protected Q_SLOTS:
-    void onVisibleChanged();
-
 protected:
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);

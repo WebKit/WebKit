@@ -87,7 +87,6 @@ private:
     // DrawingAreaProxy
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
-    virtual void setPageIsVisible(bool isVisible);
 
     virtual void createTile(int tileID, const UpdateInfo&);
     virtual void updateTile(int tileID, const UpdateInfo&);
@@ -97,7 +96,6 @@ private:
 
 private:
     bool m_isWaitingForDidSetFrameNotification;
-    bool m_isVisible;
 
     PlatformWebView* m_webView;
 #if PLATFORM(QT)

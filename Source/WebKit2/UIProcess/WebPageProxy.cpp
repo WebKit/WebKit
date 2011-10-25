@@ -718,7 +718,6 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         if (isVisible != m_isVisible) {
             m_isVisible = isVisible;
             m_drawingArea->visibilityDidChange();
-            m_drawingArea->setPageIsVisible(isVisible);
 
             if (!m_isVisible) {
                 // If we've started the responsiveness timer as part of telling the web process to update the backing store
