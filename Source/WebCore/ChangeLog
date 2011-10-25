@@ -1,3 +1,28 @@
+2011-10-24  Ben Wells  <benwells@chromium.org>
+
+        Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66920
+
+        Reviewed by James Robinson.
+
+        Test: fast/canvas/canvas-composite-image.html
+
+        Use the same method as fills to handle composited drawImage calls that will affect the whole
+        canvas. To do this code used when doing fills has been factored into seperate functions and
+        used by drawImage. Some functions used to do these types of operations have also been renamed.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::isFullCanvasCompositeMode):
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::calculateCompositingBufferRect):
+        (WebCore::CanvasRenderingContext2D::createCompositingBuffer):
+        (WebCore::CanvasRenderingContext2D::compositeBuffer):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedDrawImage):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedFill):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98294 and r98306.
