@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS "0" is a valid number.
 PASS "10" is a valid number.
 PASS "01" is a valid number.
+PASS "0.2" is a valid number.
+PASS ".2" is a valid number.
 PASS "-0" is a valid number.
 PASS "-1.2" is a valid number.
 PASS "1.2E10" is a valid number.
@@ -19,7 +21,6 @@ PASS "+1" was sanitized to "".
 PASS " 10" was sanitized to "".
 PASS "10 " was sanitized to "".
 PASS "1,2" was sanitized to "".
-PASS ".2" was sanitized to "".
 PASS "1E" was sanitized to "".
 PASS "NaN" was sanitized to "".
 PASS "nan" was sanitized to "".

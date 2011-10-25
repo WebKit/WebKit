@@ -14,6 +14,8 @@ function setValueAsNumberAndGetValue(num) {
 }
 
 shouldBe('valueAsNumberFor("0")', '0');
+shouldBe('valueAsNumberFor("0.2")', '0.2');
+shouldBe('valueAsNumberFor(".2")', '0.2');
 shouldBe('valueAsNumberFor("10")', '10');
 shouldBe('valueAsNumberFor("01")', '1');
 shouldBe('valueAsNumberFor("-0")', '0'); // "-0" is 0 in HTML5.
@@ -31,7 +33,7 @@ shouldBeTrue('isNaN(valueAsNumberFor("0xff"))');
 shouldBeTrue('isNaN(valueAsNumberFor("+1"))');
 shouldBeTrue('isNaN(valueAsNumberFor(" 10"))');
 shouldBeTrue('isNaN(valueAsNumberFor("10 "))');
-shouldBeTrue('isNaN(valueAsNumberFor(".2"))');
+shouldBeTrue('isNaN(valueAsNumberFor("."))');
 shouldBeTrue('isNaN(valueAsNumberFor("1E"))');
 shouldBeTrue('isNaN(valueAsNumberFor("NaN"))');
 shouldBeTrue('isNaN(valueAsNumberFor("nan"))');

@@ -8,6 +8,8 @@ PASS valueAsNumberFor("10") is 10
 PASS valueAsNumberFor("01") is 1
 PASS valueAsNumberFor("-0") is 0
 PASS valueAsNumberFor("-1.2") is 0
+PASS valueAsNumberFor("0.2") is 0
+PASS valueAsNumberFor(".2") is 0
 PASS valueAsNumberFor("1.2E10") is 100
 PASS valueAsNumberFor("1.2E-10") is 0
 PASS valueAsNumberFor("1.2E+10") is 100
@@ -20,7 +22,6 @@ PASS valueAsNumberFor("0xff") is 50
 PASS valueAsNumberFor("+1") is 50
 PASS valueAsNumberFor(" 10") is 50
 PASS valueAsNumberFor("10 ") is 50
-PASS valueAsNumberFor(".2") is 50
 PASS valueAsNumberFor("1E") is 50
 PASS valueAsNumberFor("NaN") is 50
 PASS valueAsNumberFor("nan") is 50

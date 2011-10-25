@@ -1,3 +1,16 @@
+2011-10-25  Sachin Puranik  <sachin.puranik@motorola.com>
+
+        Double number step=.5 should be considered valid in <input type="number" step=".5">
+        https://bugs.webkit.org/show_bug.cgi?id=70320
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/input-step-as-double.html
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseToDoubleForNumberType): Changed the function to consider
+        step as valid even if it starts with "."
+
 2011-10-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Chromium] Audits panel context menu for links not working properly

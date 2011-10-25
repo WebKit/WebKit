@@ -31,6 +31,8 @@ function checkSanitization(value, expectedValue)
 check('0');
 check('10');
 check('01');
+check('0.2');
+check('.2');
 check('-0');
 check('-1.2');
 check('1.2E10');
@@ -47,7 +49,6 @@ checkSanitization('+1', '');
 checkSanitization(' 10', '');
 checkSanitization('10 ', '');
 checkSanitization('1,2', '');
-checkSanitization('.2', '');
 checkSanitization('1E', '');
 checkSanitization('NaN', '');
 checkSanitization('nan', '');
