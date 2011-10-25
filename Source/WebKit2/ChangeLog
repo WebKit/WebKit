@@ -1,3 +1,15 @@
+2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Assertion failure when zooming a PDF in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=70849
+
+        Reviewed by Alexey Proskuryakov.
+
+        If the plug-in doesn't want window relative coordinates, we shouldn't give the plug-in window relative coordinates.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+
 2011-10-25  Sam Weinig  <sam@webkit.org>
 
         Make loadFileURL:restrictToFilesWithin: work, albeit, without the correct
