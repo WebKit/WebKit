@@ -121,10 +121,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
 	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
+	Source/JavaScriptCore/dfg/DFGJITCodeGenerator32_64.cpp \
+	Source/JavaScriptCore/dfg/DFGJITCodeGenerator64.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.h \
+	Source/JavaScriptCore/dfg/DFGJITCompiler32_64.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
+	Source/JavaScriptCore/dfg/DFGJITCompilerInlineMethods.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGOperands.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
@@ -137,6 +141,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGRepatch.cpp \
 	Source/JavaScriptCore/dfg/DFGRepatch.h \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
+	Source/JavaScriptCore/dfg/DFGSpeculativeJIT32_64.cpp \
+	Source/JavaScriptCore/dfg/DFGSpeculativeJIT64.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGStructureSet.h \

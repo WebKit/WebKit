@@ -77,12 +77,23 @@ SOURCES += \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
+    dfg/DFGAbstractState.cpp \
     dfg/DFGByteCodeParser.cpp \
+    dfg/DFGCapabilities.cpp \
+    dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCodeGenerator.cpp \
+    dfg/DFGJITCodeGenerator32_64.cpp \
+    dfg/DFGJITCodeGenerator64.cpp \
     dfg/DFGJITCompiler.cpp \
+    dfg/DFGJITCompiler32_64.cpp \
     dfg/DFGOperations.cpp \
+    dfg/DFGOSREntry.cpp \
+    dfg/DFGPropagator.cpp \
+    dfg/DFGRepatch.cpp \
     dfg/DFGSpeculativeJIT.cpp \
+    dfg/DFGSpeculativeJIT32_64.cpp \
+    dfg/DFGSpeculativeJIT64.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \
