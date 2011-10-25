@@ -1,3 +1,11 @@
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More gardening.
+
+        * platform/chromium/test_expectations.txt: Missed some cases where
+        video-porter.html times out. Also added zoom-animator-scale-test2.html
+        that has been timing out for several days.
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         Plug-ins have to use JavaScript to find out the current device scale factor
