@@ -125,7 +125,7 @@ static inline void updateGuidVersionMap(int guid, String newVersion)
     // FIXME: This is a quite-awkward restriction to have to program with.
 
     // Map null string to empty string (see comment above).
-    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.threadsafeCopy());
+    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
 typedef HashMap<int, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
@@ -177,9 +177,9 @@ const char* AbstractDatabase::databaseInfoTableName()
 AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
                                    const String& displayName, unsigned long estimatedSize)
     : m_scriptExecutionContext(context)
-    , m_name(name.crossThreadString())
-    , m_expectedVersion(expectedVersion.crossThreadString())
-    , m_displayName(displayName.crossThreadString())
+    , m_name(name.isolatedCopy())
+    , m_expectedVersion(expectedVersion.isolatedCopy())
+    , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
     , m_guid(0)
     , m_opened(false)
@@ -264,7 +264,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
         GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGuidVersionMap()).
-            currentVersion = entry->second.isNull() ? String("") : entry->second.threadsafeCopy();
+            currentVersion = entry->second.isNull() ? String("") : entry->second.isolatedCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
 
 #if PLATFORM(CHROMIUM)
@@ -371,13 +371,13 @@ SecurityOrigin* AbstractDatabase::securityOrigin() const
 String AbstractDatabase::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_name.threadsafeCopy();
+    return m_name.isolatedCopy();
 }
 
 String AbstractDatabase::displayName() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_displayName.threadsafeCopy();
+    return m_displayName.isolatedCopy();
 }
 
 unsigned long AbstractDatabase::estimatedSize() const
@@ -388,7 +388,7 @@ unsigned long AbstractDatabase::estimatedSize() const
 String AbstractDatabase::fileName() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_filename.threadsafeCopy();
+    return m_filename.isolatedCopy();
 }
 
 bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
@@ -431,13 +431,13 @@ bool AbstractDatabase::setVersionInDatabase(const String& version, bool shouldCa
 
 void AbstractDatabase::setExpectedVersion(const String& version)
 {
-    m_expectedVersion = version.threadsafeCopy();
+    m_expectedVersion = version.isolatedCopy();
 }
 
 String AbstractDatabase::getCachedVersion() const
 {
     MutexLocker locker(guidMutex());
-    return guidToVersionMap().get(m_guid).threadsafeCopy();
+    return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
 void AbstractDatabase::setCachedVersion(const String& actualVersion)

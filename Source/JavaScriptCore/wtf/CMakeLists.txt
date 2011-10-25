@@ -12,7 +12,6 @@ SET(WTF_HEADERS
     ByteArray.h
     Compiler.h
     Complex.h
-    CrossThreadRefCounted.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
     DateMath.h

@@ -123,9 +123,6 @@ protected:
     }
 
 private:
-    template<class T>
-    friend class CrossThreadRefCounted;
-
     int m_refCount;
 #if !USE(LOCKFREE_THREADSAFEREFCOUNTED)
     mutable Mutex m_mutex;

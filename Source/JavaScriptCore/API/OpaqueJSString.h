@@ -26,6 +26,7 @@
 #ifndef OpaqueJSString_h
 #define OpaqueJSString_h
 
+#include <wtf/ThreadSafeRefCounted.h>
 #include <runtime/UString.h>
 
 namespace JSC {

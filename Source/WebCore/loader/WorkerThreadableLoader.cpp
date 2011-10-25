@@ -92,7 +92,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
                                                            const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer)
     : m_workerClientWrapper(workerClientWrapper)
     , m_loaderProxy(loaderProxy)
-    , m_taskMode(taskMode.crossThreadString())
+    , m_taskMode(taskMode.isolatedCopy())
 {
     ASSERT(m_workerClientWrapper.get());
     m_loaderProxy.postTaskToLoader(

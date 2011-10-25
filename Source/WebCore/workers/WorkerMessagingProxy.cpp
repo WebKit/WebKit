@@ -118,9 +118,9 @@ public:
 
 private:
     WorkerExceptionTask(const String& errorMessage, int lineNumber, const String& sourceURL, WorkerMessagingProxy* messagingProxy)
-        : m_errorMessage(errorMessage.crossThreadString())
+        : m_errorMessage(errorMessage.isolatedCopy())
         , m_lineNumber(lineNumber)
-        , m_sourceURL(sourceURL.crossThreadString())
+        , m_sourceURL(sourceURL.isolatedCopy())
         , m_messagingProxy(messagingProxy)
     {
     }
@@ -222,7 +222,7 @@ public:
 private:
     PostMessageToPageInspectorTask(WorkerMessagingProxy* messagingProxy, const String& message)
         : m_messagingProxy(messagingProxy)
-        , m_message(message.crossThreadString())
+        , m_message(message.isolatedCopy())
     {
     }
 

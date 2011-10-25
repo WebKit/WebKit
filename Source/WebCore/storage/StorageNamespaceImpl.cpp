@@ -65,7 +65,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(unsig
 
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)
     : m_storageType(storageType)
-    , m_path(path.crossThreadString())
+    , m_path(path.isolatedCopy())
     , m_syncManager(0)
     , m_quota(quota)
     , m_isShutdown(false)

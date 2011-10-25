@@ -144,7 +144,6 @@
             'wtf/CheckedArithmetic.h',
             'wtf/Compiler.h',
             'wtf/Complex.h',
-            'wtf/CrossThreadRefCounted.h',
             'wtf/CryptographicallyRandomNumber.h',
             'wtf/CurrentTime.h',
             'wtf/DateMath.h',

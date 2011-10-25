@@ -29,6 +29,7 @@
 
 #include <runtime/UString.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 

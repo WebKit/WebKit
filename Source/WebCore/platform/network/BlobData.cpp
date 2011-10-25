@@ -53,7 +53,7 @@ void RawData::detachFromCurrentThread()
 void BlobDataItem::detachFromCurrentThread()
 {
     data->detachFromCurrentThread();
-    path = path.crossThreadString();
+    path = path.isolatedCopy();
     url = url.copy();
 }
 
@@ -64,8 +64,8 @@ PassOwnPtr<BlobData> BlobData::create()
 
 void BlobData::detachFromCurrentThread()
 {
-    m_contentType = m_contentType.crossThreadString();
-    m_contentDisposition = m_contentDisposition.crossThreadString();
+    m_contentType = m_contentType.isolatedCopy();
+    m_contentDisposition = m_contentDisposition.isolatedCopy();
     for (size_t i = 0; i < m_items.size(); ++i)
         m_items.at(i).detachFromCurrentThread();
 }

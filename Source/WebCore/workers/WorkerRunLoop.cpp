@@ -185,7 +185,7 @@ void WorkerRunLoop::postTask(PassOwnPtr<ScriptExecutionContext::Task> task)
 
 void WorkerRunLoop::postTaskForMode(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    m_messageQueue.append(Task::create(task, mode.crossThreadString()));
+    m_messageQueue.append(Task::create(task, mode.isolatedCopy()));
 }
 
 PassOwnPtr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
@@ -202,7 +202,7 @@ void WorkerRunLoop::Task::performTask(ScriptExecutionContext* context)
 
 WorkerRunLoop::Task::Task(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
     : m_task(task)
-    , m_mode(mode.crossThreadString())
+    , m_mode(mode.isolatedCopy())
 {
 }
 

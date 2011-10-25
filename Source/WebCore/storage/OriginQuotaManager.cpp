@@ -75,7 +75,7 @@ void OriginQuotaManager::trackOrigin(PassRefPtr<SecurityOrigin> origin)
     ASSERT(m_usageRecordGuardLocked);
     ASSERT(!m_usageMap.contains(origin.get()));
 
-    m_usageMap.set(origin->threadsafeCopy(), new OriginUsageRecord);
+    m_usageMap.set(origin->isolatedCopy(), new OriginUsageRecord);
 }
 
 bool OriginQuotaManager::tracksOrigin(SecurityOrigin* origin) const
@@ -91,7 +91,7 @@ void OriginQuotaManager::addDatabase(SecurityOrigin* origin, const String& datab
     OriginUsageRecord* usageRecord = m_usageMap.get(origin);
     ASSERT(usageRecord);
 
-    usageRecord->addDatabase(databaseIdentifier.threadsafeCopy(), fullPath.threadsafeCopy());
+    usageRecord->addDatabase(databaseIdentifier.isolatedCopy(), fullPath.isolatedCopy());
 }
 
 void OriginQuotaManager::removeDatabase(SecurityOrigin* origin, const String& databaseIdentifier)

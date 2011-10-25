@@ -1,3 +1,156 @@
+2011-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed SharedUChar and tightened language around its previous uses
+        https://bugs.webkit.org/show_bug.cgi?id=70698
+
+        Reviewed by David Levin.
+
+        - Renamed "threadSafeCopy" and "crossThreadCopy" to "isolatedCopy" because
+        the former names gave the dangerous misimpression that the resulting object
+        was thread-safe, which is not true.
+        
+        - Updated a bunch of files for header dependency changes, now that
+        CrossThreadRefCounted is gone.
+
+        * ForwardingHeaders/wtf/CrossThreadRefCounted.h: Removed.
+        * WebCore.exp.in:
+        * bindings/js/ScriptHeapSnapshot.h:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * css/CSSPropertySourceData.h:
+        * css/CSSValue.h:
+        * css/StyleMedia.h:
+        * css/WebKitCSSMatrix.h:
+        * dom/QualifiedName.h:
+        * fileapi/LocalFileSystem.h:
+        (WebCore::LocalFileSystem::SystemBasePath::operator String):
+        * history/CachedFrame.h:
+        * history/CachedPage.h:
+        * history/HistoryItem.h:
+        * html/canvas/CanvasStyle.h:
+        * inspector/InspectorResourceAgent.h:
+        * loader/FormState.h:
+        * loader/TextResourceDecoder.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::synchronousIconForPageURL):
+        (WebCore::IconDatabase::synchronousIconURLForPageURL):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::databasePath):
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        (WebCore::ImportedIconURLForPageURLWorkItem::ImportedIconURLForPageURLWorkItem):
+        (WebCore::ImportedIconDataForPageURLWorkItem::ImportedIconDataForPageURLWorkItem):
+        * page/ContentSecurityPolicy.h:
+        * page/Coordinates.h:
+        (WebCore::Coordinates::isolatedCopy):
+        * page/Geoposition.h:
+        (WebCore::Geoposition::isolatedCopy):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isolatedCopy):
+        * page/SecurityOrigin.h:
+        * page/animation/AnimationBase.h:
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * platform/FileChooser.h:
+        * platform/KURL.cpp:
+        (WebCore::KURL::copy):
+        * platform/cf/SchedulePair.h:
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobDataItem::detachFromCurrentThread):
+        (WebCore::BlobData::detachFromCurrentThread):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        * platform/network/MIMEHeader.h:
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::copy):
+        * platform/network/ResourceLoadInfo.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/sql/SQLValue.cpp:
+        (WebCore::SQLValue::SQLValue):
+        (WebCore::SQLValue::string):
+        * rendering/style/QuotesData.h:
+        * storage/AbstractDatabase.cpp:
+        (WebCore::updateGuidVersionMap):
+        (WebCore::AbstractDatabase::AbstractDatabase):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::stringIdentifier):
+        (WebCore::AbstractDatabase::displayName):
+        (WebCore::AbstractDatabase::fileName):
+        (WebCore::AbstractDatabase::setExpectedVersion):
+        (WebCore::AbstractDatabase::getCachedVersion):
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::ChangeVersionWrapper):
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::tableNames):
+        * storage/DatabaseDetails.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setDatabaseDirectoryPath):
+        (WebCore::DatabaseTracker::databaseDirectoryPath):
+        (WebCore::DatabaseTracker::trackerDatabasePath):
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::originPath):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::recordCreatingDatabase):
+        (WebCore::DatabaseTracker::recordDeletingDatabase):
+        (WebCore::DatabaseTracker::recordDeletingOrigin):
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        * storage/OriginQuotaManager.cpp:
+        (WebCore::OriginQuotaManager::trackOrigin):
+        (WebCore::OriginQuotaManager::addDatabase):
+        * storage/SQLError.h:
+        (WebCore::SQLError::message):
+        (WebCore::SQLError::SQLError):
+        * storage/SQLResultSetRowList.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        * storage/StorageAreaSync.h:
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::importItem):
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl):
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::StorageTracker):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::willDeleteAllOrigins):
+        * svg/SVGPathSeg.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::url):
+        (WebCore::SharedWorkerProxy::name):
+        (WebCore::SharedWorkerProxy::SharedWorkerProxy):
+        (WebCore::DefaultSharedWorkerRepository::getProxy):
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::WorkerExceptionTask):
+        (WebCore::PostMessageToPageInspectorTask::PostMessageToPageInspectorTask):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        (WebCore::WorkerRunLoop::Task::Task):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+
 2011-10-24  Adam Barth  <abarth@webkit.org>
 
         Remove empty directory.

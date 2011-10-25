@@ -1,3 +1,54 @@
+2011-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed SharedUChar and tightened language around its previous uses
+        https://bugs.webkit.org/show_bug.cgi?id=70698
+
+        Reviewed by David Levin.
+
+        - Removed SharedUChar because most of its functionality has moved into
+        other abstraction layers, and we want remaining clients to choose their
+        abstractions explicitly instead of relying on StringImpl to provide this
+        behavior implicitly, since we think they can sometimes make more efficient
+        choices.
+
+        - Renamed "threadSafeCopy" and "crossThreadCopy" to "isolatedCopy" because
+        the former names could give the impression that the resulting object was
+        thread-safe, but actually it's just an isolated copy, which is not
+        thread-safe by itself, but can be used to implement a thread-safe
+        algorithm through isolation.
+
+        * wtf/CrossThreadRefCounted.h: Removed.
+
+        * JavaScriptCore.exp: Export!
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl): Removed the stuff mentioned above.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::length): Ditto.
+
+        (WTF::StringImpl::isolatedCopy): Inlined this, since it's now trivial.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isolatedCopy):
+        * wtf/text/WTFString.h: Updated for StringImpl changes.
+
+        * API/OpaqueJSString.h:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/OwnFastMallocPtr.h:
+        * wtf/RefCounted.h:
+        * wtf/SizeLimits.cpp:
+        * wtf/ThreadSafeRefCounted.h:
+        * wtf/wtf.pri:
+        * yarr/YarrPattern.h: Updated these files to accomodate removal of
+        CrossThreadRefCounted.h.
+
 2011-10-24  Oliver Hunt  <oliver@apple.com>
 
         Crash in void JSC::validateCell<JSC::RegExp*>(JSC::RegExp*)

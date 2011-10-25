@@ -149,7 +149,6 @@ protected:
 #endif
 
 private:
-    template<typename T> friend class CrossThreadRefCounted;
 
 #ifndef NDEBUG
     friend void adopted(RefCountedBase*);

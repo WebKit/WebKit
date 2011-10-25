@@ -25,7 +25,6 @@
 
 #include <limits.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/CrossThreadRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -57,8 +56,6 @@ struct UCharBufferTranslator;
 
 enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
 
-typedef OwnFastMallocPtr<const UChar> SharableUChar;
-typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
@@ -77,7 +74,6 @@ private:
         BufferInternal,
         BufferOwned,
         BufferSubstring,
-        BufferShared,
     };
 
     // Used to construct static strings, which have an special refCount that can never hit zero.
@@ -134,25 +130,12 @@ private:
         ASSERT(m_substringBuffer->bufferOwnership() != BufferSubstring);
     }
 
-    // Used to construct new strings sharing an existing SharedUChar (BufferShared)
-    StringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-        : m_refCount(s_refCountIncrement)
-        , m_length(length)
-        , m_data(characters)
-        , m_sharedBuffer(sharedBuffer.leakRef())
-        , m_hashAndFlags(BufferShared)
-    {
-        ASSERT(m_data);
-        ASSERT(m_length);
-    }
-
 public:
     ~StringImpl();
 
     static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*);
-    static PassRefPtr<StringImpl> create(const UChar*, unsigned length, PassRefPtr<SharedUChar> sharedBuffer);
     static ALWAYS_INLINE PassRefPtr<StringImpl> create(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
     {
         ASSERT(rep);
@@ -208,7 +191,6 @@ public:
     static PassRefPtr<StringImpl> adopt(StringBuffer&);
 
     unsigned length() const { return m_length; }
-    SharedUChar* sharedBuffer();
     const UChar* characters() const { return m_data; }
 
     size_t cost()
@@ -318,12 +300,10 @@ public:
             memcpy(destination, source, numCharacters * sizeof(UChar));
     }
 
-    // Returns a StringImpl suitable for use on another thread.
-    PassRefPtr<StringImpl> crossThreadString();
-    // Makes a deep copy. Helpful only if you need to use a String on another thread
-    // (use crossThreadString if the method call doesn't need to be threadsafe).
-    // Since StringImpl objects are immutable, there's no other reason to make a copy.
-    PassRefPtr<StringImpl> threadsafeCopy() const;
+    // Some string features, like refcounting and the atomicity flag, are not
+    // thread-safe. We achieve thread safety by isolation, giving each thread
+    // its own copy of the string.
+    PassRefPtr<StringImpl> isolatedCopy() const;
 
     PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
 
@@ -418,7 +398,6 @@ private:
     union {
         void* m_buffer;
         StringImpl* m_substringBuffer;
-        SharedUChar* m_sharedBuffer;
     };
     mutable unsigned m_hashAndFlags;
 };
@@ -453,6 +432,11 @@ static inline bool isSpaceOrNewline(UChar c)
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.
     return c <= 0x7F ? WTF::isASCIISpace(c) : WTF::Unicode::direction(c) == WTF::Unicode::WhiteSpaceNeutral;
+}
+
+inline PassRefPtr<StringImpl> StringImpl::isolatedCopy() const
+{
+    return create(m_data, m_length);
 }
 
 struct StringHash;

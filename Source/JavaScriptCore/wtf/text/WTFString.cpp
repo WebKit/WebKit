@@ -578,18 +578,11 @@ float String::toFloat(bool* ok, bool* didReadNumber) const
     return m_impl->toFloat(ok, didReadNumber);
 }
 
-String String::threadsafeCopy() const
+String String::isolatedCopy() const
 {
     if (!m_impl)
         return String();
-    return m_impl->threadsafeCopy();
-}
-
-String String::crossThreadString() const
-{
-    if (!m_impl)
-        return String();
-    return m_impl->crossThreadString();
+    return m_impl->isolatedCopy();
 }
 
 void String::split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const

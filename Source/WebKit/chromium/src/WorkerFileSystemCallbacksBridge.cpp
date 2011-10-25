@@ -74,7 +74,7 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::WebVector<WebKit::
         for (size_t i = 0; i < entries.size(); ++i) {
             String name = entries[i].name;
             newEntries[i].isDirectory = entries[i].isDirectory;
-            newEntries[i].name = name.crossThreadString();
+            newEntries[i].name = name.isolatedCopy();
         }
         return newEntries;
     }

@@ -33,6 +33,7 @@
 
 #include "PlatformString.h"
 #include "ScriptProfileNode.h"
+#include <wtf/RefCounted.h>
 
 namespace v8 {
 class CpuProfile;

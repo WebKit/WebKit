@@ -14,7 +14,6 @@ HEADERS += \
     wtf/ByteArray.h \
     wtf/CheckedArithmetic.h \
     wtf/Compiler.h \
-    wtf/CrossThreadRefCounted.h \
     wtf/CryptographicallyRandomNumber.h \
     wtf/CurrentTime.h \
     wtf/DateMath.h \

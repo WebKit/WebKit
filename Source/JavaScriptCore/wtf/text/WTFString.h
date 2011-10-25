@@ -264,13 +264,7 @@ public:
 
     bool percentage(int& percentage) const;
 
-    // Returns a StringImpl suitable for use on another thread.
-    WTF_EXPORT_PRIVATE String crossThreadString() const;
-    // Makes a deep copy. Helpful only if you need to use a String on another thread
-    // (use crossThreadString if the method call doesn't need to be threadsafe).
-    // Since the underlying StringImpl objects are immutable, there's no other reason
-    // to ever prefer copy() over plain old assignment.
-    WTF_EXPORT_PRIVATE String threadsafeCopy() const;
+    WTF_EXPORT_PRIVATE String isolatedCopy() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString*).

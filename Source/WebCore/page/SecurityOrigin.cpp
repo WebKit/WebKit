@@ -132,11 +132,11 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_sandboxFlags(other->m_sandboxFlags)
-    , m_protocol(other->m_protocol.threadsafeCopy())
-    , m_host(other->m_host.threadsafeCopy())
-    , m_encodedHost(other->m_encodedHost.threadsafeCopy())
-    , m_domain(other->m_domain.threadsafeCopy())
-    , m_filePath(other->m_filePath.threadsafeCopy())
+    , m_protocol(other->m_protocol.isolatedCopy())
+    , m_host(other->m_host.isolatedCopy())
+    , m_encodedHost(other->m_encodedHost.isolatedCopy())
+    , m_domain(other->m_domain.isolatedCopy())
+    , m_filePath(other->m_filePath.isolatedCopy())
     , m_port(other->m_port)
     , m_isUnique(other->m_isUnique)
     , m_universalAccess(other->m_universalAccess)
@@ -164,7 +164,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createEmpty()
     return create(KURL());
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::threadsafeCopy()
+PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy()
 {
     return adoptRef(new SecurityOrigin(this));
 }

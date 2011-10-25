@@ -28,6 +28,7 @@
 #define ResourceLoadInfo_h
 
 #include "HTTPHeaderMap.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "TransformationMatrix.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

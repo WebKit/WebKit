@@ -29,6 +29,7 @@
 #include "KURL.h"
 #include "ScriptCachedFrameData.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

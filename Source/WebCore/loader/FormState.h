@@ -30,6 +30,7 @@
 #define FormState_h
 
 #include "PlatformString.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

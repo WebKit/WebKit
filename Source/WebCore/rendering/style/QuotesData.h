@@ -21,6 +21,7 @@
 #ifndef QuotesData_h
 #define QuotesData_h
 
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

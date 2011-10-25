@@ -85,7 +85,7 @@ StorageTracker& StorageTracker::tracker()
 }
 
 StorageTracker::StorageTracker(const String& storagePath)
-    : m_storageDirectoryPath(storagePath.threadsafeCopy())
+    : m_storageDirectoryPath(storagePath.isolatedCopy())
     , m_client(0)
     , m_thread(LocalStorageThread::create())
     , m_isActive(false)
@@ -167,7 +167,7 @@ void StorageTracker::syncImportOriginIdentifiers()
             {
                 MutexLocker lockOrigins(m_originSetGuard);
                 while ((result = statement.step()) == SQLResultRow)
-                    m_originSet.add(statement.getColumnText(0).threadsafeCopy());
+                    m_originSet.add(statement.getColumnText(0).isolatedCopy());
             }
             
             if (result != SQLResultDone) {
@@ -214,7 +214,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
         MutexLocker lock(m_originSetGuard);
         OriginSet::const_iterator end = m_originSet.end();
         for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
-            originSetCopy.add((*it).threadsafeCopy());
+            originSetCopy.add((*it).isolatedCopy());
     }
     
     // Add missing StorageTracker records.
@@ -236,7 +236,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     OriginSet::const_iterator setEnd = originSetCopy.end();
     for (OriginSet::const_iterator it = originSetCopy.begin(); it != setEnd; ++it) {
         if (!foundOrigins.contains(*it)) {
-            RefPtr<StringImpl> originIdentifier = (*it).threadsafeCopy().impl();
+            RefPtr<StringImpl> originIdentifier = (*it).isolatedCopy().impl();
             callOnMainThread(deleteOriginOnMainThread, originIdentifier.release().leakRef());
         }
     }
@@ -256,7 +256,7 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         m_originSet.add(originIdentifier);
     }
 
-    OwnPtr<LocalStorageTask> task = LocalStorageTask::createSetOriginDetails(originIdentifier.threadsafeCopy(), databaseFile);
+    OwnPtr<LocalStorageTask> task = LocalStorageTask::createSetOriginDetails(originIdentifier.isolatedCopy(), databaseFile);
 
     if (isMainThread()) {
         ASSERT(m_thread);
@@ -502,7 +502,7 @@ void StorageTracker::willDeleteAllOrigins()
 
     OriginSet::const_iterator end = m_originSet.end();
     for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
-        m_originsBeingDeleted.add((*it).threadsafeCopy());
+        m_originsBeingDeleted.add((*it).isolatedCopy());
 }
 
 void StorageTracker::willDeleteOrigin(const String& originIdentifier)

@@ -23,6 +23,7 @@
 #define OwnFastMallocPtr_h
 
 #include "FastMalloc.h"
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 

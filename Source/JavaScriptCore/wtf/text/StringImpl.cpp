@@ -55,20 +55,17 @@ StringImpl::~StringImpl()
 #endif
 
     BufferOwnership ownership = bufferOwnership();
-    if (ownership != BufferInternal) {
-        if (ownership == BufferOwned) {
-            ASSERT(!m_sharedBuffer);
-            ASSERT(m_data);
-            fastFree(const_cast<UChar*>(m_data));
-        } else if (ownership == BufferSubstring) {
-            ASSERT(m_substringBuffer);
-            m_substringBuffer->deref();
-        } else {
-            ASSERT(ownership == BufferShared);
-            ASSERT(m_sharedBuffer);
-            m_sharedBuffer->deref();
-        }
+    if (ownership == BufferInternal)
+        return;
+    if (ownership == BufferOwned) {
+        ASSERT(m_data);
+        fastFree(const_cast<UChar*>(m_data));
+        return;
     }
+
+    ASSERT(ownership == BufferSubstring);
+    ASSERT(m_substringBuffer);
+    m_substringBuffer->deref();
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
@@ -143,37 +140,6 @@ PassRefPtr<StringImpl> StringImpl::create(const char* string)
     if (length > numeric_limits<unsigned>::max())
         CRASH();
     return create(string, length);
-}
-
-PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-{
-    ASSERT(characters);
-    ASSERT(minLengthToShare && length >= minLengthToShare);
-    return adoptRef(new StringImpl(characters, length, sharedBuffer));
-}
-
-SharedUChar* StringImpl::sharedBuffer()
-{
-    if (m_length < minLengthToShare)
-        return 0;
-    // All static strings are smaller that the minimim length to share.
-    ASSERT(!isStatic());
-
-    BufferOwnership ownership = bufferOwnership();
-
-    if (ownership == BufferInternal)
-        return 0;
-    if (ownership == BufferSubstring)
-        return m_substringBuffer->sharedBuffer();
-    if (ownership == BufferOwned) {
-        ASSERT(!m_sharedBuffer);
-        m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).leakRef();
-        m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferShared;
-    }
-
-    ASSERT(bufferOwnership() == BufferShared);
-    ASSERT(m_sharedBuffer);
-    return m_sharedBuffer;
 }
 
 bool StringImpl::containsOnlyWhitespace()
@@ -1144,20 +1110,6 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
     terminatedString->m_length--;
     terminatedString->m_hashAndFlags = (string.m_hashAndFlags & ~s_flagMask) | s_hashFlagHasTerminatingNullCharacter;
     return terminatedString.release();
-}
-
-PassRefPtr<StringImpl> StringImpl::threadsafeCopy() const
-{
-    return create(m_data, m_length);
-}
-
-PassRefPtr<StringImpl> StringImpl::crossThreadString()
-{
-    if (SharedUChar* sharedBuffer = this->sharedBuffer())
-        return adoptRef(new StringImpl(m_data, m_length, sharedBuffer->crossThreadCopy()));
-
-    // If no shared buffer is available, create a copy.
-    return threadsafeCopy();
 }
 
 } // namespace WTF

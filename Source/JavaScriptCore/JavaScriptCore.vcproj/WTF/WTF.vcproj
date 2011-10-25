@@ -681,10 +681,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\CrossThreadRefCounted.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\CryptographicallyRandomNumber.cpp"
 			>
 		</File>
