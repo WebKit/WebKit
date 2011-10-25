@@ -63,6 +63,7 @@ public:
     }
 };
 
+
 static bool simpleLoadDone;
 
 @interface SimpleLoadDelegate : NSObject <WKBrowsingContextLoadDelegate>
@@ -85,17 +86,53 @@ TEST_F(WKBrowsingContextLoadDelegateTest, Empty)
 TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoad)
 {
     // Add the load delegate.
-    SimpleLoadDelegate *simpleLoadDelegate = [[SimpleLoadDelegate alloc] init];
-    view.browsingContextController.loadDelegate = simpleLoadDelegate;
+    SimpleLoadDelegate *loadDelegate = [[SimpleLoadDelegate alloc] init];
+    view.browsingContextController.loadDelegate = loadDelegate;
 
     // Load the file.
     NSURL *nsURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html"];
     [view.browsingContextController loadFileURL:nsURL restrictToFilesWithin:nil];
 
-    // Wait for the load.
+    // Wait for the load to finish.
     TestWebKitAPI::Util::run(&simpleLoadDone);
 
     // Tear down the delegate.
     view.browsingContextController.loadDelegate = nil;
-    [simpleLoadDelegate release];
+    [loadDelegate release];
+}
+
+
+static bool simpleLoadFailDone;
+
+@interface SimpleLoadFailDelegate : NSObject <WKBrowsingContextLoadDelegate>
+@end
+
+@implementation SimpleLoadFailDelegate
+
+- (void)browsingContextControllerDidFailProvisionalLoad:(WKBrowsingContextController *)sender withError:(NSError *)error
+{
+    EXPECT_EQ(-1100, error.code);
+    EXPECT_WK_STREQ(NSURLErrorDomain, error.domain);
+    
+    simpleLoadFailDone = true;
+}
+
+@end
+
+TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoadFail)
+{
+    // Add the load delegate.
+    SimpleLoadFailDelegate *loadDelegate = [[SimpleLoadFailDelegate alloc] init];
+    view.browsingContextController.loadDelegate = loadDelegate;
+
+    // Load a non-existent file.
+    NSURL *nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
+    [view.browsingContextController loadFileURL:nsURL restrictToFilesWithin:nil];
+
+    // Wait for the load to fail.
+    TestWebKitAPI::Util::run(&simpleLoadFailDone);
+
+    // Tear down the delegate.
+    view.browsingContextController.loadDelegate = nil;
+    [loadDelegate release];
 }

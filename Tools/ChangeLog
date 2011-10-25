@@ -1,3 +1,16 @@
+2011-10-25  Sam Weinig  <sam@webkit.org>
+
+        Add WKBrowsingContextLoadDelegateTest test for a failed load
+        https://bugs.webkit.org/show_bug.cgi?id=70859
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextLoadDelegateTest.mm:
+        (TEST_F): Add TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoadFail).
+ 
+        (-[SimpleLoadFailDelegate browsingContextControllerDidFailProvisionalLoad:withError:]):
+        Test that we are getting the correct NSError code and domain.
+
 2011-10-25  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Make successfullyParsed optional
