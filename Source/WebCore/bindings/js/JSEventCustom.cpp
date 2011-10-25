@@ -69,4 +69,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
     return CREATE_DOM_WRAPPER(exec, globalObject, Event, event);
 }
 
+#undef TRY_TO_WRAP_WITH_INTERFACE
+
 } // namespace WebCore

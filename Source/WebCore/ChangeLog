@@ -1,3 +1,11 @@
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Windows build.  Windows mashes all these files into
+        one, which doesn't respect the compilation unit rules of C++.
+
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSEventTarget.cpp:
+
 2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving to the start of line should not place the caret outside of the table

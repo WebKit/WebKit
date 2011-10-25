@@ -134,6 +134,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
     return jsNull();
 }
 
+#undef TRY_TO_WRAP_WITH_INTERFACE
+
 EventTarget* toEventTarget(JSC::JSValue value)
 {
     #define CONVERT_TO_EVENT_TARGET(type) \
