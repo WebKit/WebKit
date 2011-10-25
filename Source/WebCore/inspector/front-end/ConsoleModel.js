@@ -53,15 +53,7 @@ WebInspector.ConsoleModel.prototype = {
         if (WebInspector.settings.monitoringXHREnabled.get())
             ConsoleAgent.setMonitoringXHREnabled(true);
 
-        ConsoleAgent.enable(this._setConsoleMessageExpiredCount.bind(this));
-    },
-
-    _setConsoleMessageExpiredCount: function(count)
-    {
-        if (count) {
-            var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
-            this.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
-        }
+        ConsoleAgent.enable();
     },
 
     /**

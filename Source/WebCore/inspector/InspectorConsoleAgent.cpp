@@ -81,11 +81,14 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
     m_inspectorDOMAgent = 0;
 }
 
-void InspectorConsoleAgent::enable(ErrorString*, int* consoleMessageExpireCount)
+void InspectorConsoleAgent::enable(ErrorString*)
 {
-    *consoleMessageExpireCount = m_expiredConsoleMessageCount;
-
     m_inspectorState->setBoolean(ConsoleAgentState::consoleMessagesEnabled, true);
+
+    if (m_expiredConsoleMessageCount) {
+        ConsoleMessage expiredMessage(OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount), 0, "", "");
+        expiredMessage.addToFrontend(m_frontend, m_injectedScriptManager);
+    }
 
     size_t messageCount = m_consoleMessages.size();
     for (size_t i = 0; i < messageCount; ++i)
@@ -120,8 +123,7 @@ void InspectorConsoleAgent::restore()
 {
     if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled)) {
         ErrorString error;
-        int expiredCount;
-        enable(&error, &expiredCount);
+        enable(&error);
     }
 }
 

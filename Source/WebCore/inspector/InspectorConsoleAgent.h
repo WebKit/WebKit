@@ -59,7 +59,7 @@ public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
     ~InspectorConsoleAgent();
 
-    void enable(ErrorString*, int* consoleMessageExpireCount);
+    void enable(ErrorString*);
     void disable(ErrorString*);
     void clearMessages(ErrorString*);
     void reset();

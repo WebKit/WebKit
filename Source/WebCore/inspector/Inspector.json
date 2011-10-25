@@ -398,12 +398,12 @@
                 "description": "Console message.",
                 "properties": [
                     { "name": "source", "type": "string", "enum": ["html", "wml", "xml", "javascript", "network", "console-api", "other"], "description": "Message source." },
-                    { "name": "type", "type": "string", "enum": ["log", "dir", "dirxml", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert"], "description": "Console message type." },
                     { "name": "level", "type": "string", "enum": ["tip", "log", "warning", "error", "debug"], "description": "Message severity." },
-                    { "name": "line", "type": "integer", "description": "Line number in the resource that generated this message." },
-                    { "name": "url", "type": "string", "description": "URL of the message origin." },
-                    { "name": "repeatCount", "type": "integer", "description": "Repeat count for repeated messages." },
                     { "name": "text", "type": "string", "description": "Message text." },
+                    { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert"], "description": "Console message type." },
+                    { "name": "url", "type": "string", "optional": true, "description": "URL of the message origin." },
+                    { "name": "line", "type": "integer", "optional": true, "description": "Line number in the resource that generated this message." },
+                    { "name": "repeatCount", "type": "integer", "optional": true, "description": "Repeat count for repeated messages." },
                     { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." },
                     { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "optional": true, "description": "Message parameters in case of the formatted message." },
                     { "name": "stackTrace", "$ref": "StackTrace", "optional": true, "description": "JavaScript stack trace for assertions and error messages." }
@@ -430,9 +430,6 @@
         "commands": [
             {
                 "name": "enable",
-                "returns": [
-                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages dropped due to message threashold overflow." }
-                ],
                 "description": "Enables console domain, sends the messages collected so far to the client by means of the <code>messageAdded</code> notification." 
             },
             {

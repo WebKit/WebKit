@@ -30,7 +30,6 @@ request:
 response:
 {
     result : {
-        expiredMessagesCount : 0
     }
     id : <number>
 }
