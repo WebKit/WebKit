@@ -1,3 +1,9 @@
+2011-10-24  Adam Barth  <abarth@webkit.org>
+
+        Remove empty directory.
+
+        * p2p: Removed.
+
 2011-10-24  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor painting/updating/drawing code.
