@@ -38,6 +38,7 @@
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/RenderBoxModelObject.h>
 #include <WebCore/ScrollAnimator.h>
 #include <WebCore/ScrollbarTheme.h>
 
@@ -232,21 +233,14 @@ void BuiltInPDFView::destroy()
     destroyScrollbar(VerticalScrollbar);
 }
 
-void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRectInWindowCoordinates)
+void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
     scrollAnimator()->contentAreaWillPaint();
 
-    paintBackground(graphicsContext, dirtyRectInWindowCoordinates);
+    paintBackground(graphicsContext, dirtyRect);
 
     if (!m_pdfDocument) // FIXME: Draw loading progress.
         return;
-
-    GraphicsContextStateSaver stateSaver(*graphicsContext);
-
-    // Undo translation to window coordinates performed by PluginView::paint().
-    IntRect dirtyRect = pluginView()->parent()->windowToContents(dirtyRectInWindowCoordinates);
-    IntPoint documentOriginInWindowCoordinates = pluginView()->parent()->windowToContents(IntPoint());
-    graphicsContext->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
 
     paintContent(graphicsContext, dirtyRect);
     paintControls(graphicsContext, dirtyRect);
@@ -271,9 +265,8 @@ void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRec
 
     graphicsContext->clip(dirtyRect);
     IntRect contentRect(dirtyRect);
-    contentRect.moveBy(-pluginView()->location());
     contentRect.moveBy(IntPoint(m_scrollOffset));
-    graphicsContext->translate(pluginView()->x() - m_scrollOffset.width(), pluginView()->y() - m_scrollOffset.height());
+    graphicsContext->translate(-m_scrollOffset.width(), -m_scrollOffset.height());
 
     CGContextScaleCTM(context, 1, -1);
 
@@ -307,10 +300,18 @@ void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRec
 
 void BuiltInPDFView::paintControls(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
-    if (m_horizontalScrollbar)
-        m_horizontalScrollbar->paint(graphicsContext, dirtyRect);
-    if (m_verticalScrollbar)
-        m_verticalScrollbar->paint(graphicsContext, dirtyRect);
+    {
+        GraphicsContextStateSaver stateSaver(*graphicsContext);
+        IntRect scrollbarDirtyRect = dirtyRect;
+        scrollbarDirtyRect.moveBy(pluginView()->frameRect().location());
+        graphicsContext->translate(-pluginView()->frameRect().x(), -pluginView()->frameRect().y());
+
+        if (m_horizontalScrollbar)
+            m_horizontalScrollbar->paint(graphicsContext, scrollbarDirtyRect);
+
+        if (m_verticalScrollbar)
+            m_verticalScrollbar->paint(graphicsContext, scrollbarDirtyRect);
+    }
 
     IntRect dirtyCornerRect = intersection(scrollCornerRect(), dirtyRect);
     ScrollbarTheme::theme()->paintScrollCorner(0, graphicsContext, dirtyCornerRect);
@@ -531,6 +532,11 @@ bool BuiltInPDFView::handleScroll(ScrollDirection direction, ScrollGranularity g
     return scroll(direction, granularity);
 }
 
+bool BuiltInPDFView::wantsWindowRelativeCoordinates()
+{
+    return false;
+}
+
 Scrollbar* BuiltInPDFView::horizontalScrollbar()
 {
     return m_horizontalScrollbar.get();
@@ -654,6 +660,14 @@ void BuiltInPDFView::scrollbarStyleChanged()
     updateScrollbars();
 
     scrollAnimator()->contentsResized();
+}
+
+IntPoint BuiltInPDFView::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+{
+    IntPoint point = pluginView()->frame()->view()->convertToRenderer(pluginView()->renderer(), parentPoint);
+    point.move(pluginView()->location() - scrollbar->location());
+
+    return point;
 }
 
 } // namespace WebKit

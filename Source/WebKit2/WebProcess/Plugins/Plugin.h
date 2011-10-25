@@ -207,6 +207,10 @@ public:
     // Tells the plug-in that it should scroll. The plug-in should return true if it did scroll.
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) = 0;
 
+    // Whether the plug-in wants its coordinates to be relative to the window.
+    // FIXME: No plug-ins should want window relative coordinates, so we should get rid of this.
+    virtual bool wantsWindowRelativeCoordinates() = 0;
+
     // A plug-in can use WebCore scroll bars. Make them known, so that hit testing can find them.
     // FIXME: This code should be in PluginView or its base class, not in individual plug-ins.
     virtual WebCore::Scrollbar* horizontalScrollbar() = 0;

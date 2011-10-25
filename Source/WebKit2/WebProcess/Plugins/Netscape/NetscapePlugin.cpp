@@ -891,6 +891,11 @@ bool NetscapePlugin::handleScroll(ScrollDirection, ScrollGranularity)
     return false;
 }
 
+bool NetscapePlugin::wantsWindowRelativeCoordinates()
+{
+    return true;
+}
+
 Scrollbar* NetscapePlugin::horizontalScrollbar()
 {
     return 0;
