@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 6: Error: Problem parsing d="M0 0 A0 0 0 0 0 0 0 0 0 0"
+If this text is visible the malformed SVG path is handled correctly.
