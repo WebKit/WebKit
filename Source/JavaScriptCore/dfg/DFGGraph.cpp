@@ -222,6 +222,18 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
         hasPrinted = true;
     }
+    if (node.hasConstantBuffer() && codeBlock) {
+        if (hasPrinted)
+            printf(", ");
+        printf("%u:[", node.startConstant());
+        for (unsigned i = 0; i < node.numConstants(); ++i) {
+            if (i)
+                printf(", ");
+            printf("%s", codeBlock->constantBuffer(node.startConstant())[i].description());
+        }
+        printf("]");
+        hasPrinted = true;
+    }
     if (op == JSConstant) {
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         if (codeBlock) {

@@ -1,3 +1,25 @@
+2011-10-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Tiered compilation may introduce dangling pointers in constant buffers
+        https://bugs.webkit.org/show_bug.cgi?id=70854
+
+        Reviewed by Oliver Hunt.
+        
+        Tiered compilation now copies constant buffers, which fixes the regression in
+        https://bugs.webkit.org/show_bug.cgi?id=70246. No new tests because this
+        regression relies on a subtle interleaving of optimized compilation and garbage
+        collection, and cannot be reproduced in a simple test.
+        
+        This also adds some new debug support, which was used to fix this bug and is
+        likely to be useful in the future.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::copyDataFrom):
+        (JSC::CodeBlock::usesOpcode):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing Windows build after r98367

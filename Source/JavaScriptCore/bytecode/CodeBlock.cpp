@@ -1828,6 +1828,8 @@ void CodeBlock::copyDataFrom(CodeBlock* alternative)
     replaceExistingEntries(m_constantRegisters, alternative->m_constantRegisters);
     replaceExistingEntries(m_functionDecls, alternative->m_functionDecls);
     replaceExistingEntries(m_functionExprs, alternative->m_functionExprs);
+    if (!!m_rareData && !!alternative->m_rareData)
+        replaceExistingEntries(m_rareData->m_constantBuffers, alternative->m_rareData->m_constantBuffers);
 }
 
 void CodeBlock::copyDataFromAlternative()
@@ -1999,6 +2001,33 @@ void CodeBlock::dumpValueProfiles()
         RareCaseProfile* profile = specialFastCaseProfile(i);
         fprintf(stderr, "   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
+}
+#endif
+
+#ifndef NDEBUG
+bool CodeBlock::usesOpcode(OpcodeID opcodeID)
+{
+    Interpreter* interpreter = globalData()->interpreter;
+    Instruction* instructionsBegin = instructions().begin();
+    unsigned instructionCount = instructions().size();
+    
+    for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount; ) {
+        switch (interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
+#define DEFINE_OP(curOpcode, length)        \
+        case curOpcode:                     \
+            if (curOpcode == opcodeID)      \
+                return true;                \
+            bytecodeOffset += length;       \
+            break;
+            FOR_EACH_OPCODE_ID(DEFINE_OP)
+#undef DEFINE_OP
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    
+    return false;
 }
 #endif
 

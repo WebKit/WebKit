@@ -390,6 +390,10 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_instructions; }
         void discardBytecode() { m_instructions.clear(); }
 
+#ifndef NDEBUG
+        bool usesOpcode(OpcodeID);
+#endif
+
         unsigned instructionCount() { return m_instructionCount; }
         void setInstructionCount(unsigned instructionCount) { m_instructionCount = instructionCount; }
 
