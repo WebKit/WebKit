@@ -1664,10 +1664,9 @@ sub buildCMakeProjectOrExit($$$$@)
 {
     my ($clean, $port, $prefixPath, $makeArgs, @cmakeArgs) = @_;
     my $returnCode;
-    if ($clean) {
-        $returnCode = exitStatus(cleanCMakeGeneratedProject());
-        exit($returnCode) if $returnCode;
-    }
+
+    exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
+
     $returnCode = exitStatus(generateBuildSystemFromCMakeProject($port, $prefixPath, @cmakeArgs));
     exit($returnCode) if $returnCode;
     $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));

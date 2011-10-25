@@ -1,3 +1,17 @@
+2011-10-25  Daniel Bates  <dbates@rim.com>
+
+        build-webkit --clean should only clean build directory for CMake-based ports
+        https://bugs.webkit.org/show_bug.cgi?id=70834
+
+        Reviewed by Antonio Gomes.
+
+        Currently build-webkit --clean both cleans the build directory and builds WebKit for
+        CMake-based ports. Instead, build-webkit --clean should only clean up the build directory
+        as per its description in the usage message of build-webkit.
+
+        * Scripts/webkitdirs.pm:
+        (buildCMakeProjectOrExit):
+
 2011-10-25  Anna Cavender  <annacc@chromium.org>
 
         Enable running of track layout tests for Chromium
