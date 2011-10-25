@@ -1,3 +1,16 @@
+2011-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: redesign workers sidebar pane
+        https://bugs.webkit.org/show_bug.cgi?id=70815
+
+        Update tests in accord with change of class name from
+        styles-sidebar-pane to sidebar-pane.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpSelectedElementStyles):
+
 2011-10-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Debugger fails when there is an invalid watch expression.

@@ -579,7 +579,7 @@ WebInspector.StylesSidebarPane.prototype = {
             var styleRule = styleRules[i];
             if (styleRule.isStyleSeparator) {
                 var separatorElement = document.createElement("div");
-                separatorElement.className = "styles-sidebar-separator";
+                separatorElement.className = "sidebar-separator";
                 if (styleRule.node) {
                     var link = WebInspector.DOMPresentationUtils.linkifyNodeReference(styleRule.node);
                     separatorElement.appendChild(document.createTextNode(WebInspector.UIString("Inherited from") + " "));

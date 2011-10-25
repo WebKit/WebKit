@@ -169,3 +169,20 @@ iframe.view {
     color: black;
 }
 
+.sidebar-separator {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), color-stop(0.05, rgb(243, 243, 243)), color-stop(0.05, rgb(230, 230, 230)), to(rgb(209, 209, 209)));
+    padding: 0 5px;
+    border-top: 1px solid rgb(189, 189, 189);
+    border-bottom: 1px solid rgb(189, 189, 189);
+    color: rgb(110, 110, 110);
+    text-shadow: white 0 1px 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 11px;
+}
+
+.sidebar-label {
+    font-size: 11px;
+}
+

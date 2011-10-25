@@ -172,3 +172,16 @@
     cursor: default;
     overflow: auto;
 }
+
+.dedicated-worker-item {
+    margin: 5px 0px 5px 1px;
+}
+
+#shared-workers-list {
+    margin: 5px 0px 5px 20px;
+}
+
+#pause-workers-checkbox > input {
+    position: relative;
+    top: 2px;
+}

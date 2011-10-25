@@ -56,7 +56,8 @@ var Preferences = {
     canClearCacheAndCookies: false,
     canDisableCache: false,
     showNetworkPanelInitiatorColumn: false,
-    haveExtensions: false
+    haveExtensions: false,
+    sharedWorkersListURL: undefined
 }
 
 /**

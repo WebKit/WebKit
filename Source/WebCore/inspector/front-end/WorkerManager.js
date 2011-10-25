@@ -110,7 +110,6 @@ WebInspector.WorkerManager.Events = {
     WorkerAdded: "worker-added",
     WorkerRemoved: "worker-removed",
     WorkersCleared: "workers-cleared",
-    WorkerInspectorClosed: "worker-inspector-closed"
 }
 
 WebInspector.WorkerManager.prototype = {
@@ -136,6 +135,12 @@ WebInspector.WorkerManager.prototype = {
 
     openWorkerInspector: function(workerId)
     {
+        var existingInspector = this._workerIdToWindow[workerId];
+        if (existingInspector) {
+            existingInspector.focus();
+            return;
+        }
+
         this._openInspectorWindow(workerId, false);
         WorkerAgent.connectToWorker(workerId);
     },
@@ -185,7 +190,6 @@ WebInspector.WorkerManager.prototype = {
             return;
         delete this._workerIdToWindow[workerId];
         WorkerAgent.disconnectFromWorker(workerId);
-        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerInspectorClosed, workerId);
     }
 }
 

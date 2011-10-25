@@ -1,3 +1,41 @@
+2011-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: redesign workers sidebar pane
+        https://bugs.webkit.org/show_bug.cgi?id=70815
+
+        Changed workers sidebar pane design.
+
+        Now there is a link to worker inspector for each dedicated worker created
+        by inspected page. The sidebar display a link to a page with list of all
+        shared workers if there one is supported by the WebKit port. Also there
+        is a checkbox that allows pause all new workers on first statements.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype.openWorkerInspector):
+        (WebInspector.WorkerManager.prototype._workerInspectorClosing):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkerListSidebarPane):
+        (WebInspector.WorkerListSidebarPane.prototype._workerRemoved):
+        (WebInspector.WorkerListSidebarPane.prototype._workersCleared):
+        (WebInspector.WorkerListSidebarPane.prototype._addWorker):
+        (WebInspector.WorkerListSidebarPane.prototype._workerItemClicked):
+        (WebInspector.WorkerListSidebarPane.prototype._autoattachToWorkersClicked):
+        (WebInspector.WorkerListSidebarPane.prototype._createSharedWorkersLink.link.onclick):
+        (WebInspector.WorkerListSidebarPane.prototype._createSharedWorkersLink):
+        * inspector/front-end/elementsPanel.css:
+        * inspector/front-end/inspectorCommon.css:
+        (.sidebar-separator):
+        (.sidebar-label):
+        * inspector/front-end/scriptsPanel.css:
+        (.dedicated-worker-item):
+        (#shared-workers-list):
+        (#pause-workers-checkbox > input):
+
 2011-10-25  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Fix an ODR violation.
