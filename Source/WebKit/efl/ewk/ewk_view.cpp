@@ -82,6 +82,43 @@ static const size_t EWK_VIEW_SCROLLS_SIZE_INITIAL = 8;
 static const size_t EWK_VIEW_SCROLLS_SIZE_STEP = 2;
 static const size_t EWK_VIEW_SCROLLS_SIZE_MAX_FREE = 32;
 
+static const Evas_Smart_Cb_Description _ewk_view_callback_names[] = {
+    { "download,request", "p" },
+    { "editorclient,contents,changed", "" },
+    { "editorclient,selection,changed", "" },
+    { "frame,created", "p" },
+    { "icon,received", "" },
+    { "inputmethod,changed", "b" },
+    { "js,windowobject,clear", "" },
+    { "link,hover,in", "p" },
+    { "link,hover,out", "" },
+    { "load,document,finished", "p" },
+    { "load,error", "p" },
+    { "load,finished", "p" },
+    { "load,newwindow,show", "" },
+    { "load,progress", "d" },
+    { "load,provisional", "" },
+    { "load,started", "" },
+    { "menubar,visible,get", "b" },
+    { "menubar,visible,set", "b" },
+    { "popup,created", "p" },
+    { "popup,willdelete", "p" },
+    { "ready", "" },
+    { "scrollbars,visible,get", "b" },
+    { "scrollbars,visible,set", "b" },
+    { "statusbar,text,set", "s" },
+    { "statusbar,visible,get", "b" },
+    { "statusbar,visible,set", "b" },
+    { "title,changed", "s" },
+    { "toolbars,visible,get", "b" },
+    { "toolbars,visible,set", "b" },
+    { "tooltip,text,set", "s" },
+    { "uri,changed", "s" },
+    { "view,resized", "" },
+    { "zoom,animated,end", "" },
+    { 0, 0 }
+};
+
 /**
  * @brief Private data that is used internally by EFL WebKit
  * and should never be modified from outside.
@@ -1093,6 +1130,7 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->sc.show = _ewk_view_smart_show;
     api->sc.hide = _ewk_view_smart_hide;
     api->sc.data = EWK_VIEW_TYPE_STR; /* used by type checking */
+    api->sc.callbacks = _ewk_view_callback_names;
 
     api->contents_resize = _ewk_view_smart_contents_resize;
     api->zoom_set = _ewk_view_smart_zoom_set;
