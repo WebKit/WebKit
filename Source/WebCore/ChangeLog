@@ -1,3 +1,10 @@
+2011-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r98300.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+
 2011-10-24  Anders Carlsson  <andersca@apple.com>
 
         It should be possible for Widget subclasses to control whether transforms affect the frame rect

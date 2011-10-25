@@ -1812,7 +1812,6 @@ HEADERS += \
     html/LoadableTextTrack.h \
     html/MediaDocument.h \
     html/MicroDataItemValue.h \
-    html/MutableTextTrack.h \
     html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \

@@ -5559,8 +5559,6 @@
             'html/MediaError.h',
             'html/MicroDataItemValue.cpp',
             'html/MicroDataItemValue.h',
-            'html/MutableTextTrack.cpp',
-            'html/MutableTextTrack.h',
             'html/MonthInputType.cpp',
             'html/MonthInputType.h',
             'html/NumberInputType.cpp',
