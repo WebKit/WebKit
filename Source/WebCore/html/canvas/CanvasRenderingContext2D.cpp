@@ -929,14 +929,6 @@ void CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode()
 }
 #endif
 
-static bool isFullCanvasCompositeMode(CompositeOperator op)
-{
-    // See 4.8.11.1.3 Compositing
-    // CompositeSourceAtop and CompositeDestinationOut are not listed here as the platforms already
-    // implement the specification's behavior.
-    return op == CompositeSourceIn || op == CompositeSourceOut || op == CompositeDestinationIn || op == CompositeDestinationAtop;
-}
-
 void CanvasRenderingContext2D::fill()
 {
     GraphicsContext* c = drawingContext();
@@ -946,8 +938,8 @@ void CanvasRenderingContext2D::fill()
         return;
 
     if (!m_path.isEmpty()) {
-        if (isFullCanvasCompositeMode(state().m_globalComposite))
-            fullCanvasCompositedFill(m_path);
+        if (shouldDisplayTransparencyElsewhere())
+            fillAndDisplayTransparencyElsewhere(m_path);
         else if (state().m_globalComposite == CompositeCopy) {
             clearCanvas();
             c->fillPath(m_path);
@@ -1052,8 +1044,8 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 
     FloatRect rect(x, y, width, height);
 
-    if (isFullCanvasCompositeMode(state().m_globalComposite))
-        fullCanvasCompositedFill(rect);
+    if (shouldDisplayTransparencyElsewhere())
+        fillAndDisplayTransparencyElsewhere(rect);
     else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
         c->fillRect(rect);
@@ -1330,17 +1322,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     checkOrigin(image);
 
-    if (isFullCanvasCompositeMode(op)) {
-        fullCanvasCompositedDrawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
-        didDraw(FloatRect(FloatPoint::zero(), canvas()->size()), CanvasDidDrawApplyClip);
-    } else if (op == CompositeCopy) {
-        clearCanvas();
-        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
-        didDraw(FloatRect(FloatPoint::zero(), canvas()->size()), CanvasDidDrawApplyClip);
-    } else {
-        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
-        didDraw(normalizedDstRect);
-    }
+    c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+    didDraw(normalizedDstRect);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y, ExceptionCode& ec)
@@ -1528,6 +1511,15 @@ void CanvasRenderingContext2D::clearCanvas()
     c->restore();
 }
 
+bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
+{
+    // See 4.8.11.1.3 Compositing
+    // CompositeSourceAtop and CompositeDestinationOut are not listed here as the platforms already
+    // implement the specification's behavior.
+    return state().m_globalComposite == CompositeSourceIn || state().m_globalComposite == CompositeSourceOut
+           || state().m_globalComposite == CompositeDestinationIn || state().m_globalComposite == CompositeDestinationAtop;
+}
+
 Path CanvasRenderingContext2D::transformAreaToDevice(const Path& path) const
 {
     Path transformed(path);
@@ -1543,29 +1535,31 @@ Path CanvasRenderingContext2D::transformAreaToDevice(const FloatRect& rect) cons
     return transformAreaToDevice(path);
 }
 
-template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRect(const T& area, IntSize* croppedOffset)
+template<class T> void CanvasRenderingContext2D::fillAndDisplayTransparencyElsewhere(const T& area)
 {
+    ASSERT(shouldDisplayTransparencyElsewhere());
+
     IntRect canvasRect(0, 0, canvas()->width(), canvas()->height());
     canvasRect = canvas()->baseTransform().mapRect(canvasRect);
     Path path = transformAreaToDevice(area);
     IntRect bufferRect = enclosingIntRect(path.boundingRect());
-    IntPoint originalLocation = bufferRect.location();
     bufferRect.intersect(canvasRect);
-    if (croppedOffset)
-        *croppedOffset = originalLocation - bufferRect.location();
-    return bufferRect;
-}
 
-PassOwnPtr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
-{
+    if (bufferRect.isEmpty()) {
+        clearCanvas();
+        return;
+    }
+
+    path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
+
     RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
-    return ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
-}
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
+    if (!buffer)
+        return;
 
-void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRect& bufferRect, CompositeOperator op)
-{
-    IntRect canvasRect(0, 0, canvas()->width(), canvas()->height());
-    canvasRect = canvas()->baseTransform().mapRect(canvasRect);
+    buffer->context()->setCompositeOperation(CompositeSourceOver);
+    state().m_fillStyle->applyFillColor(buffer->context());
+    buffer->context()->fillPath(path);
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1573,70 +1567,14 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRec
 
     c->save();
     c->setCTM(AffineTransform());
-    c->setCompositeOperation(op);
 
     c->save();
     c->clipOut(bufferRect);
     c->clearRect(canvasRect);
     c->restore();
 
-    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, bufferRect.location(), state().m_globalComposite);
+    c->drawImageBuffer(buffer.get(), ColorSpaceDeviceRGB, bufferRect.location(), state().m_globalComposite);
     c->restore();
-}
-
-void CanvasRenderingContext2D::fullCanvasCompositedDrawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
-{
-    ASSERT(isFullCanvasCompositeMode(op));
-
-    IntSize croppedOffset;
-    IntRect bufferRect = calculateCompositingBufferRect(dest, &croppedOffset);
-    if (bufferRect.isEmpty()) {
-        clearCanvas();
-        return;
-    }
-
-    OwnPtr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
-    if (!buffer)
-        return;
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
-    FloatRect adjustedDest = dest;
-    adjustedDest.setLocation(FloatPoint(0, 0));
-    AffineTransform effectiveTransform = c->getCTM();
-    IntRect transformedAdjustedRect = enclosingIntRect(effectiveTransform.mapRect(adjustedDest));
-    buffer->context()->translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
-    buffer->context()->translate(croppedOffset.width(), croppedOffset.height());
-    buffer->context()->concatCTM(effectiveTransform);
-    buffer->context()->drawImage(image, styleColorSpace, adjustedDest, src, CompositeSourceOver);
-
-    compositeBuffer(buffer.get(), bufferRect, op);
-}
-
-template<class T> void CanvasRenderingContext2D::fullCanvasCompositedFill(const T& area)
-{
-    ASSERT(isFullCanvasCompositeMode(state().m_globalComposite));
-
-    IntRect bufferRect = calculateCompositingBufferRect(area, 0);
-    if (bufferRect.isEmpty()) {
-        clearCanvas();
-        return;
-    }
-
-    OwnPtr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
-    if (!buffer)
-        return;
-
-    Path path = transformAreaToDevice(area);
-    path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
-
-    buffer->context()->setCompositeOperation(CompositeSourceOver);
-    state().m_fillStyle->applyFillColor(buffer->context());
-    buffer->context()->fillPath(path);
-
-    compositeBuffer(buffer.get(), bufferRect, state().m_globalComposite);
 }
 
 void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const

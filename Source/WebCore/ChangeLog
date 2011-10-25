@@ -1,3 +1,19 @@
+2011-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98309.
+        http://trac.webkit.org/changeset/98309
+        https://bugs.webkit.org/show_bug.cgi?id=70801
+
+        Test fails on mac (Requested by benwells on #webkit).
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere):
+        (WebCore::CanvasRenderingContext2D::fillAndDisplayTransparencyElsewhere):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-10-24  Geoffrey Garen  <ggaren@apple.com>
 
         Chromium build fix: #include window.h for HANDLE.
