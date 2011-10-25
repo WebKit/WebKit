@@ -38,6 +38,7 @@
 namespace WebCore { class Node; }
 
 namespace WebKit {
+class WebDOMEvent;
 class WebDOMEventListener;
 class WebDOMEventListenerPrivate;
 class WebDocument;
@@ -103,6 +104,7 @@ public:
     WEBKIT_EXPORT bool isElementNode() const;
     WEBKIT_EXPORT void addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
     WEBKIT_EXPORT void removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
+    WEBKIT_EXPORT bool dispatchEvent(const WebDOMEvent&);
     WEBKIT_EXPORT void simulateClick();
     WEBKIT_EXPORT WebNodeList getElementsByTagName(const WebString&) const;
 

@@ -69,6 +69,11 @@ WebDOMEvent::WebDOMEvent(const WTF::PassRefPtr<WebCore::Event>& event)
 {
 }
 
+WebDOMEvent::operator WTF::PassRefPtr<WebCore::Event>() const
+{
+    return static_cast<WebCore::Event*>(m_private);
+}
+
 WebString WebDOMEvent::type() const
 {
     ASSERT(m_private);

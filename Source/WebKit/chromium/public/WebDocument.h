@@ -103,6 +103,7 @@ public:
     WEBKIT_EXPORT WebDocumentType doctype() const;
     WEBKIT_EXPORT void cancelFullScreen();
     WEBKIT_EXPORT WebElement fullScreenElement() const;
+    WEBKIT_EXPORT WebDOMEvent createEvent(const WebString& eventType);
 
     // Accessibility support. These methods should only be called on the
     // top-level document, because one accessibility cache spans all of

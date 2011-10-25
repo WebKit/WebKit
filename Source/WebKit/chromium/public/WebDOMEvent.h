@@ -95,6 +95,7 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebDOMEvent(const WTF::PassRefPtr<WebCore::Event>&);
+    operator WTF::PassRefPtr<WebCore::Event>() const;
 #endif
 
     template<typename T> T to()

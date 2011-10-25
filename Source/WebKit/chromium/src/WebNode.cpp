@@ -184,6 +184,13 @@ void WebNode::removeEventListener(const WebString& eventType, WebDOMEventListene
     // listenerWrapper is now deleted.
 }
 
+bool WebNode::dispatchEvent(const WebDOMEvent& event)
+{
+    if (!event.isNull())
+        return m_private->dispatchEvent(event);
+    return false;
+}
+
 void WebNode::simulateClick()
 {
     RefPtr<Event> noEvent;

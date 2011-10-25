@@ -1,3 +1,29 @@
+2011-10-25  Dave Michael  <dmichael@chromium.org>
+
+        Make it possible to create and dispatch a message event through chromium API
+
+        Removed messageChannels parameter, since it's hard to get right and I don't need it. Changed message_data->messageData. Reordered includes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=69962
+
+        Reviewed by David Levin.
+
+        * WebKit.gyp:
+        * public/WebDOMEvent.h:
+        * public/WebDOMMessageEvent.h: Added.
+        * public/WebDocument.h:
+        * public/WebNode.h:
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::hasPendingActivity):
+        * src/WebDOMEvent.cpp:
+        (WebKit::WebDOMEvent::operator WTF::PassRefPtr<WebCore::Event>):
+        * src/WebDOMMessageEvent.cpp: Added.
+        (WebKit::WebDOMMessageEvent::initMessageEvent):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::createEvent):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::dispatchEvent):
+
 2011-10-25  Gene Girard  <girard@chromium.org>
 
         Re-enable touch tests (from 66577)
