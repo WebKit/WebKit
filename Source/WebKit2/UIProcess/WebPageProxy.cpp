@@ -593,7 +593,45 @@ void WebPageProxy::shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGo
     WebBackForwardListItem* item = process()->webBackForwardItem(itemID);
     shouldGoToBackForwardItem = item && m_loaderClient.shouldGoToBackForwardListItem(this, item);
 }
-    
+
+String WebPageProxy::activeURL() const
+{
+    if (!m_mainFrame)
+        return String();
+
+    // If there is a currently pending url, it is the active URL.
+    if (!m_pendingAPIRequestURL.isNull())
+        return m_pendingAPIRequestURL;
+
+    // FIXME: What do we do in the case of the unreachable URL?
+
+    switch (m_mainFrame->loadState()) {
+    case WebFrameProxy::LoadStateProvisional:
+        return m_mainFrame->provisionalURL();
+    case WebFrameProxy::LoadStateCommitted:
+    case WebFrameProxy::LoadStateFinished:
+        return m_mainFrame->url();
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+String WebPageProxy::provisionalURL() const
+{
+    if (!m_mainFrame)
+        return String();
+    return m_mainFrame->provisionalURL();
+}
+
+String WebPageProxy::committedURL() const
+{
+    if (!m_mainFrame)
+        return String();
+
+    return m_mainFrame->url();
+}
+
 bool WebPageProxy::canShowMIMEType(const String& mimeType) const
 {
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))

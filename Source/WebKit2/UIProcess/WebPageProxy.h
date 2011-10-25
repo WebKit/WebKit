@@ -251,6 +251,10 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
 
+    String activeURL() const;
+    String provisionalURL() const;
+    String committedURL() const;
+
     bool willHandleHorizontalScrollEvents() const;
 
     bool canShowMIMEType(const String& mimeType) const;

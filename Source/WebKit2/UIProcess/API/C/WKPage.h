@@ -323,6 +323,10 @@ WK_EXPORT WKStringRef WKPageCopyTitle(WKPageRef page);
 
 WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef page);
 
+WK_EXPORT WKURLRef WKPageCopyActiveURL(WKPageRef page);
+WK_EXPORT WKURLRef WKPageCopyProvisionalURL(WKPageRef page);
+WK_EXPORT WKURLRef WKPageCopyCommittedURL(WKPageRef page);
+
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);
 WK_EXPORT WKFrameRef WKPageGetFocusedFrame(WKPageRef page); // The focused frame may be inactive.
 WK_EXPORT WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef page);

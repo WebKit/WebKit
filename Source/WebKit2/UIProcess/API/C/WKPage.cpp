@@ -506,6 +506,21 @@ WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
     return toCopiedURLAPI(toImpl(pageRef)->pendingAPIRequestURL());
 }
 
+WKURLRef WKPageCopyActiveURL(WKPageRef pageRef)
+{
+    return toCopiedURLAPI(toImpl(pageRef)->activeURL());
+}
+
+WKURLRef WKPageCopyProvisionalURL(WKPageRef pageRef)
+{
+    return toCopiedURLAPI(toImpl(pageRef)->provisionalURL());
+}
+
+WKURLRef WKPageCopyCommittedURL(WKPageRef pageRef)
+{
+    return toCopiedURLAPI(toImpl(pageRef)->committedURL());
+}
+
 void WKPageSetDebugPaintFlags(WKPageDebugPaintFlags flags)
 {
     WebPageProxy::setDebugPaintFlags(flags);

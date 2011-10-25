@@ -144,30 +144,18 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 - (NSURL *)activeURL
 {
-    /* FIXME: Implement. */
-    return nil;
-}
-
-- (NSURL *)pendingURL
-{
-    return autoreleased(WKPageCopyPendingAPIRequestURL(self.pageRef));
+    return autoreleased(WKPageCopyActiveURL(self.pageRef));
 }
 
 - (NSURL *)provisionalURL
 {
-    return autoreleased(WKFrameCopyProvisionalURL(WKPageGetMainFrame(self.pageRef)));
+    return autoreleased(WKPageCopyProvisionalURL(self.pageRef));
 }
 
-- (NSURL *)commitedURL
+- (NSURL *)committedURL
 {
-    return autoreleased(WKFrameCopyURL(WKPageGetMainFrame(self.pageRef)));
+    return autoreleased(WKPageCopyCommittedURL(self.pageRef));
 }
-
-- (NSURL *)unreachableURL
-{
-    return autoreleased(WKFrameCopyUnreachableURL(WKPageGetMainFrame(self.pageRef)));
-}
-
 
 #pragma mark Active Document Introspection
 

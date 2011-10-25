@@ -1,5 +1,40 @@
 2011-10-24  Sam Weinig  <sam@webkit.org>
 
+        Simplify url accessors on WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=70797
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyActiveURL):
+        (WKPageCopyProvisionalURL):
+        (WKPageCopyCommittedURL):
+        * UIProcess/API/C/WKPage.h:
+        Add accessors to C SPI.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        Remove unreachableURL accessor for now. It may make a glorious return when we have
+        error page support.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController activeURL]):
+        (-[WKBrowsingContextController provisionalURL]):
+        (-[WKBrowsingContextController committedURL]):
+        Implement these in terms of the new C SPI.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activeURL):
+        Add computation of the "active" URL, which is the URL one would show
+        in an address field. It is the pending URL when there is one, the provisional
+        URL when there is one, and otherwise the committed/final URL.
+
+        (WebKit::WebPageProxy::provisionalURL):
+        (WebKit::WebPageProxy::committedURL):
+        Add access to the main frame URL.
+        * UIProcess/WebPageProxy.h:
+
+2011-10-24  Sam Weinig  <sam@webkit.org>
+
         Hook up minimalist load delegate to WKBrowsingContextController
         https://bugs.webkit.org/show_bug.cgi?id=70764
 
