@@ -58,7 +58,9 @@ void QtTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, b
         m_panGestureRecognizer.reset();
         m_pinchGestureRecognizer.reset();
     } else {
-        m_panGestureRecognizer.recognize(event.nativeEvent());
+        // Convert the event timestamp from second to millisecond.
+        qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
+        m_panGestureRecognizer.recognize(event.nativeEvent(), eventTimestampMillis);
         m_pinchGestureRecognizer.recognize(event.nativeEvent());
     }
 }

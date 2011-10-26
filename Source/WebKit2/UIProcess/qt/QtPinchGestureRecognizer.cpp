@@ -96,7 +96,7 @@ bool QtPinchGestureRecognizer::recognize(const QTouchEvent* event)
                 if (pinchDistance < pinchInitialTriggerDistanceThreshold)
                     return false;
                 m_state = GestureRecognized;
-                m_viewportInteractionEngine->pinchGestureStarted();
+                m_viewportInteractionEngine->pinchGestureStarted(computeTouchCenter(point1, point2));
 
                 // We reset the initial position to the previous position in order to avoid the jump caused
                 // by skipping all the events between the beginning and when the threshold is hit.

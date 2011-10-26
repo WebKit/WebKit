@@ -1,3 +1,54 @@
+2011-10-25  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Add the animations on the ViewportInteractionEngine
+        https://bugs.webkit.org/show_bug.cgi?id=66664
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Introduce a QScroller based panning and a QVariantAnimation based scale animation.
+        QScroller also handles flick gestures and animates overshoot.
+        If a pinch gesture ends, the scale animation will scale and reposition the content
+        such that it is within valid boundaries. The content is by default animated such
+        that the content position as seen in the center of the visible viewport stays
+        in the center, unless the content would be out of valid bounds.
+        The patch also simplifies the ViewportUpdateGuard by using reference counting
+        instead of a boolean for defering update requests.
+
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtTouchWebPageProxy.cpp:
+        (QtTouchWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::bindToScaleLimits):
+        (WebKit::ViewportUpdateGuard::ViewportUpdateGuard):
+        (WebKit::ViewportUpdateGuard::~ViewportUpdateGuard):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::innerBoundedScale):
+        (WebKit::QtViewportInteractionEngine::outerBoundedScale):
+        (WebKit::QtViewportInteractionEngine::updateVisibleRect):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::stopAnimations):
+        (WebKit::QtViewportInteractionEngine::calculateBoundariesForScale):
+        (WebKit::QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::setConstraints):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::contentViewportChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit::QtViewportInteractionEngine::scroller):
+        (WebKit::QtViewportInteractionEngine::ScaleAnimation::ScaleAnimation):
+        (WebKit::QtViewportInteractionEngine::ScaleAnimation::updateCurrentValue):
+
 2011-10-26  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] Rewrite MiniBrowser in QML

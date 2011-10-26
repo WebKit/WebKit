@@ -37,7 +37,7 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtViewportInteractionEngine* inte
     reset();
 }
 
-bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
+bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
     // Pan gesture always starts on TouchBegin unless the engine is suspended.
     if (m_state == NoGesture && event->type() != QEvent::TouchBegin)
@@ -58,6 +58,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
         ASSERT(m_state == NoGesture);
         m_state = GestureRecognitionStarted;
         m_firstPosition = touchPoint.screenPos();
+        m_viewportInteractionEngine->stopAnimations();
         return false;
     case QEvent::TouchUpdate: {
         ASSERT(m_state != NoGesture);
@@ -69,18 +70,16 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
                 return false;
 
             m_state = GestureRecognized;
-            m_viewportInteractionEngine->panGestureStarted();
+            m_viewportInteractionEngine->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
         }
 
         ASSERT(m_state == GestureRecognized);
-        // Offset sent to the views must be in page view coordinate space.
-        QPointF offsetSinceLastEvent(touchPoint.pos() - touchPoint.lastPos());
-        m_viewportInteractionEngine->panGestureRequestUpdate(offsetSinceLastEvent.x(), offsetSinceLastEvent.y());
+        m_viewportInteractionEngine->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
         return true;
     }
     case QEvent::TouchEnd:
         if (m_state == GestureRecognized) {
-            m_viewportInteractionEngine->panGestureEnded();
+            m_viewportInteractionEngine->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
             reset();
             return true;
         }

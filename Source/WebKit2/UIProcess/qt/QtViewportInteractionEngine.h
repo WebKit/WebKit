@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +23,11 @@
 #define QtViewportInteractionEngine_h
 
 #include "OwnPtr.h"
+#include <QScroller>
 #include "qwebkitglobal.h"
 #include <QtCore/QObject>
+#include <QtCore/QVariant>
+#include <QtCore/QVariantAnimation>
 
 QT_BEGIN_NAMESPACE
 class QPointF;
@@ -41,6 +45,7 @@ public:
     QtViewportInteractionEngine(const QSGItem*, QSGItem*);
     ~QtViewportInteractionEngine();
 
+
     struct Constraints {
         Constraints()
             : initialScale(1.0)
@@ -55,17 +60,20 @@ public:
         bool isUserScalable;
     };
 
+    bool event(QEvent*);
+
     void reset();
     void setConstraints(const Constraints&);
 
-    void panGestureStarted();
-    void panGestureRequestUpdate(qreal deltaX, qreal deltaY);
+    void panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis);
+    void panGestureRequestUpdate(const QPointF& touchPoint, qint64 eventTimestampMillis);
     void panGestureCancelled();
-    void panGestureEnded();
+    void panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis);
 
-    void pinchGestureStarted();
+    void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinate);
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor);
     void pinchGestureEnded();
+    void stopAnimations();
 
 Q_SIGNALS:
     void viewportUpdateRequested();
@@ -74,17 +82,19 @@ Q_SIGNALS:
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
     void contentViewportChanged();
+    void updateVisibleRect(QVariant visibleRectVariant);
+    void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
 
 private:
-    void updateContentIfNeeded();
-    void updateContentScaleIfNeeded();
-    void updateContentPositionIfNeeded();
-
+    qreal innerBoundedScale(qreal scale);
+    qreal outerBoundedScale(qreal scale);
+    const QRectF calculateBoundariesForScale(const QSizeF contentSize, const QSizeF viewportSize, qreal scale);
     void animateContentIntoBoundariesIfNeeded();
-    void animateContentPositionIntoBoundariesIfNeeded();
-    void animateContentScaleIntoBoundariesIfNeeded();
 
     void scaleContent(const QPointF& centerInContentCoordinate, qreal scale);
+
+    // As long as the object exists this function will always return the same QScroller instance.
+    QScroller* scroller() { return QScroller::scroller(this); }
 
     friend class ViewportUpdateGuard;
 
@@ -92,16 +102,28 @@ private:
     QSGItem* const m_content;
 
     Constraints m_constraints;
-    bool m_isUpdatingContent;
+    int m_pendingUpdates;
     OwnPtr<ViewportUpdateGuard> m_pinchViewportUpdateDeferrer;
     enum UserInteractionFlag {
         UserHasNotInteractedWithContent = 0,
         UserHasMovedContent = 1,
-        UserHasScaledContent = 2
+        UserHasScaledContent = 2,
+        UserHasStoppedAnimations = 4
     };
     Q_DECLARE_FLAGS(UserInteractionFlags, UserInteractionFlag);
     UserInteractionFlags m_userInteractionFlags;
 
+    class ScaleAnimation : public QVariantAnimation {
+    public:
+        ScaleAnimation(QObject* parent = 0)
+            : QVariantAnimation(parent)
+        { }
+
+        virtual void updateCurrentValue(const QVariant&) { }
+    };
+
+    ScaleAnimation* m_scaleAnimation;
+    QPointF m_lastPinchCenterInViewportCoordinates;
     qreal m_pinchStartScale;
 };
 
