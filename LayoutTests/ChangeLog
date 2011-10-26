@@ -1,5 +1,11 @@
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Revert change to test_expectations.txt due to test failures.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Mark compositing/video/video-poster.html as timing out on Mac10.6 GPU.
 
         * platform/chromium/test_expectations.txt:
