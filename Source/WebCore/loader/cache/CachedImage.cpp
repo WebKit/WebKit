@@ -34,6 +34,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
+#include "RenderObject.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/CurrentTime.h>
@@ -130,26 +131,75 @@ bool CachedImage::willPaintBrokenImage() const
     return errorOccurred() && m_shouldPaintBrokenImage;
 }
 
-Image* CachedImage::lookupImageForSize(const IntSize& size) const
+#if ENABLE(SVG)
+inline Image* CachedImage::lookupImageForSize(const IntSize& size) const
 {
-    // FIXME: Add logic for this in webkit.org/b/47156.
-    UNUSED_PARAM(size);
+    if (!m_image)
+        return 0;
+    if (!m_image->isSVGImage())
+        return m_image.get();
+    if (Image* image = m_svgImageCache.imageForSize(size))
+        return image;
     return m_image.get();
 }
 
-Image* CachedImage::lookupImageForRenderer(const RenderObject* renderer) const
+inline Image* CachedImage::lookupImageForRenderer(const RenderObject* renderer) const
 {
-    // FIXME: Add logic for this in webkit.org/b/47156.
-    UNUSED_PARAM(renderer);
+    if (!m_image)
+        return 0;
+    if (!m_image->isSVGImage())
+        return m_image.get();
+    if (Image* image = m_svgImageCache.imageForRenderer(renderer))
+        return image;
     return m_image.get();
 }
 
-PassRefPtr<Image> CachedImage::lookupOrCreateImageForRenderer(const RenderObject* renderer)
+inline PassRefPtr<Image> createSVGImage(CachedImage* image, const IntSize& size, SharedBuffer* data)
 {
-    // FIXME: Add logic for this in webkit.org/b/47156.
-    UNUSED_PARAM(renderer);
+    if (size.isEmpty() || !data)
+        return SVGImage::create(image);
+
+    RefPtr<Image> newImage = SVGImage::create(image);
+    newImage->setData(data, true);
+    newImage->setContainerSize(size);
+    return newImage.release();
+}
+
+inline PassRefPtr<Image> CachedImage::lookupOrCreateImageForRenderer(const RenderObject* renderer)
+{
+    if (!m_image)
+        return 0;
+    if (!m_image->isSVGImage())
+        return m_image;
+
+    IntSize size;
+    if (Image* result = m_svgImageCache.imageForRenderer(renderer, &size))
+        return result;
+
+    if (size.isEmpty())
+        return m_image;
+
+    // Create and cache new image at desired size.
+    RefPtr<Image> newImage = createSVGImage(this, size, m_data.get());
+    m_svgImageCache.putImage(size, newImage);
+    return newImage.release();
+}
+#else
+inline Image* CachedImage::lookupImageForSize(const IntSize&) const
+{
+    return m_image.get();
+}
+
+inline Image* CachedImage::lookupImageForRenderer(const RenderObject*) const
+{
+    return m_image.get();
+}
+
+inline PassRefPtr<Image> CachedImage::lookupOrCreateImageForRenderer(const RenderObject*)
+{
     return m_image;
 }
+#endif
 
 Image* CachedImage::image()
 {
@@ -185,14 +235,26 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     return Image::nullImage();
 }
 
-void CachedImage::setContainerSizeForRenderer(const RenderObject* renderer, const IntSize& containerSize)
+void CachedImage::setContainerSizeForRenderer(const RenderObject* renderer, const IntSize& containerSize, float containerZoom)
 {
     if (!m_image)
         return;
+#if ENABLE(SVG)
+    if (!m_image->isSVGImage()) {
+        m_image->setContainerSize(containerSize);
+        return;
+    }
+    m_svgImageCache.setClient(renderer, containerSize);
 
-    // FIXME: Add logic for this in webkit.org/b/47156.
+    Image* image = lookupOrCreateImageForRenderer(renderer).get();
+    if (image && image != m_image) {
+        ASSERT(image->isSVGImage());
+        static_cast<SVGImage*>(image)->setContainerZoom(containerZoom);
+    }
+#else
     UNUSED_PARAM(renderer);
     m_image->setContainerSize(containerSize);
+#endif
 }
 
 bool CachedImage::usesImageContainerSize() const
@@ -223,9 +285,14 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
 {
     ASSERT(!isPurgeable());
 
-    Image* image = lookupImageForRenderer(renderer);
-    if (!image)
+    if (!m_image)
         return IntSize();
+#if ENABLE(SVG)
+    // SVGImages already includes the zooming in its intrinsic size.
+    if (m_image->isSVGImage())
+        return lookupImageForRenderer(renderer)->size();
+#endif
+
     if (multiplier == 1.0f)
         return m_image->size();
         
@@ -241,10 +308,28 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     return IntSize(width, height);
 }
 
-void CachedImage::computeIntrinsicDimensions(const RenderObject* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    if (Image* image = lookupImageForRenderer(renderer))
-        image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    if (m_image)
+        m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+}
+
+void CachedImage::addClientForRenderer(RenderObject* renderer)
+{
+    ASSERT(renderer);
+#if ENABLE(SVG)
+    m_svgImageCache.addClient(renderer, IntSize());
+#endif
+    addClient(renderer);
+}
+
+void CachedImage::removeClientForRenderer(RenderObject* renderer)
+{
+    ASSERT(renderer);
+#if ENABLE(SVG)
+    m_svgImageCache.removeClient(renderer);
+#endif
+    removeClient(renderer);
 }
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
@@ -284,7 +369,7 @@ inline void CachedImage::createImage()
 #endif
 #if ENABLE(SVG)
     if (m_response.mimeType() == "image/svg+xml") {
-        m_image = SVGImage::create(this);
+        m_image = createSVGImage(this, IntSize(), 0);
         return;
     }
 #endif

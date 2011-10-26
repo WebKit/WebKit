@@ -60,4 +60,18 @@ void RenderImageResourceStyleImage::shutdown()
     m_cachedImage = 0;
 }
 
+PassRefPtr<Image> RenderImageResourceStyleImage::image(int width, int height) const
+{
+    // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
+    if (m_styleImage->isPendingImage())
+        return 0;
+    return m_styleImage->image(m_renderer, IntSize(width, height));
+}
+
+void RenderImageResourceStyleImage::setContainerSizeForRenderer(const IntSize& size)
+{
+    ASSERT(m_renderer);
+    m_styleImage->setContainerSizeForRenderer(m_renderer, size, m_renderer->style()->effectiveZoom());
+}
+
 } // namespace WebCore

@@ -54,15 +54,16 @@ public:
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
 
 protected:
+    virtual bool needsPreferredWidthsRecalculation() const;
+    virtual RenderBox* embeddedContentBox() const;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
+
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
     virtual void paint(PaintInfo&, const LayoutPoint&);
-
-    bool isLogicalWidthSpecified() const;
-    bool isLogicalHeightSpecified() const;
 
     virtual void intrinsicSizeChanged()
     {
@@ -86,13 +87,10 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
-    virtual LayoutUnit computeReplacedLogicalHeight() const;
 
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
-
-    int calcAspectRatioLogicalWidth() const;
-    int calcAspectRatioLogicalHeight() const;
+    bool updateIntrinsicSizeIfNeeded(bool imageSizeChanged);
 
     void paintAreaElementFocusRing(PaintInfo&);
 

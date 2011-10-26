@@ -40,6 +40,7 @@ public:
 
     void addClient(const RenderObject*, const IntSize&);
     void removeClient(const RenderObject*);
+    void setClient(const RenderObject*, const IntSize&);
 
     Image* getImage(const RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
@@ -47,7 +48,7 @@ public:
     void clear();
 
     Image* imageForSize(const IntSize&) const;
-    IntSize sizeForClient(const RenderObject*) const;
+    Image* imageForRenderer(const RenderObject*, IntSize* lookedUpSize = 0) const;
     const RenderObjectSizeCountMap& clients() const { return m_clients; }
 
 private:

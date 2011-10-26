@@ -64,9 +64,9 @@ bool StyleCachedImage::imageHasRelativeHeight() const
     return m_image->imageHasRelativeHeight();
 }
 
-void StyleCachedImage::computeIntrinsicDimensions(const RenderObject* renderer, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleCachedImage::computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    m_image->computeIntrinsicDimensions(renderer, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool StyleCachedImage::usesImageContainerSize() const
@@ -74,19 +74,19 @@ bool StyleCachedImage::usesImageContainerSize() const
     return m_image->usesImageContainerSize();
 }
 
-void StyleCachedImage::setContainerSizeForRenderer(const RenderObject* renderer, const IntSize& imageContainerSize)
+void StyleCachedImage::setContainerSizeForRenderer(const RenderObject* renderer, const IntSize& imageContainerSize, float imageContainerZoomFactor)
 {
-    m_image->setContainerSizeForRenderer(renderer, imageContainerSize);
+    m_image->setContainerSizeForRenderer(renderer, imageContainerSize, imageContainerZoomFactor);
 }
 
 void StyleCachedImage::addClient(RenderObject* renderer)
 {
-    m_image->addClient(renderer);
+    m_image->addClientForRenderer(renderer);
 }
 
 void StyleCachedImage::removeClient(RenderObject* renderer)
 {
-    m_image->removeClient(renderer);
+    m_image->removeClientForRenderer(renderer);
 }
 
 PassRefPtr<Image> StyleCachedImage::image(RenderObject* renderer, const IntSize&) const

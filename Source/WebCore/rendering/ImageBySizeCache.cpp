@@ -34,6 +34,7 @@ ImageBySizeCache::ImageBySizeCache()
 
 void ImageBySizeCache::addClient(const RenderObject* renderer, const IntSize& size)
 {
+    ASSERT(renderer);
     if (!size.isEmpty())
         m_sizes.add(size);
     
@@ -48,8 +49,10 @@ void ImageBySizeCache::addClient(const RenderObject* renderer, const IntSize& si
 
 void ImageBySizeCache::removeClient(const RenderObject* renderer)
 {
+    ASSERT(renderer);
     RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
-    ASSERT(it != m_clients.end());
+    if (it == m_clients.end())
+        return;
 
     SizeCountPair& sizeCount = it->second;
     IntSize size = sizeCount.first;
@@ -61,6 +64,21 @@ void ImageBySizeCache::removeClient(const RenderObject* renderer)
     
     if (!--sizeCount.second)
         m_clients.remove(renderer);
+}
+
+void ImageBySizeCache::setClient(const RenderObject* renderer, const IntSize& size)
+{
+    ASSERT(renderer);
+    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
+    if (it != m_clients.end()) {
+        IntSize currentSize = it->second.first;
+        if (currentSize == size)
+            return;
+        removeClient(renderer);
+    }
+
+    if (!size.isEmpty())
+        addClient(renderer, size);
 }
 
 Image* ImageBySizeCache::getImage(const RenderObject* renderer, const IntSize& size)
@@ -97,18 +115,24 @@ void ImageBySizeCache::clear()
 
 Image* ImageBySizeCache::imageForSize(const IntSize& size) const
 {
+    if (size.isEmpty())
+        return 0;
     HashMap<IntSize, RefPtr<Image> >::const_iterator it = m_images.find(size);
     if (it == m_images.end())
         return 0;
     return it->second.get();
 }
 
-IntSize ImageBySizeCache::sizeForClient(const RenderObject* renderer) const
+Image* ImageBySizeCache::imageForRenderer(const RenderObject* renderer, IntSize* size) const
 {
+    if (!renderer)
+        return 0;
     RenderObjectSizeCountMap::const_iterator it = m_clients.find(renderer);
     if (it == m_clients.end())
-        return IntSize();
-    return it->second.first;
+        return 0;
+    if (size)
+        *size = it->second.first;
+    return imageForSize(it->second.first);
 }
 
 } // namespace WebCore

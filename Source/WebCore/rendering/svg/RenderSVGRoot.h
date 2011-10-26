@@ -31,13 +31,15 @@
 
 namespace WebCore {
 
-class SVGStyledElement;
 class AffineTransform;
+class SVGStyledElement;
 
 class RenderSVGRoot : public RenderBox {
 public:
     explicit RenderSVGRoot(SVGStyledElement*);
     virtual ~RenderSVGRoot();
+
+    bool isEmbeddedThroughImageElement() const;
 
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
     const RenderObjectChildList* children() const { return &m_children; }
@@ -55,10 +57,10 @@ public:
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesOrTransformUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsBoundariesOrTransformUpdate = true; }
 
-private:
-    LayoutUnit computeIntrinsicWidth(LayoutUnit replacedWidth) const;
-    LayoutUnit computeIntrinsicHeight(LayoutUnit replacedHeight) const;
+    IntSize containerSize() const { return m_containerSize; }
+    void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
+private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
@@ -92,8 +94,6 @@ private:
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
 
-    void calcViewport();
-
     bool selfWillPaint();
     void updateCachedBoundaries();
 
@@ -103,7 +103,7 @@ private:
     AffineTransform localToBorderBoxTransform() const;
 
     RenderObjectChildList m_children;
-    FloatSize m_viewportSize;
+    IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;

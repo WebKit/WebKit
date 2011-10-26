@@ -1350,7 +1350,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
         LayoutUnit bulletWidth = fontMetrics.ascent() / 2;
-        m_image->setContainerSizeForRenderer(this, LayoutSize(bulletWidth, bulletWidth));
+        m_image->setContainerSizeForRenderer(this, LayoutSize(bulletWidth, bulletWidth), style()->effectiveZoom());
         LayoutSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style()->isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
