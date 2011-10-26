@@ -1,3 +1,11 @@
+2011-10-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+        fast/forms/form-associated-element-crash3.html has
+        been timing out very regularly on linux debug.
+
 2011-10-25  Erik Arvidsson  <arv@chromium.org>
 
         [Chromium] Fix expectation.
