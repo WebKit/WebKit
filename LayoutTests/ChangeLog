@@ -1,3 +1,18 @@
+2011-10-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening.
+
+        [Qt][WK2] fast/css/font-face-descending-unicode-range.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=70922
+        Skipped
+
+        [Qt][WK2] Metric mismatches (fast/text/justify-padding-distribution.html and svg/as-object/svg-embedded-in-html-in-iframe.html)
+        https://bugs.webkit.org/show_bug.cgi?id=70915
+        The svg test has correct pixel results so it's ok to add platform results.
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt: Added.
+
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert change to test_expectations.txt due to test failures.
