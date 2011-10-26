@@ -1,3 +1,50 @@
+2011-10-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Split DFGJITCodeGenerator::callOperation methods
+        https://bugs.webkit.org/show_bug.cgi?id=70870
+
+        Reviewed by Filip Pizlo.
+
+        The DFGJITCodeGenerator currently contains two sets of callOperation methods.
+        One set works with the JSVALUE64 value representation and passes arguments in
+        registers (suitable for use on x86-64), and one set works with the JSVALUE32_64
+        value representation and passes arguments in memory  (suitable for use on x86).
+        By refactoring out the representation and calling convention specific aspects
+        of the code we can also configure the DFG JIT to operator on platforms that use
+        the JSVALUE32_64 value representation but pass arguments in registers.
+
+        On platforms supported by the JIT, the payload precedes the tag of a value in
+        argument/result ordering, as such, in order to make the setupResults method
+        generally applicable to return the results of a function that are returned in
+        two registers, the ordering of arguments to this function has been reversed -
+        as is the ordering of augments passed to setupArguments methods, with respect
+        to the ordering with which they are passed in to callOperation.
+        This inconsistency will be resolved in a later change when we combine the pairs
+        of arguments passed into callOperation, such that the function signatures can
+        be made consistent across the two value representations (the callOperation
+        methods will be passed a reference to a struct representing the JSValue
+        temporary, this will consist of two gprs on 32_64 and one on 64).
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::resetCallArguments):
+        (JSC::DFG::addCallArgument):
+            - moved, removed tag,payload version of this method.
+        (JSC::DFG::setupArguments):
+        (JSC::DFG::setupArgumentsExecState):
+        (JSC::DFG::setupArgumentsWithExecState):
+            - Calling convention specific portion of callOperation refactored out into these methods.
+        (JSC::DFG::callOperation):
+            - updated these methods to use setupArguments* methods.
+        (JSC::DFG::setupResults):
+            - setupResults is now passed payload,tag.
+        (JSC::DFG::appendCallWithExceptionCheckSetResult):
+            - Added fpr versions of this function.
+        (JSC::DFG::appendCallSetResult):
+            - Added versions of this function without exception check.
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+            - setupResults is now passed payload,tag.
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove deletePropertyVirtual

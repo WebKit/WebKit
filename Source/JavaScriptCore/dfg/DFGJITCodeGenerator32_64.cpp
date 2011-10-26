@@ -1372,7 +1372,7 @@ void JITCodeGenerator::emitCall(Node& node)
 
     done.link(&m_jit);
 
-    setupResults(resultTagGPR, resultPayloadGPR);
+    setupResults(resultPayloadGPR, resultTagGPR);
 
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
 
