@@ -1,3 +1,17 @@
+2011-10-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit does not expose HTML label for slider elements
+        https://bugs.webkit.org/show_bug.cgi?id=70856
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/slider-allows-title-ui-element.html
+
+        * accessibility/AccessibilitySlider.h:
+        (WebCore::AccessibilitySlider::isControl):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove putVirtual
