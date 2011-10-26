@@ -1,3 +1,18 @@
+2011-10-26  Cary Clark  <caryclark@google.com>
+
+        Unreviewed gardening: sixth chunk of baselines for Chromium-Skia
+        on Leopard.
+
+        [Omitting 674 of 680 files for brevity.]
+
+        * platform/chromium-mac-leopard/svg/as-background-image: Added.
+        * platform/chromium-mac-leopard/svg/as-background-image/svg-as-background-1-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/as-background-image/svg-as-background-5-expected.png: Added.
+        ...
+        * platform/chromium-mac-leopard/tables/mozilla/core/margins-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_col_valign_baseline-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+
 2011-10-26  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r97030): Cannot log in to progressive.com
