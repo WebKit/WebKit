@@ -1,3 +1,12 @@
+2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove g_thread_init() calls from gtk-doc scanner too
+        https://bugs.webkit.org/show_bug.cgi?id=70908
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * docs/GNUmakefile.am:
+
 2011-10-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] GtkAdjustment watcher updates adjustments too lazily
