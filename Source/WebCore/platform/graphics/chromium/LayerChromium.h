@@ -196,6 +196,7 @@ public:
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
+    virtual void contentChanged() { }
 
     CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
     void cleanupResourcesRecursive();

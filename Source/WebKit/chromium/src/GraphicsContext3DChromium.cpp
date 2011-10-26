@@ -225,9 +225,6 @@ WebGLLayerChromium* GraphicsContext3DPrivate::platformLayer()
 
 void GraphicsContext3DPrivate::markContextChanged()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    platformLayer()->setTextureUpdated();
-#endif
     m_layerComposited = false;
 }
 

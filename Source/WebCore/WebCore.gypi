@@ -3498,6 +3498,8 @@
             'platform/graphics/chromium/PluginLayerChromium.h',
             'platform/graphics/chromium/ProgramBinding.cpp',
             'platform/graphics/chromium/ProgramBinding.h',
+            'platform/graphics/chromium/RateLimiter.cpp',
+            'platform/graphics/chromium/RateLimiter.h',
             'platform/graphics/chromium/RenderSurfaceChromium.cpp',
             'platform/graphics/chromium/RenderSurfaceChromium.h',
             'platform/graphics/chromium/ShaderChromium.cpp',

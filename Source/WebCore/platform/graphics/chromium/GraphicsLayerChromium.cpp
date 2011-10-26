@@ -307,8 +307,10 @@ void GraphicsLayerChromium::setReplicatedByLayer(GraphicsLayer* layer)
 
 void GraphicsLayerChromium::setContentsNeedsDisplay()
 {
-    if (m_contentsLayer)
+    if (m_contentsLayer) {
         m_contentsLayer->setNeedsDisplay();
+        m_contentsLayer->contentChanged();
+    }
 }
 
 void GraphicsLayerChromium::setNeedsDisplay()

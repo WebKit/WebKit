@@ -50,14 +50,14 @@ WebGLLayerChromium::WebGLLayerChromium(CCLayerDelegate* delegate)
     : CanvasLayerChromium(delegate)
     , m_context(0)
     , m_textureChanged(true)
-    , m_contextSupportsRateLimitingExtension(false)
-    , m_rateLimitingTimer(this, &WebGLLayerChromium::rateLimitContext)
     , m_textureUpdated(false)
 {
 }
 
 WebGLLayerChromium::~WebGLLayerChromium()
 {
+    if (m_context && layerTreeHost())
+        layerTreeHost()->stopRateLimiter(m_context);
 }
 
 bool WebGLLayerChromium::drawsContent() const
@@ -115,18 +115,21 @@ bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
     return true;
 }
 
-void WebGLLayerChromium::setTextureUpdated()
+void WebGLLayerChromium::contentChanged()
 {
     m_textureUpdated = true;
     // If WebGL commands are issued outside of a the animation callbacks, then use
     // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
-    if (layerTreeHost() && !layerTreeHost()->animating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
-        m_rateLimitingTimer.startOneShot(0);
+    if (layerTreeHost())
+        layerTreeHost()->startRateLimiter(m_context);
 }
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
 {
     bool contextChanged = (m_context != context);
+
+    if (layerTreeHost() && contextChanged)
+        layerTreeHost()->stopRateLimiter(m_context);
 
     m_context = const_cast<GraphicsContext3D*>(context);
 
@@ -142,7 +145,6 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     GraphicsContext3D::Attributes attributes = m_context->getContextAttributes();
     m_hasAlpha = attributes.alpha;
     m_premultipliedAlpha = attributes.premultipliedAlpha;
-    m_contextSupportsRateLimitingExtension = m_context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
 }
 
 GraphicsContext3D* WebGLLayerChromium::layerRendererContext()
@@ -152,17 +154,6 @@ GraphicsContext3D* WebGLLayerChromium::layerRendererContext()
     if (!layerTreeHost() || layerTreeHost()->settings().enableCompositorThread)
         return 0;
     return layerTreeHost()->context();
-}
-
-void WebGLLayerChromium::rateLimitContext(Timer<WebGLLayerChromium>*)
-{
-    TRACE_EVENT("WebGLLayerChromium::rateLimitContext", this, 0);
-
-    if (!m_context)
-        return;
-
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    extensions->rateLimitOffscreenContextCHROMIUM();
 }
 
 }

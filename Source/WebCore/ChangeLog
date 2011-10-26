@@ -1,3 +1,59 @@
+2011-10-25  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Canvas2D should rate-limit drawing to prevent swamping the GPU process.
+        https://bugs.webkit.org/show_bug.cgi?id=70367
+
+        Reviewed by James Robinson.
+
+        Sadly, we don't have infrastructure to test this kind of GPU swamping
+        yet.
+
+        * WebCore.gypi:
+        Add RateLimiter.* to the Chromium build.
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::contentChanged):
+        When the layer is notified that the contents have changed, ping the
+        rate limiter.
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsNeedsDisplay):
+        Call (new) virtual contentChanged() on a layer when its contents have
+        been changed (e.g., by a drawing call).
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::contentChanged):
+        New virtual contentChanged().
+        * platform/graphics/chromium/RateLimiter.cpp: Added.
+        (WebCore::RateLimiter::create):
+        Rate limiter factory function.
+        (WebCore::RateLimiter::RateLimiter):
+        (WebCore::RateLimiter::start):
+        Public API to start rate limiting a context.
+        (WebCore::RateLimiter::stop):
+        Public API to stop rate limiting a context.
+        (WebCore::RateLimiter::rateLimitContext):
+        Internal timer callback when a context should be rate limited.
+        * platform/graphics/chromium/RateLimiter.h: Added.
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        Remove rate limiting timer and extension check (moved to RateLimiter).
+        (WebCore::WebGLLayerChromium::contentChanged):
+        The function formerly known as setTextureUpdated(), now renamed to
+        match the base class virtual contentChanged().  Call rate limiter in
+        CCLayerTreeHost (local implementation removed).
+        (WebCore::WebGLLayerChromium::setContext):
+        When the context is changed, stop the pending rate limiter on the old
+        context.  Remove extension check (moved to RateLimiter).
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        Remove rate limiting timer and extension check (moved to RateLimiter).
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::startRateLimiter):
+        Public API for starting per-context rate limiter.
+        (WebCore::CCLayerTreeHost::stopRateLimiter):
+        Public API for stopping per-context rate limiter.
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        Implementation of per-GraphicsContext3D RateLimiter.
+
+
 2011-10-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing inspector extensions tests.

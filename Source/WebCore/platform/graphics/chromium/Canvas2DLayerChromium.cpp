@@ -36,6 +36,7 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "cc/CCLayerTreeHost.h"
 
 #if USE(SKIA)
 #include "GrContext.h"
@@ -82,6 +83,12 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*, CCText
 
     m_updateRect = FloatRect(FloatPoint(), bounds());
     resetNeedsDisplay();
+}
+
+void Canvas2DLayerChromium::contentChanged()
+{
+    if (layerTreeHost())
+        layerTreeHost()->startRateLimiter(m_context);
 }
 
 }

@@ -430,4 +430,28 @@ void CCLayerTreeHost::applyScrollDeltas(const CCScrollUpdateSet& info)
     }
 }
 
+void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
+{
+    if (animating())
+        return;
+    ASSERT(context);
+    RateLimiterMap::iterator it = m_rateLimiters.find(context);
+    if (it != m_rateLimiters.end())
+        it->second->start();
+    else {
+        RefPtr<RateLimiter> rateLimiter = RateLimiter::create(context);
+        m_rateLimiters.set(context, rateLimiter);
+        rateLimiter->start();
+    }
+}
+
+void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)
+{
+    RateLimiterMap::iterator it = m_rateLimiters.find(context);
+    if (it != m_rateLimiters.end()) {
+        it->second->stop();
+        m_rateLimiters.remove(it);
+    }
+}
+
 }

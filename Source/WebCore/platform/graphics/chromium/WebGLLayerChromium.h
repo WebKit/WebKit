@@ -35,7 +35,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CanvasLayerChromium.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -51,7 +50,7 @@ public:
 
     virtual bool drawsContent() const;
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
-    void setTextureUpdated();
+    virtual void contentChanged();
     bool paintRenderedResultsToCanvas(ImageBuffer*);
 
     void setContext(const GraphicsContext3D* context);
@@ -63,15 +62,11 @@ private:
 
     GraphicsContext3D* layerRendererContext();
 
-    void rateLimitContext(Timer<WebGLLayerChromium>*);
-
     // GraphicsContext3D::platformLayer has a side-effect of assigning itself
     // to the layer. Because of that GraphicsContext3D's destructor will reset
     // layer's context to 0.
     GraphicsContext3D* m_context;
     bool m_textureChanged;
-    bool m_contextSupportsRateLimitingExtension;
-    Timer<WebGLLayerChromium> m_rateLimitingTimer;
     bool m_textureUpdated;
 };
 

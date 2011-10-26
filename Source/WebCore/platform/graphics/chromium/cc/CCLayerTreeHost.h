@@ -27,10 +27,12 @@
 
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
+#include "RateLimiter.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -160,6 +162,8 @@ public:
 
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     void applyScrollDeltas(const CCScrollUpdateSet&);
+    void startRateLimiter(GraphicsContext3D*);
+    void stopRateLimiter(GraphicsContext3D*);
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
     bool initialize();
@@ -194,6 +198,8 @@ private:
     IntSize m_viewportSize;
     TransformationMatrix m_zoomAnimatorTransform;
     bool m_visible;
+    typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
+    RateLimiterMap m_rateLimiters;
 };
 
 }
