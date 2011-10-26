@@ -2441,14 +2441,7 @@ BUGCR65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = PASS CRASH
 BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
-// Mostly-flaky timeouts
-BUGCR66085 LINUX WIN : dom/html/level1/core/documentgetdoctypenodtd.html = PASS TIMEOUT
-BUGCR66085 LINUX : editing/selection/3690703-2.html = PASS TIMEOUT
-BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.html = PASS TIMEOUT
-BUGCR66085 LINUX WIN : fast/events/5056619.html = PASS TIMEOUT
-BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
-BUGCR66085 LINUX WIN : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
-BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
+BUGWK70878 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT

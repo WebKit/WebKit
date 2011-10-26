@@ -1,5 +1,15 @@
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Cleanup Chromium test expectation. These tests were erroneously marked as timing out intermittently
+        even though the Chromium issue 66085 was fixed a long time ago.
+
+        Remove failing expectations from these tests except http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html
+        which is still timing out intermittently on Chromium Linux. Filed the bug 70878 to track the failure.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium editing test rebaselines and editing test expectations updates.
 
         * platform/chromium-linux/editing/selection/5354455-2-expected.png:
