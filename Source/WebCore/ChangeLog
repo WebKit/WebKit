@@ -1,3 +1,12 @@
+2011-10-25  Adam Barth  <abarth@webkit.org>
+
+        V8DOMWrapper.cpp has unneeded header includes
+        https://bugs.webkit.org/show_bug.cgi?id=70863
+
+        Reviewed by Eric Seidel.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Resetting baseline for test bindings
