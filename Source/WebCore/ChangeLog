@@ -1,3 +1,17 @@
+2011-10-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10350775> REGRESSION (r97032): Slider thumb is not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=70891
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::ensuredView): Set the WebCoreFlippedView’s size, because NSSliderCell
+        always shrinks the slider thumb to fit in the control view’s bounds.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb): Removed workaround code no longer needed after
+        r97032.
+
 2011-10-26  Chris Rogers  <crogers@google.com>
 
         Add AudioSourceProviderClient and setFormat() method so we can know audio stream format
