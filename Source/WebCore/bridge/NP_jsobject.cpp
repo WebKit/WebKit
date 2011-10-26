@@ -375,9 +375,9 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
 
         JSLock lock(SilenceAssertionsOnly);
         if (i->isString())
-            obj->imp->deletePropertyVirtual(exec, identifierFromNPIdentifier(exec, i->string()));
+            obj->imp->methodTable()->deleteProperty(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()));
         else
-            obj->imp->deletePropertyVirtual(exec, i->number());
+            obj->imp->methodTable()->deletePropertyByIndex(obj->imp, exec, i->number());
 
         exec->clearException();
         return true;

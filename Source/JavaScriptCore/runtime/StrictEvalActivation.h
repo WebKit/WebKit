@@ -41,7 +41,6 @@ public:
         return activation;
     }
 
-    virtual bool deletePropertyVirtual(ExecState*, const Identifier&);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
     virtual JSObject* toThisObject(ExecState*) const;
 

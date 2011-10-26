@@ -57,13 +57,14 @@ void JSDOMStringMap::getOwnPropertyNames(ExecState* exec, PropertyNameArray& pro
     Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
+bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
+    JSDOMStringMap* thisObject = static_cast<JSDOMStringMap*>(cell);
     AtomicString stringName = identifierToAtomicString(propertyName);
-    if (!m_impl->contains(stringName))
+    if (!thisObject->m_impl->contains(stringName))
         return false;
     ExceptionCode ec = 0;
-    m_impl->deleteItem(stringName, ec);
+    thisObject->m_impl->deleteItem(stringName, ec);
     setDOMException(exec, ec);
     return !ec;
 }

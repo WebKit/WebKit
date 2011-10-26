@@ -364,12 +364,13 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
         Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool JSDOMWindow::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
+bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
-    return Base::deleteProperty(this, exec, propertyName);
+    return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
 void JSDOMWindow::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

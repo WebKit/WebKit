@@ -342,11 +342,6 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool JSFunction::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
-{
-    return deleteProperty(this, exec, propertyName);
-}
-
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);

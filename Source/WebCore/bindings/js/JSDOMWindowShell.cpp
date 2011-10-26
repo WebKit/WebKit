@@ -131,9 +131,10 @@ bool JSDOMWindowShell::defineOwnProperty(JSC::ExecState* exec, const JSC::Identi
     return m_window->defineOwnProperty(exec, propertyName, descriptor, shouldThrow);
 }
 
-bool JSDOMWindowShell::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
+bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    return m_window->deletePropertyVirtual(exec, propertyName);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(cell);
+    return thisObject->m_window->methodTable()->deleteProperty(thisObject->m_window.get(), exec, propertyName);
 }
 
 void JSDOMWindowShell::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

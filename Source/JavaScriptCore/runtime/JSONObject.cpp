@@ -710,7 +710,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSArray* array = arrayStack.peek();
                 JSValue filteredValue = callReviver(array, jsString(m_exec, UString::number(indexStack.last())), outValue);
                 if (filteredValue.isUndefined())
-                    array->deletePropertyVirtual(m_exec, indexStack.last());
+                    array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else {
                     if (isJSArray(&m_exec->globalData(), array) && array->canSetIndex(indexStack.last()))
                         array->setIndex(m_exec->globalData(), indexStack.last(), filteredValue);
@@ -777,7 +777,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 PutPropertySlot slot;
                 JSValue filteredValue = callReviver(object, jsString(m_exec, prop.ustring()), outValue);
                 if (filteredValue.isUndefined())
-                    object->deletePropertyVirtual(m_exec, prop);
+                    object->methodTable()->deleteProperty(object, m_exec, prop);
                 else
                     object->methodTable()->put(object, m_exec, prop, filteredValue, slot);
                 if (m_exec->hadException())

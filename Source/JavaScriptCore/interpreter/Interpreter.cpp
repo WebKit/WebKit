@@ -3358,7 +3358,7 @@ skip_id_custom_self:
 
         JSObject* baseObj = callFrame->r(base).jsValue().toObject(callFrame);
         Identifier& ident = codeBlock->identifier(property);
-        bool result = baseObj->deletePropertyVirtual(callFrame, ident);
+        bool result = baseObj->methodTable()->deleteProperty(baseObj, callFrame, ident);
         if (!result && codeBlock->isStrictMode()) {
             exceptionValue = createTypeError(callFrame, "Unable to delete property.");
             goto vm_throw;
@@ -3545,12 +3545,12 @@ skip_id_custom_self:
         bool result;
         uint32_t i;
         if (subscript.getUInt32(i))
-            result = baseObj->deletePropertyVirtual(callFrame, i);
+            result = baseObj->methodTable()->deletePropertyByIndex(baseObj, callFrame, i);
         else {
             CHECK_FOR_EXCEPTION();
             Identifier property(callFrame, subscript.toString(callFrame));
             CHECK_FOR_EXCEPTION();
-            result = baseObj->deletePropertyVirtual(callFrame, property);
+            result = baseObj->methodTable()->deleteProperty(baseObj, callFrame, property);
         }
         if (!result && codeBlock->isStrictMode()) {
             exceptionValue = createTypeError(callFrame, "Unable to delete property.");

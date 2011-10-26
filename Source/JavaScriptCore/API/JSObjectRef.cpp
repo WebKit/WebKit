@@ -327,7 +327,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
     JSObject* jsObject = toJS(object);
 
-    bool result = jsObject->deletePropertyVirtual(exec, propertyName->identifier(&exec->globalData()));
+    bool result = jsObject->methodTable()->deleteProperty(jsObject, exec, propertyName->identifier(&exec->globalData()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());

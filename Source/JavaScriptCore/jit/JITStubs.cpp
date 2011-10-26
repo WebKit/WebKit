@@ -2108,7 +2108,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_del_by_id)
     
     JSObject* baseObj = stackFrame.args[0].jsValue().toObject(callFrame);
 
-    bool couldDelete = baseObj->deletePropertyVirtual(callFrame, stackFrame.args[1].identifier());
+    bool couldDelete = baseObj->methodTable()->deleteProperty(baseObj, callFrame, stackFrame.args[1].identifier());
     JSValue result = jsBoolean(couldDelete);
     if (!couldDelete && callFrame->codeBlock()->isStrictMode())
         stackFrame.globalData->exception = createTypeError(stackFrame.callFrame, "Unable to delete property.");
@@ -3723,12 +3723,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_del_by_val)
     bool result;
     uint32_t i;
     if (subscript.getUInt32(i))
-        result = baseObj->deletePropertyVirtual(callFrame, i);
+        result = baseObj->methodTable()->deletePropertyByIndex(baseObj, callFrame, i);
     else {
         CHECK_FOR_EXCEPTION();
         Identifier property(callFrame, subscript.toString(callFrame));
         CHECK_FOR_EXCEPTION();
-        result = baseObj->deletePropertyVirtual(callFrame, property);
+        result = baseObj->methodTable()->deleteProperty(baseObj, callFrame, property);
     }
 
     if (!result && callFrame->codeBlock()->isStrictMode())

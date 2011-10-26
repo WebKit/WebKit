@@ -146,12 +146,13 @@ bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutProp
     return false;
 }
 
-bool JSHistory::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
+bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
+    JSHistory* thisObject = static_cast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!allowsAccessFromFrame(exec, impl()->frame()))
+    if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return false;
-    return Base::deleteProperty(this, exec, propertyName);
+    return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
 void JSHistory::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

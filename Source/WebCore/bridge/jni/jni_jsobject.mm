@@ -362,7 +362,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->deletePropertyVirtual(exec, Identifier(exec, JavaString(memberName).impl()));
+    _imp->methodTable()->deleteProperty(_imp, exec, Identifier(exec, JavaString(memberName).impl()));
 }
 
 

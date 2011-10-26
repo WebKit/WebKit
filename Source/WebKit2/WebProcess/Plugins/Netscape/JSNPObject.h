@@ -87,9 +87,7 @@ private:
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
     static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
-    virtual bool deletePropertyVirtual(JSC::ExecState*, const JSC::Identifier& propertyName);
     static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName);
-    virtual bool deletePropertyVirtual(JSC::ExecState*, unsigned propertyName);
     static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName);
 
     bool deleteProperty(JSC::ExecState*, NPIdentifier propertyName);

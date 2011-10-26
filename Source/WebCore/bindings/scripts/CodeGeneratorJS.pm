@@ -820,7 +820,7 @@ sub GenerateHeader
     push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};
 
     # Custom deleteProperty function
-    push(@headerContent, "    virtual bool deletePropertyVirtual(JSC::ExecState*, const JSC::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+    push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
 
     # Custom getPropertyNames function exists on DOMWindow
     if ($interfaceName eq "DOMWindow") {

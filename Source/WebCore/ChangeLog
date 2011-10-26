@@ -1,3 +1,47 @@
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove deletePropertyVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70738
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Removed all declarations and definitions of deletePropertyVirtual.
+        Also replaced all call sites to deletePropertyVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::deleteProperty):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::deleteProperty):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::deleteProperty):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::deleteProperty):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::deleteProperty):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject removeWebScriptKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_RemoveProperty):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::removeMember):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+
 2011-10-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit does not expose HTML label for slider elements

@@ -143,9 +143,7 @@ namespace JSC {
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
-        virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-        virtual bool deletePropertyVirtual(ExecState*, unsigned propertyName);
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
         void createStrictModeCallerIfNecessary(ExecState*);
         void createStrictModeCalleeIfNecessary(ExecState*);

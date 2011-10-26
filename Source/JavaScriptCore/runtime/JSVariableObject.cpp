@@ -34,11 +34,6 @@
 
 namespace JSC {
 
-bool JSVariableObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
-{
-    return deleteProperty(this, exec, propertyName);
-}
-
 bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     JSVariableObject* thisObject = static_cast<JSVariableObject*>(cell);

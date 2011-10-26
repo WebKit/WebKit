@@ -318,11 +318,6 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool Arguments::deletePropertyVirtual(ExecState* exec, unsigned i) 
-{
-    return deletePropertyByIndex(this, exec, i);
-}
-
 bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i) 
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
@@ -338,11 +333,6 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     }
 
     return JSObject::deleteProperty(thisObject, exec, Identifier(exec, UString::number(i)));
-}
-
-bool Arguments::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName) 
-{
-    return deleteProperty(this, exec, propertyName);
 }
 
 bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName) 

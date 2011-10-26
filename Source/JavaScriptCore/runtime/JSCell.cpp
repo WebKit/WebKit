@@ -110,24 +110,16 @@ void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSVa
     thisObject->methodTable()->putByIndex(thisObject, exec, identifier, value);
 }
 
-bool JSCell::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)
-{
-    return deleteProperty(this, exec, identifier);
-}
-
 bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& identifier)
 {
-    return cell->toObject(exec, exec->lexicalGlobalObject())->deletePropertyVirtual(exec, identifier);
-}
-
-bool JSCell::deletePropertyVirtual(ExecState* exec, unsigned identifier)
-{
-    return deletePropertyByIndex(this, exec, identifier);
+    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
+    return thisObject->methodTable()->deleteProperty(thisObject, exec, identifier);
 }
 
 bool JSCell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned identifier)
 {
-    return cell->toObject(exec, exec->lexicalGlobalObject())->deletePropertyVirtual(exec, identifier);
+    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
+    return thisObject->methodTable()->deletePropertyByIndex(thisObject, exec, identifier);
 }
 
 JSObject* JSCell::toThisObject(ExecState* exec) const

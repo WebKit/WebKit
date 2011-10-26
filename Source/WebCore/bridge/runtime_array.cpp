@@ -171,19 +171,9 @@ void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSV
     thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArray::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
-{
-    return deleteProperty(this, exec, propertyName);
-}
-
 bool RuntimeArray::deleteProperty(JSCell*, ExecState*, const Identifier&)
 {
     return false;
-}
-
-bool RuntimeArray::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
-{
-    return deletePropertyByIndex(this, exec, propertyName);
 }
 
 bool RuntimeArray::deletePropertyByIndex(JSCell*, ExecState*, unsigned)

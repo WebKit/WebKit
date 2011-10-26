@@ -346,19 +346,9 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
     releaseNPVariantValue(&variant);
 }
 
-bool JSNPObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
-{
-    return deleteProperty(this, exec, propertyName);
-}
-
 bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     return static_cast<JSNPObject*>(cell)->deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
-}
-
-bool JSNPObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
-{
-    return deletePropertyByIndex(this, exec, propertyName);
 }
 
 bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)

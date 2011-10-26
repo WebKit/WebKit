@@ -128,7 +128,6 @@ private:
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static CallType getCallData(JSCell*, CallData&);
-    virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 

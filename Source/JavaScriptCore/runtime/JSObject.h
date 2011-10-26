@@ -121,9 +121,7 @@ namespace JSC {
         bool hasProperty(ExecState*, unsigned propertyName) const;
         bool hasOwnProperty(ExecState*, const Identifier& propertyName) const;
 
-        virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-        virtual bool deletePropertyVirtual(ExecState*, unsigned propertyName);
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
         virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;

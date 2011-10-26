@@ -1,5 +1,66 @@
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Remove deletePropertyVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70738
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all declarations and definitions of deletePropertyVirtual.
+        Also replaced all call sites to deletePropertyVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::deletePropertyByIndex):
+        * API/JSObjectRef.cpp:
+        (JSObjectDeleteProperty):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::deleteProperty):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::deletePropertyByIndex):
+        * runtime/JSArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::deleteProperty):
+        (JSC::JSCell::deletePropertyByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/JSVariableObject.cpp:
+        * runtime/JSVariableObject.h:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Remove putVirtual
         https://bugs.webkit.org/show_bug.cgi?id=70740
 

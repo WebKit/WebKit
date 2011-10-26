@@ -249,11 +249,6 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
-bool JSObject::deletePropertyVirtual(ExecState* exec, const Identifier& propertyName)
-{
-    return deleteProperty(this, exec, propertyName);
-}
-
 // ECMA 8.6.2.5
 bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
@@ -286,14 +281,10 @@ bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) c
     return const_cast<JSObject*>(this)->getOwnPropertySlotVirtual(exec, propertyName, slot);
 }
 
-bool JSObject::deletePropertyVirtual(ExecState* exec, unsigned propertyName)
-{
-    return deletePropertyByIndex(this, exec, propertyName);
-}
-
 bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return static_cast<JSObject*>(cell)->deletePropertyVirtual(exec, Identifier::from(exec, propertyName));
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
 }
 
 static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
@@ -789,7 +780,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     // A generic descriptor is simply changing the attributes of an existing property
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
-            deletePropertyVirtual(exec, propertyName);
+            methodTable()->deleteProperty(this, exec, propertyName);
             putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
         }
         return true;
@@ -802,7 +793,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
                 throwError(exec, createTypeError(exec, "Attempting to change access mechanism for an unconfigurable property."));
             return false;
         }
-        deletePropertyVirtual(exec, propertyName);
+        methodTable()->deleteProperty(this, exec, propertyName);
         return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
@@ -830,7 +821,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
                 return false;
             return true;
         }
-        deletePropertyVirtual(exec, propertyName);
+        methodTable()->deleteProperty(this, exec, propertyName);
         return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
@@ -859,7 +850,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             getterSetter->setGetter(exec->globalData(), asObject(descriptor.getter()));
         return true;
     }
-    deletePropertyVirtual(exec, propertyName);
+    methodTable()->deleteProperty(this, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
     if (descriptor.setter())
         attrs |= Setter;
