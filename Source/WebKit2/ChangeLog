@@ -1,3 +1,9 @@
+2011-10-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix after r97587.
+
+        * win/WebKit2CFLite.def:
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         CG plug-ins are always given a context with a scale factor of 1, even when the device scale factor is something else
