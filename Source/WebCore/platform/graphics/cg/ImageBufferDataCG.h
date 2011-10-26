@@ -53,6 +53,7 @@ public:
     unsigned m_bytesPerRow;
     CGColorSpaceRef m_colorSpace;
     RetainPtr<IOSurfaceRef> m_surface;
+    mutable double m_lastFlushTime;
 
     PassRefPtr<ByteArray> getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const;
     void putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied);
