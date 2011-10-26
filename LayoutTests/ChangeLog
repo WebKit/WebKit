@@ -1,5 +1,11 @@
 2011-10-26  Leandro Pereira  <leandro@profusion.mobi>
 
+        [EFL] Unreviewed. Add pixel baselines for CSS3 tests.
+
+        * platform/efl/css3: [...]
+
+2011-10-26  Leandro Pereira  <leandro@profusion.mobi>
+
         [EFL] Unreviewed. Add pixel baselines for CSS2.1 tests.
 
         * platform/efl/css2.1: [...]
