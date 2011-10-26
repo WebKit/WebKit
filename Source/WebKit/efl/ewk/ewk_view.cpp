@@ -1079,11 +1079,8 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* smartData)
                                        (_ewk_view_zoom_animator_cb, smartData);
 }
 
-static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Evas_Object* ewkView)
+static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Ewk_View_Private_Data* priv)
 {
-    EWK_VIEW_SD_GET(ewkView, smartData);
-    EWK_VIEW_PRIV_GET(smartData, priv);
-
     int desktopWidth = 980;
     int deviceDPI = ewk_util_dpi_get();
 
@@ -3537,7 +3534,9 @@ void ewk_view_viewport_attributes_set(Evas_Object* ewkView, const WebCore::Viewp
 
 void ewk_view_viewport_attributes_get(const Evas_Object* ewkView, int* width, int* height, float* initScale, float* maxScale, float* minScale, float* devicePixelRatio, Eina_Bool* userScalable)
 {
-    WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(priv);
 
     if (width)
         *width = attributes.layoutSize.width();

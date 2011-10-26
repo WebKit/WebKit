@@ -1,3 +1,17 @@
+2011-10-26  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Private function _ewk_view_viewport_attributes_compute takes an internal data of ewk_view.
+        https://bugs.webkit.org/show_bug.cgi?id=66366
+
+        Reviewed by Ryosuke Niwa.
+
+        Passes to _ewk_view_viewport_attributes_compute an internal data of ewk_view instead of the view object.
+        Adds to ewk_view_viewport_attributes_get NULL checks to avoid unexpected results since this is API.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+        (ewk_view_viewport_attributes_get):
+
 2011-10-25  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         Fix occurrence of unpainted tiles while scrolling and zooming.
