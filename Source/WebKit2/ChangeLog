@@ -1,3 +1,12 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another GTK build fix attempt after r98413 and r98416.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::geometryDidChange):
+        (WebKit::PluginProxy::update):
+
 2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         C/C++ needs ; after each statement.

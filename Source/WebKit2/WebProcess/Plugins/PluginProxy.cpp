@@ -135,7 +135,11 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     if (!needsBackingStore() || !m_backingStore)
         return;
 
+#if PLATFORM(MAC)
     float contentsScaleFactor = controller()->contentsScaleFactor();
+#else
+    float contentsScaleFactor = 0;
+#endif
 
     if (!m_pluginBackingStoreContainsValidData) {
         m_connection->connection()->sendSync(Messages::PluginControllerProxy::PaintEntirePlugin(), Messages::PluginControllerProxy::PaintEntirePlugin::Reply(), m_pluginInstanceID);
@@ -182,7 +186,11 @@ void PluginProxy::geometryDidChange()
 {
     ASSERT(m_isStarted);
 
+#if PLATFORM(MAC)
     float contentsScaleFactor = controller()->contentsScaleFactor();
+#else
+    float contentsScaleFactor = 0;
+#endif
 
     if (m_frameRect.isEmpty() || !needsBackingStore()) {
         ShareableBitmap::Handle pluginBackingStoreHandle;
@@ -530,7 +538,11 @@ void PluginProxy::update(const IntRect& paintedRect)
     paintedRectPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
     if (m_backingStore) {
+#if PLATFORM(MAC)
         float contentsScaleFactor = controller()->contentsScaleFactor();
+#else
+        float contentsScaleFactor = 0;
+#endif
 
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
