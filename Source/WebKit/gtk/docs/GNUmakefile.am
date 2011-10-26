@@ -116,7 +116,12 @@ EXTRA_DIST += \
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
 DISTCLEANFILES += \
-	$(top_builddir)/Source/WebKit/gtk/docs/version.xml
+	$(top_builddir)/Source/WebKit/gtk/docs/version.xml \
+	$(top_builddir)/tmpl-build.stamp \
+	$(top_builddir)/doc-setup-build.stamp \
+	$(top_builddir)/html-build.stamp \
+	$(top_builddir)/scan-build.stamp \
+	$(top_builddir)/sgml-build.stamp
 
 # Comment this out if you want your docs-status tested during 'make check'
 #TESTS = $(GTKDOC_CHECK)

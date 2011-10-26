@@ -1,3 +1,14 @@
+2011-10-26  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Fix distcheck compilation
+        https://bugs.webkit.org/show_bug.cgi?id=70921
+
+        Add new files required by doc compilation to the clean process.
+
+        Reviewed by Martin Robinson.
+
+        * docs/GNUmakefile.am:
+
 2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
 
         Name viewport change event consistently.
