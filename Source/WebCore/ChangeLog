@@ -1,3 +1,10 @@
+2011-10-26  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: follow up to 98236 - moved inspector settings initialization earlier to unbreak settings panel.
+
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel):
+
 2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
 
         Name viewport change event consistently.
