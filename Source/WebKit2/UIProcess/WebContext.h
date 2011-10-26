@@ -184,6 +184,10 @@ public:
     void getWebCoreStatistics(PassRefPtr<DictionaryCallback>);
     void garbageCollectJavaScriptObjects();
 
+#if PLATFORM(MAC)
+    static bool omitPDFSupport();
+#endif
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 

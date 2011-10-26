@@ -568,7 +568,8 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
 
 #if PLATFORM(MAC)
     // Add built-in PDF last, so that it's not used when a real plug-in is installed.
-    pluginInfos.append(BuiltInPDFView::pluginInfo());
+    if (!omitPDFSupport())
+        pluginInfos.append(BuiltInPDFView::pluginInfo());
 #endif
 }
 

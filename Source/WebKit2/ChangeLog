@@ -1,3 +1,23 @@
+2011-10-26  Jeff Miller  <jeffm@apple.com>
+
+        WebKit2 should respect secret WebKitOmitPDFSupport preference on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=70943
+        
+        If WebKitOmitPDFSupport pref is set, disable both the new "plug-in" for subframes and the PDFKit-based support for the main frame only.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::getPlugins): Don't register built-in PDF plugin if WebKitOmitPDFSupport pref is set.
+        
+        * UIProcess/WebContext.h: Added omitPDFSupport().
+        
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canShowMIMEType): Don't show PDFs if WebKitOmitPDFSupport is set.
+        
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::omitPDFSupport): Added.
+
 2011-10-26  Sam Weinig  <sam@webkit.org>
 
         Add initial setting to WKBrowsingContextGroup

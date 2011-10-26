@@ -139,5 +139,11 @@ String WebContext::platformDefaultLocalStorageDirectory() const
     return [localStorageDirectory stringByStandardizingPath];
 }
 
+bool WebContext::omitPDFSupport()
+{
+    // Since this is a "secret default" we don't bother registering it.
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
+}
+
 } // namespace WebKit
 
