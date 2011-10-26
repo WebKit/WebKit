@@ -1,3 +1,10 @@
+2011-10-26  Ojan Vafai  <ojan@chromium.org>
+
+        Fix typo. The expected results don't change.
+
+        * fast/writing-mode/borders.html:
+        * fast/writing-mode/margins.html:
+
 2011-10-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         REGRESSION (r94887): Scrolling the HTML spec is more jerky now than it was (regression)
