@@ -1,3 +1,13 @@
+2011-10-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        REGRESSION (r94887): Scrolling the HTML spec is more jerky now than it was (regression)
+        https://bugs.webkit.org/show_bug.cgi?id=70857
+
+        Rubber-stamped by Antti Koivisto.
+
+        * fast/css/adjacent-sibling-selector-expected.txt: Removed.
+        * fast/css/adjacent-sibling-selector.html: Removed.
+
 2011-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         inspector/cookie-parser.html is a flaky crash

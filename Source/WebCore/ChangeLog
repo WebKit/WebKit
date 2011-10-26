@@ -1,3 +1,26 @@
+2011-10-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        REGRESSION (r94887): Scrolling the HTML spec is more jerky now than it was (regression)
+        https://bugs.webkit.org/show_bug.cgi?id=70857
+
+        Revert r94887, because it regressed performance.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::parentStylePreventsSharing):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::checkForSiblingStyleChanges):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::childrenAffectedByDirectAdjacentRules):
+        (WebCore::InheritedFlags::setChildrenAffectedByDirectAdjacentRules):
+
 2011-10-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Need workaround for the red crossed circle in the status bar not bringing up the console when clicked

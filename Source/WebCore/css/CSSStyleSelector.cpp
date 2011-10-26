@@ -1018,9 +1018,6 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
     if (style->transitions() || style->animations())
         return false;
 
-    if (style->affectedByDirectAdjacentRules())
-        return false;
-
 #if USE(ACCELERATED_COMPOSITING)
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
     // See comments in RenderObject::setStyle().
@@ -1060,7 +1057,8 @@ static inline bool parentStylePreventsSharing(const RenderStyle* parentStyle)
 {
     return parentStyle->childrenAffectedByPositionalRules()
         || parentStyle->childrenAffectedByFirstChildRules()
-        || parentStyle->childrenAffectedByLastChildRules();
+        || parentStyle->childrenAffectedByLastChildRules() 
+        || parentStyle->childrenAffectedByDirectAdjacentRules();
 }
 
 RenderStyle* CSSStyleSelector::locateSharedStyle()
