@@ -322,7 +322,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'TypeError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'UIEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'URIError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitAnimationEvent') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSFilterValue') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSKeyframeRule') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSKeyframesRule') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSMatrix') is 'object'
@@ -488,6 +487,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeTrue') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeTrueQuiet') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeUndefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldEvaluateTo') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldHaveHadError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldThrow') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'status') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'statusbar') is 'object'
@@ -547,8 +547,11 @@ PASS Object.getOwnPropertyDescriptor(window, 'stop') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toLocaleString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'valueOf') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelRequestAnimationFrame') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromNodeToPage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromPageToNode') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitPostMessage') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitRequestAnimationFrame') is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE
