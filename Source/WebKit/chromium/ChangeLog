@@ -1,3 +1,12 @@
+2011-10-26  Polina Sokolova  <polina@chromium.org>
+
+        Remove temporary hack needed to ease Chromium/WebKit commit.
+        https://bugs.webkit.org/show_bug.cgi?id=70791
+
+        Reviewed by Darin Fisher.
+
+        * public/WebDocument.h:
+
 2011-10-25  Nat Duca  <nduca@chromium.org>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only

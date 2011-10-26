@@ -54,9 +54,6 @@ class WebNodeList;
 class WebString;
 class WebURL;
 
-// Temporary hack to ease Chromium/WebKit commit.
-#define WEBKIT_WEBDOCUMENT_HAS_FULLSCREENELEMENT 1
-
 // Provides readonly access to some properties of a DOM document.
 class WebDocument : public WebNode {
 public:
