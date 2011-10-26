@@ -473,12 +473,8 @@ WONTFIX SKIP : fast/regex/slow.html = TIMEOUT
 WONTFIX SKIP : platform/qt/view/fixed-layout-size.html = FAIL
 
 // These don't have pixel results and rely on ObjC bindings. Don't run until they have pixel results.
-WONTFIX SKIP WIN LINUX : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = FAIL
-WONTFIX SKIP WIN LINUX : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
-
-// These tests seem to pass on Snow Leopard.
-BUGRNIWA MAC : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = PASS FAIL
-BUGRNIWA MAC : http/tests/security/dataTransfer-set-data-file-url.html = PASS FAIL
+WONTFIX WIN LINUX : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = FAIL
+WONTFIX WIN LINUX : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
 
 // The issue is which global object to use as the implicit
 // receiver for cross-frame calls.  Currently, IE, Firefox and Chrome
@@ -643,12 +639,9 @@ BUGWK69791 WIN LINUX : plugins/iframe-plugin-bgcolor.html = TEXT
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
 // We don't intend to copy this feature (at least not for Beta).
-BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
-
+BUGCR20844 LINUX WIN : editing/selection/designmode-no-caret.html = FAIL
 // Regression from merge 41268:41286
-BUGCR10435 MAC RELEASE : editing/selection/designmode-no-caret.html = FAIL
-
-BUGWK60089 DEBUG : editing/selection/designmode-no-caret.html = FAIL
+BUGCR10435 MAC : editing/selection/designmode-no-caret.html = FAIL
 
 // Issue 3273: TextInputController::firstRectForCharacterRange not returning
 // the correct values for bidi/rtl text.

@@ -1,3 +1,27 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac editing test rebaseline.
+
+        * platform/chromium-cg-mac-leopard/platform/mac/editing: Added.
+        * platform/chromium-cg-mac-leopard/platform/mac/editing/pasteboard: Added.
+        * platform/chromium-cg-mac-leopard/platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/chromium-mac-leopard/http/tests/security: Added.
+        * platform/chromium-mac-leopard/http/tests/security/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/chromium-mac-leopard/platform/mac: Added.
+        * platform/chromium-mac-leopard/platform/mac/editing: Added.
+        * platform/chromium-mac-leopard/platform/mac/editing/pasteboard: Added.
+        * platform/chromium-mac-leopard/platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/chromium-mac-snowleopard/http: Added.
+        * platform/chromium-mac-snowleopard/http/tests: Added.
+        * platform/chromium-mac-snowleopard/http/tests/security: Added.
+        * platform/chromium-mac-snowleopard/http/tests/security/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform: Added.
+        * platform/chromium-mac-snowleopard/platform/mac: Added.
+        * platform/chromium-mac-snowleopard/platform/mac/editing: Added.
+        * platform/chromium-mac-snowleopard/platform/mac/editing/pasteboard: Added.
+        * platform/chromium-mac-snowleopard/platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-26  Ojan Vafai  <ojan@chromium.org>
 
         Fix typo. The expected results don't change.
