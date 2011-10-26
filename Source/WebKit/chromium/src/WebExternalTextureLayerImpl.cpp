@@ -48,7 +48,6 @@ WebExternalTextureLayerImpl::WebExternalTextureLayerImpl(WebLayerClient* client)
 
 WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl()
 {
-    setDelegate(0);
 }
 
 bool WebExternalTextureLayerImpl::drawsContent() const

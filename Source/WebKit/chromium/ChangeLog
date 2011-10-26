@@ -1,5 +1,25 @@
 2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r98393.
+        http://trac.webkit.org/changeset/98393
+        https://bugs.webkit.org/show_bug.cgi?id=70892
+
+        "Compilation is broken on Chromium Webkit Mac Builder (dbg) "
+        (Requested by yurys on #webkit).
+
+        * WebKit.gypi:
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::setDrawsContent):
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::~WebLayerImpl):
+        * tests/LayerChromiumTest.cpp:
+        * tests/WebLayerTest.cpp: Removed.
+
+2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r98429.
         http://trac.webkit.org/changeset/98429
         https://bugs.webkit.org/show_bug.cgi?id=70881
