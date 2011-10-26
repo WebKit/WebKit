@@ -1,5 +1,31 @@
 2011-10-26  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 93720
+
+    2011-08-24  Oliver Hunt  <oliver@apple.com>
+
+            JSNPObject and JSNPMethod create their structure in their constructors
+            https://bugs.webkit.org/show_bug.cgi?id=66879
+
+            Reviewed by Anders Carlsson.
+
+            It's not safe to create the Structure for an object inside its constructor
+            so we hoist construction out into their ::create methods and move the methods
+            into the cpp file.
+
+            * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+            (WebKit::JSNPMethod::JSNPMethod):
+            (WebKit::JSNPMethod::create):
+            * WebProcess/Plugins/Netscape/JSNPMethod.h:
+            (WebKit::JSNPMethod::create):
+            * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+            (WebKit::JSNPObject::JSNPObject):
+            (WebKit::JSNPObject::create):
+            * WebProcess/Plugins/Netscape/JSNPObject.h:
+            (WebKit::JSNPObject::create):
+
+2011-10-26  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98153
 
     2011-10-21  Alexey Proskuryakov  <ap@apple.com>

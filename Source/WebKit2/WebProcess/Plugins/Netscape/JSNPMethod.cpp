@@ -41,11 +41,17 @@ namespace WebKit {
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0 };
 
-JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, NPIdentifier npIdentifier)
-    : InternalFunction(&exec->globalData(), globalObject, createStructure(exec->globalData(), globalObject->functionPrototype()), name)
+JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, NPIdentifier npIdentifier, Structure* structure)
+    : InternalFunction(&exec->globalData(), globalObject, structure, name)
     , m_npIdentifier(npIdentifier)
 {
     ASSERT(inherits(&s_info));
+}
+
+JSNPMethod* JSNPMethod::create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& ident, NPIdentifier npIdent)
+{
+    JSC::Structure* structure = createStructure(exec->globalData(), globalObject->functionPrototype());
+    return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, ident, npIdent, structure);
 }
 
 static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)

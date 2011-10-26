@@ -39,11 +39,7 @@ class NPRuntimeObjectMap;
 
 class JSNPObject : public JSC::JSObjectWithGlobalObject {
 public:
-    static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
-    {
-        return new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, objectMap, npObject);
-    }
-
+    static JSNPObject* create(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*);
     ~JSNPObject();
 
     void invalidate();
@@ -60,7 +56,7 @@ public:
     NPObject* npObject() const { return m_npObject; }
 
 private:
-    JSNPObject(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*);
+    JSNPObject(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*, JSC::Structure*);
 
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     
