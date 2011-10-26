@@ -251,7 +251,7 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
     ASSERT(m_divisor);
 
     // Skip the first '(clipBottom - yEnd)' lines
-    pixel += (clipBottom - yEnd) * (xIncrease + (clipRight + 1) * (preserveAlphaValues ? 3 : 4));
+    pixel += (clipBottom - yEnd) * (xIncrease + (clipRight + 1) * 4);
     int startKernelPixel = (clipBottom - yEnd) * (xIncrease + (clipRight + 1) * 4);
 
     for (int y = yEnd + 1; y > yStart; --y) {

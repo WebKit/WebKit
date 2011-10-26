@@ -1,3 +1,20 @@
+2011-10-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        ParallelJobs path of FEConvolveMatrix is erroneous
+        https://bugs.webkit.org/show_bug.cgi?id=70409
+
+        Reviewed by Zoltan Herczeg.
+
+        Covered by existing tests.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::fastSetInteriorPixels):
+        Reject the silly idea that bytes per pixel ratio is 3 in preserveAlphaValues mode.
+        The bug was hidden so far because that computation has no effect when we are going
+        with the full inferior area in one round (in that case clipBottom and yEnd are equals
+        and the value of the expression is always 0). With ParallelJobs we process sub-areas
+        on each thread which has triggered the issue.
+
 2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98393.
