@@ -404,6 +404,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Lookup.h \
 	Source/JavaScriptCore/runtime/MathObject.cpp \
 	Source/JavaScriptCore/runtime/MathObject.h \
+	Source/JavaScriptCore/runtime/MemoryStatistics.h \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.cpp \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.h \
 	Source/JavaScriptCore/runtime/NativeErrorPrototype.cpp \

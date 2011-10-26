@@ -1,3 +1,15 @@
+2011-10-26  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] [WK2] Add WebKit2 distcheck support
+        https://bugs.webkit.org/show_bug.cgi?id=70933
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add a bunch of missing files from API and
+        sources, also include more files in the EXTRA_DIST.
+        * UIProcess/API/gtk/docs/GNUmakefile.am: Add the version.xml to
+        the cleaning section.
+
 2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix gtk-doc warnings and style issues in WebKit2 GTK+ API

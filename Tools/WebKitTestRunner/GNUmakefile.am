@@ -9,6 +9,7 @@ noinst_PROGRAMS += \
 	Programs/WebKitTestRunner
 
 Programs_WebKitTestRunner_SOURCES = \
+	Tools/WebKitTestRunner/EventSenderProxy.h \
 	Tools/WebKitTestRunner/gtk/main.cpp \
 	Tools/WebKitTestRunner/gtk/EventSenderProxyGtk.cpp \
 	Tools/WebKitTestRunner/gtk/PlatformWebViewGtk.cpp \
@@ -24,6 +25,7 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/TestController.h \
 	Tools/WebKitTestRunner/TestInvocation.cpp \
 	Tools/WebKitTestRunner/TestInvocation.h \
+	Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
 	Source/WebCore/platform/gtk/GtkVersioning.c
 
 Programs_WebKitTestRunner_CPPFLAGS = \
@@ -85,6 +87,7 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.h \
 	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.h \
 	Tools/WebKitTestRunner/InjectedBundle/TextInputController.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/TextInputController.h
 
@@ -133,3 +136,12 @@ DerivedSources/InjectedBundle/JS%.cpp: Tools/WebKitTestRunner/InjectedBundle/Bin
 		--include $(srcdir)/Tools/InjectedBundle/Bindings \
 		--outputDir $(top_builddir)/DerivedSources/InjectedBundle \
 		$<
+
+EXTRA_DIST += \
+	$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
+	$(srcdir)/Source/WebCore/bindings/scripts/CodeGenerator.pm \
+	$(srcdir)/Source/WebCore/bindings/scripts/IDLParser.pm \
+	$(srcdir)/Source/WebCore/bindings/scripts/IDLStructure.pm \
+	$(srcdir)/Source/WebCore/bindings/scripts/InFilesParser.pm \
+	$(srcdir)/Source/WebCore/bindings/scripts/generate-bindings.pl \
+	$(shell ls $(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings/*.idl)

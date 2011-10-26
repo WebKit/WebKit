@@ -48,6 +48,9 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKFormSubmissionListener.h \
 	$(WebKit2)/UIProcess/API/C/WKFrame.h \
 	$(WebKit2)/UIProcess/API/C/WKFramePolicyListener.h \
+	$(WebKit2)/UIProcess/API/C/WKGeolocationManager.h \
+	$(WebKit2)/UIProcess/API/C/WKGeolocationPermissionRequest.h \
+	$(WebKit2)/UIProcess/API/C/WKGeolocationPosition.h \
 	$(WebKit2)/UIProcess/API/C/WKGrammarDetail.h \
 	$(WebKit2)/UIProcess/API/C/WKHitTestResult.h \
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
@@ -168,6 +171,7 @@ nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@
 	$(webkit2_built_sources)
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
+	Source/WebKit2/config.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.cpp \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h \
@@ -217,6 +221,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp \
 	Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp \
+	Source/WebKit2/Shared/ContextMenuState.h \
+	Source/WebKit2/Shared/DragControllerAction.h \
+	Source/WebKit2/Shared/FontInfo.h \
+	Source/WebKit2/Shared/HTTPCookieAcceptPolicy.h \
+	Source/WebKit2/Shared/ResourceCachesToClear.h \
+	Source/WebKit2/Shared/WebMemorySampler.h \
 	Source/WebKit2/Shared/APIClient.h \
 	Source/WebKit2/Shared/APIClientTraits.cpp \
 	Source/WebKit2/Shared/APIClientTraits.h \
@@ -644,6 +654,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/WebTextCheckerClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
 	Source/WebKit2/UIProcess/WebUIClient.h \
+	Source/WebKit2/WebKit2Prefix.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp \
@@ -653,6 +664,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/Cookies/gtk/WebCookieManagerGtk.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
+	Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
 	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp \
@@ -811,6 +823,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp \
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.h \
 	Source/WebKit2/WebProcess/WebPage/DrawingAreaImpl.cpp \
+	Source/WebKit2/WebProcess/WebPage/DrawingAreaImpl.h \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.cpp \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/FindController.cpp \
@@ -818,6 +831,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.cpp \
+	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.h \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.h \
 	Source/WebKit2/WebProcess/WebPage/TiledDrawingArea.cpp \
@@ -1379,4 +1393,32 @@ EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
 	$(WebKit2)/UIProcess/API/gtk/docs/version.xml.in \
-	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types
+	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types \
+	$(WebKit2)/UIProcess/API/gtk/docs/GNUmakefile.in \
+	$(WebKit2)/Scripts/generate-message-receiver.py \
+	$(WebKit2)/Scripts/generate-messages-header.py \
+	$(WebKit2)/Scripts/webkit2/__init__.py \
+	$(WebKit2)/Scripts/webkit2/messages.py \
+	$(WebKit2)/Scripts/webkit2/model.py \
+	$(WebKit2)/Scripts/webkit2/parser.py \
+	$(WebKit2)/UIProcess/API/gtk/webkit2marshal.list \
+	$(WebKit2)/Scripts/generate-forwarding-headers.pl \
+	$(shell ls $(WebKit2)/PluginProcess/*.in) \
+	$(shell ls $(WebKit2)/Shared/Plugins/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/Plugins/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/ApplicationCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Authentication/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Cookies/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/FullScreen/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Geolocation/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/IconDatabase/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/KeyValueStorage/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/MediaCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Plugins/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/ResourceCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/WebCoreSupport/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/WebPage/*.in)
+
