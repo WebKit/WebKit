@@ -1,3 +1,11 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix rebaseline done in r98439.
+
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/chromium/editing/pasteboard/copy-standalone-image-expected.txt: Added.
+
 2011-10-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Debugger fails when there is an invalid watch expression.
