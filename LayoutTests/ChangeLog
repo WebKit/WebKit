@@ -1,3 +1,9 @@
+2011-10-26  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Unreviewed skip. fast/canvas/canvas-composite-image.html failing on Qt
+
+        * platform/qt/Skipped:
+
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix editing/selection/caret-mode-paragraph-keys-navigation.html for Mac

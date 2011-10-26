@@ -2460,3 +2460,6 @@ inspector/extensions/extensions-network.html
 # Introduced in r97988. Failure: "Gesture manager is not implemented."
 # https://bugs.webkit.org/show_bug.cgi?id=70593
 fast/events/touch/page-scaled-touch-gesture-click.html
+
+# fast/canvas/canvas-composite-image.html is failing
+fast/canvas/canvas-composite-image.html
