@@ -39,18 +39,19 @@ if (window.layoutTestController) {
   shouldBe("getSelection().baseOffset", "15");
   shouldBe("getSelection().extentOffset", "17");
 
-  // check left/right arrows + Ctrl
-  eventSender.keyDown("rightArrow", ["ctrlKey"]);
+  // check left/right arrows + Ctrl/Option
+  var modifierForWordGranularity = navigator.platform == "MacIntel" ? "altKey" : "ctrlKey";
+  eventSender.keyDown("rightArrow", [modifierForWordGranularity]);
   shouldBe("getSelection().baseOffset", "21");
-  eventSender.keyDown("leftArrow", ["ctrlKey"]);
+  eventSender.keyDown("leftArrow", [modifierForWordGranularity]);
   shouldBe("getSelection().baseOffset", "16");
 
-  // check left/right arrows + Ctrl + Shift
-  eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
-  eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
+  // check left/right arrows + Ctrl/Option + Shift
+  eventSender.keyDown("rightArrow", [modifierForWordGranularity, "shiftKey"]);
+  eventSender.keyDown("rightArrow", [modifierForWordGranularity, "shiftKey"]);
   shouldBe("getSelection().baseOffset", "16");
   shouldBe("getSelection().extentOffset", "26");
-  eventSender.keyDown("leftArrow", ["ctrlKey"]);
+  eventSender.keyDown("leftArrow", [modifierForWordGranularity]);
   shouldBe("getSelection().baseOffset", "22");
 }
 
