@@ -1,3 +1,9 @@
+2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, gardening. Mark editing/selection/designmode-no-caret.html as failing in debug mode.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] inspector/extensions/extensions-console.html is failing

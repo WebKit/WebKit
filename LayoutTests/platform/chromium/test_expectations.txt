@@ -648,6 +648,8 @@ BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
 // Regression from merge 41268:41286
 BUGCR10435 MAC RELEASE : editing/selection/designmode-no-caret.html = FAIL
 
+BUGWK60089 DEBUG : editing/selection/designmode-no-caret.html = FAIL
+
 // Issue 3273: TextInputController::firstRectForCharacterRange not returning
 // the correct values for bidi/rtl text.
 BUGCR3273 : editing/selection/move-left-right.html = FAIL
