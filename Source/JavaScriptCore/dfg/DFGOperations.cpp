@@ -374,13 +374,13 @@ EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray* array)
 void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
-    base->putVirtual(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->methodTable()->put(base, exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
-    base->putVirtual(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->methodTable()->put(base, exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)

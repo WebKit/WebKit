@@ -71,7 +71,6 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
-        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier& propertyName, PropertySlot&);

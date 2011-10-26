@@ -791,7 +791,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == LiteralParser::JSONPPathEntryTypeDeclare) {
                 if (globalObject->hasProperty(callFrame, JSONPPath[0].m_pathEntryName)) {
                     PutPropertySlot slot;
-                    globalObject->putVirtual(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                    globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 } else
                     globalObject->putWithAttributes(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, DontEnum | DontDelete);
                 // var declarations return undefined
@@ -1251,14 +1251,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             const Identifier& ident = codeBlock->variable(i);
             if (!variableObject->hasProperty(callFrame, ident)) {
                 PutPropertySlot slot;
-                variableObject->putVirtual(callFrame, ident, jsUndefined(), slot);
+                variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
             }
         }
 
         for (int i = 0; i < numFunctions; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PutPropertySlot slot;
-            variableObject->putVirtual(callFrame, function->name(), function->make(callFrame, scopeChain), slot);
+            variableObject->methodTable()->put(variableObject, callFrame, function->name(), function->make(callFrame, scopeChain), slot);
         }
     }
 
@@ -3503,7 +3503,7 @@ skip_id_custom_self:
                 if (jsArray->canSetIndex(i))
                     jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
                 else
-                    jsArray->JSArray::putVirtual(callFrame, i, callFrame->r(value).jsValue());
+                    jsArray->JSArray::putByIndex(jsArray, callFrame, i, callFrame->r(value).jsValue());
             } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
                 JSByteArray* jsByteArray = asByteArray(baseValue);
                 JSValue jsValue = callFrame->r(value).jsValue();

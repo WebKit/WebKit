@@ -269,11 +269,6 @@ void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& property
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void Arguments::putVirtual(ExecState* exec, unsigned i, JSValue value)
-{
-    putByIndex(this, exec, i, value);
-}
-
 void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
@@ -289,11 +284,6 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
     JSObject::put(thisObject, exec, Identifier(exec, UString::number(i)), value, slot);
 }
 
-void Arguments::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-    
 void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);

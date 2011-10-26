@@ -715,7 +715,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     if (isJSArray(&m_exec->globalData(), array) && array->canSetIndex(indexStack.last()))
                         array->setIndex(m_exec->globalData(), indexStack.last(), filteredValue);
                     else
-                        array->putVirtual(m_exec, indexStack.last(), filteredValue);
+                        array->methodTable()->putByIndex(array, m_exec, indexStack.last(), filteredValue);
                 }
                 if (m_exec->hadException())
                     return jsNull();
@@ -779,7 +779,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 if (filteredValue.isUndefined())
                     object->deletePropertyVirtual(m_exec, prop);
                 else
-                    object->putVirtual(m_exec, prop, filteredValue, slot);
+                    object->methodTable()->put(object, m_exec, prop, filteredValue, slot);
                 if (m_exec->hadException())
                     return jsNull();
                 indexStack.last()++;
@@ -810,7 +810,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     }
     JSObject* finalHolder = constructEmptyObject(m_exec);
     PutPropertySlot slot;
-    finalHolder->putVirtual(m_exec, m_exec->globalData().propertyNames->emptyIdentifier, outValue, slot);
+    finalHolder->methodTable()->put(finalHolder, m_exec, m_exec->globalData().propertyNames->emptyIdentifier, outValue, slot);
     return callReviver(finalHolder, jsEmptyString(m_exec), outValue);
 }
 

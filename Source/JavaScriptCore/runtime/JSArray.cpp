@@ -334,11 +334,6 @@ bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& proper
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void JSArray::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 // ECMA 15.4.5.1
 void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
@@ -361,11 +356,6 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
     }
 
     JSObject::put(thisObject, exec, propertyName, value, slot);
-}
-
-void JSArray::putVirtual(ExecState* exec, unsigned i, JSValue value)
-{
-    putByIndex(this, exec, i, value);
 }
 
 void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
@@ -406,7 +396,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     if (i >= MIN_SPARSE_ARRAY_INDEX) {
         if (i > MAX_ARRAY_INDEX) {
             PutPropertySlot slot;
-            putVirtual(exec, Identifier::from(exec, i), value, slot);
+            methodTable()->put(this, exec, Identifier::from(exec, i), value, slot);
             return;
         }
 
@@ -781,7 +771,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     ArrayStorage* storage = m_storage;
 
     if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
-        putVirtual(exec, storage->m_length, value);
+        methodTable()->putByIndex(this, exec, storage->m_length, value);
         throwError(exec, createRangeError(exec, "Invalid array length"));
         return;
     }
@@ -835,7 +825,7 @@ void JSArray::shiftCount(ExecState* exec, int count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    putVirtual(exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
             }
         }
 
@@ -884,7 +874,7 @@ void JSArray::unshiftCount(ExecState* exec, int count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    putVirtual(exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
             }
         }
     }

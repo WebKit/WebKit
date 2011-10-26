@@ -317,11 +317,6 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void JSFunction::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);

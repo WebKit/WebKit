@@ -50,7 +50,6 @@ namespace JSC {
 
     private:
         ObjectPrototype(ExecState*, Structure*);
-        virtual void putVirtual(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
         virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);

@@ -89,9 +89,7 @@ namespace JSC {
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
         const MethodTable* methodTable() const;
-        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        virtual void putVirtual(ExecState*, unsigned propertyName, JSValue);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
         
         virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);

@@ -119,11 +119,6 @@ static void throwSetterError(ExecState* exec)
     throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
 }
 
-void JSObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 // ECMA 8.6.2.2
 void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
@@ -201,15 +196,11 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
     return;
 }
 
-void JSObject::putVirtual(ExecState* exec, unsigned propertyName, JSValue value)
-{
-    putByIndex(this, exec, propertyName, value);
-}
-
 void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
     PutPropertySlot slot;
-    static_cast<JSObject*>(cell)->putVirtual(exec, Identifier::from(exec, propertyName), value, slot);
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
@@ -834,7 +825,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             if (!descriptor.value())
                 return true;
             PutPropertySlot slot;
-            putVirtual(exec, propertyName, descriptor.value(), slot);
+            methodTable()->put(this, exec, propertyName, descriptor.value(), slot);
             if (exec->hadException())
                 return false;
             return true;

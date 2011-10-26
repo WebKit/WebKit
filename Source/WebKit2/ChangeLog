@@ -1,3 +1,19 @@
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove putVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70740
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all declarations and definitions of putVirtual.
+        Also replaced all call sites to putVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::setProperty):
+
 2011-10-25  Anders Carlsson  <andersca@apple.com>
 
         Plug-ins have no way to find out when the device scale factor changes

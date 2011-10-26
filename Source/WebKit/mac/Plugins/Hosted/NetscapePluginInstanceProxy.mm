@@ -1060,7 +1060,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
 
     JSValue value = demarshalValue(exec, valueData, valueLength);
     PutPropertySlot slot;
-    object->putVirtual(exec, propertyName, value, slot);
+    object->methodTable()->put(object, exec, propertyName, value, slot);
     
     exec->clearException();
     return true;
@@ -1085,7 +1085,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
     JSLock lock(SilenceAssertionsOnly);    
     
     JSValue value = demarshalValue(exec, valueData, valueLength);
-    object->putVirtual(exec, propertyName, value);
+    object->methodTable()->putByIndex(object, exec, propertyName, value);
     
     exec->clearException();
     return true;

@@ -1,3 +1,85 @@
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove putVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70740
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all declarations and definitions of putVirtual.
+        Also replaced all call sites to putVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        (JSObjectSetPropertyAtIndex):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::put):
+        * debugger/DebuggerActivation.h:
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putProperty):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSValue::put):
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+
 2011-10-25  Gavin Barraclough  <barraclough@apple.com>
 
         Separate out function linking & exception check data structures.

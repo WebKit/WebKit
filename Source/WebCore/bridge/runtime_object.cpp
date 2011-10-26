@@ -216,11 +216,6 @@ bool RuntimeObject::getOwnPropertyDescriptor(ExecState *exec, const Identifier& 
     return instance->getOwnPropertyDescriptor(this, exec, propertyName, descriptor);
 }
 
-void RuntimeObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void RuntimeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);

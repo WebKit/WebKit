@@ -224,10 +224,6 @@ bool ObjcFallbackObjectImp::getOwnPropertyDescriptor(ExecState*, const Identifie
     return true;
 }
 
-void ObjcFallbackObjectImp::putVirtual(ExecState*, const Identifier&, JSValue, PutPropertySlot&)
-{
-}
-
 void ObjcFallbackObjectImp::put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&)
 {
 }

@@ -307,11 +307,6 @@ bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     return false;
 }
 
-void JSNPObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
     JSNPObject* thisObject = static_cast<JSNPObject*>(cell);

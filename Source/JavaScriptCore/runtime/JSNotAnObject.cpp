@@ -74,19 +74,9 @@ bool JSNotAnObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&,
     return false;
 }
 
-void JSNotAnObject::putVirtual(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, identifier, value, slot);
-}
-
 void JSNotAnObject::put(JSCell*, ExecState* exec, const Identifier& , JSValue, PutPropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
-}
-
-void JSNotAnObject::putVirtual(ExecState* exec, unsigned i, JSValue value)
-{
-    putByIndex(this, exec, i, value);
 }
 
 void JSNotAnObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue)

@@ -208,12 +208,6 @@ bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(ExecState* exec, const I
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
-template <class Parent>
 void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);

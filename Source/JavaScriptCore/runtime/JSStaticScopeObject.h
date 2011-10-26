@@ -46,7 +46,6 @@ namespace JSC{
         virtual JSObject* toThisObject(ExecState*) const;
         virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-        virtual void putVirtual(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
         void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);

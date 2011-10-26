@@ -349,7 +349,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock(SilenceAssertionsOnly);
 
     PutPropertySlot slot;
-    [self _imp]->putVirtual(exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    [self _imp]->methodTable()->put([self _imp], exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -486,7 +486,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(SilenceAssertionsOnly);
-    [self _imp]->putVirtual(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
+    [self _imp]->methodTable()->putByIndex([self _imp], exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);

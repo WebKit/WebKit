@@ -104,7 +104,7 @@ int main(int argc, char** argv)
         
         MyObject* myObject = new MyObject;
         
-        global->putVirtual(exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::QtLanguage, (void*)myObject));
+        global->methodTable()->put(global, exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::QtLanguage, (void*)myObject));
         
         
         if (code) {

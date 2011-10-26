@@ -292,11 +292,6 @@ JSValue regExpConstructorRightContext(ExecState* exec, JSValue slotBase, const I
     return asRegExpConstructor(slotBase)->getRightContext(exec);
 }
 
-void RegExpConstructor::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void RegExpConstructor::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), static_cast<RegExpConstructor*>(cell), slot);

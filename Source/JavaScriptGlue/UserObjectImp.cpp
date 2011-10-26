@@ -152,11 +152,6 @@ bool UserObjectImp::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Iden
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-void UserObjectImp::putVirtual(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void UserObjectImp::put(JSCell* cell, ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&)
 {
     UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);

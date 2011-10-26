@@ -1031,7 +1031,7 @@ private:
         if (array->canSetIndex(index))
             array->setIndex(m_exec->globalData(), index, value);
         else
-            array->putVirtual(m_exec, index, value);
+            array->methodTable()->putByIndex(array, m_exec, index, value);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)

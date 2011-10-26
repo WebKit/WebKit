@@ -99,7 +99,6 @@ namespace JSC {
         virtual bool getOwnPropertySlotVirtual(ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-        virtual void putVirtual(ExecState*, unsigned propertyName, JSValue); // FIXME: Make protected and add setItem.
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -171,7 +170,6 @@ namespace JSC {
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
-        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         virtual bool deletePropertyVirtual(ExecState*, const Identifier& propertyName);

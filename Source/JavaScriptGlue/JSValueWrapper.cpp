@@ -136,7 +136,7 @@ void JSValueWrapper::JSObjectSetProperty(void *data, CFStringRef propertyName, J
         JSValue value = JSObjectKJSValue((JSUserObject*)jsValue);
         JSObject *objValue = ptr->GetValue().toObject(exec);
         PutPropertySlot slot;
-        objValue->putVirtual(exec, CFStringToIdentifier(propertyName, exec), value, slot);
+        objValue->methodTable()->put(objValue, exec, CFStringToIdentifier(propertyName, exec), value, slot);
     }
 }
 

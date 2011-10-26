@@ -337,9 +337,9 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 
         if (i->isString()) {
             PutPropertySlot slot;
-            obj->imp->putVirtual(exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
+            obj->imp->methodTable()->put(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
         } else
-            obj->imp->putVirtual(exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
+            obj->imp->methodTable()->putByIndex(obj->imp, exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
         exec->clearException();
         return true;
     }

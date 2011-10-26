@@ -49,11 +49,6 @@ JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
     return exec->globalThisValue();
 }
 
-void JSStaticScopeObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);

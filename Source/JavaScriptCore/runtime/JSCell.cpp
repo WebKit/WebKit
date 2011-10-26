@@ -98,24 +98,16 @@ bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i
     return true;
 }
 
-void JSCell::putVirtual(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, identifier, value, slot);
-}
-
 void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
-    cell->toObject(exec, exec->lexicalGlobalObject())->putVirtual(exec, identifier, value, slot);
-}
-
-void JSCell::putVirtual(ExecState* exec, unsigned identifier, JSValue value)
-{
-    putByIndex(this, exec, identifier, value);
+    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
+    thisObject->methodTable()->put(thisObject, exec, identifier, value, slot);
 }
 
 void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value)
 {
-    cell->toObject(exec, exec->lexicalGlobalObject())->putVirtual(exec, identifier, value);
+    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
+    thisObject->methodTable()->putByIndex(thisObject, exec, identifier, value);
 }
 
 bool JSCell::deletePropertyVirtual(ExecState* exec, const Identifier& identifier)

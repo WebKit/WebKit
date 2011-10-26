@@ -65,7 +65,6 @@ namespace JSC {
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
 
-        virtual void putVirtual(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);

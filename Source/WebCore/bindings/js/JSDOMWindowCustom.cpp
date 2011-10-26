@@ -344,11 +344,6 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
     return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void JSDOMWindow::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);

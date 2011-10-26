@@ -169,11 +169,6 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return false;
 }
 
-void JSActivation::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSActivation* thisObject = static_cast<JSActivation*>(cell);

@@ -136,11 +136,6 @@ void JSGlobalObject::init(JSObject* thisValue)
     reset(prototype());
 }
 
-void JSGlobalObject::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);

@@ -142,11 +142,6 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState *exec, unsi
     return JSObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-void RuntimeArray::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
@@ -163,11 +158,6 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& property
     }
     
     JSObject::put(thisObject, exec, propertyName, value, slot);
-}
-
-void RuntimeArray::putVirtual(ExecState* exec, unsigned index, JSValue value)
-{
-    putByIndex(this, exec, index, value);
 }
 
 void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value)

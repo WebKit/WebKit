@@ -105,9 +105,7 @@ namespace JSC {
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
-        virtual void putVirtual(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        virtual void putVirtual(ExecState*, unsigned propertyName, JSValue);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         virtual void putWithAttributes(JSGlobalData*, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot);
@@ -812,10 +810,11 @@ inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot
 inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell())) {
-        synthesizeObject(exec)->putVirtual(exec, propertyName, value, slot);
+        JSObject* thisObject = synthesizeObject(exec);
+        thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
         return;
     }
-    asCell()->putVirtual(exec, propertyName, value, slot);
+    asCell()->methodTable()->put(asCell(), exec, propertyName, value, slot);
 }
 
 inline void JSValue::putDirect(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
@@ -828,10 +827,11 @@ inline void JSValue::putDirect(ExecState* exec, const Identifier& propertyName, 
 inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
 {
     if (UNLIKELY(!isCell())) {
-        synthesizeObject(exec)->putVirtual(exec, propertyName, value);
+        JSObject* thisObject = synthesizeObject(exec);
+        thisObject->methodTable()->putByIndex(thisObject, exec, propertyName, value);
         return;
     }
-    asCell()->putVirtual(exec, propertyName, value);
+    asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value);
 }
 
 // --- JSValue inlines ----------------------------

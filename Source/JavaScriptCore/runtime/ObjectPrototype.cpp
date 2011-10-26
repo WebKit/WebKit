@@ -75,11 +75,6 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
     ASSERT(inherits(&s_info));
 }
 
-void ObjectPrototype::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
