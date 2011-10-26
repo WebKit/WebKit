@@ -1,3 +1,31 @@
+2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98429.
+        http://trac.webkit.org/changeset/98429
+        https://bugs.webkit.org/show_bug.cgi?id=70881
+
+        "webkit_gpu_tests fail in Chromium" (Requested by yurys on
+        #webkit).
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::layerRendererContext):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::context):
+        (WebCore::CCLayerTreeHost::setNeedsAnimate):
+        (WebCore::CCLayerTreeHost::setNeedsCommitThenRedraw):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::composite):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-26  Ben Wells  <benwells@chromium.org>
 
         Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

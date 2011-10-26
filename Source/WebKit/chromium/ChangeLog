@@ -1,3 +1,26 @@
+2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98429.
+        http://trac.webkit.org/changeset/98429
+        https://bugs.webkit.org/show_bug.cgi?id=70881
+
+        "webkit_gpu_tests fail in Chromium" (Requested by yurys on
+        #webkit).
+
+        * public/WebLayerTreeView.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositor::setThread):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::composite):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+
 2011-10-26  Polina Sokolova  <polina@chromium.org>
 
         Remove temporary hack needed to ease Chromium/WebKit commit.

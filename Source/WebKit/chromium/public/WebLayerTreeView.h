@@ -49,8 +49,6 @@ public:
 
         bool acceleratePainting;
         bool compositeOffscreen;
-        // FIXME: this field is ignored, but is currently in use by downstream code.
-        // Remove this field once downstream stops setting it.
         bool enableCompositorThread;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;

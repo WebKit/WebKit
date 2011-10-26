@@ -67,11 +67,13 @@ struct CCSettings {
     CCSettings()
             : acceleratePainting(false)
             , compositeOffscreen(false)
+            , enableCompositorThread(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
+    bool enableCompositorThread;
     bool showFPSCounter;
     bool showPlatformLayerTree;
 };

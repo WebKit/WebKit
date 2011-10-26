@@ -29,7 +29,6 @@
 #include "WebLayerTreeViewImpl.h"
 #include "WebSize.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCThreadProxy.h"
 
 using namespace WebCore;
 
@@ -39,6 +38,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     CCSettings settings;
     settings.acceleratePainting = acceleratePainting;
     settings.compositeOffscreen = compositeOffscreen;
+    settings.enableCompositorThread = enableCompositorThread;
 
     // FIXME: showFPSCounter / showPlatformLayerTree aren't supported currently.
     settings.showFPSCounter = false;
@@ -68,7 +68,7 @@ bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
 
 void WebLayerTreeView::composite()
 {
-    if (CCThreadProxy::hasThread())
+    if (m_private->settings().enableCompositorThread)
         m_private->setNeedsCommitThenRedraw();
     else
         m_private->composite();

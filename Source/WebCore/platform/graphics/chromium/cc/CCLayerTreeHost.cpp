@@ -64,7 +64,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
 bool CCLayerTreeHost::initialize()
 {
     TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
-    if (CCThreadProxy::hasThread()) {
+    if (m_settings.enableCompositorThread) {
         // The HUD does not work in threaded mode. Turn it off.
         m_settings.showFPSCounter = false;
         m_settings.showPlatformLayerTree = false;
@@ -166,7 +166,7 @@ void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 // Temporary hack until WebViewImpl context creation gets simplified
 GraphicsContext3D* CCLayerTreeHost::context()
 {
-    ASSERT(!CCThreadProxy::hasThread());
+    ASSERT(!m_settings.enableCompositorThread);
     return m_proxy->context();
 }
 
@@ -197,15 +197,13 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 
 void CCLayerTreeHost::setNeedsAnimate()
 {
-    if (CCThreadProxy::hasThread())
-        m_proxy->setNeedsAnimate();
-    else
-        m_client->scheduleComposite();
+    ASSERT(m_settings.enableCompositorThread);
+    m_proxy->setNeedsAnimate();
 }
 
 void CCLayerTreeHost::setNeedsCommitThenRedraw()
 {
-    if (CCThreadProxy::hasThread()) {
+    if (m_settings.enableCompositorThread) {
         TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
         m_proxy->setNeedsCommitThenRedraw();
     } else
@@ -214,7 +212,7 @@ void CCLayerTreeHost::setNeedsCommitThenRedraw()
 
 void CCLayerTreeHost::setNeedsRedraw()
 {
-    if (CCThreadProxy::hasThread())
+    if (m_settings.enableCompositorThread)
         m_proxy->setNeedsRedraw();
     else
         m_client->scheduleComposite();
@@ -250,7 +248,7 @@ TextureManager* CCLayerTreeHost::contentsTextureManager() const
 
 void CCLayerTreeHost::composite()
 {
-    ASSERT(!CCThreadProxy::hasThread());
+    ASSERT(!m_settings.enableCompositorThread);
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 
