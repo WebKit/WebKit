@@ -205,11 +205,6 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, identifier, slot);
-}
-
 bool ObjcFallbackObjectImp::getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false

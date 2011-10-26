@@ -201,11 +201,6 @@ JSObject* JSString::toThisObject(ExecState* exec) const
     return StringObject::create(exec, exec->lexicalGlobalObject(), const_cast<JSString*>(this));
 }
 
-bool JSString::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSString* thisObject = static_cast<JSString*>(cell);
@@ -221,7 +216,7 @@ bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifie
     JSObject* object;
     for (JSValue prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype.isNull(); prototype = object->prototype()) {
         object = asObject(prototype);
-        if (object->getOwnPropertySlotVirtual(exec, propertyName, slot))
+        if (object->methodTable()->getOwnPropertySlot(object, exec, propertyName, slot))
             return true;
     }
     slot.setUndefined();
@@ -253,11 +248,6 @@ bool JSString::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prope
         return false;
     descriptor.setDescriptor(exec->lexicalGlobalObject()->stringPrototype(), DontEnum);
     return true;
-}
-
-bool JSString::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
 bool JSString::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)

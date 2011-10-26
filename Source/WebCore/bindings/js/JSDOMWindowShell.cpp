@@ -100,14 +100,10 @@ UString JSDOMWindowShell::className() const
     return m_window->className();
 }
 
-bool JSDOMWindowShell::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return static_cast<JSDOMWindowShell*>(cell)->m_window->getOwnPropertySlotVirtual(exec, propertyName, slot);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(cell);
+    return thisObject->m_window->methodTable()->getOwnPropertySlot(thisObject->m_window.get(), exec, propertyName, slot);
 }
 
 bool JSDOMWindowShell::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

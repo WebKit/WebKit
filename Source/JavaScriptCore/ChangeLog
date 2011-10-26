@@ -1,3 +1,97 @@
+2011-10-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove getOwnPropertySlotVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=70741
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all declarations and definitions of getOwnPropertySlotVirtual.
+        Also replaced all call sites to getOwnPropertyVirtualVirtual with a 
+        corresponding lookup in the MethodTable.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyDescriptor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create):
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ErrorPrototype.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlotByIndex):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::getOwnPropertyNames):
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::hasOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSCell::fastGetOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSValue::get):
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot):
+        * runtime/JSString.h:
+        * runtime/MathObject.cpp:
+        * runtime/MathObject.h:
+        (JSC::MathObject::create):
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::createStructure):
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/RegExpPrototype.h:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        * runtime/StringPrototype.h:
+
 2011-10-26  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] [WK2] Add WebKit2 distcheck support

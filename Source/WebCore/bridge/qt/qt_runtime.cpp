@@ -1494,11 +1494,6 @@ CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool QtRuntimeMetaMethod::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
@@ -1739,11 +1734,6 @@ CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = call;
     return CallTypeHost;
-}
-
-bool QtRuntimeConnectionMethod::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

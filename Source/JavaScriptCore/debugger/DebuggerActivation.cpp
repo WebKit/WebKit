@@ -60,14 +60,10 @@ UString DebuggerActivation::className() const
     return m_activation->className();
 }
 
-bool DebuggerActivation::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool DebuggerActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return static_cast<DebuggerActivation*>(cell)->m_activation->getOwnPropertySlotVirtual(exec, propertyName, slot);
+    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    return thisObject->m_activation->methodTable()->getOwnPropertySlot(thisObject->m_activation.get(), exec, propertyName, slot);
 }
 
 void DebuggerActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

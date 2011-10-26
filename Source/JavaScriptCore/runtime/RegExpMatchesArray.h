@@ -39,26 +39,23 @@ namespace JSC {
         }
         virtual ~RegExpMatchesArray();
 
+        static JS_EXPORTDATA const ClassInfo s_info;
+        
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        {
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        }
+        
     protected:
         void finishCreation(JSGlobalData&, RegExpConstructorPrivate* data);
 
     private:
-        virtual bool getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-        {
-            return getOwnPropertySlot(this, exec, propertyName, slot);
-        }
-
         static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
         {
             RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::getOwnPropertySlot(thisObject, exec, propertyName, slot);
-        }
-
-        virtual bool getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-        {
-            return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
         }
 
         static bool getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)

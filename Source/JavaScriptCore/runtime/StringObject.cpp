@@ -41,11 +41,6 @@ void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
     setInternalValue(globalData, string);
 }
 
-bool StringObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     StringObject* thisObject = static_cast<StringObject*>(cell);
@@ -54,11 +49,6 @@ bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
     
-bool StringObject::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
-}
-
 bool StringObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     StringObject* thisObject = static_cast<StringObject*>(cell);

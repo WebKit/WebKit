@@ -141,11 +141,6 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
     return true;
 }
 
-bool JSActivation::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSActivation* thisObject = static_cast<JSActivation*>(cell);

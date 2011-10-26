@@ -78,11 +78,6 @@ void RuntimeArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& prope
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-bool RuntimeArray::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
@@ -124,11 +119,6 @@ bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
     }
     
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
-}
-
-bool RuntimeArray::getOwnPropertySlotVirtual(ExecState *exec, unsigned index, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, index, slot);
 }
 
 bool RuntimeArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState *exec, unsigned index, PropertySlot& slot)

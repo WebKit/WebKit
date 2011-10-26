@@ -54,11 +54,6 @@ Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject
     return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), classInfo);
 }
 
-bool JSByteArray::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
@@ -80,11 +75,6 @@ bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
         return true;
     }
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
-}
-
-bool JSByteArray::getOwnPropertySlotVirtual(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, propertyName, slot);
 }
 
 bool JSByteArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)

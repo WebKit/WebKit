@@ -129,9 +129,7 @@ namespace JSC {
         void finishCreation(JSGlobalData&, Structure*, CreatingEarlyCellTag);
 
         // Base implementation; for non-object classes implements getPropertySlot.
-        virtual bool getOwnPropertySlotVirtual(ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertySlotVirtual(ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         
     private:

@@ -59,11 +59,6 @@ void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringP
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool StringConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool StringConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), static_cast<StringConstructor*>(cell), propertyName, slot);

@@ -337,7 +337,7 @@ private:
                 hasIndex = true;
                 return slot.getValue(m_exec, propertyName);
             }
-        } else if (array->getOwnPropertySlotVirtual(m_exec, propertyName, slot)) {
+        } else if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
             hasIndex = true;
             return slot.getValue(m_exec, propertyName);
         }
@@ -348,7 +348,7 @@ private:
     JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
         PropertySlot slot(object);
-        if (object->getOwnPropertySlotVirtual(m_exec, propertyName, slot))
+        if (object->methodTable()->getOwnPropertySlot(object, m_exec, propertyName, slot))
             return slot.getValue(m_exec, propertyName);
         return JSValue();
     }

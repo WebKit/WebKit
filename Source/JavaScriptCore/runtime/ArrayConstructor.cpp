@@ -63,11 +63,6 @@ void ArrayConstructor::finishCreation(ExecState* exec, ArrayPrototype* arrayProt
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool ArrayConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool ArrayConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), static_cast<ArrayConstructor*>(cell), propertyName, slot);

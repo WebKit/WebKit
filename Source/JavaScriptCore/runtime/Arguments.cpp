@@ -145,11 +145,6 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     }
 }
 
-bool Arguments::getOwnPropertySlotVirtual(ExecState* exec, unsigned i, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, i, slot);
-}
-
 bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     Arguments* thisObject = static_cast<Arguments*>(cell);
@@ -186,11 +181,6 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     JSValue thrower = createTypeErrorFunction(exec, "Unable to access callee of strict mode function");
     descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
     defineOwnProperty(exec, exec->propertyNames().callee, descriptor, false);
-}
-
-bool Arguments::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

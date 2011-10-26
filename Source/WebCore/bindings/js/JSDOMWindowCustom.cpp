@@ -121,11 +121,6 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifi
     return toJS(exec, thisObj, collection.get());
 }
 
-bool JSDOMWindow::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
@@ -691,7 +686,7 @@ inline JSValue DialogHandler::returnValue() const
         return jsUndefined();
     Identifier identifier(m_exec, "returnValue");
     PropertySlot slot;
-    if (!globalObject->getOwnPropertySlotVirtual(m_exec, identifier, slot))
+    if (!globalObject->methodTable()->getOwnPropertySlot(globalObject, m_exec, identifier, slot))
         return jsUndefined();
     return slot.getValue(m_exec, identifier);
 }

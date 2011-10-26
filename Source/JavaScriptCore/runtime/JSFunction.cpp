@@ -195,11 +195,6 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
     return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
-bool JSFunction::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);
@@ -263,7 +258,7 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     
     if (propertyName == exec->propertyNames().prototype) {
         PropertySlot slot;
-        getOwnPropertySlotVirtual(exec, propertyName, slot);
+        methodTable()->getOwnPropertySlot(this, exec, propertyName, slot);
         return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
     }
     
@@ -308,7 +303,7 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     if (!isHostFunction() && (mode == IncludeDontEnumProperties)) {
         // Make sure prototype has been reified.
         PropertySlot slot;
-        getOwnPropertySlotVirtual(exec, exec->propertyNames().prototype, slot);
+        methodTable()->getOwnPropertySlot(this, exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
         propertyNames.add(exec->propertyNames().caller);
@@ -328,7 +323,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot;
-        thisObject->getOwnPropertySlotVirtual(exec, propertyName, slot);
+        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
         // This will trigger the property to be reified, if this is not already the case!

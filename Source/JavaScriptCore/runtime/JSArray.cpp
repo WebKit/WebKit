@@ -245,11 +245,6 @@ JSArray::~JSArray()
     fastFree(m_storage->m_allocBase);
 }
 
-bool JSArray::getOwnPropertySlotVirtual(ExecState* exec, unsigned i, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, i, slot);
-}
-
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     JSArray* thisObject = static_cast<JSArray*>(cell);
@@ -257,7 +252,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
     
     if (i >= storage->m_length) {
         if (i > MAX_ARRAY_INDEX)
-            return thisObject->getOwnPropertySlotVirtual(exec, Identifier::from(exec, i), slot);
+            return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
         return false;
     }
 
@@ -278,11 +273,6 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
     }
 
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
-}
-
-bool JSArray::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

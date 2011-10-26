@@ -523,7 +523,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
             value = asArray(m_object.get())->getIndex(index);
         else {
             PropertySlot slot(m_object.get());
-            if (!m_object->getOwnPropertySlotVirtual(exec, index, slot))
+            if (!m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot))
                 slot.setUndefined();
             if (exec->hadException())
                 return false;
@@ -541,7 +541,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
         // Get the value.
         PropertySlot slot(m_object.get());
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        if (!m_object->getOwnPropertySlotVirtual(exec, propertyName, slot))
+        if (!m_object->methodTable()->getOwnPropertySlot(m_object.get(), exec, propertyName, slot))
             return true;
         JSValue value = slot.getValue(exec, propertyName);
         if (exec->hadException())
@@ -597,11 +597,6 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, Exe
 */
 
 // ECMA 15.8
-
-bool JSONObject::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
 
 bool JSONObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
@@ -693,7 +688,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     inValue = array->getIndex(index);
                 else {
                     PropertySlot slot;
-                    if (array->getOwnPropertySlotVirtual(m_exec, index, slot))
+                    if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, index, slot))
                         inValue = slot.getValue(m_exec, index);
                     else
                         inValue = jsUndefined();
@@ -755,7 +750,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 PropertySlot slot;
-                if (object->getOwnPropertySlotVirtual(m_exec, properties[index], slot))
+                if (object->methodTable()->getOwnPropertySlot(object, m_exec, properties[index], slot))
                     inValue = slot.getValue(m_exec, properties[index]);
                 else
                     inValue = jsUndefined();

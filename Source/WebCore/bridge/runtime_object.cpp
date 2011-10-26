@@ -116,11 +116,6 @@ JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, const Ide
     return method;
 }
 
-bool RuntimeObject::getOwnPropertySlotVirtual(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);

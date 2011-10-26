@@ -64,11 +64,6 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData&)
     return ConstructTypeNone;
 }
 
-bool JSCell::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, identifier, slot);
-}
-
 bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     // This is not a general purpose implementation of getOwnPropertySlot.
@@ -79,11 +74,6 @@ bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier&
     if (!object->getPropertySlot(exec, identifier, slot))
         slot.setUndefined();
     return true;
-}
-
-bool JSCell::getOwnPropertySlotVirtual(ExecState* exec, unsigned identifier, PropertySlot& slot)
-{
-    return getOwnPropertySlotByIndex(this, exec, identifier, slot);
 }
 
 bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned identifier, PropertySlot& slot)

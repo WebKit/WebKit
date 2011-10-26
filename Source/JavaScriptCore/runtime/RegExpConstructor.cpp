@@ -69,6 +69,8 @@ ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
 
 const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::regExpConstructorTable, CREATE_METHOD_TABLE(RegExpConstructor) };
 
+const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RegExpMatchesArray)};
+
 /* Source for RegExpConstructor.lut.h
 @begin regExpConstructorTable
     input           regExpConstructorInput          None
@@ -202,11 +204,6 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec) const
     return jsEmptyString(exec);
 }
     
-bool RegExpConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 bool RegExpConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), static_cast<RegExpConstructor*>(cell), propertyName, slot);
