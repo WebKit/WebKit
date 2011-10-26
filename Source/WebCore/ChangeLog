@@ -1,3 +1,22 @@
+2011-10-26  Mike Reed  <reed@google.com>
+
+        [skia] replace offscreen technique with native support for antialiased clipping
+        https://bugs.webkit.org/show_bug.cgi?id=70748
+
+        Reviewed by Stephen White.
+
+        ~100 layout tests need to be rebaselined, as the native aa-clipping differs sometimes in the low
+        bits of the result. Other than that, the results should be the same, except that now the drawing
+        can go directly to the canvas, rather than being direct offscreen and then have that result
+        "clipped" during the restore. This has the effect of allowing LCD text to be drawing inside a
+        antialiased clip area.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::State):
+        (WebCore::PlatformContextSkia::State::cloneInheritedProperties):
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+        (WebCore::PlatformContextSkia::restore):
+
 2011-10-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         CSS 2.1 failure: background-intrinsic-*
