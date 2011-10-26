@@ -44,6 +44,9 @@ public:
     void removeListener(DOMWindow*);
     void removeAllListeners(DOMWindow*);
 
+    void suspendEventsForAllListeners(DOMWindow*);
+    void resumeEventsForAllListeners(DOMWindow*);
+
     void didChangeDeviceMotion(DeviceMotionData*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
@@ -54,6 +57,7 @@ private:
     DeviceMotionClient* m_client;
     typedef HashCountedSet<RefPtr<DOMWindow> > ListenersCountedSet;
     ListenersCountedSet m_listeners;
+    ListenersCountedSet m_suspendedListeners;
     typedef HashSet<RefPtr<DOMWindow> > ListenersSet;
     ListenersSet m_newListeners;
     Timer<DeviceMotionController> m_timer;

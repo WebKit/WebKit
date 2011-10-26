@@ -47,6 +47,10 @@
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
+#include "DeviceMotionController.h"
+#include "DeviceMotionEvent.h"
+#include "DeviceOrientationController.h"
+#include "DeviceOrientationEvent.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -70,6 +74,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GeolocationController.h"
 #include "HashChangeEvent.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
@@ -1833,6 +1838,36 @@ void Document::removeAllEventListeners()
         domWindow->removeAllEventListeners();
     for (Node* node = firstChild(); node; node = node->traverseNextNode())
         node->removeAllEventListeners();
+}
+
+void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
+{
+    ScriptExecutionContext::suspendActiveDOMObjects(why);
+
+#if ENABLE(DEVICE_ORIENTATION)
+    if (!page())
+        return;
+
+    if (page()->deviceMotionController())
+        page()->deviceMotionController()->suspendEventsForAllListeners(domWindow());
+    if (page()->deviceOrientationController())
+        page()->deviceOrientationController()->suspendEventsForAllListeners(domWindow());
+#endif
+}
+
+void Document::resumeActiveDOMObjects()
+{
+    ScriptExecutionContext::resumeActiveDOMObjects();
+
+#if ENABLE(DEVICE_ORIENTATION)
+    if (!page())
+        return;
+
+    if (page()->deviceMotionController())
+        page()->deviceMotionController()->resumeEventsForAllListeners(domWindow());
+    if (page()->deviceOrientationController())
+        page()->deviceOrientationController()->resumeEventsForAllListeners(domWindow());
+#endif
 }
 
 RenderView* Document::renderView() const

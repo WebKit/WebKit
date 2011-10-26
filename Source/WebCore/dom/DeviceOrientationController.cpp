@@ -82,6 +82,7 @@ void DeviceOrientationController::addListener(DOMWindow* window)
 void DeviceOrientationController::removeListener(DOMWindow* window)
 {
     m_listeners.remove(window);
+    m_suspendedListeners.remove(window);
     m_newListeners.remove(window);
     if (m_listeners.isEmpty())
         m_client->stopUpdating();
@@ -94,9 +95,32 @@ void DeviceOrientationController::removeAllListeners(DOMWindow* window)
         return;
 
     m_listeners.removeAll(window);
+    m_suspendedListeners.removeAll(window);
     m_newListeners.remove(window);
     if (m_listeners.isEmpty())
         m_client->stopUpdating();
+}
+
+void DeviceOrientationController::suspendEventsForAllListeners(DOMWindow* window)
+{
+    if (!m_listeners.contains(window))
+        return;
+
+    int count = m_listeners.count(window);
+    removeAllListeners(window);
+    while (count--)
+        m_suspendedListeners.add(window);
+}
+
+void DeviceOrientationController::resumeEventsForAllListeners(DOMWindow* window)
+{
+    if (!m_suspendedListeners.contains(window))
+        return;
+
+    int count = m_suspendedListeners.count(window);
+    m_suspendedListeners.removeAll(window);
+    while (count--)
+        addListener(window);
 }
 
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* orientation)

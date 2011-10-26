@@ -46,6 +46,9 @@ public:
     void removeListener(DOMWindow*);
     void removeAllListeners(DOMWindow*);
 
+    void suspendEventsForAllListeners(DOMWindow*);
+    void resumeEventsForAllListeners(DOMWindow*);
+
     void didChangeDeviceOrientation(DeviceOrientation*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
@@ -57,6 +60,7 @@ private:
     DeviceOrientationClient* m_client;
     typedef HashCountedSet<RefPtr<DOMWindow> > ListenersCountedSet;
     ListenersCountedSet m_listeners;
+    ListenersCountedSet m_suspendedListeners;
     typedef HashSet<RefPtr<DOMWindow> > ListenersSet;
     ListenersSet m_newListeners;
     Timer<DeviceOrientationController> m_timer;
