@@ -22,48 +22,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaElementAudioSourceNode_h
-#define MediaElementAudioSourceNode_h
-
-#if ENABLE(VIDEO)
-
-#include "AudioSourceNode.h"
-#include "AudioSourceProviderClient.h"
-#include "HTMLMediaElement.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#ifndef AudioSourceProviderClient_h
+#define AudioSourceProviderClient_h
 
 namespace WebCore {
 
-class AudioContext;
-    
-class MediaElementAudioSourceNode : public AudioSourceNode, public AudioSourceProviderClient {
+class AudioSourceProviderClient {
 public:
-    static PassRefPtr<MediaElementAudioSourceNode> create(AudioContext*, HTMLMediaElement*);
-
-    virtual ~MediaElementAudioSourceNode();
-
-    HTMLMediaElement* mediaElement() { return m_mediaElement.get(); }                                        
-
-    // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
-    
-    // AudioSourceProviderClient
-    virtual void setFormat(size_t numberOfChannels, float sampleRate);
-    
-    void lock();
-    void unlock();
-
-private:
-    MediaElementAudioSourceNode(AudioContext*, HTMLMediaElement*);
-
-    RefPtr<HTMLMediaElement> m_mediaElement;
-    Mutex m_processLock;
+    virtual void setFormat(size_t numberOfChannels, float sampleRate) = 0;
+protected:
+    virtual ~AudioSourceProviderClient() { }
 };
 
-} // namespace WebCore
+} // WebCore
 
-#endif // ENABLE(VIDEO)
-
-#endif // MediaElementAudioSourceNode_h
+#endif // AudioSourceProviderClient_h

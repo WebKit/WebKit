@@ -1,3 +1,29 @@
+2011-10-26  Chris Rogers  <crogers@google.com>
+
+        Add AudioSourceProviderClient and setFormat() method so we can know audio stream format
+        https://bugs.webkit.org/show_bug.cgi?id=70155
+
+        Reviewed by Eric Carlson.
+
+        No new tests.  There isn't yet an implementation to test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::setAudioSourceNode):
+        Let MediaPlayer know about the MediaElementAudioSourceNode so it can callback with audio stream format information.
+        * platform/audio/AudioSourceProvider.h:
+        (WebCore::AudioSourceProvider::setClient):
+        Add abstract setClient() method so a client may know about stream format information when it becomes available.
+        * platform/audio/AudioSourceProviderClient.h: Copied from Source/WebCore/webaudio/MediaElementAudioSourceNode.h.
+        (WebCore::AudioSourceProviderClient::~AudioSourceProviderClient):
+        Add abstract class AudioSourceProviderClient which implements setFormat() to receive audio stream format information.
+        * webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        Concrete implementation of setFormat() so MediaElementAudioSourceNode can create necessary audio converters.
+        * webaudio/MediaElementAudioSourceNode.h:
+        Make MediaElementAudioSourceNode implement AudioSourceProviderClient so it can get audio stream format information
+        when its setFormat() method is called.
+
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed, rolling out r98483.

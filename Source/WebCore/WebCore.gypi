@@ -3122,6 +3122,7 @@
             'platform/audio/AudioResamplerKernel.cpp',
             'platform/audio/AudioResamplerKernel.h',
             'platform/audio/AudioSourceProvider.h',
+            'platform/audio/AudioSourceProviderClient.h',
             'platform/audio/AudioUtilities.cpp',
             'platform/audio/AudioUtilities.h',
             'platform/audio/Biquad.cpp',

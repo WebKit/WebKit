@@ -31,6 +31,7 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
+#include "AudioSourceProvider.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
@@ -3046,8 +3047,13 @@ void HTMLMediaElement::createMediaPlayer()
     m_player = MediaPlayer::create(this);
 
 #if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode)
+    if (m_audioSourceNode) {
+        // When creating the player, make sure its AudioSourceProvider knows about the MediaElementAudioSourceNode.
+        if (audioSourceProvider())
+            audioSourceProvider()->setClient(m_audioSourceNode);
+
         m_audioSourceNode->unlock();
+    }
 #endif
 }
 
@@ -3055,6 +3061,9 @@ void HTMLMediaElement::createMediaPlayer()
 void HTMLMediaElement::setAudioSourceNode(MediaElementAudioSourceNode* sourceNode)
 {
     m_audioSourceNode = sourceNode;
+
+    if (audioSourceProvider())
+        audioSourceProvider()->setClient(m_audioSourceNode);
 }
 
 AudioSourceProvider* HTMLMediaElement::audioSourceProvider()

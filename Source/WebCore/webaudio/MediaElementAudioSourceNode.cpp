@@ -57,6 +57,12 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
     uninitialize();
 }
 
+void MediaElementAudioSourceNode::setFormat(size_t, float)
+{
+    // FIXME: setup a sample-rate converter if necessary to convert to the AudioContext sample-rate.
+    ASSERT_NOT_REACHED();
+}
+
 void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();

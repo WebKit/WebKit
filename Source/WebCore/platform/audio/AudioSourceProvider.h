@@ -32,12 +32,17 @@
 namespace WebCore {
 
 class AudioBus;
+class AudioSourceProviderClient;
     
 // Abstract base-class for a pull-model client.
-// provideInput() gets called repeatedly to render time-slices of a continuous audio stream.
 class AudioSourceProvider {
 public:
+    // provideInput() gets called repeatedly to render time-slices of a continuous audio stream.
     virtual void provideInput(AudioBus* bus, size_t framesToProcess) = 0;
+
+    // If a client is set, we call it back when the audio format is available or changes.
+    virtual void setClient(AudioSourceProviderClient*) { };
+
     virtual ~AudioSourceProvider() { }
 };
 
