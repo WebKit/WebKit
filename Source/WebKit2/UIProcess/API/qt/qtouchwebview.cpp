@@ -49,9 +49,9 @@ void QTouchWebViewPrivate::loadDidCommit()
 
 void QTouchWebViewPrivate::_q_viewportUpdated()
 {
-    const QRectF visibleRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
+    const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->scale();
-    page.setVisibleContentRectAndScale(visibleRectInPageViewCoordinate, scale);
+    page.setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
 }
 
 void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)

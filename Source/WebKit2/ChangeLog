@@ -1,3 +1,26 @@
+2011-10-26  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Rename clean-up of QtPinchGestureRecognizer and QtViewportInteractionEngine
+        https://bugs.webkit.org/show_bug.cgi?id=70903
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename computeTouchCenter to computePinchCenter,
+        and use the plural form of coordinate where appropriate.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::_q_viewportUpdated):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::computePinchCenter):
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::contentRectInViewportCoordinates):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
 
         Name viewport change event consistently.

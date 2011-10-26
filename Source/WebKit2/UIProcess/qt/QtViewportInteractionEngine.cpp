@@ -33,7 +33,7 @@ namespace WebKit {
 
 static const int kScaleAnimationDurationMillis = 400;
 
-static inline QRectF contentRectInViewportCoordinate(const QSGItem* content, const QSGItem* viewport)
+static inline QRectF contentRectInViewportCoordinates(const QSGItem* content, const QSGItem* viewport)
 {
     return viewport->mapRectFromItem(content, content->boundingRect());
 }
@@ -158,7 +158,7 @@ bool QtViewportInteractionEngine::event(QEvent* event)
     case QEvent::ScrollPrepare: {
         QScrollPrepareEvent* prepareEvent = static_cast<QScrollPrepareEvent*>(event);
         const QRectF viewportRect = m_viewport->boundingRect();
-        const QRectF contentRect = contentRectInViewportCoordinate(m_content, m_viewport);
+        const QRectF contentRect = contentRectInViewportCoordinates(m_content, m_viewport);
         const QRectF contentPositionRange = calculateBoundariesForScale(contentRect.size(), viewportRect.size(), 1);
         prepareEvent->setContentPosRange(contentPositionRange);
         prepareEvent->setViewportSize(viewportRect.size());
@@ -312,13 +312,13 @@ void QtViewportInteractionEngine::panGestureEnded(const QPointF& touchPoint, qin
     scroller()->handleInput(QScroller::InputRelease, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
 }
 
-void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinate)
+void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)
 {
     if (!m_constraints.isUserScalable)
         return;
 
     m_pinchViewportUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
-    m_lastPinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinate);
+    m_lastPinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
     m_userInteractionFlags |= UserHasScaledContent;
     m_userInteractionFlags |= UserHasMovedContent;
     m_pinchStartScale = m_content->scale();
@@ -327,7 +327,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     emit viewportTrajectoryVectorChanged(QPointF());
 }
 
-void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor)
+void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor)
 {
     if (!m_constraints.isUserScalable)
         return;
@@ -341,9 +341,9 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
     // Allow zooming out beyond mimimum scale on pages that do not explicitly disallow it.
     const qreal boundedScale = outerBoundedScale(scale);
 
-    QPointF pinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinate);
+    QPointF pinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
 
-    scaleContent(pinchCenterInContentCoordinate, boundedScale);
+    scaleContent(pinchCenterInContentCoordinates, boundedScale);
 
     const QPointF positionDiff = pinchCenterInViewportCoordinates - m_lastPinchCenterInViewportCoordinates;
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
@@ -370,11 +370,11 @@ void QtViewportInteractionEngine::contentViewportChanged()
     animateContentIntoBoundariesIfNeeded();
 }
 
-void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinate, qreal scale)
+void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinates, qreal scale)
 {
-    QPointF oldPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinate);
+    QPointF oldPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinates);
     m_content->setScale(scale);
-    QPointF newPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinate);
+    QPointF newPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinates);
     m_content->setPos(m_content->pos() - (newPinchCenterOnParent - oldPinchCenterOnParent));
 }
 

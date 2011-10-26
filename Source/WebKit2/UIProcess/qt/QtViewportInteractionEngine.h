@@ -70,8 +70,8 @@ public:
     void panGestureCancelled();
     void panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis);
 
-    void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinate);
-    void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor);
+    void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates);
+    void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
     void stopAnimations();
 
@@ -91,7 +91,7 @@ private:
     const QRectF calculateBoundariesForScale(const QSizeF contentSize, const QSizeF viewportSize, qreal scale);
     void animateContentIntoBoundariesIfNeeded();
 
-    void scaleContent(const QPointF& centerInContentCoordinate, qreal scale);
+    void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);
 
     // As long as the object exists this function will always return the same QScroller instance.
     QScroller* scroller() { return QScroller::scroller(this); }
