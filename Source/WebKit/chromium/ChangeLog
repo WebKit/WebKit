@@ -1,3 +1,28 @@
+2011-10-26  Chris Rogers  <crogers@google.com>
+
+        Add chromium bridging for AudioSourceProviderClient and setFormat() method so we can know audio stream format
+        https://bugs.webkit.org/show_bug.cgi?id=70650
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebAudioSourceProvider.h:
+        (WebKit::WebAudioSourceProvider::setClient):
+        * public/WebAudioSourceProviderClient.h: Copied from Source/WebKit/chromium/public/WebAudioSourceProvider.h.
+        (WebKit::WebAudioSourceProviderClient::~WebAudioSourceProviderClient):
+        * public/WebMediaPlayer.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        (WebKit::WebMediaPlayerClientImpl::audioSourceProvider):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::wrap):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::setClient):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput):
+        (WebKit::WebMediaPlayerClientImpl::AudioClientImpl::setFormat):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit::WebMediaPlayerClientImpl::AudioClientImpl::AudioClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::AudioClientImpl::~AudioClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::AudioClientImpl::wrap):
+
 2011-10-25  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Canvas2D should rate-limit drawing to prevent swamping the GPU process.

@@ -7,6 +7,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "AudioSourceProvider.h"
+#include "AudioSourceProviderClient.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
@@ -230,8 +232,13 @@ void WebMediaPlayerClientImpl::loadInternal()
 {
     Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
     m_webMediaPlayer = createWebMediaPlayer(this, frame);
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer.get()) {
+#if ENABLE(WEB_AUDIO)
+        // Make sure if we create/re-create the WebMediaPlayer that we update our wrapper.
+        m_audioSourceProvider.wrap(m_webMediaPlayer->audioSourceProvider());
+#endif
         m_webMediaPlayer->load(KURL(ParsedURLString, m_url));
+    }
 }
 
 void WebMediaPlayerClientImpl::cancelLoad()
@@ -546,17 +553,12 @@ unsigned WebMediaPlayerClientImpl::videoDecodedByteCount() const
     return 0;
 }
 
-WebCore::AudioSourceProvider* WebMediaPlayerClientImpl::audioSourceProvider()
-{
 #if ENABLE(WEB_AUDIO)
-    if (m_webMediaPlayer.get()) {
-        // Wrap the WebAudioSourceProvider in the form of WebCore::AudioSourceProvider.
-        m_audioSourceProvider.initialize(m_webMediaPlayer->audioSourceProvider());
-        return &m_audioSourceProvider;
-    }
-#endif
-    return 0;
+AudioSourceProvider* WebMediaPlayerClientImpl::audioSourceProvider()
+{
+    return &m_audioSourceProvider;
 }
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
 bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
@@ -659,13 +661,28 @@ WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
 }
 
 #if ENABLE(WEB_AUDIO)
-void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(WebCore::AudioBus* bus, size_t framesToProcess)
+void WebMediaPlayerClientImpl::AudioSourceProviderImpl::wrap(WebAudioSourceProvider* provider)
+{
+    if (m_webAudioSourceProvider && m_webAudioSourceProvider != provider)
+        m_webAudioSourceProvider->setClient(0);
+    m_webAudioSourceProvider = provider;
+    if (m_webAudioSourceProvider)
+        m_webAudioSourceProvider->setClient(&m_client);
+}
+
+void WebMediaPlayerClientImpl::AudioSourceProviderImpl::setClient(AudioSourceProviderClient* client)
+{
+    m_client.wrap(client);
+    if (m_webAudioSourceProvider)
+        m_webAudioSourceProvider->setClient(&m_client);
+}
+
+void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(AudioBus* bus, size_t framesToProcess)
 {
     ASSERT(bus);
     if (!bus)
         return;
 
-    ASSERT(m_webAudioSourceProvider);
     if (!m_webAudioSourceProvider) {
         bus->zero();
         return;
@@ -679,6 +696,13 @@ void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(WebCore::Au
 
     m_webAudioSourceProvider->provideInput(webAudioData, framesToProcess);
 }
+
+void WebMediaPlayerClientImpl::AudioClientImpl::setFormat(size_t numberOfChannels, float sampleRate)
+{
+    if (m_client)
+        m_client->setFormat(numberOfChannels, sampleRate);
+}
+
 #endif
 
 } // namespace WebKit

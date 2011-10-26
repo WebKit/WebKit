@@ -22,27 +22,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAudioSourceProvider_h
-#define WebAudioSourceProvider_h
-
-#include "WebVector.h"
+#ifndef WebAudioSourceProviderClient_h
+#define WebAudioSourceProviderClient_h
 
 namespace WebKit {
-    
-class WebAudioSourceProviderClient;
 
-// Abstract interface for a pull-model client.
-class WebAudioSourceProvider {
+class WebAudioSourceProviderClient {
 public:
-    // provideInput() gets called repeatedly to render time-slices of a continuous audio stream.
-    virtual void provideInput(const WebVector<float*>& audioData, size_t numberOfFrames) = 0;
-
-    // If a client is set, we call it back when the audio format is available.
-    virtual void setClient(WebAudioSourceProviderClient*) { };
-
-    virtual ~WebAudioSourceProvider() { }
+    virtual void setFormat(size_t numberOfChannels, float sampleRate) = 0;
+protected:
+    virtual ~WebAudioSourceProviderClient() { }
 };
 
 } // WebKit
 
-#endif // WebAudioSourceProvider_h
+#endif // WebAudioSourceProviderClient_h

@@ -38,8 +38,11 @@
 #include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
 #include "VideoLayerChromium.h"
+#include "WebAudioSourceProviderClient.h"
 #include "WebMediaPlayerClient.h"
 #include <wtf/OwnPtr.h>
+
+namespace WebCore { class AudioSourceProviderClient; }
 
 namespace WebKit {
 
@@ -126,7 +129,10 @@ public:
     virtual unsigned droppedFrameCount() const;
     virtual unsigned audioDecodedByteCount() const;
     virtual unsigned videoDecodedByteCount() const;
+    
+#if ENABLE(WEB_AUDIO)
     virtual WebCore::AudioSourceProvider* audioSourceProvider();
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
@@ -167,7 +173,29 @@ private:
     static bool m_isEnabled;
 
 #if ENABLE(WEB_AUDIO)
+    // AudioClientImpl wraps an AudioSourceProviderClient.
+    // When the audio format is known, Chromium calls setFormat() which then dispatches into WebCore.
+
+    class AudioClientImpl : public WebKit::WebAudioSourceProviderClient {
+    public:
+        AudioClientImpl()
+            : m_client(0)
+        {
+        }
+
+        virtual ~AudioClientImpl() { }
+
+        // WebAudioSourceProviderClient
+        virtual void setFormat(size_t numberOfChannels, float sampleRate);
+
+        void wrap(WebCore::AudioSourceProviderClient* client) { m_client = client; }
+        
+    private:
+        WebCore::AudioSourceProviderClient* m_client;
+    };
+
     // AudioSourceProviderImpl wraps a WebAudioSourceProvider.
+    // provideInput() calls into Chromium to get a rendered audio stream. 
 
     class AudioSourceProviderImpl : public WebCore::AudioSourceProvider {
     public:
@@ -178,11 +206,16 @@ private:
 
         virtual ~AudioSourceProviderImpl() { }
 
+        // Wraps the given WebAudioSourceProvider.
+        void wrap(WebAudioSourceProvider*);
+
+        // WebCore::AudioSourceProvider
+        virtual void setClient(WebCore::AudioSourceProviderClient*);
         virtual void provideInput(WebCore::AudioBus*, size_t framesToProcess);
-        void initialize(WebAudioSourceProvider* provider) { m_webAudioSourceProvider = provider; }
 
     private:
         WebAudioSourceProvider* m_webAudioSourceProvider;
+        AudioClientImpl m_client;
     };
 
     AudioSourceProviderImpl m_audioSourceProvider;

@@ -114,6 +114,8 @@
                 'public/WebAttribute.h',
                 'public/WebAudioBus.h',
                 'public/WebAudioDevice.h',
+                'public/WebAudioSourceProvider.h',
+                'public/WebAudioSourceProviderClient.h',
                 'public/WebAutofillClient.h',
                 'public/WebBindings.h',
                 'public/WebBlob.h',

@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class WebAudioSourceProvider;
+class WebAudioSourceProviderClient;
 class WebMediaPlayerClient;
 class WebURL;
 struct WebRect;
