@@ -3032,23 +3032,14 @@ BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html =
 
 // Flakiness on canaries (noted ~ r85140)
 BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
-BUGKBR DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
-
-// Flakiness on canaries (noted ~ r85220)
-BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
-BUGKBR LINUX WIN : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT TEXT
+BUGWK70886 DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
+BUGWK70884 LINUX WIN : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT TEXT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
 BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = PASS TEXT
 
-// Flakiness on canaries (noted ~ r85280)
-BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = PASS CRASH
-BUGDPRANKE DEBUG : editing/pasteboard/drag-image-in-about-blank-frame.html = PASS CRASH
-
-BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = PASS CRASH
 BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
-BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = PASS CRASH
 
 // flakiness on the deps bots (noted r~83476)
 BUGWK60105 LINUX WIN DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
@@ -3551,9 +3542,6 @@ BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-i
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
-// Failing after r95188
-BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
-
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
@@ -3642,7 +3630,6 @@ BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TI
 
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
-BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
 
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
 BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH

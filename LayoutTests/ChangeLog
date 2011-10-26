@@ -1,5 +1,16 @@
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More Chromium test expectation updates. Filed a bunch of bugs to track real failures
+        and removed erroneous failing test expectations.
+
+        * platform/chromium-cg-mac-leopard/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-mac-leopard/editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/merge-whitespace-pre-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Cleanup Chromium test expectation. These tests were erroneously marked as timing out intermittently
         even though the Chromium issue 66085 was fixed a long time ago.
 
