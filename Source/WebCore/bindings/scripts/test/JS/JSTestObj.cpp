@@ -753,11 +753,6 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
     return JSTestObj::getConstructor(exec, domObject->globalObject());
 }
 
-void JSTestObj::putVirtual(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
-{
-    put(this, exec, propertyName, value, slot);
-}
-
 void JSTestObj::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSTestObj* thisObject = static_cast<JSTestObj*>(cell);

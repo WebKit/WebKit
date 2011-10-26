@@ -1,5 +1,16 @@
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Resetting baseline for test bindings
+
+        Unreviewed preemptive build fix
+
+        No new tests.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+
+2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Remove deletePropertyVirtual
         https://bugs.webkit.org/show_bug.cgi?id=70738
 
