@@ -1,4 +1,45 @@
 =================
+WebKitGTK+ 1.7.1
+=================
+
+What's new in WebKitGTK+ 1.7.1?
+
+  - Fix a problem with scroll adjustments tha made scrollbars become
+    out of sync with the page contents.
+  - Show title of option control items in a tooltip.
+  - Improve scrolling performance for pages containing windowed
+    plugins.
+  - Use GtkGrid instead of GtkTable in authentication dialogs.
+  - Fix compatibility issues with DOM bindings.
+  - Fix video pause/play in fullscreen.
+  - Add support for pseudo-italics on freetype fonts when italic font
+    is requested but Fontconfig gives one that is neither oblique
+    nor italic.
+  - Fix test rendering issues due to custom fonts which use synthetic
+    oblique rendering.
+  - Support for client-based geolocation.
+  - Add support for sending encoded blob data during network requests.
+  - Use SOCK_SEQPACKET when available for sockets used to communicate
+    processes in WebKit2.
+  - Add gtk-doc support to generate WebKit2 GTK+ API documentation.
+  - Implement default error pages in WebKit2.
+  - Initial implementation of WebInspector for WebKit2.
+  - Implement drag and drop support in WebKit2.
+  - TextChecker implementation for WebKit2.
+  - Initial implementation of back forward list for WebKit2 GTK+ API.
+  - Initial implementation of view settings for WebKit2 GTK+ API.
+  - Initial implementation of loader client for WebKit2 GTK+ API.
+  - Implement cache model for WebKit2
+  - Initial implementation of web context for WebKit2 GTK+ API.
+  - Add methods to get/set a custom text enconding to WebKit2 GTK+
+    API.
+  - Add WebKitError to WebKit2 GTK+ API.
+
+This is the first release providing a minimal working WebKit2 GTK+
+API. This API is still under design and development, so use it
+carefully and take into account that it might change.
+
+=================
 WebKitGTK+ 1.5.90
 =================
 
