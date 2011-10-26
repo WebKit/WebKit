@@ -1,3 +1,21 @@
+2011-10-26  Fady Samuel  <fsamuel@chromium.org>
+
+        Page Scale Factor broken when navigating history on pages with child frames
+        https://bugs.webkit.org/show_bug.cgi?id=70459
+
+        Reviewed by Darin Fisher.
+
+        With frameScaleFactor now always returning 1.0 for subframes and pageScaleFactor for the mainFrame,
+        and there being only a single pageScaleFactor, history for scaling is broken. Scaling history is
+        saved on a per frame basis but restored, overriding the per-page pageScaleFactor multiple times.
+        As a result, sometimes pages that have subframes end up getting a scale factor of 1.0 instead
+        of the correct scale factor that was assigned to the main frame.
+
+        No new tests because I don't know how to test this.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+
 2011-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98429.

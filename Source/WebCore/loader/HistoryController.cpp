@@ -125,7 +125,8 @@ void HistoryController::restoreScrollPositionAndViewState()
     if (FrameView* view = m_frame->view()) {
         if (!view->wasScrolledByUser()) {
             view->setScrollPosition(m_currentItem->scrollPoint());
-            if (Page* page = m_frame->page())
+            Page* page = m_frame->page();
+            if (page && page->mainFrame() == m_frame)
                 page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
         }
     }
