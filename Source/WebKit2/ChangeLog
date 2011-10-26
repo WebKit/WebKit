@@ -1,3 +1,25 @@
+2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+        CG plug-ins are always given a context with a scale factor of 1, even when the device scale factor is something else
+        https://bugs.webkit.org/show_bug.cgi?id=67227
+        <rdar://problem/10048319>
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        Apply the scale factor when painting.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        Apply the scale factor when painting.
+
+        (WebKit::PluginProxy::geometryDidChange):
+        Make sure to apply the contents scale factor to the backing store size.
+
+        (WebKit::PluginProxy::update):
+        Apply the scale factor (when painting).
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove putVirtual

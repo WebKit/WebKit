@@ -163,6 +163,10 @@ void PluginControllerProxy::paint()
     // Create a graphics context.
     OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
 
+    // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
+    // which we currently don't have initiated in the plug-in process.
+    graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
+
     graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
 
     if (m_plugin->isTransparent())
