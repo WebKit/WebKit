@@ -1,3 +1,21 @@
+2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Flaky Test: editing/pasteboard/copy-standalone-image.html
+        https://bugs.webkit.org/show_bug.cgi?id=61813
+
+        Reviewed by Adam Barth.
+
+        The flakiness was caused by the fact test didn't wait until iframe finish loading.
+
+        HTML5 section 4.8.2. the iframe element (http://www.whatwg.org/specs/web-apps/current-work/#the-iframe-element):
+            When there is an active parser in the iframe, and when anything in the iframe is delaying the load event
+            of the iframe's browsing context's active document, the iframe must delay the load event of its document.
+
+        Since an image doesn't require an active parser, it does not delay the load event of the document.
+
+        * editing/pasteboard/copy-standalone-image.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-25  Xiaomei Ji  <xji@chromium.org>
 
         Disable editing/selection/move-by-word-visually-inline-block-positioned-element.html in QT after r98428.

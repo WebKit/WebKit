@@ -668,7 +668,6 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 
 // Flaky
 BUGCR31803 LINUX MAC : editing/inserting/12882.html = PASS IMAGE
-BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT IMAGE IMAGE+TEXT
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
