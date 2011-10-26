@@ -2,6 +2,7 @@
 
         Plug-ins have no way to find out when the device scale factor changes
         https://bugs.webkit.org/show_bug.cgi?id=67226
+        <rdar://problem/10048276>
 
         Reviewed by Sam Weinig.
 
