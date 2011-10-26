@@ -138,7 +138,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
 #if PLATFORM(MAC)
     float contentsScaleFactor = controller()->contentsScaleFactor();
 #else
-    float contentsScaleFactor = 0;
+    float contentsScaleFactor = 1;
 #endif
 
     if (!m_pluginBackingStoreContainsValidData) {
@@ -189,7 +189,7 @@ void PluginProxy::geometryDidChange()
 #if PLATFORM(MAC)
     float contentsScaleFactor = controller()->contentsScaleFactor();
 #else
-    float contentsScaleFactor = 0;
+    float contentsScaleFactor = 1;
 #endif
 
     if (m_frameRect.isEmpty() || !needsBackingStore()) {
@@ -541,7 +541,7 @@ void PluginProxy::update(const IntRect& paintedRect)
 #if PLATFORM(MAC)
         float contentsScaleFactor = controller()->contentsScaleFactor();
 #else
-        float contentsScaleFactor = 0;
+        float contentsScaleFactor = 1;
 #endif
 
         // Blit the plug-in backing store into our own backing store.
