@@ -1,3 +1,10 @@
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+        storage/domstorage/events/basic-setattribute.html is a flaky crasher.
+
 2011-10-26  Cary Clark  <caryclark@google.com>
 
         Unreviewed gardening: sixth chunk of baselines for Chromium-Skia
