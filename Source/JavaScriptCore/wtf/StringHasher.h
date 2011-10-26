@@ -36,7 +36,7 @@ static const unsigned stringHashingStartValue = 0x9e3779b9U;
 // JavaScriptCore and the CodeGeneratorJS.pm script in WebCore.
 class StringHasher {
 public:
-    static const unsigned flagCount = 6; // Save 6 bits for StringImpl to use as flags.
+    static const unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
 
     inline StringHasher()
         : m_hash(stringHashingStartValue)
@@ -81,9 +81,9 @@ public:
         result += result >> 15;
         result ^= result << 10;
 
-        // Reserving the high bits for flags preserves most of the hash's value,
-        // since hash lookup typically masks out the high bits anyway.
-        result >>= flagCount;
+        // Reserving space from the high bits for flags preserves most of the hash's
+        // value, since hash lookup typically masks out the high bits anyway.
+        result &= (1u << (sizeof(result) * 8 - flagCount)) - 1;
 
         // This avoids ever returning a hash code of 0, since that is used to
         // signal "hash not computed yet". Setting the high bit maintains

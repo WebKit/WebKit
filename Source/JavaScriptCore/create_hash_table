@@ -221,14 +221,14 @@ sub hashValue($) {
   $hash = $hash% $EXP2_32;
   $hash ^= (leftShift($hash, 10)% $EXP2_32);
 
-  # Save 6 bits for StringImpl to use as flags.
-  $hash = ($hash >> 6);
+  # Save 8 bits for StringImpl to use as flags.
+  $hash &= 0xffffff;
 
   # This avoids ever returning a hash code of 0, since that is used to
   # signal "hash not computed yet". Setting the high bit maintains
   # reasonable fidelity to a hash code of 0 because it is likely to yield
   # exactly 0 when hash lookup masks out the high bits.
-  $hash = (0x80000000 >> 6) if ($hash == 0);
+  $hash = (0x80000000 >> 8) if ($hash == 0);
 
   return $hash;
 }

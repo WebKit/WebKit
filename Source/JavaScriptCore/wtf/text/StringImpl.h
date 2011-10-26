@@ -381,8 +381,8 @@ private:
     static const unsigned s_refCountFlagIsStaticString = 0x1;
     static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
-    // The bottom 6 bits in the hash are flags.
-    static const unsigned s_flagCount = 6;
+    // The bottom 8 bits in the hash are flags.
+    static const unsigned s_flagCount = 8;
     static const unsigned s_flagMask = (1u << s_flagCount) - 1;
     COMPILE_ASSERT(s_flagCount == StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
 

@@ -1,3 +1,21 @@
+2011-10-26  Michael Saboff  <msaboff@apple.com>
+
+        Increase StringImpl Flag Bits for 8 bit Strings
+        https://bugs.webkit.org/show_bug.cgi?id=70937
+
+        Increased the number of bits used for flags in StringImpl
+        from 6 to 8 bits. This frees up 2 flag bits that will be
+        used for 8-bit string support. Updated hash methods accordingly.
+        Changed hash value masking from the low bits to the high
+        bits.
+
+        Reviewed by Darin Adler.
+
+        * create_hash_table:
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::hash):
+        * wtf/text/StringImpl.h:
+
 2011-10-26  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

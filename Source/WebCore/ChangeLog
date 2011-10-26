@@ -1,3 +1,19 @@
+2011-10-26  Michael Saboff  <msaboff@apple.com>
+
+        Increase StringImpl Flag Bits for 8 bit Strings
+        https://bugs.webkit.org/show_bug.cgi?id=70937
+
+        Increased the number of bits used for flags in StringImpl
+        from 6 to 8 bits. This frees up 2 flag bits that will be
+        used for 8-bit string support. Updated hash methods accordingly.
+        Changed hash value masking from the low bits to the high
+        bits.
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashValue):
+
 2011-10-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         REGRESSION (r94887): Scrolling the HTML spec is more jerky now than it was (regression)
