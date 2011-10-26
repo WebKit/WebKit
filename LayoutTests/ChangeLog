@@ -1,5 +1,11 @@
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Filed more bugs.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         More Chromium test expectation updates. Filed a bunch of bugs to track real failures
         and removed erroneous failing test expectations.
 

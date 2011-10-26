@@ -3340,8 +3340,8 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 // The test is flaky, due to the WebSocket issue.
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = PASS TIMEOUT
 
-BUGRNIWA LEOPARD DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
-BUGRNIWA DEBUG : jquery/css.html = PASS TIMEOUT
+BUGWK70888 LEOPARD DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
+BUGWK70887 DEBUG : jquery/css.html = PASS TIMEOUT
 
 BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = PASS CRASH
 
