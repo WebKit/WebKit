@@ -24,60 +24,21 @@
  */
 
 #import "config.h"
-#import "WKBrowsingContextGroup.h"
-#import "WKBrowsingContextGroupInternal.h"
+#import "Test.h"
 
-#import "WKPageGroup.h"
-#import "WKPreferences.h"
-#import "WKRetainPtr.h"
-#import "WKStringCF.h"
+#import <WebKit2/WKBrowsingContextGroup.h>
 
-@interface WKBrowsingContextGroupData : NSObject {
-@public
-    WKRetainPtr<WKPageGroupRef> _pageGroupRef;
-}
-@end
-
-@implementation WKBrowsingContextGroupData
-@end
-
-@implementation WKBrowsingContextGroup
-
-- (id)initWithIdentifier:(NSString *)identifier
+TEST(WKBrowsingContextGroupTest, GetSetJavaScriptEnabled)
 {
-    self = [super init];
-    if (!self)
-        return nil;
+    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
+    
+    ASSERT_TRUE(browsingContextGroup.javaScriptEnabled);
+    ASSERT_TRUE([browsingContextGroup isJavaScriptEnabled]);
 
-    _data = [[WKBrowsingContextGroupData alloc] init];
-    _data->_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
+    browsingContextGroup.javaScriptEnabled = NO;
 
-    return self;
+    ASSERT_FALSE(browsingContextGroup.javaScriptEnabled);
+    ASSERT_FALSE([browsingContextGroup isJavaScriptEnabled]);
+
+    [browsingContextGroup release];
 }
-
-- (void)dealloc
-{
-    [_data release];
-    [super dealloc];
-}
-
-- (BOOL)isJavaScriptEnabled
-{
-    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef));
-}
-
-- (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
-{
-    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef), javaScriptEnabled);
-}
-
-@end
-
-@implementation WKBrowsingContextGroup (Internal)
-
-- (WKPageGroupRef)pageGroupRef
-{
-    return _data->_pageGroupRef.get();
-}
-
-@end

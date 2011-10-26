@@ -36,4 +36,9 @@ WK_EXPORT
 
 - (id)initWithIdentifier:(NSString *)identifier;
 
+
+/* Settings */
+
+@property(getter = isJavaScriptEnabled) BOOL javaScriptEnabled;
+
 @end

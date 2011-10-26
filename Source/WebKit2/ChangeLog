@@ -1,3 +1,18 @@
+2011-10-26  Sam Weinig  <sam@webkit.org>
+
+        Add initial setting to WKBrowsingContextGroup
+        https://bugs.webkit.org/show_bug.cgi?id=70942
+
+        Reviewed by Anders Carlsson.
+
+        Test: WKBrowsingContextGroupTest.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.h:
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup isJavaScriptEnabled]):
+        (-[WKBrowsingContextGroup setJavaScriptEnabled:]):
+        Add setting to enabled/disable javascript. By default it is enabled. 
+
 2011-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         Embedded PDFs should be known to DocumentLoader
