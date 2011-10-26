@@ -740,9 +740,9 @@ void WebChromeClient::setRootFullScreenLayer(GraphicsLayer* layer)
 
 #endif
 
-void WebChromeClient::dispatchViewportDataDidChange(const ViewportArguments& args) const
+void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& args) const
 {
-    m_page->send(Messages::WebPageProxy::DidChangeViewportData(args));
+    m_page->send(Messages::WebPageProxy::DidChangeViewportProperties(args));
 }
 
 void WebChromeClient::didStartRubberBandForFrame(Frame*, const IntSize&) const

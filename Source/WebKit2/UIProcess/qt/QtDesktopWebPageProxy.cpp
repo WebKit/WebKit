@@ -69,7 +69,7 @@ void QtDesktopWebPageProxy::paintContent(QPainter* painter, const QRect& area)
     static_cast<DrawingAreaProxyImpl*>(m_webPageProxy->drawingArea())->paint(painter, area, unpaintedRegion);
 }
 
-void QtDesktopWebPageProxy::setViewportArguments(const WebCore::ViewportArguments&)
+void QtDesktopWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments&)
 {
     // We ignore the viewport definition on the Desktop.
 }

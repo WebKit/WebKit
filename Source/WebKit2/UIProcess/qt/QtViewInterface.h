@@ -63,7 +63,7 @@ public:
     virtual bool isVisible() = 0;
 
     virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*) = 0;
-    virtual void didReceiveViewportArguments(const WebCore::ViewportArguments&) = 0;
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&) = 0;
 
     virtual void didFindZoomableArea(const QPoint&, const QRect&) = 0;
 

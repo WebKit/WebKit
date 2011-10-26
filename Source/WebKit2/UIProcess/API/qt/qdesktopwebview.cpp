@@ -109,7 +109,7 @@ void QDesktopWebViewPrivate::startDrag(Qt::DropActions supportedDropActions, con
     *clientPosition = window->mapFromGlobal(*globalPosition);
 }
 
-void QDesktopWebViewPrivate::didReceiveViewportArguments(const WebCore::ViewportArguments&)
+void QDesktopWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments&)
 {
     // This feature is only used by QTouchWebView.
 }

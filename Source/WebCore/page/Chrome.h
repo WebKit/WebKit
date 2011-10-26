@@ -167,7 +167,7 @@ namespace WebCore {
         void enumerateChosenDirectory(FileChooser*);
 #endif
 
-        void dispatchViewportDataDidChange(const ViewportArguments&) const;
+        void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
 
         bool requiresFullscreenForVideoPlayback();
 

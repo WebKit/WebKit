@@ -164,7 +164,7 @@ namespace WebCore {
 #endif
         // End methods used by HostWindow.
 
-        virtual void dispatchViewportDataDidChange(const ViewportArguments&) const { }
+        virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
         virtual void layoutUpdated(Frame*) const { }

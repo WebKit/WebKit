@@ -86,7 +86,7 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     wkPage->setResizesToContentsUsingLayoutSize(attr.layoutSize);
 }
 
-void QTouchWebViewPrivate::setViewportArguments(const WebCore::ViewportArguments& args)
+void QTouchWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
     viewportArguments = args;
     updateViewportConstraints();

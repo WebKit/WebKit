@@ -1079,7 +1079,7 @@ void WebView::setScrollOffsetOnNextResize(const IntSize& scrollOffset)
     m_nextResizeScrollOffset = scrollOffset;
 }
 
-void WebView::setViewportArguments(const WebCore::ViewportArguments&)
+void WebView::didChangeViewportProperties(const WebCore::ViewportArguments&)
 {
 }
 

@@ -112,7 +112,7 @@ namespace WebKit {
 
         virtual void setToolTip(const WTF::String&, WebCore::TextDirection);
 
-        virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments& arguments) const;
+        virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const;
 
         virtual void print(WebCore::Frame*);
 #if ENABLE(SQL_DATABASE)

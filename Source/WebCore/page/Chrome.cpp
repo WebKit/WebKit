@@ -484,9 +484,9 @@ void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* l
     m_client->loadIconForFiles(filenames, loader);
 }
 
-void Chrome::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
+void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
-    m_client->dispatchViewportDataDidChange(arguments);
+    m_client->dispatchViewportPropertiesDidChange(arguments);
 }
 
 void Chrome::setCursor(const Cursor& cursor)

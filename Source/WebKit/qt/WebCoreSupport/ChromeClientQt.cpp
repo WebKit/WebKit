@@ -711,7 +711,7 @@ PassOwnPtr<QWebSelectMethod> ChromeClientQt::createSelectPopup() const
 #endif
 }
 
-void ChromeClientQt::dispatchViewportDataDidChange(const ViewportArguments&) const
+void ChromeClientQt::dispatchViewportPropertiesDidChange(const ViewportArguments&) const
 {
     emit m_webPage->viewportChangeRequested();
 }

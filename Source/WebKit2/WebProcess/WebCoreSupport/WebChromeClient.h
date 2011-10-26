@@ -206,7 +206,7 @@ private:
     virtual void makeFirstResponder() OVERRIDE;
 #endif
     
-    virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const OVERRIDE;
+    virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const OVERRIDE;
 
     virtual void didStartRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
     virtual void didCompleteRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;

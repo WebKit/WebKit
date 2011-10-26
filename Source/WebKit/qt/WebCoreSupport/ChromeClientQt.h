@@ -191,7 +191,7 @@ public:
 
     PassOwnPtr<QWebSelectMethod> createSelectPopup() const;
 
-    virtual void dispatchViewportDataDidChange(const ViewportArguments&) const;
+    virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }

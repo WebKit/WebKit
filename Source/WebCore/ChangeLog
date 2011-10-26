@@ -1,3 +1,22 @@
+2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Name viewport change event consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=70901
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use ViewportPropertiesDidChange term consistently throughout WebKit.
+
+        No tests needed as the change is only method renaming.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::dispatchViewportPropertiesDidChange):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::dispatchViewportPropertiesDidChange):
+        * page/Page.cpp:
+        (WebCore::Page::updateViewportArguments):
+
 2011-10-25  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Canvas2D should rate-limit drawing to prevent swamping the GPU process.

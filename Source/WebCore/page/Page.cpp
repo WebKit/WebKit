@@ -403,7 +403,7 @@ void Page::updateViewportArguments()
         return;
 
     m_viewportArguments = mainFrame()->document()->viewportArguments();
-    chrome()->dispatchViewportDataDidChange(m_viewportArguments);
+    chrome()->dispatchViewportPropertiesDidChange(m_viewportArguments);
 }
 
 void Page::refreshPlugins(bool reload)

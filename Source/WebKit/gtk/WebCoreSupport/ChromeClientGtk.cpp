@@ -640,7 +640,7 @@ void ChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCor
     loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
-void ChromeClient::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
+void ChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
     // Recompute the viewport attributes making it valid.
     webkitViewportAttributesRecompute(webkit_web_view_get_viewport_attributes(m_webView));

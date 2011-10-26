@@ -39,7 +39,7 @@ public:
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void updateViewportConstraints();
 
-    void setViewportArguments(const WebCore::ViewportArguments& args);
+    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
 
     QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;

@@ -589,9 +589,9 @@ void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
     m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
 }
 
-void QtWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& args)
+void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    m_viewInterface->didReceiveViewportArguments(args);
+    m_viewInterface->didChangeViewportProperties(args);
 }
 
 #include "moc_QtWebPageProxy.cpp"

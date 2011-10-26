@@ -159,7 +159,7 @@ public:
     virtual void cancelGeolocationPermissionRequestForFrame(Frame*);
     virtual void iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileChooser>);
 
-    virtual void dispatchViewportDataDidChange(const ViewportArguments&) const;
+    virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
 
     virtual bool selectItemWritingDirectionIsNatural();
     virtual bool selectItemAlignmentFollowsMenuWritingDirection();

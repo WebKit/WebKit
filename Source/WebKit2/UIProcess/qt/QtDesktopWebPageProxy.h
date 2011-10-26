@@ -41,7 +41,7 @@ protected:
 private:
     /* PageClient overrides. */
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
-    virtual void setViewportArguments(const WebCore::ViewportArguments&);
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif

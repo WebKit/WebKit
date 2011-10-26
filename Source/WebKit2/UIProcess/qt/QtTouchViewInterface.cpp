@@ -87,9 +87,9 @@ void QtTouchViewInterface::startDrag(Qt::DropActions supportedDropActions, const
     Q_ASSERT(false);
 }
 
-void QtTouchViewInterface::didReceiveViewportArguments(const WebCore::ViewportArguments& args)
+void QtTouchViewInterface::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    m_viewportView->d->setViewportArguments(args);
+    m_viewportView->d->didChangeViewportProperties(args);
 }
 
 void QtTouchViewInterface::didChangeUrl(const QUrl& url)

@@ -1,3 +1,16 @@
+2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Name viewport change event consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=70901
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use ViewportPropertiesDidChange term consistently throughout WebKit.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::dispatchViewportPropertiesDidChange):
+        * WebCoreSupport/ChromeClientEfl.h:
+
 2011-10-26  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Private function _ewk_view_viewport_attributes_compute takes an internal data of ewk_view.

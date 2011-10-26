@@ -1,3 +1,16 @@
+2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Name viewport change event consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=70901
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use ViewportPropertiesDidChange term consistently throughout WebKit.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::dispatchViewportPropertiesDidChange):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove g_thread_init() calls from gtk-doc scanner too

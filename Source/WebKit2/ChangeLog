@@ -1,3 +1,49 @@
+2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Name viewport change event consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=70901
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use ViewportPropertiesDidChange term consistently throughout WebKit.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/efl/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::didChangeViewportProperties):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::didChangeViewportProperties):
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeViewportProperties):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::didChangeViewportProperties):
+        * UIProcess/qt/QtDesktopWebPageProxy.h:
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::didChangeViewportProperties):
+        * UIProcess/qt/QtTouchViewInterface.h:
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::didChangeViewportProperties):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didChangeViewportProperties):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove g_thread_init() calls from gtk-doc scanner too

@@ -529,7 +529,7 @@ void ChromeClientEfl::loadIconForFiles(const Vector<String>&, FileIconLoader*)
     notImplemented();
 }
 
-void ChromeClientEfl::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
+void ChromeClientEfl::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
     ewk_view_viewport_attributes_set(m_view, arguments);
 }
