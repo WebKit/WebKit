@@ -46,6 +46,7 @@ class Float32Array;
 // The "onaudioprocess" attribute is an event listener which will get called periodically with an AudioProcessingEvent which has
 // AudioBuffers for each input and output.
 
+// FIXME: EventTarget should be introduced at the base of the inheritance hierarchy (i.e., as a base class for AudioNode).
 class JavaScriptAudioNode : public AudioNode, public EventTarget {
 public:
     // bufferSize must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
