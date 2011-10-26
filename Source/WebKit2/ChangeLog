@@ -1,5 +1,12 @@
 2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        C/C++ needs ; after each statement.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange):
+
+2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK build fix attempt after r98413 and r98416.
 
         * PluginProcess/PluginControllerProxy.cpp:
