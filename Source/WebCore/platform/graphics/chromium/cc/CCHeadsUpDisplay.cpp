@@ -39,6 +39,7 @@
 #include "TextRun.h"
 #include "TextStream.h"
 #include "TextureManager.h"
+#include "cc/CCThreadProxy.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -90,7 +91,7 @@ void CCHeadsUpDisplay::onSwapBuffers()
 bool CCHeadsUpDisplay::enabled() const
 {
     // FIXME: HUD does not work in compositor thread mode.
-    if (settings().enableCompositorThread)
+    if (CCThreadProxy::hasThread())
         return false;
     return settings().showPlatformLayerTree || settings().showFPSCounter;
 }

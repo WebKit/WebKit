@@ -1,3 +1,29 @@
+2011-10-25  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Enable threaded compositing via CCThreadProxy::hasThread only
+        https://bugs.webkit.org/show_bug.cgi?id=70838
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::layerRendererContext):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::context):
+        (WebCore::CCLayerTreeHost::setNeedsAnimate):
+        (WebCore::CCLayerTreeHost::setNeedsCommitThenRedraw):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::composite):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::hasThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-25  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word does not work in multi-line

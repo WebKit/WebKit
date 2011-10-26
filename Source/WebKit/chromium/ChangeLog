@@ -1,3 +1,20 @@
+2011-10-25  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Enable threaded compositing via CCThreadProxy::hasThread only
+        https://bugs.webkit.org/show_bug.cgi?id=70838
+
+        Reviewed by James Robinson.
+
+        * public/WebLayerTreeView.h:
+        * src/WebCompositorImpl.cpp:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::composite):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-10-25  Antoine Labour  <piman@chromium.org>
 
         Fix teardown in Web*LayerImpl, and add tests for Web*Layer

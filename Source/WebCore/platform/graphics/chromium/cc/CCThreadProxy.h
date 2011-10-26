@@ -43,6 +43,7 @@ class CCThreadProxySchedulerClient;
 class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
     friend class CCThreadProxySchedulerClient;
 public:
+    static bool hasThread();
     static void setThread(CCThread*);
 
     static PassOwnPtr<CCProxy> create(CCLayerTreeHost*);

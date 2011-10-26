@@ -45,11 +45,16 @@ namespace WebCore {
 
 CCThread* CCThreadProxy::s_ccThread = 0;
 
+bool CCThreadProxy::hasThread()
+{
+    return s_ccThread;
+}
+
 void CCThreadProxy::setThread(CCThread* ccThread)
 {
     s_ccThread = ccThread;
 #ifndef NDEBUG
-    CCProxy::setImplThread(s_ccThread->threadID());
+    CCProxy::setImplThread(s_ccThread ? s_ccThread->threadID() : 0);
 #endif
 }
 

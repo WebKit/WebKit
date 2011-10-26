@@ -222,13 +222,6 @@ protected:
         , m_endWhenBeginReturns(false)
         , m_timedOut(false)
     {
-        m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
-        WebCompositor::setThread(m_webThread.get());
-#ifndef NDEBUG
-        CCProxy::setMainThread(currentThread());
-#endif
-        ASSERT(CCProxy::isMainThread());
-        m_mainThreadProxy = CCScopedMainThreadProxy::create();
     }
 
     void doBeginTest();
@@ -296,7 +289,18 @@ protected:
 
     virtual void runTest(bool threaded)
     {
-        m_settings.enableCompositorThread = threaded;
+        if (threaded) {
+            m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
+            WebCompositor::setThread(m_webThread.get());
+        } else
+            WebCompositor::setThread(0);
+
+#ifndef NDEBUG
+        CCProxy::setMainThread(currentThread());
+#endif
+        ASSERT(CCProxy::isMainThread());
+        m_mainThreadProxy = CCScopedMainThreadProxy::create();
+
         webkit_support::PostDelayedTask(CCLayerTreeHostTest::onBeginTest, static_cast<void*>(this), 0);
         m_timeoutTask = new TimeoutTask(this);
         webkit_support::PostDelayedTask(m_timeoutTask, 5000); // webkit_support takes ownership of the task
@@ -313,6 +317,7 @@ protected:
             return;
         }
         afterTest();
+        WebCompositor::setThread(0);
     }
 
     CCSettings m_settings;
@@ -753,4 +758,3 @@ TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
 }
 
 } // namespace
-

@@ -2678,7 +2678,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         WebCore::CCSettings ccSettings;
         ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
         ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
-        ccSettings.enableCompositorThread = settings()->useThreadedCompositor();
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
