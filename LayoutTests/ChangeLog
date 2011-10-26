@@ -1,3 +1,10 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac rebaseline.
+
+        * platform/chromium-mac-leopard/editing/pasteboard/copy-standalone-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.png:
+
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed, rolling out r98483.
