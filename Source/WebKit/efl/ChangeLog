@@ -1,5 +1,22 @@
 2011-10-25  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
+        Fix occurrence of unpainted tiles while scrolling and zooming.
+        https://bugs.webkit.org/show_bug.cgi?id=70711
+
+        Reviewed by Adam Barth.
+
+        Cast one of operatees to float type when ewk_tiled_backing_store calculate tiles list on viewport.
+        For the proper calculation to generate a float number, at least one of operatees must be a float type.
+        But, currently both two operatees to calculate the number of tiles on viewport routine aren't float type,
+        so it generates smaller result than expected result when it is using ceil API.
+        As a result, it can lose a line of tiles which should be displayed in viewport area while scrolling and zooming.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (ewk_tiled_backing_store_zoom_weak_set):
+
+2011-10-25  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
         [EFL] Move assignment of some variables out of loop for ewk_tiled_backing_store.
         https://bugs.webkit.org/show_bug.cgi?id=67588
 

@@ -812,8 +812,8 @@ static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Da
     long columns, rows, oldRows, oldCols;
     INF("ewkTile%p, new size: %dx%d", priv->self, width, height);
 
-    columns = 1 + static_cast<int>(ceil(static_cast<float>(width / tileWidth)));
-    rows = 1 + static_cast<int>(ceil(static_cast<float>(height / tileHeight)));
+    columns = 1 + static_cast<int>(ceil(width / static_cast<float>(tileWidth)));
+    rows = 1 + static_cast<int>(ceil(height / static_cast<float>(tileHeight)));
 
     INF("ewkTile%p new grid size cols: %ld, rows: %ld, was %ld, %ld",
         priv->self, columns, rows, priv->view.cols, priv->view.rows);
@@ -1596,8 +1596,8 @@ Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object* ewkTile, float zoom
 
     evas_object_resize(priv->contentsClipper, modelWidth, modelHeight);
 
-    int vrows = static_cast<int>(ceil(static_cast<float>(priv->view.height / tileHeight)) + 1);
-    int vcols = static_cast<int>(ceil(static_cast<float>(priv->view.width / tileWidth)) + 1);
+    int vrows = static_cast<int>(ceil(priv->view.height /static_cast<float>(tileHeight)) + 1);
+    int vcols = static_cast<int>(ceil(priv->view.width / static_cast<float>(tileWidth)) + 1);
     Evas_Coord newX = currentX + (priv->view.offset.cur.x - currentX) * scale;
     Evas_Coord newY = currentY + (priv->view.offset.cur.y - currentY) * scale;
     Evas_Coord baseX = newX % tileWidth;
