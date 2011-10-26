@@ -567,7 +567,7 @@ body.port-qt #dock-status-bar-item {
     border-bottom: 1px solid rgb(96, 96, 96);
 }
 
-#error-count::before {
+#error-count-img {
     content: url(Images/errorIcon.png);
     width: 10px;
     height: 10px;
@@ -575,11 +575,11 @@ body.port-qt #dock-status-bar-item {
     margin-right: 2px;
 }
 
-#error-count + #warning-count {
+#error-count + #warning-count-img {
     margin-left: 6px;
 }
 
-#warning-count::before {
+#warning-count-img {
     content: url(Images/warningIcon.png);
     width: 10px;
     height: 10px;

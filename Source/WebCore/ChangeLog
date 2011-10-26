@@ -1,3 +1,17 @@
+2011-10-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Need workaround for the red crossed circle in the status bar not bringing up the console when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=70928
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.css:
+        (#error-count-img):
+        (#error-count + #warning-count-img):
+        (#warning-count-img):
+        * inspector/front-end/inspector.js:
+        (WebInspector._updateErrorAndWarningCounts):
+
 2011-10-26  Mike Reed  <reed@google.com>
 
         [skia] replace offscreen technique with native support for antialiased clipping
