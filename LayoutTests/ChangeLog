@@ -1,3 +1,15 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium editing test rebaselines and editing test expectations updates.
+
+        * platform/chromium-linux/editing/selection/5354455-2-expected.png:
+        * platform/chromium-mac-leopard/editing/inserting/12882-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/12882-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/5354455-2-expected.png: Added.
+        * platform/chromium-mac/editing/inserting/12882-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/5354455-2-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-26  Ben Wells  <benwells@chromium.org>
 
         Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

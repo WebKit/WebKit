@@ -203,10 +203,16 @@ WONTFIX SKIP : fast/forms/search-event-delay.html = PASS TEXT
 // these tests will always fail.
 // TODO(pinkerton): these should probably pass on Mac since we want Emacs
 // keybindings but they currently do not.
-WONTFIX SKIP : editing/pasteboard/emacs-cntl-y-001.html = FAIL
-WONTFIX SKIP : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
-WONTFIX SKIP : editing/pasteboard/emacs-ctrl-k-y-001.html = FAIL
-WONTFIX SKIP : editing/input/emacs-ctrl-o.html = FAIL
+WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-cntl-y-001.html = FAIL
+WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
+WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-ctrl-k-y-001.html = FAIL
+WONTFIX WIN LINUX SKIP : editing/input/emacs-ctrl-o.html = FAIL
+
+// These tests should pass on Mac
+BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
+BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
+BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
+BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
 
 // Checks for very kjs-specific garbage collector behavior.
 // Would have to be implemented much differently to work in v8.
@@ -467,8 +473,12 @@ WONTFIX SKIP : fast/regex/slow.html = TIMEOUT
 WONTFIX SKIP : platform/qt/view/fixed-layout-size.html = FAIL
 
 // These don't have pixel results and rely on ObjC bindings. Don't run until they have pixel results.
-WONTFIX SKIP : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = FAIL
-WONTFIX SKIP : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
+WONTFIX SKIP WIN LINUX : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = FAIL
+WONTFIX SKIP WIN LINUX : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
+
+// These tests seem to pass on Snow Leopard.
+BUGRNIWA MAC : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = PASS FAIL
+BUGRNIWA MAC : http/tests/security/dataTransfer-set-data-file-url.html = PASS FAIL
 
 // The issue is which global object to use as the implicit
 // receiver for cross-frame calls.  Currently, IE, Firefox and Chrome
@@ -638,8 +648,6 @@ BUGCR20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
 // Regression from merge 41268:41286
 BUGCR10435 MAC RELEASE : editing/selection/designmode-no-caret.html = FAIL
 
-BUGWK60089 DEBUG : editing/selection/designmode-no-caret.html = CRASH FAIL
-
 // Issue 3273: TextInputController::firstRectForCharacterRange not returning
 // the correct values for bidi/rtl text.
 BUGCR3273 : editing/selection/move-left-right.html = FAIL
@@ -653,9 +661,6 @@ BUGCR3273 : editing/selection/5825350-1.html = TEXT
 BUGCR3273 : editing/selection/5825350-2.html = TEXT
 BUGCR3273 : editing/selection/mixed-editability-10.html = TEXT
 
-// selection
-BUGCR10369 LINUX : editing/selection/5354455-2.html = FAIL
-
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
 // tree red. May be more involved then just rebaselining.
@@ -665,9 +670,6 @@ BUGCR14832 : editing/selection/user-drag-element-and-user-select-none.html = FAI
 // Fails due to textInputController.setInputMethod not implemented for Mac.
 BUGCR19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
 BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
-
-// Flaky
-BUGCR31803 LINUX MAC : editing/inserting/12882.html = PASS IMAGE
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
