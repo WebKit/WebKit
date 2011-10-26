@@ -467,8 +467,7 @@ WebInspector.ScriptsPanel.prototype = {
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
         var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        if (selectedCallFrame)
-            selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
+        selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
     },
 
     getSelectedCallFrameVariables: function(callback)

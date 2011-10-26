@@ -7,24 +7,15 @@ var foo = 123
 
 var test = function()
 {
-    // We need to initialize scripts panel so that watch expressions section is created.
-    WebInspector.showPanel("scripts");
-
     var watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
-    watchExpressionsSection.watchExpressions = [];
-    watchExpressionsSection.watchExpressions.push("#$%");
+    watchExpressionsSection.addExpression();
+    watchExpressionsSection.watchExpressions[0] = "#$%";
     watchExpressionsSection.update();
-
     InspectorTest.runAfterPendingDispatches(step1);
 
     function step1()
     {
         InspectorTest.addResult(watchExpressionsSection.element.innerHTML.indexOf("watch-expressions-error-level") !== -1 ? "SUCCESS" : "FAILED");
-
-        // Clear watch expressions after execution.
-        watchExpressionsSection.watchExpressions = [];
-        watchExpressionsSection.update();
-
         InspectorTest.completeTest();
     }
 }
