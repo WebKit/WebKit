@@ -1,5 +1,11 @@
 2011-10-25  Xiaomei Ji  <xji@chromium.org>
 
+        Disable editing/selection/move-by-word-visually-inline-block-positioned-element.html in QT after r98428.
+
+        * platform/qt/Skipped:
+
+2011-10-25  Xiaomei Ji  <xji@chromium.org>
+
         --webkit-visual-word does not work in multi-line
         https://bugs.webkit.org/show_bug.cgi?id=61344
 
