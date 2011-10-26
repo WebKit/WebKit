@@ -1,5 +1,45 @@
 2011-10-26  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98178
+
+    2011-10-21  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=70647
+            Common but unreproducible crash under [ScrollbarPartAnimation setCurrentProgress:]
+            -and corresponding-
+            <rdar://problem/9542018>
+
+            Reviewed by Sam Weinig.
+
+            This patch implements two speculative fixes for this crash.
+
+            First, block exceptions around all of the code responsible for calling 
+            stopAnimation. If that code throws any exceptions, we want to make sure the other 
+            animations are still stopped.
+            * platform/mac/ScrollAnimatorMac.mm:
+            (-[WebScrollbarPartAnimation scrollAnimatorDestroyed]):
+            (-[WebScrollbarPainterDelegate scrollAnimatorDestroyed]):
+            (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+
+            Only send AppKit these notifications for active pages. I originally made these 
+            assertions, and I found that they were hit a surprising number of times. If we 
+            only send notifications for active pages, then we should greatly reduce and 
+            possibly eliminate our chances of hitting this crash.
+            (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+            (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+            (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+            (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+            (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+            (WebCore::ScrollAnimatorMac::willStartLiveResize):
+            (WebCore::ScrollAnimatorMac::contentsResized):
+            (WebCore::ScrollAnimatorMac::willEndLiveResize):
+            (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+            (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+            (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+            (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+
+2011-10-26  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98171
 
     2011-10-21  Matthew Delaney  <mdelaney@apple.com>
