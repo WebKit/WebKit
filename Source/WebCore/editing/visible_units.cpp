@@ -1426,6 +1426,53 @@ static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, c
     return offsetNotFound;
 }
 
+static const RootInlineBox* previousRootInlineBox(const InlineBox* box)
+{
+    Node* node = box->renderer()->node();
+    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
+    Node* previousNode = node->previousLeafNode();
+    while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
+        previousNode = previousNode->previousLeafNode();
+  
+    while (previousNode) {
+        Position pos = createLegacyEditingPosition(previousNode, caretMaxOffset(previousNode));
+        
+        if (pos.isCandidate()) {
+            RenderedPosition renderedPos(pos, DOWNSTREAM);
+            RootInlineBox* root = renderedPos.rootBox();
+            if (root)
+                return root;
+        }
+
+        previousNode = previousNode->previousLeafNode();
+    }
+    return 0;
+}
+
+static const RootInlineBox* nextRootInlineBox(const InlineBox* box)
+{
+    Node* node = box->renderer()->node();
+    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
+    Node* nextNode = node->nextLeafNode();
+    while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
+        nextNode = nextNode->nextLeafNode();
+  
+    while (nextNode) {
+        Position pos;
+        pos = createLegacyEditingPosition(nextNode, caretMinOffset(nextNode));
+        
+        if (pos.isCandidate()) {
+            RenderedPosition renderedPos(pos, DOWNSTREAM);
+            RootInlineBox* root = renderedPos.rootBox();
+            if (root)
+                return root;
+        }
+
+        nextNode = nextNode->nextLeafNode();
+    }
+    return 0;
+}
+
 static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockDirection)
 {
     if (box->prevLeafChild())
@@ -1437,7 +1484,9 @@ static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockD
     if (leftLineBox)
         return leftLineBox->lastLeafChild();
 
-    return 0;
+    const RootInlineBox* leftRootInlineBox = isBlockLTR ? previousRootInlineBox(box) :
+        nextRootInlineBox(box); 
+    return leftRootInlineBox ? leftRootInlineBox->lastLeafChild() : 0; 
 }
 
 static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection blockDirection)
@@ -1451,7 +1500,9 @@ static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection block
     if (rightLineBox)
         return rightLineBox->firstLeafChild();
 
-    return 0;
+    const RootInlineBox* rightRootInlineBox = isBlockLTR ? nextRootInlineBox(box) :
+        previousRootInlineBox(box); 
+    return rightRootInlineBox ? rightRootInlineBox->firstLeafChild() : 0; 
 }
 
 static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)

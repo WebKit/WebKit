@@ -80,4 +80,9 @@ Move left by one word
 "ZQB abc RIG"[0, 4, 8, 11]
 Move right by one word
 "ZQB abc RIG"[11, 8, 4, 0]
+Test 17, LTR:
+Move right by one word
+<DIV>[0]
+Move left by one word
+<DIV>[0]
 

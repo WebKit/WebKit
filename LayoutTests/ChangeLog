@@ -1,3 +1,17 @@
+2011-10-25  Xiaomei Ji  <xji@chromium.org>
+
+        --webkit-visual-word does not work in multi-line
+        https://bugs.webkit.org/show_bug.cgi?id=61344
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/move-by-word-visually-inline-block-positioned-element-expected.txt: Added.
+        * editing/selection/move-by-word-visually-inline-block-positioned-element.html: Added.
+        * editing/selection/move-by-word-visually-multi-line-expected.txt:
+        * editing/selection/move-by-word-visually-single-space-one-element-expected.txt:
+        * editing/selection/move-by-word-visually-single-space-one-element.html:
+        * platform/gtk/editing/selection/move-by-word-visually-multi-line-expected.txt:
+
 2011-10-25  Erik Arvidsson  <arv@chromium.org>
 
         Fix ad hoc test.
