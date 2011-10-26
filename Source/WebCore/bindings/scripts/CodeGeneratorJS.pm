@@ -908,10 +908,10 @@ sub GenerateHeader
     if ($numCustomFunctions > 0) {
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$dataNode->functions}) {
-            next unless $function->signature->extendedAttributes->{"Custom"} or $function->signature->extendedAttributes->{"JSCCustom"};
-            next if $function->{overloads} && $function->{overloadIndex} != 1;
-            my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
-            push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
+            if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
+                my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
+                push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
+            }
         }
     }
 
@@ -1961,12 +1961,8 @@ sub GenerateImplementation
             AddIncludesForTypeInImpl($function->signature->type);
 
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"};
-            my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
 
-            next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
-
-            if (!$isCustom && $isOverloaded) {
+            if ($function->{overloads} && @{$function->{overloads}} > 1) {
                 # Append a number to an overloaded method's name to make it unique:
                 $functionName = $functionName . $function->{overloadIndex};
                 # Make this function static to avoid compiler warnings, since we
@@ -2009,7 +2005,7 @@ sub GenerateImplementation
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            if ($isCustom) {
+            if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
                 push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
             } else {
                 push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
@@ -2046,7 +2042,7 @@ sub GenerateImplementation
 
             push(@implContent, "}\n\n");
 
-            if (!$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}}) {
+            if ($function->{overloads} && @{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
                 GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
             }

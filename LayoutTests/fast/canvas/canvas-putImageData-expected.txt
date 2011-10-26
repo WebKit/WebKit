@@ -144,7 +144,7 @@ PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(9,9) is [0,128,0,255]
 PASS getPixel(1,1) is [0,128,0,255]
 PASS getPixel(9,9) is [0,128,0,255]
-PASS context.putImageData({}, 0, 0) threw exception TypeError: Type error.
+PASS context.putImageData({}, 0, 0) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS context.putImageData(buffer, NaN, 0, 0, 0, 0, 0) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS context.putImageData(buffer, 0, NaN, 0, 0, 0, 0) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS context.putImageData(buffer, 0, 0, NaN, 0, 0, 0) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
