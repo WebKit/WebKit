@@ -1,3 +1,13 @@
+2011-10-26  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r97030): Cannot log in to progressive.com
+        https://bugs.webkit.org/show_bug.cgi?id=70094
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+
 2011-10-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getOwnPropertySlotVirtual

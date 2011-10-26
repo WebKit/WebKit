@@ -1,3 +1,15 @@
+2011-10-26  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r97030): Cannot log in to progressive.com
+        https://bugs.webkit.org/show_bug.cgi?id=70094
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-intrinsic-osr-exit-expected.html: Added.
+        * fast/js/dfg-intrinsic-osr-exit.html: Added.
+        * fast/js/script-tests/dfg-intrinsic-osr-exit.js: Added.
+        (foo):
+
 2011-10-26  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Add pixel baselines for CSS3 tests.

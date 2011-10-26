@@ -891,9 +891,17 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         if (intrinsic != NoIntrinsic) {
             if (!certainAboutExpectedFunction)
                 addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
-                    
-            if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction))
+            
+            if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
+                if (!certainAboutExpectedFunction) {
+                    // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
+                    // to, since at this point we know that the call target is a constant. It's just that OSR isn't
+                    // smart enough to figure that out, since it doesn't understand CheckFunction.
+                    addToGraph(Phantom, callTarget);
+                }
+                
                 return;
+            }
         } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, firstArg, lastArg, nextOffset, kind))
             return;
     }
