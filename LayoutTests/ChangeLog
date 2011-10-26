@@ -1,3 +1,11 @@
+2011-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        Skip failing tests temporarily because of missing Qt Mobility on the buildbot.
+
+        * platform/qt-arm/Skipped:
+
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, gardening. Mark editing/selection/designmode-no-caret.html as failing in debug mode.
