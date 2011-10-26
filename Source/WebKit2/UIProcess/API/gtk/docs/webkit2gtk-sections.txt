@@ -93,7 +93,6 @@ WEBKIT_IS_WEB_LOADER_CLIENT_CLASS
 WEBKIT_WEB_LOADER_CLIENT_GET_CLASS
 
 <SUBSECTION Private>
-WebKitWebLoaderClientPrivate
 webkit_web_loader_client_get_type
 </SECTION>
 

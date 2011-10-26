@@ -1,3 +1,16 @@
+2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix gtk-doc warnings and style issues in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=70930
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2011-10-26  Anders Carlsson  <andersca@apple.com>
 
         Use the right contents scale factor for non-Mac plug-ins

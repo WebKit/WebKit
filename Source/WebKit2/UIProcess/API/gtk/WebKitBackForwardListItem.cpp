@@ -100,13 +100,13 @@ WKBackForwardListItemRef webkitBackForwardListItemGetWKItem(WebKitBackForwardLis
 
 /**
  * webkit_back_forward_list_item_get_uri:
- * @back_forward_list_item: a #WebKitBackForwardListItem
+ * @list_item: a #WebKitBackForwardListItem
  *
  * This URI may differ from the original URI if the page was,
  * for example, redirected to a new location.
  * See also webkit_back_forward_list_item_get_original_uri().
  *
- * Returns: the URI of @back_forward_list_item or %NULL
+ * Returns: the URI of @list_item or %NULL
  *    when the URI is empty.
  */
 const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* listItem)
@@ -124,9 +124,9 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
 
 /**
  * webkit_back_forward_list_item_get_title:
- * @back_forward_list_item: a #WebKitBackForwardListItem
+ * @list_item: a #WebKitBackForwardListItem
  *
- * Returns: the page title of @back_forward_list_item or %NULL
+ * Returns: the page title of @list_item or %NULL
  *    when the title is empty.
  */
 const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* listItem)
@@ -144,11 +144,11 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
 
 /**
  * webkit_back_forward_list_item_get_original_uri:
- * @back_forward_list_item: a #WebKitWebHistoryItem
+ * @list_item: a #WebKitBackForwardListItem
  *
  * See also webkit_back_forward_list_item_get_uri().
  *
- * Returns: the original URI of @back_forward_list_item or %NULL
+ * Returns: the original URI of @list_item or %NULL
  *    when the original URI is empty.
  */
 const gchar* webkit_back_forward_list_item_get_original_uri(WebKitBackForwardListItem* listItem)

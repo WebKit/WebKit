@@ -104,7 +104,7 @@ WEBKIT_API void
 webkit_web_view_reload_bypass_cache          (WebKitWebView             *web_view);
 
 WEBKIT_API gdouble
-webkit_web_view_get_estimated_load_progress  (WebKitWebView             *web_vew);
+webkit_web_view_get_estimated_load_progress  (WebKitWebView             *web_view);
 
 WEBKIT_API void
 webkit_web_view_go_back                      (WebKitWebView             *web_view);

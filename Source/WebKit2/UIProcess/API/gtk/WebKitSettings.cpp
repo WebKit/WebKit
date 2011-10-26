@@ -42,7 +42,7 @@ struct _WebKitSettingsPrivate {
 };
 
 /**
- * SECTION:webkitsettings
+ * SECTION:WebKitSettings
  * @short_description: Control the behaviour of a #WebKitWebView
  *
  * #WebKitSettings can be applied to a #WebKitWebView to control text encoding, 
@@ -188,11 +188,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     GParamFlags readWriteConstructParamFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
     /**
-    * WebKitSettings:enable-javascript
-    *
-    * Determines whether or not JavaScript executes within a page.
-    *
-    */
+     * WebKitSettings:enable-javascript:
+     *
+     * Determines whether or not JavaScript executes within a page.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_JAVASCRIPT,
                                     g_param_spec_boolean("enable-javascript",
@@ -202,13 +201,12 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:auto-load-images
-    *
-    * Determines whether images should be automatically loaded or not.
-    * On devices where network bandwidth is of concern, it might be
-    * useful to turn this property off.
-    *
-    */
+     * WebKitSettings:auto-load-images:
+     *
+     * Determines whether images should be automatically loaded or not.
+     * On devices where network bandwidth is of concern, it might be
+     * useful to turn this property off.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_AUTO_LOAD_IMAGES,
                                     g_param_spec_boolean("auto-load-images",
@@ -218,12 +216,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:load-icons-ignoring-image-load-setting
-    *
-    * Determines whether a site can load favicons irrespective
-    * of the value of #WebSettings:auto-load-images.
-    *
-    */
+     * WebKitSettings:load-icons-ignoring-image-load-setting:
+     *
+     * Determines whether a site can load favicons irrespective
+     * of the value of #WebKitSettings:auto-load-images.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_LOAD_ICONS_IGNORING_IMAGE_LOAD_SETTING,
                                     g_param_spec_boolean("load-icons-ignoring-image-load-setting",
@@ -233,16 +230,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:enable-offline-web-application-cache
-    *
-    * Whether to enable HTML5 offline web application cache support. Offline
-    * web application cache allows web applications to run even when
-    * the user is not connected to the network.
-    *
-    * HTML5 offline web application specification is available at
-    * http://dev.w3.org/html5/spec/offline.html.
-    *
-    */
+     * WebKitSettings:enable-offline-web-application-cache:
+     *
+     * Whether to enable HTML5 offline web application cache support. Offline
+     * web application cache allows web applications to run even when
+     * the user is not connected to the network.
+     *
+     * HTML5 offline web application specification is available at
+     * http://dev.w3.org/html5/spec/offline.html.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
                                     g_param_spec_boolean("enable-offline-web-application-cache",
@@ -252,15 +248,14 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:enable-html5-local-storage:
-    *
-    * Whether to enable HTML5 local storage support. Local storage provides
-    * simple synchronous storage access.
-    *
-    * HTML5 local storage specification is available at
-    * http://dev.w3.org/html5/webstorage/.
-    *
-    */
+     * WebKitSettings:enable-html5-local-storage:
+     *
+     * Whether to enable HTML5 local storage support. Local storage provides
+     * simple synchronous storage access.
+     *
+     * HTML5 local storage specification is available at
+     * http://dev.w3.org/html5/webstorage/.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_HTML5_LOCAL_STORAGE,
                                     g_param_spec_boolean("enable-html5-local-storage",
@@ -270,16 +265,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:enable-html5-database:
-    *
-    * Whether to enable HTML5 client-side SQL database support. Client-side
-    * SQL database allows web pages to store structured data and be able to
-    * use SQL to manipulate that data asynchronously.
-    *
-    * HTML5 database specification is available at
-    * http://www.w3.org/TR/webdatabase/.
-    *
-    */
+     * WebKitSettings:enable-html5-database:
+     *
+     * Whether to enable HTML5 client-side SQL database support. Client-side
+     * SQL database allows web pages to store structured data and be able to
+     * use SQL to manipulate that data asynchronously.
+     *
+     * HTML5 database specification is available at
+     * http://www.w3.org/TR/webdatabase/.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_HTML5_DATABASE,
                                     g_param_spec_boolean("enable-html5-database",
@@ -289,12 +283,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:enable-xss-auditor
-    *
-    * Whether to enable the XSS auditor. This feature filters some kinds of
-    * reflective XSS attacks on vulnerable web sites.
-    *
-    */
+     * WebKitSettings:enable-xss-auditor:
+     *
+     * Whether to enable the XSS auditor. This feature filters some kinds of
+     * reflective XSS attacks on vulnerable web sites.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_XSS_AUDITOR,
                                     g_param_spec_boolean("enable-xss-auditor",
@@ -305,13 +298,12 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
 
 
     /**
-    * WebKitSettings:enable-frame-flattening
-    *
-    * Whether to enable the frame flattening. With this setting each subframe is expanded
-    * to its contents, which will flatten all the frames to become one scrollable page.
-    * On touch devices scrollable subframes on a page can result in a confusing user experience.
-    *
-    */
+     * WebKitSettings:enable-frame-flattening:
+     *
+     * Whether to enable the frame flattening. With this setting each subframe is expanded
+     * to its contents, which will flatten all the frames to become one scrollable page.
+     * On touch devices scrollable subframes on a page can result in a confusing user experience.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_FRAME_FLATTENING,
                                     g_param_spec_boolean("enable-frame-flattening",
@@ -320,12 +312,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
-   /**
-    * WebKitSettings:enable-plugins:
-    *
-    * Determines whether or not plugins on the page are enabled.
-    *
-    */
+    /**
+     * WebKitSettings:enable-plugins:
+     *
+     * Determines whether or not plugins on the page are enabled.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_PLUGINS,
                                     g_param_spec_boolean("enable-plugins",
@@ -334,12 +325,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          TRUE,
                                                          readWriteConstructParamFlags));
 
-   /**
-    * WebKitSettings:enable-java:
-    *
-    * Determines whether or not Java is enabled on the page.
-    *
-    */
+    /**
+     * WebKitSettings:enable-java:
+     *
+     * Determines whether or not Java is enabled on the page.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_JAVA,
                                     g_param_spec_boolean("enable-java",
@@ -349,12 +339,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:javascript-can-open-windows-automatically
-    *
-    * Whether JavaScript can open popup windows automatically without user
-    * intervention.
-    *
-    */
+     * WebKitSettings:javascript-can-open-windows-automatically:
+     *
+     * Whether JavaScript can open popup windows automatically without user
+     * intervention.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
                                     g_param_spec_boolean("javascript-can-open-windows-automatically",
@@ -364,14 +353,13 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:enable-hyperlink-auditing:
-    *
-    * Determines whether or not hyperlink auditing is enabled.
-    *
-    * The hyperlink auditing specification is available at
-    * http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing.
-    *
-    */
+     * WebKitSettings:enable-hyperlink-auditing:
+     *
+     * Determines whether or not hyperlink auditing is enabled.
+     *
+     * The hyperlink auditing specification is available at
+     * http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_HYPERLINK_AUDITING,
                                     g_param_spec_boolean("enable-hyperlink-auditing",
@@ -399,7 +387,7 @@ static void webkit_settings_init(WebKitSettings* settings)
  * be manually attached to a WebView.
  *
  * Returns: a new #WebKitSettings instance.
- **/
+ */
 WebKitSettings* webkit_settings_new()
 {
     return WEBKIT_SETTINGS(g_object_new(WEBKIT_TYPE_SETTINGS, NULL));
@@ -407,13 +395,12 @@ WebKitSettings* webkit_settings_new()
 
 /**
  * webkit_settings_get_enable_javascript:
- *
- * Get the #WebKitSettings:enable-javascript property.
  * @settings: a #WebKitSettings
  *
- * Returns: %TRUE If JavaScript is enabled or %FALSE otherwise.
+ * Get the #WebKitSettings:enable-javascript property.
  *
- **/
+ * Returns: %TRUE If JavaScript is enabled or %FALSE otherwise.
+ */
 gboolean webkit_settings_get_enable_javascript(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -427,8 +414,7 @@ gboolean webkit_settings_get_enable_javascript(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-javascript property.
- *
- **/
+ */
 void webkit_settings_set_enable_javascript(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -449,8 +435,7 @@ void webkit_settings_set_enable_javascript(WebKitSettings* settings, gboolean en
  * Get the #WebKitSettings:auto-load-images property.
  *
  * Returns: %TRUE If auto loading of images is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_auto_load_images(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -464,8 +449,7 @@ gboolean webkit_settings_get_auto_load_images(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:auto-load-images property.
- *
- **/
+ */
 void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -486,8 +470,7 @@ void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean ena
  * Get the #WebKitSettings:load-icons-ignoring-image-load-setting property.
  *
  * Returns: %TRUE If site icon can be loaded irrespective of image loading preference or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -501,8 +484,7 @@ gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettin
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:load-icons-ignoring-image-load-setting property.
- *
- **/
+ */
 void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -523,8 +505,7 @@ void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* 
  * Get the #WebKitSettings:enable-offline-web-application-cache property.
  *
  * Returns: %TRUE If HTML5 offline web application cache support is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -538,8 +519,7 @@ gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-offline-web-application-cache property.
- *
- **/
+ */
 void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -560,8 +540,7 @@ void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* se
  * Get the #WebKitSettings:enable-html5-local-storage property.
  *
  * Returns: %TRUE If HTML5 local storage support is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_html5_local_storage(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -575,8 +554,7 @@ gboolean webkit_settings_get_enable_html5_local_storage(WebKitSettings* settings
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-html5-local-storage property.
- *
- **/
+ */
 void webkit_settings_set_enable_html5_local_storage(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -597,8 +575,7 @@ void webkit_settings_set_enable_html5_local_storage(WebKitSettings* settings, gb
  * Get the #WebKitSettings:enable-html5-database property.
  *
  * Returns: %TRUE If HTML5 database support is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -612,8 +589,7 @@ gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-html5-database property.
- *
- **/
+ */
 void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -634,8 +610,7 @@ void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolea
  * Get the #WebKitSettings:enable-xss-auditor property.
  *
  * Returns: %TRUE If XSS auditing is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -649,8 +624,7 @@ gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-xss-auditor property.
- *
- **/
+ */
 void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -686,8 +660,7 @@ gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-frame-flattening property.
- *
- **/
+ */
 void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -708,8 +681,7 @@ void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gbool
  * Get the #WebKitSettings:enable-plugins property.
  *
  * Returns: %TRUE If plugins are enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -723,8 +695,7 @@ gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-plugins property.
- *
- **/
+ */
 void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -745,8 +716,7 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  * Get the #WebKitSettings:enable-java property.
  *
  * Returns: %TRUE If Java is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -760,8 +730,7 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-java property.
- *
- **/
+ */
 void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -782,8 +751,7 @@ void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
  * Get the #WebKitSettings:javascript-can-open-windows-automatically property.
  *
  * Returns: %TRUE If JavaScript can open window automatically or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_javascript_can_open_windows_automatically(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -797,8 +765,7 @@ gboolean webkit_settings_get_javascript_can_open_windows_automatically(WebKitSet
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:javascript-can-open-windows-automatically property.
- *
- **/
+ */
 void webkit_settings_set_javascript_can_open_windows_automatically(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
@@ -819,8 +786,7 @@ void webkit_settings_set_javascript_can_open_windows_automatically(WebKitSetting
  * Get the #WebKitSettings:enable-hyperlink-auditing property.
  *
  * Returns: %TRUE If hyper link auditing is enabled or %FALSE otherwise.
- *
- **/
+ */
 gboolean webkit_settings_get_enable_hyperlink_auditing(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
@@ -834,8 +800,7 @@ gboolean webkit_settings_get_enable_hyperlink_auditing(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-hyperlink-auditing property.
- *
- **/
+ */
 void webkit_settings_set_enable_hyperlink_auditing(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
