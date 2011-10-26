@@ -28,31 +28,48 @@
 
 #include "BrowserWindow.h"
 
-#include "UrlLoader.h"
 #include "qdesktopwebview.h"
 #include "qtouchwebview.h"
 #include "qtouchwebpage.h"
+#include "utils.h"
 
+#include <QDeclarativeEngine>
+#include <QDir>
 
 BrowserWindow::BrowserWindow(WindowOptions* options)
-    : m_urlLoader(0)
 {
-    if (options)
-        m_windowOptions = *options;
-    else {
-        WindowOptions tmpOptions;
-        m_windowOptions = tmpOptions;
-    }
+    setWindowTitle("MiniBrowser");
+    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    setResizeMode(QSGView::SizeRootObjectToView);
 
-    if (m_windowOptions.startMaximized)
+    // This allows starting MiniBrowser from the build directory without previously defining QML_IMPORT_PATH.
+    QDir qmlImportDir = QDir(QCoreApplication::applicationDirPath());
+    qmlImportDir.cd("../imports");
+    engine()->addImportPath(qmlImportDir.canonicalPath());
+
+    engine()->rootContext()->setContextProperty("options", options);
+    setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
+    connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
+    if (options->startMaximized())
         setWindowState(Qt::WindowMaximized);
     else
         resize(800, 600);
     show();
 }
 
+QObject* BrowserWindow::webView() const
+{
+    QObject* webView = rootObject()->property("webView").value<QDesktopWebView*>();
+    // The webView is created in QML, therefore it might not exist yet.
+    if (!webView)
+        webView = rootObject()->property("webView").value<QTouchWebView*>();
+    return webView;
+}
+
 void BrowserWindow::load(const QString& url)
 {
+    QUrl completedUrl = urlFromUserInput(url);
+    QMetaObject::invokeMethod(rootObject(), "load", Qt::DirectConnection, Q_ARG(QVariant, completedUrl));
 }
 
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
@@ -66,15 +83,10 @@ void BrowserWindow::screenshot()
 {
 }
 
-void BrowserWindow::loadURLListFromFile()
-{
-}
-
 void BrowserWindow::updateUserAgentList()
 {
 }
 
 BrowserWindow::~BrowserWindow()
 {
-    delete m_urlLoader;
 }

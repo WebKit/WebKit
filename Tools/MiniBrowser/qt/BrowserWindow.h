@@ -31,10 +31,7 @@
 
 #include "MiniBrowserApplication.h"
 #include <QStringList>
-#include <QTimer>
 #include <QtDeclarative/QSGView>
-
-class UrlLoader;
 
 class BrowserWindow : public QSGView {
     Q_OBJECT
@@ -51,13 +48,8 @@ public slots:
 protected slots:
     void screenshot();
 
-    void loadURLListFromFile();
-
 private:
     void updateUserAgentList();
-
-    UrlLoader* m_urlLoader;
-    WindowOptions m_windowOptions;
     QStringList m_userAgentList;
 };
 

@@ -28,6 +28,9 @@
 
 #include "MiniBrowserApplication.h"
 
+#include "qdesktopwebview.h"
+#include "qtouchwebview.h"
+#include "qwebnavigationcontroller.h"
 #include "utils.h"
 #include <QRegExp>
 #include <QEvent>
@@ -62,7 +65,7 @@ static inline bool isMouseEvent(const QEvent* event)
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     : QGuiApplication(argc, argv)
-    , m_windowOptions()
+    , m_windowOptions(this)
     , m_realTouchEventReceived(false)
     , m_pendingFakeTouchEventCount(0)
     , m_isRobotized(false)
@@ -188,10 +191,10 @@ void MiniBrowserApplication::handleUserOptions()
     }
 
     if (args.contains("-touch"))
-        m_windowOptions.useTouchWebView = true;
+        m_windowOptions.setUseTouchWebView(true);
 
     if (args.contains("-maximize"))
-        m_windowOptions.startMaximized = true;
+        m_windowOptions.setStartMaximized(true);
 
     int robotIndex = args.indexOf("-r");
     if (robotIndex != -1) {
@@ -217,6 +220,5 @@ void MiniBrowserApplication::handleUserOptions()
         m_robotExtraTimeSeconds = takeOptionValue(&args, robotExtraTimeIndex).toInt();
 
     if (args.contains("-print-loaded-urls"))
-        m_windowOptions.printLoadedUrls = true;
-
+        m_windowOptions.setPrintLoadedUrls(true);
 }

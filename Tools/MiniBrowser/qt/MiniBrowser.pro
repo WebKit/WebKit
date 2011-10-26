@@ -48,3 +48,8 @@ DEFINES -= QT_ASCII_CAST_WARNINGS
 
 # Use the MiniBrowser.qrc file from the sources.
 RESOURCES += MiniBrowser.qrc
+
+OTHER_FILES += \
+    qml/BrowserWindow.qml \
+    qml/DesktopView.qml \
+    qml/TouchView.qml

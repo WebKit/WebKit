@@ -30,6 +30,7 @@
 #define MiniBrowserApplication_h
 
 #include <QHash>
+#include <QObject>
 #include <QStringList>
 #include <QtDeclarative>
 #include <QtGui/QGuiApplication>
@@ -37,20 +38,32 @@
 #include <QUrl>
 #include "qwindowsysteminterface_qpa.h"
 
-struct WindowOptions {
-    WindowOptions()
-        : printLoadedUrls(false)
-        , useTouchWebView(false)
-        , startMaximized(false)
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-        , useQGLWidgetViewport(false)
-#endif
+class WindowOptions : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(bool printLoadedUrls READ printLoadedUrls)
+    Q_PROPERTY(bool useTouchWebView READ useTouchWebView)
+    Q_PROPERTY(bool startMaximized READ startMaximized)
+
+public:
+    WindowOptions(QObject* parent = 0)
+        : QObject(parent)
+        , m_printLoadedUrls(false)
+        , m_useTouchWebView(false)
+        , m_startMaximized(false)
     {
     }
 
-    bool printLoadedUrls;
-    bool useTouchWebView;
-    bool startMaximized;
+    void setPrintLoadedUrls(bool enabled) { m_printLoadedUrls = enabled; }
+    bool printLoadedUrls() const { return m_printLoadedUrls; }
+    void setUseTouchWebView(bool enabled) { m_useTouchWebView = enabled; }
+    bool useTouchWebView() const { return m_useTouchWebView; }
+    void setStartMaximized(bool enabled) { m_startMaximized = enabled; }
+    bool startMaximized() const { return m_startMaximized; }
+
+private:
+    bool m_printLoadedUrls;
+    bool m_useTouchWebView;
+    bool m_startMaximized;
 };
 
 class MiniBrowserApplication : public QGuiApplication {
@@ -80,5 +93,7 @@ private:
 
     QHash<int, QWindowSystemInterface::TouchPoint> m_touchPoints;
 };
+
+QML_DECLARE_TYPE(WindowOptions);
 
 #endif

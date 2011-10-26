@@ -61,6 +61,7 @@ int main(int argc, char** argv)
 
     BrowserWindow* window = new BrowserWindow(&app.m_windowOptions);
     window->load(urls.at(0));
+    window->setGeometry(100, 100, 800, 600);
 
     for (int i = 1; i < urls.size(); ++i)
         window->newWindow(urls.at(i));

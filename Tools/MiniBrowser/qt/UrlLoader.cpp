@@ -41,16 +41,14 @@ UrlLoader::UrlLoader(BrowserWindow* browserWindow, const QString& inputFileName,
     m_checkIfFinishedTimer.setSingleShot(true);
     connect(&m_checkIfFinishedTimer, SIGNAL(timeout()), this, SLOT(checkIfFinished()));
     // loadStarted and loadFinished on QWebPage is emitted for each frame/sub-frame
-
-    // FIXME: Reconnect these signals after Qt5/QtQuick rewrite if necessary.
-    // connect(m_browserWindow->webView(), SIGNAL(loadStarted()), this, SLOT(frameLoadStarted()));
-    // connect(m_browserWindow->webView(), SIGNAL(loadFinished(bool)), this, SLOT(frameLoadFinished()));
+    connect(m_browserWindow->webView(), SIGNAL(loadStarted()), this, SLOT(frameLoadStarted()));
+    connect(m_browserWindow->webView(), SIGNAL(loadSucceeded()), this, SLOT(frameLoadFinished()));
+    connect(m_browserWindow->webView(), SIGNAL(loadFailed(QDesktopWebView::ErrorType, int, const QUrl&)), this, SLOT(frameLoadFinished()));
 
     if (timeoutSeconds) {
         m_timeoutTimer.setInterval(timeoutSeconds * 1000);
         m_timeoutTimer.setSingleShot(true);
-        // FIXME: Reconnect this signal after Qt5/QtQuick rewrite if necessary.
-        // connect(m_browserWindow->webView(), SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
+        connect(m_browserWindow->webView(), SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
         connect(&m_timeoutTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
     }
     if (extraTimeSeconds) {
