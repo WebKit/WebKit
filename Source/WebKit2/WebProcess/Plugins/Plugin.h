@@ -191,6 +191,9 @@ public:
     // Tells the plug-in about window visibility changes.
     virtual void windowVisibilityChanged(bool) = 0;
 
+    // Tells the plug-in about scale factor changes.
+    virtual void contentsScaleFactorChanged(float) = 0;
+
     // Get the per complex text input identifier.
     virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
 

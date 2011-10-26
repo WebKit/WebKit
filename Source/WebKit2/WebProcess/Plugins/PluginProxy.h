@@ -97,6 +97,7 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+    virtual void contentsScaleFactorChanged(float);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 #endif
@@ -110,6 +111,8 @@ private:
 
     bool needsBackingStore() const;
     uint64_t windowNPObjectID();
+
+    void geometryDidChange();
 
     // Message handlers.
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
@@ -135,6 +138,9 @@ private:
 
     // The plug-in rect in window coordinates.
     WebCore::IntRect m_frameRect;
+
+    // The plug-in clip rect in window coordinates.
+    WebCore::IntRect m_clipRect;
 
     // This is the backing store that we paint when we're told to paint.
     RefPtr<ShareableBitmap> m_backingStore;

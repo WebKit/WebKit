@@ -404,6 +404,14 @@ void PluginView::setWindowIsFocused(bool windowIsFocused)
     m_plugin->windowFocusChanged(windowIsFocused);    
 }
 
+void PluginView::setDeviceScaleFactor(float scaleFactor)
+{
+    if (!m_isInitialized || !m_plugin)
+        return;
+
+    m_plugin->contentsScaleFactorChanged(scaleFactor);
+}
+
 void PluginView::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     if (!m_isInitialized || !m_plugin)

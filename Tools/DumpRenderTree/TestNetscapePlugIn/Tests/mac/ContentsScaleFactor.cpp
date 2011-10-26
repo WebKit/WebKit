@@ -31,6 +31,7 @@ class ContentsScaleFactor : public PluginTest {
 public:
     ContentsScaleFactor(NPP npp, const string& identifier)
         : PluginTest(npp, identifier)
+        , m_cachedContentsScaleFactor(1.0)
     {
     }
 
@@ -42,11 +43,17 @@ private:
         return contentsScaleFactor;
     }
 
+    double cachedContentsScaleFactor()
+    {
+        return m_cachedContentsScaleFactor;
+    }
+
     class ScriptableObject : public Object<ScriptableObject> { 
     public:
         bool hasProperty(NPIdentifier propertyName)
         {
-            return identifierIs(propertyName, "contentsScaleFactor");
+            return identifierIs(propertyName, "contentsScaleFactor")
+            || identifierIs(propertyName, "cachedContentsScaleFactor");
         }
 
         bool getProperty(NPIdentifier propertyName, NPVariant* result)
@@ -56,6 +63,10 @@ private:
                 return true;
             }
 
+            if (identifierIs(propertyName, "cachedContentsScaleFactor")) {
+                DOUBLE_TO_NPVARIANT(pluginTest()->cachedContentsScaleFactor(), *result);
+                return true;
+            }
             return false;
         }
 
@@ -63,6 +74,12 @@ private:
         ContentsScaleFactor* pluginTest() const { return static_cast<ContentsScaleFactor*>(Object<ScriptableObject>::pluginTest()); }
 
     };
+
+    virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
+    {
+        m_cachedContentsScaleFactor = contentsScaleFactor();
+        return NPERR_NO_ERROR;
+    }
 
     virtual NPError NPP_GetValue(NPPVariable variable, void* value)
     {
@@ -73,6 +90,18 @@ private:
         
         return NPERR_NO_ERROR;
     }
+
+    virtual NPError NPP_SetValue(NPNVariable variable, void* value)
+    {
+        switch (variable) {
+        case NPNVcontentsScaleFactor:
+            m_cachedContentsScaleFactor = *(double*)value;
+            return NPERR_NO_ERROR;
+        default:
+            return NPERR_GENERIC_ERROR;
+        }
+    }
+    double m_cachedContentsScaleFactor;
 };
 
 static PluginTest::Register<ContentsScaleFactor> contentsScaleFactor("contents-scale-factor");

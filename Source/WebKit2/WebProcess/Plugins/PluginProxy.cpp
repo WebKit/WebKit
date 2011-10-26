@@ -175,25 +175,25 @@ bool PluginProxy::isTransparent()
     return false;
 }
 
-void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+void PluginProxy::geometryDidChange()
 {
     ASSERT(m_isStarted);
 
-    m_frameRect = frameRect;
+    float contentsScaleFactor = controller()->contentsScaleFactor();
 
     if (m_frameRect.isEmpty() || !needsBackingStore()) {
         ShareableBitmap::Handle pluginBackingStoreHandle;
-        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_frameRect, m_clipRect, contentsScaleFactor, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
         return;
     }
 
     bool didUpdateBackingStore = false;
     if (!m_backingStore) {
-        m_backingStore = ShareableBitmap::create(frameRect.size(), ShareableBitmap::SupportsAlpha);
+        m_backingStore = ShareableBitmap::create(m_frameRect.size(), ShareableBitmap::SupportsAlpha);
         didUpdateBackingStore = true;
-    } else if (frameRect.size() != m_backingStore->size()) {
+    } else if (m_frameRect.size() != m_backingStore->size()) {
         // The backing store already exists, just resize it.
-        if (!m_backingStore->resize(frameRect.size()))
+        if (!m_backingStore->resize(m_frameRect.size()))
             return;
 
         didUpdateBackingStore = true;
@@ -203,7 +203,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     if (didUpdateBackingStore) {
         // Create a new plug-in backing store.
-        m_pluginBackingStore = ShareableBitmap::createShareable(frameRect.size(), ShareableBitmap::SupportsAlpha);
+        m_pluginBackingStore = ShareableBitmap::createShareable(m_frameRect.size(), ShareableBitmap::SupportsAlpha);
         if (!m_pluginBackingStore)
             return;
 
@@ -216,7 +216,15 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
         m_pluginBackingStoreContainsValidData = false;
     }
 
-    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_frameRect, m_clipRect, contentsScaleFactor, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+{
+    m_frameRect = frameRect;
+    m_clipRect = clipRect;
+
+    geometryDidChange();
 }
 
 void PluginProxy::visibilityDidChange()
@@ -367,6 +375,11 @@ void PluginProxy::windowAndViewFramesChanged(const WebCore::IntRect& windowFrame
 void PluginProxy::windowVisibilityChanged(bool isVisible)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::WindowVisibilityChanged(isVisible), m_pluginInstanceID);
+}
+
+void PluginProxy::contentsScaleFactorChanged(float scaleFactor)
+{
+    geometryDidChange();
 }
 
 uint64_t PluginProxy::pluginComplexTextInputIdentifier() const

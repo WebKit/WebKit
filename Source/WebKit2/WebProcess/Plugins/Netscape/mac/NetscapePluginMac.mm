@@ -925,6 +925,12 @@ void NetscapePlugin::windowVisibilityChanged(bool)
     // FIXME: Implement.
 }
 
+void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
+{
+    double contentsScaleFactor = scaleFactor;
+    NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor);
+}
+
 uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
 {
     // Just return a dummy value; this is only called for in-process plug-ins, which we don't support on Mac.

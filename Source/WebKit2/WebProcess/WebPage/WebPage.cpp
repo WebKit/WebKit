@@ -850,6 +850,12 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
         return;
 
     m_page->setDeviceScaleFactor(scaleFactor);
+
+    // Tell all our plug-in views that the device scale factor changed.
+#if PLATFORM(MAC)
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setDeviceScaleFactor(scaleFactor);
+#endif
 }
 
 void WebPage::setUseFixedLayout(bool fixed)

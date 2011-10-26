@@ -1,3 +1,48 @@
+2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins have no way to find out when the device scale factor changes
+        https://bugs.webkit.org/show_bug.cgi?id=67226
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        * PluginProcess/PluginControllerProxy.h:
+        This now takes the contentsScaleFactor and calls contentsScaleFactorChanged on its plug-in
+        if the scale factor changes.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        GeometryDidChange now takes a contents scale factor parameter.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::contentsScaleFactorChanged):
+        Implement contentsScaleFactorChanged and call NPP_SetValue with the new scale factor.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::contentsScaleFactorChanged):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        Add stub.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add pure virtual contentsScaleFactorChanged member function.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        Add geometryDidChange overload that doesn't take any parameters. Make it send over the
+        new scale factor to the plug-in process.
+
+        (WebKit::PluginProxy::contentsScaleFactorChanged):
+        Call geometryDidChange.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setDeviceScaleFactor):
+        Call Plugin::contentsScaleFactorChanged.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor):
+        Call setDeviceScaleFactor on all registered plug-ins.
+
 2011-10-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70852

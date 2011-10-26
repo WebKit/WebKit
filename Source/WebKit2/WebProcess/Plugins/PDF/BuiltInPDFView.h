@@ -104,6 +104,7 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+    virtual void contentsScaleFactorChanged(float);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 #endif
