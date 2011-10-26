@@ -1,3 +1,14 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac rebaseline, trusting the baseline optimizer.
+
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.txt: Added.
+        * platform/chromium-cg-mac/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.txt: Added.
+        * platform/chromium-mac/editing/pasteboard/copy-standalone-image-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+
 2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac, Qt, and Windows rebaseline r98407.
