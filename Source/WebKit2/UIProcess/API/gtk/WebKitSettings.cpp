@@ -385,7 +385,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
 
 static void webkit_settings_init(WebKitSettings* settings)
 {
-    WebKitSettingsPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(settings, WEBKIT_TYPE_WEB_SETTINGS, WebKitSettingsPrivate);
+    WebKitSettingsPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(settings, WEBKIT_TYPE_SETTINGS, WebKitSettingsPrivate);
     settings->priv = priv;
     new (priv) WebKitSettingsPrivate();
 
@@ -402,7 +402,7 @@ static void webkit_settings_init(WebKitSettings* settings)
  **/
 WebKitSettings* webkit_settings_new()
 {
-    return WEBKIT_SETTINGS(g_object_new(WEBKIT_TYPE_WEB_SETTINGS, NULL));
+    return WEBKIT_SETTINGS(g_object_new(WEBKIT_TYPE_SETTINGS, NULL));
 }
 
 /**
@@ -416,7 +416,7 @@ WebKitSettings* webkit_settings_new()
  **/
 gboolean webkit_settings_get_enable_javascript(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetJavaScriptEnabled(settings->priv->preferences.get());
 }
@@ -431,7 +431,7 @@ gboolean webkit_settings_get_enable_javascript(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_javascript(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetJavaScriptEnabled(priv->preferences.get());
@@ -453,7 +453,7 @@ void webkit_settings_set_enable_javascript(WebKitSettings* settings, gboolean en
  **/
 gboolean webkit_settings_get_auto_load_images(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetLoadsImagesAutomatically(settings->priv->preferences.get());
 }
@@ -468,7 +468,7 @@ gboolean webkit_settings_get_auto_load_images(WebKitSettings* settings)
  **/
 void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetLoadsImagesAutomatically(priv->preferences.get());
@@ -490,7 +490,7 @@ void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean ena
  **/
 gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(settings->priv->preferences.get());
 }
@@ -505,7 +505,7 @@ gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettin
  **/
 void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(priv->preferences.get());
@@ -527,7 +527,7 @@ void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* 
  **/
 gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetOfflineWebApplicationCacheEnabled(settings->priv->preferences.get());
 }
@@ -542,7 +542,7 @@ gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings
  **/
 void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetOfflineWebApplicationCacheEnabled(priv->preferences.get());
@@ -564,7 +564,7 @@ void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* se
  **/
 gboolean webkit_settings_get_enable_html5_local_storage(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetLocalStorageEnabled(settings->priv->preferences.get());
 }
@@ -579,7 +579,7 @@ gboolean webkit_settings_get_enable_html5_local_storage(WebKitSettings* settings
  **/
 void webkit_settings_set_enable_html5_local_storage(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetLocalStorageEnabled(priv->preferences.get());
@@ -601,7 +601,7 @@ void webkit_settings_set_enable_html5_local_storage(WebKitSettings* settings, gb
  **/
 gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetDatabasesEnabled(settings->priv->preferences.get());
 }
@@ -616,7 +616,7 @@ gboolean webkit_settings_get_enable_html5_database(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetDatabasesEnabled(priv->preferences.get());
@@ -638,7 +638,7 @@ void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolea
  **/
 gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetXSSAuditorEnabled(settings->priv->preferences.get());
 }
@@ -653,7 +653,7 @@ gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetXSSAuditorEnabled(priv->preferences.get());
@@ -675,7 +675,7 @@ void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean e
  **/
 gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetFrameFlatteningEnabled(settings->priv->preferences.get());
 }
@@ -690,7 +690,7 @@ gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetFrameFlatteningEnabled(priv->preferences.get());
@@ -712,7 +712,7 @@ void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gbool
  **/
 gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetPluginsEnabled(settings->priv->preferences.get());
 }
@@ -727,7 +727,7 @@ gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetPluginsEnabled(priv->preferences.get());
@@ -749,7 +749,7 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  **/
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetJavaEnabled(settings->priv->preferences.get());
 }
@@ -764,7 +764,7 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetJavaEnabled(priv->preferences.get());
@@ -786,7 +786,7 @@ void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
  **/
 gboolean webkit_settings_get_javascript_can_open_windows_automatically(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(settings->priv->preferences.get());
 }
@@ -801,7 +801,7 @@ gboolean webkit_settings_get_javascript_can_open_windows_automatically(WebKitSet
  **/
 void webkit_settings_set_javascript_can_open_windows_automatically(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(priv->preferences.get());
@@ -823,7 +823,7 @@ void webkit_settings_set_javascript_can_open_windows_automatically(WebKitSetting
  **/
 gboolean webkit_settings_get_enable_hyperlink_auditing(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetHyperlinkAuditingEnabled(settings->priv->preferences.get());
 }
@@ -838,7 +838,7 @@ gboolean webkit_settings_get_enable_hyperlink_auditing(WebKitSettings* settings)
  **/
 void webkit_settings_set_enable_hyperlink_auditing(WebKitSettings* settings, gboolean enabled)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(settings));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = WKPreferencesGetHyperlinkAuditingEnabled(priv->preferences.get());

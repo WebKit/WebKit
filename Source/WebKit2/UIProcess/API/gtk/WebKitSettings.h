@@ -40,12 +40,12 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_WEB_SETTINGS            (webkit_settings_get_type())
-#define WEBKIT_SETTINGS(obj)                (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitSettings))
-#define WEBKIT_SETTINGS_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_SETTINGS, WebKitSettingsClass))
-#define WEBKIT_IS_WEB_SETTINGS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_SETTINGS))
-#define WEBKIT_IS_WEB_SETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_SETTINGS))
-#define WEBKIT_SETTINGS_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_SETTINGS, WebKitSettingsClass))
+#define WEBKIT_TYPE_SETTINGS            (webkit_settings_get_type())
+#define WEBKIT_SETTINGS(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_SETTINGS, WebKitSettings))
+#define WEBKIT_SETTINGS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_SETTINGS, WebKitSettingsClass))
+#define WEBKIT_IS_SETTINGS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_SETTINGS))
+#define WEBKIT_IS_SETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_SETTINGS))
+#define WEBKIT_SETTINGS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_SETTINGS, WebKitSettingsClass))
 
 typedef struct _WebKitSettings WebKitSettings;
 typedef struct _WebKitSettingsClass WebKitSettingsClass;
