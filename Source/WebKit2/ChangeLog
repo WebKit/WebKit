@@ -1,3 +1,11 @@
+2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK build fix attempt after r98413 and r98416.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        (WebKit::PluginControllerProxy::geometryDidChange):
+
 2011-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove deletePropertyVirtual

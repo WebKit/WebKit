@@ -163,9 +163,11 @@ void PluginControllerProxy::paint()
     // Create a graphics context.
     OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
 
+#if PLATFORM(MAC)
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.
     graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
+#endif
 
     graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
 
@@ -434,10 +436,14 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
 
     ASSERT(m_plugin);
 
+#if PLATFORM(MAC)
     if (contentsScaleFactor != m_contentsScaleFactor) {
         m_contentsScaleFactor = contentsScaleFactor;
         m_plugin->contentsScaleFactorChanged(m_contentsScaleFactor);
     }
+#else
+    UNUSED_PARAM(contentsScaleFactor)
+#endif
 
     platformGeometryDidChange();
 
