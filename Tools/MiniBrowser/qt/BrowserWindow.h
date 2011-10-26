@@ -29,74 +29,35 @@
 #ifndef BrowserWindow_h
 #define BrowserWindow_h
 
-#include "BrowserView.h"
-
 #include "MiniBrowserApplication.h"
 #include <QStringList>
 #include <QTimer>
+#include <QtDeclarative/QSGView>
 
 class UrlLoader;
 
-class WindowWrapper : public QWidget
-{
-    Q_OBJECT
-
-public:
-    WindowWrapper(QWindow* window, QWidget* widget = 0);
-
-protected:
-    void showEvent(QShowEvent* event);
-    void resizeEvent(QResizeEvent* event);
-
-private slots:
-    void doResize();
-
-private:
-    QWindow* m_window;
-    QTimer m_resizeTimer;
-};
-
-class BrowserWindow : public QMainWindow {
+class BrowserWindow : public QSGView {
     Q_OBJECT
 
 public:
     BrowserWindow(WindowOptions* = 0);
     ~BrowserWindow();
     void load(const QString& url);
-
     QObject* webView() const;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
-    void openLocation();
-
-signals:
-    void enteredFullScreenMode(bool on);
 
 protected slots:
-    void changeLocation();
-    void onLoadProgressChanged(int progress);
-    void urlChanged(const QUrl&);
-    void openFile();
-
     void screenshot();
 
-    void toggleFullScreenMode(bool enable);
-
-    void showUserAgentDialog();
-
     void loadURLListFromFile();
-
-    void printURL(const QUrl&);
-    void onLinkHovered(const QUrl&, const QString&);
 
 private:
     void updateUserAgentList();
 
     UrlLoader* m_urlLoader;
     WindowOptions m_windowOptions;
-    BrowserView* m_browser;
-    QLineEdit* m_addressBar;
     QStringList m_userAgentList;
 };
 

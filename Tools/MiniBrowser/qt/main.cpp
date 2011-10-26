@@ -30,6 +30,7 @@
 
 #include "MiniBrowserApplication.h"
 #include "UrlLoader.h"
+#include <QDir>
 #include <QLatin1String>
 #include <QRegExp>
 

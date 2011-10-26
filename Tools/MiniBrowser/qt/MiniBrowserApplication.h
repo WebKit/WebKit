@@ -29,18 +29,10 @@
 #ifndef MiniBrowserApplication_h
 #define MiniBrowserApplication_h
 
-#include <QApplication>
-#include <QFileDialog>
 #include <QHash>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QShortcut>
-#include <QStatusBar>
 #include <QStringList>
-#include <QToolBar>
+#include <QtDeclarative>
+#include <QtGui/QGuiApplication>
 #include <QTouchEvent>
 #include <QUrl>
 #include "qwindowsysteminterface_qpa.h"
@@ -59,12 +51,9 @@ struct WindowOptions {
     bool printLoadedUrls;
     bool useTouchWebView;
     bool startMaximized;
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    bool useQGLWidgetViewport;
-#endif
 };
 
-class MiniBrowserApplication : public QApplication {
+class MiniBrowserApplication : public QGuiApplication {
     Q_OBJECT
 
 public:

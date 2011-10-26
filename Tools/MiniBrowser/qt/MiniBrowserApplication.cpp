@@ -61,7 +61,7 @@ static inline bool isMouseEvent(const QEvent* event)
 }
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
-    : QApplication(argc, argv, QApplication::GuiServer)
+    : QGuiApplication(argc, argv)
     , m_windowOptions()
     , m_realTouchEventReceived(false)
     , m_pendingFakeTouchEventCount(0)
@@ -82,14 +82,14 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     // with touch screen, and we should not have touch mocking.
 
     if (!event->spontaneous() || m_realTouchEventReceived)
-        return QApplication::notify(target, event);
+        return QGuiApplication::notify(target, event);
 
     if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
         if (m_pendingFakeTouchEventCount)
             --m_pendingFakeTouchEventCount;
         else
             m_realTouchEventReceived = true;
-        return QApplication::notify(target, event);
+        return QGuiApplication::notify(target, event);
     }
 
     QWindow* targetWindow = qobject_cast<QWindow*>(target);
@@ -111,13 +111,13 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             break;
         case QEvent::MouseMove:
             if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
-                return QApplication::notify(target, event);
+                return QGuiApplication::notify(target, event);
             touchPoint.state = Qt::TouchPointMoved;
             touchPoint.id = mouseEvent->buttons();
             break;
         case QEvent::MouseButtonRelease:
             if (mouseEvent->modifiers().testFlag(Qt::ControlModifier))
-                return QApplication::notify(target, event);
+                return QGuiApplication::notify(target, event);
             touchPoint.state = Qt::TouchPointReleased;
             touchPoint.id = mouseEvent->button();
             break;
@@ -148,7 +148,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             break;
         case Qt::TouchPointStationary:
             // Don't send the event if nothing changed.
-            return QApplication::notify(target, event);
+            return QGuiApplication::notify(target, event);
         default:
             eventType = QEvent::TouchUpdate;
             break;
@@ -162,10 +162,9 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             if (touchPoint.state ==  Qt::TouchPointReleased)
                 m_touchPoints.remove(touchPoint.id);
         }
-        return true;
     }
 
-    return QApplication::notify(target, event);
+    return QGuiApplication::notify(target, event);
 }
 
 void MiniBrowserApplication::handleUserOptions()
@@ -183,11 +182,7 @@ void MiniBrowserApplication::handleUserOptions()
              << "[-r list]"
              << "[-robot-timeout seconds]"
              << "[-robot-extra-time seconds]"
-             << "[-chunked-drawing-area]"
              << "[-print-loaded-urls]"
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-             << "[-gl-viewport]"
-#endif
              << "URLs";
         appQuit(0);
     }
@@ -224,8 +219,4 @@ void MiniBrowserApplication::handleUserOptions()
     if (args.contains("-print-loaded-urls"))
         m_windowOptions.printLoadedUrls = true;
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    if (args.contains("-gl-viewport"))
-        m_windowOptions.useQGLWidgetViewport = true;
-#endif
 }

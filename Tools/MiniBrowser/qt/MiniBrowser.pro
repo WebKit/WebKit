@@ -2,7 +2,6 @@ TEMPLATE = app
 TARGET = MiniBrowser
 
 SOURCES += \
-    BrowserView.cpp \
     BrowserWindow.cpp \
     main.cpp \
     MiniBrowserApplication.cpp \
@@ -10,7 +9,6 @@ SOURCES += \
     utils.cpp \
 
 HEADERS += \
-    BrowserView.h \
     BrowserWindow.h \
     MiniBrowserApplication.h \
     UrlLoader.h \
@@ -32,7 +30,6 @@ CONFIG -= app_bundle
 
 QT += network declarative
 macx:QT+=xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 linux-* {
     # From Creator's src/rpath.pri:
@@ -45,11 +42,6 @@ linux-* {
     QMAKE_RPATHDIR =
 } else {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
-
-contains(QT_CONFIG, opengl) {
-    QT += opengl
-    DEFINES += QT_CONFIGURED_WITH_OPENGL
 }
 
 DEFINES -= QT_ASCII_CAST_WARNINGS
