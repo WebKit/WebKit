@@ -947,6 +947,7 @@ static void _ewk_tiled_backing_store_view_wrap_up(Ewk_Tiled_Backing_Store_Data* 
     Evas_Coord offsetY = priv->view.offset.base.y + count * tileHeight;
     Evas_Coord tilePositionY = y + (lastRow - count + 1) * tileHeight + offsetY;
     Eina_Inlist** iteratorStart, **iteratorEnd;
+    Evas_Coord originX = x + priv->view.offset.base.x;
 
     iteratorStart = priv->view.items;
     iteratorEnd = iteratorStart + lastRow;
@@ -955,7 +956,7 @@ static void _ewk_tiled_backing_store_view_wrap_up(Ewk_Tiled_Backing_Store_Data* 
         Eina_Inlist** iteratorList;
         Eina_Inlist* temp = *iteratorStart;
         Ewk_Tiled_Backing_Store_Item* item;
-        Evas_Coord origianlX = x + priv->view.offset.base.x;
+        Evas_Coord tilePositionX = originX;
         int count1 = 0;
 
         for (iteratorList = iteratorStart; iteratorList < iteratorEnd; iteratorList++)
@@ -964,8 +965,8 @@ static void _ewk_tiled_backing_store_view_wrap_up(Ewk_Tiled_Backing_Store_Data* 
 
         priv->model.base.row++;
         EINA_INLIST_FOREACH(temp, item) {
-            _ewk_tiled_backing_store_item_move(item, origianlX, tilePositionY);
-            origianlX += tileWidth;
+            _ewk_tiled_backing_store_item_move(item, tilePositionX, tilePositionY);
+            tilePositionX += tileWidth;
             _ewk_tiled_backing_store_item_fill(priv, item, count1, lastRow);
             count1++;
         }
@@ -994,6 +995,7 @@ static void _ewk_tiled_backing_store_view_wrap_down(Ewk_Tiled_Backing_Store_Data
     Evas_Coord offsetY = priv->view.offset.base.y - count * tileHeight;
     Evas_Coord tilePositionY = y + offsetY + (count - 1) * tileHeight;
     Eina_Inlist** iteratorStart, **iteratorEnd;
+    Evas_Coord originX = x + priv->view.offset.base.x;
 
     iteratorStart = priv->view.items + priv->view.rows - 1;
     iteratorEnd = priv->view.items;
@@ -1002,7 +1004,7 @@ static void _ewk_tiled_backing_store_view_wrap_down(Ewk_Tiled_Backing_Store_Data
         Eina_Inlist** iteratorList;
         Eina_Inlist* temp = *iteratorStart;
         Ewk_Tiled_Backing_Store_Item* item;
-        Evas_Coord tilePositionX = x + priv->view.offset.base.x;
+        Evas_Coord tilePositionX = originX;
         int count1 = 0;
 
         for (iteratorList = iteratorStart; iteratorList > iteratorEnd; iteratorList--)
@@ -1043,6 +1045,8 @@ static void _ewk_tiled_backing_store_view_wrap_left(Ewk_Tiled_Backing_Store_Data
     Evas_Coord oy = y + priv->view.offset.base.y;
     Eina_Inlist** iterator;
     Eina_Inlist** iteratorEnd;
+    unsigned int baseColumn = lastColumn - count + 1;
+    Evas_Coord originX = x + baseColumn * tileWidth + offsetX;
 
     iterator = priv->view.items;
     iteratorEnd = iterator + priv->view.rows;
@@ -1051,16 +1055,16 @@ static void _ewk_tiled_backing_store_view_wrap_left(Ewk_Tiled_Backing_Store_Data
     priv->model.base.column += count;
 
     for (; iterator < iteratorEnd; iterator++, row++) {
-        Evas_Coord ox = x + (lastColumn - count + 1) * tileWidth + offsetX;
-        unsigned int c = lastColumn - count + 1;
+        Evas_Coord tilePositionX = originX;
+        unsigned int column = baseColumn;
 
-        for (unsigned int i = 0; i < count; i++, c++, ox += tileWidth) {
+        for (unsigned int i = 0; i < count; i++, column++, tilePositionX += tileWidth) {
             Ewk_Tiled_Backing_Store_Item* it;
             it = EINA_INLIST_CONTAINER_GET(*iterator, Ewk_Tiled_Backing_Store_Item);
             *iterator = eina_inlist_demote(*iterator, *iterator);
 
-            _ewk_tiled_backing_store_item_move(it, ox, oy);
-            _ewk_tiled_backing_store_item_fill(priv, it, c, row);
+            _ewk_tiled_backing_store_item_move(it, tilePositionX, oy);
+            _ewk_tiled_backing_store_item_fill(priv, it, column, row);
         }
         oy += tileHeight;
     }
@@ -1089,6 +1093,8 @@ static void _ewk_tiled_backing_store_view_wrap_right(Ewk_Tiled_Backing_Store_Dat
     Evas_Coord offsetX = priv->view.offset.base.x - count * tileWidth;
     Evas_Coord tilePositionY = y + priv->view.offset.base.y;
     Eina_Inlist** iterator, ** iteratorEnd;
+    unsigned int baseColumn = count - 1;
+    Evas_Coord originX = x + baseColumn * tileWidth + offsetX;
 
     iterator = priv->view.items;
     iteratorEnd = iterator + priv->view.rows;
@@ -1097,16 +1103,16 @@ static void _ewk_tiled_backing_store_view_wrap_right(Ewk_Tiled_Backing_Store_Dat
     priv->model.base.column -= count;
 
     for (; iterator < iteratorEnd; iterator++, row++) {
-        Evas_Coord ox = x + (count - 1) * tileWidth + offsetX;
-        unsigned int c = count - 1;
+        Evas_Coord tilePositionX = originX;
+        unsigned int column = baseColumn;
 
-        for (unsigned int i = 0; i < count; i++, c--, ox -= tileWidth) {
+        for (unsigned int i = 0; i < count; i++, column--, tilePositionX -= tileWidth) {
             Ewk_Tiled_Backing_Store_Item* item;
             item = EINA_INLIST_CONTAINER_GET((*iterator)->last, Ewk_Tiled_Backing_Store_Item);
             *iterator = eina_inlist_promote(*iterator, (*iterator)->last);
 
-            _ewk_tiled_backing_store_item_move(item, ox, tilePositionY);
-            _ewk_tiled_backing_store_item_fill(priv, item, c, row);
+            _ewk_tiled_backing_store_item_move(item, tilePositionX, tilePositionY);
+            _ewk_tiled_backing_store_item_fill(priv, item, column, row);
         }
         tilePositionY += tileHeight;
     }
