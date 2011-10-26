@@ -1,3 +1,17 @@
+2011-10-26  Jon Lee  <jonlee@apple.com>
+
+        selectedIndex gets set from -1 to 0 when modifying options
+        https://bugs.webkit.org/show_bug.cgi?id=70547
+        <rdar://problem/8388856>
+
+        Reviewed by Darin Adler.
+
+        The added tests set the selected index to either -1 or 1 (a legitimate value), and then change
+        the text, value, and label of the option. In all cases, the selected index should remain unchanged.
+
+        * fast/dom/HTMLSelectElement/selected-index-preserved-when-option-text-changes-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/selected-index-preserved-when-option-text-changes.html: Added.
+
 2011-10-26  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Add new CSS escape sequence parsing tests

@@ -52,6 +52,8 @@ public:
     int size() const { return m_size; }
     bool multiple() const { return m_multiple; }
 
+    bool usesMenuList() const;
+
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void remove(int index);
     void remove(HTMLOptionElement*);
@@ -148,7 +150,6 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event*);
     void setOptionsChangedOnRenderer();
-    bool usesMenuList() const;
 
     enum SkipDirection {
         SkipBackwards = -1,

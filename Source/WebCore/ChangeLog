@@ -1,3 +1,21 @@
+2011-10-26  Jon Lee  <jonlee@apple.com>
+
+        selectedIndex gets set from -1 to 0 when modifying options
+        https://bugs.webkit.org/show_bug.cgi?id=70547
+        <rdar://problem/8388856>
+
+        Reviewed by Darin Adler.
+
+        Changing the text causes a recalculation of the list items, which in the menu list case
+        forces the first element to be selected. We check the value of the selected option prior,
+        and restore it if it differs.
+
+        Test: fast/dom/HTMLSelectElement/selected-index-preserved-when-option-text-changes.html
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setText):
+        * html/HTMLSelectElement.h: promote usesMenuList() from private to public for use by HTMLOptionElement
+
 2011-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         Embedded PDFs should be known to DocumentLoader
