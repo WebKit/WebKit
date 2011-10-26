@@ -57,7 +57,7 @@ public:
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual bool usesImageContainerSize() const = 0;
-    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&, float) = 0;
+    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&) = 0;
     virtual void addClient(RenderObject*) = 0;
     virtual void removeClient(RenderObject*) = 0;
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const = 0;

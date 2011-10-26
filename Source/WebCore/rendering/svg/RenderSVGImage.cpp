@@ -66,7 +66,6 @@ void RenderSVGImage::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_imageResource->setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
 
     bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_updateCachedRepaintRect;
     if (m_needsTransformUpdate) {

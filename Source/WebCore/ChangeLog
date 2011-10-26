@@ -1,3 +1,99 @@
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed, rolling out r98483.
+        http://trac.webkit.org/changeset/98483
+        https://bugs.webkit.org/show_bug.cgi?id=47156
+
+        Change is causing some crashes and ASSERTs.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::lookupImageForSize):
+        (WebCore::CachedImage::lookupImageForRenderer):
+        (WebCore::CachedImage::lookupOrCreateImageForRenderer):
+        (WebCore::CachedImage::setContainerSizeForRenderer):
+        (WebCore::CachedImage::imageSizeForRenderer):
+        (WebCore::CachedImage::computeIntrinsicDimensions):
+        (WebCore::CachedImage::createImage):
+        * loader/cache/CachedImage.h:
+        * page/ChromeClient.h:
+        * rendering/ImageBySizeCache.cpp:
+        (WebCore::ImageBySizeCache::addClient):
+        (WebCore::ImageBySizeCache::removeClient):
+        (WebCore::ImageBySizeCache::imageForSize):
+        (WebCore::ImageBySizeCache::sizeForClient):
+        * rendering/ImageBySizeCache.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::imageDimensionsChanged):
+        (WebCore::RenderImage::isLogicalWidthSpecified):
+        (WebCore::RenderImage::isLogicalHeightSpecified):
+        (WebCore::RenderImage::computeReplacedLogicalWidth):
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        (WebCore::RenderImage::calcAspectRatioLogicalWidth):
+        (WebCore::RenderImage::calcAspectRatioLogicalHeight):
+        * rendering/RenderImage.h:
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::setContainerSizeForRenderer):
+        * rendering/RenderImageResourceStyleImage.cpp:
+        * rendering/RenderImageResourceStyleImage.h:
+        (WebCore::RenderImageResourceStyleImage::image):
+        (WebCore::RenderImageResourceStyleImage::setContainerSizeForRenderer):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeIntrinsicLogicalWidth):
+        (WebCore::RenderReplaced::computeIntrinsicLogicalHeight):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::computeIntrinsicDimensions):
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer):
+        (WebCore::StyleCachedImage::addClient):
+        (WebCore::StyleCachedImage::removeClient):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.h:
+        (WebCore::StyleGeneratedImage::setContainerSizeForRenderer):
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::setContainerSizeForRenderer):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicWidth):
+        (WebCore::RenderSVGRoot::computeIntrinsicHeight):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::calcViewport):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/svg/RenderSVGRoot.h:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::determineViewport):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::relativeWidthValue):
+        (WebCore::SVGSVGElement::relativeHeightValue):
+        (WebCore::SVGSVGElement::currentViewBoxRect):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::setContainerSize):
+        (WebCore::SVGSVGElement::containerSize):
+        (WebCore::SVGSVGElement::hasSetContainerSize):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::usesContainerSize):
+        (WebCore::SVGImage::size):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::computeIntrinsicDimensions):
+        (WebCore::SVGImage::dataChanged):
+        * svg/graphics/SVGImage.h:
+
 2011-10-26  Eric Carlson  <eric.carlson@apple.com>
 
         Constructors for all TextTrack interfaces should be available on DOMWindow

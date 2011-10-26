@@ -47,7 +47,7 @@ public:
     virtual bool imageHasRelativeHeight() const { return !m_fixedSize; }
     virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
     virtual bool usesImageContainerSize() const { return !m_fixedSize; }
-    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize& containerSize, float) { m_containerSize = containerSize; }
+    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize& containerSize) { m_containerSize = containerSize; }
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;

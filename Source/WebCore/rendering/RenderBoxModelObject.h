@@ -195,8 +195,7 @@ protected:
 private:
     virtual bool isBoxModelObject() const { return true; }
 
-    LayoutSize calculateFillTileSize(const FillLayer*, const LayoutSize& scaledPositioningAreaSize) const;
-    LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize) const;
+    LayoutSize calculateFillTileSize(const FillLayer*, LayoutSize scaledSize) const;
 
     RoundedRect getBackgroundRoundedRect(const LayoutRect&, InlineFlowBox*, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
         bool includeLogicalLeftEdge, bool includeLogicalRightEdge);

@@ -87,6 +87,8 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_height(LengthModeHeight, "100%") 
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
+    , m_containerSize(300, 150)
+    , m_hasSetContainerSize(false)
 {
     ASSERT(hasTagName(SVGNames::svgTag));
     registerAnimatedPropertiesForSVGSVGElement();
@@ -150,6 +152,24 @@ FloatRect SVGSVGElement::viewport() const
 
     viewRectangle.setSize(FloatSize(width().value(this), height().value(this)));    
     return viewBoxToViewTransform(viewRectangle.width(), viewRectangle.height()).mapRect(viewRectangle);
+}
+
+int SVGSVGElement::relativeWidthValue() const
+{
+    SVGLength w = width();
+    if (w.unitType() != LengthTypePercentage)
+        return 0;
+
+    return static_cast<int>(w.valueAsPercentage() * m_containerSize.width());
+}
+
+int SVGSVGElement::relativeHeightValue() const
+{
+    SVGLength h = height();
+    if (h.unitType() != LengthTypePercentage)
+        return 0;
+
+    return static_cast<int>(h.valueAsPercentage() * m_containerSize.height());
 }
 
 float SVGSVGElement::pixelUnitToMillimeterX() const
@@ -559,16 +579,7 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
         return FloatRect();
     }
 
-    // Synthesize a viewBox if we're embedded through a <img> element, if none is present.
-    FloatRect useViewBox = viewBox();
-    if (useViewBox.isEmpty() && width().unitType() != LengthTypePercentage && height().unitType() != LengthTypePercentage) {
-        if (RenderObject* renderer = this->renderer()) {
-            if (renderer->isSVGRoot() && toRenderSVGRoot(renderer)->isEmbeddedThroughImageElement())
-                useViewBox = FloatRect(0, 0, width().value(this), height().value(this));
-        }
-    }
-
-    return useViewBox;
+    return viewBox();
 }
 
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const

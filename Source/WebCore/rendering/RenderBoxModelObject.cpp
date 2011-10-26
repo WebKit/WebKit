@@ -782,110 +782,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 }
 
-static inline LayoutUnit resolveWidthForRatio(LayoutUnit height, const FloatSize& intrinsicRatio)
-{
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    return static_cast<LayoutUnit>(ceilf(height * intrinsicRatio.width() / intrinsicRatio.height()));
-}
-
-static inline LayoutUnit resolveHeightForRatio(LayoutUnit width, const FloatSize& intrinsicRatio)
-{
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    return static_cast<LayoutUnit>(ceilf(width * intrinsicRatio.height() / intrinsicRatio.width()));
-}
-
-static inline LayoutSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const LayoutSize& size, const FloatSize& intrinsicRatio, LayoutUnit useWidth, LayoutUnit useHeight)
-{
-    if (intrinsicRatio.isEmpty()) {
-        if (useWidth)
-            return LayoutSize(useWidth, size.height());
-        return LayoutSize(size.width(), useHeight);
-    }
-
-    if (useWidth)
-        return LayoutSize(useWidth, resolveHeightForRatio(useWidth, intrinsicRatio));
-    return LayoutSize(resolveWidthForRatio(useHeight, intrinsicRatio), useHeight);
-}
-
-static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, const FloatSize& intrinsicRatio)
-{
-    // Two possible solutions: (size.width(), solutionHeight) or (solutionWidth, size.height())
-    // "... must be assumed to be the largest dimensions..." = easiest answer: the rect with the largest surface area.
-
-    LayoutUnit solutionWidth = resolveWidthForRatio(size.height(), intrinsicRatio);
-    LayoutUnit solutionHeight = resolveHeightForRatio(size.width(), intrinsicRatio);
-    if (solutionWidth <= size.width()) {
-        if (solutionHeight <= size.height()) {
-            // If both solutions fit, choose the one covering the larger area.
-            LayoutUnit areaOne = solutionWidth * size.height();
-            LayoutUnit areaTwo = size.width() * solutionHeight;
-            if (areaOne < areaTwo)
-                return LayoutSize(size.width(), solutionHeight);
-            return LayoutSize(solutionWidth, size.height());
-        }
-
-        // Only the first solution fits.
-        return LayoutSize(solutionWidth, size.height());
-    }
-
-    // Only the second solution fits, assert that.
-    ASSERT(solutionHeight <= size.height());
-    return LayoutSize(size.width(), solutionHeight);
-}
-
-LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize) const
-{
-    // This implements http://www.w3.org/TR/css3-background/#background-size.
-    LayoutUnit resolvedWidth = 0;
-    LayoutUnit resolvedHeight = 0;
-    FloatSize intrinsicRatio;
-
-    // A generated image without a fixed size, will always return the container size as intrinsic size.
-    if (image->isGeneratedImage() && image->usesImageContainerSize()) {
-        resolvedWidth = positioningAreaSize.width();
-        resolvedHeight = positioningAreaSize.height();
-    } else {
-        Length intrinsicWidth;
-        Length intrinsicHeight;
-        image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
-
-        // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-        if (intrinsicWidth.isFixed())
-            resolvedWidth = static_cast<LayoutUnit>(ceilf(intrinsicWidth.value() * style()->effectiveZoom()));
-        if (intrinsicHeight.isFixed())
-            resolvedHeight = static_cast<LayoutUnit>(ceilf(intrinsicHeight.value() * style()->effectiveZoom()));
-    }
-
-    // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
-    // that establishes the coordinate system for the 'background-position' property. SVG on the other hand
-    // _explicitely_ says that percentage values for the width/height attributes do NOT define intrinsic dimensions.
-    if (resolvedWidth > 0 && resolvedHeight > 0)
-        return LayoutSize(resolvedWidth, resolvedHeight);
-
-    // If the image has one of either an intrinsic width or an intrinsic height:
-    // * and an intrinsic aspect ratio, then the missing dimension is calculated from the given dimension and the ratio.
-    // * and no intrinsic aspect ratio, then the missing dimension is assumed to be the size of the rectangle that
-    //   establishes the coordinate system for the 'background-position' property.
-    if ((resolvedWidth && !resolvedHeight) || (!resolvedWidth && resolvedHeight))
-        return resolveAgainstIntrinsicWidthOrHeightAndRatio(positioningAreaSize, intrinsicRatio, resolvedWidth, resolvedHeight);
-
-    // If the image has no intrinsic dimensions and has an intrinsic ratio the dimensions must be assumed to be the
-    // largest dimensions at that ratio such that neither dimension exceeds the dimensions of the rectangle that
-    // establishes the coordinate system for the 'background-position' property.
-    if (!resolvedWidth && !resolvedHeight && !intrinsicRatio.isEmpty())
-        return resolveAgainstIntrinsicRatio(positioningAreaSize, intrinsicRatio);
-
-    // If the image has no intrinsic ratio either, then the dimensions must be assumed to be the rectangle that
-    // establishes the coordinate system for the 'background-position' property.
-    return positioningAreaSize;
-}
-
-LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, const LayoutSize& positioningAreaSize) const
+LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, LayoutSize positioningAreaSize) const
 {
     StyleImage* image = fillLayer->image();
-    EFillSizeType type = fillLayer->size().type;
+    image->setContainerSizeForRenderer(this, positioningAreaSize); // Use the box established by background-origin.
 
-    LayoutSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize);
+    EFillSizeType type = fillLayer->size().type;
 
     switch (type) {
         case SizeLength: {
@@ -908,40 +810,37 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 if (imageIntrinsicSize.height())
                     w = imageIntrinsicSize.width() * h / imageIntrinsicSize.height();        
             } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 if (imageIntrinsicSize.width())
                     h = imageIntrinsicSize.height() * w / imageIntrinsicSize.width();
             } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, use the image's intrinsic size.
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 w = imageIntrinsicSize.width();
                 h = imageIntrinsicSize.height();
             }
             
             return LayoutSize(max<LayoutUnit>(1, w), max<LayoutUnit>(1, h));
         }
-        case SizeNone: {
-            // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-            if (!imageIntrinsicSize.isEmpty())
-                return imageIntrinsicSize;
-
-            // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for ‘contain’.
-            type = Contain;
-        }
         case Contain:
         case Cover: {
+            LayoutSize imageIntrinsicSize = image->imageSize(this, 1);
             float horizontalScaleFactor = imageIntrinsicSize.width()
                 ? static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width() : 1;
             float verticalScaleFactor = imageIntrinsicSize.height()
                 ? static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height() : 1;
             float scaleFactor = type == Contain ? min(horizontalScaleFactor, verticalScaleFactor) : max(horizontalScaleFactor, verticalScaleFactor);
             return LayoutSize(max<LayoutUnit>(1, imageIntrinsicSize.width() * scaleFactor), max<LayoutUnit>(1, imageIntrinsicSize.height() * scaleFactor));
-       }
+        }
+        case SizeNone:
+            break;
     }
 
-    ASSERT_NOT_REACHED();
-    return LayoutSize();
+    return image->imageSize(this, style()->effectiveZoom());
 }
 
 void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX(int xOffset)
@@ -1028,9 +927,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         positioningAreaSize = geometry.destRect().size();
     }
 
-    LayoutSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
-    fillLayer->image()->setContainerSizeForRenderer(this, fillTileSize, style()->effectiveZoom());
-    geometry.setTileSize(fillTileSize);
+    geometry.setTileSize(calculateFillTileSize(fillLayer, positioningAreaSize));
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
@@ -1090,12 +987,8 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     LayoutUnit rightWithOutset = rect.maxX() + rightOutset;
     LayoutRect borderImageRect = LayoutRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
 
-    LayoutSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size());
-
-    // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    LayoutSize containerSize = imageSize.isEmpty() ? borderImageRect.size() : imageSize;
-    styleImage->setContainerSizeForRenderer(this, containerSize, style->effectiveZoom());
-
+    styleImage->setContainerSizeForRenderer(this, borderImageRect.size());
+    LayoutSize imageSize = styleImage->imageSize(this, 1.0f);
     LayoutUnit imageWidth = imageSize.width();
     LayoutUnit imageHeight = imageSize.height();
 

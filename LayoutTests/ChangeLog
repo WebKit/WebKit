@@ -1,3 +1,128 @@
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed, rolling out r98483.
+        http://trac.webkit.org/changeset/98483
+        https://bugs.webkit.org/show_bug.cgi?id=47156
+
+        Change is causing some crashes and ASSERTs.
+
+        * css2.1/20110323/background-intrinsic-001.htm: Removed.
+        * css2.1/20110323/background-intrinsic-002.htm: Removed.
+        * css2.1/20110323/background-intrinsic-003.htm: Removed.
+        * css2.1/20110323/background-intrinsic-004.htm: Removed.
+        * css2.1/20110323/background-intrinsic-005.htm: Removed.
+        * css2.1/20110323/background-intrinsic-006.htm: Removed.
+        * css2.1/20110323/background-intrinsic-007.htm: Removed.
+        * css2.1/20110323/background-intrinsic-008.htm: Removed.
+        * css2.1/20110323/background-intrinsic-009.htm: Removed.
+        * css2.1/20110323/resources/green-intrinsic-height-ratio.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-height.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-none.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-ratio-landscape.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-ratio-portrait.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-width-height.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-width-pc-height-pc.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-width-ratio.svg: Removed.
+        * css2.1/20110323/resources/green-intrinsic-width.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-height-ratio.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-height.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-none.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-ratio-landscape.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-ratio-portrait.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-width-height.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-width-pc-height-pc.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-width-ratio.svg: Removed.
+        * css2.1/20110323/resources/red-intrinsic-width.svg: Removed.
+        * fast/backgrounds/size/contain-and-cover-zoomed.html: Removed.
+        * fast/images/percent-height-image-expected.txt:
+        * fast/images/percent-height-image.html:
+        * platform/mac-snowleopard/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/css2.1/20110323/background-intrinsic-001-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-001-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-002-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-002-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-003-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-003-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-004-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-004-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-005-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-005-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-006-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-006-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-007-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-007-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-008-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-008-expected.txt: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-009-expected.png: Removed.
+        * platform/mac/css2.1/20110323/background-intrinsic-009-expected.txt: Removed.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Removed.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Removed.
+        * platform/mac/fast/block/float/015-expected.png:
+        * platform/mac/fast/block/float/015-expected.txt:
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt:
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.txt:
+        * platform/mac/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Removed.
+        * platform/mac/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Removed.
+        * platform/mac/svg/as-background-image/background-image-tiled-expected.png: Removed.
+        * platform/mac/svg/as-background-image/background-image-tiled-expected.txt: Removed.
+        * platform/mac/svg/as-background-image/same-image-two-instances-background-image-expected.png: Removed.
+        * platform/mac/svg/as-background-image/same-image-two-instances-background-image-expected.txt: Removed.
+        * platform/mac/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/mac/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/mac/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/mac/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/mac/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/mac/svg/as-image/same-image-two-instances-expected.png: Removed.
+        * platform/mac/svg/as-image/same-image-two-instances-expected.txt: Removed.
+        * platform/mac/svg/as-image/svg-as-relative-image-expected.png:
+        * platform/mac/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Removed.
+        * platform/mac/svg/as-image/svg-as-relative-image-with-explicit-size-expected.txt: Removed.
+        * platform/mac/svg/as-image/svg-image-change-content-size-expected.png: Removed.
+        * platform/mac/svg/as-image/svg-image-change-content-size-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Removed.
+        * svg/as-background-image/background-image-preserveaspectRatio-support.html: Removed.
+        * svg/as-background-image/background-image-tiled.html: Removed.
+        * svg/as-background-image/resources/construction-tape.svg: Removed.
+        * svg/as-background-image/resources/hearts.svg:
+        * svg/as-background-image/same-image-two-instances-background-image.html: Removed.
+        * svg/as-image/img-preserveAspectRatio-support-1.html: Removed.
+        * svg/as-image/resources/circle-default-meet.svg: Removed.
+        * svg/as-image/resources/circle-default-none.svg: Removed.
+        * svg/as-image/resources/circle-default-slice.svg: Removed.
+        * svg/as-image/resources/circle-nosize.svg: Removed.
+        * svg/as-image/resources/circle-viewbox-default.svg: Removed.
+        * svg/as-image/resources/circle-viewbox-meet.svg: Removed.
+        * svg/as-image/resources/circle-viewbox-none.svg: Removed.
+        * svg/as-image/resources/circle-viewbox-slice.svg: Removed.
+        * svg/as-image/resources/green-relative-size-rect.svg:
+        * svg/as-image/same-image-two-instances.html: Removed.
+        * svg/as-image/svg-as-relative-image-with-explicit-size.html: Removed.
+        * svg/as-image/svg-image-change-content-size.xhtml: Removed.
+        * svg/zoom/page/resources/relative-sized-background-with-viewBox.svg: Removed.
+        * svg/zoom/page/zoom-background-image-tiled.html: Removed.
+        * svg/zoom/page/zoom-background-images.html: Removed.
+        * svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html: Removed.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html: Removed.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size.html: Removed.
+
 2011-10-26  Eric Carlson  <eric.carlson@apple.com>
 
         Constructors for all TextTrack interfaces should be available on DOMWindow

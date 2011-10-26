@@ -28,8 +28,8 @@
 #include "FloatConversion.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "RenderObject.h"
 #include "RenderPart.h"
-#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGException.h"
 #include "SVGNames.h"
@@ -360,7 +360,6 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
             if (!frame)
                 return false;
 
-            // SVGs embedded through <object> resolve percentage values against the owner renderer in the host document.
             if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
                 width = ownerRenderer->width();
                 height = ownerRenderer->height();
@@ -372,14 +371,8 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
         if (!view)
             return false;
 
-        // Always resolve percentages against the unscaled viewport, as agreed across browsers.
-        float zoom = view->style()->effectiveZoom();
         width = view->viewWidth();
         height = view->viewHeight();
-        if (zoom != 1) {
-            width /= zoom;
-            height /= zoom;
-        }
         return true;
     }
 
@@ -387,13 +380,12 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
     SVGElement* viewportElement = context->viewportElement();
     if (viewportElement && viewportElement->isSVG()) {
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
-        FloatRect viewBox = svg->currentViewBoxRect();
-        if (viewBox.isEmpty()) {
+        if (svg->hasAttribute(SVGNames::viewBoxAttr)) {
+            width = svg->viewBox().width();
+            height = svg->viewBox().height();
+        } else {
             width = svg->width().value(svg);
             height = svg->height().value(svg);
-        } else {
-            width = viewBox.width();
-            height = viewBox.height();
         }
 
         return true;
