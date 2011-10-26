@@ -1,5 +1,12 @@
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed trivial renaming.
+
+        * fast/js/dfg-intrinsic-osr-exit-expected.html: Removed.
+        * fast/js/dfg-intrinsic-osr-exit-expected.txt: Copied from LayoutTests/fast/js/dfg-intrinsic-osr-exit-expected.html.
+
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed gardening.
 
         * platform/chromium/test_expectations.txt:
