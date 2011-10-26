@@ -28,7 +28,7 @@ INCLUDEPATH += \
 DESTDIR = $$OUTPUT_DIR/bin
 CONFIG -= app_bundle
 
-QT += network declarative
+QT += network declarative widgets
 macx:QT+=xml
 
 linux-* {

@@ -1,3 +1,18 @@
+2011-10-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Fix failing assertion on startup of MiniBrowser -touch.
+
+        Reviewed by Tor Arne Vestbø.
+
+        We're using QScroller since r98460, which requires QWidget/QApplication. So
+        use QApplication and QtWidgets for the time being.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication):
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+
 2011-10-25  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] Rewrite MiniBrowser in QML

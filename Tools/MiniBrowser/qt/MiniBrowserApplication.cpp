@@ -36,7 +36,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QTouchEvent>
-#include <QGuiApplication>
+#include <QApplication>
 
 static inline bool isTouchEvent(const QEvent* event)
 {
@@ -64,7 +64,7 @@ static inline bool isMouseEvent(const QEvent* event)
 }
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
-    : QGuiApplication(argc, argv)
+    : QApplication(argc, argv)
     , m_windowOptions(this)
     , m_realTouchEventReceived(false)
     , m_pendingFakeTouchEventCount(0)
@@ -85,14 +85,14 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     // with touch screen, and we should not have touch mocking.
 
     if (!event->spontaneous() || m_realTouchEventReceived)
-        return QGuiApplication::notify(target, event);
+        return QApplication::notify(target, event);
 
     if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
         if (m_pendingFakeTouchEventCount)
             --m_pendingFakeTouchEventCount;
         else
             m_realTouchEventReceived = true;
-        return QGuiApplication::notify(target, event);
+        return QApplication::notify(target, event);
     }
 
     QWindow* targetWindow = qobject_cast<QWindow*>(target);
@@ -114,13 +114,13 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             break;
         case QEvent::MouseMove:
             if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
-                return QGuiApplication::notify(target, event);
+                return QApplication::notify(target, event);
             touchPoint.state = Qt::TouchPointMoved;
             touchPoint.id = mouseEvent->buttons();
             break;
         case QEvent::MouseButtonRelease:
             if (mouseEvent->modifiers().testFlag(Qt::ControlModifier))
-                return QGuiApplication::notify(target, event);
+                return QApplication::notify(target, event);
             touchPoint.state = Qt::TouchPointReleased;
             touchPoint.id = mouseEvent->button();
             break;
@@ -151,7 +151,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             break;
         case Qt::TouchPointStationary:
             // Don't send the event if nothing changed.
-            return QGuiApplication::notify(target, event);
+            return QApplication::notify(target, event);
         default:
             eventType = QEvent::TouchUpdate;
             break;
@@ -167,7 +167,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         }
     }
 
-    return QGuiApplication::notify(target, event);
+    return QApplication::notify(target, event);
 }
 
 void MiniBrowserApplication::handleUserOptions()

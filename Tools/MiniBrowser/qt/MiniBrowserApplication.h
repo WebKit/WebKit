@@ -33,7 +33,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QtDeclarative>
-#include <QtGui/QGuiApplication>
+#include <QtWidgets/QApplication>
 #include <QTouchEvent>
 #include <QUrl>
 #include "qwindowsysteminterface_qpa.h"
@@ -66,7 +66,7 @@ private:
     bool m_startMaximized;
 };
 
-class MiniBrowserApplication : public QGuiApplication {
+class MiniBrowserApplication : public QApplication {
     Q_OBJECT
 
 public:
