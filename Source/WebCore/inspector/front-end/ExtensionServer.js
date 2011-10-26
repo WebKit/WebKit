@@ -343,11 +343,7 @@ WebInspector.ExtensionServer.prototype = {
             message.text,
             WebInspector.ConsoleMessage.MessageType.Log,
             message.url,
-            message.line,
-            1,
-            null, // parameters
-            null, // stackTrace
-            null); // networkRequestId
+            message.line);
         WebInspector.console.addMessage(consoleMessage);
     },
 

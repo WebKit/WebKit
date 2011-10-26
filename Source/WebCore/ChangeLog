@@ -1,3 +1,12 @@
+2011-10-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing inspector extensions tests.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onAddConsoleMessage):
+
 2011-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         ParallelJobs path of FEConvolveMatrix is erroneous
