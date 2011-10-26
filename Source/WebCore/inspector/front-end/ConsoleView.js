@@ -704,12 +704,13 @@ WebInspector.ConsoleCommand.prototype = {
 /**
  * @extends {WebInspector.ConsoleMessageImpl}
  * @constructor
+ * @param {WebInspector.DebuggerPresentationModel.Linkifier} linkifier
  */
 WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand, linkifier)
 {
     var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
     this.originatingCommand = originatingCommand;
-    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Result, level, -1, null, 1, null, linkifier, [result]);
+    WebInspector.ConsoleMessageImpl.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, "", linkifier, WebInspector.ConsoleMessage.MessageType.Result, undefined, undefined, undefined, [result]);
 }
 
 WebInspector.ConsoleCommandResult.prototype = {
@@ -788,13 +789,7 @@ WebInspector.ConsoleGroup.prototype = {
  */
 WebInspector.consoleView = null;
 
-WebInspector.ConsoleMessage.create = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
+WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, repeatCount, parameters, stackTrace, request)
 {
-    return new WebInspector.ConsoleMessageImpl(source, type, level, line, url, repeatCount, message, WebInspector.consoleView._linkifier, parameters, stackTrace, request);
-}
-
-WebInspector.ConsoleMessage.createTextMessage = function(text, level)
-{
-    level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
-    return new WebInspector.ConsoleMessageImpl(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, WebInspector.consoleView._linkifier, [text], null);
+    return new WebInspector.ConsoleMessageImpl(source, level, message, WebInspector.consoleView._linkifier, type, url, line, repeatCount, parameters, stackTrace, request);
 }

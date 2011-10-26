@@ -128,12 +128,10 @@ WebInspector.NetworkDispatcher.prototype = {
 
         if (!this._mimeTypeIsConsistentWithType(resource)) {
             WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Other,
-                WebInspector.ConsoleMessage.MessageType.Log,
                 WebInspector.ConsoleMessage.MessageLevel.Warning,
-                -1,
-                this.url,
-                1,
-                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType)));
+                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
+                WebInspector.ConsoleMessage.MessageType.Log,
+                this.url));
         }
     },
 

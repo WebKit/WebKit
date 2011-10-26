@@ -121,7 +121,7 @@ WebInspector.ConsoleModel.prototype = {
             this._incrementErrorWarningCount(msg);
             this.dispatchEventToListeners(WebInspector.ConsoleModel.Events.RepeatCountUpdated, msg);
         } else {
-            var msgCopy = WebInspector.ConsoleMessage.create(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._request);
+            var msgCopy = WebInspector.ConsoleMessage.create(msg.source, msg.level, msg._messageText, msg.type, msg.url, msg.line, count - prevRepeatCount, msg._parameters, msg._stackTrace, msg._request);
             msgCopy.totalRepeatCount = count;
             this.addMessage(msgCopy);
         }
@@ -162,28 +162,19 @@ WebInspector.ConsoleMessage.prototype = {
 
 /**
  * @param {string} source
- * @param {string} type
  * @param {string} level
- * @param {number} line
- * @param {string} url
- * @param {number} repeatCount
  * @param {string} message
+ * @param {string=} type
+ * @param {string=} url
+ * @param {number=} line
+ * @param {number=} repeatCount
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
  * @param {WebInspector.Resource=} request
  *
  * @return {WebInspector.ConsoleMessage}
  */
-WebInspector.ConsoleMessage.create = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
-{
-}
-
-/**
- * @param {string} text
- * @param {string} level
- * @return {WebInspector.ConsoleMessage}
- */
-WebInspector.ConsoleMessage.createTextMessage = function(text, level)
+WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, repeatCount, parameters, stackTrace, request)
 {
 }
 
@@ -236,12 +227,12 @@ WebInspector.ConsoleDispatcher.prototype = {
     {
         var consoleMessage = WebInspector.ConsoleMessage.create(
             payload.source,
-            payload.type,
             payload.level,
-            payload.line,
-            payload.url,
-            payload.repeatCount,
             payload.text,
+            payload.type,
+            payload.url,
+            payload.line,
+            payload.repeatCount,
             payload.parameters,
             payload.stackTrace,
             payload.networkRequestId ? WebInspector.networkResourceById(payload.networkRequestId) : undefined);

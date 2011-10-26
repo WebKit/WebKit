@@ -959,27 +959,11 @@ WebInspector.log = function(message, messageLevel, showConsole)
     // actually log the message
     function logMessage(message)
     {
-        var repeatCount = 1;
-        if (message == WebInspector.log.lastMessage)
-            repeatCount = WebInspector.log.repeatCount + 1;
-
-        WebInspector.log.lastMessage = message;
-        WebInspector.log.repeatCount = repeatCount;
-
-        // ConsoleMessage expects a proxy object
-        message = WebInspector.RemoteObject.fromPrimitiveValue(message);
-
         // post the message
         var msg = WebInspector.ConsoleMessage.create(
             WebInspector.ConsoleMessage.MessageSource.Other,
-            WebInspector.ConsoleMessage.MessageType.Log,
             messageLevel || WebInspector.ConsoleMessage.MessageLevel.Debug,
-            -1,
-            null,
-            repeatCount,
-            null,
-            [message],
-            null);
+            message);
 
         self.console.addMessage(msg);
         if (showConsole)

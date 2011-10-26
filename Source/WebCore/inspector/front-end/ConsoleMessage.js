@@ -31,21 +31,30 @@
 /**
  * @constructor
  * @extends {WebInspector.ConsoleMessage}
+ *
+ * @param {string} source
+ * @param {string} level
+ * @param {string} message
  * @param {WebInspector.DebuggerPresentationModel.Linkifier} linkifier
+ * @param {string=} type
+ * @param {string=} url
+ * @param {number=} line
+ * @param {number=} repeatCount
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
  * @param {WebInspector.Resource=} request
  */
-WebInspector.ConsoleMessageImpl = function(source, type, level, line, url, repeatCount, message, linkifier, parameters, stackTrace, request)
+WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, type, url, line, repeatCount, parameters, stackTrace, request)
 {
     WebInspector.ConsoleMessage.call();
 
     this._linkifier = linkifier;
     this.source = source;
-    this.type = type;
+    this.type = type || WebInspector.ConsoleMessage.MessageType.Log;
     this.level = level;
-    this.line = line;
-    this.url = url;
+    this.line = line || -1;
+    this.url = url || null;
+    repeatCount = repeatCount || 1;
     this.repeatCount = repeatCount;
     this.repeatDelta = repeatCount;
     this.totalRepeatCount = repeatCount;
@@ -129,9 +138,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
                     messageText.appendChild(fragment);
                 }
             } else {
-                var isExternal = !WebInspector.resourceForURL(this.url);
-                var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
-                this._formattedMessage.appendChild(anchor);
+                if (this.url) {
+                    var isExternal = !WebInspector.resourceForURL(this.url);
+                    var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
+                    this._formattedMessage.appendChild(anchor);
+                }
                 messageText = this._format([this._messageText]);
             }
         } else {

@@ -339,12 +339,12 @@ WebInspector.ExtensionServer.prototype = {
 
         var consoleMessage = WebInspector.ConsoleMessage.create(
             WebInspector.ConsoleMessage.MessageSource.JS,
-            WebInspector.ConsoleMessage.MessageType.Log,
             level,
-            message.line,
-            message.url,
-            1,
             message.text,
+            WebInspector.ConsoleMessage.MessageType.Log,
+            message.url,
+            message.line,
+            1,
             null, // parameters
             null, // stackTrace
             null); // networkRequestId
