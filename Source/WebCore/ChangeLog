@@ -1,3 +1,25 @@
+2011-10-25  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r93108): Shadow DOM media controls created for plug-in backed media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=70872
+
+        Reviewed by Eric Carlson.
+
+        r93108 added a call to HTMLMediaElement::configureMediaControls() in
+        HTMLMediaElement::prepareForLoad(), which creates shadow DOM media
+        controls and is only appropriate to call when media elements are not
+        backed by plug-in proxies.
+
+        Resolve this by refactoring configureMediaControls() to do the right
+        thing for the plug-in proxy case by calling MediaPlayer::setControls().
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Call
+        configureMediaControls() directly and remove the preprocessor
+        conditional.
+        (WebCore::HTMLMediaElement::configureMediaControls): Call
+        MediaPlayer::setControls() if PLUGIN_PROXY_FOR_VIDEO is enabled.
+
 2011-10-26  Jon Lee  <jonlee@apple.com>
 
         selectedIndex gets set from -1 to 0 when modifying options

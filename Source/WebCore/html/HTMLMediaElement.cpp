@@ -264,15 +264,8 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
         // Trigger a reload, as long as the 'src' attribute is present.
         if (!getAttribute(srcAttr).isEmpty())
             scheduleLoad();
-    }
-    else if (attrName == controlsAttr) {
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    } else if (attrName == controlsAttr)
         configureMediaControls();
-#else
-        if (m_player)
-            m_player->setControls(controls());
-#endif
-    }
 }
 
 void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
@@ -3016,6 +3009,7 @@ bool HTMLMediaElement::createMediaControls()
 
 void HTMLMediaElement::configureMediaControls()
 {
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (!controls()) {
         if (hasMediaControls())
             mediaControls()->hide();
@@ -3028,6 +3022,10 @@ void HTMLMediaElement::configureMediaControls()
         mediaControls()->reset();
     }
     mediaControls()->show();
+#else
+    if (m_player)
+        m_player->setControls(controls());
+#endif
 }
 
 void* HTMLMediaElement::preDispatchEventHandler(Event* event)
