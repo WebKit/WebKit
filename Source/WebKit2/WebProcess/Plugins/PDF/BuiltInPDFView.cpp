@@ -30,6 +30,8 @@
 #include "ShareableBitmap.h"
 #include "WebEvent.h"
 #include "WebEventConversion.h"
+#include <WebCore/ArchiveResource.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -185,8 +187,24 @@ void BuiltInPDFView::destroyScrollbar(ScrollbarOrientation orientation)
     scrollbar = 0;
 }
 
+void BuiltInPDFView::addArchiveResource()
+{
+    // FIXME: It's a hack to force add a resource to DocumentLoader. PDF documents should just be fetched as CachedResources.
+
+    // Add just enough data for context menu handling and web archives to work.
+    ResourceResponse synthesizedResponse;
+    synthesizedResponse.setSuggestedFilename(m_suggestedFilename);
+    synthesizedResponse.setURL(m_sourceURL); // Needs to match the HitTestResult::absolutePDFURL.
+    synthesizedResponse.setMimeType("application/pdf");
+
+    RefPtr<ArchiveResource> resource = ArchiveResource::create(SharedBuffer::wrapCFData(m_dataBuffer.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
+    pluginView()->frame()->document()->loader()->addArchiveResource(resource.release());
+}
+
 void BuiltInPDFView::pdfDocumentDidLoad()
 {
+    addArchiveResource();
+
     RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_dataBuffer.get()));
     m_pdfDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
 
@@ -218,6 +236,7 @@ bool BuiltInPDFView::initialize(const Parameters& parameters)
     m_page->addScrollableArea(this);
 
     // Load the src URL if needed.
+    m_sourceURL = parameters.url;
     if (!parameters.loadManually && !parameters.url.isEmpty())
         controller()->loadURL(pdfDocumentRequestID, "GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
 
@@ -378,9 +397,11 @@ void BuiltInPDFView::didEvaluateJavaScript(uint64_t, const WTF::String&)
     ASSERT_NOT_REACHED();
 }
 
-void BuiltInPDFView::streamDidReceiveResponse(uint64_t streamID, const KURL&, uint32_t, uint32_t, const WTF::String&, const WTF::String&)
+void BuiltInPDFView::streamDidReceiveResponse(uint64_t streamID, const KURL&, uint32_t, uint32_t, const String&, const String&, const String& suggestedFilename)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
+
+    m_suggestedFilename = suggestedFilename;
 }
                                            
 void BuiltInPDFView::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
@@ -407,8 +428,9 @@ void BuiltInPDFView::streamDidFail(uint64_t streamID, bool wasCancelled)
     m_dataBuffer.clear();
 }
 
-void BuiltInPDFView::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers)
+void BuiltInPDFView::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
 {
+    m_suggestedFilename = suggestedFilename;
 }
 
 void BuiltInPDFView::manualStreamDidReceiveData(const char* bytes, int length)

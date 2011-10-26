@@ -133,7 +133,7 @@ public:
 
     // Tells the plug-in that a stream has received its HTTP response.
     virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                          uint32_t lastModifiedTime, const String& mimeType, const String& headers) = 0;
+                                          uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that a stream did receive data.
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) = 0;
@@ -146,7 +146,7 @@ public:
 
     // Tells the plug-in that the manual stream has received its HTTP response.
     virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, 
-                                                uint32_t lastModifiedTime, const String& mimeType, const String& headers) = 0;
+                                                uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that the manual stream did receive data.
     virtual void manualStreamDidReceiveData(const char* bytes, int length) = 0;
