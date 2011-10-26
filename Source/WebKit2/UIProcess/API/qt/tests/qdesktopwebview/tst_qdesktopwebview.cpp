@@ -17,7 +17,6 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <QAction>
 #include <QScopedPointer>
 #include <QtTest/QtTest>
 #include <qdesktopwebview.h>
@@ -34,8 +33,8 @@ private slots:
     void init();
     void cleanup();
 
-    void navigationActionsStatusAtStartup();
-    void stopActionEnabledAfterLoadStarted();
+    void navigationStatusAtStartup();
+    void stopEnabledAfterLoadStarted();
 
 private:
     inline QDesktopWebView* webView() const;
@@ -62,23 +61,15 @@ inline QDesktopWebView* tst_QDesktopWebView::webView() const
     return static_cast<QDesktopWebView*>(m_window->webView.data());
 }
 
-void tst_QDesktopWebView::navigationActionsStatusAtStartup()
+void tst_QDesktopWebView::navigationStatusAtStartup()
 {
-    QAction* backAction = webView()->navigationController()->backAction();
-    QVERIFY(backAction);
-    QCOMPARE(backAction->isEnabled(), false);
+    QCOMPARE(webView()->navigationController()->canGoBack(), false);
 
-    QAction* forwardAction = webView()->navigationController()->forwardAction();
-    QVERIFY(forwardAction);
-    QCOMPARE(forwardAction->isEnabled(), false);
+    QCOMPARE(webView()->navigationController()->canGoForward(), false);
 
-    QAction* stopAction = webView()->navigationController()->stopAction();
-    QVERIFY(stopAction);
-    QCOMPARE(stopAction->isEnabled(), false);
+    QCOMPARE(webView()->navigationController()->canStop(), false);
 
-    QAction* reloadAction = webView()->navigationController()->reloadAction();
-    QVERIFY(reloadAction);
-    QCOMPARE(reloadAction->isEnabled(), false);
+    QCOMPARE(webView()->navigationController()->canReload(), false);
 }
 
 class LoadStartedCatcher : public QObject {
@@ -95,9 +86,7 @@ public slots:
     {
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
 
-        QAction* stopAction = m_webView->navigationController()->stopAction();
-        QVERIFY(stopAction);
-        QCOMPARE(stopAction->isEnabled(), true);
+        QCOMPARE(m_webView->navigationController()->canStop(), true);
     }
 
 signals:
@@ -107,17 +96,15 @@ private:
     QDesktopWebView* m_webView;
 };
 
-void tst_QDesktopWebView::stopActionEnabledAfterLoadStarted()
+void tst_QDesktopWebView::stopEnabledAfterLoadStarted()
 {
-    QAction* stopAction = webView()->navigationController()->stopAction();
-    QVERIFY(stopAction);
-    QCOMPARE(stopAction->isEnabled(), false);
+    QCOMPARE(webView()->navigationController()->canStop(), false);
 
     LoadStartedCatcher catcher(webView());
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     waitForSignal(&catcher, SIGNAL(finished()));
 
-    QCOMPARE(stopAction->isEnabled(), true);
+    QCOMPARE(webView()->navigationController()->canStop(), true);
 
     waitForSignal(webView(), SIGNAL(loadSucceeded()));
 }

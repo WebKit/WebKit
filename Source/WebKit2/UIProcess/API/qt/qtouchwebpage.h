@@ -22,7 +22,6 @@
 #define qtouchwebpage_h
 
 #include "qwebkitglobal.h"
-#include "qwebkittypes.h"
 
 #include <QtDeclarative/qsgitem.h>
 #include <QSharedPointer>

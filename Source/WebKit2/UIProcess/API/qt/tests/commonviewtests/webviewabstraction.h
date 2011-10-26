@@ -41,7 +41,10 @@ public:
     bool url(QUrl&) const;
     int loadProgress() const;
 
-    void triggerNavigationAction(QtWebKit::NavigationAction);
+    void goBack();
+    void goForward();
+    void stop();
+    void reload();
 
 Q_SIGNALS:
     void loadStarted();

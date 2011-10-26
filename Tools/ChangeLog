@@ -1,3 +1,24 @@
+2011-10-25  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Remove QAction from MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=70525
+
+        In order to rewrite MiniBrowser in QML we need a suitable
+        mechanism for triggering navigation actions.
+        Due to the QtWidgets dependency of QAction the current
+        solution is not suitable anymore. Therefore we introduce
+        invokable methods and export properties in QWebNavigationController.
+
+        Patch by Jocelyn Turcotte <jocelyn.turcotte@nokia.com>,
+                 Zeno Albisser <zeno.albisser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+
 2011-10-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Unregister viewport,changed signal in EWebLauncher.

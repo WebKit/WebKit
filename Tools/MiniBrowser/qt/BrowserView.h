@@ -31,7 +31,6 @@
 
 #include <QAction>
 #include <QtDeclarative/qsgcanvas.h>
-#include <qwebkittypes.h>
 
 class QDesktopWebView;
 class QSGItem;
@@ -46,8 +45,6 @@ public:
 
     void load(const QString&);
     QSGItem* view() const;
-
-    QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
     QTouchWebView* touchWebView() const;
     QDesktopWebView* desktopWebView() const;

@@ -97,12 +97,24 @@ int WebViewAbstraction::loadProgress() const
     return touchViewProgress;
 }
 
-void WebViewAbstraction::triggerNavigationAction(QtWebKit::NavigationAction which)
+void WebViewAbstraction::goBack()
 {
-    QAction* touchAction = touchWebView()->page()->navigationController()->navigationAction(which);
-    touchAction->trigger();
-    QAction* desktopAction = desktopWebView()->navigationController()->navigationAction(which);
-    desktopAction->trigger();
+    touchWebView()->page()->navigationController()->goBack();
+}
+
+void WebViewAbstraction::goForward()
+{
+    touchWebView()->page()->navigationController()->goForward();
+}
+
+void WebViewAbstraction::stop()
+{
+    touchWebView()->page()->navigationController()->stop();
+}
+
+void WebViewAbstraction::reload()
+{
+    touchWebView()->page()->navigationController()->reload();
 }
 
 void WebViewAbstraction::touchViewLoadStarted()

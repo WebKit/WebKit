@@ -23,7 +23,6 @@
 
 
 #include "qwebkitglobal.h"
-#include "qwebkittypes.h"
 #include <QtCore/QObject>
 
 QT_BEGIN_NAMESPACE
@@ -35,26 +34,27 @@ class QWebNavigationControllerPrivate;
 
 class QWEBKIT_EXPORT QWebNavigationController : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QAction* backAction READ backAction CONSTANT FINAL)
-    Q_PROPERTY(QAction* forwardAction READ forwardAction CONSTANT FINAL)
-    Q_PROPERTY(QAction* stopAction READ stopAction CONSTANT FINAL)
-    Q_PROPERTY(QAction* reloadAction READ reloadAction CONSTANT FINAL)
+    Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canStop READ canStop NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
 public:
     QWebNavigationController(QtWebPageProxy*);
     ~QWebNavigationController();
 
-    QAction* backAction() const;
-    QAction* forwardAction() const;
-    QAction* stopAction() const;
-    QAction* reloadAction() const;
-
-    QAction* navigationAction(QtWebKit::NavigationAction which) const;
+    bool canGoBack() const;
+    bool canGoForward() const;
+    bool canStop() const;
+    bool canReload() const;
 
 public slots:
-    void back();
-    void forward();
+    void goBack();
+    void goForward();
     void stop();
     void reload();
+
+Q_SIGNALS:
+    void navigationStateChanged();
 
 private:
     QWebNavigationControllerPrivate* d;

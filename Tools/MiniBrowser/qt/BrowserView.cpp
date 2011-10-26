@@ -85,12 +85,3 @@ QDesktopWebView* BrowserView::desktopWebView() const
     return qobject_cast<QDesktopWebView*>(m_item);
 }
 
-QAction* BrowserView::navigationAction(QtWebKit::NavigationAction which) const
-{
-    if (desktopWebView())
-        return desktopWebView()->navigationController()->navigationAction(which);
-    if (touchWebView())
-        return touchWebView()->page()->navigationController()->navigationAction(which);
-    Q_ASSERT(false);
-    return 0;
-}

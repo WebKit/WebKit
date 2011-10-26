@@ -25,7 +25,6 @@
 #include "PageClient.h"
 #include "QtPolicyInterface.h"
 #include "QtViewInterface.h"
-#include "qwebkittypes.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "WebContext.h"
@@ -139,8 +138,15 @@ public:
 
     void paint(QPainter*, const QRect&);
 
-    void updateAction(QtWebPageProxy::WebAction action);
-    void updateNavigationActions();
+    bool canGoBack() const;
+    void goBack();
+    bool canGoForward() const;
+    void goForward();
+    bool canStop() const;
+    void stop();
+    bool canReload() const;
+    void reload();
+
     void updateEditorActions();
 
     WKPageRef pageRef() const;
@@ -154,11 +160,6 @@ public:
 
     QString title() const;
 
-    QAction* navigationAction(QtWebKit::NavigationAction) const;
-
-    QAction* action(WebAction action) const;
-    void triggerAction(WebAction action, bool checked = false);
-
     void setCustomUserAgent(const QString&);
     QString customUserAgent() const;
 
@@ -171,11 +172,12 @@ public:
     QWKHistory* history() const;
 
 public Q_SLOTS:
-    void webActionTriggered(bool checked);
+    void navigationStateChanged();
 
 public:
     Q_SIGNAL void scrollRequested(int dx, int dy);
     Q_SIGNAL void zoomableAreaFound(const QRect&);
+    Q_SIGNAL void updateNavigationState();
 
 protected:
     void init();
@@ -198,7 +200,6 @@ private:
     RefPtr<WebContext> m_context;
     QWKHistory* m_history;
 
-    mutable QAction* m_actions[QtWebPageProxy::WebActionCount];
     mutable QWebPreferences* m_preferences;
 
     OwnPtr<QUndoStack> m_undoStack;

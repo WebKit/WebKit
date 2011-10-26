@@ -1,3 +1,72 @@
+2011-10-25  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Remove QAction from MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=70525
+
+        In order to rewrite MiniBrowser in QML we need a suitable
+        mechanism for triggering navigation actions.
+        Due to the QtWidgets dependency of QAction the current
+        solution is not suitable anymore. Therefore we introduce
+        invokable methods and export properties in QWebNavigationController.
+
+        Patch by Jocelyn Turcotte <jocelyn.turcotte@nokia.com>,
+                 Zeno Albisser <zeno.albisser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qwebkittypes.h: Removed.
+        * UIProcess/API/qt/qwebnavigationcontroller.cpp:
+        (QWebNavigationController::QWebNavigationController):
+        (QWebNavigationController::canGoBack):
+        (QWebNavigationController::canGoForward):
+        (QWebNavigationController::canStop):
+        (QWebNavigationController::canReload):
+        (QWebNavigationController::goBack):
+        (QWebNavigationController::goForward):
+        (QWebNavigationController::stop):
+        (QWebNavigationController::reload):
+        * UIProcess/API/qt/qwebnavigationcontroller.h:
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::backAndForward):
+        (tst_CommonViewTests::reload):
+        (tst_CommonViewTests::stop):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::goBack):
+        (WebViewAbstraction::goForward):
+        (WebViewAbstraction::stop):
+        (WebViewAbstraction::reload):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp:
+        (tst_QDesktopWebView::navigationStatusAtStartup):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QDesktopWebView::stopEnabledAfterLoadStarted):
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp:
+        (tst_QTouchWebView::navigationStatusAtStartup):
+        * UIProcess/qt/ClientImpl.cpp:
+        (dispatchLoadSucceeded):
+        (dispatchLoadFailed):
+        (qt_wk_didStartProvisionalLoadForFrame):
+        (qt_wk_didCommitLoadForFrame):
+        (qt_wk_didSameDocumentNavigationForFrame):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::canGoBack):
+        (QtWebPageProxy::goBack):
+        (QtWebPageProxy::canGoForward):
+        (QtWebPageProxy::goForward):
+        (QtWebPageProxy::canStop):
+        (QtWebPageProxy::stop):
+        (QtWebPageProxy::canReload):
+        (QtWebPageProxy::reload):
+        (QtWebPageProxy::navigationStateChanged):
+        (QtWebPageProxy::didRelaunchProcess):
+        (QtWebPageProxy::processDidCrash):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * WebKit2API.pri:
+
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another GTK build fix attempt after r98413 and r98416.

@@ -63,7 +63,7 @@ static void dispatchLoadSucceeded(WKFrameRef frame, const void* clientInfo)
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->updateNavigationState();
     toQtWebPageProxy(clientInfo)->loadDidSucceed();
 }
 
@@ -72,7 +72,7 @@ static void dispatchLoadFailed(WKFrameRef frame, const void* clientInfo, WKError
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->updateNavigationState();
 
     int errorCode = WKErrorGetErrorCode(error);
     if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad)
@@ -86,7 +86,7 @@ void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->updateNavigationState();
     toQtWebPageProxy(clientInfo)->loadDidBegin();
 }
 
@@ -102,7 +102,7 @@ void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     WebFrameProxy* wkframe = toImpl(frame);
     QString urlStr(wkframe->url());
     QUrl qUrl = urlStr;
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->updateNavigationState();
     toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
     toQtWebPageProxy(clientInfo)->loadDidCommit();
 }
@@ -122,7 +122,7 @@ void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, W
     WebFrameProxy* wkframe = toImpl(frame);
     QString urlStr(wkframe->url());
     QUrl qUrl = urlStr;
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->updateNavigationState();
     toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
 }
 

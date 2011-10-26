@@ -143,13 +143,6 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     m_addressBar = new QLineEdit();
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
-    QToolBar* bar = addToolBar("Navigation");
-    bar->addAction(m_browser->navigationAction(QtWebKit::Back));
-    bar->addAction(m_browser->navigationAction(QtWebKit::Forward));
-    bar->addAction(m_browser->navigationAction(QtWebKit::Reload));
-    bar->addAction(m_browser->navigationAction(QtWebKit::Stop));
-    bar->addWidget(m_addressBar);
-
     QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
 

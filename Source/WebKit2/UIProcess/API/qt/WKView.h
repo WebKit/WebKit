@@ -20,7 +20,6 @@
 #ifndef WKView_h
 #define WKView_h
 
-#include <WebKit2/qwebkittypes.h>
 #include <WebKit2/qdesktopwebview.h>
 #include <WebKit2/qtouchwebview.h>
 #include <WebKit2/qtouchwebpage.h>

@@ -22,7 +22,6 @@
 #define qdesktopwebview_h
 
 #include "qwebkitglobal.h"
-#include "qwebkittypes.h"
 #include <QUrl>
 #include <QtDeclarative/qsgpainteditem.h>
 #include <WebKit2/WKBase.h>

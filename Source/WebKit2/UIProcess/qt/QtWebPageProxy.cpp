@@ -42,12 +42,10 @@
 #include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
-#include <QAction>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QJSEngine>
 #include <QMimeData>
-#include <QStyle>
 #include <QTouchEvent>
 #include <QUndoStack>
 #include <QtDebug>
@@ -111,7 +109,6 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtPolicyInterface
     , m_loadProgress(0)
 {
     ASSERT(viewInterface);
-    memset(m_actions, 0, sizeof(m_actions));
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
     if (!contextRef)
@@ -430,66 +427,65 @@ void QtWebPageProxy::paint(QPainter* painter, const QRect& area)
         painter->fillRect(area, Qt::white);
 }
 
-void QtWebPageProxy::updateAction(QtWebPageProxy::WebAction action)
+bool QtWebPageProxy::canGoBack() const
 {
-    QAction* a = m_actions[action];
-    if (!a)
-        return;
+    return m_webPageProxy->canGoBack();
+}
 
+void QtWebPageProxy::goBack()
+{
+    m_webPageProxy->goBack();
+}
+
+bool QtWebPageProxy::canGoForward() const
+{
+    return m_webPageProxy->canGoForward();
+}
+
+void QtWebPageProxy::goForward()
+{
+    m_webPageProxy->goForward();
+}
+
+bool QtWebPageProxy::canStop() const
+{
     RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
-
-    bool enabled = a->isEnabled();
-
-    switch (action) {
-    case QtWebPageProxy::Back:
-        enabled = m_webPageProxy->canGoBack();
-        break;
-    case QtWebPageProxy::Forward:
-        enabled = m_webPageProxy->canGoForward();
-        break;
-    case QtWebPageProxy::Stop:
-        enabled = mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-        break;
-    case QtWebPageProxy::Reload:
-        if (mainFrame)
-            enabled = (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-        else
-            enabled = m_webPageProxy->backForwardList()->currentItem();
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    a->setEnabled(enabled);
+    return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
 }
 
-void QtWebPageProxy::updateNavigationActions()
+void QtWebPageProxy::stop()
 {
-    updateAction(QtWebPageProxy::Back);
-    updateAction(QtWebPageProxy::Forward);
-    updateAction(QtWebPageProxy::Stop);
-    updateAction(QtWebPageProxy::Reload);
+    m_webPageProxy->stopLoading();
 }
 
-void QtWebPageProxy::webActionTriggered(bool checked)
+bool QtWebPageProxy::canReload() const
 {
-    QAction* a = qobject_cast<QAction*>(sender());
-    if (!a)
-        return;
-    QtWebPageProxy::WebAction action = static_cast<QtWebPageProxy::WebAction>(a->data().toInt());
-    triggerAction(action, checked);
+    RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
+    if (mainFrame)
+        return (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
+    return m_webPageProxy->backForwardList()->currentItem();
+}
+
+void QtWebPageProxy::reload()
+{
+    m_webPageProxy->reload(/* reloadFromOrigin */ true);
+}
+
+void QtWebPageProxy::navigationStateChanged()
+{
+    emit updateNavigationState();
 }
 
 void QtWebPageProxy::didRelaunchProcess()
 {
-    updateNavigationActions();
+    updateNavigationState();
     m_viewInterface->didRelaunchProcess();
     setDrawingAreaSize(m_viewInterface->drawingAreaSize());
 }
 
 void QtWebPageProxy::processDidCrash()
 {
-    updateNavigationActions();
+    updateNavigationState();
     m_viewInterface->processDidCrash();
 }
 
@@ -568,104 +564,6 @@ void QtWebPageProxy::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZ
 QWKHistory* QtWebPageProxy::history() const
 {
     return m_history;
-}
-
-void QtWebPageProxy::triggerAction(WebAction webAction, bool)
-{
-    switch (webAction) {
-    case Back:
-        m_webPageProxy->goBack();
-        return;
-    case Forward:
-        m_webPageProxy->goForward();
-        return;
-    case Stop:
-        m_webPageProxy->stopLoading();
-        return;
-    case Reload:
-        m_webPageProxy->reload(/* reloadFromOrigin */ true);
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-QAction* QtWebPageProxy::navigationAction(QtWebKit::NavigationAction which) const
-{
-    switch (which) {
-    case QtWebKit::Back:
-        return action(QtWebPageProxy::Back);
-    case QtWebKit::Forward:
-        return action(QtWebPageProxy::Forward);
-    case QtWebKit::Reload:
-        return action(QtWebPageProxy::Reload);
-    case QtWebKit::Stop:
-        return action(QtWebPageProxy::Stop);
-    }
-
-    return 0;
-}
-
-QAction* QtWebPageProxy::action(WebAction action) const
-{
-    if (action == QtWebPageProxy::NoWebAction || action >= WebActionCount)
-        return 0;
-
-    if (m_actions[action])
-        return m_actions[action];
-
-    QString text;
-    QIcon icon;
-    QStyle* style = qobject_cast<QApplication*>(QCoreApplication::instance())->style();
-    bool checkable = false;
-    QtWebPageProxy* mutableSelf = const_cast<QtWebPageProxy*>(this);
-
-    switch (action) {
-    case Back:
-        text = contextMenuItemTagGoBack();
-        icon = style->standardIcon(QStyle::SP_ArrowBack);
-        break;
-    case Forward:
-        text = contextMenuItemTagGoForward();
-        icon = style->standardIcon(QStyle::SP_ArrowForward);
-        break;
-    case Stop:
-        text = contextMenuItemTagStop();
-        icon = style->standardIcon(QStyle::SP_BrowserStop);
-        break;
-    case Reload:
-        text = contextMenuItemTagReload();
-        icon = style->standardIcon(QStyle::SP_BrowserReload);
-        break;
-    case Undo: {
-        QAction* undoAction = m_undoStack->createUndoAction(mutableSelf);
-        m_actions[action] = undoAction;
-        return undoAction;
-    }
-    case Redo: {
-        QAction* redoAction = m_undoStack->createRedoAction(mutableSelf);
-        m_actions[action] = redoAction;
-        return redoAction;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    if (text.isEmpty())
-        return 0;
-
-    QAction* a = new QAction(mutableSelf);
-    a->setText(text);
-    a->setData(action);
-    a->setCheckable(checkable);
-    a->setIcon(icon);
-
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(webActionTriggered(bool)));
-
-    m_actions[action] = a;
-    mutableSelf->updateAction(action);
-    return a;
 }
 
 void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)

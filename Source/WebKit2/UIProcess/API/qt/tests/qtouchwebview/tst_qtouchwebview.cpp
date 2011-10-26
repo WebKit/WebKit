@@ -17,7 +17,6 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <QAction>
 #include <QtTest/QtTest>
 #include <qtouchwebpage.h>
 #include <qtouchwebview.h>
@@ -36,7 +35,7 @@ private slots:
     void cleanup();
 
     void accessPage();
-    void navigationActionsStatusAtStartup();
+    void navigationStatusAtStartup();
 
 private:
     inline QTouchWebView* webView() const;
@@ -73,23 +72,15 @@ void tst_QTouchWebView::accessPage()
     QCOMPARE(pagePropertyAccess, pageDirectAccess);
 }
 
-void tst_QTouchWebView::navigationActionsStatusAtStartup()
+void tst_QTouchWebView::navigationStatusAtStartup()
 {
-    QAction* backAction = webView()->page()->navigationController()->backAction();
-    QVERIFY(backAction);
-    QCOMPARE(backAction->isEnabled(), false);
+    QCOMPARE(webView()->page()->navigationController()->canGoBack(), false);
 
-    QAction* forwardAction = webView()->page()->navigationController()->forwardAction();
-    QVERIFY(forwardAction);
-    QCOMPARE(forwardAction->isEnabled(), false);
+    QCOMPARE(webView()->page()->navigationController()->canGoForward(), false);
 
-    QAction* stopAction = webView()->page()->navigationController()->stopAction();
-    QVERIFY(stopAction);
-    QCOMPARE(stopAction->isEnabled(), false);
+    QCOMPARE(webView()->page()->navigationController()->canStop(), false);
 
-    QAction* reloadAction = webView()->page()->navigationController()->reloadAction();
-    QVERIFY(reloadAction);
-    QCOMPARE(reloadAction->isEnabled(), false);
+    QCOMPARE(webView()->page()->navigationController()->canReload(), false);
 }
 
 

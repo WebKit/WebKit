@@ -23,7 +23,6 @@
 #include "qwebnavigationcontroller.h"
 
 #include "QtWebPageProxy.h"
-#include "qwebkittypes.h"
 
 class QWebNavigationControllerPrivate {
 public:
@@ -40,6 +39,7 @@ QWebNavigationController::QWebNavigationController(QtWebPageProxy* pageProxy)
     : QObject(pageProxy)
     , d(new QWebNavigationControllerPrivate(pageProxy))
 {
+    connect(pageProxy, SIGNAL(updateNavigationState()), this, SIGNAL(navigationStateChanged()));
 }
 
 QWebNavigationController::~QWebNavigationController()
@@ -47,47 +47,42 @@ QWebNavigationController::~QWebNavigationController()
     delete d;
 }
 
-QAction* QWebNavigationController::backAction() const
+bool QWebNavigationController::canGoBack() const
 {
-    return d->pageProxy->navigationAction(QtWebKit::Back);
+    return d->pageProxy->canGoBack();
 }
 
-QAction* QWebNavigationController::forwardAction() const
+bool QWebNavigationController::canGoForward() const
 {
-    return d->pageProxy->navigationAction(QtWebKit::Forward);
+    return d->pageProxy->canGoForward();
 }
 
-QAction* QWebNavigationController::stopAction() const
+bool QWebNavigationController::canStop() const
 {
-    return d->pageProxy->navigationAction(QtWebKit::Stop);
+    return d->pageProxy->canStop();
 }
 
-QAction* QWebNavigationController::reloadAction() const
+bool QWebNavigationController::canReload() const
 {
-    return d->pageProxy->navigationAction(QtWebKit::Reload);
+    return d->pageProxy->canReload();
 }
 
-QAction* QWebNavigationController::navigationAction(QtWebKit::NavigationAction which) const
+void QWebNavigationController::goBack()
 {
-    return d->pageProxy->navigationAction(which);
+    d->pageProxy->goBack();
 }
 
-void QWebNavigationController::back()
+void QWebNavigationController::goForward()
 {
-    d->pageProxy->navigationAction(QtWebKit::Back)->trigger();
-}
-
-void QWebNavigationController::forward()
-{
-    d->pageProxy->navigationAction(QtWebKit::Forward)->trigger();
+    d->pageProxy->goForward();
 }
 
 void QWebNavigationController::stop()
 {
-    d->pageProxy->navigationAction(QtWebKit::Stop)->trigger();
+    d->pageProxy->stop();
 }
 
 void QWebNavigationController::reload()
 {
-    d->pageProxy->navigationAction(QtWebKit::Reload)->trigger();
+    d->pageProxy->reload();
 }

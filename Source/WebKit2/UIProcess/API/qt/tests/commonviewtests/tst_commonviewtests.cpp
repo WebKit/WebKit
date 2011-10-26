@@ -117,13 +117,13 @@ void tst_CommonViewTests::backAndForward()
     QVERIFY(viewAbstraction->url(url));
     QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
 
-    viewAbstraction->triggerNavigationAction(QtWebKit::Back);
+    viewAbstraction->goBack();
     QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
 
     QVERIFY(viewAbstraction->url(url));
     QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
-    viewAbstraction->triggerNavigationAction(QtWebKit::Forward);
+    viewAbstraction->goForward();
     QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
 
     QVERIFY(viewAbstraction->url(url));
@@ -139,7 +139,7 @@ void tst_CommonViewTests::reload()
     QVERIFY(viewAbstraction->url(url));
     QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
-    viewAbstraction->triggerNavigationAction(QtWebKit::Reload);
+    viewAbstraction->reload();
     QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
 
     QVERIFY(viewAbstraction->url(url));
@@ -156,7 +156,7 @@ void tst_CommonViewTests::stop()
     QCOMPARE(url.path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
     // FIXME: This test should be fleshed out. Right now it's just here to make sure we don't crash.
-    viewAbstraction->triggerNavigationAction(QtWebKit::Stop);
+    viewAbstraction->stop();
 }
 
 void tst_CommonViewTests::loadProgress()
