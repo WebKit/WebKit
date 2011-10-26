@@ -1,3 +1,39 @@
+2011-10-26  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98113
+
+    2011-10-21  Anders Carlsson  <andersca@apple.com>
+
+            Flash of white when loading a page after a web process crash
+            https://bugs.webkit.org/show_bug.cgi?id=70615
+            <rdar://problem/10306906>
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _processDidCrash]):
+            (-[WKView _didRelaunchProcess]):
+            Remove calls to setNeedsDisplay here.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::processDidCrash):
+            Call setNeedsDisplay, but only if calling out to the loader client didn't relaunch the web process.
+
+            * WebProcess/WebPage/DrawingArea.h:
+            (WebKit::DrawingArea::setPaintingEnabled):
+            * WebProcess/WebPage/DrawingAreaImpl.cpp:
+            (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+            (WebKit::DrawingAreaImpl::setNeedsDisplay):
+            (WebKit::DrawingAreaImpl::scroll):
+            (WebKit::DrawingAreaImpl::setPaintingEnabled):
+            * WebProcess/WebPage/DrawingAreaImpl.h:
+            Add a way to disable painting completely for a drawing area.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            Disable painting while setting up the web page, otherwise we'll get paint requests when we set the
+            active state of the web page.
+
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98027

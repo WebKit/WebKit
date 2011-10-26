@@ -232,6 +232,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     platformInitialize();
 
     m_drawingArea = DrawingArea::create(this, parameters);
+    m_drawingArea->setPaintingEnabled(false);
+
     m_mainFrame = WebFrame::createMainFrame(this);
 
     setDrawsBackground(parameters.drawsBackground);
@@ -249,6 +251,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     
     if (!parameters.sessionState.isEmpty())
         restoreSession(parameters.sessionState);
+
+    m_drawingArea->setPaintingEnabled(true);
 
 #ifndef NDEBUG
     webPageCounter.increment();
