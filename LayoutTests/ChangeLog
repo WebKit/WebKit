@@ -1,3 +1,11 @@
+2011-10-25  Erik Arvidsson  <arv@chromium.org>
+
+        Fix ad hoc test.
+
+        unreviewed.
+
+        * fast/canvas/webgl/gl-teximage.html:
+
 2011-10-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit does not expose HTML label for slider elements
