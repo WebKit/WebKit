@@ -45,7 +45,7 @@ my $stub = "";
 my $rtype = "";
 my $op = "";
 
-print STDERR "Creating JIT stubs for $file \n";
+print STDOUT "Creating JIT stubs for $file \n";
 open(IN, $file) or die "No such file $file";
 
 while ( $_ = <IN> ) {

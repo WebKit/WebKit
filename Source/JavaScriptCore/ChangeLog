@@ -1,3 +1,12 @@
+2011-10-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Don't print regular output to STDERR when generating hashtables and JIT stubs
+
+        Reviewed by Simon Hausmann.
+
+        * create_hash_table:
+        * create_jit_stubs:
+
 2011-10-25  Gavin Barraclough  <barraclough@apple.com>
 
         Split DFGJITCodeGenerator::callOperation methods
