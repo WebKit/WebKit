@@ -1,3 +1,15 @@
+2011-10-26  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Add new CSS escape sequence parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=70909
+
+        Reviewed by Darin Adler.
+
+        Test escape various sequences terminated by \n \f \r and \r\n.
+
+        * fast/css/parsing-css-escapes-expected.txt: Added.
+        * fast/css/parsing-css-escapes.html: Added.
+
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Mac editing test rebaseline.
