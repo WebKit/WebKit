@@ -2438,12 +2438,6 @@ http/tests/inspector/resource-tree/resource-tree-document-url.html
 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
 http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
 
-# inspector/cookie-parser.html is a flaky crash
-# https://bugs.webkit.org/show_bug.cgi?id=62662
-inspector/cookie-parser.html
-inspector/cookie-resource-match.html
-inspector/evaluate-in-page.html
-
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset.html
