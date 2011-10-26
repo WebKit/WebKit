@@ -1,3 +1,13 @@
+2011-10-26  Ben Wells  <benwells@chromium.org>
+
+        Canvas drawImage with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66920
+
+        Reviewed by James Robinson.
+
+        * fast/canvas/canvas-composite-image-expected.txt: Added.
+        * fast/canvas/canvas-composite-image.html: Added.
+
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Mac rebaseline, trusting the baseline optimizer.
