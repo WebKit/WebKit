@@ -1,3 +1,9 @@
+2011-10-27  John Gregg  <johnnyg@google.com>
+
+        unreviewed, test expectations
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10262205> Allow column progression to be independent of writing mode
