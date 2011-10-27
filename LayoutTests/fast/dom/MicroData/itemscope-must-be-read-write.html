@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that itemscope attribute must be read/write.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+shouldBeTrue("element.itemScope = true; element.hasAttribute('itemscope')");
+shouldBeTrue("element.itemScope");
+shouldBeFalse("element.itemScope = false; element.hasAttribute('itemscope')");
+shouldBeFalse("element.itemScope");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

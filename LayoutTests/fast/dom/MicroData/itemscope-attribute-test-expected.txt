@@ -1,0 +1,16 @@
+Microdata itemscope attribute simple test.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+
+The itemScope attribute must be defined.
+PASS element.itemScope is defined.
+PASS typeof element.itemScope == 'boolean' is true
+PASS element.itemScope is true
+
+Created element of type: div
+PASS createElement('div',{}).itemScope == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

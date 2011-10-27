@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Microdata itemscope attribute simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div',{itemscope:'itemscope'});
+
+debug("<br>The itemScope attribute must be defined.");
+shouldBeDefined("element.itemScope");
+shouldBeTrue("typeof element.itemScope == 'boolean'");
+shouldBeTrue("element.itemScope");
+debug('');
+shouldBeTrue("createElement('div',{}).itemScope == 0");
+
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

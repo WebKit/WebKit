@@ -1,0 +1,11 @@
+This tests that itemscope attribute must be read/write.
+
+Created element of type: div
+PASS element.itemScope = true; element.hasAttribute('itemscope') is true
+PASS element.itemScope is true
+PASS element.itemScope = false; element.hasAttribute('itemscope') is false
+PASS element.itemScope is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

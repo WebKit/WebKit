@@ -1,3 +1,15 @@
+2011-10-27  Arko Saha  <arko@motorola.com>
+
+        Microdata: Add test cases for itemscope attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=71014
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/MicroData/itemscope-attribute-test-expected.txt: Added.
+        * fast/dom/MicroData/itemscope-attribute-test.html: Added.
+        * fast/dom/MicroData/itemscope-must-be-read-write-expected.txt: Added.
+        * fast/dom/MicroData/itemscope-must-be-read-write.html: Added.
+
 2011-10-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, gardening.
