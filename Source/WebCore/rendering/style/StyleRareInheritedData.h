@@ -102,6 +102,9 @@ public:
 
     AtomicString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;
+    
+    AtomicString m_lineGrid;
+
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor;
 #endif

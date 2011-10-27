@@ -269,6 +269,7 @@ z-index
 -webkit-line-box-contain
 -webkit-line-break
 -webkit-line-clamp
+-webkit-line-grid
 -webkit-logical-width
 -webkit-logical-height
 -webkit-margin-after-collapse

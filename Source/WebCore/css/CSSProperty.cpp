@@ -330,6 +330,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitHyphens:
     case CSSPropertyWebkitLineBoxContain:
     case CSSPropertyWebkitLineBreak:
+    case CSSPropertyWebkitLineGrid:
     case CSSPropertyWebkitNbspMode:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:

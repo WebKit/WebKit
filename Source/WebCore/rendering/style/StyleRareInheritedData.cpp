@@ -56,6 +56,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
+    , m_lineGrid(RenderStyle::initialLineGrid())
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif    
@@ -101,6 +102,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , hyphenationLimitLines(o.hyphenationLimitLines)
     , locale(o.locale)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
+    , m_lineGrid(o.m_lineGrid)
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
 #endif
@@ -162,6 +164,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
         && QuotesData::equal(quotes.get(), o.quotes.get())
+        && m_lineGrid == o.m_lineGrid
         && m_imageRendering == o.m_imageRendering;
 }
 

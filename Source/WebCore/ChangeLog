@@ -1,3 +1,31 @@
+2011-10-27  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71061
+        
+        [CSS Line Grid] Add support for parsing the line-grid property.
+
+        New tests in fast/line-grid.
+
+        Reviewed by Dan Bernstein.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::lineGrid):
+        (WebCore::InheritedFlags::setLineGrid):
+        (WebCore::InheritedFlags::initialLineGrid):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-10-27  Fady Samuel  <fsamuel@chromium.org>
 
         iframes seem to occasionally doubly scale or scale incorrectly when pageScaleFactor != 1.0

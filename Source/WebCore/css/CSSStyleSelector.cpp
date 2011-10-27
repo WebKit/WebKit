@@ -3372,7 +3372,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnBreakInside:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnBreakInside, ColumnBreakInside, PageBreak)
         return;
-     case CSSPropertyWebkitColumnRule:
+    case CSSPropertyWebkitColumnRule:
         if (isInherit) {
             m_style->setColumnRuleColor(m_parentStyle->columnRuleColor().isValid() ? m_parentStyle->columnRuleColor() : m_parentStyle->color());
             m_style->setColumnRuleStyle(m_parentStyle->columnRuleStyle());
@@ -3380,6 +3380,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         else if (isInitial)
             m_style->resetColumnRule();
+        return;
+    case CSSPropertyWebkitLineGrid:
+        HANDLE_INHERIT_AND_INITIAL(lineGrid, LineGrid);
+        if (primitiveValue->getIdent() == CSSValueNone)
+            m_style->setLineGrid(nullAtom);
+        else
+            m_style->setLineGrid(primitiveValue->getStringValue());
         return;
     case CSSPropertyWebkitRegionBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)

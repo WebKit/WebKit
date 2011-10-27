@@ -1903,6 +1903,17 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
+    case CSSPropertyWebkitLineGrid:
+        if (id == CSSValueNone)
+            validPrimitive = true;
+        else if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
+            String lineGridValue = String(value->string);
+            if (!lineGridValue.isEmpty()) {
+                addProperty(propId, primitiveValueCache()->createValue(lineGridValue, CSSPrimitiveValue::CSS_STRING), important);
+                return true;
+            }
+        }
+        break;
     case CSSPropertyWebkitLocale:
         if (id == CSSValueAuto || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;

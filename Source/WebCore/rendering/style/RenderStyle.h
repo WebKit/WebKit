@@ -810,6 +810,8 @@ public:
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
     RegionOverflow regionOverflow() const { return static_cast<RegionOverflow>(rareNonInheritedData->m_regionOverflow); }
 
+    const AtomicString& lineGrid() const { return rareInheritedData->m_lineGrid; }
+    
     // Apple-specific property getter methods
     EPointerEvents pointerEvents() const { return static_cast<EPointerEvents>(inherited_flags._pointerEvents); }
     const AnimationList* animations() const { return rareNonInheritedData->m_animations.get(); }
@@ -1189,6 +1191,8 @@ public:
 
     // End CSS3 Setters
 
+    void setLineGrid(const AtomicString& lineGrid) { SET_VAR(rareInheritedData, m_lineGrid, lineGrid); }
+
     void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
     void setRegionThread(const AtomicString& regionThread) { SET_VAR(rareNonInheritedData, m_regionThread, regionThread); }
     void setRegionOverflow(RegionOverflow regionOverflow) { SET_VAR(rareNonInheritedData, m_regionOverflow, regionOverflow); }
@@ -1468,6 +1472,8 @@ public:
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
+
+    static const AtomicString& initialLineGrid() { return nullAtom; }
 
     static const AtomicString& initialFlowThread() { return nullAtom; }
     static const AtomicString& initialRegionThread() { return nullAtom; }
