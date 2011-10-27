@@ -1,3 +1,14 @@
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily skip tables/mozilla_expected_failures/bugs/bug14007-2.html on all platforms
+        since r98542 regressed it. The failure is tracked by the bug 71032.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-10-27  Mike Reed  <reed@google.com>
 
         [skia] replace offscreen technique with native support for antialiased clipping

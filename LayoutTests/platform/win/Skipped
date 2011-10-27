@@ -1428,3 +1428,6 @@ fast/dom/MicroData
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+
+# https://bugs.webkit.org/show_bug.cgi?id=71032
+tables/mozilla_expected_failures/bugs/bug14007-2.html
