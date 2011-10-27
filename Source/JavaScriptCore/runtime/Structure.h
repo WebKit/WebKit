@@ -230,11 +230,18 @@ namespace JSC {
         void despecifyAllFunctions(JSGlobalData&);
 
         PassOwnPtr<PropertyTable> copyPropertyTable(JSGlobalData&, Structure* owner);
+        PassOwnPtr<PropertyTable> copyPropertyTableForPinning(JSGlobalData&, Structure* owner);
         void materializePropertyMap(JSGlobalData&);
         void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {
             ASSERT(structure()->classInfo() == &s_info);
             if (!m_propertyTable && m_previous)
+                materializePropertyMap(globalData);
+        }
+        void materializePropertyMapIfNecessaryForPinning(JSGlobalData& globalData)
+        {
+            ASSERT(structure()->classInfo() == &s_info);
+            if (!m_propertyTable)
                 materializePropertyMap(globalData);
         }
 

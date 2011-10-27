@@ -371,7 +371,7 @@ Structure* Structure::changePrototypeTransition(JSGlobalData& globalData, Struct
     // Don't set m_offset, as one can not transition to this.
 
     structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
+    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
     transition->pin();
 
     return transition;
@@ -387,7 +387,7 @@ Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Stru
     // Don't set m_offset, as one can not transition to this.
 
     structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
+    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
     transition->pin();
 
     if (transition->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
@@ -407,7 +407,7 @@ Structure* Structure::getterSetterTransition(JSGlobalData& globalData, Structure
     // Don't set m_offset, as one can not transition to this.
 
     structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
+    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
     transition->pin();
 
     return transition;
@@ -420,7 +420,7 @@ Structure* Structure::toDictionaryTransition(JSGlobalData& globalData, Structure
     Structure* transition = create(globalData, structure);
 
     structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
+    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
     transition->m_dictionaryKind = kind;
     transition->pin();
 
@@ -473,7 +473,7 @@ Structure* Structure::preventExtensionsTransition(JSGlobalData& globalData, Stru
     // Don't set m_offset, as one can not transition to this.
 
     structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
+    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
     transition->m_preventExtensions = true;
     transition->pin();
 
@@ -551,7 +551,7 @@ size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const I
     if (m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         specificValue = 0;
 
-    materializePropertyMapIfNecessary(globalData);
+    materializePropertyMapIfNecessaryForPinning(globalData);
     
     pin();
 
@@ -566,7 +566,7 @@ size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, cons
     ASSERT(isUncacheableDictionary());
     ASSERT(!m_enumerationCache);
 
-    materializePropertyMapIfNecessary(globalData);
+    materializePropertyMapIfNecessaryForPinning(globalData);
 
     pin();
     size_t offset = remove(propertyName);
@@ -575,6 +575,7 @@ size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, cons
 
 void Structure::pin()
 {
+    ASSERT(m_propertyTable);
     m_isPinnedPropertyTable = true;
     m_previous.clear();
     m_nameInPrevious.clear();
@@ -610,6 +611,11 @@ inline void Structure::checkConsistency()
 PassOwnPtr<PropertyTable> Structure::copyPropertyTable(JSGlobalData& globalData, Structure* owner)
 {
     return adoptPtr(m_propertyTable ? new PropertyTable(globalData, owner, *m_propertyTable) : 0);
+}
+
+PassOwnPtr<PropertyTable> Structure::copyPropertyTableForPinning(JSGlobalData& globalData, Structure* owner)
+{
+    return adoptPtr(m_propertyTable ? new PropertyTable(globalData, owner, *m_propertyTable) : new PropertyTable(m_offset == noOffset ? 0 : m_offset));
 }
 
 size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
