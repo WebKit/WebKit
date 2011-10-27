@@ -39,6 +39,14 @@ WK_EXPORT
 
 /* Settings */
 
-@property(getter = isJavaScriptEnabled) BOOL javaScriptEnabled;
+/* Setting to control whether JavaScript referenced by a page is enabled.
+   Default: YES
+*/
+@property BOOL allowsJavaScript;
+
+/* Setting to control whether plug-ins are enabled.
+   Default: YES
+*/
+@property BOOL allowsPlugIns;
 
 @end

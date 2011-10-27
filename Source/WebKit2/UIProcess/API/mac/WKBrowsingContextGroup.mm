@@ -61,14 +61,24 @@
     [super dealloc];
 }
 
-- (BOOL)isJavaScriptEnabled
+- (BOOL)allowsJavaScript
 {
     return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef));
 }
 
-- (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
+- (void)setAllowsJavaScript:(BOOL)allowsJavaScript
 {
-    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef), javaScriptEnabled);
+    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef), allowsJavaScript);
+}
+
+- (BOOL)allowsPlugIns
+{
+    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(self.pageGroupRef));
+}
+
+- (void)setAllowsPlugIns:(BOOL)allowsPlugIns
+{
+    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(self.pageGroupRef), allowsPlugIns);
 }
 
 @end

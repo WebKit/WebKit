@@ -32,13 +32,24 @@ TEST(WKBrowsingContextGroupTest, GetSetJavaScriptEnabled)
 {
     WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
     
-    ASSERT_TRUE(browsingContextGroup.javaScriptEnabled);
-    ASSERT_TRUE([browsingContextGroup isJavaScriptEnabled]);
+    ASSERT_TRUE(browsingContextGroup.allowsJavaScript);
 
-    browsingContextGroup.javaScriptEnabled = NO;
+    browsingContextGroup.allowsJavaScript = NO;
 
-    ASSERT_FALSE(browsingContextGroup.javaScriptEnabled);
-    ASSERT_FALSE([browsingContextGroup isJavaScriptEnabled]);
+    ASSERT_FALSE(browsingContextGroup.allowsJavaScript);
+
+    [browsingContextGroup release];
+}
+
+TEST(WKBrowsingContextGroupTest, GetSetPluginsEnabled)
+{
+    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
+    
+    ASSERT_TRUE(browsingContextGroup.allowsPlugIns);
+
+    browsingContextGroup.allowsPlugIns = NO;
+
+    ASSERT_FALSE(browsingContextGroup.allowsPlugIns);
 
     [browsingContextGroup release];
 }
