@@ -850,7 +850,8 @@ BUGWK62974 LINUX WIN : svg/text/text-text-06-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
-BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+// Extended by BUGCR101797.
+// BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
@@ -1631,8 +1632,9 @@ BUGCR101797 CPU : svg/custom/use-css-events.svg = IMAGE
 BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
-BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
-BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
+// Already marked as flaky under BUGCR10479
+// BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
+// BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
 BUGCR101797 CPU : svg/hixie/perf/007.xml = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
@@ -1943,9 +1945,6 @@ BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.
 
 // Started failing at r58152
 BUGWK38038 : fast/url/file-http-base.html = TEXT
-
-// Started failing at 58212
-BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 
 // WebKit roll 58304:58400
 // Skip since not relevant

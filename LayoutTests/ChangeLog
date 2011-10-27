@@ -1,3 +1,9 @@
+2011-10-27  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, fixing duplicate entries in test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Flag regions with custom styling
@@ -55,6 +61,7 @@
 
         * platform/efl/tables: [...]
 
+>>>>>>> .r98598
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline.
