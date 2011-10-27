@@ -1,3 +1,31 @@
+2011-10-27  Adam Roben  <aroben@apple.com>
+
+        Test WKBundlePageGetBackingScaleFactor
+
+        Test for <http://webkit.org/b/71025> <rdar://problem/10355037> REGRESSION (r97191): Clients
+        can't reliably determine the scale factor of snapshots returned via
+        WKBundlePageCreateSnapshot* API
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+
+        * TestWebKitAPI/Tests/WebKit2/mac/GetBackingScaleFactor.mm: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Record the passed-back scale factor.
+        (TestWebKitAPI::setInjectedBundleClient): Hook up our didReceiveMessage callback.
+        (TestWebKitAPI::createWindow): Conjure up a window.
+        (TestWebKitAPI::TEST): Ask the injected bundle code to call the new
+        WKBundlePageGetBackingScaleFactor API when the WKView is in windows with various scale
+        factors and when using a custom scale factor, and check that we get those same scale factors
+        back.
+
+        * TestWebKitAPI/Tests/WebKit2/mac/GetBackingScaleFactor_Bundle.mm: Added.
+        (TestWebKitAPI::GetBackingScaleFactorTest::GetBackingScaleFactorTest): Just initialize our
+        members.
+        (TestWebKitAPI::GetBackingScaleFactorTest::didCreatePage): Store the page for later.
+        (TestWebKitAPI::GetBackingScaleFactorTest::didReceiveMessage): Get the backing scale factor
+        from the page using the new API and send it back.
+
 2011-10-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] MiniBrowser crashes when started with 0 arguments

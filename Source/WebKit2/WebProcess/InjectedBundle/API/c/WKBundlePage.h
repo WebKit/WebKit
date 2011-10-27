@@ -339,6 +339,8 @@ WK_EXPORT WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef
 WK_EXPORT WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePageRef page, WKRect rect, WKImageOptions options);
 WK_EXPORT WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef page, WKRect rect, double scaleFactor, WKImageOptions options);
 
+WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 #endif

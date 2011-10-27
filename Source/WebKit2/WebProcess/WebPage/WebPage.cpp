@@ -872,6 +872,11 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 #endif
 }
 
+float WebPage::deviceScaleFactor() const
+{
+    return m_page->deviceScaleFactor();
+}
+
 void WebPage::setUseFixedLayout(bool fixed)
 {
     Frame* frame = m_mainFrame->coreFrame();

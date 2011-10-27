@@ -1,3 +1,23 @@
+2011-10-27  Adam Roben  <aroben@apple.com>
+
+        Add WKBundlePageGetBackingScaleFactor
+
+        Fixes <http://webkit.org/b/71025> <rdar://problem/10355037> REGRESSION (r97191): Clients
+        can't reliably determine the scale factor of snapshots returned via
+        WKBundlePageCreateSnapshot* API
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetBackingScaleFactor):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Added. Calls through to WebPage::deviceScaleFactor.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::deviceScaleFactor):
+        * WebProcess/WebPage/WebPage.h:
+        Added. Calls through to Page::deviceScaleFactor.
+
 2011-10-27  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2]Add setViewportSize API to WebKit2.
