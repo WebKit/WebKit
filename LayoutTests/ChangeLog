@@ -1,3 +1,19 @@
+2011-10-27  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, rebaselines after multi-col changes.
+ 
+        * platform/chromium-win-vista/fast/css/getComputedStyle: Added.
+        * platform/chromium-win-vista/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/getComputedStyle: Added.
+        * platform/chromium-win-xp/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/chromium/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/chromium/svg/css: Added.
+        * platform/chromium/svg/css/getComputedStyle-basic-expected.txt: Added.
+
 2011-10-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Get rid of optional parameters in the middle in IDLs.
