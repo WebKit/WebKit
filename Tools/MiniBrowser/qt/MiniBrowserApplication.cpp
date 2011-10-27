@@ -170,35 +170,39 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     return QApplication::notify(target, event);
 }
 
+static void printHelp(const QString& programName)
+{
+    qDebug() << "Usage:" << programName.toLatin1().data()
+         << "[--touch]"
+         << "[--maximize]"
+         << "[-r list]"
+         << "[--robot-timeout seconds]"
+         << "[--robot-extra-time seconds]"
+         << "[-v]"
+         << "URL";
+}
+
 void MiniBrowserApplication::handleUserOptions()
 {
     QStringList args = arguments();
-    QFileInfo program(args.at(0));
+    QFileInfo program(args.takeAt(0));
     QString programName("MiniBrowser");
     if (program.exists())
         programName = program.baseName();
 
-    if (args.contains("-help")) {
-        qDebug() << "Usage:" << programName.toLatin1().data()
-             << "[-touch]"
-             << "[-maximize]"
-             << "[-r list]"
-             << "[-robot-timeout seconds]"
-             << "[-robot-extra-time seconds]"
-             << "[-print-loaded-urls]"
-             << "URLs";
+    if (takeOptionFlag(&args, "--help")) {
+        printHelp(programName);
         appQuit(0);
     }
 
-    if (args.contains("-touch"))
-        m_windowOptions.setUseTouchWebView(true);
+    m_windowOptions.setUseTouchWebView(takeOptionFlag(&args, "--touch"));
+    m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
+    m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
+    m_robotTimeoutSeconds = takeOptionValue(&args, "--robot-timeout").toInt();
+    m_robotExtraTimeSeconds = takeOptionValue(&args, "--robot-extra-time").toInt();
 
-    if (args.contains("-maximize"))
-        m_windowOptions.setStartMaximized(true);
-
-    int robotIndex = args.indexOf("-r");
-    if (robotIndex != -1) {
-        QString listFile = takeOptionValue(&args, robotIndex);
+    if (args.contains("-r")) {
+        QString listFile = takeOptionValue(&args, "-r");
         if (listFile.isEmpty())
             appQuit(1, "-r needs a list file to start in robotized mode");
         if (!QFile::exists(listFile))
@@ -207,18 +211,12 @@ void MiniBrowserApplication::handleUserOptions()
         m_isRobotized = true;
         m_urls = QStringList(listFile);
     } else {
-        int lastArg = args.lastIndexOf(QRegExp("^-.*"));
-        m_urls = (lastArg != -1) ? args.mid(++lastArg) : args.mid(1);
+        int urlArg = args.indexOf(QRegExp("^[^-].*"));
+        m_urls += args.takeAt(urlArg);
     }
 
-    int robotTimeoutIndex = args.indexOf("-robot-timeout");
-    if (robotTimeoutIndex != -1)
-        m_robotTimeoutSeconds = takeOptionValue(&args, robotTimeoutIndex).toInt();
-
-    int robotExtraTimeIndex = args.indexOf("-robot-extra-time");
-    if (robotExtraTimeIndex != -1)
-        m_robotExtraTimeSeconds = takeOptionValue(&args, robotExtraTimeIndex).toInt();
-
-    if (args.contains("-print-loaded-urls"))
-        m_windowOptions.setPrintLoadedUrls(true);
+    if (!args.isEmpty()) {
+        printHelp(programName);
+        appQuit(1, QString("Unknown argument(s): %1").arg(args.join(",")));
+    }
 }

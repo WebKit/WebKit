@@ -42,7 +42,8 @@
 #endif
 
 // options handling
-QString takeOptionValue(QStringList* arguments, int index);
+bool takeOptionFlag(QStringList* arguments, const QString& name);
+QString takeOptionValue(QStringList* arguments, const QString& name);
 QString formatKeys(QList<QString> keys);
 QList<QString> enumToKeys(const QMetaObject, const QString&, const QString&);
 

@@ -28,12 +28,24 @@
 
 #include "utils.h"
 
-QString takeOptionValue(QStringList* arguments, int index)
+bool takeOptionFlag(QStringList* arguments, const QString& name)
+{
+    int index = arguments->indexOf(name);
+    if (index != -1)
+        arguments->removeAt(index);
+    return index != -1;
+}
+
+QString takeOptionValue(QStringList* arguments, const QString& name)
 {
     QString result;
 
-    if (++index < arguments->count() && !arguments->at(index).startsWith("-"))
-        result = arguments->takeAt(index);
+    int index = arguments->indexOf(name);
+    if (index != -1) {
+        arguments->removeAt(index);
+        if (index < arguments->count() && !arguments->at(index).startsWith("-"))
+            result = arguments->takeAt(index);
+    }
 
     return result;
 }

@@ -1,3 +1,22 @@
+2011-10-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Improve command line arguments handling for MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=70616
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        - Use two dashes for word arguments.
+        - Return with an error when an unsupported argument is given.
+        - Allow the URL to be placed before option arguments.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (printHelp):
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/utils.cpp:
+        (takeOptionFlag):
+        (takeOptionValue):
+        * MiniBrowser/qt/utils.h:
+
 2011-10-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] NRWT doesn't work on qt-mac platform
