@@ -98,6 +98,9 @@ struct PlatformContextSkia::State {
     // If m_imageBufferClip is non-empty, this is the region the image is clipped to.
     FloatRect m_clip;
 
+    // This is a list of clipping paths which are currently active, in the
+    // order in which they were pushed.
+    WTF::Vector<SkPath> m_antiAliasClipPaths;
     InterpolationQuality m_interpolationQuality;
 
     PlatformContextSkia::State cloneInheritedProperties();
@@ -143,6 +146,7 @@ PlatformContextSkia::State::State(const State& other)
     , m_textDrawingMode(other.m_textDrawingMode)
     , m_imageBufferClip(other.m_imageBufferClip)
     , m_clip(other.m_clip)
+    , m_antiAliasClipPaths(other.m_antiAliasClipPaths)
     , m_interpolationQuality(other.m_interpolationQuality)
 {
     // Up the ref count of these. SkSafeRef does nothing if its argument is 0.
@@ -159,7 +163,12 @@ PlatformContextSkia::State::~State()
 // Returns a new State with all of this object's inherited properties copied.
 PlatformContextSkia::State PlatformContextSkia::State::cloneInheritedProperties()
 {
-    return PlatformContextSkia::State(*this);
+    PlatformContextSkia::State state(*this);
+
+    // Everything is inherited except for the clip paths.
+    state.m_antiAliasClipPaths.clear();
+
+    return state;
 }
 
 SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
@@ -258,7 +267,33 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
 
 void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
 {
-    canvas()->clipPath(clipPath, SkRegion::kIntersect_Op, true);
+    if (m_canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability) {
+        // When the output is a vector device, like PDF, we don't need antialiased clips.
+        // It's up to the PDF rendering engine to do that. We can simply disable the
+        // antialiased clip code if the output is a vector device.
+        canvas()->clipPath(clipPath);
+        return;
+    }
+
+    // If we are currently tracking any anti-alias clip paths, then we already
+    // have a layer in place and don't need to add another.
+    bool haveLayerOutstanding = m_state->m_antiAliasClipPaths.size();
+
+    // See comments in applyAntiAliasedClipPaths about how this works.
+    m_state->m_antiAliasClipPaths.append(clipPath);
+
+    if (!haveLayerOutstanding) {
+        SkRect bounds = clipPath.getBounds();
+        // If we are doing a clip outside of clipPath our layer needs to be for the whole
+        // canvas, otherwise we can create a smaller layer.
+        SkRect* layerBounds = 0;
+        if (!clipPath.isInverseFillType())
+            layerBounds = &bounds;
+        canvas()->saveLayerAlpha(layerBounds, 255, static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag | SkCanvas::kClipToLayer_SaveFlag));
+        // Guards state modification during clipped operations.
+        // The state is popped in applyAntiAliasedClipPaths().
+        canvas()->save();
+    }
 }
 
 void PlatformContextSkia::restore()
@@ -267,6 +302,9 @@ void PlatformContextSkia::restore()
         applyClipFromImage(m_state->m_clip, m_state->m_imageBufferClip);
         canvas()->restore();
     }
+
+    if (!m_state->m_antiAliasClipPaths.isEmpty())
+        applyAntiAliasedClipPaths(m_state->m_antiAliasClipPaths);
 
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
@@ -582,6 +620,45 @@ void PlatformContextSkia::applyClipFromImage(const FloatRect& rect, const SkBitm
     SkPaint paint;
     paint.setXfermodeMode(SkXfermode::kDstIn_Mode);
     m_canvas->drawBitmap(imageBuffer, SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()), &paint);
+}
+
+void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
+{
+    // Anti-aliased clipping:
+    //
+    // Skia's clipping is 1-bit only. Consider what would happen if it were 8-bit:
+    // We have a square canvas, filled with white and we declare a circular
+    // clipping path. Then we fill twice with a black rectangle. The fractional
+    // pixels would first get the correct color (white * alpha + black * (1 -
+    // alpha)), but the second fill would apply the alpha to the already
+    // modified color and the result would be too dark.
+    //
+    // This, anti-aliased clipping needs to be performed after the drawing has
+    // been done. In order to do this, we create a new layer of the canvas in
+    // clipPathAntiAliased and store the clipping path. All drawing is done to
+    // the layer's bitmap while it's in effect. When WebKit calls restore() to
+    // undo the clipping, this function is called.
+    //
+    // Here, we walk the list of clipping paths backwards and, for each, we
+    // clear outside of the clipping path. We only need a single extra layer
+    // for any number of clipping paths.
+    //
+    // When we call restore on the SkCanvas, the layer's bitmap is composed
+    // into the layer below and we end up with correct, anti-aliased clipping.
+
+    m_canvas->restore();
+
+    SkPaint paint;
+    paint.setXfermodeMode(SkXfermode::kClear_Mode);
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kFill_Style);
+
+    for (size_t i = paths.size() - 1; i < paths.size(); --i) {
+        paths[i].toggleInverseFillType();
+        m_canvas->drawPath(paths[i], paint);
+    }
+
+    m_canvas->restore();
 }
 
 void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)

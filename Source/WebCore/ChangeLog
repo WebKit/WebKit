@@ -1,3 +1,19 @@
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed, rolling out r98486.
+        http://trac.webkit.org/changeset/98486
+        https://bugs.webkit.org/show_bug.cgi?id=70748
+
+        Broke Chromium's test_expectation.txt
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::State):
+        (WebCore::PlatformContextSkia::State::cloneInheritedProperties):
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+        (WebCore::PlatformContextSkia::restore):
+        (WebCore::PlatformContextSkia::applyAntiAliasedClipPaths):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2011-10-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10350775> REGRESSION (r97032): Slider thumb is not drawn
