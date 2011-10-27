@@ -1,3 +1,19 @@
+2011-10-27  Fady Samuel  <fsamuel@chromium.org>
+
+        iframes seem to occasionally doubly scale or scale incorrectly when pageScaleFactor != 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=70552
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/frames/iframe-double-scale-contents.html
+
+        The iframe's document style was using the page's scale factor, rather than the frame's (1.0).
+        If the page scale factor was set after layout was complete, then this would have no impact because the iframe's document style and layout is not recomputed, 
+        but if the page scale factor is set prior to creating and laying out the iframe, the iframe's content would be doubly scaled.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+
 2011-10-27  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, fix CCSchedulerStateMachine build errors.
