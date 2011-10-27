@@ -89,7 +89,10 @@ class QtPort(WebKitPort):
         return self._build_path('bin/ImageDiff')
 
     def _path_to_webcore_library(self):
-        return self._build_path('lib/libQtWebKit.so')
+        if self._operating_system == 'mac':
+            return self._build_path('lib/QtWebKit.framework/QtWebKit')
+        else:
+            return self._build_path('lib/libQtWebKit.so')
 
     @memoized
     def qt_version(self):

@@ -1,3 +1,14 @@
+2011-10-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] NRWT doesn't work on qt-mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=64445
+
+        Reviewed by Adam Barth.
+
+        * Scripts/run-webkit-tests: Switch qt-mac platform to NRWT.
+        (useNewRunWebKitTests):
+        * Scripts/webkitpy/layout_tests/port/qt.py: Fix library path on Mac.
+
 2011-10-26  Sam Weinig  <sam@webkit.org>
 
         Add initial setting to WKBrowsingContextGroup
