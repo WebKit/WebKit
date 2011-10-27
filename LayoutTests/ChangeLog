@@ -1,5 +1,11 @@
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed, gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Update Chromium test_expectations.
 
         inspector/storage-panel-dom-storage.html has results platform dependant?

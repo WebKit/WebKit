@@ -3779,8 +3779,7 @@ BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRAS
 
 BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
 
-BUGWK70837 GPU : compositing/video/video-poster.html = PASS TIMEOUT
-BUGWK70837 SNOWLEOPARD CPU CPU-CG : compositing/video/video-poster.html = PASS TIMEOUT
+BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT
 
 // Intermittent ASSERT seen on the bot.
 BUGWK67031 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
