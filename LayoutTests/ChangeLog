@@ -1,5 +1,17 @@
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed gardening.
+
+        * platform/chromium-linux/http/tests/inspector: Added.
+        * platform/chromium-linux/http/tests/inspector/search: Added.
+        * platform/chromium-linux/http/tests/inspector/search/search-in-resources-expected.txt: Added.
+        Rebaselined (looks like the urls are sorted differently on Linux).
+
+        * platform/chromium/test_expectations.txt: Marked inspector/storage-panel-dom-storage.html
+        as TEXT as it started failing on the bots.
+
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed, rolling out r98486.
         http://trac.webkit.org/changeset/98486
         https://bugs.webkit.org/show_bug.cgi?id=70748

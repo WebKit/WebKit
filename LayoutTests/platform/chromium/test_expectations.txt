@@ -3793,3 +3793,5 @@ BUGWK67031 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
 BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT
 
 BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
+
+BUGWK70985 LINUX : inspector/storage-panel-dom-storage.html = PASS TEXT
