@@ -1,5 +1,14 @@
 2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Reviewed by David Kilzer.
+
+        Make FeatureDefines Identical Across OS X Projects
+        https://bugs.webkit.org/show_bug.cgi?id=71051
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Correctly Guard Exported REQUEST_ANIMATION_FRAME Symbols
         https://bugs.webkit.org/show_bug.cgi?id=71047
 
