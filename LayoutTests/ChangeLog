@@ -1,3 +1,13 @@
+2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update test expecatations for search-in-resources.html
+
+        http/tests/inspector/search/search-in-resources.html fails on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=70993
+
+        * http/tests/inspector/search/search-in-resources-expected.txt:
+        * platform/chromium-linux/http/tests/inspector/search/search-in-resources-expected.txt: Removed.
+
 2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Windows and Linux rebaselines.
