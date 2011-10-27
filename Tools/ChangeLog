@@ -1,3 +1,22 @@
+2011-10-27  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION (NRWT): build.webkit.org doesn't show the total number of leaks found during a test run on the Leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=66227
+
+        Reviewed by Adam Roben.
+
+        I believe this should fix the bug.
+
+        * Scripts/run-webkit-tests: make NRWT default for --leaks
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._parse_leaks_output): removed the (unneeded) process_pid argument, and made the regexp use named groups (even though we don't ever grab them by name)
+        (LeakDetector.count_total_bytes_and_unique_leaks): renamed from parse_leak_files
+        (LeakDetector.count_total_leaks): new file (the guts of this change) which is used to re-parse the leaks output during the summarize leaks phase.
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        Changes to reflect the rename of count_total_bytes_and_unique_leaks and a new test for count_total_leaks.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        Use count_total_leaks to spit out the total leak count like ORWT did, and remove the FIXME on the subject.
+
 2011-10-27  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Need setPrinting

@@ -139,12 +139,9 @@ class MacPort(ApplePort):
         leaks_files = self._leak_detector.leaks_files_in_directory(self.results_directory())
         if not leaks_files:
             return
-        total_bytes_string, unique_leaks = self._leak_detector.parse_leak_files(leaks_files)
-        # old-run-webkit-tests used to print the "total leaks" count, but that would
-        # require re-parsing each of the leaks files (which we could do at some later point if that would be useful.)
-        # Tools/BuildSlaveSupport/build.webkit.org-config/master.cfg greps for "leaks found".
-        # master.cfg will need an update if these strings change.
-        _log.info("leaks found for a total of %s!" % total_bytes_string)
+        total_bytes_string, unique_leaks = self._leak_detector.count_total_bytes_and_unique_leaks(leaks_files)
+        total_leaks = self._leak_detector.count_total_leaks(leaks_files)
+        _log.info("%s total leaks found for a total of %s!" % (total_leaks, total_bytes_string))
         _log.info("%s unique leaks found!" % unique_leaks)
 
     def _check_port_build(self):

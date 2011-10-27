@@ -79,7 +79,7 @@ Leak: 0x25102fe0  size=176  zone: DefaultMallocZone_0x1d94000   string 'NSExcept
 """
 
     def test_parse_leaks_output(self):
-        self.assertEquals(self._make_detector()._parse_leaks_output(self.example_leaks_output, 5122), (337301, 0, 6525216))
+        self.assertEquals(self._make_detector()._parse_leaks_output(self.example_leaks_output), (337301, 0, 6525216))
 
     def test_leaks_files_in_directory(self):
         detector = self._make_detector()
@@ -91,7 +91,7 @@ Leak: 0x25102fe0  size=176  zone: DefaultMallocZone_0x1d94000   string 'NSExcept
         })
         self.assertEquals(len(detector.leaks_files_in_directory('/mock-results')), 3)
 
-    def test_parse_leak_files(self):
+    def test_count_total_bytes_and_unique_leaks(self):
         detector = self._make_detector()
 
         def mock_run_script(name, args, include_configuration_arguments=False):
@@ -103,5 +103,15 @@ total: 5,888 bytes (0 bytes excluded)."""
 
         leak_files = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']
         expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']\n"
-        results_tuple = OutputCapture().assert_outputs(self, detector.parse_leak_files, [leak_files], expected_stdout=expected_stdout)
+        results_tuple = OutputCapture().assert_outputs(self, detector.count_total_bytes_and_unique_leaks, [leak_files], expected_stdout=expected_stdout)
         self.assertEquals(results_tuple, ("5,888 bytes", 1))
+
+    def test_count_total_leaks(self):
+        detector = self._make_detector()
+        detector._filesystem = MockFileSystem({
+            '/mock-results/DumpRenderTree-1234-leaks.txt': 'Process 1234: 12 leaks for 40 total leaked bytes.\n',
+            '/mock-results/DumpRenderTree-23423-leaks.txt': 'Process 1235: 12341 leaks for 27934 total leaked bytes.\n',
+            '/mock-results/DumpRenderTree-823-leaks.txt': 'Process 12356: 23412 leaks for 18 total leaked bytes.\n',
+        })
+        leak_file_paths = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-23423-leaks.txt', '/mock-results/DumpRenderTree-823-leaks.txt']
+        self.assertEquals(detector.count_total_leaks(leak_file_paths), 35765)

@@ -84,9 +84,9 @@ class LeakDetector(object):
         leaks_args.append(pid)
         return leaks_args
 
-    def _parse_leaks_output(self, leaks_output, process_pid):
-        count, bytes = re.search(r'Process %s: (\d+) leaks? for (\d+) total' % process_pid, leaks_output).groups()
-        excluded_match = re.search(r'(\d+) leaks? excluded', leaks_output)
+    def _parse_leaks_output(self, leaks_output):
+        _, count, bytes = re.search(r'Process (?P<pid>\d+): (?P<count>\d+) leaks? for (?P<bytes>\d+) total', leaks_output).groups()
+        excluded_match = re.search(r'(?P<excluded>\d+) leaks? excluded', leaks_output)
         excluded = excluded_match.group(0) if excluded_match else 0
         return int(count), int(excluded), int(bytes)
 
@@ -97,7 +97,7 @@ class LeakDetector(object):
         # We include the number of files this worker has already written in the name to prevent overwritting previous leak results..
         return "%s-%s-leaks.txt" % (process_name, process_pid)
 
-    def parse_leak_files(self, leak_files):
+    def count_total_bytes_and_unique_leaks(self, leak_files):
         merge_depth = 5  # ORWT had a --merge-leak-depth argument, but that seems out of scope for the run-webkit-tests tool.
         args = [
             '--merge-depth',
@@ -114,6 +114,14 @@ class LeakDetector(object):
         total_bytes_string = re.search(r'^total\:\s(.+)\s\(', parse_malloc_history_output, re.MULTILINE).group(1)
         return (total_bytes_string, unique_leak_count)
 
+    def count_total_leaks(self, leak_file_paths):
+        total_leaks = 0
+        for leak_file_path in leak_file_paths:
+            leaks_output = self._filesystem.read_text_file(leak_file_path)
+            count, _, _ = self._parse_leaks_output(leaks_output)
+            total_leaks += count
+        return total_leaks
+
     def check_for_leaks(self, process_name, process_pid):
         _log.debug("Checking for leaks in %s" % process_name)
         try:
@@ -125,8 +133,8 @@ class LeakDetector(object):
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
             return
 
-        # FIXME: We should consider moving leaks parsing to the end when summarizing is done.
-        count, excluded, bytes = self._parse_leaks_output(leaks_output, process_pid)
+        # FIXME: We end up parsing this output 3 times.  Once here and twice for summarizing.
+        count, excluded, bytes = self._parse_leaks_output(leaks_output)
         adjusted_count = count - excluded
         if not adjusted_count:
             return
