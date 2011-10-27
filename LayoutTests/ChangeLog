@@ -1,3 +1,15 @@
+2011-10-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Implement legacy text check emulation in unified text check interface.
+        https://bugs.webkit.org/show_bug.cgi?id=70299
+
+        Reviewed by Hajime Morita.
+
+        Added tests for the case unified text checker is used when WebCore::checkTextOfParagraph() is not supported.
+
+        * editing/spelling/spelling-unified-emulation-expected.txt: Added.
+        * editing/spelling/spelling-unified-emulation.html: Added.
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r98507.

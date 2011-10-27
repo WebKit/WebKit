@@ -1,3 +1,12 @@
+2011-10-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Implement legacy text check emulation in unified text check interface.
+        https://bugs.webkit.org/show_bug.cgi?id=70299
+
+        Reviewed by Hajime Morita.
+
+        * Source/autotools/symbols.filter:
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com> and Zan Dobersek  <zandobersek@gmail.com>
 
         [GStreamer] WebAudio AudioFileReader implementation
