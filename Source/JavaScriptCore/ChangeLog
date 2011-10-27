@@ -1,3 +1,21 @@
+2011-10-27  Filip Pizlo  <fpizlo@apple.com>
+
+        If the bytecode generator emits code after the return in the first basic block,
+        DFG's inliner crashes
+        https://bugs.webkit.org/show_bug.cgi?id=71071
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed some cruft dealing with parsing failures due to unsupported functionality
+        (that's never reached anymore due to it being caught in DFGCapabilities). This
+        allowed me to repurpose the bool return from parseBlock() to mean: true if we
+        should continue to parse, or false if we've already parsed all live code.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+
 2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reviewed by David Kilzer.

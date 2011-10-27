@@ -1,3 +1,17 @@
+2011-10-27  Filip Pizlo  <fpizlo@apple.com>
+
+        If the bytecode generator emits code after the return in the first basic block,
+        DFG's inliner crashes
+        https://bugs.webkit.org/show_bug.cgi?id=71071
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-inline-early-return-expected.txt: Added.
+        * fast/js/dfg-inline-early-return.html: Added.
+        * fast/js/script-tests/dfg-inline-early-return.js: Added.
+        (foo):
+        (bar):
+
 2011-10-27  John Gregg  <johnnyg@google.com>
 
         Unreviewed, new chromium expectations for shading/anti-aliasing changes.

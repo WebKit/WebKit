@@ -47,7 +47,6 @@ public:
         , m_graph(graph)
         , m_currentBlock(0)
         , m_currentIndex(0)
-        , m_parseFailed(false)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
         , m_constantNaN(UINT_MAX)
@@ -73,7 +72,7 @@ public:
     
 private:
     // Just parse from m_currentIndex to the end of the current CodeBlock.
-    bool parseCodeBlock();
+    void parseCodeBlock();
 
     // Helper for min and max.
     bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
@@ -681,9 +680,6 @@ private:
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
 
-    // Record failures due to unimplemented functionality or regressions.
-    bool m_parseFailed;
-
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
     // CodeBlock's constant pool. These variables are initialized to
@@ -837,7 +833,7 @@ private:
 
 #define LAST_OPCODE(name) \
     m_currentIndex += OPCODE_LENGTH(name); \
-    return !m_parseFailed
+    return shouldContinueParsing
 
 void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op, CodeSpecializationKind kind)
 {
@@ -1207,6 +1203,8 @@ void ByteCodeParser::prepareToParseBlock()
 
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
+    bool shouldContinueParsing = true;
+    
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
@@ -1240,7 +1238,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 printf("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
 #endif
             }
-            return !m_parseFailed;
+            return shouldContinueParsing;
         }
         
         // Switch on the current bytecode opcode.
@@ -2001,7 +1999,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (m_inlineStackTop->m_returnValue != InvalidVirtualRegister)
                     setDirect(m_inlineStackTop->m_returnValue, get(currentInstruction[1].u.operand));
                 m_inlineStackTop->m_didReturn = true;
-                if (!m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
+                if (m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
+                    // If we're returning from the first block, then we're done parsing.
+                    ASSERT(m_inlineStackTop->m_callsiteBlockHead == m_graph.m_blocks.size() - 1);
+                    shouldContinueParsing = false;
+                    LAST_OPCODE(op_ret);
+                } else {
                     // If inlining created blocks, and we're doing a return, then we need some
                     // special linking.
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex == m_graph.m_blocks.size() - 1);
@@ -2355,7 +2358,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     byteCodeParser->m_inlineStackTop = this;
 }
 
-bool ByteCodeParser::parseCodeBlock()
+void ByteCodeParser::parseCodeBlock()
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
@@ -2402,25 +2405,29 @@ bool ByteCodeParser::parseCodeBlock()
                 }
             }
 
-            if (!parseBlock(limit))
-                return false;
+            bool shouldContinueParsing = parseBlock(limit);
+
             // We should not have gone beyond the limit.
             ASSERT(m_currentIndex <= limit);
             
             // We should have planted a terminal, or we just gave up because
             // we realized that the jump target information is imprecise, or we
-            // are at the end of an inline function.
-            ASSERT(m_currentBlock->begin == m_graph.size() || m_graph.last().isTerminal() || (m_currentIndex == codeBlock->instructions().size() && m_inlineStackTop->m_inlineCallFrame));
+            // are at the end of an inline function, or we realized that we
+            // should stop parsing because there was a return in the first
+            // basic block.
+            ASSERT(m_currentBlock->begin == m_graph.size() || m_graph.last().isTerminal() || (m_currentIndex == codeBlock->instructions().size() && m_inlineStackTop->m_inlineCallFrame) || !shouldContinueParsing);
 
             m_currentBlock->end = m_graph.size();
+            
+            if (!shouldContinueParsing)
+                return;
+            
             m_currentBlock = 0;
         } while (m_currentIndex < limit);
     }
 
     // Should have reached the end of the instructions.
     ASSERT(m_currentIndex == codeBlock->instructions().size());
-    
-    return true;
 }
 
 bool ByteCodeParser::parse()
