@@ -1,3 +1,15 @@
+2011-10-27  Ken Buchanan <kenrb@chromium.org>
+
+        Crash due to nested first-letter selectors
+        https://bugs.webkit.org/show_bug.cgi?id=70457
+
+        Adding layout test for nested first-letter pseudostyles causing a crash.
+
+        Reviewed by David Hyatt.
+
+        * fast/css/nested-first-letter-with-float-crash.html: Added
+        * fast/css/nested-first-letter-with-float-crash-expected.txt: Added
+
 2011-10-27  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.

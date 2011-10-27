@@ -1,3 +1,19 @@
+2011-10-27  Ken Buchanan <kenrb@chromium.org>
+
+        Crash due to nested first-letter selectors
+        https://bugs.webkit.org/show_bug.cgi?id=70457
+
+        Now only the lowest-level first-letter pseudostyle will be applied to
+        a given piece of text. Previously the last renderer to have layout
+        done would have its pseudostyle applied, no matter where it was in the
+        tree.
+
+        Reviewed by David Hyatt.
+
+        * renderer/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Use the pseudostyle from
+        the lowest level node to have one
+
 2011-10-27  Andras Becsi  <andras.becsi@nokia.com>
 
         Fix the build if NO_LISTBOX_RENDERING is enabled
