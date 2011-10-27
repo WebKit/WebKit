@@ -236,7 +236,7 @@ bool PlatformMessagePortChannel::isConnectedTo(MessagePort* port)
 bool PlatformMessagePortChannel::hasPendingActivity()
 {
     MutexLocker lock(m_mutex);
-    return m_localPort && m_localPort->hasPendingActivity();
+    return m_localPort;
 }
 
 void PlatformMessagePortChannel::setEntangledChannel(PassRefPtr<PlatformMessagePortChannel> remote)
