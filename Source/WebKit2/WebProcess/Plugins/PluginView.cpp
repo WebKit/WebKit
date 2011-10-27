@@ -707,11 +707,17 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    // Get the frame rect in window coordinates.
-    // FIXME: Figure out what we should pass here when m_plugin->wantsWindowRelativeCoordinates() returns false. 
-    IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
-    
-    m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
+    IntRect rect; 
+ 
+    if (m_plugin->wantsWindowRelativeCoordinates()) { 
+        // Get the frame rect in window coordinates. 
+        rect = parent()->contentsToWindow(frameRect()); 
+        } else { 
+        // FIXME: The plug-in shouldn't know its location relative to its parent frame. 
+        rect = frameRect(); 
+    } 
+ 
+    m_plugin->geometryDidChange(rect, clipRectInWindowCoordinates());
 }
 
 void PluginView::viewVisibilityDidChange()
