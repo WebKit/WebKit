@@ -1,5 +1,11 @@
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline.
+
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt:
+
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skipping 2 new failing tests in GTK.
 
         * platform/gtk/Skipped: Skip
