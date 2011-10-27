@@ -1,5 +1,32 @@
 2011-10-27  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, more chromium baselines for new multicol tests.
+
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/chromium-linux-x86/fast/multicol: Removed.
+        * platform/chromium-linux/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/chromium-win/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/chromium-win/fast/multicol/block-axis-horizontal-bt-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/chromium-win/fast/multicol/block-axis-horizontal-tb-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/chromium-win/fast/multicol/block-axis-vertical-lr-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/chromium-win/fast/multicol/block-axis-vertical-rl-expected.txt: Added.
+
+2011-10-27  John Gregg  <johnnyg@google.com>
+
         Unreviewed, rebaselines after multi-col changes.
  
         * platform/chromium-win-vista/fast/css/getComputedStyle: Added.
