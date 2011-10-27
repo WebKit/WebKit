@@ -1,5 +1,12 @@
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Massive gardening.
+
+        * platform/chromium/test_expectations.txt: Lots of tests were regularly failing
+        or timing out but were not marked. Added them as they were consistently flaky.
+
+2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed gardening.
 
         * platform/chromium-linux/http/tests/inspector: Added.
