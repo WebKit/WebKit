@@ -1,3 +1,20 @@
+2011-10-27  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add pixel test baselines for animations,
+        compositing, dom, editing, fonts, mathml, media, printing,
+        transforms and transitions.
+
+        * platform/efl/animations: [...]
+        * platform/efl/compositing: [...]
+        * platform/efl/dom: [...]
+        * platform/efl/editing: [...]
+        * platform/efl/fonts: [...]
+        * platform/efl/mathml: [...]
+        * platform/efl/media: [...]
+        * platform/efl/printing: [...]
+        * platform/efl/transforms: [...]
+        * platform/efl/transitions: [...]
+
 2011-10-27  Tony Chang  <tony@chromium.org>
 
         fix sizing of auto sized flexbox
