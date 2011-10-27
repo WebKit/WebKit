@@ -1,3 +1,19 @@
+2011-10-27  Kenneth Russell  <kbr@google.com>
+
+        Implement new restrictions on uniform and attribute location lengths
+        https://bugs.webkit.org/show_bug.cgi?id=70981
+
+        Reviewed by Chris Marrin.
+
+        * fast/canvas/webgl/attrib-location-length-limits-expected.txt: Added.
+        * fast/canvas/webgl/attrib-location-length-limits.html: Added (imported from WebGL conformance suite).
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        (WebGLTestUtils.): Updated to latest version in WebGL conformance suite.
+        * fast/canvas/webgl/uniform-location-length-limits-expected.txt: Added.
+        * fast/canvas/webgl/uniform-location-length-limits.html: Added (imported from WebGL conformance suite).
+        * platform/mac/Skipped: Temporarily skip new tests on Mac until WebKit's copy of ANGLE is upgraded.
+
 2011-10-27  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Implement subtree observation of transiently disconnected nodes
@@ -410,7 +426,6 @@
 
         * platform/efl/tables: [...]
 
->>>>>>> .r98598
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline.

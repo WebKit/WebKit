@@ -694,6 +694,8 @@ void WebGLRenderingContext::bindAttribLocation(WebGLProgram* program, GC3Duint i
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(program))
         return;
+    if (!validateLocationLength(name))
+        return;
     if (!validateString(name))
         return;
     m_context->bindAttribLocation(objectOrZero(program), index, name);
@@ -1933,6 +1935,8 @@ GC3Dint WebGLRenderingContext::getAttribLocation(WebGLProgram* program, const St
 {
     if (isContextLost())
         return -1;
+    if (!validateLocationLength(name))
+        return -1;
     if (!validateString(name))
         return -1;
     return m_context->getAttribLocation(objectOrZero(program), name);
@@ -2632,6 +2636,8 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
 {
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(program))
+        return 0;
+    if (!validateLocationLength(name))
         return 0;
     if (!validateString(name))
         return 0;
@@ -4203,6 +4209,16 @@ WebGLTexture* WebGLRenderingContext::validateTextureBinding(GC3Denum target, boo
     if (!tex)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
     return tex;
+}
+
+bool WebGLRenderingContext::validateLocationLength(const String& string)
+{
+    const unsigned maxWebGLLocationLength = 256;
+    if (string.length() > maxWebGLLocationLength) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return false;
+    }
+    return true;
 }
 
 bool WebGLRenderingContext::validateSize(GC3Dint x, GC3Dint y)

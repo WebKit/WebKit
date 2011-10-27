@@ -526,6 +526,9 @@ public:
     // Helper function to get the bound framebuffer's height.
     int getBoundFramebufferHeight();
 
+    // Helper function to verify limits on the length of uniform and attribute locations.
+    bool validateLocationLength(const String&);
+
     // Helper function to check if size is non-negative.
     // Generate GL error and return false for negative inputs; otherwise, return true.
     bool validateSize(GC3Dint x, GC3Dint y);

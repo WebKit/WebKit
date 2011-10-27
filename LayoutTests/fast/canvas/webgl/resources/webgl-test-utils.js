@@ -1,4 +1,4 @@
-// Copyright (c) 2009 The Chromium Authors. All rights reserved.
+// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -86,28 +86,26 @@ var startsWith = function(haystack, needle) {
  * A vertex shader for a single texture.
  * @type {string}
  */
-var simpleTextureVertexShader = '' +
-  'attribute vec4 vPosition;\n' +
-  'attribute vec2 texCoord0;\n' +
-  'varying vec2 texCoord;\n' +
-  'void main() {\n' +
-  '    gl_Position = vPosition;\n' +
-  '    texCoord = texCoord0;\n' +
-  '}\n';
+var simpleTextureVertexShader = [
+  'attribute vec4 vPosition;',
+  'attribute vec2 texCoord0;',
+  'varying vec2 texCoord;',
+  'void main() {',
+  '    gl_Position = vPosition;',
+  '    texCoord = texCoord0;',
+  '}'].join('\n');
 
 /**
  * A fragment shader for a single texture.
  * @type {string}
  */
-var simpleTextureFragmentShader = '' +
-  '#ifdef GL_ES\n' +
-  'precision mediump float;\n' +
-  '#endif\n' +
-  'uniform sampler2D tex;\n' +
-  'varying vec2 texCoord;\n' +
-  'void main() {\n' +
-  '    gl_FragData[0] = texture2D(tex, texCoord);\n' +
-  '}\n';
+var simpleTextureFragmentShader = [
+  'precision mediump float;',
+  'uniform sampler2D tex;',
+  'varying vec2 texCoord;',
+  'void main() {',
+  '    gl_FragData[0] = texture2D(tex, texCoord);',
+  '}'].join('\n');
 
 /**
  * Creates a simple texture vertex shader.
@@ -251,6 +249,70 @@ var setupTexturedQuad = function(
 };
 
 /**
+ * Creates a unit quad with only positions of a given rez
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {number} gridRez The resolution of the mesh grid.
+ * @param {number} opt_positionLocation The attrib location for position.
+ */
+var setupQuad = function (
+    gl, gridRes, opt_positionLocation, opt_flipOddTriangles) {
+  var positionLocation = opt_positionLocation || 0;
+  var objects = [];
+
+  var vertsAcross = gridRes + 1;
+  var numVerts = vertsAcross * vertsAcross;
+  var positions = new Float32Array(numVerts * 3);
+  var indices = new Uint16Array(6 * gridRes * gridRes);
+
+  var poffset = 0;
+
+  for (var yy = 0; yy <= gridRes; ++yy) {
+    for (var xx = 0; xx <= gridRes; ++xx) {
+      positions[poffset + 0] = -1 + 2 * xx / gridRes;
+      positions[poffset + 1] = -1 + 2 * yy / gridRes;
+      positions[poffset + 2] = 0;
+
+      poffset += 3;
+    }
+  }
+
+  var tbase = 0;
+  for (var yy = 0; yy < gridRes; ++yy) {
+    var index = yy * vertsAcross;
+    for (var xx = 0; xx < gridRes; ++xx) {
+      indices[tbase + 0] = index + 0;
+      indices[tbase + 1] = index + 1;
+      indices[tbase + 2] = index + vertsAcross;
+      indices[tbase + 3] = index + vertsAcross;
+      indices[tbase + 4] = index + 1;
+      indices[tbase + 5] = index + vertsAcross + 1;
+
+      if (opt_flipOddTriangles) {
+        indices[tbase + 4] = index + vertsAcross + 1;
+        indices[tbase + 5] = index + 1;
+      }
+
+      index += 1;
+      tbase += 6;
+    }
+  }
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+  objects.push(buf);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  objects.push(buf);
+
+  return objects;
+};
+
+/**
  * Fills the given texture with a solid color
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {!WebGLTexture} tex The texture to fill.
@@ -337,7 +399,8 @@ var checkCanvasRect = function(gl, x, y, width, height, color, msg, errorRange) 
         for (j = 1; j < color.length; ++j) {
           was += "," + buf[offset + j];
         }
-        debug('expected: ' + color + ' was ' + was);
+        debug('at (' + (i % width) + ', ' + Math.floor(i / width) +
+              ') expected: ' + color + ' was ' + was);
         return;
       }
     }
@@ -513,8 +576,9 @@ var glErrorShouldBe = function(gl, glError, opt_msg) {
  * Links a WebGL program, throws if there are errors.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {!WebGLProgram} program The WebGLProgram to link.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  */
-var linkProgram = function(gl, program) {
+var linkProgram = function(gl, program, opt_errorCallback) {
   // Link the program
   gl.linkProgram(program);
 
@@ -527,8 +591,6 @@ var linkProgram = function(gl, program) {
     testFailed("Error in program linking:" + error);
 
     gl.deleteProgram(program);
-    gl.deleteProgram(fragmentShader);
-    gl.deleteProgram(vertexShader);
   }
 };
 
@@ -592,6 +654,148 @@ var setupWebGLWithShaders = function(
 };
 
 /**
+ * Loads text from an external file. This function is synchronous.
+ * @param {string} url The url of the external file.
+ * @param {!function(bool, string): void} callback that is sent a bool for
+ *     success and the string.
+ */
+var loadTextFileAsync = function(url, callback) {
+  log ("loading: " + url);
+  var error = 'loadTextFileSynchronous failed to load url "' + url + '"';
+  var request;
+  if (window.XMLHttpRequest) {
+    request = new XMLHttpRequest();
+    if (request.overrideMimeType) {
+      request.overrideMimeType('text/plain');
+    }
+  } else {
+    throw 'XMLHttpRequest is disabled';
+  }
+  try {
+    request.open('GET', url, true);
+    request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+        var text = '';
+        // HTTP reports success with a 200 status. The file protocol reports
+        // success with zero. HTTP does not use zero as a status code (they
+        // start at 100).
+        // https://developer.mozilla.org/En/Using_XMLHttpRequest
+        var success = request.status == 200 || request.status == 0;
+        if (success) {
+          text = request.responseText;
+        }
+        log("loaded: " + url);
+        callback(success, text);
+      }
+    };
+    request.send(null);
+  } catch (e) {
+    log("failed to load: " + url);
+    callback(false, '');
+  }
+};
+
+/**
+ * Recursively loads a file as a list. Each line is parsed for a relative
+ * path. If the file ends in .txt the contents of that file is inserted in
+ * the list.
+ *
+ * @param {string} url The url of the external file.
+ * @param {!function(bool, Array<string>): void} callback that is sent a bool
+ *     for success and the array of strings.
+ */
+var getFileListAsync = function(url, callback) {
+  var files = [];
+
+  var getFileListImpl = function(url, callback) {
+    var files = [];
+    if (url.substr(url.length - 4) == '.txt') {
+      loadTextFileAsync(url, function() {
+        return function(success, text) {
+          if (!success) {
+            callback(false, '');
+            return;
+          }
+          var lines = text.split('\n');
+          var prefix = '';
+          var lastSlash = url.lastIndexOf('/');
+          if (lastSlash >= 0) {
+            prefix = url.substr(0, lastSlash + 1);
+          }
+          var fail = false;
+          var count = 1;
+          var index = 0;
+          for (var ii = 0; ii < lines.length; ++ii) {
+            var str = lines[ii].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+            if (str.length > 4 &&
+                str[0] != '#' &&
+                str[0] != ";" &&
+                str.substr(0, 2) != "//") {
+              var names = str.split(/ +/);
+              new_url = prefix + str;
+              if (names.length == 1) {
+                new_url = prefix + str;
+                ++count;
+                getFileListImpl(new_url, function(index) {
+                  return function(success, new_files) {
+                    log("got files: " + new_files.length);
+                    if (success) {
+                      files[index] = new_files;
+                    }
+                    finish(success);
+                  };
+                }(index++));
+              } else {
+                var s = "";
+                var p = "";
+                for (var jj = 0; jj < names.length; ++jj) {
+                  s += p + prefix + names[jj];
+                  p = " ";
+                }
+                files[index++] = s;
+              }
+            }
+          }
+          finish(true);
+
+          function finish(success) {
+            if (!success) {
+              fail = true;
+            }
+            --count;
+            log("count: " + count);
+            if (!count) {
+              callback(!fail, files);
+            }
+          }
+        }
+      }());
+
+    } else {
+      files.push(url);
+      callback(true, files);
+    }
+  };
+
+  getFileListImpl(url, function(success, files) {
+    // flatten
+    var flat = [];
+    flatten(files);
+    function flatten(files) {
+      for (var ii = 0; ii < files.length; ++ii) {
+        var value = files[ii];
+        if (typeof(value) == "string") {
+          flat.push(value);
+        } else {
+          flatten(value);
+        }
+      }
+    }
+    callback(success, flat);
+  });
+};
+
+/**
  * Gets a file from a file/URL
  * @param {string} file the URL of the file to get.
  * @return {string} The contents of the file.
@@ -603,10 +807,6 @@ var readFile = function(file) {
   return xhr.responseText.replace(/\r/g, "");
 };
 
-/**
- * Gets a file from a URL and parses it for filenames. IF a file name ends
- * in .txt recursively reads that file and adds it to the list.
- */
 var readFileList = function(url) {
   var files = [];
   if (url.substr(url.length - 4) == '.txt') {
@@ -647,14 +847,16 @@ var readFileList = function(url) {
  * Loads a shader.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {string} shaderSource The shader source.
- * @param {number} shaderType The type of shader.
+ * @param {number} shaderType The type of shader. 
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLShader} The created shader.
  */
-var loadShader = function(gl, shaderSource, shaderType) {
+var loadShader = function(gl, shaderSource, shaderType, opt_errorCallback) {
+  var errFn = opt_errorCallback || error;
   // Create the shader object
   var shader = gl.createShader(shaderType);
   if (shader == null) {
-    error("*** Error: unable to create shader '"+shaderSource+"'");
+    errFn("*** Error: unable to create shader '"+shaderSource+"'");
     return null;
   }
 
@@ -662,7 +864,7 @@ var loadShader = function(gl, shaderSource, shaderType) {
   gl.shaderSource(shader, shaderSource);
   var err = gl.getError();
   if (err != gl.NO_ERROR) {
-    error("*** Error loading shader '" + shader + "':" + glEnumToString(gl, err));
+    errFn("*** Error loading shader '" + shader + "':" + glEnumToString(gl, err));
     return null;
   }
 
@@ -674,7 +876,7 @@ var loadShader = function(gl, shaderSource, shaderType) {
   if (!compiled) {
     // Something went wrong during compilation; get the error
     lastError = gl.getShaderInfoLog(shader);
-    error("*** Error compiling shader '" + shader + "':" + lastError);
+    errFn("*** Error compiling shader '" + shader + "':" + lastError);
     gl.deleteShader(shader);
     return null;
   }
@@ -687,11 +889,12 @@ var loadShader = function(gl, shaderSource, shaderType) {
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {file} file The URL of the shader source.
  * @param {number} type The type of shader.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLShader} The created shader.
  */
-var loadShaderFromFile = function(gl, file, type) {
+var loadShaderFromFile = function(gl, file, type, opt_errorCallback) {
   var shaderSource = readFile(file);
-  return loadShader(gl, shaderSource, type);
+  return loadShader(gl, shaderSource, type, opt_errorCallback);
 };
 
 /**
@@ -700,9 +903,11 @@ var loadShaderFromFile = function(gl, file, type) {
  * @param {string} scriptId The id of the script tag.
  * @param {number} opt_shaderType The type of shader. If not passed in it will
  *     be derived from the type of the script tag.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLShader} The created shader.
  */
-var loadShaderFromScript = function(gl, scriptId, opt_shaderType) {
+var loadShaderFromScript = function(
+    gl, scriptId, opt_shaderType, opt_errorCallback) {
   var shaderSource = "";
   var shaderType;
   var shaderScript = document.getElementById(scriptId);
@@ -723,7 +928,8 @@ var loadShaderFromScript = function(gl, scriptId, opt_shaderType) {
   }
 
   return loadShader(
-      gl, shaderSource, opt_shaderType ? opt_shaderType : shaderType);
+      gl, shaderSource, opt_shaderType ? opt_shaderType : shaderType,
+      opt_errorCallback);
 };
 
 var loadStandardProgram = function(gl) {
@@ -739,17 +945,21 @@ var loadStandardProgram = function(gl) {
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {string} vertexShaderPath The URL of the vertex shader.
  * @param {string} fragmentShaderPath The URL of the fragment shader.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLProgram} The created program.
  */
-var loadProgramFromFile = function(gl, vertexShaderPath, fragmentShaderPath) {
+var loadProgramFromFile = function(
+    gl, vertexShaderPath, fragmentShaderPath, opt_errorCallback) {
   var program = gl.createProgram();
   gl.attachShader(
       program,
-      loadShaderFromFile(gl, vertexShaderPath, gl.VERTEX_SHADER));
+      loadShaderFromFile(
+          gl, vertexShaderPath, gl.VERTEX_SHADER, opt_errorCallback));
   gl.attachShader(
       program,
-      loadShaderFromFile(gl, fragmentShaderPath, gl.FRAGMENT_SHADER));
-  linkProgram(gl, program);
+      loadShaderFromFile(
+          gl, fragmentShaderPath, gl.FRAGMENT_SHADER, opt_errorCallback));
+  linkProgram(gl, program, opt_errorCallback);
   return program;
 };
 
@@ -761,49 +971,72 @@ var loadProgramFromFile = function(gl, vertexShaderPath, fragmentShaderPath) {
  *        vertex shader.
  * @param {string} fragmentScriptId The id of the script tag that contains the
  *        fragment shader.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLProgram} The created program.
  */
 var loadProgramFromScript = function loadProgramFromScript(
-  gl, vertexScriptId, fragmentScriptId) {
+    gl, vertexScriptId, fragmentScriptId, opt_errorCallback) {
   var program = gl.createProgram();
   gl.attachShader(
       program,
-      loadShaderFromScript(gl, vertexScriptId, gl.VERTEX_SHADER));
+      loadShaderFromScript(
+          gl, vertexScriptId, gl.VERTEX_SHADER, opt_errorCallback));
   gl.attachShader(
       program,
-      loadShaderFromScript(gl, fragmentScriptId,  gl.FRAGMENT_SHADER));
-  linkProgram(gl, program);
+      loadShaderFromScript(
+          gl, fragmentScriptId,  gl.FRAGMENT_SHADER, opt_errorCallback));
+  linkProgram(gl, program, opt_errorCallback);
   return program;
 };
 
 /**
- * Loads shaders from script tags, creates a program, attaches the shaders and
+ * Loads shaders from source, creates a program, attaches the shaders and
  * links.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {string} vertexShader The vertex shader.
  * @param {string} fragmentShader The fragment shader.
+ * @param {function(string): void) opt_errorCallback callback for errors. 
  * @return {!WebGLProgram} The created program.
  */
-var loadProgram = function(gl, vertexShader, fragmentShader) {
+var loadProgram = function(
+    gl, vertexShader, fragmentShader, opt_errorCallback) {
   var program = gl.createProgram();
   gl.attachShader(
       program,
-      loadShader(gl, vertexShader, gl.VERTEX_SHADER));
+      loadShader(
+          gl, vertexShader, gl.VERTEX_SHADER, opt_errorCallback));
   gl.attachShader(
       program,
-      loadShader(gl, fragmentShader,  gl.FRAGMENT_SHADER));
-  linkProgram(gl, program);
+      loadShader(
+          gl, fragmentShader, gl.FRAGMENT_SHADER, opt_errorCallback));
+  linkProgram(gl, program, opt_errorCallback);
   return program;
+};
+
+var basePath;
+var getBasePath = function() {
+  if (!basePath) {
+    var expectedBase = "webgl-test-utils.js";
+    var scripts = document.getElementsByTagName('script');
+    for (var script, i = 0; script = scripts[i]; i++) {
+      var src = script.src;
+      var l = src.length;
+      if (src.substr(l - expectedBase.length) == expectedBase) {
+        basePath = src.substr(0, l - expectedBase.length);
+      }
+    }
+  }
+  return basePath;
 };
 
 var loadStandardVertexShader = function(gl) {
   return loadShaderFromFile(
-      gl, "resources/vertexShader.vert", gl.VERTEX_SHADER);
+      gl, getBasePath() + "vertexShader.vert", gl.VERTEX_SHADER);
 };
 
 var loadStandardFragmentShader = function(gl) {
   return loadShaderFromFile(
-      gl, "resources/fragmentShader.frag", gl.FRAGMENT_SHADER);
+      gl, getBasePath() + "fragmentShader.frag", gl.FRAGMENT_SHADER);
 };
 
 /**
@@ -848,6 +1081,29 @@ var loadImagesAsync = function(urls, callback) {
   countDown();
 };
 
+var getUrlArguments = function() {
+  var args = {};
+  try {
+    var s = window.location.href;
+    var q = s.indexOf("?");
+    var e = s.indexOf("#");
+    if (e < 0) {
+      e = s.length;
+    }
+    var query = s.substring(q + 1, e);
+    var pairs = query.split("&");
+    for (var ii = 0; ii < pairs.length; ++ii) {
+      var keyValue = pairs[ii].split("=");
+      var key = keyValue[0];
+      var value = decodeURIComponent(keyValue[1]);
+      args[key] = value;
+    }
+  } catch (e) {
+    throw "could not parse url";
+  }
+  return args;
+};
+
 return {
   create3DContext: create3DContext,
   create3DContextWithWrapperThatThrowsOnGLError:
@@ -857,7 +1113,9 @@ return {
   createColoredTexture: createColoredTexture,
   drawQuad: drawQuad,
   endsWith: endsWith,
+  getFileListAsync: getFileListAsync,
   getLastError: getLastError,
+  getUrlArguments: getUrlArguments,
   glEnumToString: glEnumToString,
   glErrorShouldBe: glErrorShouldBe,
   fillTexture: fillTexture,
@@ -872,11 +1130,13 @@ return {
   loadStandardProgram: loadStandardProgram,
   loadStandardVertexShader: loadStandardVertexShader,
   loadStandardFragmentShader: loadStandardFragmentShader,
+  loadTextFileAsync: loadTextFileAsync,
   loadTexture: loadTexture,
   log: log,
   loggingOff: loggingOff,
   error: error,
   setupProgram: setupProgram,
+  setupQuad: setupQuad,
   setupSimpleTextureFragmentShader: setupSimpleTextureFragmentShader,
   setupSimpleTextureProgram: setupSimpleTextureProgram,
   setupSimpleTextureVertexShader: setupSimpleTextureVertexShader,
