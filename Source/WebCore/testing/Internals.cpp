@@ -248,6 +248,16 @@ void Internals::setForceCompositingMode(Document* document, bool enabled, Except
     document->settings()->setForceCompositingMode(enabled);
 }
 
+void Internals::setEnableCompositingForFixedPosition(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setAcceleratedCompositingForFixedPositionEnabled(enabled);
+}
+
 void Internals::setEnableScrollAnimator(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {

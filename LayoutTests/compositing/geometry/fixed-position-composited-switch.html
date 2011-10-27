@@ -1,0 +1,65 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Creating composited layers for fixed position elements</title>
+
+  <style type="text/css" media="screen">
+    #tall {
+      height: 100px;
+    }
+
+    #fixed {
+      width: 300px;
+      height: 100px;
+      position: fixed;
+      top: 30px;
+      right: 5px;
+      background-color: green;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.internals) 
+      window.internals.setEnableCompositingForFixedPosition(document, true);
+
+    function doTest()
+    {
+      var layerTreeOutput = '';
+
+      // If the fixed position element doesn't have its own stacking context then
+      // it cannot get a composited layer.
+      if (window.layoutTestController)
+        layerTreeOutput += 'Before (should be empty): \n' + layoutTestController.layerTreeAsText() + '\n';
+
+      // Adding a z-index to the fixed position element will give it a stacking context
+      // and allow it to be composited.
+      document.getElementById('fixed').style.zIndex = '1';
+
+      if (window.layoutTestController) {
+        layerTreeOutput += 'After (should not be empty): \n' + layoutTestController.layerTreeAsText();
+        document.getElementById('layertree').innerText = layerTreeOutput;
+        layoutTestController.dumpAsText();
+      }
+      
+      // Adding a transform to the container will turn off compositing.
+      document.getElementById('container').style.webkitTransform = 'translateX(0)';
+      if (window.layoutTestController) {
+        layerTreeOutput += 'After (should be empty): \n' + layoutTestController.layerTreeAsText();
+        document.getElementById('layertree').innerText = layerTreeOutput;
+        layoutTestController.dumpAsText();
+      }
+
+    }
+
+    window.addEventListener("load", doTest, false);
+
+    </script>
+</head>
+<body>
+<!-- Fixed position element should get its own layer -->
+<pre id="layertree"></pre>
+<div id="tall"></div>
+<div id="container">
+  <div id="fixed"></div>
+</div>
+</body>
+</html>

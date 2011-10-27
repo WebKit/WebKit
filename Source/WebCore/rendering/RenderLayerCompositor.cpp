@@ -100,6 +100,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_showRepaintCounter(false)
     , m_compositingConsultsOverlap(true)
     , m_compositingDependsOnGeometry(false)
+    , m_compositingNeedsUpdate(false)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
     , m_flushingLayers(false)
@@ -258,7 +259,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (m_forceCompositingMode && !m_compositing)
         enableCompositingMode(true);
 
-    if (!m_compositingDependsOnGeometry && !m_compositing)
+    if (!m_compositingDependsOnGeometry && !m_compositing && !m_compositingNeedsUpdate)
         return;
 
     bool checkForHierarchyUpdate = m_compositingDependsOnGeometry;
@@ -338,6 +339,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     if (!hasAcceleratedCompositing())
         enableCompositingMode(false);
+
+    m_compositingNeedsUpdate = false;
 }
 
 bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeRepaint shouldRepaint)
@@ -1319,7 +1322,8 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
              || clipsCompositingDescendants(layer)
              || requiresCompositingForAnimation(renderer)
-             || requiresCompositingForFullScreen(renderer);
+             || requiresCompositingForFullScreen(renderer)
+             || requiresCompositingForPosition(renderer, layer);
 }
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
@@ -1502,6 +1506,33 @@ bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* rende
     UNUSED_PARAM(renderer);
     return false;
 #endif
+}
+
+bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer) const
+{
+    // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
+    // opacity, transform) can get their own composited layer. A stacking context is required otherwise
+    // z-index and clipping will be broken.
+    if (!(renderer->isPositioned() && renderer->style()->position() == FixedPosition && layer->isStackingContext()))
+        return false;
+
+    if (Settings* settings = m_renderView->document()->settings())
+        if (!settings->acceleratedCompositingForFixedPositionEnabled())
+            return false;
+
+    RenderObject* container = renderer->container();
+    // If the renderer is not hooked up yet then we have to wait until it is.
+    if (!container) {
+        m_compositingNeedsUpdate = true;
+        return false;
+    }
+
+    // Don't promote fixed position elements that are descendants of transformed elements.
+    // They will stay fixed wrt the transformed element rather than the enclosing frame.
+    if (container != m_renderView)
+        return false;
+
+    return true;
 }
 
 bool RenderLayerCompositor::hasNonIdentity3DTransform(RenderObject* renderer) const

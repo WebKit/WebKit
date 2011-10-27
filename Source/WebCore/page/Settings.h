@@ -319,6 +319,9 @@ namespace WebCore {
         void setAcceleratedCompositingForAnimationEnabled(bool);
         bool acceleratedCompositingForAnimationEnabled() const { return m_acceleratedCompositingForAnimationEnabled; }
 
+        void setAcceleratedCompositingForFixedPositionEnabled(bool enabled) { m_acceleratedCompositingForFixedPositionEnabled = enabled; }
+        bool acceleratedCompositingForFixedPositionEnabled() const { return m_acceleratedCompositingForFixedPositionEnabled; }
+
         void setShowDebugBorders(bool);
         bool showDebugBorders() const { return m_showDebugBorders; }
 
@@ -563,6 +566,7 @@ namespace WebCore {
         bool m_acceleratedCompositingForPluginsEnabled : 1;
         bool m_acceleratedCompositingForCanvasEnabled : 1;
         bool m_acceleratedCompositingForAnimationEnabled : 1;
+        bool m_acceleratedCompositingForFixedPositionEnabled : 1;
         bool m_showDebugBorders : 1;
         bool m_showRepaintCounter : 1;
         bool m_experimentalNotificationsEnabled : 1;
