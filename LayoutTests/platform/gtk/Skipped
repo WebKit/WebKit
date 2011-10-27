@@ -1654,3 +1654,9 @@ accessibility/menu-list-sends-change-notification.html
 # https://bugs.webkit.org/show_bug.cgi?id=70720
 # [GTK] fast/events/event-creation.html fails creating MediaStreamEvent
 fast/events/event-creation.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=71022
+fast/canvas/canvas-composite-image.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=71024
+editing/spelling/spelling-unified-emulation.html

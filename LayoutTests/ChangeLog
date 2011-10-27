@@ -1,3 +1,10 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping 2 new failing tests in GTK.
+
+        * platform/gtk/Skipped: Skip
+        fast/canvas/canvas-composite-image.html and editing/spelling/spelling-unified-emulation.html.
+
 2011-10-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Rebaseline tables/mozilla_expected_failures/bugs/bug14007-2.html after r98542.
