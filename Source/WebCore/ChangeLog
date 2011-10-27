@@ -1,3 +1,30 @@
+2011-10-27  Adam Barth  <abarth@webkit.org>
+
+        Exception subtypes have incorrect namespace indentation
+        https://bugs.webkit.org/show_bug.cgi?id=71075
+
+        Reviewed by Eric Seidel.
+
+        This patch is in preparation for editing these headers.  We decided to
+        not indent namespaces in headers and update the headers as we edited
+        them.
+
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::create):
+        (WebCore::DOMCoreException::DOMCoreException):
+        * dom/EventException.h:
+        (WebCore::EventException::create):
+        (WebCore::EventException::EventException):
+        * dom/RangeException.h:
+        (WebCore::RangeException::create):
+        (WebCore::RangeException::RangeException):
+        * xml/XMLHttpRequestException.h:
+        (WebCore::XMLHttpRequestException::create):
+        (WebCore::XMLHttpRequestException::XMLHttpRequestException):
+        * xml/XPathException.h:
+        (WebCore::XPathException::create):
+        (WebCore::XPathException::XPathException):
+
 2011-10-27  Kenneth Russell  <kbr@google.com>
 
         Implement new restrictions on uniform and attribute location lengths

@@ -33,19 +33,19 @@
 
 namespace WebCore {
 
-    class DOMCoreException : public ExceptionBase {
-    public:
-        static PassRefPtr<DOMCoreException> create(const ExceptionCodeDescription& description)
-        {
-            return adoptRef(new DOMCoreException(description));
-        }
+class DOMCoreException : public ExceptionBase {
+public:
+    static PassRefPtr<DOMCoreException> create(const ExceptionCodeDescription& description)
+    {
+        return adoptRef(new DOMCoreException(description));
+    }
 
-    private:
-        DOMCoreException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
-    };
+private:
+    DOMCoreException(const ExceptionCodeDescription& description)
+        : ExceptionBase(description)
+    {
+    }
+};
 
 } // namespace WebCore
 

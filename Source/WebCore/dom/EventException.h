@@ -33,27 +33,27 @@
 
 namespace WebCore {
 
-    class EventException : public ExceptionBase {
-    public:
-        static PassRefPtr<EventException> create(const ExceptionCodeDescription& description)
-        {
-            return adoptRef(new EventException(description));
-        }
+class EventException : public ExceptionBase {
+public:
+    static PassRefPtr<EventException> create(const ExceptionCodeDescription& description)
+    {
+        return adoptRef(new EventException(description));
+    }
 
-        static const int EventExceptionOffset = 100;
-        static const int EventExceptionMax = 199;
+    static const int EventExceptionOffset = 100;
+    static const int EventExceptionMax = 199;
 
-        enum EventExceptionCode {
-            UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset,
-            DISPATCH_REQUEST_ERR
-        };
-
-    private:
-        EventException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
+    enum EventExceptionCode {
+        UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset,
+        DISPATCH_REQUEST_ERR
     };
+
+private:
+    EventException(const ExceptionCodeDescription& description)
+        : ExceptionBase(description)
+    {
+    }
+};
 
 } // namespace WebCore
 
