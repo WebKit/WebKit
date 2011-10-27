@@ -55,7 +55,7 @@ public:
     String getString() { return m_string; }
 
 private:
-    MicroDataItemValue(String);
+    MicroDataItemValue(const String&);
     MicroDataItemValue(Node*);
 
     Type m_type;

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-MicroDataItemValue::MicroDataItemValue(String string)
+MicroDataItemValue::MicroDataItemValue(const String& string)
     : m_type(STRING)
     , m_string(string)
 {
