@@ -726,7 +726,7 @@ void PluginView::viewGeometryDidChange()
         rect = frameRect();
     }
 
-    m_plugin->geometryDidChange(rect, clipRectInWindowCoordinates());
+    m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
 }
 
 void PluginView::viewVisibilityDidChange()

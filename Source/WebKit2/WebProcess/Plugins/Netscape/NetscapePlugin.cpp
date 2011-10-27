@@ -660,7 +660,7 @@ bool NetscapePlugin::isTransparent()
     return m_isTransparent;
 }
 
-void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     ASSERT(m_isStarted);
 

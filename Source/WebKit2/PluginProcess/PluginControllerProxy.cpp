@@ -452,7 +452,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
         m_backingStore = ShareableBitmap::create(backingStoreHandle);
     }
 
-    m_plugin->geometryDidChange(frameRect, clipRect);
+    m_plugin->deprecatedGeometryDidChange(frameRect, clipRect);
 }
 
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)

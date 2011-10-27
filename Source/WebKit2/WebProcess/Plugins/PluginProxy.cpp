@@ -233,7 +233,7 @@ void PluginProxy::geometryDidChange()
     m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_frameRect, m_clipRect, contentsScaleFactor, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+void PluginProxy::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     m_frameRect = frameRect;
     m_clipRect = clipRect;

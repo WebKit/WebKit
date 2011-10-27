@@ -367,7 +367,7 @@ bool BuiltInPDFView::isTransparent()
     return false;
 }
 
-void BuiltInPDFView::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+void BuiltInPDFView::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     if (m_frameRect == frameRect) {
         // Nothing to do.

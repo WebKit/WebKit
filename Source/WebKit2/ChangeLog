@@ -1,3 +1,27 @@
+2011-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Rename Plugin::geometryDidChange to Plugin::deprecatedGeometryDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=71065
+
+        Reviewed by Simon Fraser.
+
+        In preparation for adding a version of geometryDidChange that doesn't take window coordinates.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::deprecatedGeometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::deprecatedGeometryDidChange):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::deprecatedGeometryDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+
 2011-10-27  Michael Saboff  <msaboff@apple.com>
 
         Investigate storing strings in 8-bit buffers when possible
