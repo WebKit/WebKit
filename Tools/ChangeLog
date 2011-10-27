@@ -1,3 +1,18 @@
+2011-10-27  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Allow DRT to be built without notifications enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=70919
+
+        Reviewed by Tony Gentilcore.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::grantDesktopNotificationPermission):
+        (LayoutTestController::simulateDesktopNotificationClick):
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetTestController):
+
 2011-10-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Improve command line arguments handling for MiniBrowser.

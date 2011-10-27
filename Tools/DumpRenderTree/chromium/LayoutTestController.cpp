@@ -1133,7 +1133,9 @@ void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentL
         result->set(false);
         return;
     }
+#if ENABLE(NOTIFICATIONS)
     m_shell->notificationPresenter()->grantPermission(cppVariantToWebString(arguments[0]));
+#endif
     result->set(true);
 }
 
@@ -1143,9 +1145,11 @@ void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentLis
         result->set(false);
         return;
     }
+#if ENABLE(NOTIFICATIONS)
     if (m_shell->notificationPresenter()->simulateClick(cppVariantToWebString(arguments[0])))
         result->set(true);
     else
+#endif
         result->set(false);
 }
 

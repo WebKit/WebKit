@@ -31,6 +31,8 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
+#if ENABLE(NOTIFICATIONS)
+
 #include "WebKit.h"
 #include "WebKitPlatformSupport.h"
 #include "WebNotification.h"
@@ -150,3 +152,5 @@ void NotificationPresenter::requestPermission(
            origin.toString().utf8().data());
     callback->permissionRequestComplete();
 }
+
+#endif // ENABLE(NOTIFICATIONS)
