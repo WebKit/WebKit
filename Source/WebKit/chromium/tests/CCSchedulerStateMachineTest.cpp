@@ -60,28 +60,34 @@ public:
 
 TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
 {
-    StateMachine state;
     // If no commit needed, do nothing
-    state = StateMachine();
-    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
-    state.setNeedsRedraw(false);
-    state.setNeedsCommit(false);
-    state.setUpdatedThisFrame(false);
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(true));
+    {
+        StateMachine state;
+        state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
+        state.setNeedsRedraw(false);
+        state.setNeedsCommit(false);
+        state.setUpdatedThisFrame(false);
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(true));
+    }
 
     // If commit requested, begin a frame
-    state = StateMachine();
-    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
-    state.setNeedsRedraw(false);
-    state.setNeedsCommit(true);
-    state.setUpdatedThisFrame(false);
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
+    {
+        StateMachine state;
+        state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
+        state.setNeedsRedraw(false);
+        state.setNeedsCommit(true);
+        state.setUpdatedThisFrame(false);
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
+    }
 
     // Begin the frame, make sure needsCommit and commitState update correctly.
-    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_FRAME);
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
-    EXPECT_FALSE(state.needsCommit());
+    {
+        StateMachine state;
+        state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_FRAME);
+        EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
+        EXPECT_FALSE(state.needsCommit());
+    }
 }
 
 TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)

@@ -34,20 +34,6 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_needsCommit(false)
     , m_updatedThisFrame(false) { }
 
-CCSchedulerStateMachine::CCSchedulerStateMachine(const CCSchedulerStateMachine& that)
-{
-    *this = that;
-}
-
-CCSchedulerStateMachine::CCSchedulerStateMachine& CCSchedulerStateMachine::operator=(const CCSchedulerStateMachine& that)
-{
-    m_commitState = that.m_commitState;
-    m_needsRedraw = that.m_needsRedraw;
-    m_needsCommit = that.m_needsCommit;
-    m_updatedThisFrame = that.m_updatedThisFrame;
-    return *this;
-}
-
 CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(bool insideVSyncTick) const
 {
     switch (m_commitState) {

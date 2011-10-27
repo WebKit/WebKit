@@ -25,6 +25,8 @@
 #ifndef CCSchedulerStateMachine_h
 #define CCSchedulerStateMachine_h
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 // The CCSchedulerStateMachine decides how to coordinates main thread activites
@@ -40,8 +42,6 @@ namespace WebCore {
 class CCSchedulerStateMachine {
 public:
     CCSchedulerStateMachine();
-    CCSchedulerStateMachine(const CCSchedulerStateMachine& that);
-    CCSchedulerStateMachine& operator=(const CCSchedulerStateMachine& that);
 
     enum CommitState {
         COMMIT_STATE_IDLE,

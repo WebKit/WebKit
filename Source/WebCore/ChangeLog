@@ -1,3 +1,10 @@
+2011-10-27  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, fix CCSchedulerStateMachine build errors.
+
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+
 2011-10-27  Tony Chang  <tony@chromium.org>
 
         fix sizing of auto sized flexbox
