@@ -459,7 +459,7 @@ void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const Stri
 
 void PluginControllerProxy::streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
-    m_plugin->streamDidReceiveResponse(streamID, KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers);
+    m_plugin->streamDidReceiveResponse(streamID, KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
 }
 
 void PluginControllerProxy::streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data)
@@ -482,7 +482,7 @@ void PluginControllerProxy::manualStreamDidReceiveResponse(const String& respons
     if (m_pluginCanceledManualStreamLoad)
         return;
 
-    m_plugin->manualStreamDidReceiveResponse(KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers);
+    m_plugin->manualStreamDidReceiveResponse(KURL(ParsedURLString, responseURLString), streamLength, lastModifiedTime, mimeType, headers, String());
 }
 
 void PluginControllerProxy::manualStreamDidReceiveData(const CoreIPC::DataReference& data)

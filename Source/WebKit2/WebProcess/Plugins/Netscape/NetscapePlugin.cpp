@@ -623,7 +623,7 @@ void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& res
 }
 
 void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, 
-                                              uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+                                              uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& /* suggestedFileName */)
 {
     ASSERT(m_isStarted);
     
@@ -656,7 +656,7 @@ void NetscapePlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 }
 
 void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, 
-                                                    const String& mimeType, const String& headers)
+                                                    const String& mimeType, const String& headers, const String& /* suggestedFileName */)
 {
     ASSERT(m_isStarted);
     ASSERT(m_loadManually);

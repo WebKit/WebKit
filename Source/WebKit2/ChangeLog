@@ -1,5 +1,52 @@
 2011-10-27  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98503
+
+    2011-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+            Embedded PDFs should be known to DocumentLoader
+            https://bugs.webkit.org/show_bug.cgi?id=70864
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/Plugins/Plugin.h: Plugin stream load notifications now contain a suggested
+            file name, in case the plug-in wants to save the file properly.
+
+            * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+            * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+            (WebKit::BuiltInPDFView::addArchiveResource): Add the PDF as resource in DocumentLoader.
+            (WebKit::BuiltInPDFView::pdfDocumentDidLoad): Call addArchiveResource.
+            (WebKit::BuiltInPDFView::initialize): We need to remember source URL to create a resource
+            for that. The URL needs to match one in HitTestResult, so we can't use response URL.
+            (WebKit::BuiltInPDFView::streamDidReceiveResponse): Remember suggested file name, so
+            that we could put it in archive resource later.
+            (WebKit::BuiltInPDFView::manualStreamDidReceiveResponse): Ditto.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::streamDidReceiveResponse):
+            (WebKit::PluginControllerProxy::manualStreamDidReceiveResponse):
+            Pass an empty string for suggested file name. No plug-in that runs in a separate process
+            cares about it, so it's not sent to the plugin process.
+
+            * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+            (WebKit::NetscapePlugin::streamDidReceiveResponse):
+            (WebKit::NetscapePlugin::manualStreamDidReceiveResponse):
+            * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+            Updated for new signatures.
+
+            * WebProcess/Plugins/PluginProxy.cpp:
+            (WebKit::PluginProxy::streamDidReceiveResponse):
+            (WebKit::PluginProxy::manualStreamDidReceiveResponse):
+            * WebProcess/Plugins/PluginProxy.h:
+            Updated for new signatures.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::Stream::didReceiveResponse):
+            (WebKit::PluginView::manualLoadDidReceiveResponse):
+            Pass suggested file name to plug-in, in case the plug-in wants to save the file properly.
+
+2011-10-27  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98394
 
     2011-10-25  Anders Carlsson  <andersca@apple.com>

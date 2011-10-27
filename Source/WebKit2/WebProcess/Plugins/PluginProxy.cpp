@@ -245,7 +245,7 @@ void PluginProxy::didEvaluateJavaScript(uint64_t requestID, const WTF::String& r
     m_connection->connection()->send(Messages::PluginControllerProxy::DidEvaluateJavaScript(requestID, result), m_pluginInstanceID);
 }
 
-void PluginProxy::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers)
+void PluginProxy::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& /* suggestedFileName */)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::StreamDidReceiveResponse(streamID, responseURL.string(), streamLength, lastModifiedTime, mimeType, headers), m_pluginInstanceID);
 }
@@ -265,7 +265,7 @@ void PluginProxy::streamDidFail(uint64_t streamID, bool wasCancelled)
     m_connection->connection()->send(Messages::PluginControllerProxy::StreamDidFail(streamID, wasCancelled), m_pluginInstanceID);
 }
 
-void PluginProxy::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers)
+void PluginProxy::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& /* suggestedFileName */)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::ManualStreamDidReceiveResponse(responseURL.string(), streamLength, lastModifiedTime, mimeType, headers), m_pluginInstanceID);
 }

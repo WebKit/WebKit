@@ -62,6 +62,7 @@ private:
     void willRemoveVerticalScrollbar(WebCore::Scrollbar*);
     PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
+    void addArchiveResource();
     void pdfDocumentDidLoad();
     void calculateSizes();
     void paintBackground(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
@@ -83,11 +84,11 @@ private:
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result);
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers);
+    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName);
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length);
     virtual void streamDidFinishLoading(uint64_t streamID);
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled);
-    virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers);
+    virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName);
     virtual void manualStreamDidReceiveData(const char* bytes, int length);
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
@@ -146,7 +147,11 @@ private:
     // In window coordinates.
     WebCore::IntRect m_frameRect;
 
+    WebCore::KURL m_sourceURL;
+
+    String m_suggestedFilename;
     RetainPtr<CFMutableDataRef> m_dataBuffer;
+
     RetainPtr<CGPDFDocumentRef> m_pdfDocument;
     Vector<WebCore::IntRect> m_pageBoxes;
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
