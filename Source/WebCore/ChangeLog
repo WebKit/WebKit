@@ -1,3 +1,11 @@
+2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed one line fix for DOMStorageItemsView.
+        It have to use this.detachChildViews instead of this.element.removeChildren after r98225.
+
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.update):
+
 2011-10-27  Antti Koivisto  <antti@apple.com>
 
         Matched declaration cache

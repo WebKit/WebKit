@@ -62,7 +62,7 @@ WebInspector.DOMStorageItemsView.prototype = {
 
     update: function()
     {
-        this.element.removeChildren();
+        this.detachChildViews();
         this.domStorage.getEntries(this._showDOMStorageEntries.bind(this));
     },
 
