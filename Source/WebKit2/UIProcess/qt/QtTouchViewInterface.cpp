@@ -62,7 +62,6 @@ void QtTouchViewInterface::contentSizeChanged(const QSize& newSize)
 {
     m_pageView->setWidth(newSize.width());
     m_pageView->setHeight(newSize.height());
-    m_viewportView->d->updateViewportConstraints();
 }
 
 bool QtTouchViewInterface::isActive()

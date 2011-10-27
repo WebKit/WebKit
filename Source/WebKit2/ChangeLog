@@ -1,3 +1,15 @@
+2011-10-27  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2]Content size changed event does not require viewport attribute calculation.
+        https://bugs.webkit.org/show_bug.cgi?id=70920
+
+        Reviewed by Kenneth Rohde Christiansen.
+        
+        Remove unnecessary recalculation of viewport attributes.
+
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::contentSizeChanged):
+
 2011-10-27  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.
