@@ -1,5 +1,11 @@
 2011-10-27  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        Unreviewed, fix typo in skiplist.
+
+        * platform/qt/Skipped:
+
+2011-10-27  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Unreviewed. Add bugzilla link to skipped test.
 
         * platform/qt/Skipped:
