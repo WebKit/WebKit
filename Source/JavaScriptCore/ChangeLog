@@ -1,3 +1,22 @@
+2011-10-26  Oliver Hunt  <oliver@apple.com>
+
+        Restore structure-clearing behaviour of allocateCell<>
+        https://bugs.webkit.org/show_bug.cgi?id=70976
+
+        Reviewed by Geoffrey Garen.
+
+        This restores the logic that allows the markstack to filter
+        live objects that have not yet been initialised.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::clearStructure):
+           Validation-safe method to clear a cell's structure.
+        (JSC::allocateCell):
+           Call the above method.
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend):
+           Don't visit cells that haven't been initialised.
+
 2011-10-26  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r97030): Cannot log in to progressive.com

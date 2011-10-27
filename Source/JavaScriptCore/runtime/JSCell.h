@@ -66,6 +66,7 @@ namespace JSC {
 
         Structure* structure() const;
         void setStructure(JSGlobalData&, Structure*);
+        void clearStructure() { m_structure.clear(); }
 
         // Extracting the value.
         bool getString(ExecState* exec, UString&) const;
@@ -306,7 +307,9 @@ namespace JSC {
         ASSERT(!heap.globalData()->isInitializingObject());
         heap.globalData()->setInitializingObject(true);
 #endif
-        return heap.allocate(sizeof(T));
+        JSCell* result = static_cast<JSCell*>(heap.allocate(sizeof(T)));
+        result->clearStructure();
+        return result;
     }
     
     inline bool isZapped(const JSCell* cell)

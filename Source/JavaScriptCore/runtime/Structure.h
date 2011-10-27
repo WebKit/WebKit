@@ -359,7 +359,7 @@ namespace JSC {
         validate(cell);
 #endif
         m_visitCount++;
-        if (Heap::testAndSetMarked(cell))
+        if (Heap::testAndSetMarked(cell) || !cell->structure())
             return;
         m_stack.append(cell);
     }
