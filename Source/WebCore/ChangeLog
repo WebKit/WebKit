@@ -1,3 +1,49 @@
+2011-10-27  Tony Chang  <tony@chromium.org>
+
+        use main/cross instead of logical width/height when talking about flow direction
+        https://bugs.webkit.org/show_bug.cgi?id=70977
+
+        Reviewed by Ojan Vafai.
+
+        Flexbox code uses logical in function names to refer to the flow
+        direction. This is confusing because writing mode also uses logical,
+        but this is a diffent usage. To avoid confusion, be explicit about
+        main vs cross axis. Extent is used instead of width/height.
+
+        No new tests, just a refactoring.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisLengthForChild):
+        (WebCore::RenderFlexibleBox::crossAxisLength):
+        (WebCore::RenderFlexibleBox::setCrossExtent):
+        (WebCore::RenderFlexibleBox::crossExtentForChild):
+        (WebCore::RenderFlexibleBox::mainExtentForChild):
+        (WebCore::RenderFlexibleBox::crossAxisExtent):
+        (WebCore::RenderFlexibleBox::mainAxisExtent):
+        (WebCore::RenderFlexibleBox::crossAxisContentExtent):
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        (WebCore::RenderFlexibleBox::crossAxisBorderAndPaddingExtent):
+        (WebCore::RenderFlexibleBox::crossAxisMarginExtentForChild):
+        (WebCore::RenderFlexibleBox::flowAwareLocationForChild):
+        (WebCore::RenderFlexibleBox::setFlowAwareLocationForChild):
+        (WebCore::RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild):
+        (WebCore::RenderFlexibleBox::mainAxisScrollbarExtentForChild):
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForFlexItem):
+        (WebCore::RenderFlexibleBox::layoutInlineDirection):
+        (WebCore::RenderFlexibleBox::positiveFlexForChild): Since flex only
+            matters in the main axis, there's no reason to deambiguate it here.
+        (WebCore::RenderFlexibleBox::negativeFlexForChild): Ditto.
+        (WebCore::RenderFlexibleBox::availableAlignmentSpaceForChild): Alignment is always
+            in the cross axis direction, so don't include that in the method name.
+        (WebCore::RenderFlexibleBox::marginBoxAscent):
+        (WebCore::RenderFlexibleBox::computePreferredMainAxisExtent):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        (WebCore::RenderFlexibleBox::adjustAlignmentForChild):  Alignment is always
+            in the cross axis direction, so don't include that in the method name.
+        (WebCore::RenderFlexibleBox::alignChildrenBlockDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::toThisObject

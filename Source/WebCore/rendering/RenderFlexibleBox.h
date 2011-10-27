@@ -57,20 +57,20 @@ private:
     bool isColumnFlow() const;
     bool isHorizontalFlow() const;
     bool isLeftToRightFlow() const;
-    bool isFlowAwareLogicalHeightAuto() const;
-    Length flowAwareLogicalWidthLengthForChild(RenderBox* child) const;
-    void setFlowAwareLogicalHeight(LayoutUnit);
-    LayoutUnit flowAwareLogicalHeightForChild(RenderBox* child);
-    LayoutUnit flowAwareLogicalWidthForChild(RenderBox* child);
-    LayoutUnit flowAwareLogicalHeight() const;
-    LayoutUnit flowAwareLogicalWidth() const;
-    LayoutUnit flowAwareContentLogicalHeight() const;
-    LayoutUnit flowAwareContentLogicalWidth() const;
+    Length crossAxisLength() const;
+    Length mainAxisLengthForChild(RenderBox* child) const;
+    void setCrossAxisExtent(LayoutUnit);
+    LayoutUnit crossAxisExtentForChild(RenderBox* child);
+    LayoutUnit mainAxisExtentForChild(RenderBox* child);
+    LayoutUnit crossAxisExtent() const;
+    LayoutUnit mainAxisExtent() const;
+    LayoutUnit crossAxisContentExtent() const;
+    LayoutUnit mainAxisContentExtent() const;
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderBefore() const;
     LayoutUnit flowAwareBorderAfter() const;
-    LayoutUnit flowAwareBorderAndPaddingLogicalHeight() const;
+    LayoutUnit crossAxisBorderAndPaddingExtent() const;
     LayoutUnit flowAwarePaddingStart() const;
     LayoutUnit flowAwarePaddingBefore() const;
     LayoutUnit flowAwarePaddingAfter() const;
@@ -78,28 +78,28 @@ private:
     LayoutUnit flowAwareMarginEndForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginAfterForChild(RenderBox* child) const;
-    LayoutUnit flowAwareMarginLogicalHeightForChild(RenderBox* child) const;
-    LayoutPoint flowAwareLogicalLocationForChild(RenderBox* child) const;
+    LayoutUnit crossAxisMarginExtentForChild(RenderBox* child) const;
+    LayoutPoint flowAwareLocationForChild(RenderBox* child) const;
     void setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit);
     void setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit);
     // FIXME: Supporting layout deltas.
-    void setFlowAwareLogicalLocationForChild(RenderBox* child, const LayoutPoint&);
-    void adjustLocationLogicalTopForChild(RenderBox* child, LayoutUnit);
-    LayoutUnit logicalBorderAndPaddingWidthForChild(RenderBox* child) const;
-    LayoutUnit logicalScrollbarHeightForChild(RenderBox* child) const;
+    void setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint&);
+    void adjustAlignmentForChild(RenderBox* child, LayoutUnit);
+    LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const;
+    LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
     Length marginStartStyleForChild(RenderBox* child) const;
     Length marginEndStyleForChild(RenderBox* child) const;
-    LayoutUnit preferredLogicalContentWidthForFlexItem(RenderBox* child) const;
+    LayoutUnit preferredMainAxisContentExtentForFlexItem(RenderBox* child) const;
 
     void layoutInlineDirection(bool relayoutChildren);
 
-    float logicalPositiveFlexForChild(RenderBox* child) const;
-    float logicalNegativeFlexForChild(RenderBox* child) const;
+    float positiveFlexForChild(RenderBox* child) const;
+    float negativeFlexForChild(RenderBox* child) const;
 
-    LayoutUnit availableLogicalHeightForChild(RenderBox*);
+    LayoutUnit availableAlignmentSpaceForChild(RenderBox*);
     LayoutUnit marginBoxAscent(RenderBox*);
 
-    void computePreferredLogicalWidth(bool relayoutChildren, TreeOrderIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    void computePreferredMainAxisExtent(bool relayoutChildren, TreeOrderIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
     bool runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
