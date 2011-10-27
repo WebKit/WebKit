@@ -1,5 +1,12 @@
 2011-10-27  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after r98512
+
+        * html/HTMLMediaElement.cpp: Moved a Web Audio-related #include inside an appropriate ENABLE
+        guard.
+
+2011-10-27  Adam Roben  <aroben@apple.com>
+
         Regenerate WebCore's Localizable.strings file
 
         All I did was run update-webkit-localizable-strings. A few localizer comments changed, and

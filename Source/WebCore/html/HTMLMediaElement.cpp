@@ -31,7 +31,6 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
-#include "AudioSourceProvider.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
@@ -93,6 +92,7 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
+#include "AudioSourceProvider.h"
 #include "MediaElementAudioSourceNode.h"
 #endif
 
