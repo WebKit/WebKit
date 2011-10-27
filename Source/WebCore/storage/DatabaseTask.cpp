@@ -62,7 +62,7 @@ void DatabaseTaskSynchronizer::taskCompleted()
 DatabaseTask::DatabaseTask(Database* database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)
     , m_synchronizer(synchronizer)
-#ifndef NDEBUG
+#if !LOG_DISABLED
     , m_complete(false)
 #endif
 {
@@ -70,13 +70,17 @@ DatabaseTask::DatabaseTask(Database* database, DatabaseTaskSynchronizer* synchro
 
 DatabaseTask::~DatabaseTask()
 {
+#if !LOG_DISABLED
     ASSERT(m_complete || !m_synchronizer);
+#endif
 }
 
 void DatabaseTask::performTask()
 {
     // Database tasks are meant to be used only once, so make sure this one hasn't been performed before.
+#if !LOG_DISABLED
     ASSERT(!m_complete);
+#endif
 
     LOG(StorageAPI, "Performing %s %p\n", debugTaskName(), this);
 
@@ -86,7 +90,7 @@ void DatabaseTask::performTask()
     if (m_synchronizer)
         m_synchronizer->taskCompleted();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     m_complete = true;
 #endif
 }

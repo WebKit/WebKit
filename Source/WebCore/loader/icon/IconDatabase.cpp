@@ -72,7 +72,7 @@ static const int updateTimerDelay = 5;
 
 static bool checkIntegrityOnOpen = false;
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !ERROR_DISABLED
 static String urlForLogging(const String& url)
 {
     static unsigned urlTruncationLength = 120;

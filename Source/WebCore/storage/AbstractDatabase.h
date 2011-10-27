@@ -36,7 +36,7 @@
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !ERROR_DISABLED
 #include "SecurityOrigin.h"
 #endif
 
@@ -115,7 +115,7 @@ protected:
     unsigned long m_estimatedSize;
     String m_filename;
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !ERROR_DISABLED
     String databaseDebugName() const { return m_contextThreadSecurityOrigin->toString() + "::" + m_name; }
 #endif
 

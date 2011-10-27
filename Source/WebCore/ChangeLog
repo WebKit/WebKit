@@ -1,3 +1,15 @@
+2011-10-27  Steve Block  <steveblock@google.com>
+
+        Numerous debug build fixes
+
+        Unreviewed build fix.
+
+        No new tests, buuld fix only.
+
+        * loader/icon/IconDatabase.cpp: urlForLogging() is used by both LOG() and LOG_ERROR()
+        * storage/AbstractDatabase.h: databaseDebugName() is used by both LOG() and LOG_ERROR()
+        * storage/DatabaseTask.cpp: m_complete is only available when !LOG_DISABLED
+
 2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Refactor ScriptsPanel so that ConsoleView does not depend on it.
