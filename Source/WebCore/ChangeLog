@@ -1,5 +1,20 @@
 2011-10-27  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98530
+
+    2011-10-26  Steve Falkenburg  <sfalken@apple.com>
+
+            ResourceError doesn't support custom domains on Windows
+            https://bugs.webkit.org/show_bug.cgi?id=70983
+            <rdar://problem/10352145>
+
+            Reviewed by Oliver Hunt.
+
+            * platform/network/cf/ResourceErrorCF.cpp:
+            (WebCore::ResourceError::platformLazyInit): Add fallback case for unknown error types.
+
+2011-10-27  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98503
 
     2011-10-25  Alexey Proskuryakov  <ap@apple.com>
