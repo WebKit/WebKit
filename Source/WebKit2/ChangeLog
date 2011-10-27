@@ -1,3 +1,15 @@
+2011-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98556.
+        http://trac.webkit.org/changeset/98556
+        https://bugs.webkit.org/show_bug.cgi?id=71031
+
+        The test added by the patch doesn't pass on Snow Leopard
+        (Requested by rniwa on #webkit).
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::toThisObject

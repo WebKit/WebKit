@@ -1,3 +1,14 @@
+2011-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98556.
+        http://trac.webkit.org/changeset/98556
+        https://bugs.webkit.org/show_bug.cgi?id=71031
+
+        The test added by the patch doesn't pass on Snow Leopard
+        (Requested by rniwa on #webkit).
+
+        * Source/autotools/symbols.filter:
+
 2011-10-27  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.
