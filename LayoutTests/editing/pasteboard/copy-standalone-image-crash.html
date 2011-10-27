@@ -35,14 +35,11 @@ function hideDiv() {
     document.getElementById("DIV").style.display="none";
 }
 
-// this is for manual testing only
-function delayhide() {
-    setTimeout(hideDiv, 100);
-}
-
 function doTest() {
-    if (!window.layoutTestController)
+    if (!window.layoutTestController) {
+        document.body.addEventListener('mousedown', function () {setTimeout(hideDiv, 100)}, false);
         return;
+    }
 
     var image = document.getElementById("IMG");
 
@@ -59,7 +56,7 @@ function doTest() {
 
 </script>
 </head>
-<body onload="doTest()" onmousedown="delayhide()">
+<body onload="doTest()">
 This is an automated test case for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=31721">31721</a><br>
 If you wish to test manually, mouseover to image, activate context menu, wait for the image to disappear and then click copy image.<br>
 There should be no crash.

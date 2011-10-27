@@ -1,3 +1,15 @@
+2011-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Console message in copy-standalone-image-crash.html bleeds into the result of copy-standalone-image.html
+        https://bugs.webkit.org/show_bug.cgi?id=70957
+
+        Reviewed by Ojan Vafai.
+
+        The bug was caused by the delayed hideDiv call in a mousedown event listener.
+        Fixed the bug by not attaching this event listener inside DRT or TestRunner.
+
+        * editing/pasteboard/copy-standalone-image-crash.html:
+
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Massive gardening.
