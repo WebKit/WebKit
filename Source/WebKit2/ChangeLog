@@ -1,3 +1,16 @@
+2011-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Implement ShareableBitmap::paint() when scaleFactor=1
+        https://bugs.webkit.org/show_bug.cgi?id=71027
+
+        Reviewed by Martin Robinson.
+
+        Fixes windowless plugins in GTK+ port.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint): When scaleFactor is 1, simply
+        call the paint method that doesn't receive a scaleFactor.
+
 2011-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98556.

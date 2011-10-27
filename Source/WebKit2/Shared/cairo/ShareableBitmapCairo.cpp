@@ -55,10 +55,14 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
     context.platformContext()->drawSurfaceToContext(surface.get(), destRect, srcRect, &context);
 }
 
-void ShareableBitmap::paint(GraphicsContext&, float /*scaleFactor*/, const IntPoint& /*dstPoint*/, const IntRect& /*srcRect*/)
+void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    // See <https://bugs.webkit.org/show_bug.cgi?id=64665>.
-    notImplemented();
+    if (scaleFactor != 1) {
+        // See <https://bugs.webkit.org/show_bug.cgi?id=64665>.
+        notImplemented();
+        return;
+    }
+    paint(context, dstPoint, srcRect);
 }
 
 PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
