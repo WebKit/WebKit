@@ -1,3 +1,10 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r98507.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         http/tests/inspector/search/search-in-resources.html fails on all platforms

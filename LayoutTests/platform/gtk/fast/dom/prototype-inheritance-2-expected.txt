@@ -144,12 +144,15 @@ PASS HTMLSpanElementPrototype from inner.document.forms.testForm.0.parentNode.la
 PASS HTMLStyleElement from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling
 PASS HTMLStyleElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.constructor
 PASS HTMLStyleElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.__proto__
-PASS HTMLTextAreaElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
-PASS HTMLTextAreaElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
-PASS HTMLTextAreaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
-PASS HTMLTitleElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
-PASS HTMLTitleElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
-PASS HTMLTitleElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLTextAreaElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTextAreaElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTextAreaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLTitleElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTitleElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTitleElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLTrackElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLTrackElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLTrackElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
 PASS HTMLUListElement from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling
 PASS HTMLUListElementConstructor from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.constructor
 PASS HTMLUListElementPrototype from inner.document.forms.testForm.0.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
@@ -168,26 +171,26 @@ PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.sty
 PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
 PASS MemoryInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory
 PASS MemoryInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.console.memory.__proto__
-PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes.0
-PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes
-PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes.constructor
-PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes.__proto__
-PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes.0.constructor
-PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.mimeTypes.0.__proto__
+PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
+PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
+PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor
+PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.__proto__
+PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.constructor
+PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.__proto__
 PASS NamedNodeMap from inner.document.forms.testForm.0.parentNode.attributes
-PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator
-PASS NavigatorPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.__proto__
+PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation
+PASS NavigatorPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.__proto__
 PASS NodeList from inner.document.forms.testForm
 PASS NodeListConstructor from inner.document.forms.testForm.constructor
 PASS NodeListPrototype from inner.document.forms.testForm.__proto__
-PASS NodePrototype from inner.document.forms.testForm.0.ownerDocument.__proto__.__proto__.__proto__
+PASS NodePrototype from inner.document.forms.testForm.0.attributes.0.__proto__.__proto__
 PASS Object from inner.document.location.__proto__.__proto__
-PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0
-PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins
-PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.constructor
-PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.__proto__
-PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0.constructor
-PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.navigator.plugins.0.__proto__
+PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin
+PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins
+PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.constructor
+PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.__proto__
+PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.0.constructor
+PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin.__proto__
 PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
 PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
 PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
@@ -213,9 +216,9 @@ PASS StyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styl
 PASS Text from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.firstChild
 PASS TextConstructor from inner.document.forms.testForm.0.attributes.0.lastChild.constructor
 PASS TextPrototype from inner.document.forms.testForm.0.attributes.0.lastChild.__proto__
-PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.seekable
-PASS TimeRangesConstructor from inner.document.forms.testForm.0.previousElementSibling.seekable.constructor
-PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.seekable.__proto__
+PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.played
+PASS TimeRangesConstructor from inner.document.forms.testForm.0.previousElementSibling.played.constructor
+PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.played.__proto__
 PASS ValidityState from inner.document.forms.testForm.0.0.validity
 PASS ValidityStatePrototype from inner.document.forms.testForm.0.0.validity.__proto__
 PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0
@@ -439,7 +442,9 @@ Never found SVGViewElement
 Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
+Never found TextTrack
 Never found TextTrackCue
+Never found TextTrackCueList
 Never found WebKitCSSMatrix
 Never found WebKitCSSTransformValue
 Never found WebKitPoint
