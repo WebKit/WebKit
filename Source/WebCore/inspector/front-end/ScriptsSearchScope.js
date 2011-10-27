@@ -55,8 +55,8 @@ WebInspector.ScriptsSearchScope.prototype = {
             return !uiSourceCode.isContentScript;
         }
         
-        // FIXME: Add setting to search in content scripts as well.
-        uiSourceCodes.filter(filterOutContentScripts);
+        if (!WebInspector.settings.searchInContentScripts.get())
+            uiSourceCodes = uiSourceCodes.filter(filterOutContentScripts);
 
         function continueSearch()
         {
@@ -186,3 +186,5 @@ WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype = {
 }
 
 WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.__proto__ = WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype;
+
+WebInspector.settings.searchInContentScripts = WebInspector.settings.createSetting("searchInContentScripts", false);

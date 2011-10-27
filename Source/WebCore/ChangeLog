@@ -1,3 +1,15 @@
+2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for advanced search in content scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=70923
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsSearchScope.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed one line fix for DOMStorageItemsView.
