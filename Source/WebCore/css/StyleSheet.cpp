@@ -20,6 +20,7 @@
 #include "config.h"
 #include "StyleSheet.h"
 
+#include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "MediaList.h"
 #include "Node.h"
@@ -52,7 +53,10 @@ StyleSheet::~StyleSheet()
 
 StyleSheet* StyleSheet::parentStyleSheet() const
 {
-    return (parent() && parent()->isStyleSheet()) ? static_cast<StyleSheet*>(parent()) : 0;
+    if (!parent())
+        return 0;
+    ASSERT(parent()->isRule());
+    return static_cast<CSSRule*>(parent())->parentStyleSheet();
 }
 
 void StyleSheet::setMedia(PassRefPtr<MediaList> media)

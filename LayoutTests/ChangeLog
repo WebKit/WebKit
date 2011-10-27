@@ -1,3 +1,13 @@
+2011-10-27  Andreas Kling  <kling@webkit.org>
+
+        StyleSheet.parentStyleSheet does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=70956
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/stylesheet-parentStyleSheet-expected.txt: Added.
+        * fast/css/stylesheet-parentStyleSheet.html: Added.
+
 2011-10-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, gardening.
