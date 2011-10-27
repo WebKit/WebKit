@@ -105,7 +105,7 @@ static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString
 {
     pair<HTTPHeaderMap::iterator, bool> result = map->add(name, value);
     if (!result.second)
-        result.first->second += "\n" + String(value);
+        result.first->second += ", " + String(value);
 }
 
 void WebHTTPLoadInfo::addRequestHeader(const WebString& name, const WebString& value)

@@ -1,3 +1,13 @@
+2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: HTTP headers merged incorrect in Chrome
+        https://bugs.webkit.org/show_bug.cgi?id=69674
+
+        Reviewed by Pavel Feldman.
+
+        * src/WebHTTPLoadInfo.cpp:
+        (WebKit::addHeader):
+
 2011-10-27  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Need setPrinting
