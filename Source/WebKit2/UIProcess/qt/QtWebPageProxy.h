@@ -170,6 +170,7 @@ public:
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
 
     QWKHistory* history() const;
+    QtViewInterface* viewInterface() const { return m_viewInterface; }
 
 public Q_SLOTS:
     void navigationStateChanged();

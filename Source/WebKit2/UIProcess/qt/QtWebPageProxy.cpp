@@ -119,43 +119,11 @@ void QtWebPageProxy::init()
 {
     m_webPageProxy->initializeWebPage();
 
-    WKPageLoaderClient loadClient;
-    memset(&loadClient, 0, sizeof(WKPageLoaderClient));
-    loadClient.version = kWKPageLoaderClientCurrentVersion;
-    loadClient.clientInfo = this;
-    loadClient.didStartProvisionalLoadForFrame = qt_wk_didStartProvisionalLoadForFrame;
-    loadClient.didFailProvisionalLoadWithErrorForFrame = qt_wk_didFailProvisionalLoadWithErrorForFrame;
-    loadClient.didCommitLoadForFrame = qt_wk_didCommitLoadForFrame;
-    loadClient.didFinishLoadForFrame = qt_wk_didFinishLoadForFrame;
-    loadClient.didFailLoadWithErrorForFrame = qt_wk_didFailLoadWithErrorForFrame;
-    loadClient.didSameDocumentNavigationForFrame = qt_wk_didSameDocumentNavigationForFrame;
-    loadClient.didReceiveTitleForFrame = qt_wk_didReceiveTitleForFrame;
-    loadClient.didStartProgress = qt_wk_didStartProgress;
-    loadClient.didChangeProgress = qt_wk_didChangeProgress;
-    loadClient.didFinishProgress = qt_wk_didFinishProgress;
-    WKPageSetPageLoaderClient(pageRef(), &loadClient);
+    setupPageLoaderClient(this, m_webPageProxy.get());
+    setupPageUiClient(this, m_webPageProxy.get());
 
-    WKPageUIClient uiClient;
-    memset(&uiClient, 0, sizeof(WKPageUIClient));
-    uiClient.version = kWKPageUIClientCurrentVersion;
-    uiClient.clientInfo = m_viewInterface;
-    uiClient.runJavaScriptAlert = qt_wk_runJavaScriptAlert;
-    uiClient.runJavaScriptConfirm = qt_wk_runJavaScriptConfirm;
-    uiClient.runJavaScriptPrompt = qt_wk_runJavaScriptPrompt;
-    uiClient.setStatusText = qt_wk_setStatusText;
-    uiClient.runOpenPanel = qt_wk_runOpenPanel;
-    uiClient.mouseDidMoveOverElement = qt_wk_mouseDidMoveOverElement;
-    WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
-
-    if (m_policyInterface) {
-        WKPagePolicyClient policyClient;
-        memset(&policyClient, 0, sizeof(WKPagePolicyClient));
-        policyClient.version = kWKPagePolicyClientCurrentVersion;
-        policyClient.clientInfo = m_policyInterface;
-        policyClient.decidePolicyForNavigationAction = qt_wk_decidePolicyForNavigationAction;
-        policyClient.decidePolicyForResponse = qt_wk_decidePolicyForResponse;
-        WKPageSetPagePolicyClient(toAPI(m_webPageProxy.get()), &policyClient);
-    }
+    if (m_policyInterface)
+        setupPagePolicyClient(m_policyInterface, m_webPageProxy.get());
 }
 
 QtWebPageProxy::~QtWebPageProxy()

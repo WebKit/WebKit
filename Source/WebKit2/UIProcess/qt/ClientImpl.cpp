@@ -81,7 +81,7 @@ static void dispatchLoadFailed(WKFrameRef frame, const void* clientInfo, WKError
     toQtWebPageProxy(clientInfo)->loadDidFail(QtWebError(error));
 }
 
-void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -90,12 +90,12 @@ void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     toQtWebPageProxy(clientInfo)->loadDidBegin();
 }
 
-void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
     dispatchLoadFailed(frame, clientInfo, error);
 }
 
-void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -107,17 +107,17 @@ void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     toQtWebPageProxy(clientInfo)->loadDidCommit();
 }
 
-void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     dispatchLoadSucceeded(frame, clientInfo);
 }
 
-void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
     dispatchLoadFailed(frame, clientInfo, error);
 }
 
-void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
 {
     WebFrameProxy* wkframe = toImpl(frame);
     QString urlStr(wkframe->url());
@@ -126,7 +126,7 @@ void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, W
     toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
 }
 
-void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -134,28 +134,28 @@ void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef
     toQtWebPageProxy(clientInfo)->didChangeTitle(qTitle);
 }
 
-void qt_wk_didStartProgress(WKPageRef page, const void* clientInfo)
+static void qt_wk_didStartProgress(WKPageRef page, const void* clientInfo)
 {
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(0);
 }
 
-void qt_wk_didChangeProgress(WKPageRef page, const void* clientInfo)
+static void qt_wk_didChangeProgress(WKPageRef page, const void* clientInfo)
 {
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(WKPageGetEstimatedProgress(page) * 100);
 }
 
-void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
+static void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
 {
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(100);
 }
 
-void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+static void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     QString qAlertText = WKStringCopyQString(alertText);
     toQtViewInterface(clientInfo)->runJavaScriptAlert(qAlertText);
 }
 
-bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
+static bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
     QString qMessage = WKStringCopyQString(message);
     return toQtViewInterface(clientInfo)->runJavaScriptConfirm(qMessage);
@@ -167,7 +167,7 @@ static inline WKStringRef createNullWKString()
     return toAPI(webString.release().leakRef());
 }
 
-WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
+static WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
 {
     QString qMessage = WKStringCopyQString(message);
     QString qDefaultValue = WKStringCopyQString(defaultValue);
@@ -178,13 +178,13 @@ WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRe
     return WKStringCreateWithQString(result);
 }
 
-void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
+static void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
     toQtViewInterface(clientInfo)->didChangeStatusText(qText);
 }
 
-void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+static void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
 {
     Vector<String> wkSelectedFileNames = toImpl(parameters)->selectedFileNames();
 
@@ -197,7 +197,7 @@ void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef paramete
     toQtViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
 }
 
-void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
 {
     const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
     const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
@@ -231,7 +231,7 @@ static Qt::KeyboardModifiers toQtKeyboardModifiers(WKEventModifiers modifiers)
     return qtModifiers;
 }
 
-void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     QtPolicyInterface* policyInterface = toQtPolicyInterface(clientInfo);
     WKURLRef requestURL = WKURLRequestCopyURL(request);
@@ -252,7 +252,7 @@ void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKF
     }
 }
 
-void qt_wk_decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void qt_wk_decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     String type = toImpl(response)->resourceResponse().mimeType();
     type.makeLower();
@@ -277,4 +277,49 @@ void qt_wk_decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespon
     }
 
     WKFramePolicyListenerUse(listener);
+}
+
+void setupPageLoaderClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProxy)
+{
+    WKPageLoaderClient loadClient;
+    memset(&loadClient, 0, sizeof(WKPageLoaderClient));
+    loadClient.version = kWKPageLoaderClientCurrentVersion;
+    loadClient.clientInfo = qtWebPageProxy;
+    loadClient.didStartProvisionalLoadForFrame = qt_wk_didStartProvisionalLoadForFrame;
+    loadClient.didFailProvisionalLoadWithErrorForFrame = qt_wk_didFailProvisionalLoadWithErrorForFrame;
+    loadClient.didCommitLoadForFrame = qt_wk_didCommitLoadForFrame;
+    loadClient.didFinishLoadForFrame = qt_wk_didFinishLoadForFrame;
+    loadClient.didFailLoadWithErrorForFrame = qt_wk_didFailLoadWithErrorForFrame;
+    loadClient.didSameDocumentNavigationForFrame = qt_wk_didSameDocumentNavigationForFrame;
+    loadClient.didReceiveTitleForFrame = qt_wk_didReceiveTitleForFrame;
+    loadClient.didStartProgress = qt_wk_didStartProgress;
+    loadClient.didChangeProgress = qt_wk_didChangeProgress;
+    loadClient.didFinishProgress = qt_wk_didFinishProgress;
+    WKPageSetPageLoaderClient(qtWebPageProxy->pageRef(), &loadClient);
+}
+
+void setupPageUiClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProxy)
+{
+    WKPageUIClient uiClient;
+    memset(&uiClient, 0, sizeof(WKPageUIClient));
+    uiClient.version = kWKPageUIClientCurrentVersion;
+    uiClient.clientInfo = qtWebPageProxy->viewInterface();
+    uiClient.runJavaScriptAlert = qt_wk_runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm = qt_wk_runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = qt_wk_runJavaScriptPrompt;
+    uiClient.setStatusText = qt_wk_setStatusText;
+    uiClient.runOpenPanel = qt_wk_runOpenPanel;
+    uiClient.mouseDidMoveOverElement = qt_wk_mouseDidMoveOverElement;
+    WKPageSetPageUIClient(toAPI(webPageProxy), &uiClient);
+}
+
+void setupPagePolicyClient(QtPolicyInterface* policyInterface, WebPageProxy* webPageProxy)
+{
+    WKPagePolicyClient policyClient;
+    memset(&policyClient, 0, sizeof(WKPagePolicyClient));
+    policyClient.version = kWKPagePolicyClientCurrentVersion;
+    policyClient.clientInfo = policyInterface;
+    policyClient.decidePolicyForNavigationAction = qt_wk_decidePolicyForNavigationAction;
+    policyClient.decidePolicyForResponse = qt_wk_decidePolicyForResponse;
+    WKPageSetPagePolicyClient(toAPI(webPageProxy), &policyClient);
 }
