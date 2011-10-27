@@ -1,3 +1,12 @@
+2011-10-27  Adam Roben  <aroben@apple.com>
+
+        Regenerate WebCore's Localizable.strings file
+
+        All I did was run update-webkit-localizable-strings. A few localizer comments changed, and
+        some strings (which must have been hand-added) got moved to a different part of the file.
+
+        * English.lproj/Localizable.strings:
+
 2011-10-27  Daniel Cheng  <dcheng@chromium.org>
 
         Clean up MicroDataItemValue to use const String& instead of String
