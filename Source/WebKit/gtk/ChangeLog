@@ -1,3 +1,12 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] WebAudio AudioFileReader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=69834
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Link against libfftw.
+
 2011-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.7.1 release

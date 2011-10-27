@@ -277,6 +277,7 @@ SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
 GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
 ENCHANT_REQUIRED_VERSION=0.22
+LIBFFTW_REQUIRED_VERSION=3.2.2
 
 # Available modules
 #
@@ -1035,10 +1036,11 @@ if test "$os_win32" = "no"; then
 fi
 
 # check if gstreamer is available
-if test "$enable_video" = "yes"; then
+if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER],
                      [gstreamer-0.10 >= $GSTREAMER_REQUIRED_VERSION
                      gstreamer-app-0.10
+                     gstreamer-audio-0.10
                      gstreamer-base-0.10
                      gstreamer-interfaces-0.10
                      gstreamer-pbutils-0.10
@@ -1048,6 +1050,17 @@ if test "$enable_video" = "yes"; then
 
    AC_SUBST([GSTREAMER_CFLAGS])
    AC_SUBST([GSTREAMER_LIBS])
+fi
+
+# check if libfftw is available
+if test "$enable_web_audio" = "yes"; then
+   PKG_CHECK_MODULES([LIBFFTW],
+                     [fftw3 >= $LIBFFTW_REQUIRED_VERSION
+                     fftw3f >= $LIBFFTW_REQUIRED_VERSION],
+                     [have_fftw=yes])
+
+    AC_SUBST([LIBFFTW_CFLAGS])
+    AC_SUBST([LIBFFTW_LIBS])
 fi
 
 # check for code coverage support
@@ -1122,6 +1135,9 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
+
+# Web Audio feature conditional
+AM_CONDITIONAL([USE_WEBAUDIO_FFTW], [test "$have_fftw" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])

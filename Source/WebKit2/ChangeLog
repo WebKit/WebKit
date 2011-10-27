@@ -1,3 +1,12 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] WebAudio AudioFileReader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=69834
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Link against libfftw.
+
 2011-10-26  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r98153): Safari crashes if WebProcess crashed during printing

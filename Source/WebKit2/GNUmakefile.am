@@ -1376,6 +1376,7 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(XRENDER_LIBS) \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
+	$(LIBFFTW_LIBS) \
 	$(ZLIB_LIBS)
 
 Programs_WebKitPluginProcess_LDFLAGS = \

@@ -1,3 +1,13 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com> and Zan Dobersek  <zandobersek@gmail.com>
+
+        [GStreamer] WebAudio AudioFileReader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=69834
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Check for libfftw and gstreamer-audio if WebAudio
+        build is enabled.
+
 2011-10-26  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.7.1 release

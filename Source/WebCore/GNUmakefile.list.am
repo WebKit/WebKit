@@ -149,6 +149,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMURL.h \
 	DerivedSources/WebCore/JSDOMWindow.cpp \
 	DerivedSources/WebCore/JSDOMWindow.h \
+	DerivedSources/WebCore/JSDynamicsCompressorNode.h \
+	DerivedSources/WebCore/JSDynamicsCompressorNode.cpp \
 	DerivedSources/WebCore/JSElement.cpp \
 	DerivedSources/WebCore/JSElement.h \
 	DerivedSources/WebCore/JSEntity.cpp \
@@ -521,6 +523,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSValidityState.h \
 	DerivedSources/WebCore/JSVoidCallback.cpp \
 	DerivedSources/WebCore/JSVoidCallback.h \
+	DerivedSources/WebCore/JSWaveShaperNode.cpp \
+	DerivedSources/WebCore/JSWaveShaperNode.h \
 	DerivedSources/WebCore/JSWebGLActiveInfo.cpp \
 	DerivedSources/WebCore/JSWebGLActiveInfo.h \
 	DerivedSources/WebCore/JSWebGLBuffer.cpp \
@@ -4601,8 +4605,17 @@ endif # END ENABLE_SVG
 # ----
 # Web Audio Support
 # ----
+
 if ENABLE_WEB_AUDIO
 webcore_sources += \
+	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSConvolverNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSWaveShaperNodeCustom.cpp \
+	Source/WebCore/webaudio/AsyncAudioDecoder.cpp \
+	Source/WebCore/webaudio/AsyncAudioDecoder.h \
 	Source/WebCore/webaudio/AudioBasicProcessorNode.cpp \
 	Source/WebCore/webaudio/AudioBasicProcessorNode.h \
 	Source/WebCore/webaudio/AudioBuffer.cpp \
@@ -4632,42 +4645,129 @@ webcore_sources += \
 	Source/WebCore/webaudio/AudioPannerNode.h \
 	Source/WebCore/webaudio/AudioParam.cpp \
 	Source/WebCore/webaudio/AudioParam.h \
+	Source/WebCore/webaudio/AudioParamTimeline.cpp \
+	Source/WebCore/webaudio/AudioParamTimeline.h \
 	Source/WebCore/webaudio/AudioProcessingEvent.cpp \
 	Source/WebCore/webaudio/AudioProcessingEvent.h \
 	Source/WebCore/webaudio/AudioSourceNode.h \
 	Source/WebCore/webaudio/BiquadDSPKernel.cpp \
 	Source/WebCore/webaudio/BiquadDSPKernel.h \
+	Source/WebCore/webaudio/BiquadFilterNode.cpp \
+	Source/WebCore/webaudio/BiquadFilterNode.h \
 	Source/WebCore/webaudio/BiquadProcessor.cpp \
 	Source/WebCore/webaudio/BiquadProcessor.h \
 	Source/WebCore/webaudio/ConvolverNode.cpp \
 	Source/WebCore/webaudio/ConvolverNode.h \
+	Source/WebCore/webaudio/DefaultAudioDestinationNode.h \
+	Source/WebCore/webaudio/DefaultAudioDestinationNode.cpp \
 	Source/WebCore/webaudio/DelayDSPKernel.cpp \
 	Source/WebCore/webaudio/DelayDSPKernel.h \
 	Source/WebCore/webaudio/DelayNode.cpp \
 	Source/WebCore/webaudio/DelayNode.h \
 	Source/WebCore/webaudio/DelayProcessor.cpp \
 	Source/WebCore/webaudio/DelayProcessor.h \
+	Source/WebCore/webaudio/DynamicsCompressorNode.cpp \
+	Source/WebCore/webaudio/DynamicsCompressorNode.h \
 	Source/WebCore/webaudio/HighPass2FilterNode.cpp \
 	Source/WebCore/webaudio/HighPass2FilterNode.h \
 	Source/WebCore/webaudio/JavaScriptAudioNode.cpp \
 	Source/WebCore/webaudio/JavaScriptAudioNode.h \
 	Source/WebCore/webaudio/LowPass2FilterNode.cpp \
 	Source/WebCore/webaudio/LowPass2FilterNode.h \
+	Source/WebCore/webaudio/MediaElementAudioSourceNode.cpp \
+	Source/WebCore/webaudio/MediaElementAudioSourceNode.h \
+	Source/WebCore/webaudio/OfflineAudioDestinationNode.h \
+	Source/WebCore/webaudio/OfflineAudioDestinationNode.cpp \
+	Source/WebCore/webaudio/OfflineAudioCompletionEvent.h \
+	Source/WebCore/webaudio/OfflineAudioCompletionEvent.cpp \
 	Source/WebCore/webaudio/RealtimeAnalyser.cpp \
 	Source/WebCore/webaudio/RealtimeAnalyser.h \
 	Source/WebCore/webaudio/RealtimeAnalyserNode.cpp \
-	Source/WebCore/webaudio/RealtimeAnalyserNode.h
+	Source/WebCore/webaudio/RealtimeAnalyserNode.h \
+	Source/WebCore/webaudio/WaveShaperNode.cpp \
+	Source/WebCore/webaudio/WaveShaperProcessor.h \
+	Source/WebCore/webaudio/WaveShaperDSPKernel.cpp \
+	Source/WebCore/webaudio/WaveShaperDSPKernel.h \
+	Source/WebCore/webaudio/WaveShaperProcessor.cpp \
+	Source/WebCore/webaudio/WaveShaperNode.h \
+	Source/WebCore/platform/audio/AudioArray.h \
+	Source/WebCore/platform/audio/AudioBus.cpp \
+	Source/WebCore/platform/audio/AudioBus.h \
+	Source/WebCore/platform/audio/AudioChannel.cpp \
+	Source/WebCore/platform/audio/AudioChannel.h \
+	Source/WebCore/platform/audio/AudioDestination.h \
+	Source/WebCore/platform/audio/AudioDSPKernel.h \
+	Source/WebCore/platform/audio/AudioDSPKernelProcessor.cpp \
+	Source/WebCore/platform/audio/AudioDSPKernelProcessor.h \
+	Source/WebCore/platform/audio/AudioFileReader.h \
+	Source/WebCore/platform/audio/AudioProcessor.h \
+	Source/WebCore/platform/audio/AudioResampler.cpp \
+	Source/WebCore/platform/audio/AudioResampler.h \
+	Source/WebCore/platform/audio/AudioResamplerKernel.cpp \
+	Source/WebCore/platform/audio/AudioResamplerKernel.h \
+	Source/WebCore/platform/audio/AudioSourceProvider.h \
+	Source/WebCore/platform/audio/AudioUtilities.cpp \
+	Source/WebCore/platform/audio/AudioUtilities.h \
+	Source/WebCore/platform/audio/Biquad.cpp \
+	Source/WebCore/platform/audio/Biquad.h \
+	Source/WebCore/platform/audio/Cone.cpp \
+	Source/WebCore/platform/audio/Cone.h \
+	Source/WebCore/platform/audio/Distance.cpp \
+	Source/WebCore/platform/audio/Distance.h \
+	Source/WebCore/platform/audio/DynamicsCompressor.h \
+	Source/WebCore/platform/audio/DynamicsCompressorKernel.cpp \
+	Source/WebCore/platform/audio/DynamicsCompressorKernel.h \
+	Source/WebCore/platform/audio/DynamicsCompressor.cpp \
+	Source/WebCore/platform/audio/EqualPowerPanner.cpp \
+	Source/WebCore/platform/audio/EqualPowerPanner.h \
+	Source/WebCore/platform/audio/FFTConvolver.cpp \
+	Source/WebCore/platform/audio/FFTConvolver.h \
+	Source/WebCore/platform/audio/FFTFrame.cpp \
+	Source/WebCore/platform/audio/FFTFrame.h \
+	Source/WebCore/platform/audio/FFTFrameStub.cpp \
+	Source/WebCore/platform/audio/HRTFDatabase.cpp \
+	Source/WebCore/platform/audio/HRTFDatabase.h \
+	Source/WebCore/platform/audio/HRTFDatabaseLoader.cpp \
+	Source/WebCore/platform/audio/HRTFDatabaseLoader.h \
+	Source/WebCore/platform/audio/HRTFElevation.cpp \
+	Source/WebCore/platform/audio/HRTFElevation.h \
+	Source/WebCore/platform/audio/HRTFKernel.cpp \
+	Source/WebCore/platform/audio/HRTFKernel.h \
+	Source/WebCore/platform/audio/HRTFPanner.cpp \
+	Source/WebCore/platform/audio/HRTFPanner.h \
+	Source/WebCore/platform/audio/Panner.cpp \
+	Source/WebCore/platform/audio/Panner.h \
+	Source/WebCore/platform/audio/ReverbAccumulationBuffer.cpp \
+	Source/WebCore/platform/audio/ReverbAccumulationBuffer.h \
+	Source/WebCore/platform/audio/ReverbConvolver.cpp \
+	Source/WebCore/platform/audio/ReverbConvolver.h \
+	Source/WebCore/platform/audio/ReverbConvolverStage.cpp \
+	Source/WebCore/platform/audio/ReverbConvolverStage.h \
+	Source/WebCore/platform/audio/Reverb.cpp \
+	Source/WebCore/platform/audio/Reverb.h \
+	Source/WebCore/platform/audio/ReverbInputBuffer.cpp \
+	Source/WebCore/platform/audio/ReverbInputBuffer.h \
+	Source/WebCore/platform/audio/SincResampler.cpp \
+	Source/WebCore/platform/audio/SincResampler.h \
+	Source/WebCore/platform/audio/VectorMath.cpp \
+	Source/WebCore/platform/audio/VectorMath.h \
+	Source/WebCore/platform/audio/ZeroPole.cpp \
+	Source/WebCore/platform/audio/ZeroPole.h \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
+	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
+	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp
 webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioBuffer.cpp \
 	DerivedSources/WebCore/JSAudioBuffer.h \
+	DerivedSources/WebCore/JSAudioBufferCallback.cpp \
+	DerivedSources/WebCore/JSAudioBufferCallback.h \
 	DerivedSources/WebCore/JSAudioBufferSourceNode.cpp \
 	DerivedSources/WebCore/JSAudioBufferSourceNode.h \
 	DerivedSources/WebCore/JSAudioChannelMerger.cpp \
 	DerivedSources/WebCore/JSAudioChannelMerger.h \
 	DerivedSources/WebCore/JSAudioChannelSplitter.cpp \
 	DerivedSources/WebCore/JSAudioChannelSplitter.h \
-	DerivedSources/WebCore/JSAudioContext.cpp \
-	DerivedSources/WebCore/JSAudioContext.h \
 	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
 	DerivedSources/WebCore/JSAudioDestinationNode.h \
 	DerivedSources/WebCore/JSAudioGain.cpp \
@@ -4678,14 +4778,14 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioListener.h \
 	DerivedSources/WebCore/JSAudioNode.cpp \
 	DerivedSources/WebCore/JSAudioNode.h \
-	DerivedSources/WebCore/JSAudioPannerNode.cpp \
-	DerivedSources/WebCore/JSAudioPannerNode.h \
 	DerivedSources/WebCore/JSAudioParam.cpp \
 	DerivedSources/WebCore/JSAudioParam.h \
 	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
 	DerivedSources/WebCore/JSAudioProcessingEvent.h \
 	DerivedSources/WebCore/JSAudioSourceNode.cpp \
 	DerivedSources/WebCore/JSAudioSourceNode.h \
+	DerivedSources/WebCore/JSBiquadFilterNode.cpp \
+	DerivedSources/WebCore/JSBiquadFilterNode.h \
 	DerivedSources/WebCore/JSConvolverNode.cpp \
 	DerivedSources/WebCore/JSConvolverNode.h \
 	DerivedSources/WebCore/JSDelayNode.cpp \
@@ -4694,11 +4794,16 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHighPass2FilterNode.h \
 	DerivedSources/WebCore/JSJavaScriptAudioNode.cpp \
 	DerivedSources/WebCore/JSJavaScriptAudioNode.h \
+	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp \
+	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
 	DerivedSources/WebCore/JSLowPass2FilterNode.cpp \
 	DerivedSources/WebCore/JSLowPass2FilterNode.h \
+	DerivedSources/WebCore/JSMediaElementAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSMediaElementAudioSourceNode.h \
 	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
 	DerivedSources/WebCore/JSRealtimeAnalyserNode.h
 endif
+
 
 # ----
 # Web Sockets Support

@@ -1,3 +1,49 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com> and Zan Dobersek  <zandobersek@gmail.com>
+
+        [GStreamer] WebAudio AudioFileReader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=69834
+
+        Reviewed by Martin Robinson.
+
+        Basic FileReader implementation, supporting one or 2 audio
+        channels. An empty AudioDestination is also provided, its complete
+        implementation is handled in bug 69835.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp: Added.
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::~AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::start):
+        (WebCore::AudioDestinationGStreamer::stop):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h: Added.
+        (WebCore::AudioDestinationGStreamer::isPlaying):
+        (WebCore::AudioDestinationGStreamer::sampleRate):
+        (WebCore::AudioDestinationGStreamer::sourceProvider):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp: Added.
+        (WebCore::getGStreamerAudioCaps):
+        (WebCore::getFloatFromByteReader):
+        (WebCore::copyGstreamerBuffersToAudioChannel):
+        (WebCore::onAppsinkNewBufferCallback):
+        (WebCore::messageCallback):
+        (WebCore::onGStreamerDeinterleavePadAddedCallback):
+        (WebCore::onGStreamerDeinterleaveReadyCallback):
+        (WebCore::onGStreamerDecodebinPadAddedCallback):
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::~AudioFileReader):
+        (WebCore::AudioFileReader::handleBuffer):
+        (WebCore::AudioFileReader::handleMessage):
+        (WebCore::AudioFileReader::handleNewDeinterleavePad):
+        (WebCore::AudioFileReader::deinterleavePadsConfigured):
+        (WebCore::AudioFileReader::plugDeinterleave):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/gtk/AudioBusGtk.cpp: Added.
+        (WebCore::AudioBus::loadPlatformResource):
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rebaseline of the bindings tests after r98501 which
