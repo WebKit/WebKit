@@ -59,6 +59,8 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(bool insideV
     case COMMIT_STATE_READY_TO_COMMIT:
         return ACTION_COMMIT;
     }
+    ASSERT_NOT_REACHED();
+    return ACTION_NONE;
 }
 
 void CCSchedulerStateMachine::updateState(Action action)
