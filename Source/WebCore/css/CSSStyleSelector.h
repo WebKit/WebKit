@@ -191,6 +191,8 @@ public:
     void addPageStyle(PassRefPtr<CSSPageRule>);
     void addRegionStyleRule(PassRefPtr<CSSRegionStyleRule>);
 
+    bool checkRegionStyle(Element*);
+
     bool usesSiblingRules() const { return m_features.siblingRules; }
     bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
     bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }

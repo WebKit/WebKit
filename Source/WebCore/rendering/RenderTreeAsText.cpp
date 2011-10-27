@@ -687,6 +687,8 @@ static void writeRenderFlowThreads(TextStream& ts, RenderView* renderView, const
                         Element* element = static_cast<Element*>(renderRegion->node());
                         ts << " #" << element->idForStyleResolution();
                     }
+                    if (renderRegion->hasCustomRegionStyle())
+                        ts << " region style: 1";
                 }
                 if (!renderRegion->isValid())
                     ts << " invalid";

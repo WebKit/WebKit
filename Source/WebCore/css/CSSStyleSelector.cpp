@@ -1644,6 +1644,22 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
 #endif
 }
 
+bool CSSStyleSelector::checkRegionStyle(Element* e)
+{
+    m_checker.clearHasUnknownPseudoElements();
+    m_checker.setPseudoStyle(NOPSEUDO);
+
+    for (Vector<RefPtr<CSSRegionStyleRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
+        const CSSSelectorList& regionSelectorList = (*it)->selectorList();
+        for (CSSSelector* s = regionSelectorList.first(); s; s = regionSelectorList.next(s)) {
+            if (m_checker.checkSelector(s, e))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void CSSStyleSelector::updateFont()
 {
     if (!m_fontDirty)

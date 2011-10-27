@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x166
+  RenderBlock {HTML} at (0,0) size 800x166
+    RenderBody {BODY} at (8,8) size 784x150
+      RenderRegion {DIV} at (0,0) size 200x50
+      RenderBlock {DIV} at (0,50) size 200x50
+      RenderRegion {DIV} at (0,100) size 200x50
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 200x100
+      RenderFlowThread at (0,0) size 200x100
+        RenderBlock {DIV} at (0,16) size 200x188
+          RenderBlock {P} at (0,0) size 200x18
+            RenderText {#text} at (0,0) size 168x18
+              text run at (0,0) width 168: "First para goes into region."
+          RenderBlock (anonymous) at (0,34) size 200x18
+            RenderText {#text} at (0,0) size 134x18
+              text run at (0,0) width 134: "Text goes into region"
+          RenderBlock {P} at (0,68) size 200x18
+            RenderText {#text} at (0,0) size 187x18
+              text run at (0,0) width 187: "Second para goes into region."
+          RenderBlock {P} at (0,102) size 200x18
+            RenderText {#text} at (0,0) size 175x18
+              text run at (0,0) width 175: "Third para goes into region."
+          RenderBlock (anonymous) at (0,136) size 200x18
+            RenderText {#text} at (0,0) size 134x18
+              text run at (0,0) width 134: "Text goes into region"
+          RenderBlock {P} at (0,170) size 200x18
+            RenderText {#text} at (0,0) size 182x18
+              text run at (0,0) width 182: "Fourth para goes into region."
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1 region style: 1
+    RenderRegion {DIV} #region3 region style: 1

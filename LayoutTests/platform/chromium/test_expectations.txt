@@ -3329,6 +3329,7 @@ BUGWK62048 SKIP : css3/flexbox = PASS
 
 // CSS Regions support not yet enabled.
 BUGWK57312 SKIP : fast/regions = PASS
+BUGWK70733 SKIP : fast/regions/render-region-custom-style-mark.html = FAIL
 
 // CSS Exclusions support not yet enabled.
 BUGWK57311 SKIP : fast/exclusions = PASS

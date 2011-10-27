@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <!--
+    Tests that regions with region styling rules associated are identified and flagged correctly.
+    -->
+    <head>
+        <style>
+            @-webkit-region #region1 { p { margin-top: 10px; } }
+            @-webkit-region #region2 { p { margin-left: 5px; } }
+
+            #article { -webkit-flow-into: flow1; }
+            #region1, #region2, #region3 { width: 200px; height: 50px; }
+            .region {  -webkit-flow-from: flow1; }
+
+            @-webkit-region #region3 { p { color: red; } }
+        </style>
+    </head>
+    <body>
+        <div id="article">
+            <p>First para goes into region.</p>
+            Text goes into region
+            <p>Second para goes into region.</p>
+            <p>Third para goes into region.</p>
+            Text goes into region
+            <p>Fourth para goes into region.</p>
+        </div>
+        <div id="region1" class="region"></div>
+        <div id="region2" class="region"></div>
+        <div id="region3"></div>
+        <script>
+            // When the element is no longer a region, the region styling should not apply anymore.
+            document.getElementById("region2").className = "";
+            // When the element becomes a region, the region styling should be applied.
+            document.getElementById("region3").className = "region";
+        </script>
+    </body>
+</html>
+

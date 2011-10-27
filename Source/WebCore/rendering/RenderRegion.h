@@ -48,6 +48,8 @@ public:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
     void setRegionRect(const LayoutRect& rect) { m_regionRect = rect; }
     LayoutRect regionRect() const { return m_regionRect; }
     LayoutRect regionOverflowRect() const;
@@ -60,6 +62,9 @@ public:
     // Valid regions do not create circular dependencies with other flows.
     bool isValid() const { return m_isValid; }
     void setIsValid(bool valid) { m_isValid = valid; }
+
+    bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
+    void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
 
     virtual void layout();
 
@@ -94,6 +99,7 @@ private:
     HashMap<const RenderBox*, RenderBoxRegionInfo*> m_renderBoxRegionInfo;
 
     bool m_isValid;
+    bool m_hasCustomRegionStyle;
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

@@ -1,3 +1,16 @@
+2011-10-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Flag regions with custom styling
+        https://bugs.webkit.org/show_bug.cgi?id=70733
+
+        Reviewed by David Hyatt.
+
+        Region elements that have custom region styling are now marked accordingly.
+
+        * fast/regions/render-region-custom-style-mark.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-snowleopard/fast/regions/render-region-custom-style-mark-expected.txt: Added.
+
 2011-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98556.

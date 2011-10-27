@@ -30,6 +30,7 @@
 #include "config.h"
 #include "RenderRegion.h"
 
+#include "CSSStyleSelector.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
@@ -45,6 +46,7 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_flowThread(flowThread)
     , m_parentFlowThread(0)
     , m_isValid(false)
+    , m_hasCustomRegionStyle(false)
 {
 }
 
@@ -125,6 +127,17 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     }
 
     return false;
+}
+
+void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderReplaced::styleDidChange(diff, oldStyle);
+    bool customRegionStyle = false;
+    if (node()) {
+        Element* regionElement = static_cast<Element*>(node());
+        customRegionStyle = view()->document()->styleSelector()->checkRegionStyle(regionElement);
+    }
+    setHasCustomRegionStyle(customRegionStyle);
 }
 
 void RenderRegion::layout()
