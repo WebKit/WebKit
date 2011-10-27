@@ -100,21 +100,25 @@ int WebViewAbstraction::loadProgress() const
 void WebViewAbstraction::goBack()
 {
     touchWebView()->page()->navigationController()->goBack();
+    desktopWebView()->navigationController()->goBack();
 }
 
 void WebViewAbstraction::goForward()
 {
     touchWebView()->page()->navigationController()->goForward();
+    desktopWebView()->navigationController()->goForward();
 }
 
 void WebViewAbstraction::stop()
 {
     touchWebView()->page()->navigationController()->stop();
+    desktopWebView()->navigationController()->stop();
 }
 
 void WebViewAbstraction::reload()
 {
     touchWebView()->page()->navigationController()->reload();
+    desktopWebView()->navigationController()->reload();
 }
 
 void WebViewAbstraction::touchViewLoadStarted()

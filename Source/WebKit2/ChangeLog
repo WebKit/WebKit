@@ -1,3 +1,21 @@
+2011-10-27  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Remove QAction from MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=70525
+
+        This fixes the commonview tests that were failing
+        after r98447.
+        WebViewAbstraction must forward actions to both
+        the TouchWebView and the DesktopWebView.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::goBack):
+        (WebViewAbstraction::goForward):
+        (WebViewAbstraction::stop):
+        (WebViewAbstraction::reload):
+
 2011-10-27  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2]Content size changed event does not require viewport attribute calculation.
