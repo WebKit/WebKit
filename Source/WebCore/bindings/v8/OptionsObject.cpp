@@ -65,107 +65,6 @@ bool OptionsObject::isUndefinedOrNull() const
     return WebCore::isUndefinedOrNull(m_options);
 }
 
-bool OptionsObject::getKeyBool(const String& key, bool& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return false;
-
-    v8::Local<v8::Boolean> v8Bool = v8Value->ToBoolean();
-    if (v8Bool.IsEmpty())
-        return false;
-    value = v8Bool->Value();
-    return true;
-}
-
-bool OptionsObject::getKeyInt32(const String& key, int32_t& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return false;
-
-    v8::Local<v8::Int32> v8Int32 = v8Value->ToInt32();
-    if (v8Int32.IsEmpty())
-        return false;
-    value = v8Int32->Value();
-    return true;
-}
-
-bool OptionsObject::getKeyDouble(const String& key, double& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return false;
-
-    v8::Local<v8::Number> v8Number = v8Value->ToNumber();
-    if (v8Number.IsEmpty())
-        return false;
-    value = v8Number->Value();
-    return true;
-}
-
-bool OptionsObject::getKeyString(const String& key, String& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return false;
-
-    // FIXME: It is possible for this to throw in which case we'd be getting back
-    //        an empty string and returning true when we should be returning false.
-    //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
-    //        example.
-    value = v8ValueToWebCoreString(v8Value);
-    return true;
-}
-
-bool OptionsObject::getKeyStringWithUndefinedOrNullCheck(const String& key, String& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value) || v8Value->IsNull() || v8Value->IsUndefined())
-        return false;
-
-    // FIXME: It is possible for this to throw in which case we'd be getting back
-    //        an empty string and returning true when we should be returning false.
-    //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
-    //        example.
-    value = WebCore::isUndefinedOrNull(v8Value) ? String() : v8ValueToWebCoreString(v8Value);
-    return true;
-}
-
-PassRefPtr<DOMStringList> OptionsObject::getKeyDOMStringList(const String& key) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return 0;
-
-    if (!v8Value->IsArray())
-        return 0;
-
-    RefPtr<DOMStringList> ret = DOMStringList::create();
-    v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
-    for (size_t i = 0; i < v8Array->Length(); ++i) {
-        v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Integer::New(i));
-        ret->append(v8ValueToWebCoreString(indexedValue));
-    }
-    return ret.release();
-}
-
-#if ENABLE(INDEXED_DATABASE)
-
-PassRefPtr<IDBKeyRange> OptionsObject::getKeyKeyRange(const String& key) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return 0;
-
-    if (!V8IDBKeyRange::HasInstance(v8Value))
-        return 0;
-
-    return V8IDBKeyRange::toNative(v8::Handle<v8::Object>::Cast(v8Value));
-}
-
-#endif
-
 bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
 {
     if (isUndefinedOrNull())
@@ -182,7 +81,70 @@ bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
     return true;
 }
 
-bool OptionsObject::getKeyValue(const String& key, unsigned short& value) const
+bool OptionsObject::get(const String& key, bool& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Boolean> v8Bool = v8Value->ToBoolean();
+    if (v8Bool.IsEmpty())
+        return false;
+    value = v8Bool->Value();
+    return true;
+}
+
+bool OptionsObject::get(const String& key, int32_t& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Int32> v8Int32 = v8Value->ToInt32();
+    if (v8Int32.IsEmpty())
+        return false;
+    value = v8Int32->Value();
+    return true;
+}
+
+bool OptionsObject::get(const String& key, double& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Number> v8Number = v8Value->ToNumber();
+    if (v8Number.IsEmpty())
+        return false;
+    value = v8Number->Value();
+    return true;
+}
+
+bool OptionsObject::get(const String& key, String& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    // FIXME: It is possible for this to throw in which case we'd be getting back
+    //        an empty string and returning true when we should be returning false.
+    //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
+    //        example.
+    value = v8ValueToWebCoreString(v8Value);
+    return true;
+}
+
+bool OptionsObject::get(const String& key, ScriptValue& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    value = ScriptValue(v8Value);
+    return true;
+}
+
+bool OptionsObject::get(const String& key, unsigned short& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -195,7 +157,7 @@ bool OptionsObject::getKeyValue(const String& key, unsigned short& value) const
     return true;
 }
 
-bool OptionsObject::getKeyValue(const String& key, unsigned& value) const
+bool OptionsObject::get(const String& key, unsigned& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -208,7 +170,7 @@ bool OptionsObject::getKeyValue(const String& key, unsigned& value) const
     return true;
 }
 
-bool OptionsObject::getKeyValue(const String& key, unsigned long long& value) const
+bool OptionsObject::get(const String& key, unsigned long long& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -225,7 +187,7 @@ bool OptionsObject::getKeyValue(const String& key, unsigned long long& value) co
     return true;
 }
 
-bool OptionsObject::getKeyValue(const String& key, RefPtr<DOMWindow>& value) const
+bool OptionsObject::get(const String& key, RefPtr<DOMWindow>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -242,13 +204,27 @@ bool OptionsObject::getKeyValue(const String& key, RefPtr<DOMWindow>& value) con
     return true;
 }
 
-bool OptionsObject::getKeyValue(const String& key, MessagePortArray& value) const
+bool OptionsObject::get(const String& key, MessagePortArray& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
         return false;
 
     return getMessagePortArray(v8Value, value);
+}
+
+bool OptionsObject::getWithUndefinedOrNullCheck(const String& key, String& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value) || v8Value->IsNull() || v8Value->IsUndefined())
+        return false;
+
+    // FIXME: It is possible for this to throw in which case we'd be getting back
+    //        an empty string and returning true when we should be returning false.
+    //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
+    //        example.
+    value = WebCore::isUndefinedOrNull(v8Value) ? String() : v8ValueToWebCoreString(v8Value);
+    return true;
 }
 
 } // namespace WebCore

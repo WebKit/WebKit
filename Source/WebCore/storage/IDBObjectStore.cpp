@@ -156,7 +156,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
     }
 
     bool unique = false;
-    options.getKeyBool("unique", unique);
+    options.get("unique", unique);
 
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, m_transaction->backend(), ec);
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.

@@ -82,14 +82,14 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     }
 
     String keyPath;
-    bool keyPathExists = options.getKeyStringWithUndefinedOrNullCheck("keyPath", keyPath);
+    bool keyPathExists = options.getWithUndefinedOrNullCheck("keyPath", keyPath);
     if (keyPathExists && !IDBIsValidKeyPath(keyPath)) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }
 
     bool autoIncrement = false;
-    options.getKeyBool("autoIncrement", autoIncrement);
+    options.get("autoIncrement", autoIncrement);
     // FIXME: Look up evictable and pass that on as well.
 
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction->backend(), ec);

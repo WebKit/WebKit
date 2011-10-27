@@ -117,7 +117,7 @@ static v8::Handle<v8::Value> constructV8Event(const v8::Arguments& args, bool (*
         return false;
 
 #define FILL_PROPERTY(propertyName) \
-    options.getKeyValue(#propertyName, eventInit.propertyName); // This can fail but it is OK.
+    options.get(#propertyName, eventInit.propertyName); // This can fail but it is OK.
 
 INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
 INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_CUSTOM_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)

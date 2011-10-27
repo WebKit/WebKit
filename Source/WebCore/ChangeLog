@@ -1,3 +1,40 @@
+2011-10-27  Kentaro Hara  <haraken@chromium.org>
+
+        Refactor OptionsObject.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=70572
+
+        Reviewed by Adam Barth.
+
+        For example, OptionsObject::getKeyBool() is an alias of
+        OptionsObject::getKeyValue(const String& key, bool& value).
+        We should remove OptionsObject::getKeyXXXX() (XXXX is some specific type)
+        and unify them into OptionsObject::get(const String& key, XXXX& value).
+        c.f. Corresponding JSC methods are unified into
+        JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue, XXXX&).
+
+        The result of git diff is weird, but this patch is making just the following changes:
+        - Replaced getKeyBool(), getKeyInt32(), getKeyDouble() and getKeyString() with get().
+        - Renamed getKeyStringWithUndefinedOrNullCheck() to getWithUndefinedOrNullCheck().
+        - Removed getKeyDOMStringList() and getKeyKeyRange(), since these are not used.
+        - Move definitions of get() from .h to .cpp.
+
+        No new tests. No change in behavior.
+
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::get): Renamed from getKeyValue().
+        (WebCore::OptionsObject::getKey): No change to this method. git diff seems to misunderstand as if it is modified.
+        (WebCore::OptionsObject::getKeyDOMStringList): Removed, since no one is using it.
+        (WebCore::OptionsObject::getKeyKeyRange): Ditto.
+        (WebCore::OptionsObject::getWithUndefinedOrNullCheck): No change to this method. git diff seems to misunderstand as if it is modified.
+        * bindings/v8/OptionsObject.h: Moved definitions of get() to OptionsObject.cpp
+        * bindings/v8/custom/V8EventConstructors.cpp:
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::observeCallback): Replaced getKeyXXXX() to get();
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore): Ditto.
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex): Ditto.
+
 2011-10-27  Andreas Kling  <kling@webkit.org>
 
         StyleSheet.parentStyleSheet does not work.

@@ -90,17 +90,17 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
     OptionsObject optionsObject(args[1]);
     unsigned options = 0;
     bool option;
-    if (optionsObject.getKeyValue("childList", option) && option)
+    if (optionsObject.get("childList", option) && option)
         options |= WebKitMutationObserver::ChildList;
-    if (optionsObject.getKeyValue("attributes", option) && option)
+    if (optionsObject.get("attributes", option) && option)
         options |= WebKitMutationObserver::Attributes;
-    if (optionsObject.getKeyValue("characterData", option) && option)
+    if (optionsObject.get("characterData", option) && option)
         options |= WebKitMutationObserver::CharacterData;
-    if (optionsObject.getKeyValue("subtree", option) && option)
+    if (optionsObject.get("subtree", option) && option)
         options |= WebKitMutationObserver::Subtree;
-    if (optionsObject.getKeyValue("attributeOldValue", option) && option)
+    if (optionsObject.get("attributeOldValue", option) && option)
         options |= WebKitMutationObserver::AttributeOldValue;
-    if (optionsObject.getKeyValue("characterDataOldValue", option) && option)
+    if (optionsObject.get("characterDataOldValue", option) && option)
         options |= WebKitMutationObserver::CharacterDataOldValue;
 
     imp->observe(target, options);
