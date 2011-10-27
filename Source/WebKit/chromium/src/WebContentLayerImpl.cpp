@@ -54,11 +54,13 @@ WebContentLayerImpl::WebContentLayerImpl(WebLayerClient* client, WebContentLayer
 
 WebContentLayerImpl::~WebContentLayerImpl()
 {
+    setDelegate(0);
 }
 
 void WebContentLayerImpl::setDrawsContent(bool drawsContent)
 {
     m_drawsContent = drawsContent;
+    setNeedsCommit();
 }
 
 bool WebContentLayerImpl::drawsContent() const

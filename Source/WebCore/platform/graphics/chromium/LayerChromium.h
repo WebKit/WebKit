@@ -96,13 +96,13 @@ public:
     const IntSize& bounds() const { return m_bounds; }
     virtual IntSize contentBounds() const { return bounds(); }
 
-    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
+    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; setNeedsCommit(); }
     bool masksToBounds() const { return m_masksToBounds; }
 
     void setName(const String&);
     const String& name() const { return m_name; }
 
-    void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
+    void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; setNeedsCommit(); }
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
     void setNeedsDisplay(const FloatRect& dirtyRect);

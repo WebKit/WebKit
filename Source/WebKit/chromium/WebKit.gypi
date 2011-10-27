@@ -82,6 +82,7 @@
             'tests/TreeTestHelpers.h',
             'tests/WebCompositorImplTest.cpp',
             'tests/WebFrameTest.cpp',
+            'tests/WebLayerTest.cpp',
             'tests/WebURLRequestTest.cpp',
             'tests/WebViewTest.cpp',
         ],
