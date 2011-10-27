@@ -156,6 +156,7 @@ WebInspector.AdvancedSearchController.prototype = {
 WebInspector.SearchView = function(controller)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("textViewer.css");
     
     this._controller = controller;
 

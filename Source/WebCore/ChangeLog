@@ -1,3 +1,23 @@
+2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Advanced search style fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=71036
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView):
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/inspector.css:
+        (.search-view .search-panel):
+        (.search-view .search-panel input[type="search"].search-config-search):
+        (.search-view .search-panel input[type="checkbox"].search-config-checkbox):
+        (body:not(.platform-mac) .search-view .search-panel input[type="checkbox"].search-config-checkbox):
+        (body.platform-mac .search-view .search-panel input[type="checkbox"].search-config-checkbox):
+        (#drawer-status-bar .search-status-bar-progress):
+        (body:not(.platform-mac) #drawer-status-bar .search-status-bar-progress):
+        (body.platform-mac #drawer-status-bar .search-status-bar-progress):
+
 2011-10-27  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71061

@@ -2325,10 +2325,10 @@ a.worker-item:hover {
 .search-view .search-panel {
     position: absolute;
     top: 0;
-    height: 35px;
+    height: 28px;
     left: 0;
     right: 0;
-    padding-top: 4px;
+    padding-top: 2px;
     padding-left: 10px;
     background-color: #EBEBEB;
     border-bottom: 1px solid #BBB;
@@ -2338,6 +2338,7 @@ a.worker-item:hover {
 
 .search-view .search-panel input[type="search"].search-config-search {
     margin-right: 8px;
+    font-size: 11px;
     color: #303030;
 }
 
@@ -2348,7 +2349,14 @@ a.worker-item:hover {
 
 .search-view .search-panel input[type="checkbox"].search-config-checkbox {
     vertical-align: bottom;
-    margin-bottom: 6px;
+}
+
+body:not(.platform-mac) .search-view .search-panel input[type="checkbox"].search-config-checkbox {
+    margin-bottom: 5px;
+}
+
+body.platform-mac .search-view .search-panel input[type="checkbox"].search-config-checkbox {
+    margin-bottom: 4px;
 }
 
 #drawer-status-bar .search-status-bar-item {
@@ -2365,10 +2373,17 @@ a.worker-item:hover {
 }
 
 #drawer-status-bar .search-status-bar-progress {
-    height: 10px;
+    height: 11px;
     width: 100px;
-    margin-top: 8px;
     float: left;
+}
+
+body:not(.platform-mac) #drawer-status-bar .search-status-bar-progress {
+    margin-top: 8px;
+}
+
+body.platform-mac #drawer-status-bar .search-status-bar-progress {
+    margin-top: 7px;
 }
 
 #drawer-status-bar .search-status-bar-stop-button-item {
