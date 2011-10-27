@@ -26,11 +26,15 @@
 
 #include "cc/CCLayerTreeHostImpl.h"
 
+#include "GraphicsContext3DPrivate.h"
+#include "LayerRendererChromium.h"
+#include "MockWebGraphicsContext3D.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace {
 
@@ -150,5 +154,140 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     ASSERT(m_didRequestRedraw);
     ASSERT(m_didRequestCommit);
 }
+
+class BlendStateTrackerContext: public MockWebGraphicsContext3D {
+public:
+    BlendStateTrackerContext() : m_blend(false) { }
+
+    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
+
+    virtual void enable(WGC3Denum cap)
+    {
+        if (cap == GraphicsContext3D::BLEND)
+            m_blend = true;
+    }
+
+    virtual void disable(WGC3Denum cap)
+    {
+        if (cap == GraphicsContext3D::BLEND)
+            m_blend = false;
+    }
+
+    bool blend() const { return m_blend; }
+
+private:
+    bool m_blend;
+};
+
+class BlendStateCheckLayer : public CCLayerImpl {
+public:
+    static PassRefPtr<BlendStateCheckLayer> create(int id) { return adoptRef(new BlendStateCheckLayer(id)); }
+
+    virtual void draw(LayerRendererChromium* renderer)
+    {
+        m_drawn = true;
+        BlendStateTrackerContext* context = static_cast<BlendStateTrackerContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(renderer->context()));
+        EXPECT_EQ(m_blend, context->blend());
+        EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
+    }
+
+    void setExpectation(bool blend, bool hasRenderSurface)
+    {
+        m_blend = blend;
+        m_hasRenderSurface = hasRenderSurface;
+        m_drawn = false;
+    }
+
+    bool drawn() const { return m_drawn; }
+
+private:
+    explicit BlendStateCheckLayer(int id)
+        : CCLayerImpl(id)
+        , m_blend(false)
+        , m_hasRenderSurface(false)
+        , m_drawn(false)
+    {
+        setAnchorPoint(FloatPoint(0, 0));
+        setBounds(IntSize(10, 10));
+        setDrawsContent(true);
+    }
+
+    bool m_blend;
+    bool m_hasRenderSurface;
+    bool m_drawn;
+};
+
+TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new BlendStateTrackerContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->setViewport(IntSize(10, 10));
+
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setBounds(IntSize(10, 10));
+    root->setDrawsContent(false);
+    m_hostImpl->setRootLayer(root);
+
+    RefPtr<BlendStateCheckLayer> layer1 = BlendStateCheckLayer::create(1);
+    root->addChild(layer1);
+
+    // Opaque layer, drawn without blending.
+    layer1->setOpaque(true);
+    layer1->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+
+    // Layer with translucent content, drawn with blending.
+    layer1->setOpaque(false);
+    layer1->setExpectation(true, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+
+    // Layer with translucent opacity, drawn with blending.
+    layer1->setOpaque(true);
+    layer1->setOpacity(0.5);
+    layer1->setExpectation(true, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+
+    RefPtr<BlendStateCheckLayer> layer2 = BlendStateCheckLayer::create(2);
+    layer1->addChild(layer2);
+
+    // 2 opaque layers, drawn without blending.
+    layer1->setOpaque(true);
+    layer1->setOpacity(1);
+    layer1->setExpectation(false, false);
+    layer2->setOpaque(true);
+    layer2->setOpacity(1);
+    layer2->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer2->drawn());
+
+    // Parent layer with translucent content, drawn with blending.
+    // Child layer with opaque content, drawn without blending.
+    layer1->setOpaque(false);
+    layer1->setExpectation(true, false);
+    layer2->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer2->drawn());
+
+    // Parent layer with translucent opacity and opaque content. Since it has a
+    // drawing child, it's drawn to a render surface which carries the opacity,
+    // so it's itself drawn without blending.
+    // Child layer with opaque content, drawn without blending (parent surface
+    // carries the inherited opacity).
+    layer1->setOpaque(true);
+    layer1->setOpacity(0.5);
+    layer1->setExpectation(false, true);
+    layer2->setExpectation(false, false);
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer2->drawn());
+}
+
 
 } // namespace

@@ -288,6 +288,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setMasksToBounds(m_masksToBounds);
     layer->setMaxScrollPosition(m_maxScrollPosition);
     layer->setName(m_name);
+    layer->setOpaque(m_opaque);
     layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
     layer->setPreserves3D(preserves3D());

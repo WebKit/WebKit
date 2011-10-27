@@ -587,7 +587,14 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
     else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
+    bool opaque = layer->opaque() && layer->drawOpacity() == 1;
+    if (opaque)
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
+
     layer->draw(this);
+
+    if (opaque)
+        GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder(this);

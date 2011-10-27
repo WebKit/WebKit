@@ -1,3 +1,24 @@
+2011-10-27  Antoine Labour  <piman@chromium.org>
+
+        Disable blending when drawing opaque layers
+        https://bugs.webkit.org/show_bug.cgi?id=70085
+
+        Reviewed by James Robinson.
+
+        Covered by compositing/ tests, as well as a new unit test:
+        CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setOpaque):
+        (WebCore::CCLayerImpl::opaque):
+
 2011-10-27  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Passing empty array to IDBDatabase.transaction should raise exception

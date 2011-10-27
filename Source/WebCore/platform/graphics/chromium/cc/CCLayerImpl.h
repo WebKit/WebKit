@@ -92,6 +92,9 @@ public:
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     bool masksToBounds() const { return m_masksToBounds; }
 
+    void setOpaque(bool opaque) { m_opaque = opaque; }
+    bool opaque() const { return m_opaque; }
+
     void setOpacity(float opacity) { m_opacity = opacity; }
     float opacity() const { return m_opacity; }
 
@@ -209,6 +212,7 @@ private:
 
     IntRect m_visibleLayerRect;
     bool m_masksToBounds;
+    bool m_opaque;
     float m_opacity;
     FloatPoint m_position;
     bool m_preserves3D;

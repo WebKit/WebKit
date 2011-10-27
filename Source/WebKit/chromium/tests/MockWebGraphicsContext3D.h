@@ -26,6 +26,7 @@
 #ifndef MockWebGraphicsContext3D_h
 #define MockWebGraphicsContext3D_h
 
+#include "GraphicsContext3D.h"
 #include "WebGraphicsContext3D.h"
 
 namespace WebKit {
@@ -84,7 +85,11 @@ public:
     virtual void bufferData(WGC3Denum target, WGC3Dsizeiptr size, const void* data, WGC3Denum usage) { }
     virtual void bufferSubData(WGC3Denum target, WGC3Dintptr offset, WGC3Dsizeiptr size, const void* data) { }
 
-    virtual WGC3Denum checkFramebufferStatus(WGC3Denum target) { return 0; }
+    virtual WGC3Denum checkFramebufferStatus(WGC3Denum target)
+    {
+        return WebCore::GraphicsContext3D::FRAMEBUFFER_COMPLETE;
+    }
+
     virtual void clear(WGC3Dbitfield mask) { }
     virtual void clearColor(WGC3Dclampf red, WGC3Dclampf green, WGC3Dclampf blue, WGC3Dclampf alpha) { }
     virtual void clearDepth(WGC3Dclampf depth) { }
@@ -123,11 +128,28 @@ public:
     virtual WGC3Denum getError() { return 0; }
     virtual void getFloatv(WGC3Denum pname, WGC3Dfloat* value) { }
     virtual void getFramebufferAttachmentParameteriv(WGC3Denum target, WGC3Denum attachment, WGC3Denum pname, WGC3Dint* value) { }
-    virtual void getIntegerv(WGC3Denum pname, WGC3Dint* value) { }
-    virtual void getProgramiv(WebGLId program, WGC3Denum pname, WGC3Dint* value) { }
+
+    virtual void getIntegerv(WGC3Denum pname, WGC3Dint* value)
+    {
+        if (pname == WebCore::GraphicsContext3D::MAX_TEXTURE_SIZE)
+            *value = 1024;
+    }
+
+    virtual void getProgramiv(WebGLId program, WGC3Denum pname, WGC3Dint* value)
+    {
+        if (pname == WebCore::GraphicsContext3D::LINK_STATUS)
+            *value = 1;
+    }
+
     virtual WebString getProgramInfoLog(WebGLId program) { return WebString(); }
     virtual void getRenderbufferParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) { }
-    virtual void getShaderiv(WebGLId shader, WGC3Denum pname, WGC3Dint* value) { }
+
+    virtual void getShaderiv(WebGLId shader, WGC3Denum pname, WGC3Dint* value)
+    {
+        if (pname == WebCore::GraphicsContext3D::COMPILE_STATUS)
+            *value = 1;
+    }
+
     virtual WebString getShaderInfoLog(WebGLId shader) { return WebString(); }
 
     virtual WebString getShaderSource(WebGLId shader) { return WebString(); }
@@ -212,12 +234,12 @@ public:
 
     virtual void viewport(WGC3Dint x, WGC3Dint y, WGC3Dsizei width, WGC3Dsizei height) { }
 
-    virtual WebGLId createBuffer() { return 0; }
-    virtual WebGLId createFramebuffer() { return 0; }
-    virtual WebGLId createProgram() { return 0; }
-    virtual WebGLId createRenderbuffer() { return 0; }
-    virtual WebGLId createShader(WGC3Denum) { return 0; }
-    virtual WebGLId createTexture() { return 0; }
+    virtual WebGLId createBuffer() { return 1; }
+    virtual WebGLId createFramebuffer() { return 1; }
+    virtual WebGLId createProgram() { return 1; }
+    virtual WebGLId createRenderbuffer() { return 1; }
+    virtual WebGLId createShader(WGC3Denum) { return 1; }
+    virtual WebGLId createTexture() { return 1; }
 
     virtual void deleteBuffer(WebGLId) { }
     virtual void deleteFramebuffer(WebGLId) { }
