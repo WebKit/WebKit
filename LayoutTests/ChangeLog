@@ -1,3 +1,9 @@
+2011-10-27  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add pixel baselines for table tests.
+
+        * platform/efl/tables: [...]
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline.
