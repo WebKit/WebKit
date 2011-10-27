@@ -32,11 +32,12 @@ namespace WebCore {
 class CSSProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSProperty(int propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
+    CSSProperty(unsigned propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
         : m_id(propID)
         , m_shorthandID(shorthandID)
         , m_important(important)
         , m_implicit(implicit)
+        , m_inherited(isInheritedProperty(propID))
         , m_value(value)
     {
     }
@@ -56,20 +57,23 @@ public:
 
     bool isImportant() const { return m_important; }
     bool isImplicit() const { return m_implicit; }
+    bool isInherited() const { return m_inherited; }
 
     CSSValue* value() const { return m_value.get(); }
 
     String cssText() const;
 
     static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);
+    static bool isInheritedProperty(unsigned propertyID);
 
     friend bool operator==(const CSSProperty&, const CSSProperty&);
 
     // Make sure the following fits in 4 bytes. Really.
-    signed m_id : 15;
-    signed m_shorthandID : 15; // If this property was set as part of a shorthand, gives the shorthand.
+    unsigned m_id : 14;
+    unsigned m_shorthandID : 14; // If this property was set as part of a shorthand, gives the shorthand.
     bool m_important : 1;
     bool m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+    bool m_inherited : 1;
 
     RefPtr<CSSValue> m_value;
 };

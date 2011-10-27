@@ -226,13 +226,14 @@ private:
     void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     struct MatchResult {
-        MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
+        MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1), isCacheable(true) { }
         int firstUARule;
         int lastUARule;
         int firstAuthorRule;
         int lastAuthorRule;
         int firstUserRule;
         int lastUserRule;
+        bool isCacheable;
     };
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
@@ -245,9 +246,9 @@ private:
 
     void applyMatchedDeclarations(const MatchResult&);
     template <bool firstPass>
-    void applyDeclarations(bool important, int startIndex, int endIndex);
+    void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly = false);
     template <bool firstPass>
-    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant);
+    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool inheritedOnly);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -271,6 +272,7 @@ private:
 
     typedef Vector<RefPtr<CSSRegionStyleRule> > RegionStyleRules;
     RegionStyleRules m_regionStyleRules;
+
 public:
     static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
@@ -325,16 +327,28 @@ private:
 
     void loadPendingImages();
 
-    // We collect the set of decls that match in |m_matchedDecls|. We then walk the
-    // set of matched decls four times, once for those properties that others depend on (like font-size),
-    // and then a second time for all the remaining properties. We then do the same two passes
-    // for any !important rules.
     struct MatchedStyleDeclaration {
         MatchedStyleDeclaration(CSSMutableStyleDeclaration* decl, unsigned type) : styleDeclaration(decl), linkMatchType(type) { }
         CSSMutableStyleDeclaration* styleDeclaration;
         unsigned linkMatchType;
     };
+    static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
+    const RenderStyle* findFromMatchedDeclarationCache(unsigned hash, const MatchResult&);   
+    void addToMatchedDeclarationCache(const RenderStyle*, unsigned hash, const MatchResult&);
+
+    // We collect the set of decls that match in |m_matchedDecls|. We then walk the
+    // set of matched decls four times, once for those properties that others depend on (like font-size),
+    // and then a second time for all the remaining properties. We then do the same two passes
+    // for any !important rules.
     Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
+    
+    struct MatchedStyleDeclarationCacheItem {
+        Vector<MatchedStyleDeclaration> matchedStyleDeclarations;
+        MatchResult matchResult;
+        RefPtr<RenderStyle> renderStyle;
+    };
+    typedef HashMap<unsigned, MatchedStyleDeclarationCacheItem> MatchedStyleDeclarationCache;
+    MatchedStyleDeclarationCache m_matchStyleDeclarationCache;
 
     // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
     // merge sorting.
@@ -372,6 +386,10 @@ private:
     const CSSStyleApplyProperty& m_applyProperty;
 
     friend class CSSStyleApplyProperty;
+    friend bool operator==(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
+    friend bool operator!=(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
+    friend bool operator==(const MatchResult&, const MatchResult&);
+    friend bool operator!=(const MatchResult&, const MatchResult&);
 };
 
 } // namespace WebCore

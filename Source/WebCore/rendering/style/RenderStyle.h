@@ -266,6 +266,7 @@ protected:
         unsigned char _pseudoBits : 7;
         unsigned char _unicodeBidi : 3; // EUnicodeBidi
         bool _isLink : 1;
+        // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom()
         // 53 bits
     } noninherited_flags;
 
@@ -328,6 +329,7 @@ public:
     ~RenderStyle();
 
     void inheritFrom(const RenderStyle* inheritParent);
+    void copyNonInheritedFrom(const RenderStyle*);
 
     PseudoId styleType() const { return static_cast<PseudoId>(noninherited_flags._styleType); }
     void setStyleType(PseudoId styleType) { noninherited_flags._styleType = styleType; }

@@ -126,6 +126,15 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
 }
 
+void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle* other)
+{
+    svg_noninherited_flags = other->svg_noninherited_flags;
+    stops = other->stops;
+    misc = other->misc;
+    shadowSVG = other->shadowSVG;
+    resources = other->resources;
+}
+
 StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
 {
     // NOTE: All comparisions that may return StyleDifferenceLayout have to go before those who return StyleDifferenceRepaint

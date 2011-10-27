@@ -1,3 +1,76 @@
+2011-10-27  Antti Koivisto  <antti@apple.com>
+
+        Matched declaration cache
+        https://bugs.webkit.org/show_bug.cgi?id=70931
+
+        Reviewed by Darin Adler.
+
+        Sets of style declarations are applied repeatedly for different elements when calculating the document style.
+        The same set of applied declarations results in the same non-inherited style, independent of the element and 
+        its context. We can use this to build a cache to speed up style applying and to share more style data for
+        reduced memory usage.
+        
+        The patch reduces RenderStyle memory use ~40% and total memory use by ~7% over HTML5 spec load.
+        It is also ~10% progression in PerformanceTests/Parser/html5-full-render.html.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::CSSProperty):
+        (WebCore::CSSProperty::isInherited):
+        
+            We need to know which properties are inherited, something we didn't have available so far.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        
+            A set of declarations is only cacheable if it contains no element specific style. This way we
+            don't need to worry about cache invalidation. The whole style selector is reconstructed if the
+            stylesheets change, invalidating the cache too.
+    
+        (WebCore::CSSStyleSelector::styleForElement):
+        
+            Trigger image loads bit earlier so cached style will have them too.
+        
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        
+            Allow skipping over non-inherited properties.
+        
+        (WebCore::CSSStyleSelector::computeDeclarationHash):
+        
+            Hash function for declartion cache lookups.
+        
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::CSSStyleSelector::findFromMatchedDeclarationCache):
+        
+            Lookup from cache.
+        
+        (WebCore::CSSStyleSelector::addToMatchedDeclarationCache):
+        
+            Add to cache.
+        
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+        
+            If cached style is found, copy the non-inherited properties from the cache and apply the inherited properties (if any) only.
+        
+            Font and zoom changes force full applying as they can affect values of other properties (this can be relaxed later).
+        
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::MatchResult::MatchResult):
+        
+            Cacheability bit.
+        
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::copyNonInheritedFrom):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::copyNonInheritedFrom):
+        * rendering/style/SVGRenderStyle.h:
+        
+            Functions for assembling RenderStyle from non-inherited parts of the cached style.
+
 2011-10-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] add ignoreCache flag to options of inspectedWindow.reload()

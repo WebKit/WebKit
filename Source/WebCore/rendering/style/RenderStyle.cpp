@@ -181,6 +181,34 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
 #endif
 }
 
+void RenderStyle::copyNonInheritedFrom(const RenderStyle* other)
+{
+    m_box = other->m_box;
+    visual = other->visual;
+    m_background = other->m_background;
+    surround = other->surround;
+    rareNonInheritedData = other->rareNonInheritedData;
+    // The flags are copied one-by-one because noninherited_flags contains a bunch of stuff other than real style data.
+    noninherited_flags._effectiveDisplay = other->noninherited_flags._effectiveDisplay;
+    noninherited_flags._originalDisplay = other->noninherited_flags._originalDisplay;
+    noninherited_flags._overflowX = other->noninherited_flags._overflowX;
+    noninherited_flags._overflowY = other->noninherited_flags._overflowY;
+    noninherited_flags._vertical_align = other->noninherited_flags._vertical_align;
+    noninherited_flags._clear = other->noninherited_flags._clear;
+    noninherited_flags._position = other->noninherited_flags._position;
+    noninherited_flags._floating = other->noninherited_flags._floating;
+    noninherited_flags._table_layout = other->noninherited_flags._table_layout;
+    noninherited_flags._page_break_before = other->noninherited_flags._page_break_before;
+    noninherited_flags._page_break_after = other->noninherited_flags._page_break_after;
+    noninherited_flags._page_break_inside = other->noninherited_flags._page_break_inside;
+    noninherited_flags._unicodeBidi = other->noninherited_flags._unicodeBidi;
+#if ENABLE(SVG)
+    if (m_svgStyle != other->m_svgStyle)
+        m_svgStyle.access()->copyNonInheritedFrom(other->m_svgStyle.get());
+#endif
+    ASSERT(zoom() == initialZoom());
+}
+
 RenderStyle::~RenderStyle()
 {
 }
