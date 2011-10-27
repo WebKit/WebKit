@@ -52,7 +52,7 @@ function setVersionSuccess()
 function openForwardCursor()
 {
     debug("openForwardCursor()");
-    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = forwardCursorComplete;
 
@@ -97,7 +97,7 @@ function forwardCursorComplete()
 function openReverseCursor()
 {
     debug("openReverseCursor()");
-    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = reverseCursorComplete;
 

@@ -291,6 +291,9 @@ sub AddIncludesForType
     } elsif ($type eq "XPathNSResolver") {
         $includesRef->{"JSXPathNSResolver.h"} = 1;
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
+    } elsif ($type eq "DOMString[]") {
+        # FIXME: Add proper support for T[], T[]?, sequence<T>
+        $includesRef->{"JSDOMStringList.h"} = 1;
     } elsif ($isCallback) {
         $includesRef->{"JS${type}.h"} = 1;
     } else {
@@ -1222,6 +1225,10 @@ sub GenerateParametersCheckExpression
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
+            $usedArguments{$parameterIndex} = 1;
+        } elsif (IsArrayType($type)) {
+            # FIXME: Add proper support for T[], T[]?, sequence<T>
+            push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JSArray::s_info)))");
             $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
             push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
@@ -2627,6 +2634,8 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const String&",
+    # FIXME: Add proper support for T[], T[]?, sequence<T>
+    "DOMString[]" => "DOMStringList*",
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
@@ -2702,6 +2711,13 @@ sub IsNativeType
     return exists $nativeType{$type};
 }
 
+sub IsArrayType
+{
+    my $type = shift;
+    # FIXME: Add proper support for T[], T[]?, sequence<T>.
+    return $type =~ m/\[\]$/;
+}
+
 sub JSValueToNative
 {
     my $signature = shift;
@@ -2749,6 +2765,11 @@ sub JSValueToNative
         AddToImplIncludes("IDBBindingUtilities.h", $conditional);
         AddToImplIncludes("IDBKey.h", $conditional);
         return "createIDBKeyFromValue(exec, $value)";
+    }
+
+    if ($type eq "DOMString[]") {
+        AddToImplIncludes("JSDOMStringList.h", $conditional);
+        return "toDOMStringList($value)";
     }
 
     AddToImplIncludes("HTMLOptionElement.h", $conditional) if $type eq "HTMLOptionElement";

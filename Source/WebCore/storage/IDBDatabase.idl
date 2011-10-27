@@ -45,7 +45,11 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional] unsigned short mode)
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=CallWithDefaultValue] unsigned short mode)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString[] storeNames, in [Optional=CallWithDefaultValue] unsigned short mode)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=CallWithDefaultValue] unsigned short mode)
             raises (IDBDatabaseException);
         void close();
 

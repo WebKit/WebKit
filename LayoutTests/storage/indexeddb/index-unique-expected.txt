@@ -13,7 +13,7 @@ Deleted all object stores.
 db.createObjectStore('store')
 store.createIndex('index', 'x', {unique: true})
 setVersionCompleted():
-transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
+transaction = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
 transaction.objectStore('store').put({x: 1}, 'foo')
 addMoreData():
 transaction.objectStore('store').put({x: 1}, 'bar')

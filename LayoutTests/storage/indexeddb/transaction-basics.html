@@ -206,7 +206,7 @@ function setVersionSuccess()
     deleteAllObjectStores(db);
 
     evalAndLog("db.createObjectStore('storeName', null)");
-    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction = evalAndLog("db.transaction(['storeName'])");
     transaction.onabort = abortCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
     shouldBeEqualToString("store.name", "storeName");

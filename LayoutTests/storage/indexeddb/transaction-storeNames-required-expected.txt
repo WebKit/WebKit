@@ -15,7 +15,7 @@ indexedDB.open(name, description)
 db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
-PASS db.transaction(); threw exception TypeError: Not enough arguments.
+PASS db.transaction(); threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

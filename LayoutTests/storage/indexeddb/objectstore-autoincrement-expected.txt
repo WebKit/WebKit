@@ -23,7 +23,7 @@ PASS storeNames.contains('StoreWithAutoIncrement') is true
 PASS storeNames.contains('PlainOldStore') is true
 PASS storeNames.length is 3
 setVersionCompleted():
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], webkitIDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithKeyPath')
 Insert into object store with auto increment and key path, with key in the object.
 store.add({name: 'Jeffersson', number: '7010', id: 3})

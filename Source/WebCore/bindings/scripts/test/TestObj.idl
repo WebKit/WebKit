@@ -157,6 +157,8 @@ module test {
         void    overloadedMethod(in DOMString strArg);
         void    overloadedMethod(in long intArg);
         void    overloadedMethod(in [Callback] TestCallback callback);
+        void    overloadedMethod(in DOMStringList listArg);
+        void    overloadedMethod(in DOMString[] arrayArg);
 #endif
 
         // Class methods within JavaScript (like what's used for IDBKeyRange).

@@ -1160,6 +1160,24 @@ static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod6");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(RefPtr<DOMStringList>, listArg, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    imp->overloadedMethod(listArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod7");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(RefPtr<DOMStringList>, arrayArg, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    imp->overloadedMethod(arrayArg);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod");
@@ -1173,6 +1191,10 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod4Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsObject())))
         return overloadedMethod5Callback(args);
+    if ((args.Length() == 1 && (args[0]->IsNull() || V8DOMStringList::HasInstance(args[0]))))
+        return overloadedMethod6Callback(args);
+    if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsArray())))
+        return overloadedMethod7Callback(args);
     V8Proxy::throwTypeError();
     return notHandledByInterceptor();
 }

@@ -49,7 +49,7 @@ function deleteExisting()
 
 function getValue()
 {
-    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction = evalAndLog("db.transaction(['storeName'])");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -85,7 +85,7 @@ function createObjectStoreAgain()
 
 function getValueAgain()
 {
-    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction = evalAndLog("db.transaction(['storeName'])");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 

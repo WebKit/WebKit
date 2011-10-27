@@ -13,7 +13,7 @@ Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 Verifing abort
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = abortFiredCallback
 trans.oncomplete = unexpectedAbortCallback
 db.addEventListener('abort', dbAbortCaptureCallback, true)
@@ -45,7 +45,7 @@ PASS event.target is trans
 PASS event.currentTarget is db
 
 Verifing success.
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.oncomplete = completeFiredCallback
 trans.onabort = unexpectedAbortCallback
 db.removeEventListener('abort', dbAbortCaptureCallback, true)

@@ -87,7 +87,7 @@ function openKeyCursorSuccess()
     debug("openKeyCursorSuccess():");
     shouldBeNull("event.target.result");
 
-    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction = evalAndLog("db.transaction(['otherStoreName'])");
     transaction.onabort = unexpectedErrorCallback;
     var otherStore = evalAndLog("otherStore = transaction.objectStore('otherStoreName')");
 

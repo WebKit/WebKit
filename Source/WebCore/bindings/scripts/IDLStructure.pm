@@ -87,7 +87,7 @@ our $constValue = '("[^"\r\n]*")|(0[xX][a-fA-F0-9]+)|(-?[0-9]*)';
 our $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
 
 # Magic IDL parsing regular expressions
-my $supportedTypes = "((?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))";
+my $supportedTypes = "((?:(?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))(?:\\[\\])?)";
 
 # Special IDL notations. This regular expression extracts the string between the first [ and its corresponding ].
 our $extendedAttributeSyntax = qr/\[[^\[\]]*(?:(??{$IDLStructure::extendedAttributeSyntax})[^\[\]]*)*\]/x; # Used for extended attributes

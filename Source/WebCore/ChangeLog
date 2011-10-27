@@ -1,3 +1,36 @@
+2011-10-27  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Passing empty array to IDBDatabase.transaction should raise exception
+        https://bugs.webkit.org/show_bug.cgi?id=70251
+
+        Reviewed by Adam Barth.
+
+        IDBDatabase.transaction() supported being called with an empty array to
+        lock all object stores. Support for this was rejected from inclusion in
+        the IDB spec due to performance concerns. This patch removes that
+        functionality.
+
+        A special case in the spec (passing a string instead of an array) worked
+        in WebKit accidentally, by resolving the string to an empty array. This
+        needed explicit support. Support for DOMString[] is added to the binding
+        code generators (reliant on DOMStringList) to ensure JS arrays are not
+        coerced to DOMStrings. This matches the proposed IDL.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheckExpression):
+        (GetNativeType):
+        (JSValueToNative):
+        (IsArrayType):
+        * bindings/scripts/IDLStructure.pm:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabase.idl:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+
 2011-10-27  Ken Buchanan <kenrb@chromium.org>
 
         Crash due to nested first-letter selectors

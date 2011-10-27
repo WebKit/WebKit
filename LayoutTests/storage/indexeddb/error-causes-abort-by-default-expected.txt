@@ -12,7 +12,7 @@ PASS trans !== null is true
 trans.oncomplete = addData
 Deleted all object stores.
 db.createObjectStore('storeName', null)
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted
 store = trans.objectStore('storeName')
@@ -22,7 +22,7 @@ event.preventDefault()
 PASS Transaction completed
 
 
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted1
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -31,7 +31,7 @@ Doing nothing to prevent the default action...
 PASS Transaction aborted
 
 
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')

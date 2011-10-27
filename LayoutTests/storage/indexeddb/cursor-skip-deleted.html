@@ -146,7 +146,7 @@ function basicCursorTest()
 {
     debug("basicCursorTest()");
 
-    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = transactionComplete;
 

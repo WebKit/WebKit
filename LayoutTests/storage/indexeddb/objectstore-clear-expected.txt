@@ -23,7 +23,7 @@ index = store.index('indexName')
 index.openKeyCursor()
 openKeyCursorSuccess():
 PASS event.target.result is null
-db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+db.transaction(['otherStoreName'])
 otherStore = transaction.objectStore('otherStoreName')
 otherStore.get('key')
 PASS event.target.result is "value"

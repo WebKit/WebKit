@@ -52,6 +52,7 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores
     , m_pendingEvents(0)
 {
     ASSERT(m_objectStoreNames);
+    ASSERT(m_mode == IDBTransaction::VERSION_CHANGE || !m_objectStoreNames->isEmpty());
     m_database->transactionCoordinator()->didCreateTransaction(this);
 }
 
@@ -69,7 +70,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStor
     }
 
     // Does a linear search, but it really shouldn't be that slow in practice.
-    if (!m_objectStoreNames->isEmpty() && !m_objectStoreNames->contains(name)) {
+    if (m_mode != IDBTransaction::VERSION_CHANGE && !m_objectStoreNames->contains(name)) {
         ec = IDBDatabaseException::NOT_FOUND_ERR;
         return 0;
     }

@@ -16,7 +16,7 @@ objectStore.createIndex('nameIndex', 'name')
 resetObjectStore():
 
 basicCursorTest()
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
 
 testCursor():
 trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0))

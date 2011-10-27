@@ -26,6 +26,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 #include "JSDOMBinding.h"
+#include "JSDOMStringList.h"
 #include "JSEventListener.h"
 #include "JSOptionsObject.h"
 #include "JSTestCallback.h"
@@ -1755,6 +1756,36 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
     return JSValue::encode(jsUndefined());
 }
 
+static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    DOMStringList* listArg(toDOMStringList(exec->argument(0)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    imp->overloadedMethod(listArg);
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    DOMStringList* arrayArg(toDOMStringList(exec->argument(0)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    imp->overloadedMethod(arrayArg);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* exec)
 {
     size_t argsCount = exec->argumentCount();
@@ -1770,6 +1801,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod4(exec);
     if ((argsCount == 1 && (arg0.isNull() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod5(exec);
+    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(&JSDOMStringList::s_info)))))
+        return jsTestObjPrototypeFunctionOverloadedMethod6(exec);
+    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(&JSArray::s_info)))))
+        return jsTestObjPrototypeFunctionOverloadedMethod7(exec);
     return throwVMTypeError(exec);
 }
 

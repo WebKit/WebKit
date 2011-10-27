@@ -53,7 +53,7 @@ function setVersionSuccess()
 function openBasicCursor()
 {
     debug("openBasicCursor()");
-    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['basicStore'], webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = transactionComplete;
 

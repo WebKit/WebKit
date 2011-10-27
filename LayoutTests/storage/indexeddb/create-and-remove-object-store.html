@@ -47,7 +47,7 @@ function cleanDatabase()
     os = evalAndLog("db.createObjectStore('tmp')");
     evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.CONSTRAINT_ERR");
 
-    trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    trans = evalAndLog("trans = db.transaction(['tmp'])");
     request = evalAndLog("trans.objectStore('tmp').get(0)");
     request.onsuccess = tryOnceMore;
     request.onerror = unexpectedErrorCallback;

@@ -27,6 +27,7 @@
 #include "IDBDatabase.h"
 
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "EventQueue.h"
 #include "IDBAny.h"
 #include "IDBDatabaseCallbacksImpl.h"
@@ -121,11 +122,20 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
     return request;
 }
 
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& storeName, unsigned short mode, ExceptionCode& ec)
+{
+    RefPtr<DOMStringList> storeNames = DOMStringList::create();
+    storeNames->append(storeName);
+    return transaction(context, storeNames, mode, ec);
+}
+
 PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, ExceptionCode& ec)
 {
     RefPtr<DOMStringList> storeNames = prpStoreNames;
-    if (!storeNames)
-        storeNames = DOMStringList::create();
+    if (!storeNames || storeNames->isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
 
     if (mode != IDBTransaction::READ_WRITE && mode != IDBTransaction::READ_ONLY) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406

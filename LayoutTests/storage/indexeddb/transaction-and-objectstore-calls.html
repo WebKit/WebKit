@@ -75,9 +75,10 @@ function created()
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction([])");
+    debug("Passing a string as the first argument is a shortcut for just one object store:");
+    trans = evalAndLog("trans = db.transaction('a')");
     evalAndLog("trans.objectStore('a')");
-    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('b')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
@@ -91,6 +92,23 @@ function created()
     evalAndExpectException("db.transaction(['a', 'x', 'b'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
+    debug("Exception thrown when no stores specified:");
+    evalAndExpectException("db.transaction([])", "DOMException.INVALID_ACCESS_ERR");
+    debug("");
+
+    debug("{} coerces to a string - so no match, but not a type error:");
+    evalAndExpectException("db.transaction({})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction({mode:0})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    debug("Overriding the default string coercion makes these work:");
+    evalAndLog("db.transaction({toString:function(){return 'a';}})");
+    evalAndLog("db.transaction([{toString:function(){return 'a';}}])");
+    debug("... but you still need to specify a real store:");
+    evalAndExpectException("db.transaction([{toString:function(){return 'x';}}])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction([{toString:function(){return 'x';}}])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+
+    debug("");
     done();
 }
 

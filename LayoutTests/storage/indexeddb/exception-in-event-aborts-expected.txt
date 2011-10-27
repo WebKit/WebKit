@@ -16,7 +16,7 @@ Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted1
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -26,7 +26,7 @@ event.preventDefault()
 Throwing
 
 PASS The transaction was aborted.
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -36,7 +36,7 @@ event.preventDefault()
 Throwing
 
 PASS The transaction was aborted.
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted1
 store = trans.objectStore('storeName')
@@ -46,7 +46,7 @@ event.preventDefault()
 Throwing within a try block
 
 PASS The transaction completed.
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted2
 store = trans.objectStore('storeName')

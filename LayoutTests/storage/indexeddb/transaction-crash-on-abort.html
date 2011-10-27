@@ -28,6 +28,14 @@ function openSuccess()
 {
     debug("openSuccess():");
     db = evalAndLog("db = event.target.result");
+    request = evalAndLog("db.setVersion('1.0')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    evalAndLog("db.createObjectStore('foo')");
     evalAndLog("db.transaction('foo')");
     evalAndLog("window.gc()");
     done();

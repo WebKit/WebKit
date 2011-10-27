@@ -49,7 +49,7 @@ function deleteExisting()
 function setVersionCompleted()
 {
     debug("setVersionCompleted():");
-    window.transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    window.transaction = evalAndLog("transaction = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
 
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'foo')");
     request.onerror = unexpectedErrorCallback;

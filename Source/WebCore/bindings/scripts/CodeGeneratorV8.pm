@@ -1197,6 +1197,9 @@ sub GenerateParametersCheckExpression
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}->IsNull() || ${value}->IsObject())");
+        } elsif (IsArrayType($type)) {
+            # FIXME: Add proper support for T[], T[]?, sequence<T>.
+            push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
         } elsif (IsWrapperType($type)) {
             push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))");
         }
@@ -3127,6 +3130,8 @@ sub GetNativeType
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
 
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
+    # FIXME: Add proper support for T[], T[]?, sequence<T>.
+    return "RefPtr<DOMStringList>" if $type eq "DOMString[]";
 
     # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
@@ -3180,6 +3185,8 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
     return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMStringList";
+    # FIXME: Add proper support for T[], T[]? and sequence<T>.
+    return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMString[]";
 
     if ($type eq "DOMString" or $type eq "DOMUserData") {
         return $value;
@@ -3249,6 +3256,7 @@ sub GetV8HeaderName
     return "EventTarget.h" if $type eq "EventTarget";
     return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
     return "ScriptValue.h" if $type eq "DOMObject";
+    return "V8DOMStringList.h" if $type eq "DOMString[]";
     return "V8${type}.h";
 }
 
@@ -3349,6 +3357,13 @@ sub IsWrapperType
 {
     my $type = $codeGenerator->StripModule(shift);
     return !($non_wrapper_types{$type});
+}
+
+sub IsArrayType
+{
+    my $type = $codeGenerator->StripModule(shift);
+    # FIXME: Add proper support for T[], T[]?, sequence<T>.
+    return $type =~ m/\[\]$/;
 }
 
 sub IsDOMNodeType

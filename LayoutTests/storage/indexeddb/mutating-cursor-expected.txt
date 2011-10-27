@@ -16,7 +16,7 @@ objectStore.add(2, 2).onerror = unexpectedErrorCallback
 objectStore.add(3, 3).onerror = unexpectedErrorCallback
 objectStore.add(4, 4).onerror = unexpectedErrorCallback
 openForwardCursor()
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
 trans.objectStore('store')
 objectStore.openCursor()
 forwardCursor()
@@ -49,7 +49,7 @@ forwardCursor()
 PASS cursorSteps is 5
 forwardCursorComplete()
 openReverseCursor()
-trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
 trans.objectStore('store')
 objectStore.openCursor(null, webkitIDBCursor.PREV)
 reverseCursor()

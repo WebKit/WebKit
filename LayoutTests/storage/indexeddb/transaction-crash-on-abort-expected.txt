@@ -8,6 +8,8 @@ PASS webkitIndexedDB == null is false
 webkitIndexedDB.open('transaction-crash-on-abort')
 openSuccess():
 db = event.target.result
+db.setVersion('1.0')
+db.createObjectStore('foo')
 db.transaction('foo')
 window.gc()
 PASS successfullyParsed is true

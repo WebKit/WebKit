@@ -1,3 +1,65 @@
+2011-10-27  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Passing empty array to IDBDatabase.transaction should raise exception
+        https://bugs.webkit.org/show_bug.cgi?id=70251
+
+        Reviewed by Adam Barth.
+
+        Many tests relied on the non-specified behavior of passing an empty
+        array into IDBDatabase.transaction() to include all object stores in
+        scopes. Worse, non-arrays would be treated as empty arrays, and hence
+        "just worked".
+
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store.html:
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/create-object-store-options.html:
+        * storage/indexeddb/cursor-inconsistency-expected.txt:
+        * storage/indexeddb/cursor-inconsistency.html:
+        * storage/indexeddb/cursor-skip-deleted-expected.txt:
+        * storage/indexeddb/cursor-skip-deleted.html:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/cursor-update.html:
+        * storage/indexeddb/data-corruption-expected.txt:
+        * storage/indexeddb/data-corruption.html:
+        * storage/indexeddb/database-quota.html:
+        * storage/indexeddb/error-causes-abort-by-default-expected.txt:
+        * storage/indexeddb/error-causes-abort-by-default.html:
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/exception-in-event-aborts.html:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/index-unique.html:
+        * storage/indexeddb/mutating-cursor-expected.txt:
+        * storage/indexeddb/mutating-cursor.html:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/objectstore-clear-expected.txt:
+        * storage/indexeddb/objectstore-clear.html:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore.html:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/request-event-propagation.html:
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion.html:
+        * storage/indexeddb/transaction-abort.html:
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-after-close.html:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls.html:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-basics.html:
+        * storage/indexeddb/transaction-crash-on-abort-expected.txt:
+        * storage/indexeddb/transaction-crash-on-abort.html:
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-event-propagation.html:
+        * storage/indexeddb/transaction-read-only-expected.txt:
+        * storage/indexeddb/transaction-read-only.html:
+        * storage/indexeddb/transaction-storeNames-required-expected.txt:
+        * storage/indexeddb/tutorial.html:
+
 2011-10-27  Ken Buchanan <kenrb@chromium.org>
 
         Crash due to nested first-letter selectors

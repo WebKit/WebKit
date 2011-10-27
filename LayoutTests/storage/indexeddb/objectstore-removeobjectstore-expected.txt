@@ -13,7 +13,7 @@ store = db.createObjectStore('storeName', null)
 store.createIndex('indexName', '')
 PASS store.indexNames.contains('indexName') is true
 store.add('value', 'key')
-db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS event.target.result is "value"
@@ -22,7 +22,7 @@ trans = event.target.result
 PASS trans !== null is true
 db.deleteObjectStore('storeName')
 db.createObjectStore('storeName', null)
-db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS event.target.result is undefined

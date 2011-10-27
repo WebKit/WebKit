@@ -211,15 +211,14 @@ function onSetVersionComplete()
     // createObjectStore, transaction optionally takes in various optional parameters.
     //
     // First of all is the parameter "objectStoreNames". If you pass in a string, we lock just that
-    // objectStore.  If you pass in an array, we lock those. Otherwise (for example, if you omit it
-    // or pass in null/undefined) we lock the whole database. By specifying locks over fewer
+    // objectStore.  If you pass in an array, we lock those. By specifying locks over fewer
     // objectStores you make it possible for browsers to run transactions concurrently. That said,
     // Chromium/WebKit does not support this yet.
     //
     // Next is "mode" which specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
     // That's fine for this case, but later we'll ask for IDBTransaction.READ_WRITE. At the moment,
     // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
-    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
+    window.currentTransaction = db.transaction("people", IDBTransaction.READ_WRITE);
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 
@@ -266,10 +265,8 @@ function unexpectedComplete()
 
 function onTransactionAborted()
 {
-    // Now let's make a real transaction and a person to our objectStore. Just to show it's possible,
-    // we'll omit the objectStoreNames parameter which means we'll lock everything even though we only
-    // ever access "people".
-    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
+    // Now let's make a real transaction and a person to our objectStore.
+    window.currentTransaction = db.transaction("people", IDBTransaction.READ_WRITE);
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -307,7 +304,7 @@ function onPutTransactionComplete()
     // OK, now let's query the people objectStore in a couple different ways. First up, let's try get.
     // It simply takes in a key and returns a request whose result will be the value. Note that here
     // we're passing in an array for objectStoreNames rather than a simple string.
-    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE, 0);
+    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE);
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");

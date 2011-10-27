@@ -8,9 +8,9 @@ PASS webkitIndexedDB == null is false
 webkitIndexedDB.open('transaction-abort-with-js-recursion')
 db = event.target.result
 db.setVersion('new version')
-pendingTransaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
+pendingTransaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)
 Start re-entrant JS
-transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
+transaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)
 End re-entrant JS
 store = pendingTransaction.objectStore('objectStore')
 PASS store !== undefined is true

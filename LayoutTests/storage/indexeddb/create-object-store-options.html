@@ -43,7 +43,7 @@ function cleanDatabase()
     debug("db.createObjectStore('c', {autoIncrement: true});");
     db.createObjectStore('c', {autoIncrement: true});
 
-    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['a', 'b'], webkitIDBTransaction.READ_WRITE)");
     shouldBe("trans.mode", "webkitIDBTransaction.READ_WRITE");
 
     req = evalAndLog("trans.objectStore('a').put({'a': 0})");

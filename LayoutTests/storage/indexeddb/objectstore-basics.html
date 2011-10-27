@@ -135,7 +135,7 @@ var testDateB = new Date("Wed Jan 05 2011 15:54:49");
 
 function addData()
 {
-    var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    var transaction = evalAndLog("transaction = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedAbortCallback;
     window.store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -181,14 +181,14 @@ function addAgainFailure()
 
     evalAndLog("event.preventDefault()");
 
-    transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     evalAndLog("store.add({x: 'somevalue'}, 'somekey')");
     evalAndExpectException("store.add({x: 'othervalue'}, null)", "webkitIDBDatabaseException.DATA_ERR");
 
-    transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -205,7 +205,7 @@ function addWithNullIndexFailure()
 
     evalAndLog("event.preventDefault()");
 
-    transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
