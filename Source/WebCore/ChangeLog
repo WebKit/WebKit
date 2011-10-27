@@ -1,3 +1,11 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove those un-needed files committed by error in
+        r98554.
+
+        * platform/audio/gstreamer/#AudioFileReaderGStreamer.h#: Removed.
+        * platform/audio/gstreamer/.#AudioFileReaderGStreamer.h: Removed.
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com> and Zan Dobersek  <zandobersek@gmail.com>
 
         [GStreamer] WebAudio AudioFileReader implementation
