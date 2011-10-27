@@ -484,6 +484,7 @@ SOURCES += \
     dom/DeviceOrientationController.cpp \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
+    dom/DocumentEventQueue.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentMarkerController.cpp \
     dom/DocumentMarker.cpp \
@@ -506,7 +507,6 @@ SOURCES += \
     dom/EventListenerMap.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
-    dom/EventQueue.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
     dom/ExceptionCodePlaceholder.cpp \
@@ -1556,6 +1556,7 @@ HEADERS += \
     dom/EventDispatchMediator.h \
     dom/EventListenerMap.h \
     dom/EventNames.h \
+    dom/EventQueue.h \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
@@ -2611,6 +2612,7 @@ HEADERS += \
     workers/DedicatedWorkerThread.h \
     workers/SharedWorker.h \
     workers/WorkerContext.h \
+    workers/WorkerEventQueue.h \
     workers/Worker.h \
     workers/WorkerLocation.h \
     workers/WorkerMessagingProxy.h \
@@ -3015,6 +3017,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         workers/DedicatedWorkerThread.cpp \
         workers/Worker.cpp \
         workers/WorkerContext.cpp \
+        workers/WorkerEventQueue.cpp \
         workers/WorkerLocation.cpp \
         workers/WorkerMessagingProxy.cpp \
         workers/WorkerRunLoop.cpp \

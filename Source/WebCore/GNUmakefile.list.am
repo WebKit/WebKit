@@ -1176,6 +1176,8 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentFragment.cpp \
 	Source/WebCore/dom/DocumentFragment.h \
 	Source/WebCore/dom/Document.h \
+	Source/WebCore/dom/DocumentEventQueue.cpp \
+	Source/WebCore/dom/DocumentEventQueue.h \
 	Source/WebCore/dom/DocumentMarkerController.cpp \
 	Source/WebCore/dom/DocumentMarkerController.h \
 	Source/WebCore/dom/DocumentMarker.cpp \
@@ -1224,7 +1226,6 @@ webcore_sources += \
 	Source/WebCore/dom/EventNames.h \
 	Source/WebCore/dom/EventTarget.cpp \
 	Source/WebCore/dom/EventTarget.h \
-	Source/WebCore/dom/EventQueue.cpp \
 	Source/WebCore/dom/EventQueue.h \
 	Source/WebCore/dom/ExceptionBase.cpp \
 	Source/WebCore/dom/ExceptionBase.h \
@@ -3899,6 +3900,8 @@ webcore_sources += \
 	Source/WebCore/workers/WorkerContext.cpp \
 	Source/WebCore/workers/WorkerContext.h \
 	Source/WebCore/workers/WorkerContextProxy.h \
+	Source/WebCore/workers/WorkerEventQueue.cpp \
+	Source/WebCore/workers/WorkerEventQueue.h \
 	Source/WebCore/workers/Worker.cpp \
 	Source/WebCore/workers/Worker.h \
 	Source/WebCore/workers/WorkerLoaderProxy.h \

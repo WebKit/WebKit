@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "EventQueue.h"
+#include "DocumentEventQueue.h"
 
 #include "DOMWindow.h"
 #include "Document.h"
@@ -43,34 +43,34 @@ static inline bool shouldDispatchScrollEventSynchronously(Document* document)
     return applicationIsSafari() && (document->url().protocolIs("feed") || document->url().protocolIs("feeds"));
 }
 
-class EventQueueTimer : public SuspendableTimer {
-    WTF_MAKE_NONCOPYABLE(EventQueueTimer);
+class DocumentEventQueueTimer : public SuspendableTimer {
+    WTF_MAKE_NONCOPYABLE(DocumentEventQueueTimer);
 public:
-    EventQueueTimer(EventQueue* eventQueue, ScriptExecutionContext* context)
+    DocumentEventQueueTimer(DocumentEventQueue* eventQueue, ScriptExecutionContext* context)
         : SuspendableTimer(context)
         , m_eventQueue(eventQueue) { }
 
 private:
     virtual void fired() { m_eventQueue->pendingEventTimerFired(); }
-    EventQueue* m_eventQueue;    
+    DocumentEventQueue* m_eventQueue;
 };
 
-PassRefPtr<EventQueue> EventQueue::create(ScriptExecutionContext* context)
+PassRefPtr<DocumentEventQueue> DocumentEventQueue::create(ScriptExecutionContext* context)
 {
-    return adoptRef(new EventQueue(context));
+    return adoptRef(new DocumentEventQueue(context));
 }
 
-EventQueue::EventQueue(ScriptExecutionContext* context)
-    : m_pendingEventTimer(adoptPtr(new EventQueueTimer(this, context)))
+DocumentEventQueue::DocumentEventQueue(ScriptExecutionContext* context)
+    : m_pendingEventTimer(adoptPtr(new DocumentEventQueueTimer(this, context)))
     , m_isClosed(false)
 {
 }
 
-EventQueue::~EventQueue()
+DocumentEventQueue::~DocumentEventQueue()
 {
 }
 
-void EventQueue::enqueueEvent(PassRefPtr<Event> event)
+void DocumentEventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
     if (m_isClosed)
         return;
@@ -83,7 +83,7 @@ void EventQueue::enqueueEvent(PassRefPtr<Event> event)
         m_pendingEventTimer->startOneShot(0);
 }
 
-void EventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
+void DocumentEventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
 {
     if (!target->document()->hasListenerType(Document::SCROLL_LISTENER))
         return;
@@ -104,7 +104,7 @@ void EventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEve
     enqueueEvent(scrollEvent.release());
 }
 
-bool EventQueue::cancelEvent(Event* event)
+bool DocumentEventQueue::cancelEvent(Event* event)
 {
     bool found = m_queuedEvents.contains(event);
     m_queuedEvents.remove(event);
@@ -113,14 +113,14 @@ bool EventQueue::cancelEvent(Event* event)
     return found;
 }
 
-void EventQueue::close()
+void DocumentEventQueue::close()
 {
     m_isClosed = true;
     m_pendingEventTimer->stop();
     m_queuedEvents.clear();
 }
 
-void EventQueue::pendingEventTimerFired()
+void DocumentEventQueue::pendingEventTimerFired()
 {
     ASSERT(!m_pendingEventTimer->isActive());
     ASSERT(!m_queuedEvents.isEmpty());
@@ -132,7 +132,7 @@ void EventQueue::pendingEventTimerFired()
     bool wasAdded = m_queuedEvents.add(0).second;
     ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
 
-    RefPtr<EventQueue> protector(this);
+    RefPtr<DocumentEventQueue> protector(this);
 
     while (!m_queuedEvents.isEmpty()) {
         ListHashSet<RefPtr<Event> >::iterator iter = m_queuedEvents.begin();
@@ -144,7 +144,7 @@ void EventQueue::pendingEventTimerFired()
     }
 }
 
-void EventQueue::dispatchEvent(PassRefPtr<Event> event)
+void DocumentEventQueue::dispatchEvent(PassRefPtr<Event> event)
 {
     EventTarget* eventTarget = event->target();
     if (eventTarget->toDOMWindow())

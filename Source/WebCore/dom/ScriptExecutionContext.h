@@ -52,6 +52,7 @@ namespace WebCore {
     class DOMTimer;
     class DOMURL;
     class EventListener;
+    class EventQueue;
     class EventTarget;
     class MessagePort;
     class ScriptCallStack;
@@ -172,6 +173,8 @@ namespace WebCore {
         // Interval is in seconds.
         void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
         virtual double minimumTimerInterval() const;
+
+        virtual EventQueue* eventQueue() const = 0;
 
     protected:
         // Explicitly override the security origin for this script context.

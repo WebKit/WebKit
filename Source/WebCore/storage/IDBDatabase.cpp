@@ -27,6 +27,7 @@
 #include "IDBDatabase.h"
 
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "ExceptionCode.h"
 #include "EventQueue.h"
 #include "IDBAny.h"

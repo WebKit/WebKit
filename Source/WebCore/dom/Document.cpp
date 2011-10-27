@@ -51,6 +51,7 @@
 #include "DeviceMotionEvent.h"
 #include "DeviceOrientationController.h"
 #include "DeviceOrientationEvent.h"
+#include "DocumentEventQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -64,7 +65,6 @@
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "EventQueue.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
 #include "FormAssociatedElement.h"
@@ -390,7 +390,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_usingGeolocation(false)
-    , m_eventQueue(EventQueue::create(this))
+    , m_eventQueue(DocumentEventQueue::create(this))
     , m_weakReference(DocumentWeakReference::create(this))
     , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)

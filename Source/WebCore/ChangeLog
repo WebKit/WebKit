@@ -1,3 +1,70 @@
+2011-10-27  David Grogan  <dgrogan@chromium.org>
+
+        Move eventqueue from Document to ScriptExecutionContext so that it can be accessed from workers
+        https://bugs.webkit.org/show_bug.cgi?id=57789
+
+        Extract interface from EventQueue and create two new subclasses:
+        DocumentEventQueue and WorkerEventQueue.  DocumentEventQueue is the
+        old EventQueue implementation that uses DOMTimer(0) to post async
+        events.  WorkerEventQueue posts events to its thread's message loop.
+
+        Reviewed by David Levin.
+
+        No new tests - IndexedDB will use this but isn't ready yet.  I don't
+        know of any other API available in workers that I can test this with.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::eventQueue):
+        * dom/DocumentEventQueue.cpp: Renamed from Source/WebCore/dom/EventQueue.cpp.
+        (WebCore::shouldDispatchScrollEventSynchronously):
+        (WebCore::DocumentEventQueueTimer::DocumentEventQueueTimer):
+        (WebCore::DocumentEventQueueTimer::fired):
+        (WebCore::DocumentEventQueue::create):
+        (WebCore::DocumentEventQueue::DocumentEventQueue):
+        (WebCore::DocumentEventQueue::~DocumentEventQueue):
+        (WebCore::DocumentEventQueue::enqueueEvent):
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent):
+        (WebCore::DocumentEventQueue::cancelEvent):
+        (WebCore::DocumentEventQueue::close):
+        (WebCore::DocumentEventQueue::pendingEventTimerFired):
+        (WebCore::DocumentEventQueue::dispatchEvent):
+        * dom/DocumentEventQueue.h: Copied from Source/WebCore/dom/EventQueue.h.
+        * dom/EventQueue.h:
+        * dom/ScriptExecutionContext.h:
+        * page/EventHandler.cpp: Change EventQueue to DocumentEventQueue.
+        (WebCore::EventHandler::sendScrollEvent): Change EventQueue to DocumentEventQueue.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Change EventQueue to DocumentEventQueue.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollTo): Change EventQueue to DocumentEventQueue.
+        * storage/IDBDatabase.cpp:
+        * storage/IDBRequest.cpp:
+        * storage/IDBTransaction.cpp:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::eventQueue):
+        * workers/WorkerContext.h:
+        * workers/WorkerEventQueue.cpp: Added.
+        (WebCore::WorkerEventQueue::create):
+        (WebCore::WorkerEventQueue::WorkerEventQueue):
+        (WebCore::WorkerEventQueue::~WorkerEventQueue):
+        (WebCore::WorkerEventQueue::EventDispatcherTask::create):
+        (WebCore::WorkerEventQueue::EventDispatcherTask::dispatchEvent):
+        (WebCore::WorkerEventQueue::EventDispatcherTask::performTask):
+        (WebCore::WorkerEventQueue::EventDispatcherTask::cancel):
+        (WebCore::WorkerEventQueue::EventDispatcherTask::EventDispatcherTask):
+        (WebCore::WorkerEventQueue::removeEvent):
+        (WebCore::WorkerEventQueue::enqueueEvent):
+        (WebCore::WorkerEventQueue::cancelEvent):
+        (WebCore::WorkerEventQueue::close):
+        * workers/WorkerEventQueue.h: Copied from Source/WebCore/dom/EventQueue.h.
+
 2011-10-27  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         [GStreamer] Prevent memory leak when fullscreening a video

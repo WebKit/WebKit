@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -110,6 +111,7 @@ namespace WebCore {
 
         // ScriptExecutionContext
         virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+        virtual WorkerEventQueue* eventQueue() const;
 
 #if ENABLE(NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
@@ -212,6 +214,8 @@ namespace WebCore {
         EventTargetData m_eventTargetData;
 
         HashSet<Observer*> m_workerObservers;
+
+        OwnPtr<WorkerEventQueue> m_eventQueue;
     };
 
 } // namespace WebCore

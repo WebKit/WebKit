@@ -29,8 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "EventException.h"
-#include "EventQueue.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"

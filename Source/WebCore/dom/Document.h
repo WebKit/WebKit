@@ -33,6 +33,7 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "DOMTimeStamp.h"
+#include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
 #include "IconURL.h"
 #include "IntRect.h"
@@ -81,7 +82,6 @@ class Element;
 class EntityReference;
 class Event;
 class EventListener;
-class EventQueue;
 class FontData;
 class FormAssociatedElement;
 class Frame;
@@ -1030,7 +1030,7 @@ public:
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
-    EventQueue* eventQueue() const { return m_eventQueue.get(); }
+    virtual DocumentEventQueue* eventQueue() const { return m_eventQueue.get(); }
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1370,7 +1370,7 @@ private:
 
     bool m_usingGeolocation;
 
-    RefPtr<EventQueue> m_eventQueue;
+    RefPtr<DocumentEventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
 

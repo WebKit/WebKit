@@ -50,8 +50,8 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "EventHandler.h"
-#include "EventQueue.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -1442,7 +1442,7 @@ void RenderLayer::scrollTo(LayoutUnit x, LayoutUnit y)
 
     // Schedule the scroll DOM event.
     if (renderer()->node())
-        renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), EventQueue::ScrollEventElementTarget);
+        renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), DocumentEventQueue::ScrollEventElementTarget);
 }
 
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)

@@ -533,6 +533,7 @@ SET(WebCore_SOURCES
     dom/Document.cpp
     dom/DocumentMarkerController.cpp
     dom/DocumentMarker.cpp
+    dom/DocumentEventQueue.cpp
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
     dom/DocumentOrderedMap.cpp
@@ -552,7 +553,6 @@ SET(WebCore_SOURCES
     dom/EventListenerMap.cpp
     dom/EventNames.cpp
     dom/EventTarget.cpp
-    dom/EventQueue.cpp
     dom/ExceptionBase.cpp
     dom/ExceptionCode.cpp
     dom/ExceptionCodePlaceholder.cpp
@@ -2013,6 +2013,7 @@ IF (ENABLE_WORKERS)
         workers/DedicatedWorkerThread.cpp
         workers/Worker.cpp
         workers/WorkerContext.cpp
+        workers/WorkerEventQueue.cpp
         workers/WorkerLocation.cpp
         workers/WorkerMessagingProxy.cpp
         workers/WorkerRunLoop.cpp

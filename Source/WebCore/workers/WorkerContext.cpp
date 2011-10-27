@@ -506,6 +506,11 @@ void WorkerContext::notifyObserversOfStop()
     }
 }
 
+WorkerEventQueue* WorkerContext::eventQueue() const
+{
+    return m_eventQueue.get();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

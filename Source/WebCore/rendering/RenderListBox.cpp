@@ -34,8 +34,8 @@
 #include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "EventHandler.h"
-#include "EventQueue.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "Frame.h"
@@ -622,7 +622,7 @@ void RenderListBox::scrollTo(int newOffset)
 
     m_indexOffset = newOffset;
     repaint();
-    node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(node(), EventQueue::ScrollEventElementTarget);
+    node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(node(), DocumentEventQueue::ScrollEventElementTarget);
 }
 
 LayoutUnit RenderListBox::itemHeight() const

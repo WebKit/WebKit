@@ -32,10 +32,10 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"

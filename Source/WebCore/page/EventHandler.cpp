@@ -34,11 +34,11 @@
 #include "Cursor.h"
 #include "CursorList.h"
 #include "Document.h"
+#include "DocumentEventQueue.h"
 #include "DragController.h"
 #include "DragState.h"
 #include "Editor.h"
 #include "EventNames.h"
-#include "EventQueue.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -3107,7 +3107,7 @@ void EventHandler::sendScrollEvent()
 {
     setFrameWasScrolledByUser();
     if (m_frame->view() && m_frame->document())
-        m_frame->document()->eventQueue()->enqueueOrDispatchScrollEvent(m_frame->document(), EventQueue::ScrollEventDocumentTarget);
+        m_frame->document()->eventQueue()->enqueueOrDispatchScrollEvent(m_frame->document(), DocumentEventQueue::ScrollEventDocumentTarget);
 }
 
 void EventHandler::setFrameWasScrolledByUser()

@@ -24,26 +24,44 @@
  *
  */
 
-#ifndef EventQueue_h
-#define EventQueue_h
+#ifndef WorkerEventQueue_h
+#define WorkerEventQueue_h
 
+#include "EventQueue.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Event;
+class Node;
+class ScriptExecutionContext;
 
-class EventQueue {
+class WorkerEventQueue : public RefCounted<WorkerEventQueue>, public EventQueue {
 public:
-    virtual ~EventQueue() { }
-    virtual void enqueueEvent(PassRefPtr<Event>) = 0;
-    virtual bool cancelEvent(Event*) = 0;
-    // The accumulated and all the future events will be discarded, no events will be dispatched anymore.
-    virtual void close() = 0;
+
+    static PassOwnPtr<WorkerEventQueue> create(ScriptExecutionContext*);
+    virtual ~WorkerEventQueue();
+
+    // EventQueue
+    virtual void enqueueEvent(PassRefPtr<Event>);
+    virtual bool cancelEvent(Event*);
+    virtual void close();
+
+private:
+    explicit WorkerEventQueue(ScriptExecutionContext*);
+    void removeEvent(Event*);
+
+    ScriptExecutionContext* m_scriptExecutionContext;
+    bool m_isClosed;
+
+    class EventDispatcherTask;
+    typedef HashMap<RefPtr<Event>, EventDispatcherTask*> EventTaskMap;
+    EventTaskMap m_eventTaskMap;
 };
 
 }
 
-#endif // EventQueue_h
+#endif // WorkerEventQueue_h
