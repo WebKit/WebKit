@@ -93,6 +93,7 @@ namespace JSC {
         virtual bool isPropertyNameIterator() const { return false; }
 
         Structure* structure() const;
+        void clearStructure() { m_structure.clear(); }
 
         // Extracting the value.
         bool getString(ExecState* exec, UString&) const;
@@ -349,7 +350,9 @@ namespace JSC {
 
     template <typename T> void* allocateCell(Heap& heap)
     {
-        return heap.allocate(sizeof(T));
+        JSCell* result = static_cast<JSCell*>(heap.allocate(sizeof(T)));
+        result->clearStructure();
+        return result;
     }
         
 } // namespace JSC
