@@ -59,7 +59,6 @@
             'tests/CCLayerTreeHostImplTest.cpp',
             'tests/CCLayerTreeHostTest.cpp',
             'tests/CCSchedulerTest.cpp',
-            'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CCThreadTest.cpp',
             'tests/FrameTestHelpers.cpp',

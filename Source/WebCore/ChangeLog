@@ -1,3 +1,15 @@
+2011-10-27  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r98612.
+        http://trac.webkit.org/changeset/98612
+        https://bugs.webkit.org/show_bug.cgi?id=70714
+
+        Broke build
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp: Removed.
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h: Removed.
+
 2011-10-24  Nat Duca  <nduca@chromium.org>
 
         [chromium] Encapsulate state machine parts of scheduling in CCSchedulerStateMachine
