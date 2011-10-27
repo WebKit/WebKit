@@ -140,24 +140,6 @@ JSValue JSCanvasRenderingContext2D::createImageData(ExecState* exec)
     return toJS(exec, globalObject(), WTF::getPtr(imageData));
 }
 
-JSValue JSCanvasRenderingContext2D::putImageData(ExecState* exec)
-{
-    // putImageData has two variants
-    // putImageData(ImageData, x, y)
-    // putImageData(ImageData, x, y, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-
-    ExceptionCode ec = 0;
-    if (exec->argumentCount() >= 7)
-        context->putImageData(toImageData(exec->argument(0)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec), 
-                              exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec), exec->argument(5).toFloat(exec), exec->argument(6).toFloat(exec), ec);
-    else
-        context->putImageData(toImageData(exec->argument(0)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec), ec);
-
-    setDOMException(exec, ec);
-    return jsUndefined();
-}
-
 JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());

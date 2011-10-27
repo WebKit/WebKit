@@ -264,6 +264,7 @@ sub GenerateHeader
     # Copy contents of parent classes except the first parent or if it is
     # EventTarget.
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
+    $codeGenerator->LinkOverloadedFunctions($dataNode);
 
     my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"} || $className =~ /SVG/;
     if (!$hasDependentLifetime) {
@@ -371,7 +372,7 @@ END
         my $name = $function->signature->name;
         my $attrExt = $function->signature->extendedAttributes;
 
-        if ($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+        if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && $function->{overloadIndex} == 1) {
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
@@ -1384,6 +1385,17 @@ sub GenerateArgumentsCountCheck
     my $function = shift;
     my $dataNode = shift;
 
+    my $numMandatoryParams = 0;
+    my $optionalSeen = 0;
+    foreach my $param (@{$function->parameters}) {
+        if ($param->extendedAttributes->{"Optional"}) {
+            $optionalSeen = 1;
+        } else {
+            die "An argument must not be declared to be optional unless all subsequent arguments to the operation are also optional." if $optionalSeen;
+            $numMandatoryParams++;
+        }
+    }
+
     my $argumentsCountCheckString = "";
     my $requiresAllArguments;
     my $requiresAllArgumentsDefault = "";
@@ -1391,22 +1403,12 @@ sub GenerateArgumentsCountCheck
         $requiresAllArgumentsDefault = "Raise";
     }
     $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
-    if ($requiresAllArguments) {
-        my $numMandatoryParams = @{$function->parameters};
-        foreach my $param (reverse(@{$function->parameters})) {
-            if ($param->extendedAttributes->{"Optional"}) {
-                $numMandatoryParams--;
-            } else {
-                last;
-            }
-        }
-        if ($numMandatoryParams >= 1) {
-            $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
-            if ($requiresAllArguments eq "Raise") {
-                $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
-            } else {
-                $argumentsCountCheckString .= "        return v8::Handle<v8::Value>();\n";
-            }
+    if ($requiresAllArguments && $numMandatoryParams >= 1) {
+        $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
+        if ($requiresAllArguments eq "Raise") {
+            $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
+        } else {
+            $argumentsCountCheckString .= "        return v8::Handle<v8::Value>();\n";
         }
     }
     return $argumentsCountCheckString;
@@ -2005,13 +2007,12 @@ sub GenerateImplementation
         GenerateConstructorGetter($implClassName);
     }
 
-    $codeGenerator->LinkOverloadedFunctions($dataNode);
-
     my $indexer;
     my $namedPropertyGetter;
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
-        if (!($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"})) {
+        my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"};
+        if (!$isCustom) {
             GenerateFunctionCallback($function, $dataNode, $implClassName);
             if ($function->{overloadIndex} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
                 GenerateOverloadedFunctionCallback($function, $dataNode, $implClassName);
@@ -2030,7 +2031,9 @@ sub GenerateImplementation
         # generate an access getter that returns different function objects
         # for different calling context.
         if (($dataNode->extendedAttributes->{"CheckDomainSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-            GenerateDomainSafeFunctionGetter($function, $implClassName);
+            if (!$isCustom || $function->{overloadIndex} == 1) {
+                GenerateDomainSafeFunctionGetter($function, $implClassName);
+            }
         }
     }
 

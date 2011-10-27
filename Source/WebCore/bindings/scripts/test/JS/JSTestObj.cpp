@@ -1556,6 +1556,11 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     int opt1(exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
+    if (argsCount <= 2) {
+        imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1);
+        return JSValue::encode(jsUndefined());
+    }
+
     int opt2(exec->argument(2).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());

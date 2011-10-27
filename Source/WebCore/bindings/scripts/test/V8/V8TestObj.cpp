@@ -1042,6 +1042,10 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
         return v8::Handle<v8::Value>();
     }
     EXCEPTION_BLOCK(int, opt1, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
+    if (args.Length() <= 2) {
+        imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1);
+        return v8::Handle<v8::Value>();
+    }
     EXCEPTION_BLOCK(int, opt2, toInt32(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)));
     imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
     return v8::Handle<v8::Value>();

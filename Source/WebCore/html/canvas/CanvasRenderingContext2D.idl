@@ -152,13 +152,16 @@ module html {
         void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
         void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
 
+        void putImageData(in ImageData imagedata, in float dx, in float dy)
+            raises(DOMException);
+        void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+            raises(DOMException);
+
 #if defined(V8_BINDING) && V8_BINDING
         CanvasPattern createPattern(in HTMLCanvasElement canvas, in [ConvertNullToNullString] DOMString repetitionType)
             raises (DOMException);
         CanvasPattern createPattern(in HTMLImageElement image, in [ConvertNullToNullString] DOMString repetitionType)
             raises (DOMException);
-        void putImageData(in ImageData imagedata, in float dx, in float dy, in [Optional] float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
-            raises(DOMException);
         ImageData createImageData(in ImageData imagedata)
             raises (DOMException);
         ImageData createImageData(in float sw, in float sh)
@@ -166,7 +169,6 @@ module html {
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
         [Custom] void createPattern(/* 2 */);
-        [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);
         [Custom] ImageData createImageData(/* 3 */);
 #endif // defined(V8_BINDING)
 

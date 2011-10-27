@@ -1,3 +1,15 @@
+2011-10-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Get rid of optional parameters in the middle in IDLs.
+        https://bugs.webkit.org/show_bug.cgi?id=70816
+
+        Reviewed by Adam Barth.
+
+        Optional parameters in the middle are prohibited by WebIDL spec.
+
+        * fast/canvas/canvas-putImageData-expected.txt: expectation was wrong, context.putImageData({}, 0, 0) should throw Type Error.
+        * fast/canvas/canvas-putImageData.js:
+
 2011-10-27  John Gregg  <johnnyg@google.com>
 
         unreviewed, test expectations

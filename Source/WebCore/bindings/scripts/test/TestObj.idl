@@ -119,7 +119,7 @@ module test {
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
-        void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in long opt2);
+        void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // 'Callback' extended attribute
