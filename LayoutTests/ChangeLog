@@ -1,3 +1,12 @@
+2011-10-27  Mike Reed  <reed@google.com>
+
+        need to rebaseline after skia 2527 lands, fixing an off-by-1 bug in blending (with alpha==0)
+        https://bugs.webkit.org/show_bug.cgi?id=70963
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Andreas Kling  <kling@webkit.org>
 
         StyleSheet.parentStyleSheet does not work.

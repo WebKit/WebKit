@@ -1505,6 +1505,27 @@ BUGCR15270 LINUX MAC RELEASE : fast/js/excessive-comma-usage.html = TEXT
 BUGCR15270 LINUX MAC DEBUG : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 
+// rebaseline after skia rev. 2527 lands
+BUGCR101797 CPU : fast/backgrounds/size/contain-and-cover.html = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1/coords-viewattr-03-b.svg = IMAGE
+BUGCR101797 CPU : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
+BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGCR101797 CPU : svg/batik/text/textOnPathSpaces.svg = IMAGE
+BUGCR101797 CPU : svg/batik/text/verticalText.svg = IMAGE
+BUGCR101797 CPU : svg/batik/text/verticalTextOnPath.svg = IMAGE
+BUGCR101797 CPU : svg/custom/use-css-events.svg = IMAGE
+BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
+BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
+BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
+BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
+BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
+BUGCR101797 CPU : svg/hixie/perf/007.xml = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
