@@ -1,5 +1,14 @@
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Update Chromium test_expectations.
+
+        inspector/storage-panel-dom-storage.html has results platform dependant?
+        https://bugs.webkit.org/show_bug.cgi?id=70985
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Update test expecatations for search-in-resources.html
 
         http/tests/inspector/search/search-in-resources.html fails on all platforms
