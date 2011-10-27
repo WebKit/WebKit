@@ -1,3 +1,9 @@
+2011-10-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Mike Reed  <reed@google.com>
 
         need to rebaseline after skia 2527 lands, fixing an off-by-1 bug in blending (with alpha==0)

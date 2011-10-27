@@ -3439,6 +3439,7 @@ BUGWK65951 LINUX MAC DEBUG : webaudio/mixing.html = CRASH PASS
 BUGWK65951 LINUX MAC DEBUG : webaudio/test-basic.html = CRASH PASS
 
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING FAIL
+BUGWK71019 LINUX : css3/font-feature-settings-rendering.html = IMAGE
 
 // New test in r93068
 BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
