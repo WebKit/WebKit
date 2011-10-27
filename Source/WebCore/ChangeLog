@@ -1,3 +1,15 @@
+2011-10-27  Arthur Hsu  <arthurhsu@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70390
+        Ensure font load for Skia backend during printing.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2011-10-27  Michael Saboff  <msaboff@apple.com>
 
         Investigate storing strings in 8-bit buffers when possible
