@@ -22,6 +22,7 @@
 #define GStreamerGWorld_h
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "GOwnPtr.h"
 #include "PlatformVideoWindow.h"
 #include "RefCounted.h"
 #include "RefPtr.h"
@@ -60,7 +61,7 @@ private:
     GStreamerGWorld(GstElement*);
     GstElement* m_pipeline;
     RefPtr<PlatformVideoWindow> m_videoWindow;
-    gchar* m_dynamicPadName;
+    GOwnPtr<gchar> m_dynamicPadName;
 };
 
 }

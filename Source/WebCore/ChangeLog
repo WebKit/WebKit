@@ -1,3 +1,16 @@
+2011-10-27  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        [GStreamer] Prevent memory leak when fullscreening a video
+        https://bugs.webkit.org/show_bug.cgi?id=71043
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::GStreamerGWorld):
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        (WebCore::GStreamerGWorld::exitFullscreen):
+        * platform/graphics/gstreamer/GStreamerGWorld.h:
+
 2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reviewed by David Kilzer.

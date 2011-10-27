@@ -57,7 +57,6 @@ PassRefPtr<GStreamerGWorld> GStreamerGWorld::createGWorld(GstElement* pipeline)
 
 GStreamerGWorld::GStreamerGWorld(GstElement* pipeline)
     : m_pipeline(pipeline)
-    , m_dynamicPadName(0)
 {
     // XOverlay messages need to be handled synchronously.
     GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
@@ -105,7 +104,7 @@ bool GStreamerGWorld::enterFullscreen()
     gst_pad_link(srcPad, sinkPad);
     gst_object_unref(GST_OBJECT(sinkPad));
 
-    m_dynamicPadName = gst_pad_get_name(srcPad);
+    m_dynamicPadName.set(gst_pad_get_name(srcPad));
 
     // Synchronize the new elements with pipeline state. If it's
     // paused limit the state change to pre-rolling.
@@ -164,7 +163,7 @@ void GStreamerGWorld::exitFullscreen()
     GstElement* videoScale = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoScale");
 
     // Get pads to unlink and remove.
-    GstPad* srcPad = gst_element_get_static_pad(tee, m_dynamicPadName);
+    GstPad* srcPad = gst_element_get_static_pad(tee, m_dynamicPadName.get());
     GstPad* sinkPad = gst_element_get_static_pad(queue, "sink");
 
     // Block data flow towards the pipeline branch to remove. No need
@@ -195,7 +194,7 @@ void GStreamerGWorld::exitFullscreen()
     gst_object_unref(platformVideoSink);
 
     gst_object_unref(tee);
-    m_dynamicPadName = 0;
+    m_dynamicPadName.clear();
 }
 
 void GStreamerGWorld::setWindowOverlay(GstMessage* message)
