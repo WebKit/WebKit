@@ -1,3 +1,19 @@
+2011-10-27  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2]Add setViewportSize API to WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=71006
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixed layout rendering needs the viewport size information on the WebProcess
+        side to be able to do viewport attribute calculations.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewportSize):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewportSize):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-10-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Move the C API callback setup out of QtWebPageProxy

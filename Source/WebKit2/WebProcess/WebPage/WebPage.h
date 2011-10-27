@@ -308,8 +308,10 @@ public:
 #if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void setFixedVisibleContentRect(const WebCore::IntRect&);
-    void setResizesToContentsUsingLayoutSize(const WebCore::IntSize& targetLayoutSize);
+    void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
     void resizeToContentsIfNeeded();
+    void setViewportSize(const WebCore::IntSize&);
+    WebCore::IntSize viewportSize() const { return m_viewportSize; }
 #endif
 
     WebContextMenu* contextMenu();
@@ -658,6 +660,7 @@ private:
 
 #if USE(TILED_BACKING_STORE)
     WebCore::IntSize m_resizesToContentsLayoutSize;
+    WebCore::IntSize m_viewportSize;
 #endif
 
     FindController m_findController;

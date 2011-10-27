@@ -738,6 +738,20 @@ void WebPage::resizeToContentsIfNeeded()
     view->resize(m_viewSize);
     view->setNeedsLayout();
 }
+
+void WebPage::setViewportSize(const IntSize& size)
+{
+    if (m_viewportSize == size)
+        return;
+
+     m_viewportSize = size;
+
+    // Recalculate the recommended layout size, when the available size (device pixel) changes.
+    Settings* settings = m_page->settings();
+    IntSize targetLayoutSize = computeViewportAttributes(m_page->viewportArguments(), settings->layoutFallbackWidth(), settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), size).layoutSize;
+    setResizesToContentsUsingLayoutSize(targetLayoutSize);
+}
+
 #endif
 
 void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffset)
