@@ -942,6 +942,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+    [notificationCenter removeObserver:self name:WKWindowWillOrderOnScreenNotification() object:window];
+    [notificationCenter removeObserver:self name:WKWindowWillOrderOffScreenNotification() object:window];
     [notificationCenter removeObserver:self name:NSWindowWillCloseNotification object:window];
     
     _private->observingWindowNotifications = false;
@@ -2864,6 +2866,8 @@ WEBCORE_COMMAND(yankAndSelect)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(windowWillOrderOnScreen:) name:WKWindowWillOrderOnScreenNotification() object:window];
+    [notificationCenter addObserver:self selector:@selector(windowWillOrderOffScreen:) name:WKWindowWillOrderOffScreenNotification() object:window];
     [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:window];
     
     _private->observingWindowNotifications = true;
@@ -3356,6 +3360,30 @@ static void setMenuTargets(NSMenu* menu)
         [self _updateSecureInputState];
         [_private->completionController endRevertingChange:NO moveLeft:NO];
     }
+}
+
+- (void)windowWillOrderOnScreen:(NSNotification *)notification
+{
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
+    // Check if the window is already a key window, which can be the case for NSPopovers.
+    if ([[self window] isKeyWindow])
+        [self addMouseMovedObserver];
+}
+
+- (void)windowWillOrderOffScreen:(NSNotification *)notification
+{
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
+        return;
+    }
+
+    // When the WebView is in a NSPopover the NSWindowDidResignKeyNotification isn't sent
+    // unless the parent window loses key. So we need to remove the mouse moved observer.
+    [self removeMouseMovedObserver];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
