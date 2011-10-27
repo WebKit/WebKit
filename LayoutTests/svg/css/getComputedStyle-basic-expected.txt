@@ -266,6 +266,8 @@ rect: style.getPropertyValue(-webkit-column-break-before) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-break-inside) : auto
 rect: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-column-axis) : auto
+rect: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-count) : auto
 rect: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-gap) : normal
@@ -746,6 +748,8 @@ g: style.getPropertyValue(-webkit-column-break-before) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-break-inside) : auto
 g: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-column-axis) : auto
+g: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-count) : auto
 g: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-gap) : normal
