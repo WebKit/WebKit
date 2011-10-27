@@ -395,6 +395,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
         return;
 
     HFONT hfont = font->platformData().hfont();
+    PlatformSupport::ensureFontLoaded(hfont);
 
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
     // the arrays of characters and advances.
