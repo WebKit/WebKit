@@ -1,3 +1,66 @@
+2011-10-27  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98369
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            PDF SUBFRAMES: Incomplete repaint after pinch to zoom
+            https://bugs.webkit.org/show_bug.cgi?id=70821
+            <rdar://problem/10312733>
+
+            Reviewed by Simon Fraser.
+
+            Add a new pure virtual member function, Plugin::wantsWindowRelativeCoordinates.
+            If a plug-in subclass returns true, we'll keep giving the plug-in coordinates that
+            are relative to the containing window. If a plug-in subclass returns false, we'll give it
+            coordinates in a much more sane coordinate system, with the origin at the top left corner of the plug-in.
+
+            Change BuiltinPDFView to return false so that it'll work correctly with pinch to zoom.
+
+            * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+            (WebKit::NetscapePlugin::wantsWindowRelativeCoordinates):
+            Make wantsWindowRelativeCoordinates return true.
+
+            * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+            (WebKit::BuiltInPDFView::paint):
+            Remove translation since the graphics context is already set up in the right way.
+
+            (WebKit::BuiltInPDFView::paintContent):
+            No need to offset by the plug-in view location anymore.
+
+            (WebKit::BuiltInPDFView::paintControls):
+            Account for the scrollbars being children of the parent scroll view here.
+
+            (WebKit::BuiltInPDFView::wantsWindowRelativeCoordinates):
+            Return false.
+
+            (WebKit::BuiltInPDFView::convertFromContainingViewToScrollbar):
+            Implement this so that scrollbar hit testing works correctly.
+
+            * WebProcess/Plugins/Plugin.h:
+            Add wantsWindowRelativeCoordinates.
+
+            * WebProcess/Plugins/PluginProxy.cpp:
+            (WebKit::PluginProxy::wantsWindowRelativeCoordinates):
+            Return true for now.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::renderer):
+            Add simple getter.
+
+            (WebKit::PluginView::paint):
+            Handle the case when the plug-in doesn't want window relative coordinates.
+
+            (WebKit::PluginView::transformsAffectFrameRect):
+            Return true here.
+
+            (WebKit::PluginView::viewGeometryDidChange):
+            No need to adjust the bounds to account for the scale factor now, since the frame rect will always be the
+            same regardless of the transform.
+
+            (WebKit::PluginView::clipRectInWindowCoordinates):
+            Ditto.
+
 2011-10-26  Lucas Forschler  <lforschler@apple.com>
 
     Merge 93720

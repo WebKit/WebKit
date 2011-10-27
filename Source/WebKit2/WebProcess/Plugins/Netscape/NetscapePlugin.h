@@ -190,6 +190,7 @@ private:
 
     virtual void privateBrowsingStateChanged(bool);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
+    virtual bool wantsWindowRelativeCoordinates();
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
 

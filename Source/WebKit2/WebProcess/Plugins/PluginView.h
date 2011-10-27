@@ -67,6 +67,9 @@ public:
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 #endif
 
+    // FIXME: Remove this; nobody should have to know about the plug-in view's renderer except the plug-in view itself.
+    WebCore::RenderBoxModelObject* renderer() const;
+
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
@@ -118,6 +121,7 @@ private:
     virtual void notifyWidget(WebCore::WidgetNotification);
     virtual void show();
     virtual void hide();
+    virtual bool transformsAffectFrameRect();
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();

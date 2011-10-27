@@ -381,6 +381,11 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
     m_plugin->manualStreamDidFail(error.isCancellation());
 }
 
+RenderBoxModelObject* PluginView::renderer() const 
+{ 
+        return toRenderBoxModelObject(m_pluginElement->renderer()); 
+}
+     
 #if PLATFORM(MAC)    
 void PluginView::setWindowIsVisible(bool windowIsVisible)
 {
@@ -560,24 +565,39 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         return;
     }
 
-    IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
-    IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
-    if (paintRectInWindowCoordinates.isEmpty())
-        return;
+    IntRect paintRect; 
+    if (m_plugin->wantsWindowRelativeCoordinates()) { 
+    IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect); 
+    paintRect = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates()); 
+    } else { 
+        // FIXME: We should try to intersect the dirty rect with the plug-in's clip rect here. 
+        paintRect = IntRect(IntPoint(), frameRect().size()); 
+    } 
 
-    if (m_snapshot)
+    if (paintRect.isEmpty()) 
+        return; 
+ 
+    if (m_snapshot) {
         m_snapshot->paint(*context, frameRect().location(), m_snapshot->bounds());
-    else {
+        return;
+    }
+
+    GraphicsContextStateSaver stateSaver(*context); 
+
+    if (m_plugin->wantsWindowRelativeCoordinates()) {
         // The plugin is given a frame rect which is parent()->contentsToWindow(frameRect()),
         // and un-translates by the its origin when painting. The current CTM reflects
         // this widget's frame is its parent (the document), so we have to offset the CTM by
         // the document's window coordinates.
         IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
         
-        GraphicsContextStateSaver stateSaver(*context);
         context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
-        m_plugin->paint(context, paintRectInWindowCoordinates);
-    }
+    } else {
+        // Translate the coordinate system so that the origin is in the top-left corner of the plug-in. 
+         context->translate(frameRect().location().x(), frameRect().location().y()); 
+     } 
+          
+     m_plugin->paint(context, paintRect);
 }
 
 void PluginView::frameRectsChanged()
@@ -677,16 +697,20 @@ void PluginView::hide()
     Widget::hide();
 }
 
+bool PluginView::transformsAffectFrameRect() 
+{ 
+    return false; 
+}
+     
 void PluginView::viewGeometryDidChange()
 {
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
     // Get the frame rect in window coordinates.
+    // FIXME: Figure out what we should pass here when m_plugin->wantsWindowRelativeCoordinates() returns false. 
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
     
-    // Adjust bounds to account for pageScaleFactor
-    frameRectInWindowCoordinates.scale(1 / frame()->pageScaleFactor());
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
 }
 
@@ -704,6 +728,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
 
     Frame* frame = this->frame();
+    
 
     // Get the window clip rect for the enclosing layer (in window coordinates).
     RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();
@@ -712,7 +737,6 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     // Intersect the two rects to get the view clip rect in window coordinates.
     frameRectInWindowCoordinates.intersect(windowClipRect);
 
-    frameRectInWindowCoordinates.scale(1 / frame->pageScaleFactor());
     return frameRectInWindowCoordinates;
 }
 
