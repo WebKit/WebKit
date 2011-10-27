@@ -3560,6 +3560,8 @@
             'platform/graphics/chromium/cc/CCRenderSurface.h',
             'platform/graphics/chromium/cc/CCScheduler.cpp',
             'platform/graphics/chromium/cc/CCScheduler.h',
+            'platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp',
+            'platform/graphics/chromium/cc/CCSchedulerStateMachine.h',
             'platform/graphics/chromium/cc/CCScopedMainThreadProxy.h',
             'platform/graphics/chromium/cc/CCScrollController.h',
             'platform/graphics/chromium/cc/CCSingleThreadProxy.cpp',

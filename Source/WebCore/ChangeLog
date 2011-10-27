@@ -1,3 +1,23 @@
+2011-10-24  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Encapsulate state machine parts of scheduling in CCSchedulerStateMachine
+        https://bugs.webkit.org/show_bug.cgi?id=70714
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp: Added.
+        (WebCore::CCSchedulerStateMachine::nextAction):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h: Added.
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::operator=):
+        (WebCore::CCSchedulerStateMachine::commitPending):
+        (WebCore::CCSchedulerStateMachine::setNeedsRedraw):
+        (WebCore::CCSchedulerStateMachine::setNeedsCommit):
+        (WebCore::CCSchedulerStateMachine::beginFrameComplete):
+        (WebCore::CCSchedulerStateMachine::updateResourcesComplete):
+
 2011-10-27  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10262205> Allow column progression to be independent of writing mode
