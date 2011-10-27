@@ -76,6 +76,7 @@ public:
     typedef Vector<CellStruct> Row;
 
     struct RowStruct {
+        // FIXME: This field should be an OwnPtr.
         Row* row;
         RenderTableRow* rowRenderer;
         LayoutUnit baseline;
@@ -104,7 +105,7 @@ public:
     LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
     LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
 
-    int numRows() const { return m_gridRows; }
+    int numRows() const { return m_grid.size(); }
     int numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded()
@@ -152,8 +153,6 @@ private:
 
     Vector<RowStruct> m_grid;
     Vector<LayoutUnit> m_rowPos;
-
-    int m_gridRows;
 
     // the current insertion position
     int m_cCol;

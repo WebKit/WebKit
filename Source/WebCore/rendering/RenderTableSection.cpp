@@ -58,7 +58,6 @@ static inline void setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(Rende
 
 RenderTableSection::RenderTableSection(Node* node)
     : RenderBox(node)
-    , m_gridRows(0)
     , m_cCol(0)
     , m_cRow(-1)
     , m_outerBorderStart(0)
@@ -177,17 +176,16 @@ void RenderTableSection::removeChild(RenderObject* oldChild)
 
 bool RenderTableSection::ensureRows(int numRows)
 {
-    int nRows = m_gridRows;
-    if (numRows > nRows) {
-        if (numRows > static_cast<int>(m_grid.size())) {
-            size_t maxSize = numeric_limits<size_t>::max() / sizeof(RowStruct);
-            if (static_cast<size_t>(numRows) > maxSize)
-                return false;
-            m_grid.grow(numRows);
-        }
-        m_gridRows = numRows;
+    if (numRows > static_cast<int>(m_grid.size())) {
+        size_t maxSize = numeric_limits<size_t>::max() / sizeof(RowStruct);
+        if (static_cast<size_t>(numRows) > maxSize)
+            return false;
+
+        unsigned oldSize = m_grid.size();
+        m_grid.grow(numRows);
+
         int nCols = max(1, table()->numEffCols());
-        for (int r = nRows; r < numRows; r++) {
+        for (int r = oldSize; r < numRows; r++) {
             m_grid[r].row = new Row(nCols);
             m_grid[r].rowRenderer = 0;
             m_grid[r].baseline = 0;
@@ -279,8 +277,8 @@ void RenderTableSection::setCellLogicalWidths()
     Vector<LayoutUnit>& columnPos = table()->columnPositions();
 
     LayoutStateMaintainer statePusher(view());
-    
-    for (int i = 0; i < m_gridRows; i++) {
+
+    for (unsigned i = 0; i < m_grid.size(); i++) {
         Row& row = *m_grid[i].row;
         int cols = row.size();
         for (int j = 0; j < cols; j++) {
@@ -329,10 +327,10 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
     LayoutStateMaintainer statePusher(view());
 
-    m_rowPos.resize(m_gridRows + 1);
+    m_rowPos.resize(m_grid.size() + 1);
     m_rowPos[0] = spacing;
 
-    for (int r = 0; r < m_gridRows; r++) {
+    for (unsigned r = 0; r < m_grid.size(); r++) {
         m_rowPos[r + 1] = 0;
         m_grid[r].baseline = 0;
         LayoutUnit baseline = 0;
@@ -352,10 +350,10 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
             if (!cell || current.inColSpan)
                 continue;
 
-            if ((cell->row() + cell->rowSpan() - 1) > r)
+            if ((cell->row() + cell->rowSpan() - 1) > static_cast<int>(r))
                 continue;
 
-            int indx = max(r - cell->rowSpan() + 1, 0);
+            unsigned indx = max(r - cell->rowSpan() + 1, 0u);
 
             if (cell->hasOverrideHeight()) {
                 if (!statePusher.didPush()) {
@@ -413,7 +411,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
     statePusher.pop();
 
-    return m_rowPos[m_gridRows];
+    return m_rowPos[m_grid.size()];
 }
 
 void RenderTableSection::layout()
@@ -441,7 +439,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
 
     LayoutUnit rHeight;
     int rindx;
-    int totalRows = m_gridRows;
+    int totalRows = m_grid.size();
     
     // Set the width of our section now.  The rows will also be this width.
     setLogicalWidth(table()->contentLogicalWidth());
@@ -712,7 +710,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
 LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 {
     int totalCols = table()->numEffCols();
-    if (!m_gridRows || !totalCols)
+    if (!m_grid.size() || !totalCols)
         return 0;
 
     unsigned borderWidth = 0;
@@ -763,7 +761,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 {
     int totalCols = table()->numEffCols();
-    if (!m_gridRows || !totalCols)
+    if (!m_grid.size() || !totalCols)
         return 0;
 
     unsigned borderWidth = 0;
@@ -782,7 +780,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 
     bool allHidden = true;
     for (int c = 0; c < totalCols; c++) {
-        const CellStruct& current = cellAt(m_gridRows - 1, c);
+        const CellStruct& current = cellAt(m_grid.size() - 1, c);
         if (current.inColSpan || !current.hasCells())
             continue;
         const BorderValue& cb = current.primaryCell()->style()->borderAfter(); // FIXME: Make this work with perpendicular and flipped cells.
@@ -814,7 +812,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 LayoutUnit RenderTableSection::calcOuterBorderStart() const
 {
     int totalCols = table()->numEffCols();
-    if (!m_gridRows || !totalCols)
+    if (!m_grid.size() || !totalCols)
         return 0;
 
     unsigned borderWidth = 0;
@@ -834,7 +832,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     }
 
     bool allHidden = true;
-    for (int r = 0; r < m_gridRows; r++) {
+    for (unsigned r = 0; r < m_grid.size(); r++) {
         const CellStruct& current = cellAt(r, 0);
         if (!current.hasCells())
             continue;
@@ -858,7 +856,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
 LayoutUnit RenderTableSection::calcOuterBorderEnd() const
 {
     int totalCols = table()->numEffCols();
-    if (!m_gridRows || !totalCols)
+    if (!m_grid.size() || !totalCols)
         return 0;
 
     unsigned borderWidth = 0;
@@ -878,7 +876,7 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     }
 
     bool allHidden = true;
-    for (int r = 0; r < m_gridRows; r++) {
+    for (unsigned r = 0; r < m_grid.size(); r++) {
         const CellStruct& current = cellAt(r, totalCols - 1);
         if (!current.hasCells())
             continue;
@@ -909,7 +907,7 @@ void RenderTableSection::recalcOuterBorder()
 
 LayoutUnit RenderTableSection::firstLineBoxBaseline() const
 {
-    if (!m_gridRows)
+    if (!m_grid.size())
         return -1;
 
     LayoutUnit firstLineBaseline = m_grid[0].baseline;
@@ -936,7 +934,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (needsLayout())
         return;
     
-    unsigned totalRows = m_gridRows;
+    unsigned totalRows = m_grid.size();
     unsigned totalCols = table()->columns().size();
 
     if (!totalRows || !totalCols)
@@ -1003,7 +1001,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // Check which rows and cols are visible and only paint these.
-    unsigned totalRows = m_gridRows;
+    unsigned totalRows = m_grid.size();
     unsigned totalCols = table()->columns().size();
 
     PaintPhase paintPhase = paintInfo.phase;
@@ -1125,8 +1123,12 @@ void RenderTableSection::recalcCells()
 {
     m_cCol = 0;
     m_cRow = -1;
+    unsigned capacity = m_grid.size();
     clearGrid();
-    m_gridRows = 0;
+    // Although it is possible for our row count to shrink (due to removeChild being called),
+    // it is more common for the count to stay the same. Let's just reallocate the old
+    // capacity upfront to avoid re-expanding it one row at a time.
+    m_grid.reserveCapacity(capacity);
 
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         if (row->isTableRow()) {
@@ -1158,16 +1160,17 @@ void RenderTableSection::setNeedsCellRecalc()
 
 void RenderTableSection::clearGrid()
 {
-    int rows = m_gridRows;
-    while (rows--)
-        delete m_grid[rows].row;
+    for (unsigned row = 0; row < m_grid.size(); ++row)
+        delete m_grid[row].row;
+
+    m_grid.clear();
 }
 
 int RenderTableSection::numColumns() const
 {
     int result = 0;
     
-    for (int r = 0; r < m_gridRows; ++r) {
+    for (unsigned r = 0; r < m_grid.size(); ++r) {
         for (int c = result; c < table()->numEffCols(); ++c) {
             const CellStruct& cell = cellAt(r, c);
             if (cell.hasCells() || cell.inColSpan)
@@ -1180,7 +1183,7 @@ int RenderTableSection::numColumns() const
 
 void RenderTableSection::appendColumn(int pos)
 {
-    for (int row = 0; row < m_gridRows; ++row)
+    for (unsigned row = 0; row < m_grid.size(); ++row)
         m_grid[row].row->resize(pos + 1);
 }
 
@@ -1190,7 +1193,7 @@ void RenderTableSection::splitColumn(int pos, int first)
 
     if (m_cCol > pos)
         m_cCol++;
-    for (int row = 0; row < m_gridRows; ++row) {
+    for (unsigned row = 0; row < m_grid.size(); ++row) {
         Row& r = *m_grid[row].row;
         r.insert(pos + 1, CellStruct());
         if (r[pos].hasCells()) {

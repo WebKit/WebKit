@@ -1,3 +1,42 @@
+2011-10-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove RenderTableSection::m_gridRows
+        https://bugs.webkit.org/show_bug.cgi?id=70570
+
+        Reviewed by Darin Adler.
+
+        No new test, refactoring only.
+
+        Just nuke the old field that was duplicating
+        m_grid.size().
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::numRows):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderBefore):
+        (WebCore::RenderTableSection::calcOuterBorderAfter):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::clearGrid):
+        (WebCore::RenderTableSection::numColumns):
+        (WebCore::RenderTableSection::appendColumn):
+        (WebCore::RenderTableSection::splitColumn):
+        s/m_gridRows/m_grid.size()/.
+        Also updated the code as m_grid.size() is unsigned.
+
+        (WebCore::RenderTableSection::recalcCells):
+        The old code would keep the grid's memory but we have to clear it to properly
+        count the elements. To avoid lots of small reallocations, we reallocate the
+        buffer at the old capacity upfront.
+
 2011-10-27  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, rolling out r98612.
