@@ -1,3 +1,15 @@
+2011-10-27  Antti Koivisto  <antti@apple.com>
+
+        Use StringHasher to generate the matched declaration cache hash
+        https://bugs.webkit.org/show_bug.cgi?id=71012
+
+        Reviewed by Kenneth Rohde Christiansen and Andreas Kling.
+
+        It is faster and better than the current custom function.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::computeDeclarationHash):
+
 2011-10-27  Kentaro Hara  <haraken@chromium.org>
 
         Refactor OptionsObject.cpp

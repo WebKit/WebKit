@@ -2136,14 +2136,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
 unsigned CSSStyleSelector::computeDeclarationHash(MatchedStyleDeclaration* declarations, unsigned size)
 {
-    unsigned hash = 0;
-    for (unsigned i = 0; i < size; ++i) {
-        unsigned ptrHash = PtrHash<CSSMutableStyleDeclaration*>::hash(declarations[i].styleDeclaration);
-        ptrHash ^= IntHash<unsigned>::hash(declarations[i].linkMatchType);
-        // Make the position matter.
-        hash ^= (ptrHash << i) | (ptrHash >> (32 - i));
-    }
-    return hash;
+    return StringHasher::hashMemory(declarations, sizeof(MatchedStyleDeclaration) * size);
 }
 
 bool operator==(const CSSStyleSelector::MatchResult& a, const CSSStyleSelector::MatchResult& b)
