@@ -360,9 +360,9 @@ WebInspector.ConsoleView.prototype = {
             completionsReadyCallback([]);
             return;
         }
-
-        if (!expressionString && WebInspector.panels.scripts.paused)
-            WebInspector.panels.scripts.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
+        
+        if (!expressionString && WebInspector.debuggerPresentationModel.paused)
+            WebInspector.debuggerPresentationModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
             this.evalInInspectedWindow(expressionString, "completion", true, true, false, evaluated.bind(this));
 
@@ -573,8 +573,8 @@ WebInspector.ConsoleView.prototype = {
      */
     evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, returnByValue, callback)
     {
-        if (WebInspector.panels.scripts.paused) {
-            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, returnByValue, callback);
+        if (WebInspector.debuggerPresentationModel.paused) {
+            WebInspector.debuggerPresentationModel.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, returnByValue, callback);
             return;
         }
 

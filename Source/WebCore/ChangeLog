@@ -1,5 +1,31 @@
 2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Refactor ScriptsPanel so that ConsoleView does not depend on it.
+        https://bugs.webkit.org/show_bug.cgi?id=70899
+
+        Moved methods used in console view to DebuggerPresentationModel.
+        Changed debuggerPaused handler logic so that selectedCallFrame is never null when debugger is paused.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype.getSelectedCallFrameVariables.propertiesCollected):
+        (WebInspector.DebuggerPresentationModel.prototype.getSelectedCallFrameVariables):
+        (WebInspector.DebuggerPresentationModel.prototype._dispatchExecutionLineChanged):
+        (WebInspector.DebuggerPresentationModel.prototype.get executionLineLocation):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._consoleCommandEvaluatedInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype._executionLineChanged):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.ScriptsPanel.prototype._updateCallFrame):
+
+2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Add support for advanced search in content scripts.
         https://bugs.webkit.org/show_bug.cgi?id=70923
 

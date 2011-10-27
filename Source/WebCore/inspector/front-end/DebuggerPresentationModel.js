@@ -64,6 +64,7 @@ WebInspector.DebuggerPresentationModel.Events = {
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
     CallFrameSelected: "call-frame-selected",
+    ConsoleCommandEvaluatedInSelectedCallFrame: "console-command-evaluated-in-selected-call-frame",
     ExecutionLineChanged: "execution-line-changed"
 }
 
@@ -482,9 +483,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this, rawSourceCode));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
-
         this.selectedCallFrame = this._presentationCallFrames[0];
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
     },
 
     _debuggerResumed: function()
@@ -510,8 +510,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._selectedCallFrame.rawSourceCode.forceUpdateSourceMapping();
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
 
-        if (this._selectedCallFrame.rawSourceCode.sourceMapping)
-            this._dispatchExecutionLineChanged(null);
         this._selectedCallFrame.rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._dispatchExecutionLineChanged, this);
     },
 
@@ -521,13 +519,76 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
+     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
+     */
+    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
+    {
+        /**
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean} wasThrown
+         */
+        function didEvaluate(result, wasThrown)
+        {
+            if (returnByValue)
+                callback(null, wasThrown, wasThrown ? null : result);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
+            
+            if (objectGroup === "console")
+                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);
+        }
+        
+        this.selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
+    },
+
+    /**
+     * @param {function(Object)} callback
+     */
+    getSelectedCallFrameVariables: function(callback)
+    {
+        var result = { this: true };
+
+        var selectedCallFrame = this.selectedCallFrame;
+        if (!selectedCallFrame)
+            callback(result);
+
+        var pendingRequests = 0;
+
+        function propertiesCollected(properties)
+        {
+            for (var i = 0; properties && i < properties.length; ++i)
+                result[properties[i].name] = true;
+            if (--pendingRequests == 0)
+                callback(result);
+        }
+
+        for (var i = 0; i < selectedCallFrame.scopeChain.length; ++i) {
+            var scope = selectedCallFrame.scopeChain[i];
+            var object = WebInspector.RemoteObject.fromPayload(scope.object);
+            pendingRequests++;
+            object.getAllProperties(propertiesCollected);
+        }
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _dispatchExecutionLineChanged: function(event)
     {
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this.executionLineLocation);
+    },
+
+    /**
+     * @type {WebInspector.UILocation}
+     */
+    get executionLineLocation()
+    {
+        if (!this._selectedCallFrame.rawSourceCode.sourceMapping)
+            return;
+        
         var rawLocation = this._selectedCallFrame._callFrame.location;
         var uiLocation = this._selectedCallFrame.rawSourceCode.sourceMapping.rawLocationToUILocation(rawLocation);
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, uiLocation);
+        return uiLocation;
     },
 
     /**

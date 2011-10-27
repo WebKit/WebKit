@@ -179,8 +179,9 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame, this._consoleCommandEvaluatedInSelectedCallFrame, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
-
+    
     var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
@@ -448,53 +449,9 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.jsBreakpoints.removeBreakpoint(breakpoint.uiSourceCode, breakpoint.lineNumber);
     },
 
-    /**
-     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
-     */
-    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
+    _consoleCommandEvaluatedInSelectedCallFrame: function(event)
     {
-        /**
-         * @param {?RuntimeAgent.RemoteObject} result
-         * @param {boolean} wasThrown
-         */
-        function didEvaluate(result, wasThrown)
-        {
-            if (objectGroup === "console")
-                this.sidebarPanes.scopechain.update(this._presentationModel.selectedCallFrame);
-            if (returnByValue)
-                callback(null, wasThrown, wasThrown ? null : result);
-            else
-                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
-        }
-        var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        if (selectedCallFrame)
-            selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
-    },
-
-    getSelectedCallFrameVariables: function(callback)
-    {
-        var result = { this: true };
-
-        var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        if (!selectedCallFrame)
-            callback(result);
-
-        var pendingRequests = 0;
-
-        function propertiesCollected(properties)
-        {
-            for (var i = 0; properties && i < properties.length; ++i)
-                result[properties[i].name] = true;
-            if (--pendingRequests == 0)
-                callback(result);
-        }
-
-        for (var i = 0; i < selectedCallFrame.scopeChain.length; ++i) {
-            var scope = selectedCallFrame.scopeChain[i];
-            var object = WebInspector.RemoteObject.fromPayload(scope.object);
-            pendingRequests++;
-            object.getAllProperties(propertiesCollected);
-        }
+        this.sidebarPanes.scopechain.update(this._presentationModel.selectedCallFrame);
     },
 
     _debuggerPaused: function(event)
@@ -511,7 +468,7 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.setCurrentPanel(this);
 
         this.sidebarPanes.callstack.update(callFrames);
-        this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
+        this._updateCallFrame(this._presentationModel.selectedCallFrame);
 
         if (details.reason === WebInspector.DebuggerModel.BreakReason.DOM) {
             this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.auxData);
@@ -760,6 +717,11 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiLocation = event.data;
 
+        this._updateExecutionLine(uiLocation);
+    },
+
+    _updateExecutionLine: function(uiLocation)
+    {
         this._clearCurrentExecutionLine();
         if (!uiLocation)
             return;
@@ -780,9 +742,15 @@ WebInspector.ScriptsPanel.prototype = {
         if (!callFrame)
             return;
 
+        this._updateCallFrame(callFrame);
+    },
+
+    _updateCallFrame: function(callFrame)
+    {
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
-        this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
+        this.sidebarPanes.callstack.selectedCallFrame = callFrame;
+        this._updateExecutionLine(this._presentationModel.executionLineLocation);
     },
 
     _filesSelectChanged: function()
