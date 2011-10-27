@@ -71,19 +71,19 @@ class ChromiumPort(Port):
         ('lucid', 'x86_64'))
 
     ALL_GRAPHICS_TYPES = ('cpu', 'gpu')
-    CORE_GRAPHICS_VERSIONS = ('leopard', 'snowleopard')
+    CORE_GRAPHICS_VERSIONS = ('leopard', 'snowleopard', 'lion')
     CORE_GRAPHICS_TYPES = ('cpu-cg', 'gpu-cg')
 
     ALL_BASELINE_VARIANTS = [
-        'chromium-mac-snowleopard', 'chromium-mac-leopard',
-        'chromium-cg-mac-snowleopard', 'chromium-cg-mac-leopard',
+        'chromium-mac-lion', 'chromium-mac-snowleopard', 'chromium-mac-leopard',
+        'chromium-cg-mac-lion', 'chromium-cg-mac-snowleopard', 'chromium-cg-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
         'chromium-linux-x86_64', 'chromium-linux-x86',
         'chromium-gpu-mac-snowleopard', 'chromium-gpu-win-win7', 'chromium-gpu-linux-x86_64',
     ]
 
     CONFIGURATION_SPECIFIER_MACROS = {
-        'mac': ['leopard', 'snowleopard'],
+        'mac': ['leopard', 'snowleopard', 'lion'],
         'win': ['xp', 'vista', 'win7'],
         'linux': ['lucid'],
     }
