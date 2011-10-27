@@ -92,7 +92,8 @@ static BOOL isForcingPreviewUpdate;
     [self _setAutodisplay:YES];
 
     // Enabling autodisplay normally implicitly calls endPrinting() via -[WKView drawRect:], but not when content is in accelerated compositing mode.
-    _webFrame->page()->endPrinting();
+    if (_webFrame->page())
+        _webFrame->page()->endPrinting();
 }
 
 - (void)_delayedResumeAutodisplay
