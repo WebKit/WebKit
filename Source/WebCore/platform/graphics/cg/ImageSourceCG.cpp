@@ -41,6 +41,7 @@ using namespace std;
 namespace WebCore {
 
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
+const CFStringRef kCGImageSourceSkipMetaData = CFSTR("kCGImageSourceSkipMetaData");
 
 // kCGImagePropertyGIFUnclampedDelayTime is available in the ImageIO framework headers on some versions
 // of SnowLeopard. It's not possible to detect whether the constant is available so we define our own here
@@ -107,14 +108,15 @@ void ImageSource::clear(bool destroyAllFrames, size_t, SharedBuffer* data, bool 
         setData(data, allDataReceived);
 }
 
-static CFDictionaryRef imageSourceOptions()
+static CFDictionaryRef imageSourceOptions(ImageSource::ShouldSkipMetaData skipMetaData)
 {
     static CFDictionaryRef options;
 
     if (!options) {
-        const unsigned numOptions = 2;
-        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
-        const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue };
+        const unsigned numOptions = 3;
+        const CFBooleanRef imageSourceSkipMetaData = (skipMetaData == ImageSource::SkipMetaData) ? kCFBooleanTrue : kCFBooleanFalse;
+        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetaData };
+        const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, imageSourceSkipMetaData };
         options = CFDictionaryCreate(NULL, keys, values, numOptions, 
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
@@ -172,7 +174,7 @@ bool ImageSource::isSizeAvailable()
 
     // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
     if (imageSourceStatus >= kCGImageStatusIncomplete) {
-        RetainPtr<CFDictionaryRef> image0Properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions()));
+        RetainPtr<CFDictionaryRef> image0Properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions(SkipMetaData)));
         if (image0Properties) {
             CFNumberRef widthNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelWidth);
             CFNumberRef heightNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties.get(), kCGImagePropertyPixelHeight);
@@ -186,7 +188,7 @@ bool ImageSource::isSizeAvailable()
 IntSize ImageSource::frameSizeAtIndex(size_t index) const
 {
     IntSize result;
-    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(SkipMetaData)));
     if (properties) {
         int w = 0, h = 0;
         CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPixelWidth);
@@ -207,7 +209,7 @@ IntSize ImageSource::size() const
 
 bool ImageSource::getHotSpot(IntPoint& hotSpot) const
 {
-    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions(SkipMetaData)));
     if (!properties)
         return false;
 
@@ -244,7 +246,7 @@ int ImageSource::repetitionCount()
     if (!initialized())
         return result;
 
-    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyProperties(m_decoder, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyProperties(m_decoder, imageSourceOptions(SkipMetaData)));
     if (properties) {
         CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
         if (gifProperties) {
@@ -272,7 +274,7 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index)
     if (!initialized())
         return 0;
 
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions()));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions(SkipMetaData)));
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
     if (!imageUTI || !CFEqual(imageUTI, xbmUTI))
@@ -313,7 +315,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
         return 0;
 
     float duration = 0;
-    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions()));
+    RetainPtr<CFDictionaryRef> properties(AdoptCF, CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(SkipMetaData)));
     if (properties) {
         CFDictionaryRef typeProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
         if (typeProperties) {

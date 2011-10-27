@@ -126,6 +126,13 @@ public:
         GammaAndColorProfileIgnored
     };
 
+#if USE(CG)
+    enum ShouldSkipMetaData {
+        DoNotSkipMetaData,
+        SkipMetaData
+    };
+#endif
+
     ImageSource(AlphaOption alphaOption = AlphaPremultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileApplied);
     ~ImageSource();
 

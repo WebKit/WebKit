@@ -1,3 +1,27 @@
+2011-10-27  Pratik Solanki  <psolanki@apple.com>
+
+        Ask CG to not parse image metadata
+        https://bugs.webkit.org/show_bug.cgi?id=71029
+
+        Reviewed by Simon Fraser.
+
+        We don't need CG to parse the image metadata since WebCore never uses it. Passing this
+        option shaves off time spent under CGImageSourceCopyPropertiesAtIndex. Under Instruments I
+        saw the time drop from ~75ms to ~25ms when loading http://boston.com/bigpicture and the
+        first link on that page.
+
+        No new tests because no change in functionality.
+
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::imageSourceOptions):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+
 2011-10-27  David Grogan  <dgrogan@chromium.org>
 
         Move eventqueue from Document to ScriptExecutionContext so that it can be accessed from workers
