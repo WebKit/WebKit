@@ -1,3 +1,16 @@
+2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        WebInspector: View throughs the exception when a child view are removed by removeChildren call.
+        https://bugs.webkit.org/show_bug.cgi?id=71002
+
+        Another followup fix after r98225.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        (WebInspector.DatabaseTableView.prototype._queryError):
+
 2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Execution line in selected call frame should keep showing after toggling format source.

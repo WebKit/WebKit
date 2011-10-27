@@ -60,6 +60,7 @@ WebInspector.DatabaseTableView.prototype = {
     _queryFinished: function(columnNames, values)
     {
         this.detachChildViews();
+        this.element.removeChildren();
 
         var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (!dataGrid) {
@@ -73,6 +74,7 @@ WebInspector.DatabaseTableView.prototype = {
 
     _queryError: function(error)
     {
+        this.detachChildViews();
         this.element.removeChildren();
 
         var errorMsgElement = document.createElement("div");
