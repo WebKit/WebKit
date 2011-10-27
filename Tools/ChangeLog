@@ -1,3 +1,14 @@
+2011-10-27  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] update pywebsocket to 0.7.
+        https://bugs.webkit.org/show_bug.cgi?id=70992
+
+        Reviewed by Kent Tamura.
+
+        pywebsocket 0.7 fixed the bug on dual stack support on OS X.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-10-27  Elliot Poger  <epoger@google.com>
 
         make lion observe MAC lines in test_expectations.txt
