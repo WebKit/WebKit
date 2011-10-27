@@ -1,3 +1,16 @@
+2011-10-27  Helder Correia  <helder.correia@palm.com>
+
+        [Qt] Failure to build when QT_NO_MENU defined
+        https://bugs.webkit.org/show_bug.cgi?id=70970
+
+        Reviewed by Andreas Kling.
+
+        iterateContextMenu() must be wrapped around #ifndef QT_NO_MENU.
+
+        Build fix, no new tests.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+
 2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
 
         Name viewport change event consistently.

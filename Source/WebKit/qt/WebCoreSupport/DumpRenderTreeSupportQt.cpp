@@ -1033,6 +1033,7 @@ void DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled(QWebPage* page
         corePage->settings()->setInteractiveFormValidationEnabled(enable);
 }
 
+#ifndef QT_NO_MENU
 static QStringList iterateContextMenu(QMenu* menu)
 {
     if (!menu)
@@ -1050,6 +1051,7 @@ static QStringList iterateContextMenu(QMenu* menu)
     }
     return items;
 }
+#endif
 
 QStringList DumpRenderTreeSupportQt::contextMenu(QWebPage* page)
 {
