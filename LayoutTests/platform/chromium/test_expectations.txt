@@ -997,6 +997,115 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 
+// Rebaseline once native aa-clipping has landed
+BUGWK70748 CPU : css2.1/t0805-c5517-brdr-s-00-c.html = IMAGE
+BUGWK70748 CPU : fast/backgrounds/border-radius-split-background-image.html = IMAGE
+BUGWK70748 CPU : fast/backgrounds/gradient-background-leakage.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusArcs01.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-complex-inner.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDashed01.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDashed02.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDashed03.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDashed04.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDashed05.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-different-width-001.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted01.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted02.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted03.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted04.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted05.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDotted06.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble01.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble02.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble03.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble04.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble05.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble06.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble07.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble08.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusDouble09.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-groove-01.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusGroove01.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-groove-02.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusGroove02.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-groove-03.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusInset01.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-inset-outset.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusOutset01.html = IMAGE
+BUGWK70748 CPU : fast/borders/borderRadiusRidge01.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-split-inline.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-wide-border-01.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-wide-border-02.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-wide-border-03.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-radius-wide-border-04.html = IMAGE
+BUGWK70748 CPU : fast/borders/border-styles-split.html = IMAGE
+BUGWK70748 CPU : fast/borders/different-color-borders.html = IMAGE
+BUGWK70748 CPU : fast/borders/fieldsetBorderRadius.html = IMAGE
+BUGWK70748 CPU : fast/borders/mixed-border-styles-radius2.html = IMAGE
+BUGWK70748 CPU : fast/borders/mixed-border-styles-radius.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/basic-shadows.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/border-radius-big.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/inset-box-shadows.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/inset.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/spread.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/spread-multiple-inset.html = IMAGE
+BUGWK70748 CPU : fast/box-shadow/spread-multiple-normal.html = IMAGE
+BUGWK70748 CPU : fast/clip/overflow-border-radius-clip.html = IMAGE
+BUGWK70748 CPU : fast/css/box-shadow-and-border-radius.html = IMAGE
+BUGWK70748 CPU : fast/css/nested-rounded-corners.html = IMAGE
+BUGWK70748 CPU : fast/css/text-input-with-webkit-border-radius.html = IMAGE
+BUGWK70748 CPU : fast/forms/basic-selects.html = IMAGE
+BUGWK70748 CPU : fast/forms/validation-message-appearance.html = IMAGE
+BUGWK70748 CPU : fast/layers/video-layer.html = IMAGE
+BUGWK70748 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGWK70748 CPU : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGWK70748 CPU : fast/transforms/shadows.html = IMAGE
+BUGWK70748 CPU : fast/writing-mode/border-styles-vertical-lr.html = IMAGE
+BUGWK70748 CPU : fast/writing-mode/border-styles-vertical-rl.html = IMAGE
+BUGWK70748 CPU : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
+BUGWK70748 CPU : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
+BUGWK70748 CPU : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
+BUGWK70748 CPU : fullscreen/full-screen-stacking-context.html = IMAGE
+BUGWK70748 CPU : media/audio-controls-rendering.html = IMAGE
+BUGWK70748 CPU : media/controls-after-reload.html = IMAGE
+BUGWK70748 CPU : media/controls-strict.html = IMAGE
+BUGWK70748 CPU : media/controls-styling.html = IMAGE
+BUGWK70748 CPU : media/controls-without-preload.html = IMAGE
+BUGWK70748 CPU : media/media-controls-clone.html = IMAGE
+BUGWK70748 CPU : media/media-document-audio-repaint.html = IMAGE
+BUGWK70748 CPU : media/video-controls-rendering.html = IMAGE
+BUGWK70748 CPU : media/video-display-toggle.html = IMAGE
+BUGWK70748 CPU : media/video-empty-source.html = IMAGE
+BUGWK70748 CPU : media/video-no-audio.html = IMAGE
+BUGWK70748 CPU : media/video-playing-and-pause.html = IMAGE
+BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-clipped-evenodd-twice.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-clipped-nonzero.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-clipped.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-objectBoundingBox.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-on-clipped-use.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-on-g-and-child.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-on-g.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-on-svg-and-child.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-on-svg.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
+BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
+BUGWK70748 CPU : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
+BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
+BUGWK70748 CPU : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
+BUGWK70748 CPU : svg/W3C-SVG-1.1/painting-marker-02-f.svg = IMAGE
+BUGWK70748 CPU : fast/borders/only-one-border-with-width.html = IMAGE
+BUGWK70748 CPU : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
+
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
@@ -1398,7 +1507,6 @@ BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
 // Disable these while we're back to using GDI for text drawing. These give slightly
 // different results than with Skia. When we switch back to Skia, we can
 // reenable these.
-BUGCR99500 WIN RELEASE : media/audio-repaint.html = IMAGE
 BUGCR99500 WIN : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGCR99500 WIN : svg/batik/text/textStyles.svg = IMAGE
 BUGCR99500 WIN : svg/custom/simple-text-double-shadow.svg = IMAGE
@@ -2202,13 +2310,8 @@ BUGCR57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
 BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
 
 // To be rebaselined when the new gdi-aa-text code finalizes
-BUGCR98248 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGCR98248 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGCR98248 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGCR98248 WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
 BUGCR98248 WIN : fast/text/stroking-decorations.html = IMAGE
 BUGCR98248 WIN : fast/text/stroking.html = IMAGE
-BUGCR98248 WIN : fast/transforms/shadows.html = IMAGE
 BUGCR98248 WIN : fast/writing-mode/english-lr-text.html = IMAGE
 BUGCR98248 WIN : svg/css/group-with-shadow.svg = IMAGE
 BUGCR98248 WIN : svg/css/text-gradient-shadow.svg = IMAGE
@@ -2579,7 +2682,7 @@ BUGCR71022 LINUX WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
 BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE IMAGE+TEXT
 
-BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
+BUGCR71418 LEOPARD CPU-CG : fast/borders/border-radius-split-inline.html = IMAGE
 
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS CRASH TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
@@ -3001,7 +3104,7 @@ BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 BUGWK60115 LINUX WIN : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK60115 WIN : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK60115 MAC : fast/transforms/shadows.html = PASS IMAGE
+BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
 //BUGWK60115 XP : svg/css/group-with-shadow.svg = IMAGE
 BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
@@ -3670,8 +3773,8 @@ BUGABARTH WIN LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 
 BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
-BUGCR96861 WIN DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
-BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
+BUGCR96861 WIN LINUX : media/audio-repaint.html = TIMEOUT IMAGE PASS
+BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH IMAGE

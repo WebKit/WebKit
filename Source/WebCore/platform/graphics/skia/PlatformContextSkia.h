@@ -185,7 +185,6 @@ private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
     void applyClipFromImage(const FloatRect&, const SkBitmap&);
-    void applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths);
 
     // common code between setupPaintFor[Filling,Stroking]
     void setupShader(SkPaint*, Gradient*, Pattern*, SkColor) const;
