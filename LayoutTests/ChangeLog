@@ -1,3 +1,14 @@
+2011-10-27  Mike Reed  <reed@google.com>
+
+        test_rebaseline_expectations failing
+        https://bugs.webkit.org/show_bug.cgi?id=71033
+
+        Reviewed by Adam Barth.
+
+        Resolve overlaps
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Dan Bernstein  <mitz@apple.com>
 
         Updated expected results after r98608.

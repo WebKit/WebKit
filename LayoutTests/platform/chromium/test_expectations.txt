@@ -1078,20 +1078,17 @@ BUGWK70748 CPU : media/controls-styling.html = IMAGE
 BUGWK70748 CPU : media/controls-without-preload.html = IMAGE
 BUGWK70748 CPU : media/media-controls-clone.html = IMAGE
 BUGWK70748 CPU : media/media-document-audio-repaint.html = IMAGE
-BUGWK70748 CPU : media/video-controls-rendering.html = IMAGE
 BUGWK70748 CPU : media/video-display-toggle.html = IMAGE
 BUGWK70748 CPU : media/video-empty-source.html = IMAGE
 BUGWK70748 CPU : media/video-no-audio.html = IMAGE
 BUGWK70748 CPU : media/video-playing-and-pause.html = IMAGE
 BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
-BUGWK70748 GPU : media/video-zoom-controls.html = IMAGE
 BUGWK70748 GPU : media/audio-controls-rendering.html = IMAGE
 BUGWK70748 GPU : media/controls-after-reload.html = IMAGE
 BUGWK70748 GPU : media/controls-strict.html = IMAGE
 BUGWK70748 GPU : media/controls-styling.html = IMAGE
 BUGWK70748 GPU : media/controls-without-preload.html = IMAGE
 BUGWK70748 GPU : media/media-controls-clone.html = IMAGE
-BUGWK70748 GPU : media/video-controls-rendering.html = IMAGE
 BUGWK70748 GPU : media/video-display-toggle.html = IMAGE
 BUGWK70748 GPU : media/video-empty-source.html = IMAGE
 BUGWK70748 GPU : media/video-no-audio.html = IMAGE
@@ -2750,8 +2747,7 @@ BUGWK67760 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
-BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
-BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
+BUGWK58587 : media/video-controls-rendering.html = IMAGE
 
 // Take new baselines from the bots when 68035 lands.
 BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
@@ -3638,8 +3634,7 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
 // Failing after r94912.
-BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
-BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT
+BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
 BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/block-mask-overlay-image-outset.html = IMAGE+TEXT
