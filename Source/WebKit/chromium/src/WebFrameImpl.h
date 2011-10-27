@@ -178,6 +178,7 @@ public:
                                             int& marginRight,
                                             int& marginBottom,
                                             int& marginLeft);
+    virtual void printPagesWithBoundaries(WebCanvas*, const WebSize&);
     virtual bool find(
         int identifier, const WebString& searchText, const WebFindOptions&,
         bool wrapWithinFrame, WebRect* selectionRect);
@@ -191,7 +192,7 @@ public:
 
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
-    virtual WebString renderTreeAsText(bool showDebugInfo = false) const;
+    virtual WebString renderTreeAsText(RenderAsTextControls toShow = RenderAsTextNormal) const;
     virtual WebString counterValueForElementById(const WebString& id) const;
     virtual WebString markerTextForListItem(const WebElement&) const;
     virtual int pageNumberForElementById(const WebString& id,

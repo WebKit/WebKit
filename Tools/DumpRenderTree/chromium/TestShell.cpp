@@ -371,6 +371,32 @@ static string dumpFramesAsText(WebFrame* frame, bool recursive)
     return result;
 }
 
+static string dumpFramesAsPrintedText(WebFrame* frame, bool recursive)
+{
+    string result;
+
+    // Cannot do printed format for anything other than HTML
+    if (!frame->document().isHTMLDocument())
+        return string();
+
+    // Add header for all but the main frame. Skip empty frames.
+    if (frame->parent() && !frame->document().documentElement().isNull()) {
+        result.append("\n--------\nFrame: '");
+        result.append(frame->name().utf8().data());
+        result.append("'\n--------\n");
+    }
+
+    result.append(frame->renderTreeAsText(WebFrame::RenderAsTextPrinting).utf8());
+    result.append("\n");
+
+    if (recursive) {
+        for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
+            result.append(dumpFramesAsPrintedText(child, recursive));
+    }
+
+    return result;
+}
+
 static void dumpFrameScrollPosition(WebFrame* frame, bool recursive)
 {
     WebSize offset = frame->scrollOffset();
@@ -488,18 +514,19 @@ void TestShell::dump()
     bool shouldDumpAsText = m_layoutTestController->shouldDumpAsText();
     bool shouldDumpAsAudio = m_layoutTestController->shouldDumpAsAudio();
     bool shouldGeneratePixelResults = m_layoutTestController->shouldGeneratePixelResults();
+    bool shouldDumpAsPrinted = m_layoutTestController->isPrinting();
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
         m_printer->handleAudioHeader();
-        
+
         const WebKit::WebArrayBufferView& webArrayBufferView = m_layoutTestController->audioData();
         printf("Content-Length: %d\n", webArrayBufferView.byteLength());
-        
+
         if (fwrite(webArrayBufferView.baseAddress(), 1, webArrayBufferView.byteLength(), stdout) != webArrayBufferView.byteLength())
             FATAL("Short write to stdout, disk full?\n");
         printf("\n");
-        
+
         m_printer->handleTestFooter(true);
 
         fflush(stdout);
@@ -522,11 +549,16 @@ void TestShell::dump()
         }
         if (shouldDumpAsText) {
             bool recursive = m_layoutTestController->shouldDumpChildFramesAsText();
-            string dataUtf8 = dumpFramesAsText(frame, recursive);
+            string dataUtf8 = shouldDumpAsPrinted ? dumpFramesAsPrintedText(frame, recursive) : dumpFramesAsText(frame, recursive);
             if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
                 FATAL("Short write to stdout, disk full?\n");
         } else {
-            printf("%s", frame->renderTreeAsText(m_params.debugRenderTree).utf8().data());
+          WebFrame::RenderAsTextControls renderTextBehavior = WebFrame::RenderAsTextNormal;
+            if (shouldDumpAsPrinted)
+                renderTextBehavior |= WebFrame::RenderAsTextPrinting;
+            if (m_params.debugRenderTree)
+                renderTextBehavior |= WebFrame::RenderAsTextDebug;
+            printf("%s", frame->renderTreeAsText(renderTextBehavior).utf8().data());
             bool recursive = m_layoutTestController->shouldDumpChildFrameScrollPositions();
             dumpFrameScrollPosition(frame, recursive);
         }
@@ -553,7 +585,9 @@ void TestShell::dump()
                 for (WebRect line(0, 0, width, 1); line.y < height; line.y++)
                     m_webViewHost->paintRect(line);
             }
-        } else
+        } else if (m_layoutTestController->isPrinting())
+            m_webViewHost->paintPagesWithBoundaries();
+        else
             m_webViewHost->paintInvalidatedRegion();
 
         // See if we need to draw the selection bounds rect. Selection bounds

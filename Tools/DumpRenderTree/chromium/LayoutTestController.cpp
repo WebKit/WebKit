@@ -175,6 +175,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
+    bindMethod("setPrinting", &LayoutTestController::setPrinting);
     bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
     bindMethod("setSelectTrailingWhitespaceEnabled", &LayoutTestController::setSelectTrailingWhitespaceEnabled);
     bindMethod("setSmartInsertDeleteEnabled", &LayoutTestController::setSmartInsertDeleteEnabled);
@@ -629,6 +630,7 @@ void LayoutTestController::reset()
     m_titleTextDirection.set("ltr");
     m_platformName.set("chromium");
     m_userStyleSheetLocation = WebURL();
+    m_isPrinting = false;
 
     webkit_support::SetAcceptAllCookies(false);
     WebSecurityPolicy::resetOriginAccessWhitelists();
@@ -1562,6 +1564,12 @@ static bool parsePageSizeParameters(const CppArgumentList& arguments,
         return false;
     }
     return true;
+}
+
+void LayoutTestController::setPrinting(const CppArgumentList& arguments, CppVariant* result)
+{
+    setIsPrinting(true);
+    result->setNull();
 }
 
 void LayoutTestController::pageNumberForElementById(const CppArgumentList& arguments, CppVariant* result)

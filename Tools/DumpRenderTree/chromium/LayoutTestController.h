@@ -328,6 +328,9 @@ public:
     // Gets the value of the counter in the element specified by its ID.
     void counterValueForElementById(const CppArgumentList&, CppVariant*);
 
+    // Causes layout to happen as if targetted to printed pages.
+    void setPrinting(const CppArgumentList&, CppVariant*);
+
     // Gets the number of page where the specified element will be put.
     void pageNumberForElementById(const CppArgumentList&, CppVariant*);
 
@@ -450,6 +453,9 @@ public:
     {
         m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
     }
+
+    void setIsPrinting(bool value) { m_isPrinting = value; }
+    bool isPrinting() { return m_isPrinting; }
 
     bool testRepaint() const { return m_testRepaint; }
     bool sweepHorizontally() const { return m_sweepHorizontally; }
@@ -641,6 +647,9 @@ private:
 
     // If true, we will show extended information in the graphics layer tree.
     bool m_showDebugLayerTree;
+
+    // If true, layout is to target printed pages.
+    bool m_isPrinting;
 
     WorkQueue m_workQueue;
 

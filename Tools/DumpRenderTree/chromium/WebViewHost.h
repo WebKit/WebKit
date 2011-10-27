@@ -88,6 +88,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     void paintRect(const WebKit::WebRect&);
     void updatePaintRect(const WebKit::WebRect&);
     void paintInvalidatedRegion();
+    void paintPagesWithBoundaries();
     SkCanvas* canvas();
     void displayRepaintMask();
 

@@ -1573,6 +1573,45 @@ void WebViewHost::paintInvalidatedRegion()
     ASSERT(m_paintRect.isEmpty());
 }
 
+void WebViewHost::paintPagesWithBoundaries()
+{
+    ASSERT(!m_isPainting);
+    ASSERT(canvas());
+    m_isPainting = true;
+
+    WebSize pageSizeInPixels = webWidget()->size();
+    WebFrame* webFrame = webView()->mainFrame();
+
+    int pageCount = webFrame->printBegin(pageSizeInPixels);
+    int totalHeight = pageCount * (pageSizeInPixels.height + 1) - 1;
+
+    SkCanvas* testCanvas = skia::TryCreateBitmapCanvas(pageSizeInPixels.width, totalHeight, true);
+    if (testCanvas) {
+        discardBackingStore();
+        m_canvas = adoptPtr(testCanvas);
+    } else {
+        webFrame->printEnd();
+        return;
+    }
+
+#if WEBKIT_USING_SKIA
+    WebCanvas* webCanvas = canvas();
+#elif WEBKIT_USING_CG
+    const SkBitmap& canvasBitmap = canvas()->getDevice()->accessBitmap(false);
+    WebCanvas* webCanvas = CGBitmapContextCreate(canvasBitmap.getPixels(),
+                                                 pageSizeInPixels.width, totalHeight,
+                                                 8, pageSizeInPixels.width * 4,
+                                                 CGColorSpaceCreateDeviceRGB(),
+                                                 kCGImageAlphaPremultipliedFirst |
+                                                 kCGBitmapByteOrder32Host);
+#endif
+
+    webFrame->printPagesWithBoundaries(webCanvas, pageSizeInPixels);
+    webFrame->printEnd();
+
+    m_isPainting = false;
+}
+
 SkCanvas* WebViewHost::canvas()
 {
     if (m_canvas)

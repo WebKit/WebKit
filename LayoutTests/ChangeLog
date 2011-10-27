@@ -1,3 +1,28 @@
+2011-10-27  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Need setPrinting
+        https://bugs.webkit.org/show_bug.cgi?id=46152
+
+        Reviewed by Hajime Morita.
+
+        * platform/chromium/test_expectations.txt: Removing setPrinting tests from the expected failures.
+        * platform/chromium-linux/printing/setPrinting-expected.png: Added.
+        * platform/chromium-linux/printing/setPrinting-expected.txt: Added.
+        * platform/chromium-linux/printing/single-line-must-not-be-split-into-two-pages-expected.png: Added.
+        * platform/chromium-linux/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/chromium-mac/printing/setPrinting-expected.png: Added.
+        * platform/chromium-mac/printing/setPrinting-expected.txt: Added.
+        * platform/chromium-mac/printing/single-line-must-not-be-split-into-two-pages-expected.png: Added.
+        * platform/chromium-mac/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/chromium-win/printing/setPrinting-expected.png: Added.
+        * platform/chromium-win/printing/setPrinting-expected.txt: Added.
+        * platform/chromium-win/printing/single-line-must-not-be-split-into-two-pages-expected.png: Added.
+        * platform/chromium-win/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/mac/printing/setPrinting-expected.png: Rebaselined for the change to the test html.
+        * platform/mac/printing/setPrinting-expected.txt: Rebaselined for the change to the test html.
+        * printing/setPrinting.html: Modified the test to make the box have a colored border
+          instead of the solid background, as the solid background does not print on chromium.
+
 2011-10-27  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Add pixel test baselines for animations,

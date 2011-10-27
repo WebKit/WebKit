@@ -362,6 +362,56 @@ public:
         return scale;
     }
 
+    void spoolAllPagesWithBoundaries(GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
+    {
+        if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+            return;
+
+        m_frame->document()->updateLayout();
+
+        float pageHeight;
+        computePageRects(FloatRect(FloatPoint(0, 0), pageSizeInPixels), 0, 0, 1, pageHeight);
+
+        const float pageWidth = pageSizeInPixels.width();
+        size_t numPages = pageRects().size();
+        int totalHeight = numPages * (pageSizeInPixels.height() + 1) - 1;
+
+        // Fill the whole background by white.
+        graphicsContext.setFillColor(Color(255, 255, 255), ColorSpaceDeviceRGB);
+        graphicsContext.fillRect(FloatRect(0, 0, pageWidth, totalHeight));
+
+        graphicsContext.save();
+
+        int currentHeight = 0;
+        for (size_t pageIndex = 0; pageIndex < numPages; pageIndex++) {
+            // Draw a line for a page boundary if this isn't the first page.
+            if (pageIndex > 0) {
+                graphicsContext.save();
+                graphicsContext.setStrokeColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
+                graphicsContext.setFillColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
+                graphicsContext.drawLine(IntPoint(0, currentHeight),
+                                         IntPoint(pageWidth, currentHeight));
+                graphicsContext.restore();
+            }
+
+            graphicsContext.save();
+
+            graphicsContext.translate(0, currentHeight);
+#if !OS(UNIX) || OS(DARWIN)
+            // Account for the disabling of scaling in spoolPage. In the context
+            // of spoolAllPagesWithBoundaries the scale HAS NOT been pre-applied.
+            float scale = getPageShrink(pageIndex);
+            graphicsContext.scale(WebCore::FloatSize(scale, scale));
+#endif
+            spoolPage(graphicsContext, pageIndex);
+            graphicsContext.restore();
+
+            currentHeight += pageSizeInPixels.height() + 1;
+        }
+
+        graphicsContext.restore();
+    }
+
     virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
     {
         return PrintContext::computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, outPageHeight);
@@ -1778,16 +1828,19 @@ WebString WebFrameImpl::contentAsMarkup() const
     return createFullMarkup(m_frame->document());
 }
 
-WebString WebFrameImpl::renderTreeAsText(bool showDebugInfo) const
+WebString WebFrameImpl::renderTreeAsText(RenderAsTextControls toShow) const
 {
     RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal;
 
-    if (showDebugInfo) {
+    if (toShow & RenderAsTextDebug) {
         behavior |= RenderAsTextShowCompositedLayers
             | RenderAsTextShowAddresses
             | RenderAsTextShowIDAndClass
             | RenderAsTextShowLayerNesting;
     }
+
+    if (toShow & RenderAsTextPrinting)
+        behavior |= RenderAsTextPrintingMode;
 
     return externalRepresentation(m_frame, behavior);
 }
@@ -1822,6 +1875,20 @@ int WebFrameImpl::pageNumberForElementById(const WebString& id,
 
     FloatSize pageSize(pageWidthInPixels, pageHeightInPixels);
     return PrintContext::pageNumberForElement(element, pageSize);
+}
+
+void WebFrameImpl::printPagesWithBoundaries(WebCanvas* canvas, const WebSize& pageSizeInPixels)
+{
+    ASSERT(m_printContext.get());
+
+    GraphicsContextBuilder builder(canvas);
+    GraphicsContext& graphicsContext = builder.context();
+#if WEBKIT_USING_SKIA
+    graphicsContext.platformContext()->setPrinting(true);
+#endif
+
+    m_printContext->spoolAllPagesWithBoundaries(graphicsContext,
+        FloatSize(pageSizeInPixels.width, pageSizeInPixels.height));
 }
 
 WebRect WebFrameImpl::selectionBoundsRect() const

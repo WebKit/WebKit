@@ -79,6 +79,14 @@ template <typename T> class WebVector;
 
 class WebFrame {
 public:
+    // Control of renderTreeAsText output
+    enum RenderAsTextControl {
+        RenderAsTextNormal = 0,
+        RenderAsTextDebug = 1 << 0,
+        RenderAsTextPrinting = 1 << 1
+    };
+    typedef unsigned RenderAsTextControls;
+
     // Returns the number of live WebFrame objects, used for leak checking.
     WEBKIT_EXPORT static int instanceCount();
 
@@ -546,7 +554,7 @@ public:
 
     // Returns a text representation of the render tree.  This method is used
     // to support layout tests.
-    virtual WebString renderTreeAsText(bool showDebugInfo = false) const = 0;
+    virtual WebString renderTreeAsText(RenderAsTextControls toShow = RenderAsTextNormal) const = 0;
 
     // Returns the counter value for the specified element.  This method is
     // used to support layout tests.
@@ -560,6 +568,10 @@ public:
     virtual int pageNumberForElementById(const WebString& id,
                                          float pageWidthInPixels,
                                          float pageHeightInPixels) const = 0;
+
+    // Prints all of the pages into the canvas, with page boundaries drawn as
+    // one pixel wide blue lines. This method exists to support layout tests.
+    virtual void printPagesWithBoundaries(WebCanvas*, const WebSize&) = 0;
 
     // Returns the bounds rect for current selection. If selection is performed
     // on transformed text, the rect will still bound the selection but will

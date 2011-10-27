@@ -2167,10 +2167,6 @@ BUGWK65203 XP : fast/text/international/bidi-mirror-he-ar.html = IMAGE
 
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
-// Need setPrinting.
-BUGWK20011 : printing/setPrinting.html = FAIL
-BUGWK65005 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL MISSING
-
 // Needs V8 change.
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
 
@@ -2376,9 +2372,6 @@ BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
 // V8 does not implement ECMAScript strict mode
 BUGCR58936 : fast/js/basic-strict-mode.html = TEXT
 BUGCR58936 : fast/js/numeric-escapes-in-string-literals.html = TEXT
-
-// Started failing at Webkit r69628.
-BUGWK47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 
 // We don't support layoutTestController.nodesFromRect so this test just times out
 BUGWK46600 SKIP : fast/dom/nodesFromRect-links-and-text.html = TEXT

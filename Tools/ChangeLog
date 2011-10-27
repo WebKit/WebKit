@@ -1,3 +1,25 @@
+2011-10-27  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Need setPrinting
+        https://bugs.webkit.org/show_bug.cgi?id=46152
+
+        Reviewed by Hajime Morita.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): Added logic for handling setPrinting.
+        (LayoutTestController::reset): Clearing flags for setPrinting.
+        (LayoutTestController::setPrinting): Set flags for setPrinting.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setIsPrinting): Added the setPrinting methods and flags.
+        (LayoutTestController::isPrinting): Method to return the setPrinting status.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (dumpFramesAsPrintedText): A method for creating a text dump in printed layout.
+        (TestShell::dump): Modified to dump setPrinting-specific output.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintPagesWithBoundaries): Handling for pixel tests when setPrinting is
+        active.
+        * DumpRenderTree/chromium/WebViewHost.h: Prototype for paintPagesWithBoundaries.
+
 2011-10-27  Sam Weinig  <sam@webkit.org>
 
         Add allowsPlugIns property to WKBrowsingContextGroup
