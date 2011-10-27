@@ -1,3 +1,20 @@
+2011-10-27  Tony Chang  <tony@chromium.org>
+
+        fix sizing of auto sized flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=70839
+
+        Reviewed by David Hyatt.
+
+        Correctly set the height of the flexbox when we have a column flow
+        and the height is auto.
+
+        Tests: css3/flexbox/columns-auto-size.html
+               css3/flexbox/flex-flow-margins-auto-size.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Always computeLogicalHeight() after we're done placing children.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection): Set the height as we place children.
+
 2011-10-25  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Add support for creating compositing layers for fixed position elements.

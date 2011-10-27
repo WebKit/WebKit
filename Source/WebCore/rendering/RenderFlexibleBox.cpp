@@ -183,10 +183,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     layoutInlineDirection(relayoutChildren);
 
-    if (isColumnFlow())
-        computeLogicalWidth();
-    else
-        computeLogicalHeight();
+    computeLogicalHeight();
 
     if (size() != previousSize)
         relayoutChildren = true;
@@ -691,8 +688,10 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
 
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)
             startEdge += availableFreeSpace / (childSizes.size() - 1);
-    }
 
+        if (isColumnFlow())
+            setLogicalHeight(startEdge);
+    }
     alignChildrenBlockDirection(iterator, maxAscent);
 }
 
