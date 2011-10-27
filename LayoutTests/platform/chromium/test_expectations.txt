@@ -3803,3 +3803,5 @@ BUGWK70988 SNOWLEOPARD : fast/parser/residual-style-dom.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : fast/text/khmer-crash.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragment.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
+
+BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
