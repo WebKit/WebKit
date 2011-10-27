@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -3325,6 +3325,38 @@ template<> inline CSSPrimitiveValue::operator ETransformStyle3D() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnAxis e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case HorizontalColumnAxis:
+        m_value.ident = CSSValueHorizontal;
+        break;
+    case VerticalColumnAxis:
+        m_value.ident = CSSValueVertical;
+        break;
+    case AutoColumnAxis:
+        m_value.ident = CSSValueAuto;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ColumnAxis() const
+{
+    switch (m_value.ident) {
+    case CSSValueHorizontal:
+        return HorizontalColumnAxis;
+    case CSSValueVertical:
+        return VerticalColumnAxis;
+    case CSSValueAuto:
+        return AutoColumnAxis;
+    default:
+        ASSERT_NOT_REACHED();
+        return AutoColumnAxis;
+    }
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)
@@ -3611,7 +3643,7 @@ template<> inline CSSPrimitiveValue::operator EVectorEffect() const
     }
 }
 
-#endif
+#endif // ENABLE(SVG)
 
 }
 

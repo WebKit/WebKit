@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,19 +37,26 @@ public:
     ColumnInfo()
         : m_desiredColumnWidth(0)
         , m_desiredColumnCount(1)
+        , m_progressionAxis(InlineAxis)
         , m_columnCount(1)
         , m_columnHeight(0)
         , m_minimumColumnHeight(0)
         , m_forcedBreaks(0)
         , m_maximumDistanceBetweenForcedBreaks(0)
         , m_forcedBreakOffset(0)
-        { }
-    
+    {
+    }
+
     LayoutUnit desiredColumnWidth() const { return m_desiredColumnWidth; }
     void setDesiredColumnWidth(LayoutUnit width) { m_desiredColumnWidth = width; }
     
     unsigned desiredColumnCount() const { return m_desiredColumnCount; }
     void setDesiredColumnCount(unsigned count) { m_desiredColumnCount = count; }
+
+    enum Axis { InlineAxis, BlockAxis };
+
+    Axis progressionAxis() const { return m_progressionAxis; }
+    void setProgressionAxis(Axis progressionAxis) { m_progressionAxis = progressionAxis; }
 
     unsigned columnCount() const { return m_columnCount; }
     LayoutUnit columnHeight() const { return m_columnHeight; }
@@ -89,7 +96,8 @@ public:
 private:
     LayoutUnit m_desiredColumnWidth;
     unsigned m_desiredColumnCount;
-    
+    Axis m_progressionAxis;
+
     unsigned m_columnCount;
     LayoutUnit m_columnHeight;
     LayoutUnit m_minimumColumnHeight;

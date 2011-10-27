@@ -1,3 +1,73 @@
+2011-10-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10262205> Allow column progression to be independent of writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=71028
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/multicol/block-axis-horizontal-bt.html
+               fast/multicol/block-axis-horizontal-tb.html
+               fast/multicol/block-axis-vertical-lr.html
+               fast/multicol/block-axis-vertical-rl.html
+               fast/multicol/flipped-blocks-hit-test.html
+
+        Allow “columns” to be stacked along the block axis rather than the inline axis. This can facilitate
+        paginated interfaces. A column-axis property is added in order to enable this mode.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Handle the column-axis property.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Map ColumnAxis values to identifiers.
+        (WebCore::CSSPrimitiveValue::operator ColumnAxis): Map identifiers to ColumnAxis values.
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Updated to return false for the column-axis property.
+        * css/CSSPropertyNames.in: Added -webkit-column-axis.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Handle column-axis.
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::ColumnInfo): Added m_progressionAxis to the initialization list.
+        (WebCore::ColumnInfo::progressionAxis): Added this getter.
+        (WebCore::ColumnInfo::setProgressionAxis): Added this setter.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromChildren): Simplified, and thus also made this function work
+        with block-axis column progression.
+        (WebCore::RenderBlock::paintColumnRules): Added code to paint rules between columns with block-axis
+        progression.
+        (WebCore::RenderBlock::paintColumnContents): Adjusted the painting offset for the block-axis
+        column progression case.
+        (WebCore::RenderBlock::nodeAtPoint): Fixed hit-testing in flipped-blocks writing modes. This is
+        covered by flipped-blocks-hit-test.html.
+        (WebCore::RenderBlock::hitTestColumns): Adjusted the offset for the block-axis column progression
+        case.
+        (WebCore::RenderBlock::calcColumnWidth): Set the column width to the content logical width in
+        the block-axis column progression case. The column-width and column-count properties are ignored.
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth): Set the column progression axis based on
+        the style.
+        (WebCore::RenderBlock::columnCount): Broke up an assertion into two.
+        (WebCore::RenderBlock::columnRectAt): Updated for block-axis column progression.
+        (WebCore::RenderBlock::adjustPointToColumnContents): Ditto.
+        (WebCore::RenderBlock::adjustRectForColumns): Ditto.
+        (WebCore::RenderBlock::adjustForColumns): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintChildLayerIntoColumns): Adjusted the offser for the block-axis column
+        progression case.
+        (WebCore::RenderLayer::hitTestChildLayerColumns): Ditto.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::columnAxis): Added this getter.
+        (WebCore::InheritedFlags::hasInlineColumnAxis): Added. Checks the column axis against the writing
+        mode.
+        (WebCore::InheritedFlags::specifiesColumns): Changed to return true if the specified column axis
+        is the block axis.
+        (WebCore::InheritedFlags::setColumnAxis): Added this setter.
+        (WebCore::InheritedFlags::initialColumnAxis): Added. Returns AutoColumnAxis.
+        * rendering/style/RenderStyleConstants.h: Added a ColumnAxis enum.
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData): Added m_axis to the initialization list.
+        (WebCore::StyleMultiColData::operator==): Compare m_axis.
+        * rendering/style/StyleMultiColData.h: Added m_axis member variable.
+
 2011-10-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Flag regions with custom styling

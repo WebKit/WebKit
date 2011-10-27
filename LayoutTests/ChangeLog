@@ -1,3 +1,26 @@
+2011-10-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10262205> Allow column progression to be independent of writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=71028
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/block-axis-horizontal-bt.html: Added.
+        * fast/multicol/block-axis-horizontal-tb.html: Added.
+        * fast/multicol/block-axis-vertical-lr.html: Added.
+        * fast/multicol/block-axis-vertical-rl.html: Added.
+        * fast/multicol/flipped-blocks-hit-test-expected.txt: Added.
+        * fast/multicol/flipped-blocks-hit-test.html: Added.
+        * fast/multicol/resources/block-axis.css: Added.
+        * platform/mac/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/mac/fast/multicol/block-axis-horizontal-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/mac/fast/multicol/block-axis-horizontal-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/mac/fast/multicol/block-axis-vertical-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/mac/fast/multicol/block-axis-vertical-rl-expected.txt: Added.
+
 2011-10-27  John Gregg  <johnnyg@google.com>
 
         Unreviewed, adding additional expected failures.

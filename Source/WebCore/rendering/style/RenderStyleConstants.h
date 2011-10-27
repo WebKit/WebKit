@@ -448,6 +448,8 @@ enum Order { LogicalOrder = 0, VisualOrder };
 
 enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
 
+enum ColumnAxis { HorizontalColumnAxis, VerticalColumnAxis, AutoColumnAxis };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

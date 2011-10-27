@@ -236,6 +236,7 @@ z-index
 -webkit-box-reflect
 -webkit-box-shadow
 -webkit-color-correction
+-webkit-column-axis
 -webkit-column-break-after
 -webkit-column-break-before
 -webkit-column-break-inside

@@ -3777,6 +3777,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
+    case CSSPropertyWebkitColumnAxis:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(columnAxis, ColumnAxis);
+        return;
+
     case CSSPropertyWebkitWrapShape:
         HANDLE_INHERIT_AND_INITIAL(wrapShape, WrapShape);
         if (!primitiveValue)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
@@ -199,6 +199,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakBefore,
     CSSPropertyWebkitColumnBreakInside,
+    CSSPropertyWebkitColumnAxis,
     CSSPropertyWebkitColumnCount,
     CSSPropertyWebkitColumnGap,
     CSSPropertyWebkitColumnRuleColor,
@@ -1334,6 +1335,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->clear());
         case CSSPropertyColor:
             return primitiveValueCache->createColorValue(m_allowVisitedStyle ? style->visitedDependentColor(CSSPropertyColor).rgb() : style->color().rgb());
+        case CSSPropertyWebkitColumnAxis:
+            return primitiveValueCache->createValue(style->columnAxis());
         case CSSPropertyWebkitColumnCount:
             if (style->hasAutoColumnCount())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);

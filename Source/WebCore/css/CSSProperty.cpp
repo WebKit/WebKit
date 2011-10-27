@@ -541,6 +541,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitBoxReflect:
     case CSSPropertyWebkitBoxShadow:
+    case CSSPropertyWebkitColumnAxis:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:

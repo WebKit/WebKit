@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -2918,7 +2918,18 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
         columnBlock->flipForWritingMode(colRect);
         int logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
-        LayoutSize offset = isHorizontal ? LayoutSize(logicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, logicalLeftOffset);
+        LayoutSize offset;
+        if (isHorizontal) {
+            if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                offset = LayoutSize(logicalLeftOffset, currLogicalTopOffset);
+            else
+                offset = LayoutSize(0, colRect.y() + currLogicalTopOffset - columnBlock->borderTop() - columnBlock->paddingTop());
+        } else {
+            if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                offset = LayoutSize(currLogicalTopOffset, logicalLeftOffset);
+            else
+                offset = LayoutSize(colRect.x() + currLogicalTopOffset - columnBlock->borderLeft() - columnBlock->paddingLeft(), 0);
+        }
 
         colRect.moveBy(layerOffset);
 
@@ -3396,12 +3407,24 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
             currLogicalTopOffset -= blockDelta;
         else
             currLogicalTopOffset += blockDelta;
+
+        LayoutSize offset;
+        if (isHorizontal) {
+            if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                offset = LayoutSize(currLogicalLeftOffset, currLogicalTopOffset);
+            else
+                offset = LayoutSize(0, colRect.y() + currLogicalTopOffset - columnBlock->borderTop() - columnBlock->paddingTop());
+        } else {
+            if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                offset = LayoutSize(currLogicalTopOffset, currLogicalLeftOffset);
+            else
+                offset = LayoutSize(colRect.x() + currLogicalTopOffset - columnBlock->borderLeft() - columnBlock->paddingLeft(), 0);
+        }
+
         colRect.moveBy(layerOffset);
 
         LayoutRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
-        
-        LayoutSize offset = isHorizontal ? LayoutSize(currLogicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, currLogicalLeftOffset);
 
         if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectForPoint(hitTestPoint))) {
             RenderLayer* hitLayer = 0;
