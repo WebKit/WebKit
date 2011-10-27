@@ -1,5 +1,11 @@
 2011-10-27  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, adding additional expected failures.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-27  John Gregg  <johnnyg@google.com>
+
         Unreviewed, fixing duplicate entries in test expectations.
 
         * platform/chromium/test_expectations.txt:
