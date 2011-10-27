@@ -53,7 +53,7 @@ namespace {
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
     WTF_MAKE_NONCOPYABLE(ChildListMutationAccumulator);
 public:
-    ChildListMutationAccumulator(PassRefPtr<Node>, Vector<WebKitMutationObserver*>&);
+    ChildListMutationAccumulator(PassRefPtr<Node>, HashMap<WebKitMutationObserver*, MutationObserverOptions>&);
     ~ChildListMutationAccumulator();
 
     void childAdded(PassRefPtr<Node>);
@@ -73,7 +73,7 @@ private:
     RefPtr<Node> m_nextSibling;
     RefPtr<Node> m_lastAdded;
 
-    Vector<WebKitMutationObserver*> m_observers;
+    HashMap<WebKitMutationObserver*, MutationObserverOptions> m_observers;
 };
 
 class MutationAccumulationRouter {
@@ -100,7 +100,7 @@ private:
     static MutationAccumulationRouter* s_instance;
 };
 
-ChildListMutationAccumulator::ChildListMutationAccumulator(PassRefPtr<Node> target, Vector<WebKitMutationObserver*>& observers)
+ChildListMutationAccumulator::ChildListMutationAccumulator(PassRefPtr<Node> target, HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers)
     : m_target(target)
 {
     m_observers.swap(observers);
@@ -169,8 +169,8 @@ void ChildListMutationAccumulator::enqueueMutationRecord()
     RefPtr<MutationRecord> mutation = MutationRecord::createChildList(
         m_target, StaticNodeList::adopt(m_addedNodes), StaticNodeList::adopt(m_removedNodes), m_previousSibling, m_nextSibling);
 
-    for (size_t i = 0; i < m_observers.size(); ++i)
-        m_observers[i]->enqueueMutationRecord(mutation);
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter)
+        iter->first->enqueueMutationRecord(mutation);
 
     clear();
 }
@@ -244,7 +244,7 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
         return;
     }
 
-    Vector<WebKitMutationObserver*> observers;
+    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
     target->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::ChildList);
     if (observers.isEmpty())
         m_accumulations.set(target, 0);

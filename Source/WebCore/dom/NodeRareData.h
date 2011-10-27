@@ -89,16 +89,17 @@ private:
 };
 
 #if ENABLE(MUTATION_OBSERVERS)
-struct MutationObserverEntry {
-    MutationObserverEntry(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options)
+struct MutationObserverRegistration {
+    MutationObserverRegistration(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options, Node* node)
         : observer(observer)
         , options(options)
+        , registrationNode(node)
     {
     }
 
-    bool operator==(const MutationObserverEntry& other) const
+    bool operator==(const MutationObserverRegistration& other) const
     {
-        return observer == other.observer;
+        return observer == other.observer && registrationNode == other.registrationNode;
     }
 
     bool hasAllOptions(MutationObserverOptions options) const
@@ -108,6 +109,12 @@ struct MutationObserverEntry {
 
     RefPtr<WebKitMutationObserver> observer;
     MutationObserverOptions options;
+
+    // registrationNode will be 0 if the registration is non-transient. I.e. The registrationNode is the Node in whose
+    // registry it exists.
+    // Note that this doesn't need to be a RefPtr because the observer will be holding a RefPtr to the same node at
+    // least for the lifetime of this Registration in its m_transientObservedNodes map.
+    Node* registrationNode;
 };
 #endif // ENABLE(MUTATION_OBSERVERS)
 
@@ -161,12 +168,12 @@ public:
     }
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverEntry>* mutationObserverEntries() { return m_mutationObservers.get(); }
-    Vector<MutationObserverEntry>* ensureMutationObserverEntries()
+    Vector<MutationObserverRegistration>* mutationObserverRegistry() { return m_mutationObserverRegistry.get(); }
+    Vector<MutationObserverRegistration>* ensureMutationObserverRegistry()
     {
-        if (!m_mutationObservers)
-            m_mutationObservers = adoptPtr(new Vector<MutationObserverEntry>);
-        return m_mutationObservers.get();
+        if (!m_mutationObserverRegistry)
+            m_mutationObserverRegistry = adoptPtr(new Vector<MutationObserverRegistration>);
+        return m_mutationObserverRegistry.get();
     }
 #endif
 
@@ -188,7 +195,7 @@ private:
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
 
 #if ENABLE(MUTATION_OBSERVERS)
-    OwnPtr<Vector<MutationObserverEntry> > m_mutationObservers;
+    OwnPtr<Vector<MutationObserverRegistration> > m_mutationObserverRegistry;
 #endif
 };
 

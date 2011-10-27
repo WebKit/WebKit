@@ -81,7 +81,7 @@ class SVGUseElement;
 class TagNodeList;
 class TreeScope;
 
-struct MutationObserverEntry;
+struct MutationObserverRegistration;
 
 typedef int ExceptionCode;
 
@@ -590,15 +590,17 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    void getRegisteredMutationObserversOfType(Vector<WebKitMutationObserver*>&, WebKitMutationObserver::MutationType);
+    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationObserverOptions>&, WebKitMutationObserver::MutationType);
 
     enum MutationRegistrationResult {
         MutationObserverRegistered,
         MutationRegistrationOptionsReset
     };
-    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, MutationObserverOptions);
+    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, MutationObserverOptions, Node* registrationNode = 0);
 
-    void unregisterMutationObserver(PassRefPtr<WebKitMutationObserver>);
+    void unregisterMutationObserver(PassRefPtr<WebKitMutationObserver>, Node* registrationNode = 0);
+
+    void notifyMutationObserversNodeWillDetach();
 #endif // ENABLE(MUTATION_OBSERVERS)
 
 private:
@@ -725,7 +727,7 @@ private:
     void trackForDebugging();
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverEntry>* mutationObserverEntries();
+    Vector<MutationObserverRegistration>* mutationObserverRegistry();
 #endif
 
     mutable uint32_t m_nodeFlags;

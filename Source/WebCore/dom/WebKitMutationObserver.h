@@ -33,6 +33,8 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,6 +47,7 @@ class MutationRecord;
 class Node;
 
 typedef unsigned char MutationObserverOptions;
+typedef HashSet<RefPtr<Node> > NodeHashSet;
 
 class WebKitMutationObserver : public RefCounted<WebKitMutationObserver> {
 public:
@@ -68,17 +71,22 @@ public:
 
     void observe(Node*, MutationObserverOptions);
     void disconnect();
+    void willDetachNodeInObservedSubtree(PassRefPtr<Node> registrationNode, MutationObserverOptions, PassRefPtr<Node> detachingNode);
     void observedNodeDestructed(Node*);
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
 
 private:
     WebKitMutationObserver(PassRefPtr<MutationCallback>);
 
+    void clearAllTransientObservations();
     void deliver();
 
     RefPtr<MutationCallback> m_callback;
     Vector<RefPtr<MutationRecord> > m_records;
     Vector<Node*> m_observedNodes; // NodeRareData has a RefPtr to this, so use a weak pointer to avoid a cycle.
+
+    // FIXME: Change this to be OwnPtr<NodeHashSet> when OwnPtr supports being contained as map values.
+    HashMap<RefPtr<Node>, NodeHashSet*> m_transientObservedNodes;
 };
 
 }

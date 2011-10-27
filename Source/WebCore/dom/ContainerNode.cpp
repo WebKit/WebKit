@@ -1144,6 +1144,7 @@ static void dispatchChildRemovalEvents(Node* child)
     if (c->parentNode()) {
         ChildListMutationScope mutation(c->parentNode());
         mutation.willRemoveChild(c);
+        c->notifyMutationObserversNodeWillDetach();
     }
 #endif
 

@@ -193,12 +193,12 @@ void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengt
 void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<WebKitMutationObserver*> observers;
+    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
     getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
     if (!observers.isEmpty()) {
         RefPtr<MutationRecord> mutation = MutationRecord::createCharacterData(this);
-        for (size_t i = 0; i < observers.size(); ++i)
-            observers[i]->enqueueMutationRecord(mutation);
+        for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
+                iter->first->enqueueMutationRecord(mutation);
     }
 #endif
     if (parentNode())

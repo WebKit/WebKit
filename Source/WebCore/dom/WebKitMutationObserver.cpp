@@ -53,14 +53,30 @@ WebKitMutationObserver::WebKitMutationObserver(PassRefPtr<MutationCallback> call
 
 WebKitMutationObserver::~WebKitMutationObserver()
 {
+    clearAllTransientObservations();
+}
+
+static inline void clearTransientObservationsForRegistration(WebKitMutationObserver* observer, Node* registrationNode, PassOwnPtr<NodeHashSet> transientNodes)
+{
+    for (NodeHashSet::iterator iter = transientNodes->begin(); iter != transientNodes->end(); ++iter)
+        (*iter)->unregisterMutationObserver(observer, registrationNode);
 }
 
 void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options)
 {
     // FIXME: More options composition work needs to be done here, e.g., validation.
 
-    if (node->registerMutationObserver(this, options) == Node::MutationObserverRegistered)
+    if (node->registerMutationObserver(this, options) == Node::MutationObserverRegistered) {
         m_observedNodes.append(node);
+        return;
+    }
+
+    HashMap<RefPtr<Node>, NodeHashSet*>::iterator iter = m_transientObservedNodes.find(node);
+    if (iter == m_transientObservedNodes.end())
+        return;
+
+    clearTransientObservationsForRegistration(this, node, adoptPtr(iter->second));
+    m_transientObservedNodes.remove(iter);
 }
 
 void WebKitMutationObserver::disconnect()
@@ -69,10 +85,13 @@ void WebKitMutationObserver::disconnect()
         m_observedNodes[i]->unregisterMutationObserver(this);
 
     m_observedNodes.clear();
+    clearAllTransientObservations();
 }
 
 void WebKitMutationObserver::observedNodeDestructed(Node* node)
 {
+    ASSERT(!m_transientObservedNodes.contains(node));
+
     size_t index = m_observedNodes.find(node);
     ASSERT(index != notFound);
     if (index == notFound)
@@ -95,10 +114,36 @@ void WebKitMutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mu
     activeMutationObservers().add(this);
 }
 
+void WebKitMutationObserver::willDetachNodeInObservedSubtree(PassRefPtr<Node> prpRegistrationNode, MutationObserverOptions options, PassRefPtr<Node> prpDetachingNode)
+{
+    RefPtr<Node> registrationNode = prpRegistrationNode;
+    RefPtr<Node> detachingNode = prpDetachingNode;
+
+    detachingNode->registerMutationObserver(this, options, registrationNode.get());
+    HashMap<RefPtr<Node>, NodeHashSet*>::iterator iter = m_transientObservedNodes.find(registrationNode);
+    if (iter != m_transientObservedNodes.end()) {
+        iter->second->add(detachingNode);
+        return;
+    }
+
+    OwnPtr<NodeHashSet> set = adoptPtr(new NodeHashSet());
+    set->add(detachingNode);
+    m_transientObservedNodes.set(registrationNode, set.leakPtr());
+}
+
+void WebKitMutationObserver::clearAllTransientObservations()
+{
+    for (HashMap<RefPtr<Node>, NodeHashSet*>::iterator iter = m_transientObservedNodes.begin(); iter != m_transientObservedNodes.end(); ++iter)
+        clearTransientObservationsForRegistration(this, iter->first.get(), adoptPtr(iter->second));
+
+    m_transientObservedNodes.clear();
+}
+
 void WebKitMutationObserver::deliver()
 {
     MutationRecordArray records;
     records.swap(m_records);
+    clearAllTransientObservations();
     m_callback->handleEvent(&records, this);
 }
 

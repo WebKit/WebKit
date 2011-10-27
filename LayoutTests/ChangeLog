@@ -1,3 +1,16 @@
+2011-10-27  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Implement subtree observation of transiently disconnected nodes
+        https://bugs.webkit.org/show_bug.cgi?id=70788
+
+        Reviewed by Ryosuke Niwa.
+
+        Added tests which assert that nodes can be detached from a subtree where observation is registered
+        and still be observed -- until the end of the current "microtask".
+
+        * fast/mutation/observe-subtree-expected.txt:
+        * fast/mutation/observe-subtree.html:
+
 2011-10-27  Filip Pizlo  <fpizlo@apple.com>
 
         If the bytecode generator emits code after the return in the first basic block,

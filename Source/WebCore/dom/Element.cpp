@@ -619,14 +619,14 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 #if ENABLE(MUTATION_OBSERVERS)
 static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name)
 {
-    Vector<WebKitMutationObserver*> observers;
+    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
     element->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
     if (observers.isEmpty())
         return;
 
     RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name);
-    for (size_t i = 0; i < observers.size(); ++i)
-        observers[i]->enqueueMutationRecord(mutation);
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
+        iter->first->enqueueMutationRecord(mutation);
 }
 #endif
 
