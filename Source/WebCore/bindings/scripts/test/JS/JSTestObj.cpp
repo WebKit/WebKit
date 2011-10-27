@@ -131,7 +131,7 @@ static const HashTableValue JSTestObjTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 130, 127, JSTestObjTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 135, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -187,11 +187,6 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-}
-
-bool JSTestObjConstructor::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -278,17 +273,12 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 133, 127, JSTestObjPrototypeTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 137, 127, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSNonFinalObject::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestObj>(exec, globalObject);
-}
-
-bool JSTestObjPrototype::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool JSTestObjPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -319,11 +309,6 @@ void JSTestObj::finishCreation(JSGlobalData& globalData)
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
     return JSTestObjPrototype::create(exec->globalData(), globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
-}
-
-bool JSTestObj::getOwnPropertySlotVirtual(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

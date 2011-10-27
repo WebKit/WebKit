@@ -1,3 +1,17 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rebaseline of the bindings tests after r98501 which
+        removed getOwnPropertySlotVirtual.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+
 2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         WebInspector: View throughs the exception when a child view are removed by removeChildren call.
