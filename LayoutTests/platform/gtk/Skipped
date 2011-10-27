@@ -434,9 +434,40 @@ http/tests/security/isolatedWorld/cross-origin-xhr.html
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/drag-drop-list.html
 
-# Tests for WebVTT parser for <track>.  Feature is not yet functional.
+# Tests for <track>.  Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=43668
-media/track/
+media/track/track-mutable.html
+media/track/track-text-track-cue-list.html
+media/track/track-text-track.html
+media/track/track-webvtt-tc000-empty.html
+media/track/track-webvtt-tc001-utf8.html
+media/track/track-webvtt-tc002-bom.html
+media/track/track-webvtt-tc003-newlines.html
+media/track/track-webvtt-tc004-magic-header.html
+media/track/track-webvtt-tc005-header-comment.html
+media/track/track-webvtt-tc006-cue-identifiers.html
+media/track/track-webvtt-tc007-cue-no-id.html
+media/track/track-webvtt-tc008-timings-no-hours.html
+media/track/track-webvtt-tc009-timings-hour.html
+media/track/track-webvtt-tc010-no-timings.html
+media/track/track-webvtt-tc011-blank-lines.html
+media/track/track-webvtt-tc012-out-of-order.html
+media/track/track-webvtt-tc013-settings.html
+media/track/track-webvtt-tc014-alignment.html
+media/track/track-webvtt-tc015-positioning.html
+media/track/track-webvtt-tc016-align-positioning.html
+media/track/track-webvtt-tc017-line-position.html
+media/track/track-webvtt-tc018-align-text-line-position.html
+media/track/track-webvtt-tc019-cue-size.html
+media/track/track-webvtt-tc020-cue-size-align.html
+media/track/track-webvtt-tc021-valign.html
+media/track/track-webvtt-tc022-entities.html
+media/track/track-webvtt-tc023-markup.html
+media/track/track-webvtt-tc024-timestamp.html
+media/track/track-webvtt-tc025-class-markup.html
+media/track/track-webvtt-tc026-voice.html
+media/track/track-webvtt-tc027-empty-cue.html
+media/track/track-webvtt-tc028-unsupported-markup.html
 
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
