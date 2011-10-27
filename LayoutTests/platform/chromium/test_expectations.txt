@@ -3789,8 +3789,6 @@ BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOU
 
 BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
 
-BUGWK70985 : inspector/storage-panel-dom-storage.html = PASS TEXT
-
 BUGWK70988 SNOWLEOPARD : animations/change-one-anim.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : editing/pasteboard/copy-standalone-image.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT

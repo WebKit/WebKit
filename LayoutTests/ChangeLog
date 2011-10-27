@@ -1,3 +1,17 @@
+2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        inspector/storage-panel-dom-storage.html has results platform dependant?
+        https://bugs.webkit.org/show_bug.cgi?id=70985
+
+        The items set in DOM storage is unsorted and as result the test is platform dependant.
+        We will sort it before the dumping.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/storage-panel-dom-storage-expected.txt:
+        * inspector/storage-panel-dom-storage.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, gardening.

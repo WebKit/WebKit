@@ -25,6 +25,19 @@ function test()
     function name(storage) {
         return storage.isLocalStorage ? "Local storage" : "Session storage";
     }
+
+    function dumpDataGridContent(dataGrid)
+    {
+        var nodes = dataGrid.children;
+        var rows = [];
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
+            rows.push(node._data[0] + node._data[1]);
+        }
+        rows.sort();
+        InspectorTest.addResult("KeyValue pairs: " + rows.join(''));
+    }
+
     InspectorTest.runAfterPendingDispatches(function() {
         var storages = WebInspector.panels.resources._domStorage;
         if (storages) {
@@ -41,7 +54,7 @@ function test()
             for (var i = 0; i < storages.length; i++) {
                 var storage = storages[i];
                 InspectorTest.addResult(name(storage) + " content: ");
-                InspectorTest.addResult(storage._domStorageView.element.textContent);
+                dumpDataGridContent(storage._domStorageView._dataGrid);
             }
             InspectorTest.addResult("DONE");
             InspectorTest.completeTest();
