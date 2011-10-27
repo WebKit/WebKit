@@ -1,3 +1,12 @@
+2011-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Fix a slider thumb rendering regression in Chromium on OS X in r98520.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb): Reverted the changes to the Chromium code path.
+
 2011-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed, rolling out r98486.

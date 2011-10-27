@@ -1395,6 +1395,12 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
+#if PLATFORM(CHROMIUM)
+    paintInfo.context->translate(0, unzoomedRect.y());
+    paintInfo.context->scale(FloatSize(1, -1));
+    paintInfo.context->translate(0, -(unzoomedRect.y() + unzoomedRect.height()));
+#endif
+
     [sliderThumbCell drawInteriorWithFrame:unzoomedRect inView:documentViewFor(o)];
     [sliderThumbCell setControlView:nil];
 
