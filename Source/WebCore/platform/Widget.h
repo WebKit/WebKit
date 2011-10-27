@@ -215,6 +215,10 @@ public:
     // Notifies this widget that other widgets on the page have been repositioned.
     virtual void widgetPositionsUpdated() {}
 
+    // Whether transforms affect the frame rect. FIXME: We get rid of this and have
+    // the frame rects be the same no matter what transforms are applied.
+    virtual bool transformsAffectFrameRect() { return true; }
+
 #if PLATFORM(MAC)
     NSView* getOuterView() const;
 

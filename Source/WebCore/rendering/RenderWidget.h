@@ -71,6 +71,7 @@ private:
     virtual void setOverlapTestResult(bool);
 
     bool setWidgetGeometry(const IntRect&, const IntSize&);
+    bool updateWidgetGeometry();
 
     RefPtr<Widget> m_widget;
     RefPtr<Image> m_substituteImage;
