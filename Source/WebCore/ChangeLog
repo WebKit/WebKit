@@ -1,3 +1,17 @@
+2011-10-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] add ignoreCache flag to options of inspectedWindow.reload()
+        https://bugs.webkit.org/show_bug.cgi?id=70926
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/extensions-ignore-cache.html
+
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * inspector/front-end/externs.js:
+        ():
+
 2011-10-26  Steve Falkenburg  <sfalken@apple.com>
 
         ResourceError doesn't support custom domains on Windows

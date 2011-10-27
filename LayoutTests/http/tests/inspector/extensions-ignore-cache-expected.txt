@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 1: Done.
+CONSOLE MESSAGE: line 1: Done.
+CONSOLE MESSAGE: line 1: Done.
+Tests ignoreCache flag of WebInspector.inspectedPage.reload()
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testIgnoreCache
+Page reloaded.
+Page reloaded.
+afterNormalReload === beforeReload
+afterNormalReload !== afterReloadWithIgnoreCache
+All tests done.
+

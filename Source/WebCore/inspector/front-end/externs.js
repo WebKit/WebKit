@@ -276,6 +276,15 @@ function ExtensionDescriptor() {
 }
 
 /**
+ * @constructor
+ */
+function ExtensionReloadOptions() {
+    this.ignoreCache = false;
+    this.injectedScript = "";
+    this.userAgent = "";
+}
+
+/**
  * @type {WebInspector.HandlerRegistry}
  */
 WebInspector.openAnchorLocationRegistry = null;

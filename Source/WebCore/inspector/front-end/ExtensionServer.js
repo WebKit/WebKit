@@ -282,7 +282,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _onReload: function(message)
     {
-        var options = message.options || {};
+        var options = /** @type ExtensionReloadOptions */ (message.options || {});
         NetworkAgent.setUserAgentOverride(typeof options.userAgent === "string" ? options.userAgent : "");
         var injectedScript;
         if (options.injectedScript) {
@@ -290,7 +290,7 @@ WebInspector.ExtensionServer.prototype = {
             // returns empty object for compatibility with InjectedScriptManager on the backend.
             injectedScript = "((function(){" + options.injectedScript + "})(),function(){return {}})";
         }
-        PageAgent.reload(false, injectedScript);
+        PageAgent.reload(!!options.ignoreCache, injectedScript);
         return this._status.OK();
     },
 

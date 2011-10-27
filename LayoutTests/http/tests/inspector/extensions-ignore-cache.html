@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="extensions-test.js"></script>
+<script src="network/resources/random-script.php"></script>
+
+<script type="text/javascript">
+
+function extension_testIgnoreCache(nextTest)
+{
+    var beforeReload;
+    var afterReloadWithIgnoreCache;
+    var afterNormalReload;
+
+    function onNormalReload()
+    {
+        webInspector.inspectedWindow.eval("randomValue", function(value) {
+            afterNormalReload = value;
+            evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply)", onReloadWithIgnoreCache);
+            webInspector.inspectedWindow.reload({ ignoreCache: true });
+        });
+    };
+
+    function onReloadWithIgnoreCache()
+    {
+        webInspector.inspectedWindow.eval("randomValue", function(value) {
+            afterReloadWithIgnoreCache = value;
+            output("afterNormalReload " + (afterNormalReload === beforeReload ? "===" : "!==" ) + " beforeReload");
+            output("afterNormalReload " + (afterNormalReload === afterReloadWithIgnoreCache ? "===" : "!==" ) + " afterReloadWithIgnoreCache");
+            nextTest();
+        });
+    }
+
+    webInspector.inspectedWindow.eval("randomValue", function(value) {
+        beforeReload = value;
+        evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply)", onNormalReload);
+        webInspector.inspectedWindow.reload();
+    });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests ignoreCache flag of WebInspector.inspectedPage.reload()</p>
+</body>
+</html>
