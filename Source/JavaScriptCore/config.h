@@ -92,7 +92,7 @@
 #define WTF_USE_OS_RANDOMNESS 1
 #endif
 
-#if OS(FREEBSD) || OS(OPENBSD)
+#if (OS(FREEBSD) || OS(OPENBSD)) && !defined(__GLIBC__)
 #define HAVE_PTHREAD_NP_H 1
 #endif
 

@@ -347,7 +347,7 @@
 #endif
 
 /* OS(FREEBSD) - FreeBSD */
-#if defined(__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
 #define WTF_OS_FREEBSD 1
 #endif
 
@@ -633,7 +633,7 @@
 #endif
 
 #if !defined(HAVE_STRNSTR)
-#if OS(DARWIN) || OS(FREEBSD)
+#if OS(DARWIN) || (OS(FREEBSD) && !defined(__GLIBC__))
 #define HAVE_STRNSTR 1
 #endif
 #endif

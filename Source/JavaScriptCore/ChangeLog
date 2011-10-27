@@ -1,3 +1,13 @@
+2011-10-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix building on GNU/kFreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=71005
+
+        Reviewed by Darin Adler.
+
+        * config.h:
+        * wtf/Platform.h:
+
 2011-10-27  Michael Saboff  <msaboff@apple.com>
 
         Investigate storing strings in 8-bit buffers when possible
