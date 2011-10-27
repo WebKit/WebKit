@@ -173,7 +173,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
                 args.append(value);
 
                 // If this is WebCore's global object then we need to substitute the shell.
-                call(exec, setterFunc, callType, callData, thisObject->toThisObject(exec), args);
+                call(exec, setterFunc, callType, callData, thisObject->methodTable()->toThisObject(thisObject, exec), args);
                 return;
             }
 
@@ -557,9 +557,9 @@ UString JSObject::toString(ExecState* exec) const
     return primitive.toString(exec);
 }
 
-JSObject* JSObject::toThisObject(ExecState*) const
+JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
 {
-    return const_cast<JSObject*>(this);
+    return static_cast<JSObject*>(cell);
 }
 
 JSObject* JSObject::unwrappedObject()

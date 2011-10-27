@@ -247,7 +247,7 @@ namespace JSC {
         void resolveRopeSlowCase(ExecState*, UChar*) const;
         void outOfMemory(ExecState*) const;
 
-        virtual JSObject* toThisObject(ExecState*) const;
+        static JSObject* toThisObject(JSCell*, ExecState*);
 
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);

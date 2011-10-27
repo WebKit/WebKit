@@ -69,7 +69,7 @@ namespace JSC {
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
 
-        virtual JSObject* toThisObject(ExecState*) const;
+        static JSObject* toThisObject(JSCell*, ExecState*);
 
         void copyRegisters(JSGlobalData&);
         

@@ -145,9 +145,9 @@ void JSDOMWindowBase::willRemoveFromWindowShell()
     setCurrentEvent(0);
 }
 
-JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
+JSObject* JSDOMWindowBase::toThisObject(JSCell* cell, ExecState*)
 {
-    return shell();
+    return static_cast<JSDOMWindowBase*>(cell)->shell();
 }
 
 JSDOMWindowShell* JSDOMWindowBase::shell() const

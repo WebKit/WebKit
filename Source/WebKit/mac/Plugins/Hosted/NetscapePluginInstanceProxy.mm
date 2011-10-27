@@ -916,7 +916,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
 
     RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
     globalData->timeoutChecker.start();
-    JSValue value = call(exec, function, callType, callData, object->toThisObject(exec), argList);
+    JSValue value = call(exec, function, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
     globalData->timeoutChecker.stop();
         
     marshalValue(exec, value, resultData, resultLength);
@@ -951,7 +951,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
 
     RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
     globalData->timeoutChecker.start();
-    JSValue value = call(exec, object, callType, callData, object->toThisObject(exec), argList);
+    JSValue value = call(exec, object, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
     globalData->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);

@@ -342,9 +342,6 @@ EXPORTS
     ?toString@JSObject@JSC@@QBE?AVUString@2@PAVExecState@2@@Z
     ?toStringDecimal@DecimalNumber@WTF@@QBEIPA_WI@Z
     ?toStringExponential@DecimalNumber@WTF@@QBEIPA_WI@Z
-    ?toThisObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
-    ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
-    ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?toUInt32@Identifier@JSC@@SAIABVUString@2@AA_N@Z
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z

@@ -96,7 +96,7 @@ namespace JSC {
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
-        virtual JSObject* toThisObject(ExecState*) const;
+        static JSObject* toThisObject(JSCell*, ExecState*);
 
         void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
         void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
@@ -293,11 +293,6 @@ namespace JSC {
     inline JSObject* JSValue::toObject(ExecState* exec, JSGlobalObject* globalObject) const
     {
         return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
-    }
-
-    inline JSObject* JSValue::toThisObject(ExecState* exec) const
-    {
-        return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
 
     template <typename T> void* allocateCell(Heap& heap)

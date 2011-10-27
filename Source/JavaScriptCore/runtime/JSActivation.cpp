@@ -203,7 +203,7 @@ bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifie
     return Base::deleteProperty(cell, exec, propertyName);
 }
 
-JSObject* JSActivation::toThisObject(ExecState* exec) const
+JSObject* JSActivation::toThisObject(JSCell*, ExecState* exec)
 {
     return exec->globalThisValue();
 }

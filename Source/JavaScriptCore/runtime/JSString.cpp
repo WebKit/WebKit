@@ -196,9 +196,9 @@ JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) cons
     return StringObject::create(exec, globalObject, const_cast<JSString*>(this));
 }
 
-JSObject* JSString::toThisObject(ExecState* exec) const
+JSObject* JSString::toThisObject(JSCell* cell, ExecState* exec)
 {
-    return StringObject::create(exec, exec->lexicalGlobalObject(), const_cast<JSString*>(this));
+    return StringObject::create(exec, exec->lexicalGlobalObject(), static_cast<JSString*>(cell));
 }
 
 bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

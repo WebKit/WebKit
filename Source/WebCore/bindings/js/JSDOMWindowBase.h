@@ -68,7 +68,7 @@ namespace WebCore {
         // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
         virtual bool allowsAccessFrom(const JSC::JSGlobalObject*) const;
         
-        virtual JSC::JSObject* toThisObject(JSC::ExecState*) const;
+        static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
         JSDOMWindowShell* shell() const;
 
         static JSC::JSGlobalData* commonJSGlobalData();

@@ -91,7 +91,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         JSGlobalData& globalData = globalObject->globalData();
         DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
-        JSValue thisValue = globalObject->toThisObject(exec);
+        JSValue thisValue = globalObject->methodTable()->toThisObject(globalObject, exec);
 
         globalData.timeoutChecker.start();
         JSValue returnValue = JSC::call(exec, jsFunction, callType, callData, thisValue, args);

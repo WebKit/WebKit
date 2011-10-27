@@ -44,7 +44,7 @@ void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_registerStore);
 }
 
-JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
+JSObject* JSStaticScopeObject::toThisObject(JSCell*, ExecState* exec)
 {
     return exec->globalThisValue();
 }

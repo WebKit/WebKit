@@ -40,7 +40,7 @@ bool StrictEvalActivation::deleteProperty(JSCell*, ExecState*, const Identifier&
     return false;
 }
 
-JSObject* StrictEvalActivation::toThisObject(ExecState* exec) const
+JSObject* StrictEvalActivation::toThisObject(JSCell*, ExecState* exec)
 {
     return exec->globalThisValue();
 }

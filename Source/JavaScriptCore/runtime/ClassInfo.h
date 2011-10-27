@@ -58,6 +58,9 @@ namespace JSC {
 
         typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
         GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
+
+        typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
+        ToThisObjectFunctionPtr toThisObject;
     };
 
 #define CREATE_METHOD_TABLE(ClassName) { \
@@ -70,6 +73,7 @@ namespace JSC {
         &ClassName::deletePropertyByIndex, \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
+        &ClassName::toThisObject, \
     }, \
     sizeof(ClassName)
 

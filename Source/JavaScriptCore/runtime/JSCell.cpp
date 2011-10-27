@@ -112,9 +112,9 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned ident
     return thisObject->methodTable()->deletePropertyByIndex(thisObject, exec, identifier);
 }
 
-JSObject* JSCell::toThisObject(ExecState* exec) const
+JSObject* JSCell::toThisObject(JSCell* cell, ExecState* exec)
 {
-    return toObject(exec, exec->lexicalGlobalObject());
+    return cell->toObject(exec, exec->lexicalGlobalObject());
 }
 
 JSValue JSCell::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const

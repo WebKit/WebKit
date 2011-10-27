@@ -1,3 +1,39 @@
+2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSCell::toThisObject
+        https://bugs.webkit.org/show_bug.cgi?id=70958
+
+        Reviewed by Geoffrey Garen.
+
+        Converted all instances of toThisObject to static functions, 
+        added toThisObject to the MethodTable, and replaced all call sites
+        with a corresponding lookup in the MethodTable.
+
+        * API/JSContextRef.cpp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/ClassInfo.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::toThisObject):
+        * runtime/JSActivation.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toThisObject):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::toThisObject):
+        * runtime/JSObject.h:
+        (JSC::JSValue::toThisObject):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::toThisObject):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::toThisObject):
+        * runtime/JSString.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::toThisObject):
+        * runtime/StrictEvalActivation.h:
+
 2011-10-27  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Fix a small bug in callOperation after r98431

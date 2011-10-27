@@ -163,7 +163,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     APIEntryShim entryShim(exec);
 
     // It is necessary to call toThisObject to get the wrapper object when used with WebCore.
-    return toRef(exec->lexicalGlobalObject()->toThisObject(exec));
+    return toRef(exec->lexicalGlobalObject()->methodTable()->toThisObject(exec->lexicalGlobalObject(), exec));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)

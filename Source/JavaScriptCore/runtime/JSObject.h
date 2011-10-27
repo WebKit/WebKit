@@ -135,7 +135,7 @@ namespace JSC {
         double toNumber(ExecState*) const;
         UString toString(ExecState*) const;
 
-        virtual JSObject* toThisObject(ExecState*) const;
+        static JSObject* toThisObject(JSCell*, ExecState*);
         virtual JSObject* unwrappedObject();
 
         bool getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificFunction) const;
@@ -497,6 +497,11 @@ inline const MethodTable* JSCell::methodTable() const
 inline bool JSValue::inherits(const ClassInfo* classInfo) const
 {
     return isCell() && asCell()->inherits(classInfo);
+}
+
+inline JSObject* JSValue::toThisObject(ExecState* exec) const
+{
+    return isCell() ? asCell()->methodTable()->toThisObject(asCell(), exec) : toThisObjectSlowCase(exec);
 }
 
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
