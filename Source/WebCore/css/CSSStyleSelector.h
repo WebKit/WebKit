@@ -248,9 +248,9 @@ private:
 
     void applyMatchedDeclarations(const MatchResult&);
     template <bool firstPass>
-    void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly = false);
+    void applyDeclarations(bool important, int startIndex, int endIndex, bool& inheritedOnly);
     template <bool firstPass>
-    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool inheritedOnly);
+    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool& inheritedOnly);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);

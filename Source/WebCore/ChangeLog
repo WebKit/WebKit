@@ -1,3 +1,20 @@
+2011-10-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r98542): tables/mozilla_expected_failures/bugs/bug14007-2.html
+        https://bugs.webkit.org/show_bug.cgi?id=71032
+
+        Reviewed by Dave Hyatt.
+
+        If we apply an explicitly inherited property, we need to apply any further
+        non-inherited properties as the property might get overridden again.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        * css/CSSStyleSelector.h:
+
 2011-10-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove RenderTableSection::m_gridRows

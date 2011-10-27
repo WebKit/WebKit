@@ -1264,8 +1264,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
+    bool inheritedOnly = false;
     if (keyframeRule->style())
-        applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+        applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1, inheritedOnly);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
@@ -1276,7 +1277,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 
     // Now do rest of the properties.
     if (keyframeRule->style())
-        applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
+        applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1, inheritedOnly);
 
     // If our font got dirtied by one of the non-essential font props,
     // go ahead and update it a second time.
@@ -1411,7 +1412,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     matchPageRules(m_userStyle.get(), isLeft, isFirst, page);
     matchPageRules(m_authorStyle.get(), isLeft, isFirst, page);
     m_lineHeightValue = 0;
-    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
+    bool inheritedOnly = false;
+    applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1, inheritedOnly);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
@@ -1420,7 +1422,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     if (m_lineHeightValue)
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
-    applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1);
+    applyDeclarations<false>(false, 0, m_matchedDecls.size() - 1, inheritedOnly);
 
     // Start loading images referenced by this style.
     loadPendingImages();
@@ -2096,15 +2098,21 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
+void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool& inheritedOnly)
 {
     CSSMutableStyleDeclaration::const_iterator end = styleDeclaration->end();
     for (CSSMutableStyleDeclaration::const_iterator it = styleDeclaration->begin(); it != end; ++it) {
         const CSSProperty& current = *it;
         if (isImportant != current.isImportant())
             continue;
-        if (inheritedOnly && !current.isInherited() && current.value()->cssValueType() != CSSValue::CSS_INHERIT)
-            continue;
+        if (inheritedOnly && !current.isInherited()) {
+            if (current.value()->cssValueType() != CSSValue::CSS_INHERIT)
+                continue;
+            // If the property value is explicitly inherited, we need to apply further non-inherited properties
+            // as they might override the value inherited here. This is really per-property but that is
+            // probably not worth optimizing for.
+            inheritedOnly = false;
+        }
         int property = current.id();
         if (applyFirst) {
             COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
@@ -2127,7 +2135,7 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int endIndex, bool inheritedOnly)
+void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int endIndex, bool& inheritedOnly)
 {
     if (startIndex == -1)
         return;
