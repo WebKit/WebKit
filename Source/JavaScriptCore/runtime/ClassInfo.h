@@ -63,6 +63,25 @@ namespace JSC {
         ToThisObjectFunctionPtr toThisObject;
     };
 
+#define CREATE_MEMBER_CHECKER(member) \
+template <typename T> \
+struct MemberCheck##member { \
+    struct Fallback { \
+        void member(...); \
+    }; \
+    struct Derived : T, Fallback { }; \
+    template <typename U, U> struct Check; \
+    typedef char Yes[2]; \
+    typedef char No[1]; \
+    template <typename U> \
+    static No &func(Check<void (Fallback::*)(...), &U::member>*); \
+    template <typename U> \
+    static Yes &func(...); \
+    enum { has = sizeof(func<Derived>(0)) == sizeof(Yes) }; \
+}
+
+#define HAS_MEMBER_NAMED(klass, name) (MemberCheck##name<klass>::has)
+
 #define CREATE_METHOD_TABLE(ClassName) { \
         &ClassName::visitChildren, \
         &ClassName::getCallData, \

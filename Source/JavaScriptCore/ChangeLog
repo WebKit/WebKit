@@ -1,5 +1,20 @@
 2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Add ability to check for presence of static members at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=70986
+
+        Reviewed by Geoffrey Garen.
+
+        Added new CREATE_MEMBER_CHECKER macro to instantiate the template and the 
+        HAS_MEMBER_NAMED macro to use that template to check if the specified class 
+        does indeed have a method with that name.  This mechanism is not currently 
+        used anywhere, but will be in the future when adding virtual methods from 
+        JSObject to the MethodTable.
+
+        * runtime/ClassInfo.h:
+
+2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         De-virtualize JSCell::toThisObject
         https://bugs.webkit.org/show_bug.cgi?id=70958
 
