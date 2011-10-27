@@ -2456,6 +2456,7 @@ inspector/extensions/extensions-network.html
 fast/events/touch/page-scaled-touch-gesture-click.html
 
 # fast/canvas/canvas-composite-image.html is failing
+https://bugs.webkit.org/show_bug.cgi?id=70893
 fast/canvas/canvas-composite-image.html
 
 # [Qt] inspector/extensions/extensions-console.html is failing

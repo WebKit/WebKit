@@ -1,3 +1,9 @@
+2011-10-27  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed. Add bugzilla link to skipped test.
+
+        * platform/qt/Skipped:
+
 2011-10-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         inspector/storage-panel-dom-storage.html has results platform dependant?
