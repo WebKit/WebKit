@@ -445,7 +445,7 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
         if (!codeBlock->isStrictMode()) {
             // FIXME: We can use the preparser in strict mode, we just need additional logic
             // to prevent duplicates.
-            LiteralParser preparser(callFrame, programSource.characters(), programSource.length(), LiteralParser::NonStrictJSON);
+            LiteralParser preparser(callFrame, programSource.characters16(), programSource.length(), LiteralParser::NonStrictJSON);
             if (JSValue parsedObject = preparser.tryLiteralParse())
                 return parsedObject;
         }

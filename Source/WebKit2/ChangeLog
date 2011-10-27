@@ -1,3 +1,14 @@
+2011-10-27  Michael Saboff  <msaboff@apple.com>
+
+        Investigate storing strings in 8-bit buffers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=66161
+
+        Added export of StringImpl::getData16SlowCase for linking tests.
+
+        Reviewed by Geoffrey Garen.
+
+        * win/WebKit2.def:
+
 2011-10-27  Sam Weinig  <sam@webkit.org>
 
         Add allowsPlugIns property to WKBrowsingContextGroup

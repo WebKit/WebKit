@@ -48,7 +48,7 @@ class ExecutablePool;
 namespace Yarr {
 
 class YarrCodeBlock {
-    typedef int (*YarrJITCode8)(const char* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef int (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef int (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
 
 public:
@@ -68,7 +68,7 @@ public:
     void set8BitCode(MacroAssembler::CodeRef ref) { m_ref8 = ref; }
     void set16BitCode(MacroAssembler::CodeRef ref) { m_ref16 = ref; }
 
-    int execute(const char* input, unsigned start, unsigned length, int* output)
+    int execute(const LChar* input, unsigned start, unsigned length, int* output)
     {
         ASSERT(has8BitCode());
         return reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output);
@@ -91,7 +91,7 @@ private:
 
 void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject);
 int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
-int execute(YarrCodeBlock& jitObject, const char* input, unsigned start, unsigned length, int* output);
+int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

@@ -1,3 +1,17 @@
+2011-10-27  Michael Saboff  <msaboff@apple.com>
+
+        Investigate storing strings in 8-bit buffers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=66161
+
+        Changes to support 8 bit StringImpl changes.
+        
+        Reviewed by Geoffrey Garen.
+        
+        No new tests, refactored StringImpl for 8 bit strings.
+
+        * platform/text/cf/StringImplCF.cpp:
+        (WTF::StringImpl::createCFString):
+
 2011-10-27  Nat Duca  <nduca@chromium.org>
 
         [chromium] Encapsulate state machine parts of scheduling in CCSchedulerStateMachine

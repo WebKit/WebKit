@@ -39,4 +39,7 @@
 
 COMPILE_ASSERT(sizeof(UChar) == 2, UCharIsTwoBytes);
 
+// Define platform neutral 8 bit character type (L is for Latin-1).
+typedef unsigned char LChar;
+
 #endif // WTF_UNICODE_H

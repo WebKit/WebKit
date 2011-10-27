@@ -85,17 +85,17 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 }
 
 struct CStringTranslator {
-    static unsigned hash(const char* c)
+    static unsigned hash(const LChar* c)
     {
         return StringHasher::computeHash(c);
     }
 
-    static inline bool equal(StringImpl* r, const char* s)
+    static inline bool equal(StringImpl* r, const LChar* s)
     {
         return WTF::equal(r, s);
     }
 
-    static void translate(StringImpl*& location, const char* const& c, unsigned hash)
+    static void translate(StringImpl*& location, const LChar* const& c, unsigned hash)
     {
         location = StringImpl::create(c).leakRef();
         location->setHash(hash);
@@ -103,14 +103,14 @@ struct CStringTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(const char* c)
+PassRefPtr<StringImpl> AtomicString::add(const LChar* c)
 {
     if (!c)
         return 0;
     if (!*c)
         return StringImpl::empty();
 
-    return addToStringTable<const char*, CStringTranslator>(c);
+    return addToStringTable<const LChar*, CStringTranslator>(c);
 }
 
 struct UCharBuffer {

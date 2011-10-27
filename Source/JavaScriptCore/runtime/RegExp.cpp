@@ -366,9 +366,9 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
 #if ENABLE(YARR_JIT)
         if (m_state == JITCode) {
             if (s.is8Bit())
-                result = Yarr::execute(m_representation->m_regExpJITCode, s.latin1().data(), startOffset, s.length(), offsetVector);
+                result = Yarr::execute(m_representation->m_regExpJITCode, s.characters8(), startOffset, s.length(), offsetVector);
             else
-                result = Yarr::execute(m_representation->m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector);
+                result = Yarr::execute(m_representation->m_regExpJITCode, s.characters16(), startOffset, s.length(), offsetVector);
 #if ENABLE(YARR_JIT_DEBUG)
             matchCompareWithInterpreter(s, startOffset, offsetVector, result);
 #endif

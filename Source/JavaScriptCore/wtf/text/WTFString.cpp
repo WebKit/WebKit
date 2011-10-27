@@ -61,14 +61,24 @@ String::String(const UChar* str)
 }
 
 // Construct a string with latin1 data.
-String::String(const char* characters, unsigned length)
+String::String(const LChar* characters, unsigned length)
     : m_impl(characters ? StringImpl::create(characters, length) : 0)
 {
 }
 
+String::String(const char* characters, unsigned length)
+    : m_impl(characters ? StringImpl::create(reinterpret_cast<const LChar*>(characters), length) : 0)
+{
+}
+
 // Construct a string with latin1 data, from a null-terminated source.
-String::String(const char* characters)
+String::String(const LChar* characters)
     : m_impl(characters ? StringImpl::create(characters) : 0)
+{
+}
+
+String::String(const char* characters)
+    : m_impl(characters ? StringImpl::create(reinterpret_cast<const LChar*>(characters)) : 0)
 {
 }
 
@@ -95,7 +105,7 @@ void String::append(const String& str)
     }
 }
 
-void String::append(char c)
+void String::append(LChar c)
 {
     // FIXME: This is extremely inefficient. So much so that we might want to take this
     // out of String's API. We can make it better by optimizing the case where exactly
@@ -338,7 +348,7 @@ String String::format(const char *format, ...)
     va_end(args);
 
     QByteArray ba = buffer.toUtf8();
-    return StringImpl::create(ba.constData(), ba.length());
+    return StringImpl::create(reinterpret_cast<const LChar*>(ba.constData()), ba.length());
 
 #elif OS(WINCE)
     va_list args;
@@ -355,7 +365,7 @@ String String::format(const char *format, ...)
         if (written == 0)
             return String("");
         if (written > 0)
-            return StringImpl::create(buffer.data(), written);
+            return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), written);
         
         bufferSize <<= 1;
         buffer.resize(bufferSize);
@@ -396,7 +406,7 @@ String String::format(const char *format, ...)
 
     va_end(args);
     
-    return StringImpl::create(buffer.data(), len);
+    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
 #endif
 }
 
@@ -717,7 +727,7 @@ CString String::utf8(bool strict) const
     return CString(bufferVector.data(), buffer - bufferVector.data());
 }
 
-String String::fromUTF8(const char* stringStart, size_t length)
+String String::fromUTF8(const LChar* stringStart, size_t length)
 {
     if (length > numeric_limits<unsigned>::max())
         CRASH();
@@ -732,8 +742,8 @@ String String::fromUTF8(const char* stringStart, size_t length)
     UChar* bufferEnd = buffer + length;
 
     // Try converting into the buffer.
-    const char* stringCurrent = stringStart;
-    if (convertUTF8ToUTF16(&stringCurrent, stringStart + length, &buffer, bufferEnd) != conversionOK)
+    const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
+    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd) != conversionOK)
         return String();
 
     // stringBuffer is full (the input must have been all ascii) so just return it!
@@ -746,14 +756,14 @@ String String::fromUTF8(const char* stringStart, size_t length)
     return String(stringBuffer.characters(), utf16Length);
 }
 
-String String::fromUTF8(const char* string)
+String String::fromUTF8(const LChar* string)
 {
     if (!string)
         return String();
-    return fromUTF8(string, strlen(string));
+    return fromUTF8(string, strlen(reinterpret_cast<const char*>(string)));
 }
 
-String String::fromUTF8WithLatin1Fallback(const char* string, size_t size)
+String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
 {
     String utf8 = fromUTF8(string, size);
     if (!utf8)

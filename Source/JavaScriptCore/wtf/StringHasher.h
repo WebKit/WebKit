@@ -134,12 +134,12 @@ public:
 
     template<typename T> static inline unsigned computeHash(const T* data, unsigned length)
     {
-        return computeHash<T, defaultCoverter>(data, length);
+        return computeHash<T, defaultConverter>(data, length);
     }
 
     template<typename T> static inline unsigned computeHash(const T* data)
     {
-        return computeHash<T, defaultCoverter>(data);
+        return computeHash<T, defaultConverter>(data);
     }
 
     template<size_t length> static inline unsigned hashMemory(const void* data)
@@ -155,14 +155,14 @@ public:
     }
 
 private:
-    static inline UChar defaultCoverter(UChar ch)
+    static inline UChar defaultConverter(UChar ch)
     {
         return ch;
     }
 
-    static inline UChar defaultCoverter(char ch)
+    static inline UChar defaultConverter(LChar ch)
     {
-        return static_cast<unsigned char>(ch);
+        return ch;
     }
 
     inline void addCharactersToHash(UChar a, UChar b)

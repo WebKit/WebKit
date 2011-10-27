@@ -231,7 +231,7 @@ private:
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
         , m_err(NoError)
-        , m_data(pattern)
+        , m_data(pattern.characters16())
         , m_size(pattern.length())
         , m_index(0)
         , m_parenthesesNestingDepth(0)
@@ -793,7 +793,7 @@ private:
     Delegate& m_delegate;
     unsigned m_backReferenceLimit;
     ErrorCode m_err;
-    const UString& m_data;
+    const UChar* m_data;
     unsigned m_size;
     unsigned m_index;
     unsigned m_parenthesesNestingDepth;

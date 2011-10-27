@@ -39,9 +39,11 @@ public:
     UString(const UChar*);
 
     // Construct a string with latin1 data.
+    UString(const LChar* characters, unsigned length);
     UString(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
+    UString(const LChar* characters);
     UString(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
@@ -73,10 +75,26 @@ public:
     {
         if (!m_impl)
             return 0;
-        return m_impl->characters();
+        return m_impl->characters16();
     }
 
-    bool is8Bit() const { return false; }
+    const LChar* characters8() const
+    {
+        if (!m_impl)
+            return 0;
+        ASSERT(m_impl->is8Bit());
+        return m_impl->characters8();
+    }
+
+    const UChar* characters16() const
+    {
+        if (!m_impl)
+            return 0;
+        ASSERT(!m_impl->is8Bit());
+        return m_impl->characters16();
+    }
+
+    bool is8Bit() const { return m_impl->is8Bit(); }
 
     CString ascii() const;
     CString latin1() const;
@@ -86,7 +104,9 @@ public:
     {
         if (!m_impl || index >= m_impl->length())
             return 0;
-        return m_impl->characters()[index];
+        if (is8Bit())
+            return m_impl->characters8()[index];
+        return m_impl->characters16()[index];
     }
 
     static UString number(int);
@@ -100,7 +120,7 @@ public:
         { return m_impl ? m_impl->find(c, start) : notFound; }
     size_t find(const UString& str, unsigned start = 0) const
         { return m_impl ? m_impl->find(str.impl(), start) : notFound; }
-    size_t find(const char* str, unsigned start = 0) const
+    size_t find(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->find(str, start) : notFound; }
 
     // Find the last instance of a single character or string.
@@ -115,46 +135,35 @@ private:
     RefPtr<StringImpl> m_impl;
 };
 
+NEVER_INLINE bool equalSlowCase(const UString& s1, const UString& s2);
+
 ALWAYS_INLINE bool operator==(const UString& s1, const UString& s2)
 {
     StringImpl* rep1 = s1.impl();
     StringImpl* rep2 = s2.impl();
-    unsigned size1 = 0;
-    unsigned size2 = 0;
 
     if (rep1 == rep2) // If they're the same rep, they're equal.
         return true;
-    
+
+    unsigned size1 = 0;
+    unsigned size2 = 0;
+
     if (rep1)
         size1 = rep1->length();
-        
+
     if (rep2)
         size2 = rep2->length();
-        
+
     if (size1 != size2) // If the lengths are not the same, we're done.
         return false;
-    
+
     if (!size1)
         return true;
-    
-    // At this point we know 
-    //   (a) that the strings are the same length and
-    //   (b) that they are greater than zero length.
-    const UChar* d1 = rep1->characters();
-    const UChar* d2 = rep2->characters();
-    
-    if (d1 == d2) // Check to see if the data pointers are the same.
-        return true;
-    
-    // Do quick checks for sizes 1 and 2.
-    switch (size1) {
-    case 1:
-        return d1[0] == d2[0];
-    case 2:
-        return (d1[0] == d2[0]) & (d1[1] == d2[1]);
-    default:
-        return memcmp(d1, d2, size1 * sizeof(UChar)) == 0;
-    }
+
+    if (size1 == 1)
+        return (*rep1)[0] == (*rep2)[0];
+
+    return equalSlowCase(s1, s2);
 }
 
 

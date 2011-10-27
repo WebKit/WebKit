@@ -47,6 +47,7 @@ EXPORTS
     ?ToShortest@DoubleToStringConverter@double_conversion@WTF@@QBE_NNPAVStringBuilder@23@@Z
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
+    ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
@@ -157,7 +158,6 @@ EXPORTS
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?equal@Identifier@JSC@@SA_NPBVStringImpl@WTF@@PBD@Z
     ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
     ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVScopeChainNode@1@ABVSourceCode@1@V21@PAV21@@Z

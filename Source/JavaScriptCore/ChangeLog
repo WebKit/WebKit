@@ -1,3 +1,176 @@
+2011-10-27  Michael Saboff  <msaboff@apple.com>
+
+        Investigate storing strings in 8-bit buffers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=66161
+
+        Investigate storing strings in 8-bit buffers when possible
+        https://bugs.webkit.org/show_bug.cgi?id=66161
+
+        Added support for 8 bit string data in StringImpl.  Changed
+        (UChar*) m_data to m_data16.  Added char* m_data8 as a union
+        with m_data16.  Added UChar* m_copyData16 to the other union
+        to store a 16 bit copy of an 8 bit string when needed.
+        Added characters8() and characters16() accessor methods
+        that assume the caller has checked the underlying string type
+        via the new is8Bit() method. The characters() method will
+        return a UChar* of the string, materializing a 16 bit copy if the
+        string is an 8 bit string.  Added two flags, one for 8 bit buffer
+        and a second for a 16 bit copy for an 8 bit string.
+
+        Fixed method name typo (StringHasher::defaultCoverter()).
+
+        Over time the goal is to eliminate calls to characters() and
+        us the character8() and characters16() accessors.
+
+        This patch does not include changes that actually create 8 bit
+        strings. This is the first of at least 8 patches.  Subsequent
+        patches will be submitted for JIT changes, making the JSC lexer,
+        parser and literal parser, JavaScript string changes and
+        then changes in webcore to take advantage of the 8 bit strings.
+
+        This change is performance neutral for SunSpider and V8 when
+        run from the command line with "jsc".
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::data):
+        (JSC::UStringSourceProvider::UStringSourceProvider):
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierCStringTranslator::equal):
+        (JSC::IdentifierCStringTranslator::translate):
+        (JSC::Identifier::add):
+        (JSC::Identifier::toUInt32):
+        * runtime/Identifier.h:
+        (JSC::Identifier::equal):
+        (JSC::operator==):
+        (JSC::operator!=):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::resolveRopeSlowCase):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        (JSC::equalSlowCase):
+        (JSC::UString::utf8):
+        * runtime/UString.h:
+        (JSC::UString::characters):
+        (JSC::UString::characters8):
+        (JSC::UString::characters16):
+        (JSC::UString::is8Bit):
+        (JSC::UString::operator[]):
+        (JSC::UString::find):
+        (JSC::operator==):
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::computeHash):
+        (WTF::StringHasher::defaultConverter):
+        * wtf/text/AtomicString.cpp:
+        (WTF::CStringTranslator::hash):
+        (WTF::CStringTranslator::equal):
+        (WTF::CStringTranslator::translate):
+        (WTF::AtomicString::add):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        (WTF::AtomicString::contains):
+        (WTF::AtomicString::find):
+        (WTF::AtomicString::add):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equalIgnoringCase):
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+        (WTF::CaseFoldingHash::hash):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createUninitialized):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::getData16SlowCase):
+        (WTF::StringImpl::containsOnlyWhitespace):
+        (WTF::StringImpl::substring):
+        (WTF::StringImpl::characterStartingAt):
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::fill):
+        (WTF::StringImpl::foldCase):
+        (WTF::StringImpl::stripMatchedCharacters):
+        (WTF::StringImpl::removeCharacters):
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::StringImpl::toIntStrict):
+        (WTF::StringImpl::toUIntStrict):
+        (WTF::StringImpl::toInt64Strict):
+        (WTF::StringImpl::toUInt64Strict):
+        (WTF::StringImpl::toIntPtrStrict):
+        (WTF::StringImpl::toInt):
+        (WTF::StringImpl::toUInt):
+        (WTF::StringImpl::toInt64):
+        (WTF::StringImpl::toUInt64):
+        (WTF::StringImpl::toIntPtr):
+        (WTF::StringImpl::toDouble):
+        (WTF::StringImpl::toFloat):
+        (WTF::equal):
+        (WTF::equalIgnoringCase):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::StringImpl::reverseFind):
+        (WTF::StringImpl::replace):
+        (WTF::StringImpl::defaultWritingDirection):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::createWithTerminatingNullCharacter):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::create8):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::flagsOffset):
+        (WTF::StringImpl::flagIs8Bit):
+        (WTF::StringImpl::dataOffset):
+        (WTF::StringImpl::is8Bit):
+        (WTF::StringImpl::characters8):
+        (WTF::StringImpl::characters16):
+        (WTF::StringImpl::characters):
+        (WTF::StringImpl::has16BitShadow):
+        (WTF::StringImpl::setHash):
+        (WTF::StringImpl::hash):
+        (WTF::StringImpl::copyChars):
+        (WTF::StringImpl::operator[]):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::equal):
+        (WTF::equalIgnoringCase):
+        (WTF::StringImpl::isolatedCopy):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::String):
+        (WTF::String::append):
+        (WTF::String::format):
+        (WTF::String::fromUTF8):
+        (WTF::String::fromUTF8WithLatin1Fallback):
+        * wtf/text/WTFString.h:
+        (WTF::String::find):
+        (WTF::String::findIgnoringCase):
+        (WTF::String::contains):
+        (WTF::String::append):
+        (WTF::String::fromUTF8):
+        (WTF::String::fromUTF8WithLatin1Fallback):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equalIgnoringCase):
+        * wtf/unicode/Unicode.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::execute):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+
 2011-10-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing windows build

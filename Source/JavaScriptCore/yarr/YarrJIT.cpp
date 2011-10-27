@@ -2500,7 +2500,7 @@ void jitCompile(YarrPattern& pattern, YarrCharSize charSize, JSGlobalData* globa
     YarrGenerator(pattern, charSize).compile(globalData, jitObject);
 }
 
-int execute(YarrCodeBlock& jitObject, const char* input, unsigned start, unsigned length, int* output)
+int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output)
 {
     return jitObject.execute(input, start, length, output);
 }

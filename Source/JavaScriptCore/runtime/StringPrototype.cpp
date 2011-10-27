@@ -330,13 +330,13 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
             if (int srcLen = substringRanges[i].length) {
-                StringImpl::copyChars(buffer + bufferPos, source.characters() + substringRanges[i].position, srcLen);
+                StringImpl::copyChars(buffer + bufferPos, source.characters16() + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
         if (i < separatorCount) {
             if (int sepLen = separators[i].length()) {
-                StringImpl::copyChars(buffer + bufferPos, separators[i].characters(), sepLen);
+                StringImpl::copyChars(buffer + bufferPos, separators[i].characters16(), sepLen);
                 bufferPos += sepLen;
             }
         }

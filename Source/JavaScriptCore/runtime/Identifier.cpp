@@ -68,23 +68,23 @@ void deleteIdentifierTable(IdentifierTable* table)
 }
 
 struct IdentifierCStringTranslator {
-    static unsigned hash(const char* c)
+    static unsigned hash(const LChar* c)
     {
-        return StringHasher::computeHash<char>(c);
+        return StringHasher::computeHash<LChar>(c);
     }
 
-    static bool equal(StringImpl* r, const char* s)
+    static bool equal(StringImpl* r, const LChar* s)
     {
         return Identifier::equal(r, s);
     }
 
-    static void translate(StringImpl*& location, const char* c, unsigned hash)
+    static void translate(StringImpl*& location, const LChar* c, unsigned hash)
     {
-        size_t length = strlen(c);
+        size_t length = strlen(reinterpret_cast<const char*>(c));
         UChar* d;
         StringImpl* r = StringImpl::createUninitialized(length, d).leakRef();
         for (size_t i = 0; i != length; i++)
-            d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+            d[i] = c[i];
         r->setHash(hash);
         location = r;
     }
@@ -97,7 +97,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
     if (!c[0])
         return StringImpl::empty();
     if (!c[1])
-        return add(globalData, globalData->smallStrings.singleCharacterStringRep(static_cast<unsigned char>(c[0])));
+        return add(globalData, globalData->smallStrings.singleCharacterStringRep(c[0]));
 
     IdentifierTable& identifierTable = *globalData->identifierTable;
     LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
@@ -106,7 +106,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
     if (iter != literalIdentifierTable.end())
         return iter->second;
 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = identifierTable.add<const char*, IdentifierCStringTranslator>(c);
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = identifierTable.add<const LChar*, IdentifierCStringTranslator>(reinterpret_cast<const LChar*>(c));
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
@@ -154,11 +154,12 @@ uint32_t Identifier::toUInt32(const UString& string, bool& ok)
     ok = false;
 
     unsigned length = string.length();
-    const UChar* characters = string.characters();
 
     // An empty string is not a number.
     if (!length)
         return 0;
+
+    const UChar* characters = string.characters16();
 
     // Get the first character, turning it into a digit.
     uint32_t value = characters[0] - '0';

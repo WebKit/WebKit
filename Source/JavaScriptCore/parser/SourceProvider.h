@@ -88,17 +88,19 @@ namespace JSC {
         {
             return m_source.substringSharingImpl(start, end - start);
         }
-        const UChar* data() const { return m_source.characters(); }
+        const UChar* data() const { return m_data; }
         int length() const { return m_source.length(); }
 
     private:
         UStringSourceProvider(const UString& source, const UString& url)
             : SourceProvider(url)
             , m_source(source)
+            , m_data(m_source.characters16())
         {
         }
 
         UString m_source;
+        const UChar* m_data;
     };
     
 } // namespace JSC

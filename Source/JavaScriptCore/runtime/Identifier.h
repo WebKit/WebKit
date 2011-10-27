@@ -70,10 +70,13 @@ namespace JSC {
         friend bool operator==(const Identifier&, const Identifier&);
         friend bool operator!=(const Identifier&, const Identifier&);
 
+        friend bool operator==(const Identifier&, const LChar*);
         friend bool operator==(const Identifier&, const char*);
+        friend bool operator!=(const Identifier&, const LChar*);
         friend bool operator!=(const Identifier&, const char*);
     
-        static bool equal(const StringImpl*, const char*);
+        static bool equal(const StringImpl*, const LChar*);
+        static inline bool equal(const StringImpl*a, const char*b) { return Identifier::equal(a, reinterpret_cast<const LChar*>(b)); };
         static bool equal(const StringImpl*, const UChar*, unsigned length);
         static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
@@ -84,7 +87,7 @@ namespace JSC {
         UString m_string;
         
         static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
-        static bool equal(const Identifier& a, const char* b) { return equal(a.m_string.impl(), b); }
+        static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
         static PassRefPtr<StringImpl> add(ExecState*, const UChar*, int length);
         static PassRefPtr<StringImpl> add(JSGlobalData*, const UChar*, int length);
@@ -125,17 +128,27 @@ namespace JSC {
         return !Identifier::equal(a, b);
     }
 
-    inline bool operator==(const Identifier& a, const char* b)
+    inline bool operator==(const Identifier& a, const LChar* b)
     {
         return Identifier::equal(a, b);
     }
 
-    inline bool operator!=(const Identifier& a, const char* b)
+    inline bool operator==(const Identifier& a, const char* b)
+    {
+        return Identifier::equal(a, reinterpret_cast<const LChar*>(b));
+    }
+    
+    inline bool operator!=(const Identifier& a, const LChar* b)
     {
         return !Identifier::equal(a, b);
     }
 
-    inline bool Identifier::equal(const StringImpl* r, const char* s)
+    inline bool operator!=(const Identifier& a, const char* b)
+    {
+        return !Identifier::equal(a, reinterpret_cast<const LChar*>(b));
+    }
+    
+    inline bool Identifier::equal(const StringImpl* r, const LChar* s)
     {
         return WTF::equal(r, s);
     }
