@@ -1,3 +1,13 @@
+2011-10-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] MiniBrowser crashes when started with 0 arguments
+
+        Rubber-stamped by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        Fix typo error.
+
 2011-10-27  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] update pywebsocket to 0.7.

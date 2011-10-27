@@ -212,7 +212,8 @@ void MiniBrowserApplication::handleUserOptions()
         m_urls = QStringList(listFile);
     } else {
         int urlArg = args.indexOf(QRegExp("^[^-].*"));
-        m_urls += args.takeAt(urlArg);
+        if (urlArg != -1)
+            m_urls += args.takeAt(urlArg);
     }
 
     if (!args.isEmpty()) {
