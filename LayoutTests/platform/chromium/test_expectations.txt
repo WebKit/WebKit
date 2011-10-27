@@ -472,10 +472,6 @@ WONTFIX SKIP : fast/regex/slow.html = TIMEOUT
 // WebKit QT Build-specific tests
 WONTFIX SKIP : platform/qt/view/fixed-layout-size.html = FAIL
 
-// These don't have pixel results and rely on ObjC bindings. Don't run until they have pixel results.
-WONTFIX WIN LINUX : platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html = FAIL
-WONTFIX WIN LINUX : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
-
 // The issue is which global object to use as the implicit
 // receiver for cross-frame calls.  Currently, IE, Firefox and Chrome
 // agree and only Safari is doing it this way.
