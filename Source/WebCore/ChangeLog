@@ -1,3 +1,15 @@
+2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Execution line in selected call frame should keep showing after toggling format source.
+        https://bugs.webkit.org/show_bug.cgi?id=70906
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/selected-call-frame-after-formatting-source.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSource):
+
 2011-10-27  Steve Block  <steveblock@google.com>
 
         Numerous debug build fixes

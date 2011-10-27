@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+function testFunction()
+{
+    return testFunction2();
+}
+
+function testFunction2()
+{
+    var x = Math.sqrt(10);
+    debugger;
+    return x;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+    var panel = WebInspector.panels.scripts;
+
+    function step1()
+    {
+        var testName = WebInspector.mainResource.url;
+        testName = testName.substring(testName.lastIndexOf('/') + 1);
+        InspectorTest.showScriptSource(testName, step2);
+    }
+
+    function step2(callFrames)
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        WebInspector.debuggerPresentationModel.selectedCallFrame = WebInspector.debuggerPresentationModel._presentationCallFrames[1];
+        panel._toggleFormatSource();
+        InspectorTest.assertEquals("testFunction", WebInspector.debuggerPresentationModel.selectedCallFrame._callFrame.functionName);
+        panel._toggleFormatSource();
+        InspectorTest.assertEquals("testFunction", WebInspector.debuggerPresentationModel.selectedCallFrame._callFrame.functionName);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests selected call frame does not change when pretty-print is toggled.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=70906">Bug 70906</a>
+</body>
+</html>

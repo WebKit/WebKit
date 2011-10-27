@@ -312,9 +312,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointManager.reset();
         for (var id in this._rawSourceCode)
             this._rawSourceCode[id].setFormatted(this._formatSource);
-
-        if (WebInspector.debuggerModel.callFrames)
-            this._debuggerPaused();
     },
 
     /**
