@@ -1,3 +1,21 @@
+2011-10-27  Andras Becsi  <andras.becsi@nokia.com>
+
+        Fix the build if NO_LISTBOX_RENDERING is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=71009
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If NO_LISTBOX_RENDERING is enabled RenderMenuList::listBoxSelectItem uses the
+        HTMLSelectElement::listBoxSelectItem function which was accidentally removed in r97533.
+        Reintroduce HTMLSelectElement::listBoxSelectItem with a NO_LISTBOX_RENDERING guard to unbreak this setup.
+
+        This is covered by:
+        Source/WebCore/manual-tests/no-listbox-rendering.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxSelectItem): Reintroduce.
+        * html/HTMLSelectElement.h:
+
 2011-10-27  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.

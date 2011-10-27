@@ -87,6 +87,10 @@ public:
 
     void scrollToSelection();
 
+#if ENABLE(NO_LISTBOX_RENDERING)
+    void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
+#endif
+
     bool canSelectAll() const;
     void selectAll();
     int listToOptionIndex(int listIndex) const;

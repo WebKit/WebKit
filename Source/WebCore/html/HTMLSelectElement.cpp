@@ -167,6 +167,20 @@ bool HTMLSelectElement::valueMissing() const
     return firstSelectionIndex < 0 || (!firstSelectionIndex && hasPlaceholderLabelOption());
 }
 
+#if ENABLE(NO_LISTBOX_RENDERING)
+void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
+{
+    if (!multiple())
+        setSelectedIndexByUser(listToOptionIndex(listIndex), true, fireOnChangeNow);
+    else {
+        updateSelectedState(listIndex, allowMultiplySelections, shift);
+        setNeedsValidityCheck();
+        if (fireOnChangeNow)
+            listBoxOnChange();
+    }
+}
+#endif
+
 int HTMLSelectElement::activeSelectionStartListIndex() const
 {
     if (m_activeSelectionAnchorIndex >= 0)
