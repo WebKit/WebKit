@@ -161,7 +161,7 @@ ALWAYS_INLINE bool operator==(const UString& s1, const UString& s2)
         return true;
 
     if (size1 == 1)
-        return (*rep1)[0] == (*rep2)[0];
+        return (*rep1)[0u] == (*rep2)[0u];
 
     return equalSlowCase(s1, s2);
 }

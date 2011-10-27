@@ -1,3 +1,15 @@
+2011-10-27  Michael Saboff  <msaboff@apple.com>
+
+        32bit build failure after r98624
+        https://bugs.webkit.org/show_bug.cgi?id=71064
+
+        Disambiguated operator overload with unsigned index (0u).
+
+        Reviewed by Sam Weinig.
+
+        * runtime/UString.h:
+        (JSC::operator==):
+
 2011-10-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Fix building on GNU/kFreeBSD
