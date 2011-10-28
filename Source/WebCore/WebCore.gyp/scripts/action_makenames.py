@@ -155,7 +155,7 @@ def main(args):
     if attrInput != None:
         command.extend(['--attrs', attrInput])
     if eventsInput != None:
-        command.extend(['--events', eventsInput])
+        command.extend(['--input', eventsInput])
     command.extend(options)
 
     # Do it. check_call is new in 2.5, so simulate its behavior with call and

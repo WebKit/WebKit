@@ -851,10 +851,10 @@ XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
 # Register event constructors and targets
 
 EventFactory.cpp EventHeaders.h EventInterfaces.h : dom/make_event_factory.pl dom/EventFactory.in
-	perl -I $(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventFactory.in
+	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventFactory.in
 
 EventTargetHeaders.h EventTargetInterfaces.h : dom/make_event_factory.pl dom/EventTargetFactory.in
-	perl -I $(WebCore)/bindings/scripts $< --events $(WebCore)/dom/EventTargetFactory.in
+	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in
 
 # --------
  

@@ -43,7 +43,7 @@ MACRO (GENERATE_EVENT_FACTORY _infile _outfile)
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --events ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 ENDMACRO ()
 

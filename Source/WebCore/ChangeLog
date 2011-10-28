@@ -1,3 +1,32 @@
+2011-10-27  Adam Barth  <abarth@webkit.org>
+
+        Refactor make_event_factory.pl to use InFilesCompiler.pm
+        https://bugs.webkit.org/show_bug.cgi?id=71094
+
+        Reviewed by Eric Seidel.
+
+        This refactoring helps share code with
+        make_exception_code_descriptions.pl, which is coming in a future patch.
+        I have a dream of refactoring make_names.pl to use this module as well.
+
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/scripts/action_makenames.py:
+        * bindings/scripts/InFilesCompiler.pm: Added.
+        (itemHandler):
+        (parameterHandler):
+        (new):
+        (compile):
+        (license):
+        * dom/make_event_factory.pl:
+        (defaultItemFactory):
+        (interfaceForEvent):
+        (generateCode):
+        (printFactoryFile):
+        (printMacroFile):
+        (printHeadersFile):
+
 2011-10-26  Nat Duca  <nduca@chromium.org>
 
         [chromium] Implement frame rate control portions of CCScheduler

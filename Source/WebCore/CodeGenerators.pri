@@ -758,7 +758,7 @@ addExtraCompiler(fontnames)
 eventfactory.output = $${WC_GENERATED_SOURCES_DIR}/EventFactory.cpp
 eventfactory.input = EVENT_FACTORY
 eventfactory.wkScript = $$PWD/dom/make_event_factory.pl
-eventfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --events $$EVENT_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
+eventfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --input $$EVENT_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
 eventfactory.depends = $$PWD/dom/make_event_factory.pl $$EVENT_FACTORY
 addExtraCompiler(eventfactory)
 
@@ -766,7 +766,7 @@ addExtraCompiler(eventfactory)
 eventtargetfactory.output = $${WC_GENERATED_SOURCES_DIR}/EventTargetInterfaces.h
 eventtargetfactory.input = EVENT_TARGET_FACTORY
 eventtargetfactory.wkScript = $$PWD/dom/make_event_factory.pl
-eventtargetfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --events $$EVENT_TARGET_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
+eventtargetfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --input $$EVENT_TARGET_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
 eventtargetfactory.depends = $$PWD/dom/make_event_factory.pl $$EVENT_TARGET_FACTORY
 addExtraCompiler(eventtargetfactory)
 

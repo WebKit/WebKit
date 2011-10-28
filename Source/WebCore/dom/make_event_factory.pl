@@ -37,36 +37,31 @@ use Getopt::Long;
 use File::Path;
 use File::Spec;
 use IO::File;
-use InFilesParser;
-
-sub readEvents($);
-sub printFactoryFile($);
-sub printMacroFile($);
-sub printHeadersFile($);
-
-my $eventsFile = "";
-my $outputDir = ".";
-my %parsedEvents = ();
-my $namespace;
+use InFilesCompiler;
 
 require Config;
 
+my $inputFile = "";
+my $outputDir = ".";
+
 GetOptions(
-    'events=s' => \$eventsFile,
+    'input=s' => \$inputFile,
     'outputDir=s' => \$outputDir,
 );
 
 mkpath($outputDir);
 
-die "You must specify --events <file>" unless length($eventsFile);
+die "You must specify --input <file>" unless length($inputFile);
 
-my %events = %{readEvents($eventsFile)};
+my %defaultParameters = (
+    'namespace' => 0
+);
 
-printFactoryFile("$outputDir/${namespace}Factory.cpp") if $namespace eq "Event";
-printMacroFile("$outputDir/${namespace}Interfaces.h");
-printHeadersFile("$outputDir/${namespace}Headers.h");
+my $InCompiler = InFilesCompiler->new(\%defaultParameters, \&defaultItemFactory);
 
-sub defaultEventPropertyHash
+$InCompiler->compile($inputFile, \&generateCode);
+
+sub defaultItemFactory
 {
     return (
         'interfaceName' => 0,
@@ -74,53 +69,13 @@ sub defaultEventPropertyHash
     );
 }
 
-sub eventHandler($$$)
+sub interfaceForEvent($$)
 {
-    my ($event, $property, $value) = @_;
+    my ($eventName, $parsedItemsRef) = @_;
 
-    $parsedEvents{$event} = { defaultEventPropertyHash($event) } if !defined($parsedEvents{$event});
+    my %parsedItems = %{ $parsedItemsRef };
 
-    if ($property) {
-        die "Unknown property $property for event $event\n" if !defined($parsedEvents{$event}{$property});
-        $parsedEvents{$event}{$property} = $value;
-    }
-}
-
-sub parametersHandler
-{
-    my ($parameter, $value) = @_;
-
-    die "Unknown parameter $parameter\n" unless $parameter eq "namespace";
-    $namespace = $value;
-}
-
-sub readNames($$$)
-{
-    my ($namesFile, $hashToFillRef, $handler) = @_;
-
-    my $names = new IO::File;
-    open($names, $namesFile) or die "Failed to open file: $namesFile";
-
-    my $InParser = InFilesParser->new();
-    $InParser->parse($names, \&parametersHandler, $handler);
-
-    close($names);
-    die "Failed to read names from file: $namesFile" if (keys %{$hashToFillRef} == 0);
-    return $hashToFillRef;
-}
-
-sub readEvents($)
-{
-    my ($namesFile) = @_;
-    %parsedEvents = ();
-    return readNames($namesFile, \%parsedEvents, \&eventHandler);
-}
-
-sub interfaceForEvent($)
-{
-    my ($eventName) = @_;
-
-    my $interfaceName = $parsedEvents{$eventName}{"interfaceName"};
+    my $interfaceName = $parsedItems{$eventName}{"interfaceName"};
     $interfaceName = $eventName unless $interfaceName;
 
     return $interfaceName;
@@ -136,14 +91,35 @@ sub toMacroStyle($)
     die "Ok, you got me. This script is really just a giant hack.";
 }
 
-sub printFactoryFile($)
+sub generateCode()
 {
-    my $path = shift;
+    my $parsedParametersRef = shift;
+    my $parsedItemsRef = shift;
+
+    printFactoryFile($parsedParametersRef, $parsedItemsRef);
+    printMacroFile($parsedParametersRef, $parsedItemsRef);
+    printHeadersFile($parsedParametersRef, $parsedItemsRef);
+}
+
+sub printFactoryFile()
+{
+    my $parsedParametersRef = shift;
+    my $parsedItemsRef = shift;
+
     my $F;
+    my %parsedEvents = %{ $parsedItemsRef };
+    my %parsedParameters = %{ $parsedParametersRef };
 
-    open F, ">$path";
+    my $namespace = $parsedParameters{"namespace"};
 
-    printLicenseHeader($F);
+    # Currently, only Events have factory files.
+    return if $namespace ne "Event";
+
+    my $outputFile = "$outputDir/${namespace}Factory.cpp";
+
+    open F, ">$outputFile" or die "Failed to open file: $!";
+
+    print F $InCompiler->license();
 
     print F "#include \"config.h\"\n";
     print F "#include \"${namespace}Factory.h\"\n";
@@ -157,7 +133,7 @@ sub printFactoryFile($)
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName);
+        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
 
         print F "#if ENABLE($conditional)\n" if $conditional;
         print F "    if (type == \"$eventName\")\n";
@@ -169,17 +145,26 @@ sub printFactoryFile($)
     print F "}\n";
     print F "\n";
     print F "} // namespace WebCore\n";
+
     close F;
 }
 
-sub printMacroFile($)
+sub printMacroFile()
 {
-    my $path = shift;
+    my $parsedParametersRef = shift;
+    my $parsedItemsRef = shift;
+
     my $F;
+    my %parsedEvents = %{ $parsedItemsRef };
+    my %parsedParameters = %{ $parsedParametersRef };
 
-    open F, ">$path";
+    my $namespace = $parsedParameters{"namespace"};
 
-    printLicenseHeader($F);
+    my $outputFile = "$outputDir/${namespace}Interfaces.h";
+
+    open F, ">$outputFile" or die "Failed to open file: $!";
+
+    print F $InCompiler->license();
 
     print F "#ifndef ${namespace}Interfaces_h\n";
     print F "#define ${namespace}Interfaces_h\n";
@@ -190,7 +175,7 @@ sub printMacroFile($)
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName);
+        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
 
         if ($conditional) {
             if (!defined($interfacesByConditional{$conditional})) {
@@ -236,14 +221,22 @@ sub printMacroFile($)
     close F;
 }
 
-sub printHeadersFile($)
+sub printHeadersFile()
 {
-    my $path = shift;
+    my $parsedParametersRef = shift;
+    my $parsedItemsRef = shift;
+
     my $F;
+    my %parsedEvents = %{ $parsedItemsRef };
+    my %parsedParameters = %{ $parsedParametersRef };
 
-    open F, ">$path";
+    my $namespace = $parsedParameters{"namespace"};
 
-    printLicenseHeader($F);
+    my $outputFile = "$outputDir/${namespace}Headers.h";
+
+    open F, ">$outputFile" or die "Failed to open file: $!";
+
+    print F $InCompiler->license();
 
     print F "#ifndef ${namespace}Headers_h\n";
     print F "#define ${namespace}Headers_h\n";
@@ -253,7 +246,7 @@ sub printHeadersFile($)
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName);
+        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
 
         next if defined($includedInterfaces{$interfaceName});
         $includedInterfaces{$interfaceName} = 1;
@@ -273,40 +266,3 @@ sub printHeadersFile($)
 
     close F;
 }
-
-sub printLicenseHeader($)
-{
-    my ($F) = @_;
-
-    print F "/*
- * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
- *
- * This file was generated by the dom/make_event_factory.pl script.
- *
- * Copyright (C) 2011 Google Inc.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY GOOGLE, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-";
-}
-
