@@ -27,7 +27,7 @@
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
-#include <QSGCanvas>
+#include <QQuickCanvas>
 #include <QSGEngine>
 #include <QUrl>
 
@@ -156,7 +156,7 @@ void QTouchWebPagePrivate::setPage(QtTouchWebPageProxy* page)
 
 }
 
-static float computeEffectiveOpacity(const QSGItem* item)
+static float computeEffectiveOpacity(const QQuickItem* item)
 {
     if (!item)
         return 1.0;
@@ -205,7 +205,7 @@ void QTouchWebPage::itemChange(ItemChange change, const ItemChangeData &data)
 {
     if (change == ItemSceneChange)
         initSceneGraphConnections();
-    QSGItem::itemChange(change, data);
+    QQuickItem::itemChange(change, data);
 }
 
 #include "moc_qtouchwebpage.cpp"
