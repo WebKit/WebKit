@@ -1,3 +1,17 @@
+2011-10-28  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Clean-up unused functions in WebIDBFactory
+        https://bugs.webkit.org/show_bug.cgi?id=71011
+
+        Reviewed by Tony Chang.
+
+        This is a clean-up after r97453. Since Chromium was updated,
+        these functions are no longer used.
+
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::getDatabaseNames):
+        (WebKit::WebIDBFactory::open):
+
 2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
