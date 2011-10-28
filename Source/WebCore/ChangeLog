@@ -1,3 +1,21 @@
+2011-10-27  Helder Correia  <helder.correia@palm.com>
+
+        [Qt] Failure to build when QT_NO_CURSOR defined
+        https://bugs.webkit.org/show_bug.cgi?id=71060
+
+        Reviewed by Noam Rosenthal.
+
+        PlatformVideoWindowQt needs to wrap some code around #ifndef
+        QT_NO_CURSOR in order to build QtWebKit when QT_NO_CURSOR is defined.
+
+        Build fix, no new tests.
+
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::FullScreenVideoWindow):
+        (FullScreenVideoWindow::closeEvent):
+        (FullScreenVideoWindow::hideCursor):
+        (FullScreenVideoWindow::showCursor):
+
 2011-10-27  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Track when CCLayerImpl properties have changed.
