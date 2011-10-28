@@ -1,3 +1,9 @@
+2011-10-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build after r98664.
+
+        * WebProcess/Plugins/Plugin.h: Add an IntSize forward declaration.
+
 2011-10-27  Anders Carlsson  <andersca@apple.com>
 
         Add a Plugin::geometryDidChange that will work with transforms

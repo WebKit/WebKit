@@ -43,6 +43,7 @@ namespace WebCore {
     class AffineTransform;
     class GraphicsContext;
     class IntRect;
+    class IntSize;
     class Scrollbar;
 }
 
