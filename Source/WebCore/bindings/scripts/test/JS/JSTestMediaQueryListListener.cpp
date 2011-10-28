@@ -186,7 +186,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     JSTestMediaQueryListListener* castedThis = static_cast<JSTestMediaQueryListListener*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestMediaQueryListListener::s_info);
     TestMediaQueryListListener* imp = static_cast<TestMediaQueryListListener*>(castedThis->impl());
-    RefPtr<MediaQueryListListener> listener(MediaQueryListListener::create(ScriptValue(exec->globalData(), exec->argument(0))));
+    RefPtr<MediaQueryListListener> listener(MediaQueryListListener::create(ScriptValue(exec->globalData(), MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined))));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     imp->method(listener);

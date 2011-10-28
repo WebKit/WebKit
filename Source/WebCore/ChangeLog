@@ -1,3 +1,40 @@
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        binding test rebaseline after r98679.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::constructJSTestInterface):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjStringAttrWithGetterException):
+        (WebCore::setJSTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithOptional):
+
 2011-10-27  Adam Barth  <abarth@webkit.org>
 
         Move type-specific exception descriptions into the implementation files for each type

@@ -105,10 +105,10 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& str1(ustringToString(exec->argument(0).toString(exec)));
+    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& str2(ustringToString(exec->argument(1).toString(exec)));
+    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
