@@ -19,6 +19,8 @@
 #ifndef ExceptionCode_h
 #define ExceptionCode_h
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
     // The DOM standards use unsigned short for exception codes.
@@ -63,37 +65,6 @@ namespace WebCore {
         DATA_CLONE_ERR = 25
     };
 
-    enum ExceptionType {
-        DOMExceptionType,
-        RangeExceptionType,
-        EventExceptionType,
-        XMLHttpRequestExceptionType,
-        XPathExceptionType
-#if ENABLE(SVG)
-        , SVGExceptionType
-#endif
-#if ENABLE(SQL_DATABASE)
-        , SQLExceptionType
-#endif
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-        , FileExceptionType
-#endif
-#if ENABLE(INDEXED_DATABASE)
-        , IDBDatabaseExceptionType
-#endif
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-        , OperationNotAllowedExceptionType
-#endif
-    };
-
-
-    struct ExceptionCodeDescription {
-        const char* typeName; // has spaces and is suitable for use in exception description strings; maximum length is 10 characters
-        const char* name; // exception name, also intended for use in exception description strings; 0 if name not known; maximum length is 27 characters
-        const char* description; // exception description, intended for use in exception strings; more readable explanation of error
-        int code; // numeric value of the exception within a particular type
-        ExceptionType type;
-    };
     void getExceptionCodeDescription(ExceptionCode, ExceptionCodeDescription&);
 
 } // namespace WebCore

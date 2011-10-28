@@ -3199,6 +3199,8 @@
 		9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9728C3121268E4390041E89B /* MarkupAccumulator.h */; };
 		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
 		973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9738899F116EA9DC00ADF313 /* DocumentWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */; };
+		973DC640145A9409002842C2 /* ExceptionCodeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */; };
 		973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */; };
 		973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 973E325510883B7C005BC493 /* ResourceLoadNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9752D38B1413104B003305BD /* JSHTMLSpanElement.cpp */; };
@@ -10341,6 +10343,8 @@
 		9728C3121268E4390041E89B /* MarkupAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupAccumulator.h; sourceTree = "<group>"; };
 		9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentWriter.cpp; sourceTree = "<group>"; };
 		9738899F116EA9DC00ADF313 /* DocumentWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWriter.h; sourceTree = "<group>"; };
+		973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodeDescription.cpp; sourceTree = "<group>"; };
+		973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodeDescription.h; sourceTree = "<group>"; };
 		973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadNotifier.cpp; sourceTree = "<group>"; };
 		973E325510883B7C005BC493 /* ResourceLoadNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadNotifier.h; sourceTree = "<group>"; };
 		9752D38B1413104B003305BD /* JSHTMLSpanElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSpanElement.cpp; sourceTree = "<group>"; };
@@ -15179,6 +15183,8 @@
 				970B7289144FFAC600F00A37 /* EventInterfaces.h */,
 				97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */,
 				97AA3CA4145237CC003E1DA6 /* EventTargetInterfaces.h */,
+				973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */,
+				973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */,
 				A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */,
 				A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */,
 				A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */,
@@ -24523,6 +24529,7 @@
 				97665013144FAA4200F6BB51 /* EventFactory.h in Headers */,
 				A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */,
 				A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */,
+				973DC640145A9409002842C2 /* ExceptionCodeDescription.h in Headers */,
 				97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */,
 				97AA3CA6145237CC003E1DA6 /* EventTargetInterfaces.h in Headers */,
 				970B728A144FFAC600F00A37 /* EventInterfaces.h in Headers */,
@@ -27366,6 +27373,7 @@
 				978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */,
 				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
 				9B375EDA14478A0100F3CAE5 /* MicroDataItemList.cpp in Sources */,
+				973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 				71CCB49C144824AC00C676D6 /* ImageBySizeCache.cpp in Sources */,

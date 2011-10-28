@@ -696,6 +696,9 @@ DerivedSources/WebCore/EventFactory.cpp DerivedSources/WebCore/EventHeaders.h De
 DerivedSources/WebCore/EventTargetHeaders.h DerivedSources/WebCore/EventTargetInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventTargetFactory.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in --outputDir "$(GENSOURCES_WEBCORE)"
 
+DerivedSources/WebCore/ExceptionCodeDescription.cpp DerivedSources/WebCore/ExceptionCodeDescription.h: $(WebCore)/dom/make_exception_code_description.pl $(WebCore)/dom/ExceptionCodeDescription.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/ExceptionCodeDescription.in --outputDir "$(GENSOURCES_WEBCORE)"
+
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
 	$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
@@ -892,8 +895,10 @@ EXTRA_DIST += \
 	Source/WebCore/css/WebKitFontFamilyNames.in \
 	Source/WebCore/dom/EventFactory.in \
 	Source/WebCore/dom/EventTargetFactory.in \
+	Source/WebCore/dom/ExceptionCodeDescription.in \
 	Source/WebCore/dom/make_names.pl \
 	Source/WebCore/dom/make_event_factory.pl \
+	Source/WebCore/dom/make_exception_code_description.pl \
 	Source/WebCore/html/HTMLAttributeNames.in \
 	Source/WebCore/html/HTMLTagNames.in \
 	Source/WebCore/html/parser/create-html-entity-table \

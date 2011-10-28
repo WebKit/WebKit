@@ -696,6 +696,24 @@
           ],
         },
         {
+          'action_name': 'ExceptionCodeDescription',
+          'inputs': [
+            '../dom/make_exception_code_description.pl',
+            '../dom/ExceptionCodeDescription.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'MathMLNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -1016,6 +1034,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventInterfaces.h',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventTargetHeaders.h',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventTargetInterfaces.h',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',

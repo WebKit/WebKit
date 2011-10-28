@@ -588,6 +588,7 @@ all : \
     ColorData.cpp \
     EventFactory.cpp \
     EventTargetInterfaces.h \
+    ExceptionCodeDescription.cpp \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
@@ -855,6 +856,9 @@ EventFactory.cpp EventHeaders.h EventInterfaces.h : dom/make_event_factory.pl do
 
 EventTargetHeaders.h EventTargetInterfaces.h : dom/make_event_factory.pl dom/EventTargetFactory.in
 	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in
+
+ExceptionCodeDescription.cpp ExceptionCodeDescription.h : dom/make_exception_code_description.pl dom/ExceptionCodeDescription.in
+	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/ExceptionCodeDescription.in
 
 # --------
  

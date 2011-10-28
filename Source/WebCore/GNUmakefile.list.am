@@ -14,6 +14,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/EventInterfaces.h \
 	DerivedSources/WebCore/EventTargetHeaders.h \
 	DerivedSources/WebCore/EventTargetInterfaces.h \
+	DerivedSources/WebCore/ExceptionCodeDescription.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.h \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \

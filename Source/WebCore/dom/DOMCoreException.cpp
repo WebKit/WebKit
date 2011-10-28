@@ -95,7 +95,7 @@ bool DOMCoreException::initializeDescription(ExceptionCode ec, ExceptionCodeDesc
 {
     description->typeName = "DOM";
     description->code = ec;
-    description->type = DOMExceptionType;
+    description->type = DOMCoreExceptionType;
 
     size_t tableSize = WTF_ARRAY_LENGTH(coreExceptionNames);
     size_t tableIndex = ec - INDEX_SIZE_ERR;

@@ -118,7 +118,8 @@ def main(args):
         inputAbsPosix = inputAbs.replace(os.path.sep, posixpath.sep)
         inputBasename = os.path.basename(input)
         if inputBasename == 'make_names.pl' \
-            or inputBasename == 'make_event_factory.pl':
+            or inputBasename == 'make_event_factory.pl' \
+            or inputBasename == 'make_exception_code_description.pl':
             assert makeNamesInput == None
             makeNamesInput = inputAbs
         elif inputBasename.endswith('TagNames.in') \
@@ -129,7 +130,9 @@ def main(args):
              or inputBasename.endswith('attrs.in'):
             assert attrInput == None
             attrInput = inputAbsPosix
-        elif inputBasename.endswith('EventFactory.in') or inputBasename.endswith('EventTargetFactory.in'):
+        elif inputBasename.endswith('EventFactory.in') \
+            or inputBasename.endswith('EventTargetFactory.in') \
+            or inputBasename.endswith('ExceptionCodeDescription.in'):
             eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):
             options.append(inputAbsPosix)

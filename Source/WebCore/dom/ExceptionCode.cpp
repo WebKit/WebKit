@@ -26,65 +26,15 @@
 #include "config.h"
 #include "ExceptionCode.h"
 
-#include "DOMCoreException.h"
-#include "EventException.h"
-#if ENABLE(BLOB)
-#include "FileException.h"
-#endif
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBDatabaseException.h"
-#endif
-#if ENABLE(BLOB)
-#include "OperationNotAllowedException.h"
-#endif
-#include "RangeException.h"
-#if ENABLE(SQL_DATABASE)
-#include "SQLException.h"
-#endif
-#if ENABLE(SVG)
-#include "SVGException.h"
-#endif
-#include "XMLHttpRequestException.h"
-#include "XPathException.h"
+#include "ExceptionCodeDescription.h"
 
 namespace WebCore {
 
+// FIXME: Inline this function into its callers.
 void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& description)
 {
     ASSERT(ec);
-
-    if (EventException::initializeDescription(ec, &description))
-        return;
-#if ENABLE(BLOB)
-    if (FileException::initializeDescription(ec, &description))
-        return;
-#endif
-#if ENABLE(INDEXED_DATABASE)
-    if (IDBDatabaseException::initializeDescription(ec, &description))
-        return;
-#endif
-#if ENABLE(BLOB)
-    if (OperationNotAllowedException::initializeDescription(ec, &description))
-        return;
-#endif
-    if (RangeException::initializeDescription(ec, &description))
-        return;
-#if ENABLE(SQL_DATABASE)
-    if (SQLException::initializeDescription(ec, &description))
-        return;
-#endif
-#if ENABLE(SVG)
-    if (SVGException::initializeDescription(ec, &description))
-        return;
-#endif
-    if (XMLHttpRequestException::initializeDescription(ec, &description))
-        return;
-    if (XPathException::initializeDescription(ec, &description))
-        return;
-    if (DOMCoreException::initializeDescription(ec, &description))
-        return;
-
-    ASSERT_NOT_REACHED();
+    description = ExceptionCodeDescription(ec);
 }
 
 } // namespace WebCore

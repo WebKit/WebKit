@@ -48,6 +48,17 @@ MACRO (GENERATE_EVENT_FACTORY _infile _outfile)
 ENDMACRO ()
 
 
+MACRO (GENERATE_EXCEPTION_CODE_DESCRIPTION _infile _outfile)
+    SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_exception_code_description.pl)
+
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        VERBATIM)
+ENDMACRO ()
+
+
 MACRO (GENERATE_DOM_NAMES _namespace _attrs)
     SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     SET(_arguments  --attrs ${_attrs})

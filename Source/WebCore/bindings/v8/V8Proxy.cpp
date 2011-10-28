@@ -659,7 +659,7 @@ void V8Proxy::setDOMException(int exceptionCode)
 
     v8::Handle<v8::Value> exception;
     switch (description.type) {
-    case DOMExceptionType:
+    case DOMCoreExceptionType:
         exception = toV8(DOMCoreException::create(description));
         break;
     case RangeExceptionType:

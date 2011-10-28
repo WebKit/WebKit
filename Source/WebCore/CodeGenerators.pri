@@ -36,6 +36,8 @@ EVENT_FACTORY = $$PWD/dom/EventFactory.in
 
 EVENT_TARGET_FACTORY = $$PWD/dom/EventTargetFactory.in
 
+EXCEPTION_CODE_DESCRIPTION = $$PWD/dom/ExceptionCodeDescription.in
+
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
 WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
@@ -769,6 +771,14 @@ eventtargetfactory.wkScript = $$PWD/dom/make_event_factory.pl
 eventtargetfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --input $$EVENT_TARGET_FACTORY --outputDir $$WC_GENERATED_SOURCES_DIR
 eventtargetfactory.depends = $$PWD/dom/make_event_factory.pl $$EVENT_TARGET_FACTORY
 addExtraCompiler(eventtargetfactory)
+
+# GENERATOR 5-G:
+exceptioncodedescription.output = $${WC_GENERATED_SOURCES_DIR}/ExceptionCodeDescription.cpp
+exceptioncodedescription.input = EXCEPTION_CODE_DESCRIPTION
+exceptioncodedescription.wkScript = $$PWD/dom/make_exception_code_description.pl
+exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --input $$EXCEPTION_CODE_DESCRIPTION --outputDir $$WC_GENERATED_SOURCES_DIR
+exceptioncodedescription.depends = $$PWD/dom/make_exception_code_description.pl $$EXCEPTION_CODE_DESCRIPTION
+addExtraCompiler(exceptioncodedescription)
 
 # GENERATOR 8-A:
 entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityTable.cpp

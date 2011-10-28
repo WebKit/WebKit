@@ -214,7 +214,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
 
     JSValue errorObject;
     switch (description.type) {
-        case DOMExceptionType:
+        case DOMCoreExceptionType:
             errorObject = toJS(exec, globalObject, DOMCoreException::create(description));
             break;
         case RangeExceptionType:
