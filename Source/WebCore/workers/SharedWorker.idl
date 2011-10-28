@@ -40,7 +40,6 @@ module threads {
         Constructor(in DOMString scriptURL, in [Optional=CallWithNullValue] DOMString name),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
-        V8ConstructorSetsActiveDOMWrapper,
         CustomMarkFunction,
         GenerateNativeConverter,
         GenerateToJS

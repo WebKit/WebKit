@@ -197,6 +197,31 @@ JSValue JSTestInterface::getConstructor(ExecState* exec, JSGlobalObject* globalO
     return getDOMConstructor<JSTestInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
+static inline bool isObservable(JSTestInterface* jsTestInterface)
+{
+    if (jsTestInterface->hasCustomProperties())
+        return true;
+    return false;
+}
+
+bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
+    if (jsTestInterface->impl()->hasPendingActivity())
+        return true;
+    if (!isObservable(jsTestInterface))
+        return false;
+    UNUSED_PARAM(visitor);
+    return false;
+}
+
+void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsTestInterface->impl(), jsTestInterface);
+}
+
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* impl)
 {
     return wrap<JSTestInterface>(exec, globalObject, impl);

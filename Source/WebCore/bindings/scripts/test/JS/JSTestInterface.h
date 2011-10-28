@@ -62,6 +62,22 @@ protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
+class JSTestInterfaceOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestInterface*)
+{
+    DEFINE_STATIC_LOCAL(JSTestInterfaceOwner, jsTestInterfaceOwner, ());
+    return &jsTestInterfaceOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, TestInterface*)
+{
+    return world;
+}
+
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
 TestInterface* toTestInterface(JSC::JSValue);
 

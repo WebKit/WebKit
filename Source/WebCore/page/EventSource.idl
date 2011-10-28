@@ -38,7 +38,6 @@ module window {
         Constructor(in DOMString scriptUrl),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
-        V8ConstructorSetsActiveDOMWrapper,
         EventTarget,
         NoStaticTables
     ] EventSource {

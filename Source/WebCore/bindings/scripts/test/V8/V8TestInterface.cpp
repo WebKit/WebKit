@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestInterface::info = { V8TestInterface::GetTemplate, V8TestInterface::derefObject, 0, 0 };
+WrapperTypeInfo V8TestInterface::info = { V8TestInterface::GetTemplate, V8TestInterface::derefObject, V8TestInterface::toActiveDOMObject, 0 };
 
 namespace TestInterfaceInternal {
 
@@ -124,6 +124,10 @@ bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value)
     return GetRawTemplate()->HasInstance(value);
 }
 
+ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> object)
+{
+    return toNative(object);
+}      
 
 v8::Handle<v8::Object> V8TestInterface::wrapSlow(TestInterface* impl)
 {
@@ -138,7 +142,7 @@ v8::Handle<v8::Object> V8TestInterface::wrapSlow(TestInterface* impl)
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    getDOMObjectMap().set(impl, wrapperHandle);
+    getActiveDOMObjectMap().set(impl, wrapperHandle);
     return wrapper;
 }
 

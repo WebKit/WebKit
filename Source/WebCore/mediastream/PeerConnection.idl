@@ -32,7 +32,6 @@ module p2p {
         Constructor(in DOMString serverConfiguration, in [Callback=FunctionOnly] SignalingCallback signalingCallback),
         CallWith=ScriptExecutionContext,
         JSCustomConstructor,
-        V8ConstructorSetsActiveDOMWrapper,
         EventTarget
     ] PeerConnection {
         void processSignalingMessage(in DOMString message)

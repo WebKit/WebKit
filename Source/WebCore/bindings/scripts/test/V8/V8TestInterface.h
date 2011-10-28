@@ -34,7 +34,7 @@ namespace WebCore {
 
 class V8TestInterface {
 public:
-    static const bool hasDependentLifetime = false;
+    static const bool hasDependentLifetime = true;
     static bool HasInstance(v8::Handle<v8::Value> value);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
@@ -45,6 +45,7 @@ public:
     inline static v8::Handle<v8::Object> wrap(TestInterface*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
+    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static v8::Handle<v8::Object> existingWrapper(TestInterface*);
@@ -55,7 +56,7 @@ private:
 
 ALWAYS_INLINE v8::Handle<v8::Object> V8TestInterface::existingWrapper(TestInterface* impl)
 {
-    return getDOMObjectMap().get(impl);
+    return getActiveDOMObjectMap().get(impl);
 }
 
 v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)

@@ -36,7 +36,6 @@ module threads {
         Constructor(in DOMString scriptUrl),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,
-        V8ConstructorSetsActiveDOMWrapper,
         GenerateNativeConverter,
         GenerateToJS
     ] Worker : AbstractWorker {

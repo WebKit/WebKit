@@ -1584,7 +1584,7 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = $dataNode->extendedAttributes->{"V8ConstructorSetsActiveDOMWrapper"} ? "ActiveDOMObject" : "DOMObject";
+    my $DOMObject = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "ActiveDOMObject" : "DOMObject";
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
