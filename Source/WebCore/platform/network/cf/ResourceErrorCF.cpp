@@ -84,8 +84,6 @@ void ResourceError::platformLazyInit()
         m_domain = "NSOSStatusErrorDomain";
     else if (domain == kCFErrorDomainWinSock)
         m_domain = "kCFErrorDomainWinSock";
-    else
-        m_domain = domain;
 
     m_errorCode = CFErrorGetCode(m_platformError.get());
 
