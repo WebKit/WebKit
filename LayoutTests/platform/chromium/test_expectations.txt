@@ -298,9 +298,8 @@ WONTFIX SKIP GPU GPU-CG LEOPARD : media = PASS TIMEOUT FAIL
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
 
-// This is a Safari specific test to make WebKit behave like AppKit on the Mac.
-// We do not support it because PLATFORM(MAC) is not defined for the mac version.
-WONTFIX : platform/mac/editing/deleting/backward-delete.html = TEXT
+// This is a test to make WebKit behave like AppKit on Mac.
+WONTFIX SKIP WIN LINUX : platform/mac/editing/deleting/backward-delete.html = TEXT
 
 // Ignored because we do not have OBJC bindings
 WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = FAIL
@@ -3937,8 +3936,6 @@ BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragmen
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 
 BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
-
-BUGWK71032 : tables/mozilla_expected_failures/bugs/bug14007-2.html = FAIL
 
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+TEXT IMAGE PASS

@@ -1688,6 +1688,3 @@ fast/events/event-creation.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=71022
 fast/canvas/canvas-composite-image.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=71032
-tables/mozilla_expected_failures/bugs/bug14007-2.html

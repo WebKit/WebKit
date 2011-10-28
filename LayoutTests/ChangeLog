@@ -1,3 +1,17 @@
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unskip tables/mozilla_expected_failures/bugs/bug14007-2.html
+        since the test was rebaselined in r98691.
+
+        Also enable platform/mac/editing/deleting/backward-delete.html on Chromium Mac
+        and skip it again on Chromium Windows and Linux.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-10-28  Anna Cavender  <annacc@chromium.org>
 
         Implement load notification and events for <track>.
