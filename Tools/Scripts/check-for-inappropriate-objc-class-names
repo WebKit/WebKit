@@ -82,7 +82,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
 
         print "ERROR: $shortName defines one or more Objective-C classes with inappropriate names. ($executablePath)\n";
         for my $className (@badNames) {
-            print "ERROR: Inapproriate Objective-C class name: $className.\n";
+            print "ERROR: Inappropriate Objective-C class name: $className.\n";
         }
 
         if (@allowedPrefixes > 1) {

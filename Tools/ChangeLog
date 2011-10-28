@@ -1,3 +1,12 @@
+2011-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in check-for-inappropriate-objc-class-names
+        https://bugs.webkit.org/show_bug.cgi?id=71144
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/check-for-inappropriate-objc-class-names:
+
 2011-10-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Add support for sending scroll-update events from EventSender.
