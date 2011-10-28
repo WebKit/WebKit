@@ -633,16 +633,36 @@ SOURCES += \
     editing/WrapContentsInDummySpanCommand.cpp \
     fileapi/Blob.cpp \
     fileapi/BlobURL.cpp \
+    fileapi/DOMFilePath.cpp \
+    fileapi/DOMFileSystem.cpp \
+    fileapi/DOMFileSystemBase.cpp \
+    fileapi/DOMFileSystemSync.cpp \
+    fileapi/DirectoryEntry.cpp \
+    fileapi/DirectoryEntrySync.cpp \
+    fileapi/DirectoryReader.cpp \
+    fileapi/DirectoryReaderSync.cpp \
+    fileapi/Entry.cpp \
+    fileapi/EntryArray.cpp \
+    fileapi/EntryArraySync.cpp \
+    fileapi/EntryBase.cpp \
+    fileapi/EntrySync.cpp \
     fileapi/File.cpp \
+    fileapi/FileEntry.cpp \
+    fileapi/FileEntrySync.cpp \
     fileapi/FileException.cpp \
     fileapi/FileList.cpp \
     fileapi/FileReader.cpp \
     fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
     fileapi/FileStreamProxy.cpp \
+    fileapi/FileSystemCallbacks.cpp \
     fileapi/FileThread.cpp \
-    fileapi/FileException.cpp \
+    fileapi/FileWriter.cpp \
+    fileapi/FileWriterBase.cpp \
+    fileapi/FileWriterSync.cpp \
+    fileapi/LocalFileSystem.cpp \
     fileapi/OperationNotAllowedException.cpp \
+    fileapi/ThreadableBlobRegistry.cpp \
     fileapi/WebKitBlobBuilder.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
@@ -2978,25 +2998,6 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         bindings/js/JSDirectoryEntrySyncCustom.cpp \
         bindings/js/JSEntryCustom.cpp \
         bindings/js/JSEntrySyncCustom.cpp \
-        fileapi/DirectoryEntry.cpp \
-        fileapi/DirectoryEntrySync.cpp \
-        fileapi/DirectoryReader.cpp \
-        fileapi/DirectoryReaderSync.cpp \
-        fileapi/DOMFilePath.cpp \
-        fileapi/DOMFileSystem.cpp \
-        fileapi/DOMFileSystemBase.cpp \
-        fileapi/DOMFileSystemSync.cpp \
-        fileapi/Entry.cpp \
-        fileapi/EntryArray.cpp \
-        fileapi/EntryArraySync.cpp \
-        fileapi/EntrySync.cpp \
-        fileapi/FileEntry.cpp \
-        fileapi/FileEntrySync.cpp \
-        fileapi/FileSystemCallbacks.cpp \
-        fileapi/FileWriter.cpp \
-        fileapi/FileWriterBase.cpp \
-        fileapi/FileWriterSync.cpp \
-        fileapi/LocalFileSystem.cpp \
         platform/AsyncFileSystem.cpp
 }
 
