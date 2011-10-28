@@ -152,6 +152,7 @@ zoom: 1;
 -webkit-line-box-contain: block inline replaced;
 -webkit-line-break: normal;
 -webkit-line-clamp: none;
+-webkit-line-grid: none;
 -webkit-locale: auto;
 -webkit-margin-before-collapse: collapse;
 -webkit-margin-after-collapse: collapse;

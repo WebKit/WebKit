@@ -1,3 +1,25 @@
+2011-10-27  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, gardening chromium.
+
+        * platform/chromium-cg-mac-snowleopard/fullscreen/full-screen-render-inline-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/table: Added.
+        * platform/chromium-mac-snowleopard/fast/table/border-collapsing: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-render-inline-expected.png: Added.
+        * platform/chromium-win-vista/fast/css/getComputedStyle: Removed.
+        * platform/chromium-win-vista/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/css/getComputedStyle: Removed.
+        * platform/chromium-win-xp/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium/fast/css/getComputedStyle: Removed.
+        * platform/chromium/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium/svg/css: Removed.
+        * platform/chromium/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Kenneth Russell  <kbr@google.com>
 
         Implement new restrictions on uniform and attribute location lengths

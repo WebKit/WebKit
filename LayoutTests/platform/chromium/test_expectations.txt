@@ -42,8 +42,9 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
-BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
-BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
+// See BUGCR104797
+//BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
+//BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
@@ -3964,3 +3965,7 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
 BUGWK71032 : tables/mozilla_expected_failures/bugs/bug14007-2.html = FAIL
+
+BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
+BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+TEXT
+BUGWK71080 : printing/setPrinting.html = IMAGE+TEXT
