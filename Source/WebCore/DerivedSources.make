@@ -857,7 +857,7 @@ EventFactory.cpp EventHeaders.h EventInterfaces.h : dom/make_event_factory.pl do
 EventTargetHeaders.h EventTargetInterfaces.h : dom/make_event_factory.pl dom/EventTargetFactory.in
 	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in
 
-ExceptionCodeDescription.cpp ExceptionCodeDescription.h : dom/make_exception_code_description.pl dom/ExceptionCodeDescription.in
+ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h : dom/make_exception_code_description.pl dom/ExceptionCodeDescription.in
 	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/ExceptionCodeDescription.in
 
 # --------

@@ -37,9 +37,10 @@
 #include "DateExtension.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ExceptionHeaders.h"
+#include "ExceptionInterfaces.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "InspectorInstrumentation.h"
@@ -56,26 +57,11 @@
 #include "V8DOMCoreException.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
-#include "V8EventException.h"
-#include "V8FileException.h"
 #include "V8HiddenPropertyName.h"
 #include "V8IsolatedContext.h"
-#include "V8OperationNotAllowedException.h"
-#include "V8RangeException.h"
-#include "V8SQLException.h"
-#include "V8XMLHttpRequestException.h"
-#include "V8XPathException.h"
 #include "WebKitMutationObserver.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
-
-#if ENABLE(INDEXED_DATABASE)
-#include "V8IDBDatabaseException.h"
-#endif
-
-#if ENABLE(SVG)
-#include "V8SVGException.h"
-#endif
 
 #include <algorithm>
 #include <stdio.h>
@@ -649,6 +635,11 @@ void V8Proxy::clearForNavigation()
     windowShell()->clearForNavigation();
 }
 
+#define TRY_TO_CREATE_EXCEPTION(interfaceName) \
+    case interfaceName##Type: \
+        exception = toV8(interfaceName::create(description)); \
+        break;
+
 void V8Proxy::setDOMException(int ec)
 {
     if (ec <= 0)
@@ -658,51 +649,14 @@ void V8Proxy::setDOMException(int ec)
 
     v8::Handle<v8::Value> exception;
     switch (description.type) {
-    case DOMCoreExceptionType:
-        exception = toV8(DOMCoreException::create(description));
-        break;
-    case RangeExceptionType:
-        exception = toV8(RangeException::create(description));
-        break;
-    case EventExceptionType:
-        exception = toV8(EventException::create(description));
-        break;
-    case XMLHttpRequestExceptionType:
-        exception = toV8(XMLHttpRequestException::create(description));
-        break;
-#if ENABLE(SVG)
-    case SVGExceptionType:
-        exception = toV8(SVGException::create(description));
-        break;
-#endif
-    case XPathExceptionType:
-        exception = toV8(XPathException::create(description));
-        break;
-#if ENABLE(SQL_DATABASE)
-    case SQLExceptionType:
-        exception = toV8(SQLException::create(description));
-        break;
-#endif
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-    case FileExceptionType:
-        exception = toV8(FileException::create(description));
-        break;
-    case OperationNotAllowedExceptionType:
-        exception = toV8(OperationNotAllowedException::create(description));
-        break;
-#endif
-#if ENABLE(INDEXED_DATABASE)
-    case IDBDatabaseExceptionType:
-        exception = toV8(IDBDatabaseException::create(description));
-        break;
-#endif
-    default:
-        ASSERT_NOT_REACHED();
+        DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
     }
 
     if (!exception.IsEmpty())
         v8::ThrowException(exception);
 }
+
+#undef TRY_TO_CREATE_EXCEPTION
 
 v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message)
 {

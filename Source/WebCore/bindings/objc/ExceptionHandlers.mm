@@ -46,6 +46,7 @@ void raiseDOMException(ExceptionCode ec)
     ExceptionCodeDescription description(ec);
 
     NSString *exceptionName;
+    // FIXME: We can use the enum to do these comparisons faster.
     if (strcmp(description.typeName, "DOM Range") == 0)
         exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)

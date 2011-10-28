@@ -704,6 +704,8 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionHeaders.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionInterfaces.h',
           ],
           'action': [
             'python',

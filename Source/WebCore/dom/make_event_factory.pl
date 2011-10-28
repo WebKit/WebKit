@@ -32,34 +32,11 @@
 
 use strict;
 
-use Config;
-use Getopt::Long;
-use File::Path;
-use File::Spec;
-use IO::File;
 use InFilesCompiler;
-
-require Config;
-
-my $inputFile = "";
-my $outputDir = ".";
-
-GetOptions(
-    'input=s' => \$inputFile,
-    'outputDir=s' => \$outputDir,
-);
-
-mkpath($outputDir);
-
-die "You must specify --input <file>" unless length($inputFile);
 
 my %defaultParameters = (
     'namespace' => 0
 );
-
-my $InCompiler = InFilesCompiler->new(\%defaultParameters, \&defaultItemFactory);
-
-$InCompiler->compile($inputFile, \&generateCode);
 
 sub defaultItemFactory
 {
@@ -69,39 +46,22 @@ sub defaultItemFactory
     );
 }
 
-sub interfaceForEvent($$)
-{
-    my ($eventName, $parsedItemsRef) = @_;
+my $InCompiler = InFilesCompiler->new(\%defaultParameters, \&defaultItemFactory);
 
-    my %parsedItems = %{ $parsedItemsRef };
-
-    my $interfaceName = $parsedItems{$eventName}{"interfaceName"};
-    $interfaceName = $eventName unless $interfaceName;
-
-    return $interfaceName;
-}
-
-sub toMacroStyle($)
-{
-    my ($camelCase) = @_;
-
-    return "EVENT" if $camelCase eq "Event";
-    return "EVENT_TARGET" if $camelCase eq "EventTarget";
-
-    die "Ok, you got me. This script is really just a giant hack. (\$camelCase=${camelCase})";
-}
+my $outputDir = $InCompiler->initializeFromCommandLine();
+$InCompiler->compile(\&generateCode);
 
 sub generateCode()
 {
     my $parsedParametersRef = shift;
     my $parsedItemsRef = shift;
 
-    printFactoryFile($parsedParametersRef, $parsedItemsRef);
-    printMacroFile($parsedParametersRef, $parsedItemsRef);
-    printHeadersFile($parsedParametersRef, $parsedItemsRef);
+    generateImplementation($parsedParametersRef, $parsedItemsRef);
+    $InCompiler->generateInterfacesHeader();
+    $InCompiler->generateHeadersHeader()
 }
 
-sub printFactoryFile()
+sub generateImplementation()
 {
     my $parsedParametersRef = shift;
     my $parsedItemsRef = shift;
@@ -133,7 +93,7 @@ sub printFactoryFile()
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
+        my $interfaceName = $InCompiler->interfaceForItem($eventName);
 
         print F "#if ENABLE($conditional)\n" if $conditional;
         print F "    if (type == \"$eventName\")\n";
@@ -145,124 +105,6 @@ sub printFactoryFile()
     print F "}\n";
     print F "\n";
     print F "} // namespace WebCore\n";
-
-    close F;
-}
-
-sub printMacroFile()
-{
-    my $parsedParametersRef = shift;
-    my $parsedItemsRef = shift;
-
-    my $F;
-    my %parsedEvents = %{ $parsedItemsRef };
-    my %parsedParameters = %{ $parsedParametersRef };
-
-    my $namespace = $parsedParameters{"namespace"};
-
-    my $outputFile = "$outputDir/${namespace}Interfaces.h";
-
-    open F, ">$outputFile" or die "Failed to open file: $!";
-
-    print F $InCompiler->license();
-
-    print F "#ifndef ${namespace}Interfaces_h\n";
-    print F "#define ${namespace}Interfaces_h\n";
-    print F "\n";
-
-    my %unconditionalInterfaces = ();
-    my %interfacesByConditional = ();
-
-    for my $eventName (sort keys %parsedEvents) {
-        my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
-
-        if ($conditional) {
-            if (!defined($interfacesByConditional{$conditional})) {
-                $interfacesByConditional{$conditional} = ();
-            }
-            $interfacesByConditional{$conditional}{$interfaceName} = 1;
-        } else {
-            $unconditionalInterfaces{$interfaceName} = 1
-        }
-    }
-
-    my $macroStyledNamespace = toMacroStyle($namespace);
-
-    for my $conditional (sort keys %interfacesByConditional) {
-        print F "#if ENABLE($conditional)\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
-
-        for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
-            next if defined($unconditionalInterfaces{$interface});
-            print F "    macro($interface) \\\n";
-        }
-
-        print F "// End of DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional\n";
-        print F "#else\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro)\n";
-        print F "#endif\n";
-        print F "\n";
-    }
-
-    print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH(macro) \\\n";
-    print F "    \\\n";
-    for my $interface (sort keys %unconditionalInterfaces) {
-            print F "    macro($interface) \\\n";
-    }
-    print F "    \\\n";
-    for my $conditional (sort keys %interfacesByConditional) {
-        print F "    DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
-    }
-
-    print F "\n";
-    print F "#endif // ${namespace}Interfaces_h\n";
-
-    close F;
-}
-
-sub printHeadersFile()
-{
-    my $parsedParametersRef = shift;
-    my $parsedItemsRef = shift;
-
-    my $F;
-    my %parsedEvents = %{ $parsedItemsRef };
-    my %parsedParameters = %{ $parsedParametersRef };
-
-    my $namespace = $parsedParameters{"namespace"};
-
-    my $outputFile = "$outputDir/${namespace}Headers.h";
-
-    open F, ">$outputFile" or die "Failed to open file: $!";
-
-    print F $InCompiler->license();
-
-    print F "#ifndef ${namespace}Headers_h\n";
-    print F "#define ${namespace}Headers_h\n";
-    print F "\n";
-
-    my %includedInterfaces = ();
-
-    for my $eventName (sort keys %parsedEvents) {
-        my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $interfaceName = interfaceForEvent($eventName, $parsedItemsRef);
-
-        next if defined($includedInterfaces{$interfaceName});
-        $includedInterfaces{$interfaceName} = 1;
-
-        print F "#if ENABLE($conditional)\n" if $conditional;
-        print F "#include \"$interfaceName.h\"\n";
-        print F "#if USE(JSC)\n";
-        print F "#include \"JS$interfaceName.h\"\n";
-        print F "#elif USE(V8)\n";
-        print F "#include \"V8$interfaceName.h\"\n";
-        print F "#endif\n";
-        print F "#endif\n" if $conditional;
-    }
-
-    print F "\n";
-    print F "#endif // ${namespace}Headers_h\n";
 
     close F;
 }

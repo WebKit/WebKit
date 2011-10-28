@@ -1,3 +1,46 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Autogenerate Exception-downcast code in bindings
+        https://bugs.webkit.org/show_bug.cgi?id=71108
+
+        Reviewed by Eric Seidel.
+
+        This patch uses the same generated code style as we're using for Events
+        to generate the downcasts for the Exception types in the bindings.
+        This cause me to refactor more code from make_event_factory.pl into
+        InFilesCompiler.pm.
+
+        After this patch, some of these files and scripts are misnamed.  I'll
+        rename them in a followup patch.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/objc/ExceptionHandlers.mm:
+        (WebCore::raiseDOMException):
+        * bindings/scripts/InFilesCompiler.pm:
+        (initializeFromCommandLine):
+        (compile):
+        (interfaceForItem):
+        (toMacroStyle):
+        (generateInterfacesHeader):
+        (generateHeadersHeader):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * dom/ExceptionCodeDescription.in:
+        * dom/make_event_factory.pl:
+        (generateCode):
+        (generateImplementation):
+        * dom/make_exception_code_description.pl:
+        (defaultItemFactory):
+        (generateCode):
+
 2011-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Fix builds which have ACCELERATED_COMPOSITING disabled.

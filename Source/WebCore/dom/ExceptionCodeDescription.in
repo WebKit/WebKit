@@ -1,4 +1,4 @@
-namespace=ExceptionCodeDescription
+namespace=Exception
 
 DOMCoreException
 EventException

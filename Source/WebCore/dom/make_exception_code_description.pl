@@ -32,49 +32,34 @@
 
 use strict;
 
-use Config;
-use Getopt::Long;
-use File::Path;
-use File::Spec;
-use IO::File;
 use InFilesCompiler;
-
-require Config;
-
-my $inputFile;
-my $outputDir = ".";
-
-GetOptions(
-    'input=s' => \$inputFile,
-    'outputDir=s' => \$outputDir,
-);
-
-mkpath($outputDir);
-
-die "You must specify --input <file>" unless length($inputFile);
 
 my %defaultParameters = (
     'namespace' => 0
 );
 
-my $InCompiler = InFilesCompiler->new(\%defaultParameters, \&defaultItemFactory);
-
-$InCompiler->compile($inputFile, \&generateCode);
-
 sub defaultItemFactory
 {
     return (
+        'interfaceName' => 0,
         'conditional' => 0
     );
 }
 
+my $InCompiler = InFilesCompiler->new(\%defaultParameters, \&defaultItemFactory);
+
+my $outputDir = $InCompiler->initializeFromCommandLine();
+$InCompiler->compile(\&generateCode);
+
 sub generateCode()
 {
-    my $parsedParameters = shift;
-    my $parsedItems = shift;
+    my $parsedParametersRef = shift;
+    my $parsedItemsRef = shift;
 
-    generateHeader($parsedParameters, $parsedItems);
-    generateImplementation($parsedParameters, $parsedItems);
+    generateHeader($parsedParametersRef, $parsedItemsRef);
+    generateImplementation($parsedParametersRef, $parsedItemsRef);
+    $InCompiler->generateInterfacesHeader();
+    $InCompiler->generateHeadersHeader()
 }
 
 sub generateHeader()
