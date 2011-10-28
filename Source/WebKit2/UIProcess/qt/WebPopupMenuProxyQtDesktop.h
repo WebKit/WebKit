@@ -31,7 +31,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QWeakPointer>
 
-class QSGItem;
+class QQuickItem;
 
 namespace WebCore {
 class QtWebComboBox;
@@ -45,7 +45,7 @@ class WebPopupMenuProxyQtDesktop : public QObject, public WebPopupMenuProxy {
 public:
     virtual ~WebPopupMenuProxyQtDesktop();
 
-    static PassRefPtr<WebPopupMenuProxyQtDesktop> create(WebPopupMenuProxy::Client* client, QSGItem* webViewItem)
+    static PassRefPtr<WebPopupMenuProxyQtDesktop> create(WebPopupMenuProxy::Client* client, QQuickItem* webViewItem)
     {
         return adoptRef(new WebPopupMenuProxyQtDesktop(client, webViewItem));
     }
@@ -58,13 +58,13 @@ private Q_SLOTS:
     void onPopupMenuHidden();
 
 private:
-    WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client*, QSGItem* webViewItem);
+    WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client*, QQuickItem* webViewItem);
     void populate(const Vector<WebPopupItem>&);
 
     // Qt guarded pointer because QWidgets have their own memory management and
     // when closing the UI the combobox will be deleted before we are.
     QWeakPointer<WebCore::QtWebComboBox> m_comboBox;
-    QSGItem* m_webViewItem;
+    QQuickItem* m_webViewItem;
     int32_t m_selectedIndex;
 };
 

@@ -29,9 +29,9 @@
 #include <QGraphicsSceneResizeEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qsgcanvas.h>
-#include <QtDeclarative/qsgitem.h>
-#include <QtDeclarative/qsgview.h>
+#include <QtDeclarative/qquickcanvas.h>
+#include <QtDeclarative/qquickitem.h>
+#include <QtDeclarative/qquickview.h>
 #include <QtGui/QCursor>
 #include <QtGui/QDrag>
 #include <QtGui/QFocusEvent>
@@ -242,15 +242,15 @@ QString QDesktopWebViewPrivate::runJavaScriptPrompt(const QString& message, cons
 #endif
 }
 
-QDesktopWebView::QDesktopWebView(QSGItem* parent)
-    : QSGPaintedItem(parent)
+QDesktopWebView::QDesktopWebView(QQuickItem* parent)
+    : QQuickPaintedItem(parent)
     , d(new QDesktopWebViewPrivate(this))
 {
     init();
 }
 
-QDesktopWebView::QDesktopWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QSGItem* parent)
-    : QSGPaintedItem(parent)
+QDesktopWebView::QDesktopWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
+    : QQuickPaintedItem(parent)
     , d(new QDesktopWebViewPrivate(this, contextRef, pageGroupRef))
 {
     init();
@@ -397,7 +397,7 @@ void QDesktopWebView::dropEvent(QDropEvent* event)
 
 void QDesktopWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    QSGPaintedItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
         d->page.setDrawingAreaSize(newGeometry.size().toSize());
 }
@@ -418,8 +418,8 @@ bool QDesktopWebView::event(QEvent* ev)
     if (d->page.handleEvent(ev))
         return true;
     if (ev->type() == QEvent::InputMethod)
-        return false; // This is necessary to avoid an endless loop in connection with QSGItem::event().
-    return QSGItem::event(ev);
+        return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
+    return QQuickItem::event(ev);
 }
 
 WKPageRef QDesktopWebView::pageRef() const
@@ -441,7 +441,7 @@ void QDesktopWebViewPrivate::didRelaunchProcess()
 
 QJSEngine* QDesktopWebViewPrivate::engine()
 {
-    QSGView* view = qobject_cast<QSGView*>(q->canvas());
+    QQuickView* view = qobject_cast<QQuickView*>(q->canvas());
     if (view)
         return view->engine();
     return 0;

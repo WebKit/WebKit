@@ -1,3 +1,16 @@
+2011-10-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Adapt to QSG* to QQuick* API change in qtdeclarative
+        https://bugs.webkit.org/show_bug.cgi?id=70494
+
+        Reviewed by Kenneth Christiansen.
+
+        Use QQuick* instead of QSG* as well as QStandardPaths
+        instead of QDesktopLocation.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::enablePersistentStorage):
+
 2011-10-27  Helder Correia  <helder.correia@palm.com>
 
         [Qt] Failure to build when QT_NO_MENU defined

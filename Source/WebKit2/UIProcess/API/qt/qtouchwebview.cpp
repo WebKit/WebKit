@@ -92,11 +92,11 @@ void QTouchWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAr
     updateViewportConstraints();
 }
 
-QTouchWebView::QTouchWebView(QSGItem* parent)
-    : QSGItem(parent)
+QTouchWebView::QTouchWebView(QQuickItem* parent)
+    : QQuickItem(parent)
     , d(new QTouchWebViewPrivate(this))
 {
-    setFlags(QSGItem::ItemClipsChildrenToShape);
+    setFlags(QQuickItem::ItemClipsChildrenToShape);
     connect(this, SIGNAL(visibleChanged()), SLOT(onVisibleChanged()));
 }
 
@@ -112,7 +112,7 @@ QTouchWebPage* QTouchWebView::page()
 
 void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    QSGItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
         d->updateViewportConstraints();
         d->_q_viewportUpdated();
@@ -122,7 +122,7 @@ void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
 void QTouchWebView::touchEvent(QTouchEvent* event)
 {
     forceActiveFocus();
-    QSGItem::touchEvent(event);
+    QQuickItem::touchEvent(event);
 }
 
 void QTouchWebView::onVisibleChanged()

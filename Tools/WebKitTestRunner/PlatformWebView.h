@@ -31,8 +31,8 @@
 #if defined(BUILDING_QT__)
 class QDesktopWebView;
 typedef QDesktopWebView* PlatformWKView;
-class QSGView;
-typedef QSGView* PlatformWindow;
+class QQuickView;
+typedef QQuickView* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;

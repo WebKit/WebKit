@@ -31,9 +31,9 @@
 
 #include "MiniBrowserApplication.h"
 #include <QStringList>
-#include <QtDeclarative/QSGView>
+#include <QtDeclarative/QQuickView>
 
-class BrowserWindow : public QSGView {
+class BrowserWindow : public QQuickView {
     Q_OBJECT
 
 public:

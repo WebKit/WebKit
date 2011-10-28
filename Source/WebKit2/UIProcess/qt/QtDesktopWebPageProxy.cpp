@@ -86,7 +86,7 @@ void QtDesktopWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool 
 
 PassRefPtr<WebPopupMenuProxy> QtDesktopWebPageProxy::createPopupMenuProxy(WebPageProxy*)
 {
-    QSGItem* webViewItem = static_cast<QDesktopWebViewPrivate*>(m_viewInterface)->q;
+    QQuickItem* webViewItem = static_cast<QDesktopWebViewPrivate*>(m_viewInterface)->q;
     return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), webViewItem);
 }
 

@@ -31,8 +31,8 @@
 #include <QSGEngine>
 #include <QUrl>
 
-QTouchWebPage::QTouchWebPage(QSGItem* parent)
-    : QSGItem(parent)
+QTouchWebPage::QTouchWebPage(QQuickItem* parent)
+    : QQuickItem(parent)
     , d(new QTouchWebPagePrivate(this))
 {
     setFlag(ItemHasContents);
@@ -87,7 +87,7 @@ bool QTouchWebPage::event(QEvent* ev)
 {
     if (d->page->handleEvent(ev))
         return true;
-    return QSGItem::event(ev);
+    return QQuickItem::event(ev);
 }
 
 void QTouchWebPage::keyPressEvent(QKeyEvent* event)
@@ -122,7 +122,7 @@ void QTouchWebPage::touchEvent(QTouchEvent* event)
 
 void QTouchWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    QSGItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
         d->page->setDrawingAreaSize(newGeometry.size().toSize());
 }

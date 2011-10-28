@@ -40,7 +40,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
 {
     setWindowTitle("MiniBrowser");
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-    setResizeMode(QSGView::SizeRootObjectToView);
+    setResizeMode(QQuickView::SizeRootObjectToView);
 
     // This allows starting MiniBrowser from the build directory without previously defining QML_IMPORT_PATH.
     QDir qmlImportDir = QDir(QCoreApplication::applicationDirPath());

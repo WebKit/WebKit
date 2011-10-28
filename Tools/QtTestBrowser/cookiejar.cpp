@@ -27,7 +27,11 @@
 
 #include "cookiejar.h"
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QStandardPaths>
+#else
 #include <QDesktopServices>
+#endif
 #include <QDir>
 #include <QTextStream>
 
@@ -42,7 +46,11 @@ TestBrowserCookieJar::TestBrowserCookieJar(QObject* parent)
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(saveToDisk()));
 
 #ifndef QT_NO_DESKTOPSERVICES
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    QString path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+#else
     QString path = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#endif
 #else
     QString path = QDir::homePath() + "/.QtTestBrowser";
 #endif

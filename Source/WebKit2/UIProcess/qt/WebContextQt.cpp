@@ -36,7 +36,7 @@
 #include "WebProcessCreationParameters.h"
 
 #include <QCoreApplication>
-#include <QDesktopServices>
+#include <QStandardPaths>
 #include <QDir>
 #include <QProcess>
 
@@ -49,7 +49,7 @@ static QString defaultDataLocation()
     if (!s_dataLocation.isEmpty())
         return s_dataLocation;
 
-    QString dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QString dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     if (dataLocation.isEmpty())
         dataLocation = WebCore::pathByAppendingComponent(QDir::homePath(), QCoreApplication::applicationName());
     s_dataLocation = WebCore::pathByAppendingComponent(dataLocation, ".QtWebKit/");

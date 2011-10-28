@@ -23,7 +23,7 @@
 
 #include "qwebkitglobal.h"
 
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
 
 class QTouchEvent;
 class QTouchWebPage;
@@ -33,13 +33,13 @@ namespace WebKit {
 class QtTouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebView : public QSGItem
+class QWEBKIT_EXPORT QTouchWebView : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QTouchWebPage* page READ page CONSTANT FINAL)
 
 public:
-    QTouchWebView(QSGItem* parent = 0);
+    QTouchWebView(QQuickItem* parent = 0);
     ~QTouchWebView();
 
     QTouchWebPage *page();

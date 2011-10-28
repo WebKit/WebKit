@@ -28,15 +28,15 @@
 
 #include "PlatformPopupMenuData.h"
 #include "WebPopupItem.h"
-#include <QtDeclarative/QSGCanvas>
-#include <QtDeclarative/QSGItem>
+#include <QtDeclarative/QQuickCanvas>
+#include <QtDeclarative/QQuickItem>
 #include <QStandardItemModel>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client* client, QSGItem* webViewItem)
+WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client* client, QQuickItem* webViewItem)
     : QObject()
     , WebPopupMenuProxy(client)
     , m_comboBox(new QtWebComboBox)

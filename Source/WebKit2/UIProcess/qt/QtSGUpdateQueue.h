@@ -27,7 +27,7 @@
 
 class QImage;
 class QRect;
-class QSGItem;
+class QQuickItem;
 class QSGNode;
 class QSize;
 
@@ -40,21 +40,21 @@ class QtSGTileNode;
 // Takes care of taking update requests then fulfilling them asynchronously on the scene graph thread.
 class QtSGUpdateQueue {
 public:
-    QtSGUpdateQueue(QSGItem*);
+    QtSGUpdateQueue(QQuickItem*);
 
     int createTileNode(float scale);
     void removeTileNode(int nodeID);
     void setNodeBackBuffer(int nodeID, const QImage& texture, const QRect& sourceRect, const QRect& targetRect);
     void swapTileBuffers();
 
-    // Called by the QSGItem.
+    // Called by the QQuickItem.
     void applyUpdates(QSGNode* itemNode);
     bool isSwapPending() const { return m_isSwapPending; }
 
 private:
     QSGNode* getScaleNode(float scale, QSGNode* itemNode);
 
-    QSGItem* item;
+    QQuickItem* item;
     Deque<OwnPtr<NodeUpdate> > nodeUpdateQueue;
     HashMap<int, QtSGTileNode*> nodes;
     float lastScale;

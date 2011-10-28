@@ -31,28 +31,28 @@
 
 #include <QApplication>
 #include <QDeclarativeProperty>
-#include <QSGView>
+#include <QQuickView>
 
 namespace WTR {
 
-class WrapperWindow : public QSGView {
+class WrapperWindow : public QQuickView {
     Q_OBJECT
 public:
-    WrapperWindow(QSGItem* view)
-        : QSGView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
+    WrapperWindow(QQuickItem* view)
+        : QQuickView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
         , m_view(view)
     {
-        connect(this, SIGNAL(statusChanged(QSGView::Status)), SLOT(handleStatusChanged(QSGView::Status)));
+        connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
     }
 
 private slots:
-    void handleStatusChanged(QSGView::Status status)
+    void handleStatusChanged(QQuickView::Status status)
     {
-        if (status != QSGView::Ready)
+        if (status != QQuickView::Ready)
             return;
 
         setGeometry(0, 0, 800, 600);
-        setResizeMode(QSGView::SizeRootObjectToView);
+        setResizeMode(QQuickView::SizeRootObjectToView);
 
         m_view->setParentItem(rootObject());
         QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
@@ -63,7 +63,7 @@ private slots:
     }
 
 private:
-    QSGItem* m_view;
+    QQuickItem* m_view;
 };
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)

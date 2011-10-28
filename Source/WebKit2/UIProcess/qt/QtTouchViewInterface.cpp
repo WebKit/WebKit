@@ -28,7 +28,7 @@
 #include "qtouchwebview_p.h"
 
 #include <QDeclarativeEngine>
-#include <QSGView>
+#include <QQuickView>
 
 namespace WebKit {
 
@@ -181,7 +181,7 @@ void QtTouchViewInterface::didRelaunchProcess()
 
 QJSEngine* QtTouchViewInterface::engine()
 {
-    QSGView* view = qobject_cast<QSGView*>(m_pageView->canvas());
+    QQuickView* view = qobject_cast<QQuickView*>(m_pageView->canvas());
     if (view)
         return view->engine();
     return 0;

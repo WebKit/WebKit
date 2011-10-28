@@ -45,7 +45,11 @@
 #include "FileSystem.h"
 
 #include <QApplication>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QStandardPaths>
+#else
 #include <QDesktopServices>
+#endif
 #include <QDir>
 #include <QHash>
 #include <QSharedData>
@@ -1129,7 +1133,11 @@ void QWebSettings::enablePersistentStorage(const QString& path)
 
     if (path.isEmpty()) {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        storagePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
         storagePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
         if (storagePath.isEmpty())
             storagePath = WebCore::pathByAppendingComponent(QDir::homePath(), QCoreApplication::applicationName());
     } else

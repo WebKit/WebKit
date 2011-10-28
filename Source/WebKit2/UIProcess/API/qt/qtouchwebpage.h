@@ -23,7 +23,7 @@
 
 #include "qwebkitglobal.h"
 
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
 #include <QSharedPointer>
 
 class QTouchWebPagePrivate;
@@ -35,7 +35,7 @@ namespace WebKit {
 class QtTouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebPage : public QSGItem {
+class QWEBKIT_EXPORT QTouchWebPage : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
@@ -50,7 +50,7 @@ public:
         HttpError
     };
 
-    QTouchWebPage(QSGItem* parent = 0);
+    QTouchWebPage(QQuickItem* parent = 0);
 
     virtual ~QTouchWebPage();
 

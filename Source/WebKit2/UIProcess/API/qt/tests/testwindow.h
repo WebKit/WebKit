@@ -22,20 +22,20 @@
 
 #include <QResizeEvent>
 #include <QScopedPointer>
-#include <QtDeclarative/qsgview.h>
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
+#include <QtDeclarative/qquickview.h>
 
 // TestWindow: Utility class to ignore QGraphicsView details.
-class TestWindow : public QSGView {
+class TestWindow : public QQuickView {
 public:
-    inline TestWindow(QSGItem* webView);
-    QScopedPointer<QSGItem> webView;
+    inline TestWindow(QQuickItem* webView);
+    QScopedPointer<QQuickItem> webView;
 
 protected:
     inline void resizeEvent(QResizeEvent*);
 };
 
-inline TestWindow::TestWindow(QSGItem* webView)
+inline TestWindow::TestWindow(QQuickItem* webView)
     : webView(webView)
 {
     Q_ASSERT(webView);
@@ -44,7 +44,7 @@ inline TestWindow::TestWindow(QSGItem* webView)
 
 inline void TestWindow::resizeEvent(QResizeEvent* event)
 {
-    QSGCanvas::resizeEvent(event);
+    QQuickView::resizeEvent(event);
     webView->setX(0);
     webView->setY(0);
     webView->setWidth(event->size().width());

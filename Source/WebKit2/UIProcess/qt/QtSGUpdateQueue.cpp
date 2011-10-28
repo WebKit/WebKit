@@ -23,7 +23,7 @@
 
 #include "PassOwnPtr.h"
 #include "QtSGTileNode.h"
-#include <QSGItem>
+#include <QQuickItem>
 
 namespace WebKit {
 
@@ -65,7 +65,7 @@ struct NodeUpdateSwapTileBuffers : public NodeUpdate {
     { }
 };
 
-QtSGUpdateQueue::QtSGUpdateQueue(QSGItem* item)
+QtSGUpdateQueue::QtSGUpdateQueue(QQuickItem *item)
     : item(item)
     , lastScale(0)
     , lastScaleNode(0)

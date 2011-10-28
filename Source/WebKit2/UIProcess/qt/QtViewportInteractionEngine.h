@@ -31,7 +31,7 @@
 
 QT_BEGIN_NAMESPACE
 class QPointF;
-class QSGItem;
+class QQuickItem;
 QT_END_NAMESPACE
 
 namespace WebKit {
@@ -42,7 +42,7 @@ class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
-    QtViewportInteractionEngine(const QSGItem*, QSGItem*);
+    QtViewportInteractionEngine(const QQuickItem *, QQuickItem *);
     ~QtViewportInteractionEngine();
 
 
@@ -98,8 +98,8 @@ private:
 
     friend class ViewportUpdateGuard;
 
-    const QSGItem* const m_viewport;
-    QSGItem* const m_content;
+    const QQuickItem* const m_viewport;
+    QQuickItem* const m_content;
 
     Constraints m_constraints;
     int m_pendingUpdates;

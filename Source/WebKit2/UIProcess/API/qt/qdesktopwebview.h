@@ -23,7 +23,7 @@
 
 #include "qwebkitglobal.h"
 #include <QUrl>
-#include <QtDeclarative/qsgpainteditem.h>
+#include <QtDeclarative/qquickpainteditem.h>
 #include <WebKit2/WKBase.h>
 
 class QDesktopWebViewPrivate;
@@ -50,7 +50,7 @@ namespace WTR {
     class PlatformWebView;
 }
 
-class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
+class QWEBKIT_EXPORT QDesktopWebView : public QQuickPaintedItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
@@ -72,7 +72,7 @@ public:
         HttpError
     };
 
-    QDesktopWebView(QSGItem* parent = 0);
+    QDesktopWebView(QQuickItem* parent = 0);
     virtual ~QDesktopWebView();
 
     QUrl url() const;
@@ -120,7 +120,7 @@ protected:
     virtual bool event(QEvent*);
 
 private:
-    QDesktopWebView(WKContextRef, WKPageGroupRef, QSGItem* parent = 0);
+    QDesktopWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
     WKPageRef pageRef() const;
 
     void init();

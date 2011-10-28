@@ -64,7 +64,11 @@
 #endif
 
 #if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
-#include <QtGui/QDesktopServices>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QStandardPaths>
+#else
+#include <QDesktopServices>
+#endif
 #include <QtNetwork/QNetworkDiskCache>
 #endif
 
@@ -845,7 +849,11 @@ void LauncherWindow::setDiskCache(bool enable)
     QNetworkDiskCache* cache = 0;
     if (enable) {
         cache = new QNetworkDiskCache();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        QString cacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+#else
         QString cacheLocation = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#endif
         cache->setCacheDirectory(cacheLocation);
     }
     page()->networkAccessManager()->setCache(cache);

@@ -27,13 +27,13 @@
 #include <QScrollEvent>
 #include <QScrollPrepareEvent>
 #include <QScrollerProperties>
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
 
 namespace WebKit {
 
 static const int kScaleAnimationDurationMillis = 400;
 
-static inline QRectF contentRectInViewportCoordinates(const QSGItem* content, const QSGItem* viewport)
+static inline QRectF contentRectInViewportCoordinates(const QQuickItem* content, const QQuickItem* viewport)
 {
     return viewport->mapRectFromItem(content, content->boundingRect());
 }
@@ -87,7 +87,7 @@ private:
     const qreal previousScale;
 };
 
-QtViewportInteractionEngine::QtViewportInteractionEngine(const QSGItem* viewport, QSGItem* content)
+QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewport, QQuickItem* content)
     : m_viewport(viewport)
     , m_content(content)
     , m_pendingUpdates(0)

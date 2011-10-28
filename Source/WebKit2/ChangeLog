@@ -1,3 +1,50 @@
+2011-10-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Adapt to QSG* to QQuick* API change in qtdeclarative
+        https://bugs.webkit.org/show_bug.cgi?id=70494
+
+        Reviewed by Kenneth Christiansen.
+
+        Use QQuick* instead of QSG* as well as QStandardPaths
+        instead of QDesktopLocation.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebView::QDesktopWebView):
+        (QDesktopWebView::geometryChanged):
+        (QDesktopWebView::event):
+        (QDesktopWebViewPrivate::engine):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::event):
+        (QTouchWebPage::geometryChanged):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebView::QTouchWebView):
+        (QTouchWebView::geometryChanged):
+        (QTouchWebView::touchEvent):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/tests/testwindow.h:
+        (TestWindow::TestWindow):
+        (TestWindow::resizeEvent):
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::createPopupMenuProxy):
+        * UIProcess/qt/QtSGUpdateQueue.cpp:
+        (WebKit::QtSGUpdateQueue::QtSGUpdateQueue):
+        * UIProcess/qt/QtSGUpdateQueue.h:
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::engine):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::contentRectInViewportCoordinates):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::defaultDataLocation):
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp:
+        (WebKit::WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop):
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.h:
+        (WebKit::WebPopupMenuProxyQtDesktop::create):
+
 2011-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Make the kinetic engine use the same curve and constants as on the N9
