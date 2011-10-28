@@ -1,3 +1,16 @@
+2011-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Implement CSS3 Images cross-fade() image function
+        https://bugs.webkit.org/show_bug.cgi?id=52162
+        <rdar://problem/10209254>
+
+        Reviewed by Simon Fraser.
+
+        Add tests to ensure that -webkit-cross-fade is parsed correctly.
+
+        * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-cross-fade.html: Added.
+
 2011-10-28  Chris Marrin  <cmarrin@apple.com>
 
         CSS grammar doesn't support functions with no parameters

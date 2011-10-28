@@ -1,0 +1,22 @@
+-webkit-cross-fade
+
+
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png), 50%)", "background-image") is "-webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png), 50%)"
+PASS testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), url(http://example.com/example.png), 50%)", "background-image") is "-webkit-cross-fade(-webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), url(http://example.com/example.png), 50%)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/c.png), -webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), 50%)", "background-image") is "-webkit-cross-fade(url(http://example.com/c.png), -webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), 50%)"
+PASS testCrossfade("background-image: -webkit-cross-fade(-webkit-linear-gradient(black, white), url(http://example.com/example.png), 12%)", "background-image") is "-webkit-cross-fade(-webkit-linear-gradient(top, black, white), url(http://example.com/example.png), 12%)"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png),)", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(), url(http://example.com/example.png))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(10px 20% 5px #bbb)", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(-webkit-cross-fade()))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(20%, url(http://example.com/a.png), url(http://example.com/b.png))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/a.png),)", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(,)", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(,url(http://example.com/a.png))", "background-image") is "none"
+PASS testCrossfade("background-image: -webkit-cross-fade(,,,,,)", "background-image") is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE

@@ -28,6 +28,7 @@
 #include "CSSBorderImageValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
+#include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFlexValue.h"
 #include "CSSFontFaceRule.h"
@@ -1213,7 +1214,7 @@ bool CSSParser::parseValue(int propId, bool important)
                 m_valueList->next();
             }
         } else if (isGeneratedImageValue(value)) {
-            if (parseGeneratedImage(parsedValue))
+            if (parseGeneratedImage(m_valueList, parsedValue))
                 m_valueList->next();
             else
                 return false;
@@ -2729,7 +2730,7 @@ bool CSSParser::parseContent(int propId, bool important)
                 if (!parsedValue)
                     return false;
             } else if (isGeneratedImageValue(val)) {
-                if (!parseGeneratedImage(parsedValue))
+                if (!parseGeneratedImage(m_valueList, parsedValue))
                     return false;
             } else
                 return false;
@@ -2801,22 +2802,22 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
     return parseColor();
 }
 
-bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
+bool CSSParser::parseFillImage(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
 {
-    if (m_valueList->current()->id == CSSValueNone) {
+    if (valueList->current()->id == CSSValueNone) {
         value = CSSImageValue::create();
         return true;
     }
-    if (m_valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
+    if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         // FIXME: The completeURL call should be done when using the CSSImageValue,
         // not when creating it.
         if (m_styleSheet)
-            value = CSSImageValue::create(m_styleSheet->completeURL(m_valueList->current()->string));
+            value = CSSImageValue::create(m_styleSheet->completeURL(valueList->current()->string));
         return true;
     }
 
-    if (isGeneratedImageValue(m_valueList->current()))
-        return parseGeneratedImage(value);
+    if (isGeneratedImageValue(valueList->current()))
+        return parseGeneratedImage(valueList, value);
 
     return false;
 }
@@ -3078,7 +3079,7 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 case CSSPropertyBackgroundImage:
                 case CSSPropertyWebkitMaskImage:
-                    if (parseFillImage(currValue))
+                    if (parseFillImage(m_valueList, currValue))
                         m_valueList->next();
                     break;
                 case CSSPropertyWebkitBackgroundClip:
@@ -5266,7 +5267,7 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
                 context.commitImage(CSSImageValue::create(m_styleSheet->completeURL(val->string)));
             } else if (isGeneratedImageValue(val)) {
                 RefPtr<CSSValue> value;
-                if (parseGeneratedImage(value))
+                if (parseGeneratedImage(m_valueList, value))
                     context.commitImage(value);
                 else
                     return false;
@@ -5772,10 +5773,10 @@ static bool parseDeprecatedGradientColorStop(CSSParser* p, CSSParserValue* a, CS
     return true;
 }
 
-bool CSSParser::parseDeprecatedGradient(RefPtr<CSSValue>& gradient)
+bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient)
 {
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args || args->size() == 0)
         return false;
 
@@ -5931,12 +5932,12 @@ static PassRefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser* p, C
     return p->parseColor(value);
 }
 
-bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
+bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
     RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating);
 
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args || !args->size())
         return false;
 
@@ -6001,12 +6002,12 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient, CSSGradientRepea
     return true;
 }
 
-bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
+bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
     RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating);
 
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args || !args->size())
         return false;
 
@@ -6168,43 +6169,91 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
         || equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-radial-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient(")
-        || equalIgnoringCase(val->function->name, "-webkit-canvas(");
+        || equalIgnoringCase(val->function->name, "-webkit-canvas(")
+        || equalIgnoringCase(val->function->name, "-webkit-cross-fade(");
 }
 
-bool CSSParser::parseGeneratedImage(RefPtr<CSSValue>& value)
+bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
 {
-    CSSParserValue* val = m_valueList->current();
+    CSSParserValue* val = valueList->current();
 
     if (val->unit != CSSParserValue::Function)
         return false;
 
     if (equalIgnoringCase(val->function->name, "-webkit-gradient("))
-        return parseDeprecatedGradient(value);
+        return parseDeprecatedGradient(valueList, value);
 
     if (equalIgnoringCase(val->function->name, "-webkit-linear-gradient("))
-        return parseLinearGradient(value, NonRepeating);
+        return parseLinearGradient(valueList, value, NonRepeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient("))
-        return parseLinearGradient(value, Repeating);
+        return parseLinearGradient(valueList, value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-radial-gradient("))
-        return parseRadialGradient(value, NonRepeating);
+        return parseRadialGradient(valueList, value, NonRepeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient("))
-        return parseRadialGradient(value, Repeating);
+        return parseRadialGradient(valueList, value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-canvas("))
-        return parseCanvas(value);
+        return parseCanvas(valueList, value);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-cross-fade("))
+        return parseCrossfade(valueList, value);
 
     return false;
 }
 
-bool CSSParser::parseCanvas(RefPtr<CSSValue>& canvas)
+bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& crossfade)
+{
+    RefPtr<CSSCrossfadeValue> result;
+
+    // Walk the arguments.
+    CSSParserValueList* args = valueList->current()->function->args.get();
+    if (!args || args->size() != 5)
+        return false;
+    CSSParserValue* a = args->current();
+    RefPtr<CSSValue> fromImageValue;
+    RefPtr<CSSValue> toImageValue;
+
+    // The first argument is the "from" image. It is a fill image.
+    if (!a || !parseFillImage(args, fromImageValue))
+        return false;
+    a = args->next();
+
+    // Skip a comma
+    if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+        return false;
+    a = args->next();
+
+    // The second argument is the "to" image. It is a fill image.
+    if (!a || !parseFillImage(args, toImageValue))
+        return false;
+    a = args->next();
+
+    // Skip a comma
+    if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+        return false;
+    a = args->next();
+
+    // The third argument is the crossfade value. It is a percentage.
+    if (!a || a->unit != CSSPrimitiveValue::CSS_PERCENTAGE)
+        return false;
+
+    result = CSSCrossfadeValue::create(static_cast<CSSImageValue*>(fromImageValue.get()), static_cast<CSSImageValue*>(toImageValue.get()));
+    result->setPercentage(createPrimitiveNumericValue(a));
+
+    crossfade = result;
+
+    return true;
+}
+
+bool CSSParser::parseCanvas(CSSParserValueList* valueList, RefPtr<CSSValue>& canvas)
 {
     RefPtr<CSSCanvasValue> result = CSSCanvasValue::create();
 
     // Walk the arguments.
-    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args || args->size() != 1)
         return false;
 

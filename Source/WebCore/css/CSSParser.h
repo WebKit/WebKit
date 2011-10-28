@@ -91,7 +91,7 @@ public:
 
     PassRefPtr<CSSValue> parseBackgroundColor();
 
-    bool parseFillImage(RefPtr<CSSValue>&);
+    bool parseFillImage(CSSParserValueList*, RefPtr<CSSValue>&);
 
     enum FillPositionFlag { InvalidFillPosition = 0, AmbiguousFillPosition = 1, XFillPosition = 2, YFillPosition = 4 };
     PassRefPtr<CSSValue> parseFillPositionComponent(CSSParserValueList*, unsigned& cumulativeFlags, FillPositionFlag& individualFlag);
@@ -176,12 +176,14 @@ public:
     bool parseFlex(int propId, bool important);
 
     // Image generators
-    bool parseCanvas(RefPtr<CSSValue>&);
+    bool parseCanvas(CSSParserValueList*, RefPtr<CSSValue>&);
 
-    bool parseDeprecatedGradient(RefPtr<CSSValue>&);
-    bool parseLinearGradient(RefPtr<CSSValue>&, CSSGradientRepeat repeating);
-    bool parseRadialGradient(RefPtr<CSSValue>&, CSSGradientRepeat repeating);
+    bool parseDeprecatedGradient(CSSParserValueList*, RefPtr<CSSValue>&);
+    bool parseLinearGradient(CSSParserValueList*, RefPtr<CSSValue>&, CSSGradientRepeat repeating);
+    bool parseRadialGradient(CSSParserValueList*, RefPtr<CSSValue>&, CSSGradientRepeat repeating);
     bool parseGradientColorStops(CSSParserValueList*, CSSGradientValue*, bool expectComma);
+
+    bool parseCrossfade(CSSParserValueList*, RefPtr<CSSValue>&);
 
 #if ENABLE(CSS_FILTERS)
     bool isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType&, unsigned argumentCount);
@@ -317,7 +319,7 @@ private:
     void deleteFontFaceOnlyValues();
 
     bool isGeneratedImageValue(CSSParserValue*) const;
-    bool parseGeneratedImage(RefPtr<CSSValue>&);
+    bool parseGeneratedImage(CSSParserValueList*, RefPtr<CSSValue>&);
 
     bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
 

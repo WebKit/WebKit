@@ -1,3 +1,47 @@
+2011-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Implement CSS3 Images cross-fade() image function
+        https://bugs.webkit.org/show_bug.cgi?id=52162
+        <rdar://problem/10209254>
+
+        Reviewed by Simon Fraser.
+
+        Parse -webkit-cross-fade according to the CSS3 Images Values specification.
+
+        Also, adjust other CSS parsing functions to support nested functions, by using a specific CSS value list
+        instead of the global one. This allows - for example - cross-fade to pass each of its arguments back into
+        parseFillImage and to successfully parse image functions in this fashion.
+
+        Test: fast/css/getComputedStyle/computed-style-cross-fade.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCrossfadeValue.cpp: Added.
+        (WebCore::CSSCrossfadeValue::~CSSCrossfadeValue):
+        (WebCore::CSSCrossfadeValue::cssText):
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::image):
+        * css/CSSCrossfadeValue.h: Added.
+        (WebCore::CSSCrossfadeValue::create):
+        (WebCore::CSSCrossfadeValue::isFixedSize):
+        (WebCore::CSSCrossfadeValue::setFromImage):
+        (WebCore::CSSCrossfadeValue::setToImage):
+        (WebCore::CSSCrossfadeValue::setPercentage):
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::isGeneratedImageValue):
+        (WebCore::CSSParser::parseGeneratedImage):
+        (WebCore::CSSParser::parseCrossfade):
+        (WebCore::CSSParser::parseCanvas):
+        * css/CSSParser.h:
+
 2011-10-28  Dan Bernstein  <mitz@apple.com>
 
         Attempted build fix after r98765.

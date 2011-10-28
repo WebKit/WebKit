@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+function testCrossfade(css, queryProp)
+{
+    var div = document.createElement('div');
+    div.setAttribute('style', css);
+    document.body.appendChild(div);
+
+    var result = getComputedStyle(div).getPropertyValue(queryProp);
+    document.body.removeChild(div);
+    return result;
+}
+
+debug('<p>-webkit-cross-fade</p>');
+
+// Valid
+
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png), 50%)", "background-image")', '"-webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png), 50%)"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), url(http://example.com/example.png), 50%)", "background-image")', '"-webkit-cross-fade(-webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), url(http://example.com/example.png), 50%)"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/c.png), -webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), 50%)", "background-image")', '"-webkit-cross-fade(url(http://example.com/c.png), -webkit-cross-fade(url(http://example.com/a.png), url(http://example.com/b.png), 25%), 50%)"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(-webkit-linear-gradient(black, white), url(http://example.com/example.png), 12%)", "background-image")', '"-webkit-cross-fade(-webkit-linear-gradient(top, black, white), url(http://example.com/example.png), 12%)"');
+
+// Invalid
+
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png), url(http://example.com/example.png),)", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/example.png))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(), url(http://example.com/example.png))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(10px 20% 5px #bbb)", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(-webkit-cross-fade(-webkit-cross-fade()))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(20%, url(http://example.com/a.png), url(http://example.com/b.png))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(url(http://example.com/a.png),)", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(,)", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(,url(http://example.com/a.png))", "background-image")', '"none"');
+shouldBe('testCrossfade("background-image: -webkit-cross-fade(,,,,,)", "background-image")', '"none"');
+
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
