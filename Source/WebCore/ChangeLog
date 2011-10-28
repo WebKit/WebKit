@@ -1,3 +1,21 @@
+2011-10-28  Antti Koivisto  <antti@apple.com>
+
+        [Chromium] css3/font-feature-settings-rendering.html has incorrect image result after r98542
+        https://bugs.webkit.org/show_bug.cgi?id=71019
+
+        Reviewed by Andreas Kling.
+        
+        These properties need to be marked inherited too.
+        
+        Note that the new test case doesn't fail even without the patch. If I understand correctly
+        the image test in the title is pretty much the only way to see this. However the
+        new test improves code coverage and protects against future regressions.
+
+        Test: fast/css/inherited-properties-rare-text.html
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Remove getExceptionCodeDescription()

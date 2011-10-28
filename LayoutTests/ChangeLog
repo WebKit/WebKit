@@ -1,3 +1,13 @@
+2011-10-28  Antti Koivisto  <antti@apple.com>
+
+        [Chromium] css3/font-feature-settings-rendering.html has incorrect image result after r98542
+        https://bugs.webkit.org/show_bug.cgi?id=71019
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/inherited-properties-rare-text-expected.txt: Added.
+        * fast/css/inherited-properties-rare-text.html: Added.
+
 2011-10-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: CSS background-image applied inline shows a warning, but still works.

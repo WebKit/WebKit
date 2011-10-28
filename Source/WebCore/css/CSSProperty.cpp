@@ -321,6 +321,8 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitBorderVerticalSpacing:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitColorCorrection:
+    case CSSPropertyWebkitFontFeatureSettings:
+    case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitLocale:
     case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
@@ -340,6 +342,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextSizeAdjust:
     case CSSPropertyWebkitTextStroke:
@@ -385,9 +388,6 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
 #endif
         return true;
     case CSSPropertyDisplay:
-    case CSSPropertyWebkitFontFeatureSettings:
-    case CSSPropertyWebkitFontSmoothing:
-    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyZoom:
     case CSSPropertyBackground:
     case CSSPropertyBackgroundAttachment:
