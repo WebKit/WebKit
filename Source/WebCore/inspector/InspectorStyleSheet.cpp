@@ -189,9 +189,9 @@ bool InspectorStyle::setPropertyText(ErrorString* errorString, unsigned index, c
 
     if (propertyText.stripWhiteSpace().length()) {
         RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
-        CSSParser p;
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
-        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData);
+        CSSParser p;
+        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet());
         Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
         unsigned propertyCount = propertyData.size();
 
@@ -1196,7 +1196,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
 
     RefPtr<CSSMutableStyleDeclaration> tempDeclaration = CSSMutableStyleDeclaration::create();
     CSSParser p;
-    p.parseDeclaration(tempDeclaration.get(), m_styleText, result);
+    p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet());
     return true;
 }
 

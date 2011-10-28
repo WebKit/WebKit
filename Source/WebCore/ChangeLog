@@ -1,3 +1,20 @@
+2011-10-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: CSS background-image applied inline shows a warning, but still works.
+        https://bugs.webkit.org/show_bug.cgi?id=70325
+
+        Reviewed by Antti Koivisto.
+
+        This change eliminates the "non-parsed property" warning displayed next to any
+        "background-image" property of an element's inline style.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseDeclaration):
+        * css/CSSParser.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Attempt to fixenate Qt.

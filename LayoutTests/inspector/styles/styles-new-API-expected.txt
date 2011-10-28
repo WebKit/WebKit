@@ -87,7 +87,8 @@ html: []
 style
 raw style
 ['font-weight':'normal'] @[0-20] active
-['width':'85%'] @[21-31] active
+['width':'85%'] @[21-32] active
+['background-image':'url(bar.png)'] @[33-63] active
 
 === Attribute styles for table ===
 Attribute: width
