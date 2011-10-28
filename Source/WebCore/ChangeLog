@@ -1,3 +1,36 @@
+2011-10-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Database metadata changes should be tied to transaction
+        https://bugs.webkit.org/show_bug.cgi?id=70974
+
+        Reviewed by Tony Chang.
+
+        Database metadata (that is, the version string) was rolled back
+        on abort by an abort task. If the abort task didn't run e.g.
+        due to a crash, the metadata would not be reverted. All of the
+        other store/index/data changes were written into the transaction
+        itself, so the metadata now is too. Refactored the metadata
+        get/create/update methods for clarity as well.
+
+        Note that the new tests don't actually verify that the code handles
+        this case; that will need to be done with persistence tests
+        that span multiple runs of the browser and induce crashes.
+        The new tests do verify that these changes don't cause regressions
+        not caught by other tests.
+
+        Tests: storage/indexeddb/open-during-transaction.html
+               storage/indexeddb/version-change-abort.html
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseMetaData):
+        * storage/IDBLevelDBBackingStore.h:
+
 2011-10-28  Luke Macpherson   <macpherson@chromium.org>
 
         Use enum instead of bool to represent -webkit-column-span property.

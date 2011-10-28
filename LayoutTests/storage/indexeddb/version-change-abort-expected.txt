@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: line 86: Uncaught Error: This should *NOT* be caught!
+Ensure that aborted VERSION_CHANGE transactions are completely rolled back
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+PASS indexedDB == null is false
+PASS IDBTransaction == null is false
+
+indexedDB.open('version-change-abort')
+db = event.target.result
+
+vcreq = db.setVersion('version 1')
+setVersion1() callback
+PASS vcreq.result instanceof IDBTransaction is true
+store = db.createObjectStore('store1')
+setVersion1 complete
+PASS db.version is "version 1"
+
+vcreq = db.setVersion('version 2')
+setVersion2() callback
+PASS db.version is "version 2"
+PASS vcreq.result instanceof IDBTransaction is true
+store = db.deleteObjectStore('store1')
+store = db.createObjectStore('store2')
+raising exception
+
+setVersion2Abort() callback
+PASS db.version is "version 1"
+PASS db.objectStoreNames.contains('store1') is true
+PASS db.objectStoreNames.contains('store2') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,42 @@
+Test IndexedDB opening database connections during transactions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+PASS IDBTransaction == null is false
+
+prepare database
+openreq1 = indexedDB.open('db1')
+dbc1 = openreq1.result
+setverreq = dbc1.setVersion('1.0')
+dbc1.createObjectStore('storeName')
+database preparation complete
+
+starting transaction
+state = 'starting'
+trans = dbc1.transaction('storeName', IDBTransaction.READ_WRITE)
+trans.objectStore('storeName').put('value', 'key')
+
+trying to open the same database
+openreq2 = indexedDB.open('db1')
+
+trying to open a different database
+openreq3 = indexedDB.open('db2')
+
+openreq2.onsuccess
+PASS state is "starting"
+state = 'open2complete'
+
+openreq3.onsuccess
+PASS state is "open2complete"
+state = 'open3complete'
+
+transaction complete
+PASS state is "open3complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

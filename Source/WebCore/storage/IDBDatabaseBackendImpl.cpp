@@ -88,9 +88,9 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
 {
     ASSERT(!m_name.isNull());
 
-    bool success = m_backingStore->extractIDBDatabaseMetaData(m_name, m_version, m_id);
-    ASSERT_UNUSED(success, success == (m_id != InvalidId));
-    if (!m_backingStore->setIDBDatabaseMetaData(m_name, m_version, m_id, m_id == InvalidId))
+    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_id);
+    ASSERT(success == (m_id != InvalidId));
+    if (!success && !m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_id))
         ASSERT_NOT_REACHED(); // FIXME: Need better error handling.
     loadObjectStores();
 }
@@ -218,7 +218,7 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
 {
     int64_t databaseId = database->id();
     database->m_version = version;
-    if (!database->m_backingStore->setIDBDatabaseMetaData(database->m_name, database->m_version, databaseId, databaseId == InvalidId)) {
+    if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version)) {
         // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();

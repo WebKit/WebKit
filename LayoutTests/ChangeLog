@@ -1,3 +1,15 @@
+2011-10-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Database metadata changes should be tied to transaction
+        https://bugs.webkit.org/show_bug.cgi?id=70974
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/open-during-transaction-expected.txt: Added.
+        * storage/indexeddb/open-during-transaction.html: Added.
+        * storage/indexeddb/version-change-abort-expected.txt: Added.
+        * storage/indexeddb/version-change-abort.html: Added.
+
 2011-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Added some missing results for compositing visibilty tests.

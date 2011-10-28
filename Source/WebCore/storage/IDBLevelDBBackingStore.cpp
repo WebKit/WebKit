@@ -186,7 +186,7 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
     }
 }
 
-bool IDBLevelDBBackingStore::extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
+bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
 
@@ -216,19 +216,24 @@ static int64_t getNewDatabaseId(LevelDBDatabase* db)
     return databaseId;
 }
 
-bool IDBLevelDBBackingStore::setIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId, bool invalidRowId)
+bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId)
 {
-    if (invalidRowId) {
-        rowId = getNewDatabaseId(m_db.get());
-        if (rowId < 0)
-            return false;
+    rowId = getNewDatabaseId(m_db.get());
+    if (rowId < 0)
+        return false;
 
-        const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
-        if (!putInt(m_db.get(), key, rowId))
-            return false;
-    }
-
+    const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
+    if (!putInt(m_db.get(), key, rowId))
+        return false;
     if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::kUserVersion), version))
+        return false;
+    return true;
+}
+
+bool IDBLevelDBBackingStore::updateIDBDatabaseMetaData(int64_t rowId, const String& version)
+{
+    ASSERT(m_currentTransaction);
+    if (!putString(m_currentTransaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::kUserVersion), version))
         return false;
 
     return true;
