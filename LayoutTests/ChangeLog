@@ -1,3 +1,21 @@
+2011-10-27  John Gregg  <johnnyg@google.com>
+
+        Add more test expectations and chromium results.
+
+        * platform/chromium-cg-mac-leopard/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/css/getComputedStyle: Removed.
+        * platform/chromium-cg-mac-leopard/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/child-style-can-override-visited-style-expected.txt: Added.
+        * platform/chromium-linux/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-linux/fast/css/child-style-can-override-visited-style-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-win/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-win/fast/css/child-style-can-override-visited-style-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Dan Bernstein  <mitz@apple.com>
 
         Assertion failure (m_text) in RenderText::RenderText() at icanhascheezburger.com
