@@ -1,3 +1,29 @@
+2011-10-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Track wheel event handler registration and pass to input filter
+        https://bugs.webkit.org/show_bug.cgi?id=71078
+
+        Reviewed by Kenneth Russell.
+
+        This propagates mouse wheel registration notifications to the compositor input filter. If there are any handlers
+        registered, which includes JS handlers and scrollable areas other than the main view, the input filter will pass
+        mouse wheel events to the widget. Otherwise when threaded compositing is enabled the input filter translates
+        wheel events into root layer scrolling.
+
+        Only changes behavior with an off-by-default flag enabled, so no tests.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setHaveWheelEventHandlers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::haveWheelEventHandlers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore::CCLayerTreeHostImpl::setHaveWheelEventHandlers):
+        * platform/graphics/chromium/cc/CCScrollController.h:
+
 2011-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix due to r98775.

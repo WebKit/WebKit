@@ -116,7 +116,13 @@ void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
 {
     ASSERT(CCProxy::isImplThread());
     ASSERT(m_client);
-    // FIXME: Do something interesting with this input event like inform our m_scrollController.
+
+    if (event.type == WebInputEvent::MouseWheel && !m_scrollController->haveWheelEventHandlers()) {
+        const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
+        m_scrollController->scrollRootLayer(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+        m_client->didHandleInputEvent();
+        return;
+    }
     m_client->didNotHandleInputEvent(true /* sendToWidget */);
 }
 

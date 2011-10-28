@@ -999,8 +999,7 @@ bool ChromeClientImpl::shouldRubberBandInDirection(WebCore::ScrollDirection dire
 
 void ChromeClientImpl::numWheelEventHandlersChanged(unsigned numberOfWheelHandlers)
 {
-    if (m_webView->client())
-        m_webView->client()->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
+    m_webView->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
 }
 
 } // namespace WebKit

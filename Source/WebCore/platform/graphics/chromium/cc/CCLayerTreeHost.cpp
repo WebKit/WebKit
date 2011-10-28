@@ -56,6 +56,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
     , m_rootLayer(rootLayer)
     , m_settings(settings)
     , m_visible(true)
+    , m_haveWheelEventHandlers(false)
 {
     CCMainThread::initialize();
     ASSERT(CCProxy::isMainThread());
@@ -128,6 +129,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setVisible(m_visible);
+    hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
 
@@ -235,6 +237,15 @@ void CCLayerTreeHost::setVisible(bool visible)
         m_proxy->setNeedsCommit();
     }
 }
+
+void CCLayerTreeHost::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
+{
+    if (m_haveWheelEventHandlers == haveWheelEventHandlers)
+        return;
+    m_haveWheelEventHandlers = haveWheelEventHandlers;
+    m_proxy->setNeedsCommit();
+}
+
 
 void CCLayerTreeHost::loseCompositorContext(int numTimes)
 {

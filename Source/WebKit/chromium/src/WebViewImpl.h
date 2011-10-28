@@ -294,6 +294,8 @@ public:
     bool charEvent(const WebKeyboardEvent&);
     bool touchEvent(const WebTouchEvent&);
 
+    void numberOfWheelEventHandlersChanged(unsigned);
+
     // Handles context menu events orignated via the the keyboard. These
     // include the VK_APPS virtual key and the Shift+F10 combine. Code is
     // based on the Webkit function bool WebView::handleContextMenuEvent(WPARAM
@@ -578,6 +580,7 @@ private:
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
 #endif
+    bool m_haveWheelEventHandlers;
     static const WebInputEvent* m_currentInputEvent;
 
 #if ENABLE(INPUT_SPEECH)

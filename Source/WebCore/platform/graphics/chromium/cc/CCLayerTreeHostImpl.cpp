@@ -49,6 +49,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_frameNumber(0)
     , m_settings(settings)
     , m_visible(true)
+    , m_haveWheelEventHandlers(false)
 {
     ASSERT(CCProxy::isImplThread());
 }
@@ -179,6 +180,11 @@ void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
     m_rootLayerImpl->scrollBy(scrollDelta);
     m_client->setNeedsCommitOnImplThread();
     m_client->setNeedsRedrawOnImplThread();
+}
+
+bool CCLayerTreeHostImpl::haveWheelEventHandlers()
+{
+    return m_haveWheelEventHandlers;
 }
 
 PassOwnPtr<CCScrollUpdateSet> CCLayerTreeHostImpl::processScrollDeltas()

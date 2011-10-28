@@ -35,6 +35,7 @@ class CCScrollController {
     WTF_MAKE_NONCOPYABLE(CCScrollController);
 public:
     virtual void scrollRootLayer(const IntSize&) = 0;
+    virtual bool haveWheelEventHandlers() = 0;
 
 protected:
     CCScrollController() { }

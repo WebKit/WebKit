@@ -1,3 +1,21 @@
+2011-10-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Track wheel event handler registration and pass to input filter
+        https://bugs.webkit.org/show_bug.cgi?id=71078
+
+        Reviewed by Kenneth Russell.
+
+        Pushes mouse wheel event handler notifications to CCLayerTreeHost when compositing.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::numWheelEventHandlersChanged):
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::numberOfWheelEventHandlersChanged):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead

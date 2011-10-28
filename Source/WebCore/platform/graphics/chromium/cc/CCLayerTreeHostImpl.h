@@ -60,6 +60,7 @@ public:
 
     // CCScrollController implementation
     virtual void scrollRootLayer(const IntSize&);
+    virtual bool haveWheelEventHandlers();
 
     // Virtual for testing
     virtual void beginCommit();
@@ -86,6 +87,7 @@ public:
     void setRootLayer(PassRefPtr<CCLayerImpl>);
 
     void setVisible(bool);
+    void setHaveWheelEventHandlers(bool haveWheelEventHandlers) { m_haveWheelEventHandlers = haveWheelEventHandlers; }
 
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
@@ -110,6 +112,7 @@ private:
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;
+    bool m_haveWheelEventHandlers;
 };
 
 };

@@ -157,6 +157,7 @@ public:
     TextureManager* contentsTextureManager() const;
 
     void setVisible(bool);
+    void setHaveWheelEventHandlers(bool);
 
     void updateLayers();
 
@@ -164,6 +165,7 @@ public:
     void applyScrollDeltas(const CCScrollUpdateSet&);
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
     bool initialize();
@@ -198,6 +200,7 @@ private:
     IntSize m_viewportSize;
     TransformationMatrix m_zoomAnimatorTransform;
     bool m_visible;
+    bool m_haveWheelEventHandlers;
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
 };

@@ -781,6 +781,17 @@ bool WebViewImpl::touchEvent(const WebTouchEvent& event)
 }
 #endif
 
+void WebViewImpl::numberOfWheelEventHandlersChanged(unsigned numberOfWheelHandlers)
+{
+    m_haveWheelEventHandlers = numberOfWheelHandlers > 0;
+    if (m_client)
+        m_client->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost)
+        m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
+#endif
+}
+
 #if !OS(DARWIN)
 // Mac has no way to open a context menu based on a keyboard event.
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
@@ -2612,6 +2623,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_layerTreeHost = CCLayerTreeHost::create(this, m_nonCompositedContentHost->topLevelRootLayer()->platformLayer(), ccSettings);
         if (m_layerTreeHost) {
+            m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
