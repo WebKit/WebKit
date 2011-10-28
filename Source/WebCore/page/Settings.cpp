@@ -229,6 +229,7 @@ Settings::Settings(Page* page)
     , m_passwordEchoEnabled(false)
 #endif
     , m_suppressIncrementalRendering(false)
+    , m_backspaceKeyNavigationEnabled(true)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

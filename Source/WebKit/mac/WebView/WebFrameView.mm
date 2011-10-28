@@ -784,7 +784,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
             case NSDeleteCharacter:
-                if (!maintainsBackForwardList) {
+                if (!maintainsBackForwardList || ![[[self _webView] preferences] backspaceKeyNavigationEnabled]) {
                     callSuper = YES;
                     break;
                 }

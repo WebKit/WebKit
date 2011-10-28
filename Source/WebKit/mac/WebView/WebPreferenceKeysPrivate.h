@@ -126,6 +126,7 @@
 #define WebKitEditingBehaviorPreferenceKey @"WebKitEditingBehavior"
 #define WebKitUsePreHTML5ParserQuirksKey @"WebKitUsePreHTML5ParserQuirks"
 #define WebKitSuppressIncrementalRenderingKey @"WebKitSuppressIncrementalRendering"
+#define WebKitBackspaceKeyNavigationEnabledKey @"WebKitBackspaceKeyNavigationEnabled"
 
 // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is set
 // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by

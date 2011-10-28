@@ -469,7 +469,10 @@ namespace WebCore {
 
         void setSuppressIncrementalRendering(bool flag) { m_suppressIncrementalRendering = flag; }
         bool suppressIncrementalRendering() const { return m_suppressIncrementalRendering; }
-
+        
+        void setBackspaceKeyNavigationEnabled(bool flag) { m_backspaceKeyNavigationEnabled = flag; }
+        bool backspaceKeyNavigationEnabled() const { return m_backspaceKeyNavigationEnabled; }
+        
         void setPasswordEchoDurationInSeconds(double durationInSeconds) { m_passwordEchoDurationInSeconds = durationInSeconds; }
         double passwordEchoDurationInSeconds() const { return m_passwordEchoDurationInSeconds; }
 
@@ -607,6 +610,7 @@ namespace WebCore {
         bool m_mediaPlaybackAllowsInline : 1;
         bool m_passwordEchoEnabled : 1;
         bool m_suppressIncrementalRendering : 1;
+        bool m_backspaceKeyNavigationEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

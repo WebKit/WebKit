@@ -1474,6 +1474,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings->setSuppressIncrementalRendering([preferences suppressIncrementalRendering]);
+    settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

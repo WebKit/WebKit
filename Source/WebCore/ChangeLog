@@ -1,3 +1,26 @@
+2011-10-28  John Sullivan  <sullivan@apple.com>
+
+        WebCore part of:
+        https://bugs.webkit.org/show_bug.cgi?id=71142
+        Whether backspace goes Back should be configurable
+
+        Reviewed by Sam Weinig.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+        Bail out if backspace navigation is not enabled.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        Initialize m_backspaceKeyNavigationEnabled to true to match current behavior.
+
+        * page/Settings.h:
+        Declared m_backspaceKeyNavigationEnabled.
+        (WebCore::Settings::setBackspaceKeyNavigationEnabled):
+        New function, simple setter.
+        (WebCore::Settings::backspaceKeyNavigationEnabled):
+        New function, simple getter.
+
 2011-10-28  Emil A Eklund  <eae@chromium.org>
 
         Overridden clippedOverflowRectForRepaint() still uses IntRects

@@ -386,6 +386,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressIncrementalRenderingKey,
+        [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1561,6 +1562,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)suppressIncrementalRendering
 {
     return [self _boolValueForKey:WebKitSuppressIncrementalRenderingKey];
+}
+
+- (void)setBackspaceKeyNavigationEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitBackspaceKeyNavigationEnabledKey];
+}
+
+- (BOOL)backspaceKeyNavigationEnabled
+{
+    return [self _boolValueForKey:WebKitBackspaceKeyNavigationEnabledKey];
 }
 
 @end

@@ -651,3 +651,13 @@ bool WKPreferencesGetSuppressIncrementalRendering(WKPreferencesRef preferencesRe
 {
     return toImpl(preferencesRef)->suppressIncrementalRendering();
 }
+
+void WKPreferencesSetBackspaceKeyNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setBackspaceKeyNavigationEnabled(enabled);
+}
+
+bool WKPreferencesGetBackspaceKeyNavigationEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->backspaceKeyNavigationEnabled();
+}

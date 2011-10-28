@@ -1,3 +1,28 @@
+2011-10-28  John Sullivan  <sullivan@apple.com>
+
+        WebKit2 part of:
+        https://bugs.webkit.org/show_bug.cgi?id=71142
+        Whether backspace goes Back should be configurable
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesStore.h:
+        Declared backspaceKeyNavigationEnabled property using macro. This initializes
+        it to true, to match current behavior.
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetBackspaceKeyNavigationEnabled):
+        New function, pass value to impl.
+        (WKPreferencesGetBackspaceKeyNavigationEnabled):
+        New function, returns result from impl.
+        
+        * UIProcess/API/C/WKPreferences.h:
+        Declared API functions for new preference.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Updates WebCore settings from WebKit2 prefs.
+
 2011-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Support using a different front-end for the Web Inspector in WebKit2.

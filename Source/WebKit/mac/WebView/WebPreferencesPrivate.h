@@ -268,4 +268,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setSuppressIncrementalRendering:(BOOL)flag;
 - (BOOL)suppressIncrementalRendering;
 
+- (void)setBackspaceKeyNavigationEnabled:(BOOL)flag;
+- (BOOL)backspaceKeyNavigationEnabled;
+
 @end

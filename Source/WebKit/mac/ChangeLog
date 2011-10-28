@@ -1,3 +1,33 @@
+2011-10-28  John Sullivan  <sullivan@apple.com>
+
+        WebKit part of:
+        https://bugs.webkit.org/show_bug.cgi?id=71142
+        Whether backspace goes Back should be configurable
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:]):
+        Honor the new preference.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        Added #define for WebKitBackspaceKeyNavigationEnabledKey
+        
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Initialize new pref to YES, to match current behavior.
+        (-[WebPreferences setBackspaceKeyNavigationEnabled:]):
+        New method, standard prefs setter.
+        (-[WebPreferences backspaceKeyNavigationEnabled]):
+        New method, standard prefs getter.
+
+        * WebView/WebPreferencesPrivate.h:
+        Declared new methods.
+        
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Updates WebCore settings from WebKit prefs.
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead
