@@ -66,6 +66,8 @@ public:
         return errorCode + IDBDatabaseExceptionOffset;
     }
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     IDBDatabaseException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

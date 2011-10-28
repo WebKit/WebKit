@@ -538,6 +538,7 @@ SET(WebCore_SOURCES
     dom/DocumentParser.cpp
     dom/DocumentOrderedMap.cpp
     dom/DocumentType.cpp
+    dom/DOMCoreException.cpp
     dom/DOMImplementation.cpp
     dom/DOMStringList.cpp
     dom/DOMStringMap.cpp
@@ -550,6 +551,7 @@ SET(WebCore_SOURCES
     dom/EventContext.cpp
     dom/EventDispatchMediator.cpp
     dom/EventDispatcher.cpp
+    dom/EventException.cpp
     dom/EventListenerMap.cpp
     dom/EventNames.cpp
     dom/EventTarget.cpp
@@ -585,6 +587,7 @@ SET(WebCore_SOURCES
     dom/ProgressEvent.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
+    dom/RangeException.cpp
     dom/RegisteredEventListener.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptableDocumentParser.cpp
@@ -681,7 +684,9 @@ SET(WebCore_SOURCES
     fileapi/Blob.cpp
     fileapi/BlobURL.cpp
     fileapi/File.cpp
+    fileapi/FileException.cpp
     fileapi/FileList.cpp
+    fileapi/OperationNotAllowedException.cpp
     fileapi/ThreadableBlobRegistry.cpp
     fileapi/WebKitBlobBuilder.cpp
 
@@ -1330,6 +1335,7 @@ SET(WebCore_SOURCES
     storage/IDBDatabaseBackendImpl.cpp
     storage/IDBCursor.cpp
     storage/IDBCursorBackendImpl.cpp
+    storage/IDBDatabaseException.cpp
     storage/IDBEventDispatcher.cpp
     storage/IDBIndex.cpp
     storage/IDBIndexBackendImpl.cpp
@@ -1345,6 +1351,7 @@ SET(WebCore_SOURCES
     storage/LocalStorageThread.cpp
     storage/OriginQuotaManager.cpp
     storage/OriginUsageRecord.cpp
+    storage/SQLException.cpp
     storage/SQLResultSet.cpp
     storage/SQLResultSetRowList.cpp
     storage/SQLStatement.cpp
@@ -1369,11 +1376,13 @@ SET(WebCore_SOURCES
     xml/NativeXPathNSResolver.cpp
     xml/XMLErrors.cpp
     xml/XMLHttpRequest.cpp
+    xml/XMLHttpRequestException.cpp
     xml/XMLHttpRequestProgressEventThrottle.cpp
     xml/XMLHttpRequestUpload.cpp
     xml/XMLTreeViewer.cpp
     xml/XMLSerializer.cpp
     xml/XPathEvaluator.cpp
+    xml/XPathException.cpp
     xml/XPathExpression.cpp
     xml/XPathExpressionNode.cpp
     xml/XPathFunctions.cpp
@@ -1690,6 +1699,7 @@ IF (ENABLE_SVG)
         svg/SVGElementInstance.cpp
         svg/SVGElementInstanceList.cpp
         svg/SVGEllipseElement.cpp
+        svg/SVGException.cpp
         svg/SVGExternalResourcesRequired.cpp
         svg/SVGFEBlendElement.cpp
         svg/SVGFEColorMatrixElement.cpp

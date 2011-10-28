@@ -3267,6 +3267,16 @@
 		977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 977E2E0C12F0FC9C00C13379 /* XSSAuditor.h */; };
 		978AD67414130A8D00C7CAE3 /* HTMLSpanElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978AD67114130A8D00C7CAE3 /* HTMLSpanElement.cpp */; };
 		978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */; };
+		978D07B2145A0EBD0096908D /* IDBDatabaseException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B1145A0EBD0096908D /* IDBDatabaseException.cpp */; };
+		978D07B4145A0ECD0096908D /* SQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B3145A0ECD0096908D /* SQLException.cpp */; };
+		978D07B6145A0F030096908D /* FileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B5145A0F030096908D /* FileException.cpp */; };
+		978D07B8145A0F1B0096908D /* OperationNotAllowedException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */; };
+		978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B9145A0F3C0096908D /* RangeException.cpp */; };
+		978D07BC145A0F560096908D /* EventException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BB145A0F560096908D /* EventException.cpp */; };
+		978D07BE145A0F6C0096908D /* DOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BD145A0F6C0096908D /* DOMCoreException.cpp */; };
+		978D07CA145A10160096908D /* SVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07C9145A10160096908D /* SVGException.cpp */; };
+		978D07CC145A102E0096908D /* XPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CB145A102E0096908D /* XPathException.cpp */; };
+		978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CD145A10370096908D /* XMLHttpRequestException.cpp */; };
 		979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* NavigationScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* NavigationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */; };
@@ -10402,6 +10412,16 @@
 		978AD67114130A8D00C7CAE3 /* HTMLSpanElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSpanElement.cpp; sourceTree = "<group>"; };
 		978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSpanElement.h; sourceTree = "<group>"; };
 		978AD67314130A8D00C7CAE3 /* HTMLSpanElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSpanElement.idl; sourceTree = "<group>"; };
+		978D07B1145A0EBD0096908D /* IDBDatabaseException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseException.cpp; sourceTree = "<group>"; };
+		978D07B3145A0ECD0096908D /* SQLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLException.cpp; sourceTree = "<group>"; };
+		978D07B5145A0F030096908D /* FileException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileException.cpp; path = fileapi/FileException.cpp; sourceTree = "<group>"; };
+		978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationNotAllowedException.cpp; path = fileapi/OperationNotAllowedException.cpp; sourceTree = "<group>"; };
+		978D07B9145A0F3C0096908D /* RangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RangeException.cpp; sourceTree = "<group>"; };
+		978D07BB145A0F560096908D /* EventException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventException.cpp; sourceTree = "<group>"; };
+		978D07BD145A0F6C0096908D /* DOMCoreException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCoreException.cpp; sourceTree = "<group>"; };
+		978D07C9145A10160096908D /* SVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGException.cpp; sourceTree = "<group>"; };
+		978D07CB145A102E0096908D /* XPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathException.cpp; sourceTree = "<group>"; };
+		978D07CD145A10370096908D /* XMLHttpRequestException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestException.cpp; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* NavigationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* NavigationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationScheduler.h; sourceTree = "<group>"; };
 		97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetHeaders.h; sourceTree = "<group>"; };
@@ -14201,6 +14221,7 @@
 				B61762531203374F00EF9114 /* IDBDatabaseBackendInterface.h */,
 				C585A69D11D4FB3D004C3E4B /* IDBDatabaseError.h */,
 				C585A69E11D4FB3D004C3E4B /* IDBDatabaseError.idl */,
+				978D07B1145A0EBD0096908D /* IDBDatabaseException.cpp */,
 				C585A69F11D4FB3D004C3E4B /* IDBDatabaseException.h */,
 				C585A6A011D4FB3D004C3E4B /* IDBDatabaseException.idl */,
 				C585A6C911D4FB3D004C3E4B /* IDBFactory.cpp */,
@@ -14246,6 +14267,7 @@
 				245D80A213280E40003492A6 /* SQLCallbackWrapper.h */,
 				51EC92570CE90DB400F90308 /* SQLError.h */,
 				51EC92580CE90DB400F90308 /* SQLError.idl */,
+				978D07B3145A0ECD0096908D /* SQLException.cpp */,
 				B56EBA8311C9FF8100B04477 /* SQLException.h */,
 				B56EBA8411C9FF8100B04477 /* SQLException.idl */,
 				519611670CAC56570010A80C /* SQLResultSet.cpp */,
@@ -17339,6 +17361,7 @@
 				893C47FE1248BD39002B3D86 /* FileEntrySync.cpp */,
 				893C47FF1248BD39002B3D86 /* FileEntrySync.h */,
 				976D6C64122B8A3D001FD1F7 /* FileError.h */,
+				978D07B5145A0F030096908D /* FileException.cpp */,
 				2EDF369E122C94C8002F7D4E /* FileException.h */,
 				976D6C66122B8A3D001FD1F7 /* FileList.cpp */,
 				976D6C67122B8A3D001FD1F7 /* FileList.h */,
@@ -17372,6 +17395,7 @@
 				8987854F122CA064003AABDA /* LocalFileSystem.h */,
 				89878550122CA064003AABDA /* Metadata.h */,
 				89878551122CA064003AABDA /* MetadataCallback.h */,
+				978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */,
 				2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */,
 				2E2445F61395893A004B6C19 /* OperationNotAllowedException.idl */,
 				976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */,
@@ -18536,6 +18560,7 @@
 				B22278290D00BF1F0071B782 /* SVGEllipseElement.cpp */,
 				B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */,
 				B222782B0D00BF1F0071B782 /* SVGEllipseElement.idl */,
+				978D07C9145A10160096908D /* SVGException.cpp */,
 				B222782C0D00BF1F0071B782 /* SVGException.h */,
 				B222782D0D00BF1F0071B782 /* SVGException.idl */,
 				B222782E0D00BF1F0071B782 /* SVGExternalResourcesRequired.cpp */,
@@ -20305,6 +20330,7 @@
 				BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */,
 				BC772C450C4EB2C60083285F /* XMLHttpRequest.h */,
 				BC348BA70DB7F1B8004ABAB9 /* XMLHttpRequest.idl */,
+				978D07CD145A10370096908D /* XMLHttpRequestException.cpp */,
 				BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */,
 				BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */,
 				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
@@ -20324,6 +20350,7 @@
 				1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */,
 				1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */,
 				1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */,
+				978D07CB145A102E0096908D /* XPathException.cpp */,
 				BC60DA590D2A31F700B9918F /* XPathException.h */,
 				BC60DA5A0D2A31F700B9918F /* XPathException.idl */,
 				1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */,
@@ -20928,6 +20955,7 @@
 				A8185F3209765765005826D9 /* DocumentType.cpp */,
 				A8185F3109765765005826D9 /* DocumentType.h */,
 				93EEC1E809C2877700C515D1 /* DocumentType.idl */,
+				978D07BD145A0F6C0096908D /* DOMCoreException.cpp */,
 				BC60D6E80D28D83400B9918F /* DOMCoreException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
@@ -20965,6 +20993,7 @@
 				4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */,
 				418A06CF133C04D500CD379C /* EventDispatcher.cpp */,
 				418A06CE133C04D500CD379C /* EventDispatcher.h */,
+				978D07BB145A0F560096908D /* EventException.cpp */,
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
 				97665011144FAA4200F6BB51 /* EventFactory.h */,
@@ -21075,6 +21104,7 @@
 				F523D30402DE4476018635CA /* Range.h */,
 				936DD03A09CEAC270056AE8C /* Range.idl */,
 				93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */,
+				978D07B9145A0F3C0096908D /* RangeException.cpp */,
 				D23CA56B0AB0EB8D005108A5 /* RangeException.h */,
 				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
@@ -27324,6 +27354,16 @@
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
 				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
+				978D07B2145A0EBD0096908D /* IDBDatabaseException.cpp in Sources */,
+				978D07B4145A0ECD0096908D /* SQLException.cpp in Sources */,
+				978D07B6145A0F030096908D /* FileException.cpp in Sources */,
+				978D07B8145A0F1B0096908D /* OperationNotAllowedException.cpp in Sources */,
+				978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */,
+				978D07BC145A0F560096908D /* EventException.cpp in Sources */,
+				978D07BE145A0F6C0096908D /* DOMCoreException.cpp in Sources */,
+				978D07CA145A10160096908D /* SVGException.cpp in Sources */,
+				978D07CC145A102E0096908D /* XPathException.cpp in Sources */,
+				978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */,
 				0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */,
 				9B375EDA14478A0100F3CAE5 /* MicroDataItemList.cpp in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,

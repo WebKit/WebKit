@@ -43,6 +43,8 @@ public:
         SVG_MATRIX_NOT_INVERTABLE = SVGExceptionOffset + 2
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     SVGException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

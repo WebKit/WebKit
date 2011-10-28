@@ -48,6 +48,8 @@ public:
         DISPATCH_REQUEST_ERR
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     EventException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

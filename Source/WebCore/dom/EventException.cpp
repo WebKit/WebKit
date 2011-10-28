@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +14,7 @@
  *     its contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
@@ -26,37 +26,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLHttpRequestException_h
-#define XMLHttpRequestException_h
-
-#include "ExceptionBase.h"
+#include "config.h"
+#include "EventException.h"
 
 namespace WebCore {
 
-class XMLHttpRequestException : public ExceptionBase {
-public:
-    static PassRefPtr<XMLHttpRequestException> create(const ExceptionCodeDescription& description)
-    {
-        return adoptRef(new XMLHttpRequestException(description));
-    }
-
-    static const int XMLHttpRequestExceptionOffset = 500;
-    static const int XMLHttpRequestExceptionMax = 699;
-
-    enum XMLHttpRequestExceptionCode {
-        NETWORK_ERR = XMLHttpRequestExceptionOffset + 101,
-        ABORT_ERR
-    };
-
-    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
-
-private:
-    XMLHttpRequestException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description)
-    {
-    }
+// FIXME: This should be an array of structs to pair the names and descriptions.
+static const char* const eventExceptionNames[] = {
+    "UNSPECIFIED_EVENT_TYPE_ERR",
+    "DISPATCH_REQUEST_ERR"
 };
 
-} // namespace WebCore
+static const char* const eventExceptionDescriptions[] = {
+    "The Event's type was not specified by initializing the event before the method was called.",
+    "The Event object is already being dispatched."
+};
 
-#endif // XMLHttpRequestException_h
+COMPILE_ASSERT(WTF_ARRAY_LENGTH(eventExceptionNames) == WTF_ARRAY_LENGTH(eventExceptionDescriptions), EventExceptionTablesMustMatch);
+
+bool EventException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
+{
+    if (ec < EventExceptionOffset || ec > EventExceptionMax)
+        return false;
+
+    description->typeName = "DOM Events";
+    description->code = ec - EventExceptionOffset;
+    description->type = EventExceptionType;
+
+    size_t tableSize = WTF_ARRAY_LENGTH(eventExceptionNames);
+    size_t tableIndex = ec - UNSPECIFIED_EVENT_TYPE_ERR;
+
+    description->name = tableIndex < tableSize ? eventExceptionNames[tableIndex] : 0;
+    description->description = tableIndex < tableSize ? eventExceptionDescriptions[tableIndex] : 0;
+
+    return true;
+}
+
+} // namespace WebCore

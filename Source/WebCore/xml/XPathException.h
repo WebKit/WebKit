@@ -48,6 +48,8 @@ public:
         TYPE_ERR
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     XPathException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

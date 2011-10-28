@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +14,7 @@
  *     its contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
@@ -26,37 +26,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XMLHttpRequestException_h
-#define XMLHttpRequestException_h
-
-#include "ExceptionBase.h"
+#include "config.h"
+#include "XPathException.h"
 
 namespace WebCore {
 
-class XMLHttpRequestException : public ExceptionBase {
-public:
-    static PassRefPtr<XMLHttpRequestException> create(const ExceptionCodeDescription& description)
-    {
-        return adoptRef(new XMLHttpRequestException(description));
-    }
-
-    static const int XMLHttpRequestExceptionOffset = 500;
-    static const int XMLHttpRequestExceptionMax = 699;
-
-    enum XMLHttpRequestExceptionCode {
-        NETWORK_ERR = XMLHttpRequestExceptionOffset + 101,
-        ABORT_ERR
-    };
-
-    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
-
-private:
-    XMLHttpRequestException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description)
-    {
-    }
+// FIXME: This should be an array of structs to pair the names and descriptions.
+static const char* const exceptionNames[] = {
+    "INVALID_EXPRESSION_ERR",
+    "TYPE_ERR"
 };
 
-} // namespace WebCore
+static const char* const exceptionDescriptions[] = {
+    "The expression had a syntax error or otherwise is not a legal expression according to the rules of the specific XPathEvaluator.",
+    "The expression could not be converted to return the specified type."
+};
 
-#endif // XMLHttpRequestException_h
+COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), XPathExceptionTablesMustMatch);
+
+bool XPathException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
+{
+    if (ec < XPathExceptionOffset || ec > XPathExceptionMax)
+        return false;
+
+    description->typeName = "DOM XPath";
+    description->code = ec - XPathExceptionOffset;
+    description->type = XPathExceptionType;
+
+    size_t tableSize = WTF_ARRAY_LENGTH(exceptionNames);
+    size_t tableIndex = ec - INVALID_EXPRESSION_ERR;
+
+    description->name = tableIndex < tableSize ? exceptionNames[tableIndex] : 0;
+    description->description = tableIndex < tableSize ? exceptionDescriptions[tableIndex] : 0;
+
+    return true;
+}
+
+} // namespace WebCore

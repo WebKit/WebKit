@@ -44,6 +44,8 @@ public:
         INVALID_NODE_TYPE_ERR
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     RangeException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

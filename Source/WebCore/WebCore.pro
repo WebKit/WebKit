@@ -490,6 +490,7 @@ SOURCES += \
     dom/DocumentOrderedMap.cpp \
     dom/DocumentParser.cpp \
     dom/DocumentType.cpp \
+    dom/DOMCoreException.cpp \
     dom/DOMImplementation.cpp \
     dom/DOMStringList.cpp \
     dom/DOMStringMap.cpp \
@@ -503,6 +504,7 @@ SOURCES += \
     dom/EventContext.cpp \
     dom/EventDispatchMediator.cpp \
     dom/EventDispatcher.cpp \
+    dom/EventException.cpp \
     dom/EventListenerMap.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
@@ -539,6 +541,7 @@ SOURCES += \
     dom/ProgressEvent.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
+    dom/RangeException.cpp \
     dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
     dom/ScopedEventQueue.cpp \
@@ -631,13 +634,15 @@ SOURCES += \
     fileapi/Blob.cpp \
     fileapi/BlobURL.cpp \
     fileapi/File.cpp \
+    fileapi/FileException.cpp \
     fileapi/FileList.cpp \
     fileapi/FileReader.cpp \
     fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
     fileapi/FileStreamProxy.cpp \
     fileapi/FileThread.cpp \
-    fileapi/ThreadableBlobRegistry.cpp \
+    fileapi/FileException.cpp \
+    fileapi/OperationNotAllowedException.cpp \
     fileapi/WebKitBlobBuilder.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
@@ -1238,11 +1243,13 @@ SOURCES += \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
+    xml/XMLHttpRequestException.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
     xml/XMLErrors.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \
+    xml/XPathException.cpp \
     xml/XPathExpression.cpp \
     xml/XPathExpressionNode.cpp \
     xml/XPathFunctions.cpp \
@@ -2832,6 +2839,7 @@ contains(DEFINES, ENABLE_SQL_DATABASE=1) {
         storage/DatabaseTracker.cpp \
         storage/OriginQuotaManager.cpp \
         storage/OriginUsageRecord.cpp \
+        storage/SQLException.cpp \
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \
@@ -2896,6 +2904,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBCursorBackendImpl.cpp \
         storage/IDBDatabase.cpp \
         storage/IDBDatabaseBackendImpl.cpp \
+        storage/IDBDatabaseException.cpp \
         storage/IDBEventDispatcher.cpp \
         storage/IDBFactory.cpp \
         storage/IDBFactoryBackendInterface.cpp \
@@ -3395,6 +3404,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGElementInstance.cpp \
               svg/SVGElementInstanceList.cpp \
               svg/SVGEllipseElement.cpp \
+              svg/SVGException.cpp \
               svg/SVGExternalResourcesRequired.cpp \
               svg/SVGFEBlendElement.cpp \
               svg/SVGFEColorMatrixElement.cpp \

@@ -69,6 +69,8 @@ public:
         return errorCode + FileExceptionOffset;
     }
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     FileException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

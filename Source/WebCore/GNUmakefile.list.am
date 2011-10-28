@@ -1188,6 +1188,7 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentTiming.h \
 	Source/WebCore/dom/DocumentType.cpp \
 	Source/WebCore/dom/DocumentType.h \
+	Source/WebCore/dom/DOMCoreException.cpp \
 	Source/WebCore/dom/DOMCoreException.h \
 	Source/WebCore/dom/DOMImplementation.cpp \
 	Source/WebCore/dom/DOMImplementation.h \
@@ -1216,6 +1217,7 @@ webcore_sources += \
 	Source/WebCore/dom/EventDispatchMediator.h \
 	Source/WebCore/dom/EventDispatcher.cpp \
 	Source/WebCore/dom/EventDispatcher.h \
+	Source/WebCore/dom/EventException.cpp \
 	Source/WebCore/dom/EventException.h \
 	Source/WebCore/dom/EventFactory.h \
 	Source/WebCore/dom/EventListener.h \
@@ -1300,6 +1302,7 @@ webcore_sources += \
 	Source/WebCore/dom/QualifiedName.h \
 	Source/WebCore/dom/RangeBoundaryPoint.h \
 	Source/WebCore/dom/Range.cpp \
+	Source/WebCore/dom/RangeException.cpp \
 	Source/WebCore/dom/RangeException.h \
 	Source/WebCore/dom/Range.h \
 	Source/WebCore/dom/RawDataDocumentParser.h \
@@ -1532,6 +1535,8 @@ webcore_sources += \
 	Source/WebCore/fileapi/FileError.h \
 	Source/WebCore/fileapi/FileException.h \
 	Source/WebCore/fileapi/File.h \
+	Source/WebCore/fileapi/FileException.cpp \
+	Source/WebCore/fileapi/FileException.h \
 	Source/WebCore/fileapi/FileList.cpp \
 	Source/WebCore/fileapi/FileList.h \
 	Source/WebCore/fileapi/FileReader.cpp \
@@ -1562,6 +1567,7 @@ webcore_sources += \
 	Source/WebCore/fileapi/LocalFileSystem.h \
 	Source/WebCore/fileapi/MetadataCallback.h \
 	Source/WebCore/fileapi/Metadata.h \
+	Source/WebCore/fileapi/OperationNotAllowedException.cpp \
 	Source/WebCore/fileapi/OperationNotAllowedException.h \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
@@ -3394,6 +3400,7 @@ webcore_sources += \
 	Source/WebCore/storage/IDBDatabaseCallbacksImpl.h \
 	Source/WebCore/storage/IDBDatabase.cpp \
 	Source/WebCore/storage/IDBDatabaseError.h \
+	Source/WebCore/storage/IDBDatabaseException.cpp \
 	Source/WebCore/storage/IDBDatabaseException.h \
 	Source/WebCore/storage/IDBDatabase.h \
 	Source/WebCore/storage/IDBEventDispatcher.cpp \
@@ -3443,6 +3450,7 @@ webcore_sources += \
 	Source/WebCore/storage/OriginUsageRecord.h \
 	Source/WebCore/storage/SQLCallbackWrapper.h \
 	Source/WebCore/storage/SQLError.h \
+	Source/WebCore/storage/SQLException.cpp \
 	Source/WebCore/storage/SQLException.h \
 	Source/WebCore/storage/SQLResultSet.cpp \
 	Source/WebCore/storage/SQLResultSet.h \
@@ -3618,6 +3626,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGElementRareData.h \
 	Source/WebCore/svg/SVGEllipseElement.cpp \
 	Source/WebCore/svg/SVGEllipseElement.h \
+	Source/WebCore/svg/SVGException.cpp \
 	Source/WebCore/svg/SVGException.h \
 	Source/WebCore/svg/SVGExternalResourcesRequired.cpp \
 	Source/WebCore/svg/SVGExternalResourcesRequired.h \
@@ -3942,6 +3951,7 @@ webcore_sources += \
 	Source/WebCore/xml/XMLErrors.cpp \
 	Source/WebCore/xml/XMLErrors.h \
 	Source/WebCore/xml/XMLHttpRequest.cpp \
+	Source/WebCore/xml/XMLHttpRequestException.cpp \
 	Source/WebCore/xml/XMLHttpRequestException.h \
 	Source/WebCore/xml/XMLHttpRequest.h \
 	Source/WebCore/xml/XMLHttpRequestProgressEvent.h \
@@ -3955,6 +3965,7 @@ webcore_sources += \
 	Source/WebCore/xml/XMLSerializer.h \
 	Source/WebCore/xml/XPathEvaluator.cpp \
 	Source/WebCore/xml/XPathEvaluator.h \
+	Source/WebCore/xml/XPathException.cpp \
 	Source/WebCore/xml/XPathException.h \
 	Source/WebCore/xml/XPathExpression.cpp \
 	Source/WebCore/xml/XPathExpression.h \

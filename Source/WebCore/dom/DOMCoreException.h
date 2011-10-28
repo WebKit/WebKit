@@ -40,6 +40,8 @@ public:
         return adoptRef(new DOMCoreException(description));
     }
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     DOMCoreException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

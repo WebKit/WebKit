@@ -42320,6 +42320,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XMLHttpRequestException.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XMLHttpRequestException.h"
 				>
 			</File>
@@ -42365,6 +42369,10 @@
 			</File>
 			<File
 				RelativePath="..\xml\XPathEvaluator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XPathException.cpp"
 				>
 			</File>
 			<File
@@ -44850,6 +44858,58 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DOMCoreException.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\dom\DOMImplementation.cpp"
 				>
 				<FileConfiguration
@@ -45478,7 +45538,59 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\EventDispatcMediator.cpp"
+				RelativePath="..\dom\EventDispatchMediator.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\EventException.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -47480,6 +47592,58 @@
 			<File
 				RelativePath="..\dom\RangeBoundaryPoint.h"
 				>
+			</File>
+			<File
+				RelativePath="..\dom\RangeException.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\RangeException.h"
@@ -52926,6 +53090,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileException.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileList.cpp"
 				>
 			</File>
@@ -53023,6 +53191,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileWriterSync.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\OperationNotAllowedException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\OperationNotAllowedException.h"
 				>
 			</File>
 			<File
@@ -67599,6 +67775,10 @@
 			</File>
 			<File
 				RelativePath="..\storage\SQLError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLException.cpp"
 				>
 			</File>
 			<File

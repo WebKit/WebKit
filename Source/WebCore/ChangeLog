@@ -1,3 +1,52 @@
+2011-10-27  Adam Barth  <abarth@webkit.org>
+
+        Move type-specific exception descriptions into the implementation files for each type
+        https://bugs.webkit.org/show_bug.cgi?id=71081
+
+        Reviewed by Eric Seidel.
+
+        There's no reason to centralize this information.  It belongs with each
+        exception type.  This patch is in preparation for autogenerating the central file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMCoreException.cpp: Added.
+        (WebCore::DOMCoreException::initializeDescription):
+        * dom/DOMCoreException.h:
+        * dom/EventException.cpp: Copied from Source/WebCore/xml/XMLHttpRequestException.h.
+        (WebCore::EventException::initializeDescription):
+        * dom/EventException.h:
+        * dom/ExceptionBase.h:
+        (WebCore::ExceptionBase::code):
+        (WebCore::ExceptionBase::name):
+        (WebCore::ExceptionBase::message):
+        (WebCore::ExceptionBase::description):
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/RangeException.cpp: Copied from Source/WebCore/xml/XPathException.h.
+        (WebCore::RangeException::initializeDescription):
+        * dom/RangeException.h:
+        * fileapi/FileException.cpp: Added.
+        (WebCore::FileException::initializeDescription):
+        * fileapi/FileException.h:
+        * fileapi/OperationNotAllowedException.cpp: Copied from Source/WebCore/xml/XMLHttpRequestException.h.
+        (WebCore::OperationNotAllowedException::initializeDescription):
+        * fileapi/OperationNotAllowedException.h:
+        * storage/IDBDatabaseException.cpp: Added.
+        (WebCore::IDBDatabaseException::initializeDescription):
+        * storage/IDBDatabaseException.h:
+        * storage/SQLException.cpp: Added.
+        (WebCore::SQLException::initializeDescription):
+        * storage/SQLException.h:
+        * svg/SVGException.cpp: Copied from Source/WebCore/dom/EventException.h.
+        (WebCore::SVGException::initializeDescription):
+        * svg/SVGException.h:
+        * xml/XMLHttpRequestException.cpp: Copied from Source/WebCore/xml/XMLHttpRequestException.h.
+        (WebCore::XMLHttpRequestException::initializeDescription):
+        * xml/XMLHttpRequestException.h:
+        * xml/XPathException.cpp: Copied from Source/WebCore/xml/XPathException.h.
+        (WebCore::XPathException::initializeDescription):
+        * xml/XPathException.h:
+
 2011-10-27  Kentaro Hara  <haraken@chromium.org>
 
         Generate WebKitCSSMatrix constructor for JSC by [Constructor] IDL

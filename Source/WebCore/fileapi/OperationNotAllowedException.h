@@ -51,6 +51,8 @@ public:
         NOT_ALLOWED_ERR = OperationNotAllowedExceptionOffset + 1,
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     OperationNotAllowedException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

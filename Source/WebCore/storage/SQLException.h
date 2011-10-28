@@ -58,6 +58,8 @@ public:
         TIMEOUT_ERR = SQLExceptionOffset + 7
     };
 
+    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+
 private:
     SQLException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
