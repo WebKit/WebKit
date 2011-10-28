@@ -143,7 +143,7 @@ static void webkit_web_data_source_init(WebKitWebDataSource* webDataSource)
  * Creates a new #WebKitWebDataSource instance. The URL of the
  * #WebKitWebDataSource will be set to "about:blank".
  *
- * Return: a new #WebKitWebDataSource.
+ * Returns: a new #WebKitWebDataSource.
  *
  * Since: 1.1.14
  */

@@ -803,6 +803,8 @@ static void end_print_callback(GtkPrintOperation* op, GtkPrintContext* context, 
  * gtk_print_operation_run() for printing the contents of the
  * #WebKitWebFrame.
  *
+ * Returns: The #GtkPrintOperationResult specifying the result of this operation.
+ *
  * Since: 1.1.5
  */
 GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPrintOperation* operation, GtkPrintOperationAction action, GError** error)
@@ -877,6 +879,8 @@ gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame)
  * @frame: a #WebKitWebView
  *
  * Determines the current status of the load.
+ *
+ * Returns: The #WebKitLoadStatus specifying the status of the current load.
  *
  * Since: 1.1.7
  */

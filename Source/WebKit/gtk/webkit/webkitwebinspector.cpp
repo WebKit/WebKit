@@ -423,6 +423,7 @@ void webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKit
 
 /**
  * webkit_web_inspector_get_web_view:
+ * @web_inspector: a #WebKitWebInspector
  *
  * Obtains the #WebKitWebView that is used to render the
  * inspector. The #WebKitWebView instance is created by the
@@ -455,6 +456,7 @@ void webkit_web_inspector_set_inspected_uri(WebKitWebInspector* web_inspector, c
 
 /**
  * webkit_web_inspector_get_inspected_uri:
+ * @web_inspector: a #WebKitWebInspector
  *
  * Obtains the URI that is currently being inspected.
  *
@@ -480,7 +482,7 @@ webkit_web_inspector_set_inspector_client(WebKitWebInspector* web_inspector, Web
 
 /**
  * webkit_web_inspector_show:
- * @webInspector: the #WebKitWebInspector that will be shown
+ * @web_inspector: the #WebKitWebInspector that will be shown
  *
  * Causes the Web Inspector to be shown.
  *
@@ -558,7 +560,7 @@ void webkit_web_inspector_inspect_coordinates(WebKitWebInspector* webInspector, 
 
 /**
  * webkit_web_inspector_close:
- * @webInspector: the #WebKitWebInspector that will be closed
+ * @web_inspector: the #WebKitWebInspector that will be closed
  *
  * Causes the Web Inspector to be closed.
  *

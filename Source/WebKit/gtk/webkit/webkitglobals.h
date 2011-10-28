@@ -29,7 +29,7 @@
 
 G_BEGIN_DECLS
 
-/*
+/**
  * WebKitCacheModel:
  * @WEBKIT_CACHE_MODEL_DEFAULT: The default cache model. This is
  *   WEBKIT_CACHE_MODEL_WEB_BROWSER.
@@ -44,7 +44,8 @@ G_BEGIN_DECLS
  *   by caching a very large number of resources and previously viewed content.
  *
  * Enum values used for determining the webview cache model.
- */
+ *
+ **/
 typedef enum {
     WEBKIT_CACHE_MODEL_DEFAULT,
     WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,

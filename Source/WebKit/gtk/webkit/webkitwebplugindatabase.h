@@ -48,16 +48,17 @@ WEBKIT_API GType
 webkit_web_plugin_database_get_type                (void) G_GNUC_CONST;
 
 WEBKIT_API void
-webkit_web_plugin_database_plugins_list_free       (GSList*);
+webkit_web_plugin_database_plugins_list_free       (GSList                  *list);
 
 WEBKIT_API GSList*
-webkit_web_plugin_database_get_plugins             (WebKitWebPluginDatabase*);
+webkit_web_plugin_database_get_plugins             (WebKitWebPluginDatabase *database);
 
 WEBKIT_API WebKitWebPlugin*
-webkit_web_plugin_database_get_plugin_for_mimetype (WebKitWebPluginDatabase*, const char *);
+webkit_web_plugin_database_get_plugin_for_mimetype (WebKitWebPluginDatabase *database,
+                                                    const char              *mime_type);
 
 WEBKIT_API void
-webkit_web_plugin_database_refresh                 (WebKitWebPluginDatabase*);
+webkit_web_plugin_database_refresh                 (WebKitWebPluginDatabase *database);
 
 G_END_DECLS
 

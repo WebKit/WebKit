@@ -41,13 +41,28 @@ struct _WebKitSpellCheckerInterface {
     void   (*ignore_word)                                     (WebKitSpellChecker* checker, const char* word);
 };
 
-WEBKIT_API GType   webkit_spell_checker_get_type(void) G_GNUC_CONST;
-WEBKIT_API void    webkit_spell_checker_check_spelling_of_string(WebKitSpellChecker* checker, const char* string, int* misspelling_location, int* misspelling_length);
-WEBKIT_API char**  webkit_spell_checker_get_guesses_for_word(WebKitSpellChecker* checker, const char* word, const char* context);
-WEBKIT_API void    webkit_spell_checker_update_spell_checking_languages(WebKitSpellChecker* checker, const char* languages);
-WEBKIT_API char*   webkit_spell_checker_get_autocorrect_suggestions_for_misspelled_word(WebKitSpellChecker* checker, const char* word);
-WEBKIT_API void    webkit_spell_checker_learn_word(WebKitSpellChecker* checker, const char* word);
-WEBKIT_API void    webkit_spell_checker_ignore_word(WebKitSpellChecker* checker, const char* word);
+WEBKIT_API GType   webkit_spell_checker_get_type                                        (void) G_GNUC_CONST;
+
+WEBKIT_API void    webkit_spell_checker_check_spelling_of_string                        (WebKitSpellChecker *checker,
+                                                                                         const char         *string,
+                                                                                         int                *misspelling_location,
+                                                                                         int                *misspelling_length);
+
+WEBKIT_API char**  webkit_spell_checker_get_guesses_for_word                            (WebKitSpellChecker *checker,
+                                                                                         const char         *word,
+                                                                                         const char         *context);
+
+WEBKIT_API void    webkit_spell_checker_update_spell_checking_languages                 (WebKitSpellChecker *checker,
+                                                                                         const char         *languages);
+
+WEBKIT_API char*   webkit_spell_checker_get_autocorrect_suggestions_for_misspelled_word (WebKitSpellChecker *checker,
+                                                                                         const char         *word);
+
+WEBKIT_API void    webkit_spell_checker_learn_word                                      (WebKitSpellChecker *checker,
+                                                                                         const char         *word);
+
+WEBKIT_API void    webkit_spell_checker_ignore_word                                     (WebKitSpellChecker *checker,
+                                                                                         const char         *word);
 
 G_END_DECLS
 

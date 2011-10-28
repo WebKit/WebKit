@@ -112,7 +112,7 @@ GSList* webkit_web_plugin_database_get_plugins(WebKitWebPluginDatabase* database
 /**
  * webkit_web_plugin_database_get_plugin_for_mimetype:
  * @database: a #WebKitWebPluginDatabase
- * @mimeType: a mime type
+ * @mime_type: a mime type
  *
  * Returns the #WebKitWebPlugin that is handling @mimeType in the
  * @database, or %NULL if there's none doing so.

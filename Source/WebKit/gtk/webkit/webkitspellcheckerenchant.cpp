@@ -27,6 +27,14 @@
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
+/**
+ * SECTION:webkitspellcheckerenchant
+ * @short_description: the default spell checking implementation for WebKitGTK+.
+ *
+ * #WebKitSpellCheckerEnchant is the default spell checking implementation for
+ * WebKitGTK+. It uses the Enchant dictionaries installed on the system to
+ * correct spelling.
+ */
 static EnchantBroker* broker = 0;
 
 struct _WebKitSpellCheckerEnchantPrivate {

@@ -57,8 +57,10 @@ struct _WebKitWebBackForwardListClass {
 WEBKIT_API GType
 webkit_web_back_forward_list_get_type (void);
 
+#if !defined(WEBKIT_DISABLE_DEPRECATED)
 WEBKIT_API WebKitWebBackForwardList *
 webkit_web_back_forward_list_new_with_web_view           (WebKitWebView *web_view);
+#endif
 
 WEBKIT_API void
 webkit_web_back_forward_list_go_forward                  (WebKitWebBackForwardList *web_back_forward_list);

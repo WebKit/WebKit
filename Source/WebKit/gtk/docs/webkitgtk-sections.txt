@@ -15,6 +15,7 @@ WEBKIT_IS_WEB_SETTINGS_CLASS
 WEBKIT_WEB_SETTINGS_GET_CLASS
 <SUBSECTION Private>
 WebKitWebSettingsClass
+WebKitWebSettingsPrivate
 webkit_web_settings_get_type
 </SECTION>
 
@@ -115,8 +116,10 @@ WEBKIT_IS_WEB_FRAME_CLASS
 WEBKIT_WEB_FRAME_GET_CLASS
 <SUBSECTION Private>
 WebKitWebFramePrivate
-webkit_web_frame_get_type
 WebKitWebFrameClass
+webkit_web_frame_get_type
+webkit_web_frame_get_range_for_word_around_caret
+webkit_web_frame_replace_selection
 </SECTION>
 
 <SECTION>
@@ -271,6 +274,7 @@ webkit_web_inspector_get_web_view
 webkit_web_inspector_inspect_coordinates
 webkit_web_inspector_show
 webkit_web_inspector_close
+webkit_web_inspector_inspect_node
 <SUBSECTION Standard>
 WEBKIT_WEB_INSPECTOR
 WEBKIT_IS_WEB_INSPECTOR
@@ -288,13 +292,11 @@ WebKitWebInspectorClass
 <FILE>webkitwebnavigationaction</FILE>
 <TITLE>WebKitWebNavigationAction</TITLE>
 WebKitWebNavigationAction
-WebKitWebNavigationReason
 webkit_web_navigation_action_get_button
 webkit_web_navigation_action_get_modifier_state
 webkit_web_navigation_action_get_original_uri
 webkit_web_navigation_action_get_reason
 webkit_web_navigation_action_get_target_frame
-webkit_web_navigation_action_get_type
 webkit_web_navigation_action_set_original_uri
 webkit_web_navigation_action_set_reason
 <SUBSECTION Standard>
@@ -305,8 +307,10 @@ WEBKIT_WEB_NAVIGATION_ACTION
 WEBKIT_WEB_NAVIGATION_ACTION_CLASS
 WEBKIT_WEB_NAVIGATION_ACTION_GET_CLASS
 <SUBSECTION Private>
+WebKitWebNavigationReason
 WebKitWebNavigationActionClass
 WebKitWebNavigationActionPrivate
+webkit_web_navigation_action_get_type
 </SECTION>
 
 <SECTION>
@@ -314,7 +318,6 @@ WebKitWebNavigationActionPrivate
 <TITLE>WebKitWebPolicyDecision</TITLE>
 WebKitWebPolicyDecision
 webkit_web_policy_decision_download
-webkit_web_policy_decision_get_type
 webkit_web_policy_decision_ignore
 webkit_web_policy_decision_use
 <SUBSECTION Standard>
@@ -327,6 +330,7 @@ WEBKIT_WEB_POLICY_DECISION_GET_CLASS
 <SUBSECTION Private>
 WebKitWebPolicyDecisionClass
 WebKitWebPolicyDecisionPrivate
+webkit_web_policy_decision_get_type
 </SECTION>
 
 <SECTION>
@@ -335,7 +339,6 @@ WebKitWebPolicyDecisionPrivate
 WebKitGeolocationPolicyDecision
 webkit_geolocation_policy_allow
 webkit_geolocation_policy_deny
-webkit_geolocation_policy_decision_get_type
 <SUBSECTION Standard>
 WEBKIT_IS_GEOLOCATION_POLICY_DECISION
 WEBKIT_IS_GEOLOCATION_POLICY_DECISION_CLASS
@@ -346,6 +349,7 @@ WEBKIT_GEOLOCATION_POLICY_DECISION_GET_CLASS
 <SUBSECTION Private>
 WebKitGeolocationPolicyDecisionClass
 WebKitGeolocationPolicyDecisionPrivate
+webkit_geolocation_policy_decision_get_type
 </SECTION>
 
 <SECTION>
@@ -364,9 +368,9 @@ WEBKIT_NETWORK_REQUEST_CLASS
 WEBKIT_IS_NETWORK_REQUEST_CLASS
 WEBKIT_NETWORK_REQUEST_GET_CLASS
 <SUBSECTION Private>
-webkit_network_request_get_type
 WebKitNetworkRequestPrivate
 WebKitNetworkRequestClass
+webkit_network_request_get_type
 </SECTION>
 
 <SECTION>
@@ -384,10 +388,10 @@ WEBKIT_NETWORK_RESPONSE_CLASS
 WEBKIT_IS_NETWORK_RESPONSE_CLASS
 WEBKIT_NETWORK_RESPONSE_GET_CLASS
 <SUBSECTION Private>
-webkit_network_response_get_type
-webkit_network_response_new
 WebKitNetworkResponsePrivate
 WebKitNetworkResponseClass
+webkit_network_response_new
+webkit_network_response_get_type
 </SECTION>
 
 <SECTION>
@@ -419,6 +423,7 @@ webkit_web_view_get_encoding
 webkit_web_view_get_focused_frame
 webkit_web_view_get_full_content_zoom
 webkit_web_view_get_hit_test_result
+webkit_web_view_get_icon_pixbuf
 webkit_web_view_get_icon_uri
 webkit_web_view_get_inspector
 webkit_web_view_get_load_status
@@ -479,6 +484,8 @@ WEBKIT_WEB_VIEW_GET_CLASS
 webkit_web_view_get_type
 WebKitWebViewPrivate
 WebKitWebViewClass
+WebKitInsertAction
+WebKitSelectionAffinity
 </SECTION>
 
 <SECTION>
@@ -510,10 +517,19 @@ webkit_get_web_plugin_database
 webkit_remove_all_web_databases
 webkit_set_default_web_database_quota
 webkit_set_web_database_directory_path
+webkit_get_icon_database
+webkit_get_text_checker
+webkit_set_text_checker
+<SUBSECTION ApplicationCache>
+webkit_application_cache_get_database_directory_path
+webkit_application_cache_get_maximum_size
+webkit_application_cache_set_maximum_size
 <SUBSECTION CacheModel>
 WebKitCacheModel
 webkit_get_cache_model
 webkit_set_cache_model
+<SUBSECTION Private>
+WEBKITGTK_API_VERSION
 </SECTION>
 
 <SECTION>
@@ -524,7 +540,6 @@ webkit_web_resource_get_data
 webkit_web_resource_get_encoding
 webkit_web_resource_get_frame_name
 webkit_web_resource_get_mime_type
-webkit_web_resource_get_type
 webkit_web_resource_get_uri
 webkit_web_resource_new
 <SUBSECTION Standard>
@@ -535,6 +550,7 @@ WEBKIT_WEB_RESOURCE_CLASS
 WEBKIT_IS_WEB_RESOURCE_CLASS
 WEBKIT_WEB_RESOURCE_GET_CLASS
 <SUBSECTION Private>
+webkit_web_resource_get_type
 WebKitWebResourcePrivate
 WebKitWebResourceClass
 </SECTION>
@@ -576,9 +592,9 @@ WEBKIT_WEB_PLUGIN
 WEBKIT_WEB_PLUGIN_CLASS
 WEBKIT_WEB_PLUGIN_GET_CLASS
 <SUBSECTION Private>
-webkit_web_plugin_get_type
 WebKitWebPluginClass
 WebKitWebPluginPrivate
+webkit_web_plugin_get_type
 </SECTION>
 
 <SECTION>
@@ -603,6 +619,43 @@ webkit_web_plugin_database_get_type
 </SECTION>
 
 <SECTION>
+<FILE>webkitspellchecker</FILE>
+<TITLE>WebKitSpellChecker</TITLE>
+WebKitSpellChecker
+webkit_spell_checker_check_spelling_of_string
+webkit_spell_checker_get_guesses_for_word
+webkit_spell_checker_update_spell_checking_languages
+webkit_spell_checker_get_autocorrect_suggestions_for_misspelled_word
+webkit_spell_checker_learn_word
+webkit_spell_checker_ignore_word
+<SUBSECTION Standard>
+WEBKIT_TYPE_SPELL_CHECKER
+WEBKIT_SPELL_CHECKER
+WEBKIT_IS_SPELL_CHECKER
+WEBKIT_SPELL_CHECKER_GET_IFACE
+<SUBSECTION Private>
+WebKitSpellCheckerInterface
+webkit_spell_checker_get_type
+</SECTION>
+
+<SECTION>
+<FILE>webkitspellcheckerenchant</FILE>
+<TITLE>WebKitSpellCheckerEnchant</TITLE>
+<SUBSECTION Standard>
+WEBKIT_IS_SPELL_CHECKER_ENCHANT
+WEBKIT_IS_SPELL_CHECKER_ENCHANT_CLASS
+WEBKIT_SPELL_CHECKER_ENCHANT
+WEBKIT_SPELL_CHECKER_ENCHANT_CLASS
+WEBKIT_SPELL_CHECKER_ENCHANT_GET_CLASS
+WEBKIT_TYPE_SPELL_CHECKER_ENCHANT
+<SUBSECTION Private>
+WebKitSpellCheckerEnchant
+WebKitSpellCheckerEnchantClass
+WebKitSpellCheckerEnchantPrivate
+webkit_spell_checker_enchant_get_type
+</SECTION>
+
+<SECTION>
 <FILE>webkiterror</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR
@@ -616,8 +669,31 @@ webkit_policy_error_quark
 </SECTION>
 
 <SECTION>
+<FILE>webkiticondatabase</FILE>
+<TITLE>WebKitIconDatabase</TITLE>
+WebKitIconDatabase
+webkit_icon_database_clear
+webkit_icon_database_get_icon_pixbuf
+webkit_icon_database_get_icon_uri
+webkit_icon_database_get_path
+webkit_icon_database_get_type
+webkit_icon_database_set_path
+<SUBSECTION Standard>
+WEBKIT_TYPE_ICON_DATABASE
+WEBKIT_ICON_DATABASE
+WEBKIT_ICON_DATABASE_CLASS
+WEBKIT_ICON_DATABASE_GET_CLASS
+WEBKIT_IS_ICON_DATABASE
+WEBKIT_IS_ICON_DATABASE_CLASS
+<SUBSECTION Private>
+WebKitIconDatabaseClass
+WebKitIconDatabasePrivate
+</SECTION>
+
+<SECTION>
 <FILE>webkitdefines</FILE>
 WEBKIT_API
+WEBKITGTK_API_VERSION
 WEBKIT_OBSOLETE_API
 WEBKIT_CHECK_VERSION
 WEBKIT_MAJOR_VERSION
@@ -627,4 +703,8 @@ webkit_check_version
 webkit_major_version
 webkit_micro_version
 webkit_minor_version
+<SUBSECTION Private>
+LIBSOUP_I_HAVE_READ_BUG_594377_AND_KNOW_SOUP_PASSWORD_MANAGER_MIGHT_GO_AWAY
+WEBKIT_USER_AGENT_MAJOR_VERSION
+WEBKIT_USER_AGENT_MINOR_VERSION
 </SECTION>

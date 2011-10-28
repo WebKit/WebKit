@@ -56,22 +56,25 @@ WEBKIT_API GType
 webkit_web_inspector_get_type (void);
 
 WEBKIT_API WebKitWebView*
-webkit_web_inspector_get_web_view(WebKitWebInspector* web_inspector);
+webkit_web_inspector_get_web_view        (WebKitWebInspector *web_inspector);
 
 WEBKIT_API const gchar*
-webkit_web_inspector_get_inspected_uri(WebKitWebInspector* web_inspector);
+webkit_web_inspector_get_inspected_uri   (WebKitWebInspector *web_inspector);
 
 WEBKIT_API void
-webkit_web_inspector_inspect_node(WebKitWebInspector* webInspector, WebKitDOMNode* node);
+webkit_web_inspector_inspect_node        (WebKitWebInspector *web_inspector,
+                                          WebKitDOMNode      *node);
 
 WEBKIT_API void
-webkit_web_inspector_inspect_coordinates(WebKitWebInspector* web_inspector, gdouble x, gdouble y);
+webkit_web_inspector_inspect_coordinates (WebKitWebInspector *web_inspector,
+                                          gdouble            x,
+                                          gdouble            y);
 
 WEBKIT_API void
-webkit_web_inspector_show(WebKitWebInspector* webInspector);
+webkit_web_inspector_show                (WebKitWebInspector *web_inspector);
 
 WEBKIT_API void
-webkit_web_inspector_close(WebKitWebInspector* webInspector);
+webkit_web_inspector_close               (WebKitWebInspector *web_inspector);
 G_END_DECLS
 
 #endif /* webkitwebinspector_h */

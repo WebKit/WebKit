@@ -68,22 +68,23 @@ WEBKIT_API GType
 webkit_web_plugin_get_type        (void) G_GNUC_CONST;
 
 WEBKIT_API const char*
-webkit_web_plugin_get_name        (WebKitWebPlugin*);
+webkit_web_plugin_get_name        (WebKitWebPlugin *plugin);
 
 WEBKIT_API const char*
-webkit_web_plugin_get_description (WebKitWebPlugin*);
+webkit_web_plugin_get_description (WebKitWebPlugin *plugin);
 
 WEBKIT_API const char*
-webkit_web_plugin_get_path        (WebKitWebPlugin*);
+webkit_web_plugin_get_path        (WebKitWebPlugin *plugin);
 
 WEBKIT_API GSList*
-webkit_web_plugin_get_mimetypes   (WebKitWebPlugin*);
+webkit_web_plugin_get_mimetypes   (WebKitWebPlugin *plugin);
 
 WEBKIT_API void
-webkit_web_plugin_set_enabled     (WebKitWebPlugin*, gboolean);
+webkit_web_plugin_set_enabled     (WebKitWebPlugin *plugin,
+                                   gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_web_plugin_get_enabled     (WebKitWebPlugin*);
+webkit_web_plugin_get_enabled     (WebKitWebPlugin *plugin);
 
 G_END_DECLS
 

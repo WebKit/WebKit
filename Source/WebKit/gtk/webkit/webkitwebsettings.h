@@ -34,6 +34,15 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_SETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_SETTINGS))
 #define WEBKIT_WEB_SETTINGS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsClass))
 
+/**
+ * WebKitEditingBehavior:
+ * @WEBKIT_EDITING_BEHAVIOR_MAC: Editing behavior mimicking OS X user interfaces.
+ * @WEBKIT_EDITING_BEHAVIOR_WINDOWS: Editing behavior mimicking Windows user interfaces.
+ * @WEBKIT_EDITING_BEHAVIOR_UNIX: Editing behavior mimicking free desktop user interfaces.
+ *
+ * Enum values used for determining the editing behavior of editable elements.
+ *
+ **/
 typedef enum {
     WEBKIT_EDITING_BEHAVIOR_MAC,
     WEBKIT_EDITING_BEHAVIOR_WINDOWS,

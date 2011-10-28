@@ -1,3 +1,29 @@
+2011-10-27  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove most of the documentation errors from WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=70670
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fix most of the documentation errors for WebKit and make many
+        missing symbols show up in the documentation.
+
+        * webkit/webkitglobals.h: Doc fixes.
+        * webkit/webkitspellchecker.h: Ditto.
+        * webkit/webkitspellcheckerenchant.cpp: Ditto.
+        * webkit/webkitwebbackforwardlist.h: Ditto.
+        * webkit/webkitwebdatasource.cpp: Ditto.
+        * webkit/webkitwebframe.cpp: Ditto.
+        * webkit/webkitwebinspector.cpp: Ditto.
+        * webkit/webkitwebinspector.h: Ditto.
+        * webkit/webkitwebplugin.h: Ditto.
+        * webkit/webkitwebplugindatabase.cpp: Ditto.
+        * webkit/webkitwebplugindatabase.h: Ditto.
+        * webkit/webkitwebsettings.h: Ditto.
+        * webkit/webkitwebview.cpp: Ditto.
+        (webkit_web_view_class_init): Ditto.
+        * webkit/webkitwebview.h: Ditto.
+
 2011-10-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] WebAudio AudioFileReader implementation
