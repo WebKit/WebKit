@@ -1,3 +1,15 @@
+2011-10-27  Arthur Hsu  <arthurhsu@chromium.org>
+
+        Reland patch ensure font load before calling Skia during printing
+        https://bugs.webkit.org/show_bug.cgi?id=70390
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2011-10-27  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Qt build.

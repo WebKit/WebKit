@@ -33,9 +33,11 @@
 
 #include "AffineTransform.h"
 #include "PlatformContextSkia.h"
+#include "PlatformSupport.h"
 #include "Gradient.h"
 #include "Pattern.h"
 #include "SkCanvas.h"
+#include "SkDevice.h"
 #include "SkPaint.h"
 #include "SkShader.h"
 #include "SkTemplates.h"
@@ -236,6 +238,9 @@ void paintSkiaText(GraphicsContext* context,
     PlatformContextSkia* platformContext = context->platformContext();
     SkCanvas* canvas = platformContext->canvas();
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
+    // Ensure font load for printing, because PDF device needs it.
+    if (canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability)
+        PlatformSupport::ensureFontLoaded(hfont);
 
     // Filling (if necessary). This is the common case.
     SkPaint paint;
