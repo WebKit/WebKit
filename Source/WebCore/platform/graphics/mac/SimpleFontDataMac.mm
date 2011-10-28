@@ -402,7 +402,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     if (platformData().orientation() == Horizontal || m_isBrokenIdeographFallback) {
         NSFont *font = platformData().font();
         if (font && platformData().isColorBitmapFont())
-            advance = [font advancementForGlyph:glyph];
+            advance = NSSizeToCGSize([font advancementForGlyph:glyph]);
         else {
             float pointSize = platformData().m_size;
             CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
