@@ -376,6 +376,7 @@ public:
     bool isStackingContext() const { return !hasAutoZIndex() || renderer()->isRenderView(); }
 
     void dirtyZOrderLists();
+    void dirtyZOrderListsIncludingDescendants();
     void dirtyStackingContextZOrderLists();
     void updateZOrderLists();
     Vector<RenderLayer*>* posZOrderList() const { return m_posZOrderList; }
@@ -540,6 +541,8 @@ private:
     void setParent(RenderLayer* parent);
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
+    
+    void dirtyZOrderListsInternal();
 
     LayoutPoint renderBoxLocation() const { return renderer()->isBox() ? toRenderBox(renderer())->location() : LayoutPoint(); }
     LayoutUnit renderBoxX() const { return renderBoxLocation().x(); }

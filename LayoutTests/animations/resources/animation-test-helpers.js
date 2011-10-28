@@ -33,6 +33,9 @@ Function parameters:
 
 */
 
+const doPixelTest = true;
+const dontDoPixelTest = false;
+
 function isCloseEnough(actual, desired, tolerance)
 {
     var diff = Math.abs(actual - desired);
@@ -140,6 +143,20 @@ function checkExpectedValue(expected, index)
         }
         else
             pass = isCloseEnough(computedValue, expectedValue, tolerance);
+    } else if (property == "visibility") {
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+
+        computedValue = window.getComputedStyle(element).visibility;
+        if (compareElements) {
+            computedValue2 = window.getComputedStyle(document.getElementById(elementId2)).visibility;
+            pass = computedValue == computedValue2;
+        }
+        else
+            pass = computedValue == expectedValue;
     } else {
         var element;
         if (iframeId)

@@ -1,0 +1,3 @@
+PASS - "visibility" property for "box" element at 0.75s saw something close to: visible
+PASS - "webkitTransform.4" property for "box" element at 0.75s saw something close to: 375
+

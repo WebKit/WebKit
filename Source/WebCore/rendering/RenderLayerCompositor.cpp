@@ -124,6 +124,8 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
         
         if (m_compositing) {
             ensureRootLayer();
+            // Compositing affects whether visibility:hidden layers are included in z-order lists, so we have to dirty the lists here.
+            rootRenderLayer()->dirtyZOrderListsIncludingDescendants();
             notifyIFramesOfCompositingChange();
         } else
             destroyRootLayer();
@@ -1123,7 +1125,6 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
         }
     }
 }
-
 
 void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const LayoutRect& absRect)
 {

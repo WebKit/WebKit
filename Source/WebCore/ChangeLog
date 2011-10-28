@@ -1,3 +1,28 @@
+2011-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        If visibility changes while an accelerated animation is running, element jumps around
+        https://bugs.webkit.org/show_bug.cgi?id=29984
+
+        Reviewed by Chris Marrin.
+        
+        Compositing now affects whether RenderLayers for visibility:hidden elements
+        are included in z-order lists. So we have to dirty those lists when we enter
+        compopsiting mode.
+
+        Test: compositing/visibility/animation-visibility.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateVisibilityStatus): Removed trailing whitespace.
+        (WebCore::RenderLayer::dirtyZOrderLists): Call dirtyZOrderListsInternal(), which doesn't have
+        to ping the compositor.
+        (WebCore::RenderLayer::dirtyZOrderListsInternal):
+        (WebCore::RenderLayer::dirtyZOrderListsIncludingDescendants): Recursively dirty z-order
+        lists.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode): When going into compositing mode,
+        dirty all z-order lists.
+
 2011-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Implement CSS3 Images cross-fade() image function
