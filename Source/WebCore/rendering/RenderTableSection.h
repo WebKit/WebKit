@@ -92,7 +92,7 @@ public:
     }
 
     void appendColumn(int pos);
-    void splitColumn(int pos, int first);
+    void splitColumn(unsigned pos, int first);
 
     LayoutUnit calcOuterBorderBefore() const;
     LayoutUnit calcOuterBorderAfter() const;
@@ -105,8 +105,8 @@ public:
     LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
     LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
 
-    int numRows() const { return m_grid.size(); }
-    int numColumns() const;
+    unsigned numRows() const { return m_grid.size(); }
+    unsigned numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded()
     {
@@ -144,7 +144,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    bool ensureRows(int);
+    bool ensureRows(unsigned);
     void clearGrid();
 
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
@@ -155,8 +155,8 @@ private:
     Vector<LayoutUnit> m_rowPos;
 
     // the current insertion position
-    int m_cCol;
-    int m_cRow;
+    unsigned m_cCol;
+    unsigned m_cRow;
 
     LayoutUnit m_outerBorderStart;
     LayoutUnit m_outerBorderEnd;

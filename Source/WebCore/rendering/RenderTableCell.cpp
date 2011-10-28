@@ -43,8 +43,8 @@ using namespace HTMLNames;
 
 RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
-    , m_row(-1)
-    , m_column(-1)
+    , m_row(unsetRowIndex)
+    , m_column(unsetColumnIndex)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
     , m_cellWidthChanged(false)

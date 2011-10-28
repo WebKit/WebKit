@@ -1,3 +1,85 @@
+2011-10-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableCell m_row and m_column should not be signed values
+        https://bugs.webkit.org/show_bug.cgi?id=70369
+
+        Reviewed by Darin Adler.
+
+        No new tests, refactoring only.
+
+        The gist of the change is to update row / column handling in the table's
+        rendering code to use unsigned values. Not all the code is switched over
+        to unsigned but this is a good start.
+
+        Using unsigned makes a lot more sense that allowing some negative indexes
+        to creep in the algorithms. Also it enables us to "free" the unused signed
+        bit on the 2 RenderTableCell fields that can be used to pack 2 bits in a
+        follow-up patch.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        Removed 2 casts to int as the left side now computes to an unsigned too.
+        Added some ASSERT to make sure we don't get negative values (colSpan / rowSpan
+        are always >= 1 by definition but better to be safe).
+
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * accessibility/AccessibilityTableColumn.h:
+        Switched m_columnIndex to unsigned to remove any signed / unsigned comparisons.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::calcBorderEnd):
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        (WebCore::RenderTable::cellBefore):
+        (WebCore::RenderTable::cellAfter):
+        Mostly mechanical changes to avoid signed / unsigned comparisons or casts.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::numEffCols):
+        (WebCore::RenderTable::colToEffCol):
+        Updated a couple of functions to use an unsigned.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::col):
+        (WebCore::RenderTableCell::setCol):
+        (WebCore::RenderTableCell::row):
+        (WebCore::RenderTableCell::setRow):
+        Updated after switching the fields to unsigned. Also added 2 constants
+        to cover the not-initialized-yet value for row and column indexes.
+        Note: we don't enforce that you can't reach those indexes but neither
+        did the previous code!
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        (WebCore::RenderTableSection::recalcCells):
+        (WebCore::RenderTableSection::clearGrid):
+        (WebCore::RenderTableSection::numColumns):
+        (WebCore::RenderTableSection::appendColumn):
+        (WebCore::RenderTableSection::splitColumn):
+        Lots of mechanical: signed -> unsigned changes. However we had
+        to change the logic a bit as it assumed that m_cRow started at
+        -1 and increased from there. The new meaning of m_cRow is the
+        number of rows seen and m_cRow - 1 is where to insert your new
+        cells.
+
+        (WebCore::RenderTableSection::addCell):
+        Checked the callers and all increase m_cRow before calling the function.
+        Added an ASSERT to catch up wrong usage in the future.
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::numRows): Switched to unsigned.
+
 2011-10-27  Dan Bernstein  <mitz@apple.com>
 
         Assertion failure (m_text) in RenderText::RenderText() at icanhascheezburger.com

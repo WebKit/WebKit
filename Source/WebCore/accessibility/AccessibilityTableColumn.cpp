@@ -122,7 +122,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     if (!section)
         return 0;
     
-    int numCols = section->numColumns();
+    unsigned numCols = section->numColumns();
     if (m_columnIndex >= numCols)
         return 0;
     

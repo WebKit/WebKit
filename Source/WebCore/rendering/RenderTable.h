@@ -146,18 +146,18 @@ public:
     // This function returns 0 if the table has no non-empty sections.
     RenderTableSection* topNonEmptySection() const;
 
-    void splitColumn(int pos, int firstSpan);
+    void splitColumn(unsigned position, int firstSpan);
     void appendColumn(int span);
-    int numEffCols() const { return m_columns.size(); }
+    unsigned numEffCols() const { return m_columns.size(); }
     int spanOfEffCol(int effCol) const { return m_columns[effCol].span; }
     
-    int colToEffCol(unsigned col) const
+    unsigned colToEffCol(unsigned column) const
     {
-        unsigned effCol = 0;
-        unsigned numCols = numEffCols();
-        for (unsigned c = 0; effCol < numCols && c + m_columns[effCol].span - 1 < col; ++effCol)
-            c += m_columns[effCol].span;
-        return effCol;
+        unsigned effColumn = 0;
+        unsigned numColumns = numEffCols();
+        for (unsigned c = 0; effColumn < numColumns && c + m_columns[effColumn].span - 1 < column; ++effColumn)
+            c += m_columns[effColumn].span;
+        return effColumn;
     }
     
     int effColToCol(int effCol) const

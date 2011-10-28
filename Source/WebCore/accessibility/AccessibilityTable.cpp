@@ -491,20 +491,22 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
             if (!cell) {
                 
                 // first try rows
-                for (int testRow = sectionSpecificRow-1; testRow >= 0; --testRow) {
+                for (int testRow = sectionSpecificRow - 1; testRow >= 0; --testRow) {
                     cell = tableSection->primaryCellAt(testRow, column);
                     // cell overlapped. use this one
-                    if (cell && ((cell->row() + (cell->rowSpan()-1)) >= (int)sectionSpecificRow))
+                    ASSERT(cell->rowSpan() >= 1);
+                    if (cell && ((cell->row() + (cell->rowSpan() - 1)) >= sectionSpecificRow))
                         break;
                     cell = 0;
                 }
                 
                 if (!cell) {
                     // try cols
-                    for (int testCol = column-1; testCol >= 0; --testCol) {
+                    for (int testCol = column - 1; testCol >= 0; --testCol) {
                         cell = tableSection->primaryCellAt(sectionSpecificRow, testCol);
                         // cell overlapped. use this one
-                        if (cell && ((cell->col() + (cell->colSpan()-1)) >= (int)column))
+                        ASSERT(cell->rowSpan() >= 1);
+                        if (cell && ((cell->col() + (cell->colSpan() - 1)) >= column))
                             break;
                         cell = 0;
                     }

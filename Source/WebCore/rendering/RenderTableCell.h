@@ -29,6 +29,11 @@
 
 namespace WebCore {
 
+// FIXME: It is possible for these indexes to be reached for a table big enough.
+// We would need to enforce a maximal index on both rows and columns.
+static const unsigned unsetColumnIndex = 0xFFFFFFFF;
+static const unsigned unsetRowIndex = 0xFFFFFFFF;
+
 class RenderTableCell : public RenderBlock {
 public:
     explicit RenderTableCell(Node*);
@@ -43,10 +48,19 @@ public:
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();
 
-    int col() const { return m_column; }
-    void setCol(int col) { m_column = col; }
-    int row() const { return m_row; }
-    void setRow(int row) { m_row = row; }
+    void setCol(unsigned column) { m_column = column; }
+    unsigned col() const
+    {
+        ASSERT(m_column != unsetColumnIndex);
+        return m_column;
+    }
+
+    void setRow(unsigned row) { m_row = row; }
+    unsigned row() const
+    {
+        ASSERT(m_row != unsetRowIndex);
+        return m_row;
+    }
 
     RenderTableSection* section() const { return toRenderTableSection(parent()->parent()); }
     RenderTable* table() const { return toRenderTable(parent()->parent()->parent()); }
@@ -145,8 +159,8 @@ private:
 
     void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 
-    int m_row;
-    int m_column;
+    unsigned m_row;
+    unsigned m_column;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
 

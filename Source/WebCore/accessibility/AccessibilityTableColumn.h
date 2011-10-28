@@ -61,7 +61,7 @@ public:
     virtual LayoutRect elementRect() const;
     
 private:    
-    int m_columnIndex;
+    unsigned m_columnIndex;
     LayoutRect m_columnRect;
     
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);

@@ -634,21 +634,21 @@ RenderTableSection* RenderTable::topNonEmptySection() const
     return section;
 }
 
-void RenderTable::splitColumn(int pos, int firstSpan)
+void RenderTable::splitColumn(unsigned position, int firstSpan)
 {
     // we need to add a new columnStruct
-    int oldSize = m_columns.size();
+    unsigned oldSize = m_columns.size();
     m_columns.grow(oldSize + 1);
-    int oldSpan = m_columns[pos].span;
+    int oldSpan = m_columns[position].span;
     ASSERT(oldSpan > firstSpan);
-    m_columns[pos].span = firstSpan;
-    memmove(m_columns.data() + pos + 1, m_columns.data() + pos, (oldSize - pos) * sizeof(ColumnStruct));
-    m_columns[pos + 1].span = oldSpan - firstSpan;
+    m_columns[position].span = firstSpan;
+    memmove(m_columns.data() + position + 1, m_columns.data() + position, (oldSize - position) * sizeof(ColumnStruct));
+    m_columns[position + 1].span = oldSpan - firstSpan;
 
     // change width of all rows.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableSection())
-            toRenderTableSection(child)->splitColumn(pos, firstSpan);
+            toRenderTableSection(child)->splitColumn(position, firstSpan);
     }
 
     m_columnPos.grow(numEffCols() + 1);
@@ -886,7 +886,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
         if (tb.style() > BHIDDEN)
             borderWidth = tb.width();
 
-        int endColumn = numEffCols() - 1;
+        unsigned endColumn = numEffCols() - 1;
         if (RenderTableCol* colGroup = colElement(endColumn)) {
             const BorderValue& gb = colGroup->style()->borderEnd();
             if (gb.style() == BHIDDEN)
@@ -1103,7 +1103,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
 
     // Look up the cell in the section's grid, which requires effective col index
     if (section) {
-        int effCol = colToEffCol(cell->col());
+        unsigned effCol = colToEffCol(cell->col());
         RenderTableSection::CellStruct& aboveCell = section->cellAt(rAbove, effCol);
         return aboveCell.primaryCell();
     } else
@@ -1115,9 +1115,9 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
     recalcSectionsIfNeeded();
 
     // Find the section and row to look in
-    int r = cell->row() + cell->rowSpan() - 1;
+    unsigned r = cell->row() + cell->rowSpan() - 1;
     RenderTableSection* section = 0;
-    int rBelow = 0;
+    unsigned rBelow = 0;
     if (r < cell->section()->numRows() - 1) {
         // The cell is not in the last row, so use the next row in the section.
         section = cell->section();
@@ -1130,7 +1130,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
 
     // Look up the cell in the section's grid, which requires effective col index
     if (section) {
-        int effCol = colToEffCol(cell->col());
+        unsigned effCol = colToEffCol(cell->col());
         RenderTableSection::CellStruct& belowCell = section->cellAt(rBelow, effCol);
         return belowCell.primaryCell();
     } else
@@ -1142,7 +1142,7 @@ RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
     recalcSectionsIfNeeded();
 
     RenderTableSection* section = cell->section();
-    int effCol = colToEffCol(cell->col());
+    unsigned effCol = colToEffCol(cell->col());
     if (!effCol)
         return 0;
     
@@ -1155,7 +1155,7 @@ RenderTableCell* RenderTable::cellAfter(const RenderTableCell* cell) const
 {
     recalcSectionsIfNeeded();
 
-    int effCol = colToEffCol(cell->col() + cell->colSpan());
+    unsigned effCol = colToEffCol(cell->col() + cell->colSpan());
     if (effCol >= numEffCols())
         return 0;
     return cell->section()->primaryCellAt(cell->row(), effCol);
