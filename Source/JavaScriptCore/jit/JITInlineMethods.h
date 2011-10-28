@@ -88,8 +88,17 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
     failures.append(branchTest32(Zero, dst));
+    loadPtr(MacroAssembler::Address(dst, ThunkHelpers::stringImplFlagsOffset()), regT1);
     loadPtr(MacroAssembler::Address(dst, ThunkHelpers::stringImplDataOffset()), dst);
+
+    JumpList is16Bit;
+    JumpList cont8Bit;
+    is16Bit.append(branchTest32(Zero, regT1, TrustedImm32(ThunkHelpers::stringImpl8BitFlag())));
+    load8(MacroAssembler::Address(dst, 0), dst);
+    cont8Bit.append(jump());
+    is16Bit.link(this);
     load16(MacroAssembler::Address(dst, 0), dst);
+    cont8Bit.link(this);
 }
 
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)

@@ -1,3 +1,32 @@
+2011-10-27  Michael Saboff  <msaboff@apple.com>
+
+        ENH: Add 8 bit string support to JSC JIT
+        https://bugs.webkit.org/show_bug.cgi?id=71073
+
+        Changed the JIT String character access generation to create code
+        to check the character size and load8() or load16() as approriate.
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movzbl_mr):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JSInterfaceJIT.h:
+        (JSC::ThunkHelpers::stringImplFlagsOffset):
+        (JSC::ThunkHelpers::stringImpl8BitFlag):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+
 2011-10-27  Filip Pizlo  <fpizlo@apple.com>
 
         If the bytecode generator emits code after the return in the first basic block,

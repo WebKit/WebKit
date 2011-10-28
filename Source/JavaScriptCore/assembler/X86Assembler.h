@@ -1231,6 +1231,11 @@ public:
         m_formatter.twoByteOp(OP2_MOVZX_GvEw, dst, base, index, scale, offset);
     }
 
+    void movzbl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, offset);
+    }
+    
     void movzbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, index, scale, offset);

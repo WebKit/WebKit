@@ -215,6 +215,8 @@ namespace JSC {
     };
 
     struct ThunkHelpers {
+        static unsigned stringImplFlagsOffset() { return StringImpl::flagsOffset(); }
+        static unsigned stringImpl8BitFlag() { return StringImpl::flagIs8Bit(); }
         static unsigned stringImplDataOffset() { return StringImpl::dataOffset(); }
         static unsigned jsStringLengthOffset() { return OBJECT_OFFSETOF(JSString, m_length); }
         static unsigned jsStringValueOffset() { return OBJECT_OFFSETOF(JSString, m_value); }

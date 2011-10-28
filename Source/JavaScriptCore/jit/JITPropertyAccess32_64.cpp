@@ -176,13 +176,23 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(JSGlobalData* globalData)
     jit.load32(Address(regT0, ThunkHelpers::jsStringLengthOffset()), regT1);
     jit.loadPtr(Address(regT0, ThunkHelpers::jsStringValueOffset()), regT0);
     failures.append(jit.branchTest32(Zero, regT0));
-    jit.loadPtr(Address(regT0, ThunkHelpers::stringImplDataOffset()), regT0);
     
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     failures.append(jit.branch32(AboveOrEqual, regT2, regT1));
     
     // Load the character
+    JumpList is16Bit;
+    JumpList cont8Bit;
+    // Load the string flags
+    jit.loadPtr(Address(regT0, ThunkHelpers::stringImplFlagsOffset()), regT1);
+    jit.loadPtr(Address(regT0, ThunkHelpers::stringImplDataOffset()), regT0);
+    is16Bit.append(jit.branchTest32(Zero, regT1, TrustedImm32(ThunkHelpers::stringImpl8BitFlag())));
+    jit.load8(BaseIndex(regT0, regT2, TimesOne, 0), regT0);
+    cont8Bit.append(jit.jump());
+    is16Bit.link(&jit);
     jit.load16(BaseIndex(regT0, regT2, TimesTwo, 0), regT0);
+
+    cont8Bit.link(&jit);
     
     failures.append(jit.branch32(AboveOrEqual, regT0, TrustedImm32(0x100)));
     jit.move(TrustedImmPtr(globalData->smallStrings.singleCharacterStrings()), regT1);

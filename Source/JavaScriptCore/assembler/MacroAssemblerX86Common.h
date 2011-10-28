@@ -481,6 +481,11 @@ public:
         m_assembler.movzbl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
+    void load8(ImplicitAddress address, RegisterID dest)
+    {
+        m_assembler.movzbl_mr(address.offset, address.base, dest);
+    }
+    
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);

@@ -581,27 +581,37 @@ void SpeculativeJIT::compileGetCharCodeAt(Node& node)
     ASSERT(node.child3() == NoNode);
     SpeculateCellOperand string(this, node.child1());
     SpeculateStrictInt32Operand index(this, node.child2());
-    
+
     GPRReg stringReg = string.gpr();
     GPRReg indexReg = index.gpr();
-    
+
     if (!isStringPrediction(m_state.forNode(node.child1()).m_type))
         speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(stringReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
-    
+
     // unsigned comparison so we can filter out negative indices and indices that are too large
     speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, indexReg, MacroAssembler::Address(stringReg, JSString::offsetOfLength())));
-    
+
     GPRTemporary scratch(this);
     GPRReg scratchReg = scratch.gpr();
 
     m_jit.loadPtr(MacroAssembler::Address(stringReg, JSString::offsetOfValue()), scratchReg);
-    
+
     // Speculate that we're not accessing a rope
     speculationCheck(m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
-    
+
     // Load the character into scratchReg
+    JITCompiler::Jump is16Bit = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
+
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load8(MacroAssembler::BaseIndex(scratchReg, indexReg, MacroAssembler::TimesOne, 0), scratchReg);
+    JITCompiler::Jump cont8Bit = m_jit.jump();
+
+    is16Bit.link(&m_jit);
+
     m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
     m_jit.load16(MacroAssembler::BaseIndex(scratchReg, indexReg, MacroAssembler::TimesTwo, 0), scratchReg);
+
+    cont8Bit.link(&m_jit);
 
     integerResult(scratchReg, m_compileIndex);
 }
@@ -611,7 +621,7 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
     ASSERT(node.child3() == NoNode);
     SpeculateCellOperand base(this, node.child1());
     SpeculateStrictInt32Operand property(this, node.child2());
-    
+
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
 
@@ -623,18 +633,30 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
 
     GPRTemporary scratch(this);
     GPRReg scratchReg = scratch.gpr();
-    
+
     m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), scratchReg);
 
     // Speculate that we're not accessing a rope
     speculationCheck(m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
-    
+
     // Load the character into scratchReg
+    JITCompiler::Jump is16Bit = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
+
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load8(MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesOne, 0), scratchReg);
+    JITCompiler::Jump cont8Bit = m_jit.jump();
+
+    is16Bit.link(&m_jit);
+
     m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
     m_jit.load16(MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesTwo, 0), scratchReg);
 
     // We only support ascii characters
     speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, scratchReg, TrustedImm32(0x100)));
+
+    // 8 bit string values don't need the isASCII check.
+    cont8Bit.link(&m_jit);
+
     GPRTemporary smallStrings(this);
     GPRReg smallStringsReg = smallStrings.gpr();
     m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalData()->smallStrings.singleCharacterStrings()), smallStringsReg);
