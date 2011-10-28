@@ -327,11 +327,6 @@ WebTextInputType WebPopupMenuImpl::textInputType()
     return WebTextInputTypeNone;
 }
 
-WebRect WebPopupMenuImpl::caretOrSelectionBounds()
-{
-    return WebRect();
-}
-
 bool WebPopupMenuImpl::caretOrSelectionRange(size_t* location, size_t* length)
 {
     *location = 0;

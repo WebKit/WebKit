@@ -87,8 +87,6 @@ public:
     virtual bool confirmComposition(const WebString& text);
     virtual bool compositionRange(size_t* location, size_t* length);
     virtual WebTextInputType textInputType();
-    virtual WebRect caretOrSelectionBounds();
-    virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const { return false; }

@@ -1,3 +1,16 @@
+2011-10-27  Peng Huang  <penghuang@chromium.org>
+
+        [chromium] Remove some APIs which are not used anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=71068
+
+        Reviewed by Darin Fisher.
+
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
 2011-10-27  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Track when CCLayerImpl properties have changed.
