@@ -53,7 +53,7 @@ private:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void layout();
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     // The only time rows get a layer is when they have transparency.

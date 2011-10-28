@@ -184,7 +184,7 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
+LayoutRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     ASSERT(parent());
 
@@ -198,7 +198,7 @@ IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
     if (RenderTable* parentTable = table())
         return parentTable->clippedOverflowRectForRepaint(repaintContainer);
 
-    return IntRect();
+    return LayoutRect();
 }
 
 // Hit Testing

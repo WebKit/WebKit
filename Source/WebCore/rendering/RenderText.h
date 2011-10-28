@@ -100,7 +100,7 @@ public:
     virtual LayoutUnit marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual LayoutUnit marginRight() const { return style()->marginRight().calcMinValue(0); }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }

@@ -1,3 +1,35 @@
+2011-10-28  Emil A Eklund  <eae@chromium.org>
+
+        Overridden clippedOverflowRectForRepaint() still uses IntRects
+        https://bugs.webkit.org/show_bug.cgi?id=71046
+
+        Reviewed by Simon Fraser.
+
+        Change all virtual clippedOverflowRectForRepaint functions to use the
+        same signature.
+
+        No new tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+        * rendering/RenderText.h:
+
 2011-10-28  Adam Klein  <adamk@chromium.org>
 
         Remove unused parsers for 'exception' and 'alias' IDL keywords
