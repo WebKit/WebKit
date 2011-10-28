@@ -1,3 +1,12 @@
+2011-10-27  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION (r98639): NRWT crashes when parsing leaks output
+        https://bugs.webkit.org/show_bug.cgi?id=71087
+
+        Unreviewed.  Sadly we have no good way to test logging.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+
 2011-10-27  David Levin  <levin@chromium.org>
 
         Test expectation errors should include the file name and platform in both the log and exception info.

@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import re
 
 from webkitpy.common.system.executive import ScriptError
+
+_log = logging.getLogger(__name__)
 
 
 # If other ports/platforms decide to support --leaks, we should see about sharing as much of this code as possible.
