@@ -1,5 +1,11 @@
 2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+       Unskip platform/mac/editing/deleting/backward-delete.html on Chromium because it passes on my Mac.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Group editing test expectations for Chromium in one place.
 
         * platform/chromium/test_expectations.txt:

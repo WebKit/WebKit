@@ -300,7 +300,7 @@ WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
 
 // This is a Safari specific test to make WebKit behave like AppKit on the Mac.
 // We do not support it because PLATFORM(MAC) is not defined for the mac version.
-WONTFIX SKIP : platform/mac/editing/deleting/backward-delete.html = TEXT
+WONTFIX : platform/mac/editing/deleting/backward-delete.html = TEXT
 
 // Ignored because we do not have OBJC bindings
 WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = FAIL
