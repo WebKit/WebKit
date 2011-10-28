@@ -1,3 +1,14 @@
+2011-10-27  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Expose Settings::setAcceleratedCompositingForFixedPositionEnabled to WebSettingsImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=71077
+
+        Reviewed by James Robinson.
+
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedCompositingForFixedPositionEnabled):
+        * src/WebSettingsImpl.h:
+
 2011-10-27  Peng Huang  <penghuang@chromium.org>
 
         [chromium] Remove some APIs which are not used anymore.

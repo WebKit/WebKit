@@ -364,6 +364,11 @@ void WebSettingsImpl::setLegacyAccelerated2dCanvasEnabled(bool enabled)
     m_settings->setLegacyAccelerated2dCanvasEnabled(enabled);
 }
 
+void WebSettingsImpl::setAcceleratedCompositingForFixedPositionEnabled(bool enabled)
+{
+    m_settings->setAcceleratedCompositingForFixedPositionEnabled(enabled);
+}
+
 void WebSettingsImpl::setMinimumAccelerated2dCanvasSize(int numPixels)
 {
     m_settings->setMinimumAccelerated2dCanvasSize(numPixels);
