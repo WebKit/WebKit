@@ -109,7 +109,8 @@ total: 5,888 bytes (0 bytes excluded)."""
     def test_count_total_leaks(self):
         detector = self._make_detector()
         detector._filesystem = MockFileSystem({
-            '/mock-results/DumpRenderTree-1234-leaks.txt': 'Process 1234: 12 leaks for 40 total leaked bytes.\n',
+            # The \xff is some non-utf8 characters to make sure we don't blow up trying to parse the file.
+            '/mock-results/DumpRenderTree-1234-leaks.txt': '\xff\nProcess 1234: 12 leaks for 40 total leaked bytes.\n\xff\n',
             '/mock-results/DumpRenderTree-23423-leaks.txt': 'Process 1235: 12341 leaks for 27934 total leaked bytes.\n',
             '/mock-results/DumpRenderTree-823-leaks.txt': 'Process 12356: 23412 leaks for 18 total leaked bytes.\n',
         })

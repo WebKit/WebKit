@@ -1,3 +1,16 @@
+2011-10-28  Eric Seidel  <eric@webkit.org>
+
+        NRWT crashes when parsing leaks output due to UTF-8 decoding error
+        https://bugs.webkit.org/show_bug.cgi?id=71112
+
+        Reviewed by Adam Barth.
+
+        Use read_binary_file instead of read_text_file and add a test
+        case with some non-utf8 data to make sure we don't break this in the future.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+
 2011-10-28  David Levin  <levin@chromium.org>
 
         watchlist should not CC the bug reporter

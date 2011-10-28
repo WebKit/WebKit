@@ -120,7 +120,9 @@ class LeakDetector(object):
     def count_total_leaks(self, leak_file_paths):
         total_leaks = 0
         for leak_file_path in leak_file_paths:
-            leaks_output = self._filesystem.read_text_file(leak_file_path)
+            # Leaks have been seen to include non-utf8 data, so we use read_binary_file.
+            # See https://bugs.webkit.org/show_bug.cgi?id=71112.
+            leaks_output = self._filesystem.read_binary_file(leak_file_path)
             count, _, _ = self._parse_leaks_output(leaks_output)
             total_leaks += count
         return total_leaks
