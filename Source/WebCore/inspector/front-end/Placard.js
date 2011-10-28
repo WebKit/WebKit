@@ -105,5 +105,9 @@ WebInspector.Placard.prototype = {
     toggleSelected: function()
     {
         this.selected = !this.selected;
+    },
+
+    discard: function()
+    {
     }
 }

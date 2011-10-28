@@ -1,3 +1,13 @@
+2011-10-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: CallStackSidebarPane should remove discarded Placards from RawSourceCode listeners list
+        https://bugs.webkit.org/show_bug.cgi?id=70996
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/callstack-placards-discarded-expected.txt: Added.
+        * inspector/debugger/callstack-placards-discarded.html: Added.
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Add allowScriptFromSource callback to FrameLoaderClient

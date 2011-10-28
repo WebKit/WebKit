@@ -40,6 +40,10 @@ WebInspector.CallStackSidebarPane.prototype = {
     {
         this.bodyElement.removeChildren();
 
+        if (this.placards) {
+            for (var i = 0; i < this.placards.length; ++i)
+                this.placards[i].discard();
+        }
         this.placards = [];
 
         if (!callFrames) {

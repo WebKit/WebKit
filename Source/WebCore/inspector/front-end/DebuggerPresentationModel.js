@@ -83,20 +83,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     createPlacard: function(callFrame)
     {
-        var title = callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)");
-        var placard = new WebInspector.Placard(title, "");
-
-        var rawSourceCode = callFrame._rawSourceCode;
-        function updatePlacard()
-        {
-            var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(callFrame._callFrame.location);
-            placard.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
-            placard._text = WebInspector.UIString("%s() at %s", placard.title, placard.subtitle);
-        }
-        if (rawSourceCode.sourceMapping)
-            updatePlacard.call(this);
-        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, updatePlacard, this);
-        return placard;
+        return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame);
     },
 
     /**
@@ -761,6 +748,37 @@ WebInspector.PresentationCallFrame.prototype = {
             this._rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, sourceMappingReady, this);
     }
 }
+
+/**
+ * @constructor
+ * @extends {WebInspector.Placard}
+ * @param {WebInspector.PresentationCallFrame} callFrame
+ */
+WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame)
+{
+    WebInspector.Placard.call(this, callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
+    this._callFrame = callFrame;
+    var rawSourceCode = callFrame._rawSourceCode;
+    if (rawSourceCode.sourceMapping)
+        this._update();
+    rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._update, this);
+}
+
+WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype = {
+    discard: function()
+    {
+        this._callFrame._rawSourceCode.removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._update, this);
+    },
+
+    _update: function()
+    {
+        var rawSourceCode = this._callFrame._rawSourceCode;
+        var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(this._callFrame._callFrame.location);
+        this.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
+    }
+}
+
+WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype.__proto__ = WebInspector.Placard.prototype;
 
 /**
  * @constructor
