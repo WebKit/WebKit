@@ -1,3 +1,12 @@
+2011-10-27  Priit Laes  <plaes@plaes.org>
+
+        [GTK] Create .xz tarballs during distcheck
+        https://bugs.webkit.org/show_bug.cgi?id=71001
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Switched tarballs to use .xz compression.
+
 2011-10-27  Daniel Bates  <dbates@rim.com>
 
         CMake: Add support to optionally install the built JavaScript shell

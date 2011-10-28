@@ -38,7 +38,7 @@ dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versionin
 LIBWEBKITGTK_VERSION=11:1:11
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
-AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
+AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
 
 # Use AM_SILENT_RULES if present
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
