@@ -40,7 +40,7 @@ BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
-BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
+//BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 // See BUGCR104797
 //BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
@@ -3947,3 +3947,8 @@ BUGWK71084 WIN : http/tests/inspector/extensions-ignore-cache.html = FAIL CRASH
 BUGWK71127 : fast/js/array-functions-non-arrays.html = TEXT
 BUGWK71127 : fast/js/toString-overrides.html = TEXT
 BUGWK71127 : fast/js/toString-recursion.html = TEXT
+
+BUGWK71139 SNOWLEOPARD : http/tests/security/cross-frame-access-custom.html = CRASH PASS
+BUGWK71139 SNOWLEOPARD : fast/frames/content-opacity-2.html = CRASH PASS
+BUGWK71139 SNOWLEOPARD : fast/parser/close-while-stopping.html = CRASH PASS
+BUGWK71139 SNOWLEOPARD : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS

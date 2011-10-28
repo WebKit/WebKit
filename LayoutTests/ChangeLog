@@ -1,3 +1,27 @@
+2011-10-28  John Gregg  <johnnyg@google.com>
+
+        Unreviewed gardening.
+
+        * platform/chromium-cg-mac-leopard/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-cg-mac-snowleopard/fast/dom: Removed.
+        * platform/chromium-cg-mac/fast/dom/nested-script-exceptions-expected.txt: Removed.
+        * platform/chromium-cg-mac/svg/hixie/perf: Removed.
+        * platform/chromium-cg-mac/svg/hixie/perf/001-expected.png: Removed.
+        * platform/chromium-gpu-mac/compositing/visibility: Added.
+        * platform/chromium-gpu-mac/compositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/visibility: Added.
+        * platform/chromium-gpu-win/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom: Removed.
+        * platform/chromium-mac/fast/dom/nested-script-exceptions-expected.txt: Removed.
+        * platform/chromium-mac/svg/hixie/perf/001-expected.png: Removed.
+        * platform/chromium-mac/svg/hixie/perf/001-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/batik/text/textOnPath-expected.png: Removed.
+        * platform/chromium-win/fast/dom/nested-script-exceptions-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10288006> Emoji characters are too close to each other in small font size
