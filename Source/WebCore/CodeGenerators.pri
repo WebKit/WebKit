@@ -776,7 +776,7 @@ addExtraCompiler(eventtargetfactory)
 exceptioncodedescription.output = $${WC_GENERATED_SOURCES_DIR}/ExceptionCodeDescription.cpp
 exceptioncodedescription.input = EXCEPTION_CODE_DESCRIPTION
 exceptioncodedescription.wkScript = $$PWD/dom/make_exception_code_description.pl
-exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$eventfactory.wkScript --input $$EXCEPTION_CODE_DESCRIPTION --outputDir $$WC_GENERATED_SOURCES_DIR
+exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$exceptioncodedescription.wkScript --input $$EXCEPTION_CODE_DESCRIPTION --outputDir $$WC_GENERATED_SOURCES_DIR
 exceptioncodedescription.depends = $$PWD/dom/make_exception_code_description.pl $$EXCEPTION_CODE_DESCRIPTION
 addExtraCompiler(exceptioncodedescription)
 

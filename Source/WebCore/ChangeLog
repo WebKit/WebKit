@@ -1,5 +1,13 @@
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fixenate Qt.
+
+        * CodeGenerators.pri:
+        * dom/make_event_factory.pl:
+        (toMacroStyle):
+
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
         ExceptionCode.cpp shouldn't need to know about every feature that throws exceptions
         https://bugs.webkit.org/show_bug.cgi?id=70890
 

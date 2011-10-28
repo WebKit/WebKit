@@ -88,7 +88,7 @@ sub toMacroStyle($)
     return "EVENT" if $camelCase eq "Event";
     return "EVENT_TARGET" if $camelCase eq "EventTarget";
 
-    die "Ok, you got me. This script is really just a giant hack.";
+    die "Ok, you got me. This script is really just a giant hack. (\$camelCase=${camelCase})";
 }
 
 sub generateCode()
