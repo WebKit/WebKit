@@ -1,3 +1,10 @@
+2011-10-28  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, update Chromium test expectation.
+
+        * platform/chromium/test_expectations.txt:
+        Mark http/tests/websocket/tests/hybi/reserved-bits.html as flaky.
+
 2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
        Unskip platform/mac/editing/deleting/backward-delete.html on Chromium because it passes on my Mac.

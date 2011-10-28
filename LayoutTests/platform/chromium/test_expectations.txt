@@ -2864,8 +2864,9 @@ BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS 
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
 BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
-BUGCR73094 LINUX : http/tests/websocket/tests/hixie76/send-after-close-on-unload.html = PASS TIMEOUT
-BUGCR73094 LINUX : http/tests/websocket/tests/hybi/send-after-close-on-unload.html = PASS TIMEOUT
+BUGCR73094 LINUX DEBUG : http/tests/websocket/tests/hixie76/send-after-close-on-unload.html = PASS TIMEOUT
+BUGCR73094 LINUX DEBUG : http/tests/websocket/tests/hybi/send-after-close-on-unload.html = PASS TIMEOUT
+BUGCR73094 LINUX DEBUG : http/tests/websocket/tests/hybi/reserved-bits.html = PASS TIMEOUT
 
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-indirect-strictcode.html = TEXT
