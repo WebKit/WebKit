@@ -395,6 +395,14 @@ function gc() {
     }
 }
 
+function isSuccessfullyParsed()
+{
+    if (!errorMessage)
+        successfullyParsed = true;
+    shouldBeTrue("successfullyParsed");
+    debug('<br><span class="pass">TEST COMPLETE</span>');
+}
+
 // It's possible for an async test to call finishJSTest() before js-test-post.js
 // has been parsed.
 function finishJSTest()
