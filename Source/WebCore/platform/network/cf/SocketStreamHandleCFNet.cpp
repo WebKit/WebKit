@@ -82,7 +82,7 @@ void SocketStreamHandle::scheduleStreams()
     ASSERT(m_readStream);
     ASSERT(m_writeStream);
 
-    CFStreamClientContext clientContext = { 0, this, 0, 0, copyCFStreamDescription };
+    CFStreamClientContext clientContext = { 0, this, retainSocketStreamHandle, releaseSocketStreamHandle, copyCFStreamDescription };
     // FIXME: Pass specific events we're interested in instead of -1.
     CFReadStreamSetClient(m_readStream.get(), static_cast<CFOptionFlags>(-1), readStreamCallback, &clientContext);
     CFWriteStreamSetClient(m_writeStream.get(), static_cast<CFOptionFlags>(-1), writeStreamCallback, &clientContext);
@@ -102,6 +102,19 @@ void SocketStreamHandle::scheduleStreams()
         removePACRunLoopSource();
 
     m_connectingSubstate = WaitingForConnect;
+}
+
+void* SocketStreamHandle::retainSocketStreamHandle(void* info)
+{
+    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
+    handle->ref();
+    return handle;
+}
+
+void SocketStreamHandle::releaseSocketStreamHandle(void* info)
+{
+    SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
+    handle->deref();
 }
 
 CFStringRef SocketStreamHandle::copyPACExecutionDescription(void*)
@@ -128,6 +141,8 @@ void SocketStreamHandle::pacExecutionCallbackMainThread(void* invocation)
     MainThreadPACCallbackInfo* info = static_cast<MainThreadPACCallbackInfo*>(invocation);
     ASSERT(info->handle->m_connectingSubstate == ExecutingPACFile);
     // This time, the array won't have PAC as a first entry.
+    if (info->handle->m_state != Connecting)
+        return;
     info->handle->chooseProxyFromArray(info->proxyList);
     info->handle->createStreams();
     info->handle->scheduleStreams();
@@ -136,7 +151,7 @@ void SocketStreamHandle::pacExecutionCallbackMainThread(void* invocation)
 void SocketStreamHandle::executePACFileURL(CFURLRef pacFileURL)
 {
     // CFNetwork returns an empty proxy array for WebScoket schemes, so use m_httpsURL.
-    CFStreamClientContext clientContext = { 0, this, 0, 0, copyPACExecutionDescription };
+    CFStreamClientContext clientContext = { 0, this, retainSocketStreamHandle, releaseSocketStreamHandle, copyPACExecutionDescription };
     m_pacRunLoopSource.adoptCF(CFNetworkExecuteProxyAutoConfigurationURL(pacFileURL, m_httpsURL.get(), pacExecutionCallback, &clientContext));
 #if PLATFORM(WIN)
     CFRunLoopAddSource(loaderRunLoop(), m_pacRunLoopSource.get(), kCFRunLoopDefaultMode);
@@ -443,8 +458,6 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         if (m_connectingSubstate == WaitingForConnect) {
             m_connectingSubstate = Connected;
             m_state = Open;
-
-            RefPtr<SocketStreamHandle> protect(this); // The client can close the handle, potentially removing the last reference.
             m_client->didOpenSocketStream(this);
             if (m_state == Closed)
                 break;
@@ -502,8 +515,6 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
         if (m_connectingSubstate == WaitingForConnect) {
             m_connectingSubstate = Connected;
             m_state = Open;
-
-            RefPtr<SocketStreamHandle> protect(this); // The client can close the handle, potentially removing the last reference.
             m_client->didOpenSocketStream(this);
             break;
         }

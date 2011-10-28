@@ -1,3 +1,29 @@
+2011-10-28  Yuta Kitamura  <yutak@chromium.org>
+
+        Race condition in SocketStreamHandleCFNet when PAC script is used
+        https://bugs.webkit.org/show_bug.cgi?id=70894
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pass callback functions that call ref() or deref() as retain/release member
+        of CFStreamClientContext.
+
+        No new tests, as it is not possible to write a test with PAC script enabled.
+
+        * platform/network/cf/SocketStreamHandle.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::scheduleStreams):
+        (WebCore::SocketStreamHandle::retainSocketStreamHandle):
+        (WebCore::SocketStreamHandle::releaseSocketStreamHandle):
+        (WebCore::SocketStreamHandle::pacExecutionCallbackMainThread):
+        This callback may be called after platformClose() is already called. We should
+        not create new streams in this case.
+        (WebCore::SocketStreamHandle::executePACFileURL):
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        This manual ref/deref can be safely removed as m_readStream holds the reference.
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        Ditto.
+
 2011-10-27  Arthur Hsu  <arthurhsu@chromium.org>
 
         Reland patch ensure font load before calling Skia during printing

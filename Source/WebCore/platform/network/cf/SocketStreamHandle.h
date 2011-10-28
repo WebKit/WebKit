@@ -74,7 +74,9 @@ private:
 
     void addCONNECTCredentials(CFHTTPMessageRef response);
 
-    static CFStringRef copyCFStreamDescription(void* );
+    static void* retainSocketStreamHandle(void*);
+    static void releaseSocketStreamHandle(void*);
+    static CFStringRef copyCFStreamDescription(void*);
     static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void*);
     static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void*);
 #if PLATFORM(WIN)
