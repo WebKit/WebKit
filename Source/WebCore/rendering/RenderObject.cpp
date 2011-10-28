@@ -1906,7 +1906,7 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
             if (child->style()->specifiesColumns())
                 newStyle->inheritColumnPropertiesFrom(style());
             if (child->style()->columnSpan())
-                newStyle->setColumnSpan(true);
+                newStyle->setColumnSpan(ColumnSpanAll);
         }
         newStyle->setDisplay(child->style()->display());
         child->setStyle(newStyle.release());

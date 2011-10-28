@@ -130,6 +130,31 @@ template<> inline CSSPrimitiveValue::operator float() const
     return 0.0f;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnSpan columnSpan)
+    : m_hasCachedCSSText(false)
+{
+    switch (columnSpan) {
+    case ColumnSpanAll:
+        m_type = CSS_IDENT;
+        m_value.ident = CSSValueAll;
+        break;
+    case ColumnSpanOne:
+        m_type = CSS_NUMBER;
+        m_value.num = 1;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ColumnSpan() const
+{
+    if (m_type == CSS_IDENT && m_value.ident == CSSValueAll)
+        return ColumnSpanAll;
+    if (m_type == CSS_NUMBER && m_value.num == 1)
+        return ColumnSpanOne;
+    ASSERT_NOT_REACHED();
+    return ColumnSpanOne;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

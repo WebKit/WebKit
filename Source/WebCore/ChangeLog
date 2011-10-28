@@ -1,3 +1,28 @@
+2011-10-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Use enum instead of bool to represent -webkit-column-span property.
+        https://bugs.webkit.org/show_bug.cgi?id=70867
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymousColumnSpanBlock):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateStyleToAnonymousChildren):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::columnSpan):
+        (WebCore::InheritedFlags::setColumnSpan):
+        (WebCore::InheritedFlags::initialColumnSpan):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleMultiColData.h:
+
 2011-10-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize isGlobalObject, isVariableObject, isActivationObject, and isErrorInstance in JSObject

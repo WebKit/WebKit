@@ -2477,6 +2477,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
 
+    ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
+
     if (!applyPropertyToRegularStyle() && (!applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
@@ -3356,11 +3358,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBoxSizing:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
         return;
-    case CSSPropertyWebkitColumnSpan: {
-        HANDLE_INHERIT_AND_INITIAL(columnSpan, ColumnSpan)
-        m_style->setColumnSpan(primitiveValue->getIdent() == CSSValueAll);
+    case CSSPropertyWebkitColumnSpan:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(columnSpan, ColumnSpan)
         return;
-    }
     case CSSPropertyWebkitColumnRuleStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
         return;

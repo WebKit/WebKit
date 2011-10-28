@@ -6222,7 +6222,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsBlock() const
 RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-    newStyle->setColumnSpan(true);
+    newStyle->setColumnSpan(ColumnSpanAll);
     newStyle->setDisplay(BLOCK);
 
     RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
