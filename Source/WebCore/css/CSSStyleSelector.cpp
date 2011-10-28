@@ -2822,7 +2822,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 else
                     m_parentStyle->setUnique();
                 QualifiedName attr(nullAtom, contentValue->getStringValue().impl(), nullAtom);
-                m_style->setContent(m_element->getAttribute(attr).impl(), didSet);
+                const AtomicString& value = m_element->getAttribute(attr);
+                m_style->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
                 didSet = true;
                 // register the fact that the attribute value affects the style
                 m_features.attrsInRules.add(attr.localName().impl());
