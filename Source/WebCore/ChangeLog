@@ -1,3 +1,23 @@
+2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98736.
+        http://trac.webkit.org/changeset/98736
+        https://bugs.webkit.org/show_bug.cgi?id=71125
+
+        This patch broke perf/array-binary-search.html test (Requested
+        by annacc on #webkit).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTextTracks):
+        (WebCore::HTMLMediaElement::addTrack):
+        * html/HTMLMediaElement.h:
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedIntoTree):
+        (WebCore::HTMLTrackElement::willRemove):
+        * html/HTMLTrackElement.h:
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+
 2011-10-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableSection::recalcCells should not free its grid

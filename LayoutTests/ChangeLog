@@ -1,3 +1,19 @@
+2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98736.
+        http://trac.webkit.org/changeset/98736
+        https://bugs.webkit.org/show_bug.cgi?id=71125
+
+        This patch broke perf/array-binary-search.html test (Requested
+        by annacc on #webkit).
+
+        * media/track/track-load-error-readyState-expected.txt: Removed.
+        * media/track/track-load-error-readyState.html: Removed.
+        * media/track/track-load-from-element-readyState-expected.txt: Removed.
+        * media/track/track-load-from-element-readyState.html: Removed.
+        * media/track/track-load-from-src-readyState-expected.txt: Removed.
+        * media/track/track-load-from-src-readyState.html: Removed.
+
 2011-10-28  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Testing allowed identifier chars which are greater than 126

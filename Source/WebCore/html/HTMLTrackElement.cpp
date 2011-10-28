@@ -32,7 +32,6 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
-#include "ScriptEventListener.h"
 
 using namespace std;
 
@@ -60,39 +59,20 @@ void HTMLTrackElement::insertedIntoTree(bool deep)
 {
     HTMLElement::insertedIntoTree(deep);
     Element* parent = parentElement();
-    if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->trackWasAdded(this);
+    if (parent && parent->isMediaElement()) {
+        // TODO(annacc):
+        // static_cast<HTMLMediaElement*>(parentNode())->trackWasAdded(this);
+    }
 }
 
 void HTMLTrackElement::willRemove()
 {
     Element* parent = parentElement();
-    if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->trackWillBeRemoved(this);
-    HTMLElement::willRemove();
-}
-
-void HTMLTrackElement::parseMappedAttribute(Attribute* attribute)
-{
-    const QualifiedName& attrName = attribute->name();
-    
-    if (attrName == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
-    else if (attrName == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
-    else
-        HTMLElement::parseMappedAttribute(attribute);
-}
-
-void HTMLTrackElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    HTMLElement::attributeChanged(attr, preserveDecls);
-
-    const QualifiedName& attrName = attr->name();
-    if (attrName == srcAttr) {
-        if (!getAttribute(srcAttr).isEmpty() && parentNode())
-            static_cast<HTMLMediaElement*>(parentNode())->trackSourceChanged(this);
+    if (parent && parent->isMediaElement()) {
+        // TODO(annacc):
+        // static_cast<HTMLMediaElement*>(parentNode())->trackWillBeRemoved(this);
     }
+    HTMLElement::willRemove();
 }
 
 KURL HTMLTrackElement::src() const

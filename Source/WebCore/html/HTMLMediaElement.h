@@ -57,9 +57,6 @@ class Uint8Array;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
 #endif
-#if ENABLE(VIDEO_TRACK)
-class HTMLTrackElement;
-#endif
 
 // FIXME: The inheritance from MediaPlayerClient here should be private inheritance.
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
@@ -183,9 +180,6 @@ public:
 
 #if ENABLE(VIDEO_TRACK)
     PassRefPtr<TextTrack> addTrack(const String& kind, const String& label = "", const String& language = "");
-    virtual void trackWasAdded(HTMLTrackElement*);
-    virtual void trackWillBeRemoved(HTMLTrackElement*);
-    virtual void trackSourceChanged(HTMLTrackElement*);
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -358,7 +352,6 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     void loadTextTracks();
-    void loadNextTextTrack(HTMLTrackElement*);
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
