@@ -1,3 +1,12 @@
+2011-10-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add watchlist for QtWebKit2 API and for WK2's Qt specific files.
+        https://bugs.webkit.org/show_bug.cgi?id=71116
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-10-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Adapt to QSG* to QQuick* API change in qtdeclarative

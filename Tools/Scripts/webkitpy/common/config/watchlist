@@ -81,6 +81,31 @@
         "GtkWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/gtk/",
         },
+        "QtWebKit2PublicAPI": {
+            "filename": r"Source/WebKit2/UIProcess/API/qt/"
+                        r"|Source/WebKit2/UIProcess/API/cpp/qt/"
+                        r"|Source/WebKit2/UIProcess/API/C/qt/",
+        },
+        "QtWebKit2PlatformSpecific": {
+            "filename": r"Source/WebKit2/.*\.(pri|pro)"
+                        r"|Source/WebKit2/Platform/qt/"
+                        r"|Source/WebKit2/qt/"
+                        r"|Source/WebKit2/PluginProcess/qt/"
+                        r"|Source/WebKit2/Platform/qt/"
+                        r"|Source/WebKit2/Shared/API/c/qt/"
+                        r"|Source/WebKit2/Shared/qt/"
+                        r"|Source/WebKit2/WebProcess/InjectedBundle/qt/"
+                        r"|Source/WebKit2/WebProcess/FullScreen/qt/"
+                        r"|Source/WebKit2/WebProcess/WebPage/qt/"
+                        r"|Source/WebKit2/WebProcess/qt/"
+                        r"|Source/WebKit2/WebProcess/Plugins/Netscape/qt/"
+                        r"|Source/WebKit2/WebProcess/Downloads/qt/"
+                        r"|Source/WebKit2/WebProcess/WebCoreSupport/qt/"
+                        r"|Source/WebKit2/WebProcess/Cookies/qt/"
+                        r"|Source/WebKit2/UIProcess/qt/"
+                        r"|Source/WebKit2/UIProcess/Plugins/qt/"
+                        r"|Source/WebKit2/UIProcess/Launcher/qt/",
+        },
         "CSS": {
             "filename": r"Source/WebCore/css/",
         },
@@ -105,6 +130,8 @@
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", ],
+        "QtWebKit2PublicAPI": [ "zoltan@webkit.org", ],
+        "QtWebKit2PlatformSpecific": [ "zoltan@webkit.org", ],
         "CSS": [ "macpherson@chromium.org", ],
     },
     "MESSAGE_RULES": {
