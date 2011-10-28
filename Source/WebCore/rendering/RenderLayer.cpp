@@ -4006,7 +4006,11 @@ void RenderLayer::updateZOrderLists()
     if (!isStackingContext() || !m_zOrderListsDirty)
         return;
 
+#if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
+#else
+    bool includeHiddenLayers = false;
+#endif
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         if (!m_reflection || reflectionLayer() != child)
             child->collectLayers(includeHiddenLayers, m_posZOrderList, m_negZOrderList);
