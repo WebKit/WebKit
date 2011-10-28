@@ -3580,7 +3580,6 @@ BUGWK65951 LINUX MAC DEBUG : webaudio/mixing.html = CRASH PASS
 BUGWK65951 LINUX MAC DEBUG : webaudio/test-basic.html = CRASH PASS
 
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING FAIL
-BUGWK71019 LINUX : css3/font-feature-settings-rendering.html = IMAGE
 
 BUGCR97646 : media/media-blocked-by-beforeload.html = PASS TEXT
 
