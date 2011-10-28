@@ -1,3 +1,10 @@
+2011-10-28  Adam Roben  <aroben@apple.com>
+
+        Mac build fix after r98711
+
+        * WebCore.xcodeproj/project.pbxproj: Mark ExceptionCodeDescription.h private so WebKit can
+        find it.
+
 2011-10-28  Antti Koivisto  <antti@apple.com>
 
         [Chromium] css3/font-feature-settings-rendering.html has incorrect image result after r98542
