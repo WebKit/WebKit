@@ -695,6 +695,7 @@ class TestExpectations(object):
         self._is_lint_mode = is_lint_mode
         self._model = TestExpectationsModel()
         self._parser = TestExpectationParser(port, tests, is_lint_mode)
+        self._port = port
         self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
 
         self._expectations = TestExpectationParser.tokenize_list(expectations)
@@ -783,7 +784,11 @@ class TestExpectations(object):
                 warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
 
         if len(errors) or len(warnings):
-            _log.error("FAILURES FOR %s" % str(self._test_config))
+            webkit_base_path = self._port.webkit_base()
+            test_expectation_path = self._port.path_to_test_expectations_file()
+            test_expectation_relative_path = test_expectation_path[len(webkit_base_path):].lstrip('/')
+            failure_title = "FAILURES FOR %s in %s" % (str(self._test_config), test_expectation_relative_path)
+            _log.error(failure_title)
 
             for error in errors:
                 _log.error(error)
@@ -791,11 +796,11 @@ class TestExpectations(object):
                 _log.error(warning)
 
             if len(errors):
-                raise ParseError(fatal=True, errors=errors)
+                raise ParseError(fatal=True, errors=[failure_title] + errors)
             if len(warnings):
                 self._has_warnings = True
                 if self._is_lint_mode:
-                    raise ParseError(fatal=False, errors=warnings)
+                    raise ParseError(fatal=False, errors=[failure_title] + warnings)
 
     def _process_tests_without_expectations(self):
         if self._full_test_list:
