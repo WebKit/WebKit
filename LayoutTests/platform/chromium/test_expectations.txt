@@ -479,11 +479,6 @@ WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
 // supporting that option.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
-// These tests have been rewritten, with the original being ignored,
-// because they rely on being able to shadow the 'top' variable on the
-// global object.  For security we disallow shadowing of top.
-WONTFIX SKIP : editing/selection/click-before-and-after-table.html = FAIL
-
 // We're taking a different approach on this test than Webkit does, related to
 // whether we create a window via a plugin when target is _blank.
 WONTFIX SKIP : plugins/get-url-with-blank-target.html = FAIL

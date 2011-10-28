@@ -1,7 +1,3 @@
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
 <style>
 td {
     border: 1px solid #aaa;
@@ -11,6 +7,9 @@ td {
 <body style="border: 1px solid red;" contenteditable="true"><table id="table" style="margin: 25px; border:10px solid #ccc; padding: 10px;"><tr><td>cell one</td><td>cell two</td></tr></table>
 <ul id="console"></ul>
 <script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
@@ -19,10 +18,8 @@ function log(message) {
     console.appendChild(li);
     li.appendChild(text);
 }
-if (!window.layoutTestController) {
-    log("This test uses the eventSender to do mouse clicks.  To run it manually, click after the table, the caret should appear there (and not inside the table).  Then click inside the table.  The caret should appear inside it.");
-    document.body.addEventListener("click", function() { var s = window.getSelection(); log("click @ " + event.clientX + ", " + event.clientY + " caret at: " + s.anchorNode + ", " + s.anchorOffset); }, true);
-} else {
+
+function runAutomatedTest() {
     window.layoutTestController.dumpAsText();
     var s, x, y, e, top, bottom, left, right;
     table = document.getElementById("table");
@@ -72,5 +69,13 @@ if (!window.layoutTestController) {
     if (s.anchorNode == document.body)
         log("Failure: Clicking @ " + x + ", " + y + " inside the table put the caret before or after it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
 }
+
+if (window.layoutTestController)
+    runAutomatedTest();
+else {
+    log("This test uses the eventSender to do mouse clicks.  To run it manually, click after the table, the caret should appear there (and not inside the table).  Then click inside the table.  The caret should appear inside it.");
+    document.body.addEventListener("click", function() { var s = window.getSelection(); log("click @ " + event.clientX + ", " + event.clientY + " caret at: " + s.anchorNode + ", " + s.anchorOffset); }, true);
+}
+
 </script>
 </body>
