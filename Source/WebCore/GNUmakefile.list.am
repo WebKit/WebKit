@@ -967,6 +967,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSCharsetRule.h \
 	Source/WebCore/css/CSSComputedStyleDeclaration.cpp \
 	Source/WebCore/css/CSSComputedStyleDeclaration.h \
+	Source/WebCore/css/CSSCrossfadeValue.cpp \
+	Source/WebCore/css/CSSCrossfadeValue.h \
 	Source/WebCore/css/CSSCursorImageValue.cpp \
 	Source/WebCore/css/CSSCursorImageValue.h \
 	Source/WebCore/css/CSSFlexValue.cpp \

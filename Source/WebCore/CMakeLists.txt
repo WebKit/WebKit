@@ -436,6 +436,7 @@ SET(WebCore_SOURCES
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp
     css/CSSComputedStyleDeclaration.cpp
+    css/CSSCrossfadeValue.cpp
     css/CSSCursorImageValue.cpp
     css/CSSFlexValue.cpp
     css/CSSFontFace.cpp

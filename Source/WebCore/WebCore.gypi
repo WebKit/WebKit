@@ -2340,6 +2340,8 @@
             'css/CSSCharsetRule.cpp',
             'css/CSSCharsetRule.h',
             'css/CSSComputedStyleDeclaration.cpp',
+            'css/CSSCrossfadeValue.cpp',
+            'css/CSSCrossfadeValue.h',
             'css/CSSCursorImageValue.cpp',
             'css/CSSFlexValue.cpp',
             'css/CSSFlexValue.h',

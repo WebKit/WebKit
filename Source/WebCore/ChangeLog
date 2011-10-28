@@ -1,3 +1,14 @@
+2011-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix due to r98775.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+
 2011-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         If visibility changes while an accelerated animation is running, element jumps around
