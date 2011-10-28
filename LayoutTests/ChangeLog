@@ -1,5 +1,11 @@
 2011-10-27  John Gregg  <johnnyg@google.com>
 
+        Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-27  John Gregg  <johnnyg@google.com>
+
         Add more test expectations and chromium results.
 
         * platform/chromium-cg-mac-leopard/fast/backgrounds/size/contain-and-cover-expected.png: Added.

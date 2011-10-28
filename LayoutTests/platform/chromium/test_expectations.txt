@@ -3666,7 +3666,7 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
 // Failing after r94912.
-BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT
+BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT IMAGE
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
 BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/block-mask-overlay-image-outset.html = IMAGE+TEXT
