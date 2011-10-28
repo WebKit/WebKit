@@ -1,3 +1,13 @@
+2011-10-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10288006> Emoji characters are too close to each other in small font size
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformWidthForGlyph): If the font is a color bitmap font, use
+        -[NSFont advancementForGlyph:] instead of wkGetGlyphTransformedAdvances().
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Remove unused default constructor

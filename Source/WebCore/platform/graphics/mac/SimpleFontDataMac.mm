@@ -400,12 +400,16 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
     if (platformData().orientation() == Horizontal || m_isBrokenIdeographFallback) {
-        NSFont* font = platformData().font();
-        float pointSize = platformData().m_size;
-        CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
-        if (!wkGetGlyphTransformedAdvances(platformData().cgFont(), font, &m, &glyph, &advance)) {
-            LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
-            advance.width = 0;
+        NSFont *font = platformData().font();
+        if (font && platformData().isColorBitmapFont())
+            advance = [font advancementForGlyph:glyph];
+        else {
+            float pointSize = platformData().m_size;
+            CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
+            if (!wkGetGlyphTransformedAdvances(platformData().cgFont(), font, &m, &glyph, &advance)) {
+                LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+                advance.width = 0;
+            }
         }
     } else
         CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), kCTFontVerticalOrientation, &glyph, &advance, 1);

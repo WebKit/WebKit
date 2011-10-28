@@ -1,3 +1,11 @@
+2011-10-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10288006> Emoji characters are too close to each other in small font size
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/fast/css/font-family-pictograph-expected.txt:
+
 2011-10-28  Ken Buchanan <kenrb@chromium.org>
 
         Crash when splitting inline flows with generated floats
