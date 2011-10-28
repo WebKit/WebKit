@@ -1,3 +1,47 @@
+2011-10-28  John Gregg  <johnnyg@google.com>
+
+        Unreviewed gardening.
+
+        * platform/chromium-cg-mac-leopard/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fullscreen/parent-flow-inline-with-block-child-expected.png: Removed.
+        * platform/chromium-cg-mac-snowleopard/fullscreen/full-screen-render-inline-expected.png: Removed.
+        * platform/chromium-cg-mac-snowleopard/svg/hixie: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/hixie/perf: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-cg-mac/svg/hixie/perf/002-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/background-leakage-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/emphasis-overlap-expected.png:
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-render-inline-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fullscreen/parent-flow-inline-with-block-child-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textOnPath-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/hixie: Added.
+        * platform/chromium-mac-snowleopard/svg/hixie/perf: Added.
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/002-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textOnPath-expected.png: Removed.
+        * platform/chromium-mac/svg/hixie/perf/002-expected.png: Removed.
+        * platform/chromium-mac/svg/hixie/perf/002-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/batik/text: Removed.
+        * platform/chromium-win-xp/svg/batik/text/textOnPath-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/textOnPath-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt:
+        * platform/chromium/fast/js/array-prototype-properties-expected.txt: Replaced.
+        * platform/chromium/fast/js/exception-sequencing-binops2-expected.txt: Removed.
+        * platform/chromium/fast/js/kde/RegExp-expected.txt: Removed.
+        * platform/chromium/fast/js/regexp-caching-expected.txt: Removed.
+        * platform/chromium/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Database metadata changes should be tied to transaction

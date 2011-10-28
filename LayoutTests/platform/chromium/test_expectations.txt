@@ -3938,8 +3938,12 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
-BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+TEXT IMAGE PASS
+BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+TEXT IMAGE PASS MISSING
 BUGWK71080 : printing/setPrinting.html = IMAGE+TEXT IMAGE PASS
 
 BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = FAIL CRASH
 BUGWK71084 WIN : http/tests/inspector/extensions-ignore-cache.html = FAIL CRASH
+
+BUGWK71127 : fast/js/array-functions-non-arrays.html = TEXT
+BUGWK71127 : fast/js/toString-overrides.html = TEXT
+BUGWK71127 : fast/js/toString-recursion.html = TEXT
