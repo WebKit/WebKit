@@ -32,7 +32,7 @@ struct( idlDocument => {
     fileName => '$'  # file name
 });
 
-# Used to represent 'interface' / 'exception' blocks
+# Used to represent 'interface' blocks
 struct( domClass => {
     name => '$',      # Class identifier (without module)
     parents => '@',      # List of strings
@@ -101,9 +101,6 @@ our $getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)'
 our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
 
 our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
-
-our $exceptionSelector = 'exception\s*(' . $idlIdNs . '*)\s*([a-zA-Z\s{;]*};)';
-our $exceptionSubSelector = '{\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*;\s*}';
 
 our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]&\|]*)';
 our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';

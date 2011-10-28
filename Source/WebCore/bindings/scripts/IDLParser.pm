@@ -32,8 +32,6 @@ use constant MODE_UNDEF    => 0; # Default mode.
 
 use constant MODE_MODULE  => 10; # 'module' section
 use constant MODE_INTERFACE  => 11; # 'interface' section
-use constant MODE_EXCEPTION  => 12; # 'exception' section
-use constant MODE_ALIAS    => 13; # 'alias' section
 
 # Helper variables
 my @temporaryContent = "";
@@ -236,41 +234,7 @@ sub ParseInterface
     $data =~ s/[\n\r]/ /g;
 
     # Beginning of the regexp parsing magic
-    if ($sectionName eq "exception") {
-        print " |- Trying to parse exception...\n" unless $beQuiet;
-
-        my $exceptionName = "";
-        my $exceptionData = "";
-        my $exceptionDataName = "";
-        my $exceptionDataType = "";
-
-        # Match identifier of the exception, and enclosed data...
-        $data =~ /$IDLStructure::exceptionSelector/;
-        $exceptionName = (defined($1) ? $1 : die("Parsing error!\nSource:\n$data\n)"));
-        $exceptionData = (defined($2) ? $2 : die("Parsing error!\nSource:\n$data\n)"));
-
-        ('' =~ /^/); # Reset variables needed for regexp matching
-
-        # ... parse enclosed data (get. name & type)
-        $exceptionData =~ /$IDLStructure::exceptionSubSelector/;
-        $exceptionDataType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$data\n)"));
-        $exceptionDataName = (defined($2) ? $2 : die("Parsing error!\nSource:\n$data\n)"));
-
-        # Fill in domClass datastructure
-        $dataNode->name($exceptionName);
-
-        my $newDataNode = new domAttribute();
-        $newDataNode->type("readonly attribute");
-        $newDataNode->signature(new domSignature());
-
-        $newDataNode->signature->name($exceptionDataName);
-        $newDataNode->signature->type($exceptionDataType);
-
-        my $arrayRef = $dataNode->attributes;
-        push(@$arrayRef, $newDataNode);
-
-        print "  |----> Exception; NAME \"$exceptionName\" DATA TYPE \"$exceptionDataType\" DATA NAME \"$exceptionDataName\"\n |-\n |\n" unless $beQuiet;
-    } elsif ($sectionName eq "interface") {
+    if ($sectionName eq "interface") {
         print " |- Trying to parse interface...\n" unless $beQuiet;
 
         my $interfaceName = "";
@@ -415,12 +379,6 @@ sub DetermineParseMode
         $mode = MODE_MODULE;
     } elsif ($_ =~ /interface/) {
         $mode = MODE_INTERFACE;
-    } elsif ($_ =~ /exception/) {
-        $mode = MODE_EXCEPTION;
-    } elsif ($_ =~ /(\A|\b)alias/) {
-        # The (\A|\b) above is needed so we don't match attributes
-        # whose names contain the substring "alias".
-        $mode = MODE_ALIAS;
     }
 
     return $mode;
@@ -442,27 +400,6 @@ sub ProcessSection
         die ("No module specified! Fatal Error!\n") if ($document eq 0);
         my $arrayRef = $document->classes;
         push(@$arrayRef, $node);
-    } elsif($parseMode eq MODE_EXCEPTION) {
-        my $node = new domClass();
-        $object->ParseInterface($node, "exception");
-
-        die ("No module specified! Fatal Error!\n") if ($document eq 0);
-        my $arrayRef = $document->classes;
-        push(@$arrayRef, $node);
-    } elsif($parseMode eq MODE_ALIAS) {
-        print " |- Trying to parse alias...\n" unless $beQuiet;
-    
-        my $line = join("", @temporaryContent);
-        $line =~ /$IDLStructure::aliasSelector/;
-
-        my $interfaceName = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));
-        my $wrapperName = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
-    
-        print "  |----> Alias; INTERFACE \"$interfaceName\" WRAPPER \"$wrapperName\"\n |-\n |\n" unless $beQuiet;
-
-        # FIXME: Check if alias is already in aliases
-        my $aliases = $document->aliases;
-        $aliases->{$interfaceName} = $wrapperName;
     }
 
     @temporaryContent = "";

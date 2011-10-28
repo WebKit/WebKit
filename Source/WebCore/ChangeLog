@@ -1,3 +1,16 @@
+2011-10-28  Adam Klein  <adamk@chromium.org>
+
+        Remove unused parsers for 'exception' and 'alias' IDL keywords
+        https://bugs.webkit.org/show_bug.cgi?id=71140
+
+        Reviewed by Adam Barth.
+
+        * bindings/scripts/IDLParser.pm:
+        (ParseInterface):
+        (DetermineParseMode):
+        (ProcessSection):
+        * bindings/scripts/IDLStructure.pm:
+
 2011-10-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10288006> Emoji characters are too close to each other in small font size
