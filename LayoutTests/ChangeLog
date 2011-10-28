@@ -1,3 +1,11 @@
+2011-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Added some missing results for compositing visibilty tests.
+
+        * platform/mac/compositing/visibility/visibility-composited-expected.txt: Added.
+        * platform/mac/compositing/visibility/visibility-composited-transforms-expected.txt: Added.
+        * platform/mac/compositing/visibility/visibility-image-layers-expected.txt: Added.
+
 2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98736.
