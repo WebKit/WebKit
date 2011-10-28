@@ -1,3 +1,41 @@
+2011-10-28  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableSection::recalcCells should not free its grid
+        https://bugs.webkit.org/show_bug.cgi?id=71056
+
+        Reviewed by Darin Adler.
+
+        Refactoring only, no change in behavior.
+
+        r98614 had the bad side effect of clearing the row vector (m_grid) on
+        the RenderTableSection when doing a recalcCells. This change removes the
+        unneeded free and inline the |row| field into the RowStruct as it made
+        no sense to have it as a pointer.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative):
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        (WebCore::RenderTableSection::appendColumn):
+        (WebCore::RenderTableSection::splitColumn):
+        Mechanical changes now that |row| is a member of RowStruct.
+
+        (WebCore::RenderTableSection::~RenderTableSection): Clear our row vector.
+
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::recalcCells):
+        Those 2 functions were refactored to use fillRowsWithDefaultStartingAtPosition.
+
+        (WebCore::RenderTableSection::fillRowsWithDefaultStartingAtPosition):
+        Factored the code to fill the RowStruct structure with default values.
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::cellAt):
+        (WebCore::RenderTableSection::primaryCellAt):
+        More mechanical change after the |row| field change.
+
 2011-10-28  Anna Cavender  <annacc@chromium.org>
 
         Implement load notification and events for <track>.

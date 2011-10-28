@@ -76,18 +76,17 @@ public:
     typedef Vector<CellStruct> Row;
 
     struct RowStruct {
-        // FIXME: This field should be an OwnPtr.
-        Row* row;
+        Row row;
         RenderTableRow* rowRenderer;
         LayoutUnit baseline;
         Length logicalHeight;
     };
 
-    CellStruct& cellAt(int row,  int col) { return (*m_grid[row].row)[col]; }
-    const CellStruct& cellAt(int row, int col) const { return (*m_grid[row].row)[col]; }
+    CellStruct& cellAt(int row,  int col) { return m_grid[row].row[col]; }
+    const CellStruct& cellAt(int row, int col) const { return m_grid[row].row[col]; }
     RenderTableCell* primaryCellAt(int row, int col)
     {
-        CellStruct& c = (*m_grid[row].row)[col];
+        CellStruct& c = m_grid[row].row[col];
         return c.primaryCell();
     }
 
@@ -145,7 +144,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     bool ensureRows(unsigned);
-    void clearGrid();
+    void fillRowsWithDefaultStartingAtPosition(unsigned);
 
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
 

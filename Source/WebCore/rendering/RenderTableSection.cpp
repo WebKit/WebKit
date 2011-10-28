@@ -48,12 +48,12 @@ using namespace HTMLNames;
 static unsigned gMinTableSizeToUseFastPaintPathWithOverflowingCell = 75 * 75;
 static float gMaxAllowedOverflowingCellRatioForFastPaintPath = 0.1f;
 
-static inline void setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(RenderTableSection::RowStruct* row)
+static inline void setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(RenderTableSection::RowStruct& row)
 {
-    ASSERT(row && row->rowRenderer);
-    row->logicalHeight = row->rowRenderer->style()->logicalHeight();
-    if (row->logicalHeight.isRelative())
-        row->logicalHeight = Length();
+    ASSERT(row.rowRenderer);
+    row.logicalHeight = row.rowRenderer->style()->logicalHeight();
+    if (row.logicalHeight.isRelative())
+        row.logicalHeight = Length();
 }
 
 RenderTableSection::RenderTableSection(Node* node)
@@ -73,7 +73,6 @@ RenderTableSection::RenderTableSection(Node* node)
 
 RenderTableSection::~RenderTableSection()
 {
-    clearGrid();
 }
 
 void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -158,7 +157,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     m_grid[insertionRow].rowRenderer = toRenderTableRow(child);
 
     if (!beforeChild)
-        setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(&m_grid[insertionRow]);
+        setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
     // If the next renderer is actually wrapped in an anonymous table row, we need to go up and find that.
     while (beforeChild && beforeChild->parent() != this)
@@ -184,14 +183,7 @@ bool RenderTableSection::ensureRows(unsigned numRows)
 
         unsigned oldSize = m_grid.size();
         m_grid.grow(numRows);
-
-        unsigned nCols = max(1u, table()->numEffCols());
-        for (unsigned r = oldSize; r < numRows; r++) {
-            m_grid[r].row = new Row(nCols);
-            m_grid[r].rowRenderer = 0;
-            m_grid[r].baseline = 0;
-            m_grid[r].logicalHeight = Length();
-        }
+        fillRowsWithDefaultStartingAtPosition(oldSize);
     }
 
     return true;
@@ -283,7 +275,7 @@ void RenderTableSection::setCellLogicalWidths()
     LayoutStateMaintainer statePusher(view());
 
     for (unsigned i = 0; i < m_grid.size(); i++) {
-        Row& row = *m_grid[i].row;
+        Row& row = m_grid[i].row;
         unsigned cols = row.size();
         for (unsigned j = 0; j < cols; j++) {
             CellStruct& current = row[j];
@@ -344,8 +336,8 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
         m_rowPos[r + 1] = max(m_rowPos[r + 1], pos);
 
-        Row* row = m_grid[r].row;
-        unsigned totalCols = row->size();
+        Row& row = m_grid[r].row;
+        unsigned totalCols = row.size();
 
         for (unsigned c = 0; c < totalCols; c++) {
             CellStruct& current = cellAt(r, c);
@@ -920,10 +912,10 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
         return firstLineBaseline + m_rowPos[0];
 
     firstLineBaseline = -1;
-    Row* firstRow = m_grid[0].row;
-    for (size_t i = 0; i < firstRow->size(); ++i) {
-        CellStruct& cs = firstRow->at(i);
-        RenderTableCell* cell = cs.primaryCell();
+    const Row& firstRow = m_grid[0].row;
+    for (size_t i = 0; i < firstRow.size(); ++i) {
+        const CellStruct& cs = firstRow.at(i);
+        const RenderTableCell* cell = cs.primaryCell();
         if (cell)
             firstLineBaseline = max(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight());
     }
@@ -1128,12 +1120,7 @@ void RenderTableSection::recalcCells()
 {
     m_cCol = 0;
     m_cRow = 0;
-    unsigned capacity = m_grid.size();
-    clearGrid();
-    // Although it is possible for our row count to shrink (due to removeChild being called),
-    // it is more common for the count to stay the same. Let's just reallocate the old
-    // capacity upfront to avoid re-expanding it one row at a time.
-    m_grid.reserveCapacity(capacity);
+    fillRowsWithDefaultStartingAtPosition(0);
 
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         if (row->isTableRow()) {
@@ -1145,7 +1132,7 @@ void RenderTableSection::recalcCells()
             
             RenderTableRow* tableRow = toRenderTableRow(row);
             m_grid[insertionRow].rowRenderer = tableRow;
-            setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(&m_grid[insertionRow]);
+            setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
                 if (cell->isTableCell())
@@ -1153,6 +1140,8 @@ void RenderTableSection::recalcCells()
             }
         }
     }
+
+    m_grid.shrinkToFit();
     m_needsCellRecalc = false;
     setNeedsLayout(true);
 }
@@ -1164,12 +1153,19 @@ void RenderTableSection::setNeedsCellRecalc()
         t->setNeedsSectionRecalc();
 }
 
-void RenderTableSection::clearGrid()
+void RenderTableSection::fillRowsWithDefaultStartingAtPosition(unsigned startingRow)
 {
-    for (unsigned row = 0; row < m_grid.size(); ++row)
-        delete m_grid[row].row;
-
-    m_grid.clear();
+    unsigned effectiveColumnCount = max(1u, table()->numEffCols());
+    for (unsigned row = startingRow; row < m_grid.size(); ++row) {
+        // It may be more efficient to reset the CellStruct individually instead of reallocating
+        // the whole buffer in each Row, for now this is good enough and will properly shrink
+        // the rows if effectiveColumnCount was decreased.
+        m_grid[row].row.clear();
+        m_grid[row].row.grow(effectiveColumnCount);
+        m_grid[row].rowRenderer = 0;
+        m_grid[row].baseline = 0;
+        m_grid[row].logicalHeight = Length();
+    }
 }
 
 unsigned RenderTableSection::numColumns() const
@@ -1190,7 +1186,7 @@ unsigned RenderTableSection::numColumns() const
 void RenderTableSection::appendColumn(int pos)
 {
     for (unsigned row = 0; row < m_grid.size(); ++row)
-        m_grid[row].row->resize(pos + 1);
+        m_grid[row].row.resize(pos + 1);
 }
 
 void RenderTableSection::splitColumn(unsigned pos, int first)
@@ -1200,7 +1196,7 @@ void RenderTableSection::splitColumn(unsigned pos, int first)
     if (m_cCol > pos)
         m_cCol++;
     for (unsigned row = 0; row < m_grid.size(); ++row) {
-        Row& r = *m_grid[row].row;
+        Row& r = m_grid[row].row;
         r.insert(pos + 1, CellStruct());
         if (r[pos].hasCells()) {
             r[pos + 1].cells.append(r[pos].cells);
