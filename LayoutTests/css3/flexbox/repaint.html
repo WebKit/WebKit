@@ -42,6 +42,7 @@ function step(count) {
 window.onload = function() {
     if (window.layoutTestController) {
         layoutTestController.dumpAsText(true);
+        document.body.offsetTop;
         layoutTestController.display();
         layoutTestController.waitUntilDone();
     }
