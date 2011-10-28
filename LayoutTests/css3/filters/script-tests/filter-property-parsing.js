@@ -42,10 +42,12 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
   
     shouldBe("filterRule.length", "" + expectedLength); // shouldBe expects string arguments
   
-    for (var i = 0; i < expectedLength; i++) {
-        subRule = filterRule[i];
-        shouldBe("subRule.operationType", expectedTypes[i]);
-        shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+    if (filterRule) {
+        for (var i = 0; i < expectedLength; i++) {
+            subRule = filterRule[i];
+            shouldBe("subRule.operationType", expectedTypes[i]);
+            shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+        }
     }
 }
 
@@ -84,6 +86,11 @@ testFilterRule("Zero value",
                ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
                ["grayscale(0)"]);
 
+testFilterRule("No values",
+               "grayscale()", 1, "grayscale()",
+               ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
+               ["grayscale()"]);
+
 testFilterRule("Multiple values",
                "grayscale(0.5) grayscale(0.25)", 2, "grayscale(0.5) grayscale(0.25)",
                ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
@@ -103,6 +110,11 @@ testFilterRule("Zero value",
                "sepia(0)", 1, "sepia(0)",
                ["WebKitCSSFilterValue.CSS_FILTER_SEPIA"],
                ["sepia(0)"]);
+
+testFilterRule("No values",
+               "sepia()", 1, "sepia()",
+               ["WebKitCSSFilterValue.CSS_FILTER_SEPIA"],
+               ["sepia()"]);
 
 testFilterRule("Multiple values",
                "sepia(0.5) sepia(0.25)", 2, "sepia(0.5) sepia(0.25)",
@@ -128,6 +140,11 @@ testFilterRule("Zero value",
                "saturate(0)", 1, "saturate(0)",
                ["WebKitCSSFilterValue.CSS_FILTER_SATURATE"],
                ["saturate(0)"]);
+
+testFilterRule("No values",
+               "saturate()", 1, "saturate()",
+               ["WebKitCSSFilterValue.CSS_FILTER_SATURATE"],
+               ["saturate()"]);
 
 testFilterRule("Multiple values",
                "saturate(0.5) saturate(0.25)", 2, "saturate(0.5) saturate(0.25)",
@@ -169,6 +186,11 @@ testFilterRule("Zero value",
                ["WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE"],
                ["hue-rotate(0deg)"]);
 
+testFilterRule("No values",
+               "hue-rotate()", 1, "hue-rotate()",
+               ["WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE"],
+               ["hue-rotate()"]);
+
 testFilterRule("Rule combinations",
                "hue-rotate(10deg) grayscale(0.25)", 2, "hue-rotate(10deg) grayscale(0.25)",
                ["WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
@@ -188,6 +210,11 @@ testFilterRule("Zero value",
                "invert(0)", 1, "invert(0)",
                ["WebKitCSSFilterValue.CSS_FILTER_INVERT"],
                ["invert(0)"]);
+
+testFilterRule("No values",
+               "invert()", 1, "invert()",
+               ["WebKitCSSFilterValue.CSS_FILTER_INVERT"],
+               ["invert()"]);
 
 testFilterRule("Multiple values",
                "invert(0.5) invert(0.25)", 2, "invert(0.5) invert(0.25)",
@@ -213,6 +240,11 @@ testFilterRule("Zero value",
                "opacity(0)", 1, "opacity(0)",
                ["WebKitCSSFilterValue.CSS_FILTER_OPACITY"],
                ["opacity(0)"]);
+
+testFilterRule("No values",
+               "opacity()", 1, "opacity()",
+               ["WebKitCSSFilterValue.CSS_FILTER_OPACITY"],
+               ["opacity()"]);
 
 testFilterRule("Multiple values",
                "opacity(0.5) opacity(0.25)", 2, "opacity(0.5) opacity(0.25)",
@@ -244,6 +276,11 @@ testFilterRule("Float value",
                ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
                ["gamma(1.3)"]);
 
+testFilterRule("No values",
+               "gamma()", 1, "gamma()",
+               ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
+               ["gamma()"]);
+
 testFilterRule("Two zeros to px",
                "blur(0 0)", 1, "blur(0px 0px)",
                ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
@@ -264,6 +301,11 @@ testFilterRule("One length",
                ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
                ["blur(10%)"]);
 
+testFilterRule("No values",
+               "blur()", 1, "blur()",
+               ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
+               ["blur()"]);
+
 testFilterRule("Three values",
                "sharpen(1.0 10px 1)", 1, "sharpen(1 10px 1)",
                ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
@@ -283,6 +325,11 @@ testFilterRule("One value",
                "sharpen(0.25)", 1, "sharpen(0.25)",
                ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
                ["sharpen(0.25)"]);
+
+testFilterRule("No values",
+               "sharpen()", 1, "sharpen()",
+               ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
+               ["sharpen()"]);
 
 testFilterRule("Multiple operations",
                "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)", 9,

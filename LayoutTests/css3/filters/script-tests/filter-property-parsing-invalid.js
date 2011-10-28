@@ -68,7 +68,8 @@ testInvalidFilterRule("Length instead of number", "gamma(10 10 10px)");
 testInvalidFilterRule("Negative number", "gamma(-0.1)");
 testInvalidFilterRule("Negative number", "gamma(1.0 -0.1)");
 testInvalidFilterRule("Too many parameters", "gamma(1.0 1.0 1.0 1.0)");
-testInvalidFilterRule("Commas", "hue-rotate(1.0, 1.0, 1.0)");
+testInvalidFilterRule("Commas", "gamma(1.0, 1.0, 1.0)");
+testInvalidFilterRule("Trailing comma", "gamma(1.0, 1.0,)");
 
 testInvalidFilterRule("Bare number", "blur(1)");
 testInvalidFilterRule("Bare number", "blur(1px 1)");
@@ -77,11 +78,13 @@ testInvalidFilterRule("Negative number", "blur(1px -1px)");
 testInvalidFilterRule("Too many parameters", "blur(1px 1px 1px)");
 testInvalidFilterRule("Too many parameters and commas", "blur(1em, 1em, 2em)");
 testInvalidFilterRule("Commas", "blur(10px, 10px)");
+testInvalidFilterRule("Trailing comma", "blur(1em,)");
 
 testInvalidFilterRule("Missing length", "sharpen(1 1 1)");
 testInvalidFilterRule("Wrong length type", "sharpen(1 1deg 1)");
 testInvalidFilterRule("Too many parameters", "sharpen(1 1px 1 1)");
 testInvalidFilterRule("Too many parameters and commas", "sharpen(1, 1px, 1, 1)");
 testInvalidFilterRule("Commas", "sharpen(1, 10px, 1)");
+testInvalidFilterRule("Trailing comma", "sharpen(1, 10px,)");
 
 successfullyParsed = true;

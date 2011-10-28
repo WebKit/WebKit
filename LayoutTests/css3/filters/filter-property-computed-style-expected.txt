@@ -43,6 +43,11 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0)'
 
+No values : grayscale()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(1)'
+
 Multiple values : grayscale(0.5) grayscale(0.25)
 PASS filterStyle.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
@@ -64,6 +69,11 @@ Zero value : sepia(0)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0)'
+
+No values : sepia()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(1)'
 
 Multiple values : sepia(0.5) sepia(0.25)
 PASS filterStyle.length is 2
@@ -93,6 +103,11 @@ Zero value : saturate(0)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0)'
+
+No values : saturate()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(1)'
 
 Multiple values : saturate(0.5) saturate(0.25)
 PASS filterStyle.length is 2
@@ -138,6 +153,11 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(0deg)'
 
+No values : hue-rotate()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate(0deg)'
+
 Rule combinations : hue-rotate(10deg) grayscale(0.25)
 PASS filterStyle.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
@@ -159,6 +179,11 @@ Zero value : invert(0)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0)'
+
+No values : invert()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(1)'
 
 Multiple values : invert(0.5) invert(0.25)
 PASS filterStyle.length is 2
@@ -189,6 +214,11 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0)'
 
+No values : opacity()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(1)'
+
 Multiple values : opacity(0.5) opacity(0.25)
 PASS filterStyle.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
@@ -214,6 +244,11 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
 PASS subRule.cssText is 'gamma(1 1 0)'
 
 One value : gamma(1)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma(1 1 0)'
+
+No values : gamma()
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
 PASS subRule.cssText is 'gamma(1 1 0)'
@@ -248,6 +283,11 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(5px 5px)'
 
+No values : blur()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur(0px 0px)'
+
 Three values : sharpen(1.0 10px 1)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
@@ -267,6 +307,11 @@ One value : sharpen(0.5)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
 PASS subRule.cssText is 'sharpen(0.5 0px 1)'
+
+No values : sharpen()
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen(0 0px 1)'
 
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
 PASS filterStyle.length is 9

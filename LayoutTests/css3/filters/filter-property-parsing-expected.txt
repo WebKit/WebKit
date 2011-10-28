@@ -85,6 +85,17 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0)'
 
+No values : grayscale()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale()'
+
 Multiple values : grayscale(0.5) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -130,6 +141,17 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0)'
+
+No values : sepia()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'sepia()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia()'
 
 Multiple values : sepia(0.5) sepia(0.25)
 PASS cssRule.type is 1
@@ -189,6 +211,17 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0)'
+
+No values : saturate()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'saturate()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate()'
 
 Multiple values : saturate(0.5) saturate(0.25)
 PASS cssRule.type is 1
@@ -282,6 +315,17 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(0deg)'
 
+No values : hue-rotate()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'hue-rotate()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
+PASS subRule.cssText is 'hue-rotate()'
+
 Rule combinations : hue-rotate(10deg) grayscale(0.25)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -327,6 +371,17 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0)'
+
+No values : invert()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'invert()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert()'
 
 Multiple values : invert(0.5) invert(0.25)
 PASS cssRule.type is 1
@@ -386,6 +441,17 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0)'
+
+No values : opacity()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'opacity()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity()'
 
 Multiple values : opacity(0.5) opacity(0.25)
 PASS cssRule.type is 1
@@ -457,6 +523,17 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
 PASS subRule.cssText is 'gamma(1.3)'
 
+No values : gamma()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'gamma()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
+PASS subRule.cssText is 'gamma()'
+
 Two zeros to px : blur(0 0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -501,6 +578,17 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(10%)'
 
+No values : blur()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'blur()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
+PASS subRule.cssText is 'blur()'
+
 Three values : sharpen(1.0 10px 1)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -544,6 +632,17 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
 PASS subRule.cssText is 'sharpen(0.25)'
+
+No values : sharpen()
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'sharpen()'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
+PASS subRule.cssText is 'sharpen()'
 
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
 PASS cssRule.type is 1

@@ -5395,9 +5395,6 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             continue;
 
         WebKitCSSFilterValue* filterValue = static_cast<WebKitCSSFilterValue*>(i.value());
-        if (!filterValue->length())
-            continue;
-
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
 
         bool haveNonPrimitiveValue = false;
@@ -5410,10 +5407,11 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         if (haveNonPrimitiveValue)
             continue;
 
-        CSSPrimitiveValue* firstValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(0));
+        CSSPrimitiveValue* firstValue = filterValue->length() ? static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(0)) : 0;
         switch (filterValue->operationType()) {
         case WebKitCSSFilterValue::ReferenceFilterOperation: {
-            operations.operations().append(ReferenceFilterOperation::create(firstValue->getStringValue(), operationType));
+            if (firstValue)
+                operations.operations().append(ReferenceFilterOperation::create(firstValue->getStringValue(), operationType));
             break;
         }
         case WebKitCSSFilterValue::GrayscaleFilterOperation:
@@ -5427,13 +5425,16 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             break;
         }
         case WebKitCSSFilterValue::HueRotateFilterOperation: {
-            double angle = firstValue->getDoubleValue();
-            if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                angle = rad2deg(angle);
-            else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                angle = grad2deg(angle);
-            else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
-                angle = turn2deg(angle);
+            double angle = 0;
+            if (filterValue->length() == 1) {
+                angle = firstValue->getDoubleValue();
+                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
+                    angle = rad2deg(angle);
+                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
+                    angle = grad2deg(angle);
+                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
+                    angle = turn2deg(angle);
+            }
 
             operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
             break;

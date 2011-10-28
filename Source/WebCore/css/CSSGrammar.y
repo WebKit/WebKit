@@ -100,7 +100,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 54
+%expect 55
 
 %nonassoc LOWEST_PREC
 
@@ -1474,6 +1474,16 @@ function:
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
         f->args = adoptPtr(p->sinkFloatingValueList($3));
+        $$.id = 0;
+        $$.unit = CSSParserValue::Function;
+        $$.function = f;
+    } |
+    FUNCTION maybe_space ')' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        CSSParserFunction* f = p->createFloatingFunction();
+        f->name = $1;
+        CSSParserValueList* valueList = p->createFloatingValueList();
+        f->args = adoptPtr(p->sinkFloatingValueList(valueList));
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
