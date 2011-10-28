@@ -9,7 +9,6 @@ if (window.layoutTestController) {
 var expectedPasses = 6;
 var messages = new Array();
 var currentMessageIndex = 0;
-var onloadFired = false;
 
 function log(message)
 {
@@ -27,12 +26,7 @@ function logPass(message, messageNumber)
     }
 
     expectedPasses--;
-    checkIfDone();
-}
-
-function checkIfDone()
-{
-    if (expectedPasses == 0 && onloadFired && window.layoutTestController)
+    if (expectedPasses == 0 && window.layoutTestController)
         layoutTestController.notifyDone();
 }
 </script>
@@ -40,7 +34,7 @@ function checkIfDone()
 <link rel="prefetch" src="" href="" onerror="log('FAIL: link rel=prefetch onerror fired')"></link>
 <link rel="stylesheet" src="" href="" onerror="log('FAIL: link rel=stylesheet onerror fired')"></link>
 </head>
-<body onload="setTimeout('onloadFired = true; checkIfDone();', 0)">
+<body>
 <div id="console"></div>
 <command icon="" onerror="log('FAIL: command onerror fired')"></command>
 <object data="" onerror="log('FAIL: object onerror fired')"></object>

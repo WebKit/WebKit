@@ -1,3 +1,22 @@
+2011-10-28  Nate Chapin  <japhet@chromium.org>
+
+        empty-urls.html needs to stop being flaky.
+        Because it was in http/tests/loading, it output
+        frame load callbacks, and it was unpredictable whether
+        the callback for onload or for the load completing would
+        be called first. Ergo, move the test to http/tests/misc,
+        and remove the logic which failed to enforce a frame load
+        callback ordering.
+        https://bugs.webkit.org/show_bug.cgi?id=67359
+
+        Reviewed by Adam Barth.
+
+        * http/tests/loading/empty-urls-expected.txt: Removed.
+        * http/tests/loading/empty-urls.html: Removed.
+        * http/tests/misc/empty-urls-expected.txt: Copied from LayoutTests/http/tests/loading/empty-urls-expected.txt.
+        * http/tests/misc/empty-urls.html: Copied from LayoutTests/http/tests/loading/empty-urls.html.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.

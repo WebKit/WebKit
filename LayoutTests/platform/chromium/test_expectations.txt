@@ -3642,8 +3642,6 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-BUGWK67359 : http/tests/loading/empty-urls.html = PASS TEXT
-
 BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
