@@ -43,6 +43,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_anchorPoint(0.5, 0.5)
     , m_anchorPointZ(0)
     , m_doubleSided(true)
+    , m_layerPropertyChanged(false)
     , m_masksToBounds(false)
     , m_opaque(false)
     , m_opacity(1.0)
@@ -126,6 +127,7 @@ void CCLayerImpl::scrollBy(const IntSize& scroll)
     IntSize maxDelta = m_maxScrollPosition - toSize(m_scrollPosition);
     // Clamp newDelta so that position + delta stays within scroll bounds.
     m_scrollDelta = newDelta.expandedTo(minDelta).shrunkTo(maxDelta);
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::cleanupResources()
@@ -221,6 +223,175 @@ void CCLayerImpl::dumpLayer(TextStream& ts, int indent) const
     }
     for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->dumpLayer(ts, indent+1);
+}
+
+void CCLayerImpl::noteLayerPropertyChangedForSubtree()
+{
+    m_layerPropertyChanged = true;
+    noteLayerPropertyChangedForDescendants();
+}
+
+void CCLayerImpl::noteLayerPropertyChangedForDescendants()
+{
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->noteLayerPropertyChangedForSubtree();
+}
+
+void CCLayerImpl::setBounds(const IntSize& bounds)
+{
+    if (m_bounds != bounds) {
+        m_bounds = bounds;
+
+        if (masksToBounds())
+            noteLayerPropertyChangedForSubtree();
+        else
+            m_layerPropertyChanged = true;
+    }
+}
+
+void CCLayerImpl::setMaskLayer(PassRefPtr<CCLayerImpl> maskLayer)
+{
+    if (m_maskLayer != maskLayer) {
+        m_maskLayer = maskLayer;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setReplicaLayer(PassRefPtr<CCLayerImpl> replicaLayer)
+{
+    if (m_replicaLayer != replicaLayer) {
+        m_replicaLayer = replicaLayer;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setDrawsContent(bool drawsContent)
+{
+    if (m_drawsContent != drawsContent) {
+        m_drawsContent = drawsContent;
+        m_layerPropertyChanged = true;
+    }
+}
+
+void CCLayerImpl::setAnchorPoint(const FloatPoint& anchorPoint)
+{
+    if (m_anchorPoint != anchorPoint) {
+        m_anchorPoint = anchorPoint;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setAnchorPointZ(float anchorPointZ)
+{
+    if (m_anchorPointZ != anchorPointZ) {
+        m_anchorPointZ = anchorPointZ;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setMasksToBounds(bool masksToBounds)
+{
+    if (m_masksToBounds != masksToBounds) {
+        m_masksToBounds = masksToBounds;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setOpaque(bool opaque)
+{
+    if (m_opaque != opaque) {
+        m_opaque = opaque;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setOpacity(float opacity)
+{
+    if (m_opacity != opacity) {
+        m_opacity = opacity;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setPosition(const FloatPoint& position)
+{
+    if (m_position != position) {
+        m_position = position;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setPreserves3D(bool preserves3D)
+{
+    if (m_preserves3D != preserves3D) {
+        m_preserves3D = preserves3D;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTransform)
+{
+    if (m_sublayerTransform != sublayerTransform) {
+        m_sublayerTransform = sublayerTransform;
+        // sublayer transform does not affect the current layer; it affects only its children.
+        noteLayerPropertyChangedForDescendants();
+    }
+}
+
+void CCLayerImpl::setTransform(const TransformationMatrix& transform)
+{
+    if (m_transform != transform) {
+        m_transform = transform;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setDebugBorderColor(Color debugBorderColor)
+{
+    if (m_debugBorderColor != debugBorderColor) {
+        m_debugBorderColor = debugBorderColor;
+        m_layerPropertyChanged = true;
+    }
+}
+
+void CCLayerImpl::setDebugBorderWidth(float debugBorderWidth)
+{
+    if (m_debugBorderWidth != debugBorderWidth) {
+        m_debugBorderWidth = debugBorderWidth;
+        m_layerPropertyChanged = true;
+    }
+}
+
+void CCLayerImpl::setContentBounds(const IntSize& contentBounds)
+{
+    if (m_contentBounds != contentBounds) {
+        m_contentBounds = contentBounds;
+        m_layerPropertyChanged = true;
+    }
+}
+
+void CCLayerImpl::setScrollPosition(const IntPoint& scrollPosition)
+{
+    if (m_scrollPosition != scrollPosition) {
+        m_scrollPosition = scrollPosition;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
+{
+    if (m_scrollDelta != scrollDelta) {
+        m_scrollDelta = scrollDelta;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setDoubleSided(bool doubleSided)
+{
+    if (m_doubleSided != doubleSided) {
+        m_doubleSided = doubleSided;
+        noteLayerPropertyChangedForSubtree();
+    }
 }
 
 }

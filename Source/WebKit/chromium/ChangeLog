@@ -1,3 +1,14 @@
+2011-10-27  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Track when CCLayerImpl properties have changed.
+        https://bugs.webkit.org/show_bug.cgi?id=70442
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerImplTest.cpp: Added.
+        (WebCore::TEST):
+
 2011-10-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: HTTP headers merged incorrect in Chrome

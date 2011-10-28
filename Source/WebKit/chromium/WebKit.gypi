@@ -54,6 +54,7 @@
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
+            'tests/CCLayerImplTest.cpp',
             'tests/CCLayerSorterTest.cpp',
             'tests/CCLayerTreeHostCommonTest.cpp',
             'tests/CCLayerTreeHostImplTest.cpp',

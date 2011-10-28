@@ -58,10 +58,10 @@ public:
     void removeFromParent();
     void removeAllChildren();
 
-    void setMaskLayer(PassRefPtr<CCLayerImpl> maskLayer) { m_maskLayer = maskLayer; }
+    void setMaskLayer(PassRefPtr<CCLayerImpl>);
     CCLayerImpl* maskLayer() const { return m_maskLayer.get(); }
 
-    void setReplicaLayer(PassRefPtr<CCLayerImpl> replicaLayer) { m_replicaLayer = replicaLayer; }
+    void setReplicaLayer(PassRefPtr<CCLayerImpl>);
     CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
 
     int id() const { return m_layerId; }
@@ -75,7 +75,7 @@ public:
     virtual void bindContentsTexture(LayerRendererChromium*);
 
     // Returns true if this layer has content to draw.
-    void setDrawsContent(bool drawsContent) { m_drawsContent = drawsContent; }
+    void setDrawsContent(bool);
     bool drawsContent() const { return m_drawsContent; }
 
     // Returns true if any of the layer's descendants has content to draw.
@@ -83,25 +83,25 @@ public:
 
     void cleanupResources();
 
-    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; }
+    void setAnchorPoint(const FloatPoint&);
     const FloatPoint& anchorPoint() const { return m_anchorPoint; }
 
-    void setAnchorPointZ(float anchorPointZ) { m_anchorPointZ = anchorPointZ; }
+    void setAnchorPointZ(float);
     float anchorPointZ() const { return m_anchorPointZ; }
 
-    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
+    void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
-    void setOpaque(bool opaque) { m_opaque = opaque; }
+    void setOpaque(bool);
     bool opaque() const { return m_opaque; }
 
-    void setOpacity(float opacity) { m_opacity = opacity; }
+    void setOpacity(float);
     float opacity() const { return m_opacity; }
 
-    void setPosition(const FloatPoint& position) { m_position = position; }
+    void setPosition(const FloatPoint&);
     const FloatPoint& position() const { return m_position; }
 
-    void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; }
+    void setPreserves3D(bool);
     bool preserves3D() const { return m_preserves3D; }
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
@@ -110,19 +110,19 @@ public:
     void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
-    void setSublayerTransform(const TransformationMatrix& sublayerTransform) { m_sublayerTransform = sublayerTransform; }
+    void setSublayerTransform(const TransformationMatrix&);
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    void setTransform(const TransformationMatrix& transform) { m_transform = transform; }
+    void setTransform(const TransformationMatrix&);
     const TransformationMatrix& transform() const { return m_transform; }
 
     void setName(const String& name) { m_name = name; }
     const String& name() const { return m_name; }
 
     // Debug layer border - visual effect only, do not change geometry/clipping/etc.
-    void setDebugBorderColor(Color c) { m_debugBorderColor = c; }
+    void setDebugBorderColor(Color);
     Color debugBorderColor() const { return m_debugBorderColor; }
-    void setDebugBorderWidth(float width) { m_debugBorderWidth = width; }
+    void setDebugBorderWidth(float);
     float debugBorderWidth() const { return m_debugBorderWidth; }
 
     void drawDebugBorder(LayerRendererChromium*);
@@ -140,19 +140,19 @@ public:
     void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
     const IntSize& bounds() const { return m_bounds; }
-    void setBounds(const IntSize& bounds) { m_bounds = bounds; }
+    void setBounds(const IntSize&);
 
     const IntSize& contentBounds() const { return m_contentBounds; }
-    void setContentBounds(const IntSize& contentBounds) { m_contentBounds = contentBounds; }
+    void setContentBounds(const IntSize&);
 
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
-    void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
+    void setScrollPosition(const IntPoint&);
 
     const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
     void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
 
     const IntSize& scrollDelta() const { return m_scrollDelta; }
-    void setScrollDelta(const IntSize& scrollDelta) { m_scrollDelta = scrollDelta; }
+    void setScrollDelta(const IntSize&);
 
     void scrollBy(const IntSize& scroll);
     bool scrollable() const { return !maxScrollPosition().isZero(); }
@@ -161,7 +161,7 @@ public:
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
     bool doubleSided() const { return m_doubleSided; }
-    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; }
+    void setDoubleSided(bool);
 
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
@@ -177,6 +177,9 @@ public:
 
     String layerTreeAsText() const;
 
+    bool layerPropertyChanged() const { return m_layerPropertyChanged; }
+    void resetLayerPropertyChanged() { m_layerPropertyChanged = false; }
+
 protected:
     explicit CCLayerImpl(int);
 
@@ -187,6 +190,11 @@ private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
     friend class TreeSynchronizer;
     void clearChildList(); // Warning: This does not preserve tree structure invariants and so is only exposed to the tree synchronizer.
+
+    void noteLayerPropertyChangedForSubtree();
+
+    // Note carefully this does not affect the current layer.
+    void noteLayerPropertyChangedForDescendants();
 
     virtual const char* layerTypeAsString() const { return "LayerChromium"; }
 
@@ -209,6 +217,9 @@ private:
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;
+
+    // Tracks if drawing-related properties have changed since last redraw.
+    bool m_layerPropertyChanged;
 
     IntRect m_visibleLayerRect;
     bool m_masksToBounds;
