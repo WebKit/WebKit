@@ -1,3 +1,24 @@
+2011-10-28  Adrienne Walker  <enne@google.com>
+
+        [chromium] Implicitly skip render surfaces that won't be drawn
+        https://bugs.webkit.org/show_bug.cgi?id=71038
+
+        Rather than having redundant checks in three places for how to walk
+        through a render surface list, instead don't add render surfaces that
+        don't need to get rendered to the render surface list.
+
+        Reviewed by James Robinson.
+
+        Covered by existing layout tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Autogenerate Exception-downcast code in bindings

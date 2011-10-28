@@ -232,9 +232,20 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     bool useSurfaceForReflection = layer->replicaLayer();
     bool useSurfaceForFlatDescendants = layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && layer->descendantDrawsContent();
     if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantDrawsContent())) {
+        // Layer's opacity will be applied when drawing the render surface.
+        float drawOpacity = layer->opacity();
+        if (layer->parent() && layer->parent()->preserves3D())
+            drawOpacity *= layer->parent()->drawOpacity();
+
+        // If this render surface isn't drawn, we can also skip its children.
+        if (!drawOpacity)
+            return;
+
         if (!layer->renderSurface())
             layer->createRenderSurface();
+
         RenderSurfaceType* renderSurface = layer->renderSurface();
+        renderSurface->clearLayerList();
 
         // The origin of the new surface is the upper left corner of the layer.
         TransformationMatrix drawTransform;
@@ -243,10 +254,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         transformedLayerRect = IntRect(0, 0, bounds.width(), bounds.height());
 
-        // Layer's opacity will be applied when drawing the render surface.
-        float drawOpacity = layer->opacity();
-        if (layer->parent() && layer->parent()->preserves3D())
-            drawOpacity *= layer->parent()->drawOpacity();
         renderSurface->setDrawOpacity(drawOpacity);
         layer->setDrawOpacity(1);
 
@@ -261,8 +268,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         // be applied before drawing the render surface onto its containing
         // surface and is therefore expressed in the parent's coordinate system.
         renderSurface->setScissorRect(layer->parent() ? layer->parent()->scissorRect() : layer->scissorRect());
-
-        renderSurface->clearLayerList();
 
         if (layer->maskLayer()) {
             renderSurface->setMaskLayer(layer->maskLayer());
@@ -370,6 +375,20 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             layer->setDrawableContentRect(drawableContentRect);
         }
     }
+
+    if (layer->renderSurface() && !layer->renderSurface()->layerList().size()) {
+        // If a render surface has no layer list, then it and none of its
+        // children needed to get drawn. Therefore, it should be the last layer
+        // in the render surface list and we can trivially remove it.
+        ASSERT(renderSurfaceLayerList.last() == layer);
+        renderSurfaceLayerList.removeLast();
+        layer->clearRenderSurface();
+        return;
+    }
+
+    // If neither this layer nor any of its children were added, early out.
+    if (sortingStartIndex == descendants.size())
+        return;
 
     if (layer->masksToBounds() || useSurfaceForMasking) {
         IntRect drawableContentRect = layer->drawableContentRect();
