@@ -85,6 +85,7 @@ public:
     virtual bool notify(QObject*, QEvent*);
 
 private:
+    void sendTouchEvent(QWindow* targetWindow);
     void handleUserOptions();
 
 private:
@@ -96,6 +97,7 @@ private:
     QStringList m_urls;
 
     QHash<int, QWindowSystemInterface::TouchPoint> m_touchPoints;
+    QSet<int> m_heldTouchPoints;
 };
 
 QML_DECLARE_TYPE(WindowOptions);

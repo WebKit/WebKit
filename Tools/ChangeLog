@@ -1,3 +1,24 @@
+2011-10-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix the Ctrl behavior for touch mocking in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=71106
+
+        Reviewed by Simon Hausmann.
+
+        Holding Ctrl allows multiple touch points to be held on the screen using
+        mouse buttons. It would previously only prevent TouchReleased to be sent
+        and would require another MouseButtonRelease to be sent without holding Ctrl.
+
+        This patch makes sure that all held touch points are released when Ctrl
+        is released if MouseButtonRelease was received.
+        It also removes the touch QEvent::Type logic since it's currently handled
+        by QtGui by observing the modified touch points.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        (MiniBrowserApplication::sendTouchEvent):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+
 2011-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] MiniBrowser needs a -window-size option

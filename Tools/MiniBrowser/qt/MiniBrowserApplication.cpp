@@ -96,6 +96,14 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     }
 
     QWindow* targetWindow = qobject_cast<QWindow*>(target);
+    if (event->type() == QEvent::KeyRelease && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Control) {
+        foreach (int id, m_heldTouchPoints)
+            if (m_touchPoints.contains(id))
+                m_touchPoints[id].state = Qt::TouchPointReleased;
+        m_heldTouchPoints.clear();
+        sendTouchEvent(targetWindow);
+    }
+
     if (targetWindow && isMouseEvent(event)) {
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
 
@@ -115,20 +123,24 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         case QEvent::MouseMove:
             if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
                 return QApplication::notify(target, event);
-            touchPoint.state = Qt::TouchPointMoved;
             touchPoint.id = mouseEvent->buttons();
+            touchPoint.state = Qt::TouchPointMoved;
             break;
         case QEvent::MouseButtonRelease:
-            if (mouseEvent->modifiers().testFlag(Qt::ControlModifier))
-                return QApplication::notify(target, event);
             touchPoint.state = Qt::TouchPointReleased;
             touchPoint.id = mouseEvent->button();
+            if (mouseEvent->modifiers().testFlag(Qt::ControlModifier)) {
+                m_heldTouchPoints.insert(touchPoint.id);
+                return QApplication::notify(target, event);
+            }
             break;
         default:
             Q_ASSERT_X(false, "multi-touch mocking", "unhandled event type");
         }
 
         // Update current touch-point
+        if (m_touchPoints.isEmpty())
+            touchPoint.isPrimary = true;
         m_touchPoints.insert(touchPoint.id, touchPoint);
 
         // Update states for all other touch-points
@@ -137,37 +149,22 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
                 it.value().state = Qt::TouchPointStationary;
         }
 
-        QList<QWindowSystemInterface::TouchPoint> touchPoints = m_touchPoints.values();
-        QWindowSystemInterface::TouchPoint& firstPoint = touchPoints.first();
-        firstPoint.isPrimary = true;
-
-        QEvent::Type eventType;
-        switch (touchPoint.state) {
-        case Qt::TouchPointPressed:
-            eventType = QEvent::TouchBegin;
-            break;
-        case Qt::TouchPointReleased:
-            eventType = QEvent::TouchEnd;
-            break;
-        case Qt::TouchPointStationary:
-            // Don't send the event if nothing changed.
-            return QApplication::notify(target, event);
-        default:
-            eventType = QEvent::TouchUpdate;
-            break;
-        }
-
-        m_pendingFakeTouchEventCount++;
-        QWindowSystemInterface::handleTouchEvent(targetWindow, eventType, QTouchEvent::TouchScreen, touchPoints);
-
-        // Get rid of touch-points that are no longer valid
-        foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {
-            if (touchPoint.state ==  Qt::TouchPointReleased)
-                m_touchPoints.remove(touchPoint.id);
-        }
+        sendTouchEvent(targetWindow);
     }
 
     return QApplication::notify(target, event);
+}
+
+void MiniBrowserApplication::sendTouchEvent(QWindow* targetWindow)
+{
+    m_pendingFakeTouchEventCount++;
+    QWindowSystemInterface::handleTouchEvent(targetWindow, QEvent::None, QTouchEvent::TouchScreen, m_touchPoints.values());
+
+    // Get rid of touch-points that are no longer valid
+    foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {
+    if (touchPoint.state ==  Qt::TouchPointReleased)
+        m_touchPoints.remove(touchPoint.id);
+    }
 }
 
 static void printHelp(const QString& programName)
