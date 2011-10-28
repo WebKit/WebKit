@@ -121,6 +121,10 @@
 (if (positive? (string-length (param "WEBKIT_APPLICATION_CACHE_DIR")))
     (allow file* (subpath (param "WEBKIT_APPLICATION_CACHE_DIR"))))
 
+;; The Web Inspector directory.
+(if (positive? (string-length (param "WEBKIT_WEB_INSPECTOR_DIR")))
+    (allow file-read* (subpath (param "WEBKIT_WEB_INSPECTOR_DIR"))))
+
 ;; The NSURLCache directory.
 (if (positive? (string-length (param "NSURL_CACHE_DIR")))
     (allow file* (subpath (param "NSURL_CACHE_DIR"))))

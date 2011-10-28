@@ -30,12 +30,23 @@
 
 namespace WebKit {
 
+static String& globalInspectorLocalizedStringsURL()
+{
+    DEFINE_STATIC_LOCAL(String, inspectorLocalizedStringsURL, ());
+    return inspectorLocalizedStringsURL;
+}
+
+void WebInspector::setLocalizedStringsPath(const String& path)
+{
+    if (!path.isEmpty())
+        globalInspectorLocalizedStringsURL() = [[NSURL fileURLWithPath:path] absoluteString];
+    else
+        globalInspectorLocalizedStringsURL() = String();
+}
+
 String WebInspector::localizedStringsURL() const
 {
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"localizedStrings" ofType:@"js"];
-    if (path)
-        return [[NSURL fileURLWithPath:path] absoluteString];
-    return String();
+    return globalInspectorLocalizedStringsURL();
 }
 
 } // namespace WebKit

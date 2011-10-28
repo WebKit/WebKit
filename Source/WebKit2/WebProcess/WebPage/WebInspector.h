@@ -60,6 +60,10 @@ public:
     void startPageProfiling();
     void stopPageProfiling();
 
+#if PLATFORM(MAC)
+    static void setLocalizedStringsPath(const String&);
+#endif
+
 private:
     friend class WebInspectorClient;
     friend class WebInspectorFrontendClient;

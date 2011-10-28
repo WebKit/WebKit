@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #import "WKAPICast.h"
+#import "WebContext.h"
 #import "WKInspectorMac.h"
 #import "WKViewPrivate.h"
 #import "WebPageProxy.h"
@@ -248,17 +249,24 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
-    ASSERT(path);
+    NSString *path = page()->process()->context()->overrideWebInspectorPagePath();
+    if (![path length])
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+
+    ASSERT([path length]);
 
     return [[NSURL fileURLWithPath:path] absoluteString];
 }
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    // Web Inspector uses localized strings, so it's not contained within inspector directory.
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
-    ASSERT(path);
+    NSString *path = page()->process()->context()->overrideWebInspectorBaseDirectory();
+    if (![path length]) {
+        // WebCore's Web Inspector uses localized strings, which are not contained within inspector directory.
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
+    }
+
+    ASSERT([path length]);
 
     return [[NSURL fileURLWithPath:path] absoluteString];
 }

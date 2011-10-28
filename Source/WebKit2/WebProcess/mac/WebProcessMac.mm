@@ -28,6 +28,7 @@
 
 #import "SandboxExtension.h"
 #import "WKFullKeyboardAccessWatcher.h"
+#import "WebInspector.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
@@ -159,7 +160,7 @@ static void appendReadwriteConfDirectory(Vector<const char*>& vector, const char
 
 static void appendReadonlySandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
 {
-    appendSandboxParameterPathInternal(vector, name, [(NSString *)path fileSystemRepresentation]);
+    appendSandboxParameterPathInternal(vector, name, [path length] ? [(NSString *)path fileSystemRepresentation] : "");
 }
 
 static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
@@ -188,6 +189,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
     // These are read-only.
     appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent]);
     appendReadonlySandboxDirectory(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath);
+    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT_WEB_INSPECTOR_DIR", parameters.webInspectorBaseDirectory);
 
     // These are read-write getconf paths.
     appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
@@ -244,6 +246,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.nsURLCachePath]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
+
+    WebInspector::setLocalizedStringsPath(parameters.webInspectorLocalizedStringsPath);
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 

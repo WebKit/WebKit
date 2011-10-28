@@ -1,3 +1,44 @@
+2011-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Support using a different front-end for the Web Inspector in WebKit2.
+
+        rdar://problem/10318665
+        https://webkit.org/b/71089
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Added webInspectorBasePath and webInspectorLocalizedStringsPath.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetOverrideWebInspectorBaseDirectory): Added. Calls through to WebContext.
+        (WKContextSetOverrideWebInspectorPagePath): Ditto.
+        (WKContextSetOverrideWebInspectorLocalizedStringsPath): Ditto.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess): Set webInspectorBasePath and webInspectorLocalizedStringsPath.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::overrideWebInspectorBaseDirectory): Added.
+        (WebKit::WebContext::setOverrideWebInspectorBaseDirectory): Added.
+        (WebKit::WebContext::overrideWebInspectorPagePath): Added.
+        (WebKit::WebContext::setOverrideWebInspectorPagePath): Added.
+        (WebKit::WebContext::setOverrideWebInspectorLocalizedStringsPath): Added.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorPageURL): Use WebContext::overrideWebInspectorPagePath if set.
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Use WebContext::overrideWebInspectorBaseDirectory if set.
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::globalInspectorLocalizedStringsURL): Added. Static storage for the setting.
+        (WebKit::WebInspector::setLocalizedStringsPath): Added. Set globalInspectorLocalizedStringsURL.
+        (WebKit::WebInspector::localizedStringsURL): Return globalInspectorLocalizedStringsURL.
+        * WebProcess/com.apple.WebProcess.sb: Added read-only subpath for WEBKIT_WEB_INSPECTOR_DIR.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::appendReadonlySandboxDirectory): Check path for empty to prevent an exception when
+        calling through to fileSystemRepresentation.
+        (WebKit::initializeSandbox): Added WEBKIT_WEB_INSPECTOR_DIR parameter.
+        (WebKit::WebProcess::platformInitializeWebProcess): Call WebInspector::setLocalizedStringsPath.
+
 2011-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up BuiltInPDFView a little

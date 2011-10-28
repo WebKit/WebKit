@@ -225,6 +225,21 @@ void WKContextSetLocalStorageDirectory(WKContextRef contextRef, WKStringRef loca
     toImpl(contextRef)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
 }
 
+void WKContextSetOverrideWebInspectorBaseDirectory(WKContextRef contextRef, WKStringRef webInspectorBaseDirectory)
+{
+    toImpl(contextRef)->setOverrideWebInspectorBaseDirectory(toImpl(webInspectorBaseDirectory)->string());
+}
+
+void WKContextSetOverrideWebInspectorPagePath(WKContextRef contextRef, WKStringRef webInspectorPagePath)
+{
+    toImpl(contextRef)->setOverrideWebInspectorPagePath(toImpl(webInspectorPagePath)->string());
+}
+
+void WKContextSetOverrideWebInspectorLocalizedStringsPath(WKContextRef contextRef, WKStringRef webInspectorLocalizedStringsPath)
+{
+    toImpl(contextRef)->setOverrideWebInspectorLocalizedStringsPath(toImpl(webInspectorLocalizedStringsPath)->string());
+}
+
 void WKContextDisableProcessTermination(WKContextRef contextRef)
 {
     toImpl(contextRef)->disableProcessTermination();

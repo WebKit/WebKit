@@ -56,6 +56,8 @@ struct WebProcessCreationParameters {
     String applicationCacheDirectory;    
     String databaseDirectory;
     String localStorageDirectory;
+    String webInspectorLocalizedStringsPath;
+
     Vector<String> urlSchemesRegistererdAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
@@ -98,6 +100,8 @@ struct WebProcessCreationParameters {
     CoreIPC::MachPort acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;
+
+    String webInspectorBaseDirectory;
 
 #elif PLATFORM(WIN)
     String cfURLCachePath;
