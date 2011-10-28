@@ -1281,6 +1281,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 #if ENABLE(GESTURE_EVENTS)
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GestureScrollEnd:
+    case WebInputEvent::GestureScrollUpdate:
     case WebInputEvent::GestureTap:
         handled = gestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
         break;

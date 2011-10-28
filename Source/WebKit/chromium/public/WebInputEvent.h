@@ -103,6 +103,7 @@ public:
         // WebGestureEvent
         GestureScrollBegin,
         GestureScrollEnd,
+        GestureScrollUpdate,
         GestureTap,
 
         // WebTouchEvent
@@ -334,12 +335,16 @@ public:
     int y;
     int globalX;
     int globalY;
+    float deltaX;
+    float deltaY;
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
         : x(0)
         , y(0)
         , globalX(0)
         , globalY(0)
+        , deltaX(0.0f)
+        , deltaY(0.0f)
     {
     }
 };

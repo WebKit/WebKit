@@ -1,3 +1,17 @@
+2011-10-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for sending scroll-update events from EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=66272
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::reset):
+        (EventSender::gestureScrollUpdate):
+        (EventSender::gestureEvent):
+        * DumpRenderTree/chromium/EventSender.h:
+
 2011-10-28  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests: MASTER BUG: Switch all webkit.org bots over

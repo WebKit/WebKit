@@ -1,3 +1,19 @@
+2011-10-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+ 
+        Add support for sending scroll-update events from EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=66272
+
+        Reviewed by Adam Barth.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2011-10-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Track wheel event handler registration and pass to input filter

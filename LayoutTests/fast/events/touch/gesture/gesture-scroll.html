@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="../../../js/resources/js-test-post-function.js"></script>
+<style type="text/css">
+#gesturetarget {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background: white;
+}
+
+#movingbox {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  word-wrap: break-word;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  display: block;
+}
+
+#greenbox {
+  width: 100px;
+  height: 100px;
+  background: green;
+  padding: 0px;
+  margin: 0px;
+}
+
+#redbox {
+  width: 100px;
+  height: 100px;
+  background: red;
+  padding: 0px;
+  margin: 0px;
+}
+
+td {
+  padding: 0px;
+}
+</style>
+</head>
+<body style="margin:0" onload="runTest();">
+<div id="gesturetarget">
+  <div id="movingbox">
+    <table border="0" cellspacing="0px">
+      <tr>
+        <td><div id="redbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+      <tr>
+        <td><div id="greenbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var movingdiv;
+var expectedScrollsTotal = 2;
+var scrollsOccurred = 0;
+var scrollAmountX = ['90', '90'];
+var scrollAmountY = ['0', '95'];
+
+function checkScrollOffset()
+{
+    movingdiv = document.getElementById('movingbox');
+    if (window.eventSender) {
+        shouldBe('movingdiv.scrollTop', scrollAmountY[scrollsOccurred]);
+        shouldBe('movingdiv.scrollLeft', scrollAmountX[scrollsOccurred]);
+        scrollsOccurred++;
+    }
+
+    if (scrollsOccurred == expectedScrollsTotal) {
+        // If we've got here, we've passed.
+        successfullyParsed = true;
+        isSuccessfullyParsed();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    } else {
+        secondGestureScrollSequence();
+    }
+}
+
+function firstGestureScrollSequence()
+{
+    debug("first gesture");
+
+    eventSender.gestureScrollBegin(95, 12);
+    eventSender.gestureScrollUpdate(-90, 0);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+function secondGestureScrollSequence()
+{
+    debug("second gesture");
+
+    eventSender.gestureScrollBegin(12, 97);
+    eventSender.gestureScrollUpdate(0, -95);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+function exitIfNecessary()
+{
+    debug('Gesture events not implemented on this platform or broken');
+    successfullyParsed = true;
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function runTest()
+{
+    var movingdiv = document.getElementById('movingbox');
+
+    if (window.eventSender) {
+        description('This tests scroll gesture events. ' +
+            'Square is (mostly) green on pass');
+
+        if (eventSender.clearTouchPoints)
+            firstGestureScrollSequence();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.");
+    }
+}
+</script>
+</body>
+</html>

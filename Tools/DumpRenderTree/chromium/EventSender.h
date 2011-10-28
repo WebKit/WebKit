@@ -98,6 +98,7 @@ public:
 
     void gestureScrollBegin(const CppArgumentList&, CppVariant*);
     void gestureScrollEnd(const CppArgumentList&, CppVariant*);
+    void gestureScrollUpdate(const CppArgumentList&, CppVariant*);
     void gestureTap(const CppArgumentList&, CppVariant*);
     void gestureEvent(WebKit::WebInputEvent::Type, const CppArgumentList&);
 
@@ -158,6 +159,9 @@ private:
 
     // Non-owning pointer. The EventSender is owned by the TestShell.
     TestShell* m_shell;
+
+    // Location of the touch point that initiated a gesture.
+    WebKit::WebPoint m_gestureStartLocation;
 
     // Location of last mouseMoveTo event.
     static WebKit::WebPoint lastMousePos;

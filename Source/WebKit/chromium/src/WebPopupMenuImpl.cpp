@@ -274,6 +274,7 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GestureScrollEnd:
+    case WebInputEvent::GestureScrollUpdate:
     case WebInputEvent::GestureTap:
         return GestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
 

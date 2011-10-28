@@ -280,6 +280,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
     bindMethod("gestureScrollBegin", &EventSender::gestureScrollBegin);
     bindMethod("gestureScrollEnd", &EventSender::gestureScrollEnd);
+    bindMethod("gestureScrollUpdate", &EventSender::gestureScrollUpdate);
     bindMethod("gestureTap", &EventSender::gestureTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
@@ -328,6 +329,7 @@ void EventSender::reset()
     touchModifiers = 0;
     touchPoints.clear();
     m_taskList.revokeAll();
+    m_gestureStartLocation = WebPoint(0, 0);
 }
 
 WebView* EventSender::webview()
@@ -1037,6 +1039,12 @@ void EventSender::gestureScrollEnd(const CppArgumentList& arguments, CppVariant*
     gestureEvent(WebInputEvent::GestureScrollEnd, arguments);
 }
 
+void EventSender::gestureScrollUpdate(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureScrollUpdate, arguments);
+}
+
 void EventSender::gestureTap(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1052,10 +1060,29 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     WebGestureEvent event;
     event.type = type;
-    event.x = point.x;
-    event.y = point.y;
-    event.globalX = point.x;
-    event.globalY = point.y;
+
+    switch (type) {
+    case WebInputEvent::GestureScrollUpdate:
+        event.deltaX = static_cast<float>(arguments[0].toDouble());
+        event.deltaY = static_cast<float>(arguments[1].toDouble());
+        event.x = m_gestureStartLocation.x + event.deltaX;
+        event.y = m_gestureStartLocation.y + event.deltaY;
+        break;
+
+    case WebInputEvent::GestureScrollBegin:
+        m_gestureStartLocation = WebPoint(point.x, point.y);
+        // Fallthrough
+    case WebInputEvent::GestureScrollEnd:
+    case WebInputEvent::GestureTap:
+        event.x = point.x;
+        event.y = point.y;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    event.globalX = event.x;
+    event.globalY = event.y;
     event.timeStampSeconds = getCurrentEventTimeSec();
     webview()->handleInputEvent(event);
 }
