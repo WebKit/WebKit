@@ -1,3 +1,28 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Fix namespace indent in ScriptExecutionContext.h.
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isDocument):
+        (WebCore::ScriptExecutionContext::isWorkerContext):
+        (WebCore::ScriptExecutionContext::setHasOpenDatabases):
+        (WebCore::ScriptExecutionContext::hasOpenDatabases):
+        (WebCore::ScriptExecutionContext::url):
+        (WebCore::ScriptExecutionContext::completeURL):
+        (WebCore::ScriptExecutionContext::securityOrigin):
+        (WebCore::ScriptExecutionContext::contentSecurityPolicy):
+        (WebCore::ScriptExecutionContext::activeDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendScriptedAnimationControllerCallbacks):
+        (WebCore::ScriptExecutionContext::resumeScriptedAnimationControllerCallbacks):
+        (WebCore::ScriptExecutionContext::messagePorts):
+        (WebCore::ScriptExecutionContext::domUrls):
+        (WebCore::ScriptExecutionContext::ref):
+        (WebCore::ScriptExecutionContext::deref):
+        (WebCore::ScriptExecutionContext::Task::Task):
+        (WebCore::ScriptExecutionContext::Task::isCleanupTask):
+
 2011-10-28  John Sullivan  <sullivan@apple.com>
 
         WebCore part of:
