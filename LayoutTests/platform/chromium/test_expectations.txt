@@ -701,6 +701,38 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 LINUX WIN : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
+BUGCR64733 : editing/text-iterator/findString.html = TEXT
+
+// Selection is wrong.
+BUGCR64938 : editing/selection/5354455-1.html = TEXT
+
+BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
+
+// New test added in r82159
+BUGCR77706 : editing/spelling/grammar.html = FAIL
+
+// Flaky
+BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
+
+// pulled in from downstream during webkit roll 84350:84431
+BUGCASEQ LINUX WIN : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
+
+BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = PASS TEXT
+
+BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
+
+BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
+
+BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
+BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
+
+// New test in r93068
+BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
+
+BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
+
+BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
 // -----------------------------------------------------------------
 // Plugin tests
@@ -2497,17 +2529,12 @@ BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
 
 BUGCR64672 : fast/regex/invalid-range-in-class.html = TEXT
 
-BUGCR64733 : editing/text-iterator/findString.html = TEXT
-
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
-
-// Selection is wrong.
-BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
 // Regressed at r73423. All areas are painted green.
 BUGWK50734 LINUX WIN : fast/repaint/positioned-document-element.html = IMAGE
@@ -2863,8 +2890,6 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = TEXT
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
-BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
-
 BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE IMAGE+TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
@@ -2971,9 +2996,6 @@ BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE
 BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
 BUGWK57302 LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE IMAGE+TEXT
 
-// New test added in r82159
-BUGCR77706 : editing/spelling/grammar.html = FAIL
-
 // New test added in r82152 and test expectation updated in r82189.
 BUGCR77734 : http/tests/uri/username-with-no-hostname.html = TEXT
 
@@ -3050,9 +3072,6 @@ BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
 // Flaky, possibly timing related.
 BUGCR79853 : animations/combo-transform-translate+scale.html = PASS TEXT
 
-// Flaky
-BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
-
 // Flaky on debug
 BUGCR79855 LINUX WIN DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
 
@@ -3090,7 +3109,6 @@ BUGDPRANKE LINUX MAC : transitions/interrupt-zero-duration.html = PASS TEXT
 BUGDPRANKE LINUX WIN : animations/change-one-anim.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ LINUX WIN : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 BUGCASEQ LEOPARD CPU CPU-CG : fast/canvas/image-object-in-canvas.html = IMAGE
 
@@ -3115,7 +3133,6 @@ BUGDPRANKE LINUX WIN DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
 // more failures for triaging, fails on deps bots at least?
-BUGWK60123 LINUX DEBUG : editing/pasteboard/merge-end-2.html = PASS CRASH
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = PASS TEXT
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = PASS TIMEOUT
 BUGWK60125 : fast/files/create-blob-url-crash.html = PASS CRASH
@@ -3140,8 +3157,6 @@ BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
-BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = PASS TEXT
-
 BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 
@@ -3156,8 +3171,6 @@ BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 BUGDPRANKE WIN DEBUG CPU : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
-
-BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 
 // These seem to be minor debug-only differences.
 BUGWK60135 SNOWLEOPARD CPU CPU-CG : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
@@ -3323,12 +3336,7 @@ BUGCR84095 VISTA : svg/custom/use-detach.svg = PASS TIMEOUT
 // Flaky for a long time with no obvious cause.
 BUGADAMK VISTA : http/tests/history/redirect-301.html = PASS TIMEOUT
 
-BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
-
 BUGWK61625 LEOPARD : fast/events/dropzone-002.html = TEXT
-
-BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
-BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
 // Weird failures only on debug bots after r87526.
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = PASS IMAGE+TEXT
@@ -3573,10 +3581,6 @@ BUGWK65951 LINUX MAC DEBUG : webaudio/test-basic.html = CRASH PASS
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING FAIL
 BUGWK71019 LINUX : css3/font-feature-settings-rendering.html = IMAGE
 
-// New test in r93068
-BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
-
 BUGCR97646 : media/media-blocked-by-beforeload.html = PASS TEXT
 
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
@@ -3591,8 +3595,6 @@ BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT TIMEOUT
-
-BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 
 BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-delete.html = TIMEOUT PASS
 BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
@@ -3821,9 +3823,6 @@ BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
 // Need to follow a JSC binding change. See webkit.org/b/53752.
 BUGWK53578 : fast/dom/dataset.html = TEXT
 BUGWK53578 : fast/dom/dataset-xhtml.xhtml = TEXT
-
-
-BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
 

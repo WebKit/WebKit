@@ -1,5 +1,11 @@
 2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Group editing test expectations for Chromium in one place.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium Mac rebaselines.
 
         * platform/chromium-cg-mac-leopard/editing/deleting/table-cells-expected.png:
