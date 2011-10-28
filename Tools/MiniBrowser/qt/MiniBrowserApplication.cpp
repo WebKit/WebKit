@@ -175,6 +175,7 @@ static void printHelp(const QString& programName)
     qDebug() << "Usage:" << programName.toLatin1().data()
          << "[--touch]"
          << "[--maximize]"
+         << "[--window-size (width)x(height)]"
          << "[-r list]"
          << "[--robot-timeout seconds]"
          << "[--robot-extra-time seconds]"
@@ -196,10 +197,15 @@ void MiniBrowserApplication::handleUserOptions()
     }
 
     m_windowOptions.setUseTouchWebView(takeOptionFlag(&args, "--touch"));
-    m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
     m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
-    m_robotTimeoutSeconds = takeOptionValue(&args, "--robot-timeout").toInt();
-    m_robotExtraTimeSeconds = takeOptionValue(&args, "--robot-extra-time").toInt();
+    m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
+
+    if (args.contains("--window-size")) {
+        QString value = takeOptionValue(&args, "--window-size");
+        QStringList list = value.split(QRegExp("\\D+"), QString::SkipEmptyParts);
+        if (list.length() == 2)
+            m_windowOptions.setRequestedWindowSize(QSize(list.at(0).toInt(), list.at(1).toInt()));
+    }
 
     if (args.contains("-r")) {
         QString listFile = takeOptionValue(&args, "-r");
@@ -210,6 +216,10 @@ void MiniBrowserApplication::handleUserOptions()
 
         m_isRobotized = true;
         m_urls = QStringList(listFile);
+
+        // toInt() returns 0 if it fails parsing.
+        m_robotTimeoutSeconds = takeOptionValue(&args, "--robot-timeout").toInt();
+        m_robotExtraTimeSeconds = takeOptionValue(&args, "--robot-extra-time").toInt();
     } else {
         int urlArg = args.indexOf(QRegExp("^[^-].*"));
         if (urlArg != -1)

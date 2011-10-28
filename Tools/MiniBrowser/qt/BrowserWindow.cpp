@@ -53,7 +53,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     if (options->startMaximized())
         setWindowState(Qt::WindowMaximized);
     else
-        resize(800, 600);
+        resize(options->requestedWindowSize());
     show();
 }
 

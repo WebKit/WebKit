@@ -50,6 +50,7 @@ public:
         , m_printLoadedUrls(false)
         , m_useTouchWebView(false)
         , m_startMaximized(false)
+        , m_windowSize(QSize(800, 600))
     {
     }
 
@@ -59,11 +60,14 @@ public:
     bool useTouchWebView() const { return m_useTouchWebView; }
     void setStartMaximized(bool enabled) { m_startMaximized = enabled; }
     bool startMaximized() const { return m_startMaximized; }
+    void setRequestedWindowSize(const QSize& size) { m_windowSize = size; }
+    QSize requestedWindowSize() const { return m_windowSize; }
 
 private:
     bool m_printLoadedUrls;
     bool m_useTouchWebView;
     bool m_startMaximized;
+    QSize m_windowSize;
 };
 
 class MiniBrowserApplication : public QApplication {

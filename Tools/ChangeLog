@@ -1,3 +1,25 @@
+2011-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] MiniBrowser needs a -window-size option
+        https://bugs.webkit.org/show_bug.cgi?id=70999
+
+        Reviewed by Simon Hausmann.
+
+        Add an -window-size option useful for testing the viewport handling.
+        Also clean up the option handling.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+        (WindowOptions::setRequestedWindowSize):
+        (WindowOptions::requestedWindowSize):
+        * MiniBrowser/qt/utils.cpp:
+        (takeOptionValue):
+        * MiniBrowser/qt/utils.h:
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Add allowScriptFromSource callback to FrameLoaderClient
