@@ -241,6 +241,12 @@ void PluginProxy::deprecatedGeometryDidChange(const IntRect& frameRect, const In
     geometryDidChange();
 }
 
+void PluginProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
+{
+    // FIXME: This isn't called yet.
+    ASSERT_NOT_REACHED();
+}
+
 void PluginProxy::visibilityDidChange()
 {
     ASSERT(m_isStarted);

@@ -1,3 +1,14 @@
+2011-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a Plugin::geometryDidChange that will work with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=71072
+
+        Reviewed by Simon Fraser.
+
+        Export symbols needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-10-27  Adam Barth  <abarth@webkit.org>
 
         Exception subtypes have incorrect namespace indentation

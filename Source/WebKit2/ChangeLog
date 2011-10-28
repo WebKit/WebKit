@@ -1,3 +1,47 @@
+2011-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a Plugin::geometryDidChange that will work with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=71072
+
+        Reviewed by Simon Fraser.
+
+        Add a new Plugin::geometryDidChange pure virtual member function, that takes
+        the size of the plug-in, the clip rect (in plug-in coordinates), and a matrix that makes
+        it possible to convert between root view coordinates and plug-in coordinates.
+
+        PluginView only calls this new geometryDidChange member function if 
+        Plugin::wantsWindowRelativeCoordinates returns false, which is only true for BuiltInPDFView right now.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add stub.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::updateScrollbars):
+        (WebKit::BuiltInPDFView::pdfDocumentDidLoad):
+        (WebKit::BuiltInPDFView::paintContent):
+        (WebKit::BuiltInPDFView::deprecatedGeometryDidChange):
+        (WebKit::BuiltInPDFView::geometryDidChange):
+        (WebKit::BuiltInPDFView::setScrollOffset):
+        (WebKit::BuiltInPDFView::maximumScrollPosition):
+        (WebKit::BuiltInPDFView::visibleHeight):
+        (WebKit::BuiltInPDFView::visibleWidth):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        There's no need to keep track of the plug-in rect anymore.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add and document geometryDidChange.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+        Add stub.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+        Call geometryDidChange.
+
 2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reviewed by David Kilzer.

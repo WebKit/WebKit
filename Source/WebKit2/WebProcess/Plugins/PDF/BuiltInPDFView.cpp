@@ -97,15 +97,15 @@ const PluginView* BuiltInPDFView::pluginView() const
 void BuiltInPDFView::updateScrollbars()
 {
     if (m_horizontalScrollbar) {
-        if (m_frameRect.width() >= m_pdfDocumentSize.width())
+        if (m_pluginSize.width() >= m_pdfDocumentSize.width())
             destroyScrollbar(HorizontalScrollbar);
-    } else if (m_frameRect.width() < m_pdfDocumentSize.width())
+    } else if (m_pluginSize.width() < m_pdfDocumentSize.width())
         m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
 
     if (m_verticalScrollbar) {
-        if (m_frameRect.height() >= m_pdfDocumentSize.height())
+        if (m_pluginSize.height() >= m_pdfDocumentSize.height())
             destroyScrollbar(VerticalScrollbar);
-    } else if (m_frameRect.height() < m_pdfDocumentSize.height())
+    } else if (m_pluginSize.height() < m_pdfDocumentSize.height())
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
 
     int horizontalScrollbarHeight = (m_horizontalScrollbar && !m_horizontalScrollbar->isOverlayScrollbar()) ? m_horizontalScrollbar->height() : 0;
@@ -115,16 +115,16 @@ void BuiltInPDFView::updateScrollbars()
 
     if (m_horizontalScrollbar) {
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_horizontalScrollbar->setProportion(m_frameRect.width() - verticalScrollbarWidth, m_pdfDocumentSize.width());
-        IntRect scrollbarRect(pluginView()->x(), pluginView()->y() + m_frameRect.height() - m_horizontalScrollbar->height(), m_frameRect.width(), m_horizontalScrollbar->height());
+        m_horizontalScrollbar->setProportion(m_pluginSize.width() - verticalScrollbarWidth, m_pdfDocumentSize.width());
+        IntRect scrollbarRect(pluginView()->x(), pluginView()->y() + m_pluginSize.height() - m_horizontalScrollbar->height(), m_pluginSize.width(), m_horizontalScrollbar->height());
         if (m_verticalScrollbar)
             scrollbarRect.contract(m_verticalScrollbar->width(), 0);
         m_horizontalScrollbar->setFrameRect(scrollbarRect);
     }
     if (m_verticalScrollbar) {
         m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_verticalScrollbar->setProportion(m_frameRect.height() - horizontalScrollbarHeight, m_pdfDocumentSize.height());
-        IntRect scrollbarRect(IntRect(pluginView()->x() + m_frameRect.width() - m_verticalScrollbar->width(), pluginView()->y(), m_verticalScrollbar->width(), m_frameRect.height()));
+        m_verticalScrollbar->setProportion(m_pluginSize.height() - horizontalScrollbarHeight, m_pdfDocumentSize.height());
+        IntRect scrollbarRect(IntRect(pluginView()->x() + m_pluginSize.width() - m_verticalScrollbar->width(), pluginView()->y(), m_verticalScrollbar->width(), m_pluginSize.height()));
         if (m_horizontalScrollbar)
             scrollbarRect.contract(0, m_horizontalScrollbar->height());
         m_verticalScrollbar->setFrameRect(scrollbarRect);
@@ -211,7 +211,7 @@ void BuiltInPDFView::pdfDocumentDidLoad()
     calculateSizes();
     updateScrollbars();
 
-    controller()->invalidate(IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
+    controller()->invalidate(IntRect(0, 0, m_pluginSize.width(), m_pluginSize.height()));
 }
 
 void BuiltInPDFView::calculateSizes()
@@ -292,8 +292,8 @@ void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRec
     int pageTop = 0;
     for (size_t i = 0; i < m_pageBoxes.size(); ++i) {
         IntRect pageBox = m_pageBoxes[i];
-        float extraOffsetForCenteringX = max(roundf((m_frameRect.width() - pageBox.width()) / 2.0f), 0.0f);
-        float extraOffsetForCenteringY = (m_pageBoxes.size() == 1) ? max(roundf((m_frameRect.height() - pageBox.height() + shadowOffsetY) / 2.0f), 0.0f) : 0;
+        float extraOffsetForCenteringX = max(roundf((m_pluginSize.width() - pageBox.width()) / 2.0f), 0.0f);
+        float extraOffsetForCenteringY = (m_pageBoxes.size() == 1) ? max(roundf((m_pluginSize.height() - pageBox.height() + shadowOffsetY) / 2.0f), 0.0f) : 0;
 
         if (pageTop > contentRect.maxY())
             break;
@@ -369,12 +369,17 @@ bool BuiltInPDFView::isTransparent()
 
 void BuiltInPDFView::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
-    if (m_frameRect == frameRect) {
+    ASSERT_NOT_REACHED();
+}
+
+void BuiltInPDFView::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
+{
+    if (m_pluginSize == pluginSize) {
         // Nothing to do.
         return;
     }
 
-    m_frameRect = frameRect;
+    m_pluginSize = pluginSize;
     updateScrollbars();
 }
 
@@ -594,7 +599,7 @@ void BuiltInPDFView::setScrollOffset(const IntPoint& offset)
 {
     m_scrollOffset = IntSize(offset.x(), offset.y());
     // FIXME: It would be better for performance to blit parts that remain visible.
-    controller()->invalidate(IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
+    controller()->invalidate(IntRect(0, 0, m_pluginSize.width(), m_pluginSize.height()));
 }
 
 int BuiltInPDFView::scrollSize(ScrollbarOrientation orientation) const
@@ -651,19 +656,19 @@ IntPoint BuiltInPDFView::maximumScrollPosition() const
     int horizontalScrollbarHeight = (m_horizontalScrollbar && !m_horizontalScrollbar->isOverlayScrollbar()) ? m_horizontalScrollbar->height() : 0;
     int verticalScrollbarWidth = (m_verticalScrollbar && !m_verticalScrollbar->isOverlayScrollbar()) ? m_verticalScrollbar->width() : 0;
 
-    IntPoint maximumOffset(m_pdfDocumentSize.width() - m_frameRect.width() + verticalScrollbarWidth, m_pdfDocumentSize.height() - m_frameRect.height() + horizontalScrollbarHeight);
+    IntPoint maximumOffset(m_pdfDocumentSize.width() - m_pluginSize.width() + verticalScrollbarWidth, m_pdfDocumentSize.height() - m_pluginSize.height() + horizontalScrollbarHeight);
     maximumOffset.clampNegativeToZero();
     return maximumOffset;
 }
 
 LayoutUnit BuiltInPDFView::visibleHeight() const
 {
-    return m_frameRect.height();
+    return m_pluginSize.height();
 }
 
 LayoutUnit BuiltInPDFView::visibleWidth() const
 {
-    return m_frameRect.width();
+    return m_pluginSize.width();
 }
 
 IntSize BuiltInPDFView::contentsSize() const

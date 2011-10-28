@@ -78,6 +78,7 @@ private:
 #endif
     virtual bool isTransparent();
     virtual void deprecatedGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
@@ -143,8 +144,7 @@ private:
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;
 
-    // In window coordinates.
-    WebCore::IntRect m_frameRect;
+    WebCore::IntSize m_pluginSize;
 
     WebCore::KURL m_sourceURL;
 
