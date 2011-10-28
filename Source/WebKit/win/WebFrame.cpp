@@ -1951,7 +1951,7 @@ void WebFrame::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
     ASSERT(coreFrame);
 
     Settings* settings = coreFrame->settings();
-    if (!settings || !settings->isJavaScriptEnabled())
+    if (!settings || !settings->isScriptEnabled())
         return;
 
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;

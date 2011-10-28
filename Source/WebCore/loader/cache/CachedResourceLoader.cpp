@@ -320,7 +320,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 
         if (frame()) {
             Settings* settings = frame()->settings();
-            if (!frame()->loader()->client()->allowScriptFromSource(!settings || settings->isJavaScriptEnabled(), url)) {
+            if (!frame()->loader()->client()->allowScriptFromSource(!settings || settings->isScriptEnabled(), url)) {
                 frame()->loader()->client()->didNotAllowScript();
                 return false;
             }

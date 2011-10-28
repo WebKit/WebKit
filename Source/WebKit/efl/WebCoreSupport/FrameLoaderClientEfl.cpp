@@ -432,7 +432,7 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     ASSERT(coreFrame);
 
     Settings* settings = coreFrame->settings();
-    if (!settings || !settings->isJavaScriptEnabled())
+    if (!settings || !settings->isScriptEnabled())
         return;
 
     Ewk_Window_Object_Cleared_Event event;

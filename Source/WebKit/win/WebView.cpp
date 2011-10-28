@@ -4592,7 +4592,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->isJavaScriptEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setJavaScriptEnabled(!!enabled);
+    settings->setScriptEnabled(!!enabled);
 
     hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
     if (FAILED(hr))

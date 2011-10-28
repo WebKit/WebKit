@@ -101,7 +101,7 @@ WebView::WebView(HWND hwnd, unsigned features)
     settings->setDefaultFontSize(14);
     settings->setMinimumFontSize(8);
     settings->setMinimumLogicalFontSize(8);
-    settings->setJavaScriptEnabled(true);
+    settings->setScriptEnabled(true);
     settings->setLoadsImagesAutomatically(true);
 
     WebKit::FrameLoaderClientWinCE* loaderClient = new WebKit::FrameLoaderClientWinCE(this);

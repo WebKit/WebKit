@@ -287,7 +287,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         // loaded by a top-level document.
         m_page = adoptPtr(new Page(pageClients));
         m_page->settings()->setMediaEnabled(false);
-        m_page->settings()->setJavaScriptEnabled(false);
+        m_page->settings()->setScriptEnabled(false);
         m_page->settings()->setPluginsEnabled(false);
 
         RefPtr<Frame> frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);

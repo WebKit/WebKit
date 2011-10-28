@@ -1380,7 +1380,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
     settings->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
     settings->setJavaEnabled([preferences isJavaEnabled]);
-    settings->setJavaScriptEnabled([preferences isJavaScriptEnabled]);
+    settings->setScriptEnabled([preferences isJavaScriptEnabled]);
     settings->setWebSecurityEnabled([preferences isWebSecurityEnabled]);
     settings->setAllowUniversalAccessFromFileURLs([preferences allowUniversalAccessFromFileURLs]);
     settings->setAllowFileAccessFromFileURLs([preferences allowFileAccessFromFileURLs]);

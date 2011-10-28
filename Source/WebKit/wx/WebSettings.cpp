@@ -91,13 +91,13 @@ bool wxWebSettings::LoadsImagesAutomatically() const
 void wxWebSettings::SetJavaScriptEnabled(bool enabled)
 {
     if (m_settings)
-        m_settings->setJavaScriptEnabled(enabled);
+        m_settings->setScriptEnabled(enabled);
 }
 
 bool wxWebSettings::IsJavaScriptEnabled() const
 {
     if (m_settings)
-        return m_settings->isJavaScriptEnabled();
+        return m_settings->isScriptEnabled();
         
     return false;
 }

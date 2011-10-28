@@ -1,3 +1,16 @@
+2011-10-28  Jochen Eisinger  <jochen@chromium.org>
+
+        Rename a number of methods mentioning JavaScript to just Script instead
+        https://bugs.webkit.org/show_bug.cgi?id=71105
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2011-10-27  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove most of the documentation errors from WebKit1

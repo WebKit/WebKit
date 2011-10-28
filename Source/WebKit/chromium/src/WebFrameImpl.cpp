@@ -857,7 +857,7 @@ void WebFrameImpl::collectGarbage()
 {
     if (!m_frame)
         return;
-    if (!m_frame->settings()->isJavaScriptEnabled())
+    if (!m_frame->settings()->isScriptEnabled())
         return;
     // FIXME: Move this to the ScriptController and make it JS neutral.
 #if USE(V8)

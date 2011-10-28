@@ -135,7 +135,7 @@ Settings::Settings(Page* page)
     , m_isMediaEnabled(true)
     , m_arePluginsEnabled(false)
     , m_localStorageEnabled(false)
-    , m_isJavaScriptEnabled(false)
+    , m_isScriptEnabled(false)
     , m_isWebSecurityEnabled(true)
     , m_allowUniversalAccessFromFileURLs(true)
     , m_allowFileAccessFromFileURLs(true)
@@ -366,9 +366,9 @@ void Settings::setLoadsSiteIconsIgnoringImageLoadingSetting(bool loadsSiteIcons)
     m_loadsSiteIconsIgnoringImageLoadingSetting = loadsSiteIcons;
 }
 
-void Settings::setJavaScriptEnabled(bool isJavaScriptEnabled)
+void Settings::setScriptEnabled(bool isScriptEnabled)
 {
-    m_isJavaScriptEnabled = isJavaScriptEnabled;
+    m_isScriptEnabled = isScriptEnabled;
 }
 
 void Settings::setWebSecurityEnabled(bool isWebSecurityEnabled)

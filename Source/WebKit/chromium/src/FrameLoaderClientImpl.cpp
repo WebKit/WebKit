@@ -178,7 +178,7 @@ void FrameLoaderClientImpl::didChangeScrollOffset()
         m_webFrame->client()->didChangeScrollOffset(m_webFrame);
 }
 
-bool FrameLoaderClientImpl::allowJavaScript(bool enabledPerSettings)
+bool FrameLoaderClientImpl::allowScript(bool enabledPerSettings)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())

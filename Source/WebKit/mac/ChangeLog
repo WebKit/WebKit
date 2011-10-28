@@ -1,3 +1,13 @@
+2011-10-28  Jochen Eisinger  <jochen@chromium.org>
+
+        Rename a number of methods mentioning JavaScript to just Script instead
+        https://bugs.webkit.org/show_bug.cgi?id=71105
+
+        Reviewed by Adam Barth.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2011-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reviewed by David Kilzer.

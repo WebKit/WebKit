@@ -639,7 +639,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setFixedFontFamily("monotype");
     priv->pageSettings->setSansSerifFontFamily("sans");
     priv->pageSettings->setStandardFontFamily("sans");
-    priv->pageSettings->setJavaScriptEnabled(true);
+    priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);
     priv->pageSettings->setLocalStorageEnabled(true);
     priv->pageSettings->setOfflineWebApplicationCacheEnabled(true);
@@ -678,7 +678,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.autoShrinkImages = priv->pageSettings->shrinksStandaloneImagesToFit();
     priv->settings.enableAutoResizeWindow = EINA_TRUE;
     priv->settings.enableDeveloperExtras = priv->pageSettings->developerExtrasEnabled();
-    priv->settings.enableScripts = priv->pageSettings->isJavaScriptEnabled();
+    priv->settings.enableScripts = priv->pageSettings->isScriptEnabled();
     priv->settings.enablePlugins = priv->pageSettings->arePluginsEnabled();
     priv->settings.enableFrameFlattening = priv->pageSettings->frameFlatteningEnabled();
     priv->settings.scriptsWindowOpen = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
@@ -1965,7 +1965,7 @@ Eina_Bool ewk_view_setting_enable_scripts_set(Evas_Object* ewkView, Eina_Bool en
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
     enable = !!enable;
     if (priv->settings.enableScripts != enable) {
-        priv->pageSettings->setJavaScriptEnabled(enable);
+        priv->pageSettings->setScriptEnabled(enable);
         priv->settings.enableScripts = enable;
     }
     return EINA_TRUE;

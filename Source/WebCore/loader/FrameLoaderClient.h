@@ -299,7 +299,7 @@ namespace WebCore {
 
         virtual void didChangeScrollOffset() { }
 
-        virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
+        virtual bool allowScript(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowScriptFromSource(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
         virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowImage(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
@@ -307,7 +307,7 @@ namespace WebCore {
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         
         // This callback notifies the client that the frame was about to run
-        // JavaScript but did not because allowJavaScript returned false. We
+        // JavaScript but did not because allowScript returned false. We
         // have a separate callback here because there are a number of places
         // that need to know if JavaScript is enabled but are not necessarily
         // preparing to execute script.

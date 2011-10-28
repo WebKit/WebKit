@@ -3119,7 +3119,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setLoadsImagesAutomatically(settingsPrivate->autoLoadImages);
     coreSettings->setShrinksStandaloneImagesToFit(settingsPrivate->autoShrinkImages);
     coreSettings->setShouldPrintBackgrounds(settingsPrivate->printBackgrounds);
-    coreSettings->setJavaScriptEnabled(settingsPrivate->enableScripts);
+    coreSettings->setScriptEnabled(settingsPrivate->enableScripts);
     coreSettings->setPluginsEnabled(settingsPrivate->enablePlugins);
     coreSettings->setTextAreasAreResizable(settingsPrivate->resizableTextAreas);
     coreSettings->setUserStyleSheetLocation(KURL(KURL(), settingsPrivate->userStylesheetURI.data()));
@@ -3214,7 +3214,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("print-backgrounds"))
         settings->setShouldPrintBackgrounds(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-scripts"))
-        settings->setJavaScriptEnabled(g_value_get_boolean(&value));
+        settings->setScriptEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-plugins"))
         settings->setPluginsEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-dns-prefetching"))

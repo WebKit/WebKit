@@ -113,11 +113,11 @@ namespace WebCore {
         void setLoadsSiteIconsIgnoringImageLoadingSetting(bool);
         bool loadsSiteIconsIgnoringImageLoadingSetting() const { return m_loadsSiteIconsIgnoringImageLoadingSetting; }
 
-        void setJavaScriptEnabled(bool);
-        // Instead of calling isJavaScriptEnabled directly, please consider calling
+        void setScriptEnabled(bool);
+        // Instead of calling isScriptEnabled directly, please consider calling
         // ScriptController::canExecuteScripts, which takes things like the
         // HTML sandbox attribute into account.
-        bool isJavaScriptEnabled() const { return m_isJavaScriptEnabled; }
+        bool isScriptEnabled() const { return m_isScriptEnabled; }
 
         void setWebSecurityEnabled(bool);
         bool isWebSecurityEnabled() const { return m_isWebSecurityEnabled; }
@@ -523,7 +523,7 @@ namespace WebCore {
         bool m_isMediaEnabled : 1;
         bool m_arePluginsEnabled : 1;
         bool m_localStorageEnabled : 1;
-        bool m_isJavaScriptEnabled : 1;
+        bool m_isScriptEnabled : 1;
         bool m_isWebSecurityEnabled : 1;
         bool m_allowUniversalAccessFromFileURLs: 1;
         bool m_allowFileAccessFromFileURLs: 1;

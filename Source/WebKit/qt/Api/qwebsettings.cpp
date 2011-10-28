@@ -173,7 +173,7 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::JavascriptEnabled,
                                       global->attributes.value(QWebSettings::JavascriptEnabled));
-        settings->setJavaScriptEnabled(value);
+        settings->setScriptEnabled(value);
 #if USE(ACCELERATED_COMPOSITING)
         value = attributes.value(QWebSettings::AcceleratedCompositingEnabled,
                                       global->attributes.value(QWebSettings::AcceleratedCompositingEnabled));

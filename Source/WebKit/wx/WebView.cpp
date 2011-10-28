@@ -413,7 +413,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setFixedFontFamily("Courier New");
     settings->setSansSerifFontFamily("Arial");
     settings->setStandardFontFamily("Times New Roman");
-    settings->setJavaScriptEnabled(true);
+    settings->setScriptEnabled(true);
 
 #if ENABLE(SQL_DATABASE)
     SetDatabasesEnabled(true);
