@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 4: Line 4
+CONSOLE MESSAGE: line 5: Line 5
+CONSOLE MESSAGE: line 1: Line 1 in document.write
+CONSOLE MESSAGE: line 4: Line 4 in document.write
+CONSOLE MESSAGE: line 7: Line 7
+CONSOLE MESSAGE: line 25: Line 25
+CONSOLE MESSAGE: line 1: script element
+CONSOLE MESSAGE: line 1: document.write from onload
+

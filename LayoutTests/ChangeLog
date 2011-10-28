@@ -1,3 +1,14 @@
+2011-10-28  Pavel Feldman  <pfeldman@google.com>
+
+        Reset line numbers for scripts generated with document.write.
+        https://bugs.webkit.org/show_bug.cgi?id=71099
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector-enabled/document-write-expected.txt: Added.
+        * http/tests/inspector-enabled/document-write.html: Added.
+        * platform/chromium-win/fast/dom/nested-script-exceptions-expected.txt:
+
 2011-10-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Unsupress css3/font-feature-settings-rendering.html as it should

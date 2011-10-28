@@ -1,3 +1,17 @@
+2011-10-28  Pavel Feldman  <pfeldman@google.com>
+
+        Reset line numbers for scripts generated with document.write.
+        https://bugs.webkit.org/show_bug.cgi?id=71099
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector-enabled/document-write.html
+
+        * dom/Document.h:
+        (WebCore::Document::isInDocumentWrite):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+
 2011-10-28  Adam Roben  <aroben@apple.com>
 
         Mac build fix after r98711

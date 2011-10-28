@@ -198,14 +198,15 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     m_alreadyStarted = true;
 
     // FIXME: If script is parser inserted, verify it's still in the original document.
+    Document* document = m_element->document();
 
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a
     // viewless document but this'll do for now.
     // See http://bugs.webkit.org/show_bug.cgi?id=5727
-    if (!m_element->document()->frame())
+    if (!document->frame())
         return false;
 
-    if (!m_element->document()->frame()->script()->canExecuteScripts(AboutToExecuteScript))
+    if (!document->frame()->script()->canExecuteScripts(AboutToExecuteScript))
         return false;
 
     Node* ancestor = m_element->parentNode();
@@ -223,7 +224,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!charsetAttributeValue().isEmpty())
         m_characterEncoding = charsetAttributeValue();
     else
-        m_characterEncoding = m_element->document()->charset();
+        m_characterEncoding = document->charset();
 
     if (hasSourceAttribute())
         if (!requestScript(sourceAttributeValue()))
@@ -234,17 +235,20 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         m_willBeParserExecuted = true;
     } else if (hasSourceAttribute() && m_parserInserted && !asyncAttributeValue())
         m_willBeParserExecuted = true;
-    else if (!hasSourceAttribute() && m_parserInserted && !m_element->document()->haveStylesheetsLoaded()) {
+    else if (!hasSourceAttribute() && m_parserInserted && !document->haveStylesheetsLoaded()) {
         m_willBeParserExecuted = true;
         m_readyToBeParserExecuted = true;
     } else if (hasSourceAttribute() && !asyncAttributeValue() && !m_forceAsync) {
         m_willExecuteInOrder = true;
-        m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::IN_ORDER_EXECUTION);
+        document->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::IN_ORDER_EXECUTION);
         m_cachedScript->addClient(this);
     } else if (hasSourceAttribute())
         m_cachedScript->addClient(this);
-    else
-        executeScript(ScriptSourceCode(scriptContent(), m_element->document()->url(), scriptStartPosition));
+    else {
+        // Reset line numbering for nested writes.
+        TextPosition position = document->isInDocumentWrite() ? TextPosition() : scriptStartPosition;
+        executeScript(ScriptSourceCode(scriptContent(), document->url(), position));
+    }
 
     return true;
 }

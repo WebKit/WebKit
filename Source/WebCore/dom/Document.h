@@ -1105,6 +1105,8 @@ public:
     void removeCachedMicroDataItemList(MicroDataItemList*, const String&);
 #endif
     
+    bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
