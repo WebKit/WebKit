@@ -856,7 +856,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitMutationObserverCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	Source/WebCore/bindings/js/JSWebSocketCustom.cpp \

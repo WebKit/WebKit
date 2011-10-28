@@ -1946,7 +1946,6 @@
             'bindings/js/JSWebKitAnimationListCustom.cpp',
             'bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp',
             'bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp',
-            'bindings/js/JSWebKitCSSMatrixCustom.cpp',
             'bindings/js/JSWebKitMutationObserverCustom.cpp',
             'bindings/js/JSWebKitPointCustom.cpp',
             'bindings/js/JSWebSocketCustom.cpp',

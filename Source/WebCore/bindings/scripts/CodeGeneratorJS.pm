@@ -2308,9 +2308,10 @@ sub GenerateParametersCheck
     foreach my $parameter (@{$function->parameters}) {
         # Optional callbacks should be treated differently, because they always have a default value (0),
         # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with [Optional=CallWithDefaultValue] should not generate an early call.
+        # Optional arguments with [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue]
+        # should not generate an early call.
         my $optional = $parameter->extendedAttributes->{"Optional"};
-        if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
+        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = exec->argumentCount();\n");
@@ -2368,7 +2369,13 @@ sub GenerateParametersCheck
                 }
             }
 
-            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "exec->argument($argsIndex)") . ");\n");
+            my $optional = $parameter->extendedAttributes->{"Optional"};
+            my $parameterMissingPolicy = "MissingIsUndefined";
+            if ($optional && $optional eq "CallWithNullValue") {
+                $parameterMissingPolicy = "MissingIsEmpty";
+            }
+
+            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterMissingPolicy)") . ");\n");
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
@@ -2743,7 +2750,7 @@ sub JSValueToNative
     if ($type eq "DOMString") {
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"} || $signature->extendedAttributes->{"Reflect"};
         return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
-        return "ustringToString($value.toString(exec))";
+        return "ustringToString($value.isEmpty() ? UString() : $value.toString(exec))";
     }
 
     if ($type eq "DOMObject") {
@@ -3277,7 +3284,8 @@ sub GenerateConstructorDefinition
                 }
 
                 # For now, we do not support SVG constructors.
-                # We do not also support a constructor [Optional] argument without CallWithDefaultValue.
+                # We do not also support a constructor [Optional] argument without CallWithDefaultValue
+                # nor CallWithNullValue.
                 my $numParameters = @{$function->parameters};
                 my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 

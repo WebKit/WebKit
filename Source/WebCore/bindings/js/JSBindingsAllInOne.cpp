@@ -148,7 +148,6 @@
 #include "JSWebKitAnimationListCustom.cpp"
 #include "JSWebKitCSSKeyframeRuleCustom.cpp"
 #include "JSWebKitCSSKeyframesRuleCustom.cpp"
-#include "JSWebKitCSSMatrixCustom.cpp"
 #include "JSWebKitPointCustom.cpp"
 #include "JSWebSocketCustom.cpp"
 #include "JSWorkerContextBase.cpp"

@@ -1,3 +1,20 @@
+2011-10-27  Kentaro Hara  <haraken@chromium.org>
+
+        Generate WebKitCSSMatrix constructor for JSC by [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=70215
+
+        Reviewed by Adam Barth.
+
+        Added a method that judges if a given JSValue is empty.
+
+        Tests: transforms/svg-vs-css.xhtml
+               transforms/cssmatrix-2d-interface.xhtml
+               transforms/cssmatrix-3d-interface.xhtml
+
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+        (JSC::JSValue::isEmpty):
+
 2011-10-27  Michael Saboff  <msaboff@apple.com>
 
         ENH: Add 8 bit string support to JSC JIT

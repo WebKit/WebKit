@@ -162,6 +162,7 @@ namespace JSC {
         double asNumber() const;
 
         // Querying the type.
+        bool isEmpty() const;
         bool isUndefined() const;
         bool isNull() const;
         bool isUndefinedOrNull() const;

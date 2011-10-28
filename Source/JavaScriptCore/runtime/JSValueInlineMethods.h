@@ -223,6 +223,11 @@ namespace JSC {
         return u.asInt64 != other.u.asInt64;
     }
 
+    inline bool JSValue::isEmpty() const
+    {
+        return tag() == EmptyValueTag;
+    }
+
     inline bool JSValue::isUndefined() const
     {
         return tag() == UndefinedTag;
@@ -366,6 +371,11 @@ namespace JSC {
     inline bool JSValue::operator!=(const JSValue& other) const
     {
         return u.ptr != other.u.ptr;
+    }
+
+    inline bool JSValue::isEmpty() const
+    {
+        return u.asInt64 == ValueEmpty;
     }
 
     inline bool JSValue::isUndefined() const

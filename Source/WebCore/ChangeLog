@@ -1,3 +1,36 @@
+2011-10-27  Kentaro Hara  <haraken@chromium.org>
+
+        Generate WebKitCSSMatrix constructor for JSC by [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=70215
+
+        Reviewed by Adam Barth.
+
+        This patch implements [Optional=CallWithNullValue] IDL for JSC.
+        While a parameter specified as [Optional=CallWithDefaultValue] is
+        handled as a string "undefined", a parameter specified as
+        [Optional=CallWithNullValue] is handled as a null string.
+        (Note: not a string "null", but a null string).
+
+        c.f. [Optional=CallWithNullValue] is implemented in V8 in bug 67458.
+
+        Tests: fast/dom/global-constructors.html
+               transforms/svg-vs-css.xhtml
+               transforms/cssmatrix-2d-interface.xhtml
+               transforms/cssmatrix-3d-interface.xhtml
+
+        * GNUmakefile.list.am: Removed JSWebKitCSSMatrixCustom.cpp.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+        * bindings/js/JSDOMBinding.h: MAYBE_MISSING_PARAMETER(exec, index, policy) returns the index-th parameter, if the parameter exists. It returns an undefined value, if the index-th parameter is missing and the policy is MissingIsUndefined. It returns an empty value, otherwise (i.e. if the index-th parameter is missing and the policy is MissingIsEmpty).
+        * bindings/js/JSWebKitCSSMatrixCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck): Supported [Optional=CallWithNullValue].
+        (GenerateConstructorDefinition): Supported [Optional=CallWithNullValue].
+        * css/WebKitCSSMatrix.idl: Removed [JSCustomConstructor].
+
 2011-10-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableCell m_row and m_column should not be signed values
