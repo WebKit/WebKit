@@ -38,7 +38,7 @@ class ApplyWatchListLocalTest(CommandsTest):
 
     def test_args_parsing_with_bug(self):
         expected_stderr = """MockWatchList: determine_cc_and_messages
-MOCK bug comment: bug_id=50002, cc=set(['levin@chromium.org', 'abarth@webkit.org'])
+MOCK bug comment: bug_id=50002, cc=set(['eric@webkit.org', 'levin@chromium.org', 'abarth@webkit.org'])
 --- Begin comment ---
 Message1.
 

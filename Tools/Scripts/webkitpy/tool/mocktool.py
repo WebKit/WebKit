@@ -167,7 +167,7 @@ _bug1 = {
 _bug2 = {
     "id": 50001,
     "title": "Bug with a patch needing review.",
-    "reporter_email": "foo@foo.com",
+    "reporter_email": "eric@webkit.org",
     "assigned_to_email": "foo@foo.com",
     "cc_emails": ["abarth@webkit.org", ],
     "attachments": [_patch3],
@@ -823,7 +823,7 @@ class MockPlatformInfo(object):
 class MockWatchList(object):
     def determine_cc_and_messages(self, diff):
         log("MockWatchList: determine_cc_and_messages")
-        return {'cc_list': ['abarth@webkit.org', 'levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }
+        return {'cc_list': ['abarth@webkit.org', 'eric@webkit.org', 'levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }
 
 
 class MockWorkspace(object):

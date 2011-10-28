@@ -1,3 +1,17 @@
+2011-10-28  David Levin  <levin@chromium.org>
+
+        watchlist should not CC the bug reporter
+        https://bugs.webkit.org/show_bug.cgi?id=71079
+
+        Reviewed by Adam Barth.
+
+        Tested by test_apply_watch_list_local (webkitpy.tool.steps.applywatchlist_unittest.ApplyWatchListTest)
+        which remains upchanged and thus verifies that the reporter doesn't get added to the cc line.
+
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py: Add the new email in the output.
+        * Scripts/webkitpy/tool/mocktool.py: Change the reporter and make them one of the people to cc.
+        * Scripts/webkitpy/tool/steps/applywatchlist.py: Remove the reporter from the cc list.
+
 2011-10-28  Zoltan Horvath  <zoltan@webkit.org>
 
         Add watchlist for QtWebKit2 API and for WK2's Qt specific files.

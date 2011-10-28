@@ -49,11 +49,12 @@ class ApplyWatchList(AbstractStep):
         cc_emails = cc_and_messages['cc_list']
         messages = cc_and_messages['messages']
         if bug_id:
-            # Remove emails and cc's which are already in the bug.
+            # Remove emails and cc's which are already in the bug or the reporter.
             bug = self._tool.bugs.fetch_bug(bug_id)
 
             messages = filter(lambda message: not bug.is_in_comments(message), messages)
             cc_emails = set(cc_emails).difference(bug.cc_emails())
+            cc_emails.discard(bug.reporter_email())
 
         comment_text = '\n\n'.join(messages)
         if bug_id:
