@@ -76,8 +76,7 @@ void WebStorageQuotaCallbacksImpl::didGrantStorageQuota(unsigned long long grant
 void WebStorageQuotaCallbacksImpl::didFail(WebStorageQuotaError error)
 {
     if (m_errorCallback) {
-        ExceptionCodeDescription description;
-        getExceptionCodeDescription(static_cast<ExceptionCode>(error), description);
+        ExceptionCodeDescription description(static_cast<ExceptionCode>(error));
         m_errorCallback->handleEvent(DOMCoreException::create(description).get());
     }
     delete this;

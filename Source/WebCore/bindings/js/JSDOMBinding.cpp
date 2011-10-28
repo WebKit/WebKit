@@ -209,8 +209,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     // frames[0].document.createElement(null, null); // throws an exception which should have the subframes prototypes.
     JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(exec);
 
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(ec, description);
+    ExceptionCodeDescription description(ec);
 
     JSValue errorObject;
     switch (description.type) {

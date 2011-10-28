@@ -176,8 +176,7 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
     WebCore::ExceptionCode ec = 0;
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->methodThatRequiresAllArgsAndThrows(converted_str_arg, converted_obj_arg, ec));
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
     WebKitDOMTestObj* res = WebKit::kit(g_res.get());
@@ -244,8 +243,7 @@ webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError **error
     WebCore::ExceptionCode ec = 0;
     item->methodWithException(ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -324,8 +322,7 @@ webkit_dom_test_obj_with_script_state_void_exception(WebKitDOMTestObj* self, GEr
     WebCore::ExceptionCode ec = 0;
     item->withScriptStateVoidException(ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -339,8 +336,7 @@ webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GErr
     WebCore::ExceptionCode ec = 0;
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->withScriptStateObjException(ec));
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
     WebKitDOMTestObj* res = WebKit::kit(g_res.get());
@@ -886,8 +882,7 @@ webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GErro
     WebCore::ExceptionCode ec = 0;
     glong res = item->attrWithGetterException(ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
     return res;
@@ -902,8 +897,7 @@ webkit_dom_test_obj_set_attr_with_getter_exception(WebKitDOMTestObj* self, glong
     WebCore::ExceptionCode ec = 0;
     item->setAttrWithGetterException(value, ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -927,8 +921,7 @@ webkit_dom_test_obj_set_attr_with_setter_exception(WebKitDOMTestObj* self, glong
     WebCore::ExceptionCode ec = 0;
     item->setAttrWithSetterException(value, ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -955,8 +948,7 @@ webkit_dom_test_obj_set_string_attr_with_getter_exception(WebKitDOMTestObj* self
     WebCore::ExceptionCode ec = 0;
     item->setStringAttrWithGetterException(converted_value, ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -982,8 +974,7 @@ webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj* self
     WebCore::ExceptionCode ec = 0;
     item->setStringAttrWithSetterException(converted_value, ec);
     if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc;
-        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }

@@ -54,8 +54,7 @@ void fireStorageInfoErrorCallback(PassRefPtr<StorageInfoErrorCallback> errorCall
 {
     if (!errorCallback)
         return;
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(ec, description);
+    ExceptionCodeDescription description(ec);
     errorCallback->handleEvent(DOMCoreException::create(description).get());
 }
 }

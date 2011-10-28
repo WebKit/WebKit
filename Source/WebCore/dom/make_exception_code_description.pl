@@ -172,6 +172,7 @@ sub generateImplementation()
     print F "\n";
     print F "ExceptionCodeDescription::ExceptionCodeDescription(ExceptionCode ec)\n";
     print F "{\n";
+    print F "    ASSERT(ec);\n";
 
     for my $exceptionType (sort keys %parsedItems) {
         # DOMCoreException needs to be last because it's a catch-all.

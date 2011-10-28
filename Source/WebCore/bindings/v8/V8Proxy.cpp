@@ -649,13 +649,12 @@ void V8Proxy::clearForNavigation()
     windowShell()->clearForNavigation();
 }
 
-void V8Proxy::setDOMException(int exceptionCode)
+void V8Proxy::setDOMException(int ec)
 {
-    if (exceptionCode <= 0)
+    if (ec <= 0)
         return;
 
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(exceptionCode, description);
+    ExceptionCodeDescription description(ec);
 
     v8::Handle<v8::Value> exception;
     switch (description.type) {

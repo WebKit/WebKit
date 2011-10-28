@@ -1,3 +1,16 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Remove getExceptionCodeDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=71103
+
+        Reviewed by Eric Seidel.
+
+        Migrate to new API.
+
+        * src/StorageInfoChromium.cpp:
+        * src/WebStorageQuotaCallbacksImpl.cpp:
+        (WebKit::WebStorageQuotaCallbacksImpl::didFail):
+
 2011-10-28  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Clean-up unused functions in WebIDBFactory

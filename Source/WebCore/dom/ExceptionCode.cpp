@@ -26,15 +26,4 @@
 #include "config.h"
 #include "ExceptionCode.h"
 
-#include "ExceptionCodeDescription.h"
-
-namespace WebCore {
-
-// FIXME: Inline this function into its callers.
-void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& description)
-{
-    ASSERT(ec);
-    description = ExceptionCodeDescription(ec);
-}
-
-} // namespace WebCore
+// FIXME: Remove this file.

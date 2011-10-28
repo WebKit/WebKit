@@ -19,6 +19,7 @@
 #ifndef ExceptionCode_h
 #define ExceptionCode_h
 
+// FIXME: Move this header into the files that actually need it.
 #include "ExceptionCodeDescription.h"
 
 namespace WebCore {
@@ -64,8 +65,6 @@ namespace WebCore {
         INVALID_NODE_TYPE_ERR = 24,
         DATA_CLONE_ERR = 25
     };
-
-    void getExceptionCodeDescription(ExceptionCode, ExceptionCodeDescription&);
 
 } // namespace WebCore
 

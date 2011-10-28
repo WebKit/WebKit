@@ -43,8 +43,7 @@ void raiseDOMException(ExceptionCode ec)
 {
     ASSERT(ec);
 
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(ec, description);
+    ExceptionCodeDescription description(ec);
 
     NSString *exceptionName;
     if (strcmp(description.typeName, "DOM Range") == 0)
