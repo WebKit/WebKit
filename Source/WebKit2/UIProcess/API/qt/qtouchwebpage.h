@@ -63,7 +63,6 @@ public:
     QWebNavigationController* navigationController() const;
     QWebPreferences* preferences() const;
 
-    virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*);
     virtual bool event(QEvent*);
 
 Q_SIGNALS:
@@ -83,8 +82,14 @@ protected:
     virtual void touchEvent(QTouchEvent*);
 
     virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void itemChange(ItemChange, const ItemChangeData&);
 
 private:
+    Q_PRIVATE_SLOT(d, void _q_onAfterSceneRender());
+    Q_PRIVATE_SLOT(d, void _q_onSceneGraphInitialized());
+
+    void initSceneGraphConnections();
+
     QTouchWebPagePrivate* d;
     friend class QTouchWebViewPrivate;
     friend class WebKit::QtTouchViewInterface;

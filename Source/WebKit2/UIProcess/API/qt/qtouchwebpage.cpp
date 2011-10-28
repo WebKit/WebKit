@@ -22,11 +22,13 @@
 #include "qtouchwebpage.h"
 
 #include "QtTouchWebPageProxy.h"
+#include "TransformationMatrix.h"
 #include "qtouchwebpage_p.h"
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
-#include <QSGNode>
+#include <QSGCanvas>
+#include <QSGEngine>
 #include <QUrl>
 
 QTouchWebPage::QTouchWebPage(QSGItem* parent)
@@ -38,6 +40,20 @@ QTouchWebPage::QTouchWebPage(QSGItem* parent)
     // We do the transform from the top left so the viewport can assume the position 0, 0
     // is always where rendering starts.
     setTransformOrigin(TopLeft);
+    initSceneGraphConnections();
+}
+
+void QTouchWebPage::initSceneGraphConnections()
+{
+    if (d->paintingIsInitialized)
+        return;
+    if (!canvas())
+        return;
+    d->paintingIsInitialized = true;
+    if (sceneGraphEngine())
+        d->_q_onSceneGraphInitialized();
+    else
+        connect(canvas(), SIGNAL(sceneGraphInitialized()), this, SLOT(_q_onSceneGraphInitialized()));
 }
 
 QTouchWebPage::~QTouchWebPage()
@@ -63,28 +79,6 @@ QString QTouchWebPage::title() const
 int QTouchWebPage::loadProgress() const
 {
     return d->page->loadProgress();
-}
-
-/*! \reimp
-*/
-QSGNode* QTouchWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
-{
-    if (!oldNode)
-        oldNode = new QSGNode;
-
-    // A swap is on the queue, and QtSGUpdateQueue::applyUpdates will empty the queue, so we know that
-    // the old frame's buffers won't be used anymore (for buffers used all the way from the web process
-    // to the graphic card). Notify the web process that it can render the next frame.
-    if (d->sgUpdateQueue.isSwapPending())
-        // The UI thread is currently locked and calling this from the rendering thread didn't crash
-        // yet, so I'm assuming that this is OK. Else we have to wait until the SG update is over
-        // and the UI thread returns to the event loop picking our event before it can be sent to
-        // the web process. This would increase our chances of missing a frame.
-        d->page->renderNextFrame();
-    d->sgUpdateQueue.applyUpdates(oldNode);
-
-    // QSGItem takes ownership of this return value and it's children between and after updatePaintNode calls.
-    return oldNode;
 }
 
 /*! \reimp
@@ -150,6 +144,7 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     , page(0)
     , navigationController(0)
     , sgUpdateQueue(view)
+    , paintingIsInitialized(false)
 {
 }
 
@@ -158,6 +153,59 @@ void QTouchWebPagePrivate::setPage(QtTouchWebPageProxy* page)
     ASSERT(!this->page);
     ASSERT(page);
     this->page = page;
+
+}
+
+static float computeEffectiveOpacity(const QSGItem* item)
+{
+    if (!item)
+        return 1.0;
+
+    float opacity = item->opacity();
+    if (opacity < 0.01)
+        return 0;
+
+    return opacity * computeEffectiveOpacity(item->parentItem());
+}
+
+void QTouchWebPagePrivate::paintToCurrentGLContext()
+{
+    if (!q->isVisible())
+        return;
+
+    QTransform transform = q->itemTransform(0, 0);
+    float opacity = computeEffectiveOpacity(q);
+    QRectF clipRect = q->parentItem()->mapRectToScene(q->parentItem()->boundingRect());
+
+    glEnable(GL_SCISSOR_TEST);
+    const int left = clipRect.left();
+    const int width = clipRect.width();
+    const int bottom = q->canvas()->height() - (clipRect.bottom() + 1);
+    const int height = clipRect.height();
+
+    glScissor(left, bottom, width, height);
+
+    page->renderToCurrentGLContext(transform, opacity);
+    glDisable(GL_SCISSOR_TEST);
+}
+
+void QTouchWebPagePrivate::_q_onAfterSceneRender()
+{
+    // TODO: Allow painting before the scene or in the middle of the scene with an FBO.
+    paintToCurrentGLContext();
+}
+
+void QTouchWebPagePrivate::_q_onSceneGraphInitialized()
+{
+    QSGEngine* engine = q->sceneGraphEngine();
+    QObject::connect(engine, SIGNAL(afterRendering()), q, SLOT(_q_onAfterSceneRender()), Qt::DirectConnection);
+}
+
+void QTouchWebPage::itemChange(ItemChange change, const ItemChangeData &data)
+{
+    if (change == ItemSceneChange)
+        initSceneGraphConnections();
+    QSGItem::itemChange(change, data);
 }
 
 #include "moc_qtouchwebpage.cpp"

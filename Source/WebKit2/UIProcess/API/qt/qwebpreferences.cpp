@@ -22,6 +22,7 @@
 
 #include "WKPageGroup.h"
 #include "WKPreferences.h"
+#include "WKPreferencesPrivate.h"
 #include "WKRetainPtr.h"
 #include "WKStringQt.h"
 #include "qwebpreferences_p.h"
@@ -52,6 +53,8 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetPrivateBrowsingEnabled(ref);
     case DnsPrefetchEnabled:
         return WKPreferencesGetDNSPrefetchingEnabled(ref);
+    case AcceleratedCompositingEnabled:
+        return WKPreferencesGetAcceleratedCompositingEnabled(ref);
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -84,6 +87,9 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         break;
     case DnsPrefetchEnabled:
         WKPreferencesSetDNSPrefetchingEnabled(ref, enable);
+        break;
+    case AcceleratedCompositingEnabled:
+        WKPreferencesSetAcceleratedCompositingEnabled(ref, enable);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -375,4 +381,9 @@ void QWebPreferences::setDefaultFixedFontSize(unsigned size)
 {
     d->setFontSize(QWebPreferencesPrivate::DefaultFixedFontSize, size);
     emit defaultFixedFontSizeChanged();
+}
+
+QWebPreferencesPrivate* QWebPreferencesPrivate::get(QWebPreferences* preferences)
+{
+    return preferences->d;
 }

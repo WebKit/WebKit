@@ -42,6 +42,10 @@
 #include <MComponentData>
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "WebGraphicsLayer.h"
+#endif
+
 #ifndef NDEBUG
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -185,6 +189,10 @@ Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
         qDebug() << "Error: connection identifier wrong.";
         return 1;
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    WebGraphicsLayer::initFactory();
+#endif
 
     WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());
 

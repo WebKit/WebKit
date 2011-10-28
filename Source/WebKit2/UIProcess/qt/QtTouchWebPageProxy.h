@@ -27,7 +27,6 @@
 #include "QtPinchGestureRecognizer.h"
 #include "QtTouchViewInterface.h"
 #include "QtWebPageProxy.h"
-#include "TiledDrawingAreaProxy.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
@@ -47,6 +46,7 @@ public:
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
     void renderNextFrame();
+    void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
 
 protected:
     virtual void paintContent(QPainter*, const QRect& area);
@@ -59,7 +59,6 @@ private:
 #endif
 
     QtTouchViewInterface* touchViewInterface() const { return static_cast<QtTouchViewInterface*>(m_viewInterface); }
-    TiledDrawingAreaProxy* drawingArea() const { return static_cast<WebKit::TiledDrawingAreaProxy*>(m_webPageProxy->drawingArea()); }
 
     void touchEvent(QTouchEvent*);
 

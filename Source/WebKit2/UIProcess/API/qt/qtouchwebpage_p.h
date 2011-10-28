@@ -38,10 +38,15 @@ public:
 
     void setPage(QtTouchWebPageProxy*);
 
+    void _q_onAfterSceneRender();
+    void _q_onSceneGraphInitialized();
+    void paintToCurrentGLContext();
+
     QTouchWebPage* const q;
     QtTouchWebPageProxy* page;
     QWebNavigationController* navigationController;
     WebKit::QtSGUpdateQueue sgUpdateQueue;
+    bool paintingIsInitialized;
 };
 
 #endif /* qtouchwebpage_p_h */

@@ -21,9 +21,11 @@
 #include "config.h"
 #include "QtTouchWebPageProxy.h"
 
+#include "DrawingAreaProxyImpl.h"
 #include <IntRect.h>
 #include <NativeWebTouchEvent.h>
 #include <WebEventFactoryQt.h>
+#include <qwebpreferences_p.h>
 
 using namespace WebCore;
 
@@ -32,12 +34,13 @@ QtTouchWebPageProxy::QtTouchWebPageProxy(QtTouchViewInterface* viewInterface, Qt
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
 {
+    QWebPreferencesPrivate::get(preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
     init();
 }
 
 PassOwnPtr<DrawingAreaProxy> QtTouchWebPageProxy::createDrawingAreaProxy()
 {
-    return TiledDrawingAreaProxy::create(touchViewInterface(), m_webPageProxy.get());
+    return DrawingAreaProxyImpl::create(m_webPageProxy.get());
 }
 
 void QtTouchWebPageProxy::processDidCrash()
@@ -49,6 +52,13 @@ void QtTouchWebPageProxy::processDidCrash()
 
 void QtTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
+}
+
+void QtTouchWebPageProxy::renderToCurrentGLContext(const TransformationMatrix& transform, float opacity)
+{
+    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
+    if (drawingArea)
+        drawingArea->paintToCurrentGLContext(transform, opacity);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -81,7 +91,7 @@ bool QtTouchWebPageProxy::handleEvent(QEvent* ev)
 void QtTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
 {
     QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
-    drawingArea()->setVisibleContentRectAndScale(alignedVisibleContentRect, scale);
+    m_webPageProxy->drawingArea()->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
     m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
@@ -89,7 +99,7 @@ void QtTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleCon
 
 void QtTouchWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
 {
-    drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
+    m_webPageProxy->drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 void QtTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
@@ -115,5 +125,4 @@ void QtTouchWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
 
 void QtTouchWebPageProxy::renderNextFrame()
 {
-    drawingArea()->renderNextFrame();
 }

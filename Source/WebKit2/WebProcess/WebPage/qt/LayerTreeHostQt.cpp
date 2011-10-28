@@ -371,7 +371,7 @@ bool LayerTreeHostQt::showRepaintCounter() const
 
 bool LayerTreeHost::supportsAcceleratedCompositing()
 {
-    return false;
+    return true;
 }
 
 #if USE(TILED_BACKING_STORE)

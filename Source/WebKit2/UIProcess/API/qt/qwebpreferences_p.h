@@ -31,6 +31,7 @@ public:
         XSSAuditingEnabled,
         FrameFlatteningEnabled,
         PrivateBrowsingEnabled,
+        AcceleratedCompositingEnabled,
         DnsPrefetchEnabled
     };
 
@@ -61,4 +62,6 @@ public:
     unsigned fontSize(FontSizeType type) const;
 
     WKPreferencesRef ref;
+
+    static QWebPreferencesPrivate* get(QWebPreferences*);
 };

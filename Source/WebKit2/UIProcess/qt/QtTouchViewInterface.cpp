@@ -51,6 +51,7 @@ QtSGUpdateQueue* QtTouchViewInterface::sceneGraphUpdateQueue() const
 
 void QtTouchViewInterface::setViewNeedsDisplay(const QRect&)
 {
+    m_pageView->update();
 }
 
 QSize QtTouchViewInterface::drawingAreaSize()

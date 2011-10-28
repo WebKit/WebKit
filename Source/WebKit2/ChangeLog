@@ -1,3 +1,58 @@
+2011-10-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Synchronize tiling with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=69151
+
+        Reviewed by Simon Hausmann.
+
+        Make QTouchWebView always render with accelerated compositing.
+        At first, the web content would only render after the rest of the scene has rendered. In a
+        future patch we'll enable rendering the web content via an FBO, which would cover all other
+        cases as well.
+
+        Right now this only works for QTouchWebView, and thus accelerated compositing is disabled
+        for desktop web-views. This required adding some settings enablers in Q
+        WebPreferencesPrivate. Those are not exposed to the public API, as they are an implementation
+        detail.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::initSceneGraphConnections):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        (QTouchWebPagePrivate::setPage):
+        (computeEffectiveOpacity):
+        (QTouchWebPagePrivate::paintToCurrentGLContext):
+        (QTouchWebPagePrivate::_q_onAfterSceneRender):
+        (QTouchWebPagePrivate::_q_onSceneGraphInitialized):
+        (QTouchWebPage::itemChange):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferencesPrivate::get):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::renderNextFrame):
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::QtDesktopWebPageProxy):
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::setViewNeedsDisplay):
+        * UIProcess/qt/QtTouchWebPageProxy.cpp:
+        (QtTouchWebPageProxy::QtTouchWebPageProxy):
+        (QtTouchWebPageProxy::createDrawingAreaProxy):
+        (QtTouchWebPageProxy::renderToCurrentGLContext):
+        (QtTouchWebPageProxy::setVisibleContentRectAndScale):
+        (QtTouchWebPageProxy::setVisibleContentRectTrajectoryVector):
+        (QtTouchWebPageProxy::renderNextFrame):
+        * UIProcess/qt/QtTouchWebPageProxy.h:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformInitialize):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2011-10-27  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build after r98664.

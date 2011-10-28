@@ -67,7 +67,6 @@ void TiledDrawingAreaProxy::setVisibleContentRectTrajectoryVector(const WebCore:
 
 void TiledDrawingAreaProxy::renderNextFrame()
 {
-    page()->process()->send(Messages::DrawingArea::RenderNextFrame(), page()->pageID());
 }
 
 void TiledDrawingAreaProxy::sizeDidChange()

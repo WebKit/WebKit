@@ -27,6 +27,7 @@
 #include "WebPopupMenuProxyQtDesktop.h"
 #include "qdesktopwebview.h"
 #include "qdesktopwebview_p.h"
+#include "qwebpreferences_p.h"
 #include <QApplication>
 #include <QEvent>
 #include <QGraphicsSceneDragDropEvent>
@@ -55,6 +56,7 @@ QtDesktopWebPageProxy::QtDesktopWebPageProxy(QDesktopWebViewPrivate* desktopWebV
     : QtWebPageProxy(desktopWebView, desktopWebView, context, pageGroup)
 {
     init();
+    QWebPreferencesPrivate::get(preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, false);
 }
 
 PassOwnPtr<DrawingAreaProxy> QtDesktopWebPageProxy::createDrawingAreaProxy()
