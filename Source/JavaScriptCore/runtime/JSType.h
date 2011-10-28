@@ -42,6 +42,12 @@ enum JSType {
     FinalObjectType     = 11,
     JSFunctionType      = 12,
     NumberObjectType    = 13,
+    ErrorInstanceType   = 14,
+
+    // VariableObjectType must be less than all of the types of its subclasses and only its subclasses.
+    VariableObjectType  = 15,
+    GlobalObjectType    = 16,
+    ActivationObjectType = 17,
 };
 
 } // namespace JSC

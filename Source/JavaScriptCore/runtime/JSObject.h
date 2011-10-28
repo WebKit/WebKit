@@ -191,10 +191,10 @@ namespace JSC {
         virtual JSValue lookupSetter(ExecState*, const Identifier& propertyName);
         virtual bool defineOwnProperty(ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
-        virtual bool isGlobalObject() const { return false; }
-        virtual bool isVariableObject() const { return false; }
-        virtual bool isActivationObject() const { return false; }
-        virtual bool isErrorInstance() const { return false; }
+        bool isGlobalObject() const;
+        bool isVariableObject() const;
+        bool isActivationObject() const;
+        bool isErrorInstance() const;
 
         void seal(JSGlobalData&);
         void freeze(JSGlobalData&);
@@ -402,6 +402,26 @@ inline size_t JSObject::offsetOfPropertyStorage()
 inline size_t JSObject::offsetOfInheritorID()
 {
     return OBJECT_OFFSETOF(JSObject, m_inheritorID);
+}
+
+inline bool JSObject::isGlobalObject() const
+{
+    return structure()->typeInfo().type() == GlobalObjectType;
+}
+
+inline bool JSObject::isVariableObject() const
+{
+    return structure()->typeInfo().type() >= VariableObjectType;
+}
+
+inline bool JSObject::isActivationObject() const
+{
+    return structure()->typeInfo().type() == ActivationObjectType;
+}
+
+inline bool JSObject::isErrorInstance() const
+{
+    return structure()->typeInfo().type() == ErrorInstanceType;
 }
 
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)

@@ -59,8 +59,6 @@ namespace JSC {
 
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
 
-        virtual bool isActivationObject() const { return true; }
-
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
 
@@ -75,7 +73,7 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ActivationObjectType, StructureFlags), &s_info); }
 
     protected:
         void finishCreation(CallFrame*);

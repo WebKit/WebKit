@@ -267,8 +267,6 @@ namespace JSC {
 
         ScopeChainNode* globalScopeChain() { return m_globalScopeChain.get(); }
 
-        virtual bool isGlobalObject() const { return true; }
-
         ExecState* globalExec();
 
         virtual bool shouldInterruptScript() const { return true; }
@@ -288,7 +286,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, 0, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
         }
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)

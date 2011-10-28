@@ -54,11 +54,6 @@ void JSVariableObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& p
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-bool JSVariableObject::isVariableObject() const
-{
-    return true;
-}
-
 bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());

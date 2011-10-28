@@ -1,3 +1,23 @@
+2011-10-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize isGlobalObject, isVariableObject, isActivationObject, and isErrorInstance in JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=70968
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/JSDOMGlobalObject.h: Changed JSType provided to TypeInfo in createStructure since this 
+        class inherits from JSGlobalObject. 
+        (WebCore::JSDOMGlobalObject::createStructure):
+        * bindings/js/JSDOMWindowBase.h: Ditto
+        (WebCore::JSDOMWindowBase::createStructure):
+        * bindings/js/JSWorkerContextBase.h: Ditto
+        (WebCore::JSWorkerContextBase::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm: Added extra check to make sure subclasses of JSGlobalObject,
+        namely JSDOMWindow and JSWorkerContext, get their special JSType in their createStructure function.
+        (GenerateHeader):
+
 2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98736.

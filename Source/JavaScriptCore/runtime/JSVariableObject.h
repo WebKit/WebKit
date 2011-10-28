@@ -53,7 +53,6 @@ namespace JSC {
         static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         
-        virtual bool isVariableObject() const;
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
 
         WriteBarrier<Unknown>& registerAt(int index) const { return m_registers[index]; }
@@ -63,7 +62,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(VariableObjectType, StructureFlags), &s_info);
         }
         
     protected:

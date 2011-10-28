@@ -152,10 +152,7 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
-    { 
-        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
-    }
+    static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue);
     
     JSValue getPrivateProperty(const Identifier& propertyName) const
     {

@@ -33,7 +33,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), &s_info);
         }
 
         static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const UString& message)
@@ -55,8 +55,6 @@ namespace JSC {
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
         void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
         void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
-
-        virtual bool isErrorInstance() const { return true; }
 
     protected:
         explicit ErrorInstance(JSGlobalData&, Structure*);

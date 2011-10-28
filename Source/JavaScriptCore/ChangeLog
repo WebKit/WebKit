@@ -1,3 +1,35 @@
+2011-10-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize isGlobalObject, isVariableObject, isActivationObject, and isErrorInstance in JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=70968
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSCallbackObject.cpp: Added two specializations for createStructure that use different JSTypes in their
+        TypeInfo.  Had to also create a specialization for JSNonFinalObject, even JSGlobalObject was the only that 
+        needed it because Windows wouldn't build without it.
+        (JSC::::createStructure):
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/ErrorInstance.h: Removed virtual function and changed JSType provided to TypeInfo in createStructure. 
+        (JSC::ErrorInstance::createStructure):
+        * runtime/ErrorPrototype.h: Ditto
+        (JSC::ErrorPrototype::createStructure):
+        * runtime/JSActivation.h: Ditto
+        (JSC::JSActivation::createStructure):
+        * runtime/JSGlobalObject.h: Ditto
+        (JSC::JSGlobalObject::createStructure):
+        * runtime/JSObject.h: De-virtualized functions.  They now check the JSType of the object for the corresponding type.
+        (JSC::JSObject::isGlobalObject):
+        (JSC::JSObject::isVariableObject):
+        (JSC::JSObject::isActivationObject):
+        (JSC::JSObject::isErrorInstance):
+        * runtime/JSType.h: Added new types for GlobalObject, VariableObject, ActivationObject, and ErrorInstance.
+        * runtime/JSVariableObject.cpp: Removed virtual function.
+        * runtime/JSVariableObject.h: Changed JSType provided to TypeInfo in createStructure.
+        (JSC::JSVariableObject::createStructure):
+
 2011-10-28  Pavel Feldman  <pfeldman@google.com>
 
         Reset line numbers for scripts generated with document.write.
