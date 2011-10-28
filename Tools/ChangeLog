@@ -1,5 +1,24 @@
 2011-10-28  Eric Seidel  <eric@webkit.org>
 
+        new-run-webkit-tests: MASTER BUG: Switch all webkit.org bots over
+        https://bugs.webkit.org/show_bug.cgi?id=34984
+
+        Reviewed by Adam Barth.
+
+        Move run-webkit-tests from using a white-list of supported NRWT ports
+        to a blacklist of ports requiring ORWT.
+
+        I've also added the ability to opt-in to parallel testing on a per-port basis.
+
+        With these changes I'm going to officially declare this bug dead and
+        work on remaining polish issues and individual developer complaints.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+        (platformIsReadyForParallelTesting):
+
+2011-10-28  Eric Seidel  <eric@webkit.org>
+
         NRWT crashes when parsing leaks output due to UTF-8 decoding error
         https://bugs.webkit.org/show_bug.cgi?id=71112
 
