@@ -33,6 +33,7 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#include <wtf/FastAllocBase.h>
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
                                                                    GST_PAD_SINK, GST_PAD_ALWAYS,
@@ -105,8 +106,15 @@ webkit_video_sink_init(WebKitVideoSink* sink, WebKitVideoSinkClass* klass)
     WebKitVideoSinkPrivate* priv;
 
     sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
+#if GLIB_CHECK_VERSION(2, 31, 0)
+    priv->data_cond = WTF::fastNew<GCond>();
+    g_cond_init(priv->data_cond);
+    priv->buffer_mutex = WTF::fastNew<GMutex>();
+    g_mutex_init(priv->buffer_mutex);
+#else
     priv->data_cond = g_cond_new();
     priv->buffer_mutex = g_mutex_new();
+#endif
 }
 
 static gboolean
@@ -242,12 +250,22 @@ webkit_video_sink_dispose(GObject* object)
     WebKitVideoSinkPrivate* priv = sink->priv;
 
     if (priv->data_cond) {
+#if GLIB_CHECK_VERSION(2, 31, 0)
+        g_cond_clear(priv->data_cond);
+        WTF::fastDelete(priv->data_cond);
+#else
         g_cond_free(priv->data_cond);
+#endif
         priv->data_cond = 0;
     }
 
     if (priv->buffer_mutex) {
+#if GLIB_CHECK_VERSION(2, 31, 0)
+        g_mutex_clear(priv->buffer_mutex);
+        WTF::fastDelete(priv->buffer_mutex);
+#else
         g_mutex_free(priv->buffer_mutex);
+#endif
         priv->buffer_mutex = 0;
     }
 

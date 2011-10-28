@@ -1,3 +1,17 @@
+2011-10-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Build fixes for glib 2.31 (current master)
+        https://bugs.webkit.org/show_bug.cgi?id=70679
+
+        Reviewed by Martin Robinson.
+
+        g_cond_new and g_mutex_new have been replaced by _init
+        functions. Same for _free, replaced by _clear.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_init):
+        (webkit_video_sink_dispose):
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead
