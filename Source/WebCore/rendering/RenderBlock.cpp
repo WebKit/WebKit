@@ -838,6 +838,15 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
 
 void RenderBlock::deleteLineBoxTree()
 {
+    if (containsFloats()) {
+        // Clear references to originating lines, since the lines are being deleted
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+            ASSERT(!((*it)->m_originatingLine) || (*it)->m_originatingLine->renderer() == this);
+            (*it)->m_originatingLine = 0;
+        }
+    }
     m_lineBoxes.deleteLineBoxTree(renderArena());
 }
 

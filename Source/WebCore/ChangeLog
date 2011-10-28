@@ -1,3 +1,16 @@
+2011-10-28  Ken Buchanan <kenrb@chromium.org>
+
+        Crash when splitting inline flows with generated floats
+        https://bugs.webkit.org/show_bug.cgi?id=70458
+
+        Reviewed by David Hyatt.
+
+        When lineBoxes on a RenderBlock are being deleted, we now check the floating object list to
+        ensure references to them are being cleared.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLineBoxTree): Remove references to lineBox when deleting them
+
 2011-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Remove Leopard-only code from GraphicsLayerCA
