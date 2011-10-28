@@ -3918,6 +3918,9 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 : svg/custom/js-late-gradient-creation.svg = IMAGE PASS
 BUGWK70298 : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
 
+// Needs rebaseline for WIN
+BUGWK70568 WIN : fast/css/child-style-can-override-visited-style.html = TEXT
+
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE

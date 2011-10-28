@@ -1,3 +1,15 @@
+2011-10-27  Mike Lawther  <mikelawther@chromium.org>
+
+        Test that :visited style can be overridden by child element style
+        Added as requested on https://bugs.webkit.org/show_bug.cgi?id=70470
+        
+        https://bugs.webkit.org/show_bug.cgi?id=70568
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/child-style-can-override-visited-style-expected.txt: Added.
+        * fast/css/child-style-can-override-visited-style.html: Added.
+
 2011-10-27  Tony Chang  <tony@chromium.org>
 
         add snow leopard results for flexbox repaint tests
