@@ -198,7 +198,6 @@ private:
     void swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
-    void updateContentsTransform();
     
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }

@@ -49,8 +49,6 @@
 
 using namespace std;
 
-#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
-
 namespace WebCore {
 
 // The threshold width or height above which a tiled layer will be used. This should be
@@ -171,7 +169,6 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     }
 }
 
-#if HAVE_MODERN_QUARTZCORE
 static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
@@ -204,7 +201,6 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
         return PlatformCAAnimation::NoValueFunction;
     }
 }
-#endif
 
 static String propertyIdToString(AnimatedPropertyID property)
 {
@@ -254,10 +250,6 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_uncommittedChanges(0)
 {
     m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
-
-#if !HAVE_MODERN_QUARTZCORE
-    setContentsOrientation(defaultContentsOrientation());
-#endif
 
     updateDebugIndicators();
     noteLayerPropertyChanged(ContentsScaleChanged);
@@ -626,13 +618,6 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
 
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
-
-#if !HAVE_MODERN_QUARTZCORE
-    // Older versions of QuartzCore do not handle opacity in transform layers properly, so we will
-    // always do software animation in that case.
-    if (valueList.property() == AnimatedPropertyOpacity)
-        return false;
-#endif
 
     // CoreAnimation does not handle the steps() timing function. Fall back
     // to software animation in that case.
@@ -1144,9 +1129,6 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
             clone->setAnchorPoint(scaledAnchorPoint);
         }
     }
-
-    // Contents transform may depend on height.
-    updateContentsTransform();
 }
 
 void GraphicsLayerCA::updateTransform()
@@ -1941,11 +1923,9 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), anim);
     basicAnim->setTimingFunction(timingFunction);
 
-#if HAVE_MODERN_QUARTZCORE
     PlatformCAAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
     if (valueFunction != PlatformCAAnimation::NoValueFunction)
         basicAnim->setValueFunction(valueFunction);
-#endif
 
     return true;
 }
@@ -2006,11 +1986,10 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
         
     keyframeAnim->setTimingFunctions(timingFunctions);
 
-#if HAVE_MODERN_QUARTZCORE
     PlatformCAAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
     if (valueFunction != PlatformCAAnimation::NoValueFunction)
         keyframeAnim->setValueFunction(valueFunction);
-#endif
+
     return true;
 }
 
@@ -2169,17 +2148,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
         m_visibleTileWashLayer = 0;
     }
 #endif
-    
-    if (useTiledLayer) {
-#if !HAVE_MODERN_QUARTZCORE
-        // Tiled layer has issues with flipped coordinates.
-        setContentsOrientation(CompositingCoordinatesTopDown);
-#endif
-    } else {
-#if !HAVE_MODERN_QUARTZCORE
-        setContentsOrientation(GraphicsLayerCA::defaultContentsOrientation());
-#endif
-    }
 
     m_layer->adoptSublayers(oldLayer.get());
 
@@ -2193,8 +2161,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     ASSERT(oldLayer->superlayer());
     if (oldLayer->superlayer())
         oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
-
-    updateContentsTransform();
 
     updateGeometry(pageScaleFactor, positionRelativeToBase);
     updateTransform();
@@ -2225,25 +2191,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
 {
-#if !HAVE_MODERN_QUARTZCORE
-    // Older QuartzCore does not support -geometryFlipped, so we manually flip the root
-    // layer geometry, and then flip the contents of each layer back so that the CTM for CG
-    // is unflipped, allowing it to do the correct font auto-hinting.
-    return CompositingCoordinatesBottomUp;
-#else
     return CompositingCoordinatesTopDown;
-#endif
-}
-
-void GraphicsLayerCA::updateContentsTransform()
-{
-#if !HAVE_MODERN_QUARTZCORE
-    if (contentsOrientation() == CompositingCoordinatesBottomUp) {
-        CGAffineTransform contentsTransform = CGAffineTransformMakeScale(1, -1);
-        contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -m_layer->bounds().size().height());
-        m_layer->setContentsTransform(TransformationMatrix(contentsTransform));
-    }
-#endif
 }
 
 void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
@@ -2489,11 +2437,6 @@ void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
 
 void GraphicsLayerCA::updateOpacityOnLayer()
 {
-#if !HAVE_MODERN_QUARTZCORE
-    // Distribute opacity either to our own layer or to our children. We pass in the 
-    // contribution from our parent(s).
-    distributeOpacity(parent() ? parent()->accumulatedOpacity() : 1);
-#else
     primaryLayer()->setOpacity(m_opacity);
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
@@ -2506,7 +2449,6 @@ void GraphicsLayerCA::updateOpacityOnLayer()
         }
         
     }
-#endif
 }
 
 void GraphicsLayerCA::setMaintainsPixelAlignment(bool maintainsAlignment)

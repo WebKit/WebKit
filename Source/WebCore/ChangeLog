@@ -1,3 +1,26 @@
+2011-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Leopard-only code from GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=71141
+
+        Reviewed by Chris Marrin.
+
+        Remove !HAVE_MODERN_QUARTZCORE code, which was only
+        used on Leopard. updateContentsTransform() became a no-op,
+        so could be removed.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::getValueFunctionNameForTransformOperation):
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::defaultContentsOrientation):
+        (WebCore::GraphicsLayerCA::updateOpacityOnLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-10-28  Adrienne Walker  <enne@google.com>
 
         [chromium] Implicitly skip render surfaces that won't be drawn
