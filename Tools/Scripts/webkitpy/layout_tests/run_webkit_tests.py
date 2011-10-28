@@ -189,6 +189,9 @@ def parse_args(args=None):
                              const='Release', dest="configuration",
                              help='Set the configuration to Release'),
         # old-run-webkit-tests also accepts -c, --configuration CONFIGURATION.
+        optparse.make_option("--platform", help="Override port/platform being tested (i.e. chromium-mac)"),
+        optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
+        optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
     ]
 
     print_options = printing.print_options()
@@ -263,8 +266,6 @@ def parse_args(args=None):
     ]
 
     results_options = [
-        # NEED for bots: --use-remote-links-to-tests Link to test files
-        # within the SVN repository in the results.
         optparse.make_option("-p", "--pixel-tests", action="store_true",
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
@@ -304,23 +305,13 @@ def parse_args(args=None):
                  "are done"),
         # FIXME: We should have a helper function to do this sort of
         # deprectated mapping and automatically log, etc.
-        optparse.make_option("--noshow-results", action="store_false",
-            dest="show_results",
-            help="Deprecated, same as --no-show-results."),
-        optparse.make_option("--no-launch-safari", action="store_false",
-            dest="show_results",
-            help="old-run-webkit-tests compat, same as --noshow-results."),
-        # old-run-webkit-tests:
-        # --[no-]launch-safari    Launch (or do not launch) Safari to display
-        #                         test results (default: launch)
+        optparse.make_option("--noshow-results", action="store_false", dest="show_results", help="Deprecated, same as --no-show-results."),
+        optparse.make_option("--no-launch-safari", action="store_false", dest="show_results", help="Deprecated, same as --no-show-results."),
         optparse.make_option("--full-results-html", action="store_true",
             default=False,
-            help="Show all failures in results.html, rather than only "
-                 "regressions"),
+            help="Show all failures in results.html, rather than only regressions"),
         optparse.make_option("--clobber-old-results", action="store_true",
             default=False, help="Clobbers test results from previous runs."),
-        optparse.make_option("--platform",
-            help="Override the platform for expected results"),
         optparse.make_option("--no-record-results", action="store_false",
             default=True, dest="record_results",
             help="Don't record the results."),

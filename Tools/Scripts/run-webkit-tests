@@ -89,24 +89,15 @@ if (useNewRunWebKitTests()) {
     if (runningOnBuildBot()) {
         push(@ARGV, "--verbose");
     }
+}
 
-    # FIXME: We need a cleaner way to do --platform handling.
-    # webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
-    # Unfortunately new-run-webkit-tests wouldn't understand --qt/--gtk if we passed it to it anyway,
-    # so we have to convert it to --platform=PORT equivalents.
-    # https://bugs.webkit.org/show_bug.cgi?id=63970
-    if (isQt()) {
-        push(@ARGV, "--platform=qt");
-    } elsif (isGtk()) {
-        push(@ARGV, "--platform=gtk");
-    }
-} else {
-    # We have to add back any --PORT arguments which may have been removed by isPort() checks above.
-    if (isQt()) {
-        push(@ARGV, "--qt");
-    } elsif (isGtk()) {
-        push(@ARGV, "--gtk");
-    }
+# FIXME: We need a cleaner way to do --platform handling.
+# webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
+# We have to add back any --PORT arguments which may have been removed by isPort() checks above.
+if (isQt()) {
+    push(@ARGV, "--qt");
+} elsif (isGtk()) {
+    push(@ARGV, "--gtk");
 }
 
 my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);

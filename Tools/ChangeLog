@@ -1,5 +1,24 @@
 2011-10-27  Eric Seidel  <eric@webkit.org>
 
+        new-run-webkit-tests doesn't understand --qt or --gtk
+        https://bugs.webkit.org/show_bug.cgi?id=63970
+
+        Reviewed by Ojan Vafai.
+
+        Add support for --qt and --gtk to NRWT.
+        I also removed some incorrect comments in the option parsing
+        code (options which we already implement, but said we didn't)
+        as well as moved --platform parsing out of the "results_options"
+        section into the top configuration section.
+
+        Now run-webkit-tests no longer needs NRWT-specific code for passing
+        --platform=qt, etc.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-10-27  Eric Seidel  <eric@webkit.org>
+
         REGRESSION (NRWT): build.webkit.org doesn't show the total number of leaks found during a test run on the Leaks bot
         https://bugs.webkit.org/show_bug.cgi?id=66227
 
