@@ -312,10 +312,19 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-        ASSERT(renderSurface->layerList().size());
-        ASSERT(renderSurface->drawOpacity());
+
+        renderSurface->setSkipsDraw(true);
+
+        if (!renderSurface->layerList().size())
+            continue;
+
+        // Skip completely transparent render surfaces.
+        if (!renderSurface->drawOpacity())
+            continue;
 
         if (useRenderSurface(renderSurface)) {
+            renderSurface->setSkipsDraw(false);
+
             if (renderSurfaceLayer != rootDrawLayer) {
                 GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
                 GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
