@@ -753,4 +753,3 @@ TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
 }
 
 } // namespace
-

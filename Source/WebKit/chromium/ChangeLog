@@ -1,3 +1,37 @@
+2011-10-26  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Implement frame rate control portions of CCScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=70713
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCDelayBasedTimeSourceTest.cpp: Added.
+        (WebKitTests::TEST):
+        * tests/CCFrameRateControllerTest.cpp: Added.
+        (WebKitTests::FakeCCFrameRateControllerClient::FakeCCFrameRateControllerClient):
+        (WebKitTests::FakeCCFrameRateControllerClient::reset):
+        (WebKitTests::FakeCCFrameRateControllerClient::frameBegun):
+        (WebKitTests::FakeCCFrameRateControllerClient::beginFrame):
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCSchedulerTestCommon.h: Added.
+        (WebKitTests::FakeCCTimeSourceClient::FakeCCTimeSourceClient):
+        (WebKitTests::FakeCCTimeSourceClient::reset):
+        (WebKitTests::FakeCCTimeSourceClient::tickCalled):
+        (WebKitTests::FakeCCTimeSourceClient::onTimerTick):
+        (WebKitTests::FakeCCThread::FakeCCThread):
+        (WebKitTests::FakeCCThread::reset):
+        (WebKitTests::FakeCCThread::hasPendingTask):
+        (WebKitTests::FakeCCThread::runPendingTask):
+        (WebKitTests::FakeCCThread::pendingDelay):
+        (WebKitTests::FakeCCThread::postTask):
+        (WebKitTests::FakeCCThread::postDelayedTask):
+        (WebKitTests::FakeCCThread::threadID):
+        (WebKitTests::FakeCCDelayBasedTimeSource::FakeCCDelayBasedTimeSource):
+        (WebKitTests::FakeCCDelayBasedTimeSource::setMonotonicallyIncreasingTime):
+        (WebKitTests::FakeCCDelayBasedTimeSource::monotonicallyIncreasingTime):
+
 2011-10-27  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Expose Settings::setAcceleratedCompositingForFixedPositionEnabled to WebSettingsImpl.

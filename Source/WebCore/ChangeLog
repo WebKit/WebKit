@@ -1,3 +1,39 @@
+2011-10-26  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Implement frame rate control portions of CCScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=70713
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp: Added.
+        (WebCore::CCDelayBasedTimeSource::setActive):
+        (WebCore::CCDelayBasedTimeSource::postTickTask):
+        (WebCore::CCDelayBasedTimeSource::onTick):
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.h: Added.
+        (WebCore::CCDelayBasedTimeSource::CCDelayBasedTimeSource):
+        (WebCore::CCDelayBasedTimeSource::~CCDelayBasedTimeSource):
+        (WebCore::CCDelayBasedTimeSource::setClient):
+        (WebCore::CCDelayBasedTimeSource::monotonicallyIncreasingTime):
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp: Added.
+        (WebCore::CCFrameRateControllerTimeSourceAdapter::create):
+        (WebCore::CCFrameRateControllerTimeSourceAdapter::~CCFrameRateControllerTimeSourceAdapter):
+        (WebCore::CCFrameRateControllerTimeSourceAdapter::onTimerTick):
+        (WebCore::CCFrameRateControllerTimeSourceAdapter::CCFrameRateControllerTimeSourceAdapter):
+        (WebCore::CCFrameRateController::CCFrameRateController):
+        (WebCore::CCFrameRateController::~CCFrameRateController):
+        (WebCore::CCFrameRateController::onTimerTick):
+        (WebCore::CCFrameRateController::didBeginFrame):
+        (WebCore::CCFrameRateController::didFinishFrame):
+        (WebCore::CCFrameRateController::didAbortAllPendingFrames):
+        * platform/graphics/chromium/cc/CCFrameRateController.h: Added.
+        (WebCore::CCFrameRateControllerClient::~CCFrameRateControllerClient):
+        (WebCore::CCFrameRateController::setClient):
+        (WebCore::CCFrameRateController::setActive):
+        * platform/graphics/chromium/cc/CCTimeSource.h: Added.
+        (WebCore::CCTimeSourceClient::~CCTimeSourceClient):
+        (WebCore::CCTimeSource::~CCTimeSource):
+
 2011-10-27  Kentaro Hara  <haraken@chromium.org>
 
         Deprecate [V8ConstructorSetsActiveDOMWrapper] IDL
