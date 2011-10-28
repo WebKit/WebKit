@@ -784,9 +784,6 @@ class MockPort(object):
     def build_webkit_command(self, build_style=None):
         return ["mock-build-webkit"]
 
-    def run_bindings_tests_command(self):
-        return ["mock-run-bindings-tests"]
-
     def prepare_changelog_command(self):
         return ['mock-prepare-ChangeLog']
 

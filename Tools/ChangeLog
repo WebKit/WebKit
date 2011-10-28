@@ -1,3 +1,19 @@
+2011-10-27  Adam Barth  <abarth@webkit.org>
+
+        Dis-integrate run-bindings-tests with webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=71092
+
+        Reviewed by Ryosuke Niwa.
+
+        These tests aren't really adding any value.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2011-10-27  Eric Seidel  <eric@webkit.org>
 
         REGRESSION (r98639): NRWT crashes when parsing leaks output

@@ -117,10 +117,6 @@ class WebKitPort(object):
         return cls.script_shell_command("test-webkitperl")
 
     @classmethod
-    def run_bindings_tests_command(cls):
-        return cls.script_shell_command("run-bindings-tests")
-
-    @classmethod
     def layout_tests_results_path(cls):
         return "/tmp/layout-test-results/results.html"
 

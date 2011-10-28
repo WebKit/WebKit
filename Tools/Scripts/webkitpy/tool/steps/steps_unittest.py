@@ -79,8 +79,6 @@ class StepsTest(unittest.TestCase):
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
-Running Bindings tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
 Running run-webkit-tests
