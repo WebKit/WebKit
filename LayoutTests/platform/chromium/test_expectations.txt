@@ -3833,23 +3833,6 @@ BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
 
 BUGWK69077 DEBUG : http/tests/security/cookies/cookie-theft-with-javascript-doc.html = CRASH
 
-BUGWK69078 MAC CPU-CG : editing/deleting/table-cells.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/execCommand/create-list-with-hr.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/execCommand/find-after-replace.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/execCommand/paste-1.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/execCommand/paste-2.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/inserting/4278698.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/inserting/paragraph-separator-in-table-2.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/pasteboard/3976872.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/pasteboard/4076267-2.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/pasteboard/4076267-3.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/pasteboard/4076267.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/pasteboard/undoable-fragment-removes.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/selection/select-all-iframe.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/undo/4063751.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/unsupported-content/table-type-after.html = IMAGE
-BUGWK69078 MAC CPU-CG : editing/unsupported-content/table-type-before.html = IMAGE
-
 BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
 BUGWK69103 WIN LINUX : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
@@ -3921,8 +3904,6 @@ BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html 
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
 
 // Failing since ~r97504.
-BUGWK70382 LEOPARD CPU-CG : fast/dom/blur-contenteditable.html = IMAGE
-BUGWK70383 LEOPARD CPU-CG : editing/pasteboard/4944770-1.html = IMAGE
 
 BUGWK70386 SNOWLEOPARD DEBUG : storage/domstorage/events/documentURI.html = PASS CRASH
 
@@ -3946,7 +3927,6 @@ BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOU
 BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
 
 BUGWK70988 SNOWLEOPARD : animations/change-one-anim.html = PASS TEXT
-BUGWK70988 SNOWLEOPARD : editing/pasteboard/copy-standalone-image.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/overflow/003.xml = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/preloader/noscript.html = PASS TEXT

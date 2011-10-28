@@ -1,3 +1,45 @@
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac rebaselines.
+
+        * platform/chromium-cg-mac-leopard/editing/deleting/table-cells-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/execCommand/create-list-with-hr-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/execCommand/find-after-replace-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/execCommand/paste-1-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/execCommand/paste-2-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/inserting/4278698-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/inserting/paragraph-separator-in-table-2-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/3976872-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/4076267-2-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/4076267-3-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/4076267-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/4944770-1-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/undoable-fragment-removes-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/selection/select-all-iframe-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/undo/4063751-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/unsupported-content/table-type-after-expected.png:
+        * platform/chromium-cg-mac-leopard/editing/unsupported-content/table-type-before-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/dom/blur-contenteditable-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/deleting/table-cells-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/create-list-with-hr-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/find-after-replace-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/paste-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/execCommand/paste-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/4278698-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/inserting/paragraph-separator-in-table-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/3976872-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/4076267-2-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/4076267-3-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/4076267-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/pasteboard/undoable-fragment-removes-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/selection/select-all-iframe-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/undo: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/undo/4063751-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/unsupported-content: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/unsupported-content/table-type-after-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/editing/unsupported-content/table-type-before-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-27  Michael Saboff  <msaboff@apple.com>
 
         Test Failure in fast/dom/prototype-inheritance-2.html after r98495
