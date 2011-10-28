@@ -520,7 +520,7 @@ WONTFIX CPU GPU : platform/chromium-gpu/compositing/rubberbanding = IMAGE
 
 // This requires usp10.dll version 1.600 or greater on Windows and
 // it isn't installed on XP by default.
-WONTFIX XP : css3/font-feature-settings-rendering.html = PASS FAIL
+WONTFIX WIN : css3/font-feature-settings-rendering.html = PASS FAIL
 
 // -----------------------------------------------------------------
 // LIGHTTPD
@@ -3969,3 +3969,6 @@ BUGWK71032 : tables/mozilla_expected_failures/bugs/bug14007-2.html = FAIL
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+TEXT
 BUGWK71080 : printing/setPrinting.html = IMAGE+TEXT
+
+BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = FAIL CRASH
+BUGWK71084 WIN : http/tests/inspector/extensions-ignore-cache.html = FAIL CRASH

@@ -1,5 +1,12 @@
 2011-10-27  John Gregg  <johnnyg@google.com>
 
+        Unreviewed, more gardening.
+
+        * platform/chromium-cg-mac-leopard/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-10-27  John Gregg  <johnnyg@google.com>
+
         Unreviewed, gardening chromium.
 
         * platform/chromium-cg-mac-snowleopard/fullscreen/full-screen-render-inline-expected.png: Added.
