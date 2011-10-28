@@ -1,3 +1,9 @@
+2011-10-28  Alexandru Chiculita  <achicu@adobe.com>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-10-27  Adam Barth  <abarth@webkit.org>
 
         Remove WinCairo from the set of core builders.  WinCairo rarely builds
