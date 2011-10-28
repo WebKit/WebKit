@@ -1,3 +1,16 @@
+2011-10-27  Daniel Bates  <dbates@rim.com>
+
+        CMake: Add support to optionally install the built JavaScript shell
+        https://bugs.webkit.org/show_bug.cgi?id=71062
+
+        Reviewed by Antonio Gomes.
+
+        Generate an installation rule for installing the JavaScript shell in
+        /bin (with respect to the prefix path) when SHOULD_INSTALL_JS_SHELL
+        is defined.
+
+        * shell/CMakeLists.txt:
+
 2011-10-27  Kentaro Hara  <haraken@chromium.org>
 
         Generate WebKitCSSMatrix constructor for JSC by [Constructor] IDL

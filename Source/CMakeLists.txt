@@ -139,6 +139,11 @@ IF (ENABLE_WEBKIT2)
 ENDIF ()
 
 # -----------------------------------------------------------------------------
+# Install JavaScript shell
+# -----------------------------------------------------------------------------
+OPTION(SHOULD_INSTALL_JS_SHELL "generate an installation rule to install the built JavaScript shell")
+
+# -----------------------------------------------------------------------------
 # Add test browser if exists
 # -----------------------------------------------------------------------------
 INCLUDE_IF_EXISTS(${TOOLS_DIR}/CMakeLists${PORT}.txt)
