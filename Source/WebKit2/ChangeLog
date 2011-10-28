@@ -1,3 +1,20 @@
+2011-10-28  Jeff Miller  <jeffm@apple.com>
+
+        More work on WebKit2 should respect WebKitOmitPDFSupport preference on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=71156
+        
+        Don't include PDF and PostScript types in the set of MIME types with custom representations
+        when initializing the web process if WebKitOmitPDFSupport is set.
+        
+        I believe the previous patch r98513 was actually sufficient to prevent PDFs from being
+        shown inline when this preference was set, but to be complete we should exclude the MIME
+        types here as well.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2011-10-28  John Sullivan  <sullivan@apple.com>
 
         WebKit2 part of:
