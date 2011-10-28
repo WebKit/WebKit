@@ -1,3 +1,13 @@
+2011-10-27  Gustavo Lima Chaves  <glima@profusion.mobi>
+
+        [EFL] Fix variable renaming issue inside ewk_view.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71020
+
+        Unreviewed build fix.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_js_object_add):
+
 2011-10-26  Zalan Bujtas  <zbujtas@gmail.com>
 
         Name viewport change event consistently.
