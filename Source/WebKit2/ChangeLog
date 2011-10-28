@@ -1,3 +1,17 @@
+2011-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Make the kinetic engine use the same curve and constants as on the N9
+        https://bugs.webkit.org/show_bug.cgi?id=71102
+
+        Reviewed by Simon Hausmann.
+
+        Now that we are using the QScroller for kinetic scrolling and page
+        interaction, we need to make sure it uses the same curve (exponential)
+        and the same values as the MeeGo Touch physics engine used on the N9.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::reset):
+
 2011-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_web_view_get_uri() to WebKit2 GTK+ API

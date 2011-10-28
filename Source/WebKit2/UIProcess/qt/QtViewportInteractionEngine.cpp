@@ -268,8 +268,9 @@ void QtViewportInteractionEngine::reset()
 
     // Set some default QScroller constrains to mimic the physics engine of the N9 browser.
     properties.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
-    properties.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.20);
-    properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.2);
+    properties.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
+    properties.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
+    properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.635);
     properties.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.33);
     properties.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
 
