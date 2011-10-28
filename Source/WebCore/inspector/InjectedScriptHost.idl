@@ -32,7 +32,6 @@
 
 module core {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=INSPECTOR
     ] InjectedScriptHost {
         void clearConsoleMessages();

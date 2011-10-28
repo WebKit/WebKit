@@ -1,3 +1,16 @@
+2011-10-28  Erik Arvidsson  <arv@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from inspector IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=65748
+
+        Reviewed by Adam Barth.
+
+        Covered by existing tests.
+
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/JavaScriptCallFrame.idl:
+
 2011-10-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Database metadata changes should be tied to transaction
