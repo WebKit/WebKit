@@ -556,7 +556,6 @@ BUGCR20519 WIN : fast/text/wide-zero-width-space.html = FAIL
 BUGCR20547 WIN : fast/text/capitalize-boundaries.html = FAIL
 
 // Different button line-heights, our behavior looks wrong.
-BUGCR20551 LINUX WIN : fast/replaced/table-percent-height.html = FAIL
 BUGCR20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = FAIL
 
 // Proper retention of CSS objects is tricky.  Disable the tests for now.
@@ -2388,7 +2387,7 @@ BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
 
 // Unexpected timeout in these tests.
-BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT TEXT
+BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT
 BUG_HCLAM : http/tests/css/css-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/mask-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = PASS TIMEOUT TEXT
@@ -2408,7 +2407,7 @@ BUGCR58333 LINUX WIN : fast/css/font-face-download-error.html = PASS TEXT
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
 BUGCR58212 WIN : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT TEXT
 
-BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT TEXT
+BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT
 
 // Flaky because they snapshot and animation.
 // Started failing on Mac since 69314:69342.
@@ -2683,7 +2682,7 @@ BUGWK52082 LINUX WIN : fast/text/midword-break-after-breakable-char.html = IMAGE
 
 // These have been flaky for as long as we have test history.
 BUGWK52064 DEBUG : fast/events/overflow-events.html = PASS TEXT
-BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TIMEOUT TEXT
+BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TIMEOUT
 BUGWK52063 SLOW MAC : http/tests/navigation/ping-cross-origin.html = PASS
 
 // These were flaky, now failing more consistently after r75169.
