@@ -1,5 +1,12 @@
 2011-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-wk2/Skipped:
+
+2011-10-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Unreviewed gardening.
 
         REGRESSION: 5 editing tests fail
