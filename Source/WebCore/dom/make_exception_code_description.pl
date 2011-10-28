@@ -96,7 +96,6 @@ sub generateHeader()
     print F "};\n";
     print F "\n";
     print F "struct ExceptionCodeDescription {\n";
-    print F "    ExceptionCodeDescription() { }\n";
     print F "    explicit ExceptionCodeDescription(ExceptionCode);\n";
     print F "\n";
     print F "    // |typeName| has spaces and is suitable for use in exception\n";

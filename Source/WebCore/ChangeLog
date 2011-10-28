@@ -1,3 +1,16 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Remove unused default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=71136
+
+        Reviewed by Eric Seidel.
+
+        No one is calling this constructor anymore now that we've fixed the
+        callers.
+
+        * dom/make_exception_code_description.pl:
+        (generateHeader):
+
 2011-10-28  Ken Buchanan <kenrb@chromium.org>
 
         Crash when splitting inline flows with generated floats
