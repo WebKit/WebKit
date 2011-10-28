@@ -1,5 +1,14 @@
 2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove erroneous expected results after r98685.
+
+        * platform/chromium-linux/editing/selection/click-before-and-after-table-expected.png: Removed.
+        * platform/chromium-win/editing/selection/click-before-and-after-table-expected.png: Removed.
+        * platform/chromium-win/editing/selection/click-before-and-after-table-expected.txt: Removed.
+        * platform/qt/editing/selection/click-before-and-after-table-expected.png: Removed.
+
+2011-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix click-before-and-after-table.html for Chromium
         https://bugs.webkit.org/show_bug.cgi?id=70869
 
