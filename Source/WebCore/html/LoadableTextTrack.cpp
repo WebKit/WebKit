@@ -63,11 +63,14 @@ void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
     setReadyState(TextTrack::Loading);
 }
 
-void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool)
+void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    // FIXME(62885): Implement.
+    loadingFailed ? setReadyState(TextTrack::Error) : setReadyState(TextTrack::Loaded);
+
+    if (m_loadingClient)
+        m_loadingClient->textTrackLoadingCompleted(this, loadingFailed);
 }
 
 } // namespace WebCore

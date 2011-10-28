@@ -839,11 +839,17 @@ void HTMLMediaElement::loadTextTracks()
         return;
 
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(trackTag)) {
-            HTMLTrackElement* track = static_cast<HTMLTrackElement*>(node);
-            track->load(ActiveDOMObject::scriptExecutionContext(), this);
-        }
+        if (node->hasTagName(trackTag))
+            loadNextTextTrack(static_cast<HTMLTrackElement*>(node));
     }
+}
+
+void HTMLMediaElement::loadNextTextTrack(HTMLTrackElement* track)
+{
+    // FIXME(71124): This should schedule an *asynchronous* load.
+    track->load(ActiveDOMObject::scriptExecutionContext(), this);
+
+    // FIXME(71123): Add new track to list of text tracks and set the text track mode.
 }
 
 void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
@@ -1977,6 +1983,38 @@ float HTMLMediaElement::percentLoaded() const
 PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language)
 {
     return TextTrack::create(this, kind, label, language);
+}
+
+void HTMLMediaElement::trackWasAdded(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+    loadNextTextTrack(track);
+}
+ 
+void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+}
+
+void HTMLMediaElement::trackSourceChanged(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackSourceChanged - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+    loadNextTextTrack(track);
 }
 #endif
 

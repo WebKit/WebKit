@@ -1,3 +1,17 @@
+2011-10-28  Anna Cavender  <annacc@chromium.org>
+
+        Implement load notification and events for <track>.
+        https://bugs.webkit.org/show_bug.cgi?id=71054
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-load-error-readyState-expected.txt: Added.
+        * media/track/track-load-error-readyState.html: Added.
+        * media/track/track-load-from-element-readyState-expected.txt: Added.
+        * media/track/track-load-from-element-readyState.html: Added.
+        * media/track/track-load-from-src-readyState-expected.txt: Added.
+        * media/track/track-load-from-src-readyState.html: Added.
+
 2011-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         The HTML5 video element in Safari does not respect "visibility:hidden" CSS property
