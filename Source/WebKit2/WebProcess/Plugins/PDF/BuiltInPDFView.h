@@ -91,9 +91,6 @@ private:
     virtual void manualStreamDidReceiveData(const char* bytes, int length);
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
-
-    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState) { }
-
     virtual bool handleMouseEvent(const WebMouseEvent&);
     virtual bool handleWheelEvent(const WebWheelEvent&);
     virtual bool handleMouseEnterEvent(const WebMouseEvent&);
@@ -140,6 +137,7 @@ private:
     virtual void disconnectFromPage() { m_page = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     virtual void scrollbarStyleChanged();
+    virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState) { }
 
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;

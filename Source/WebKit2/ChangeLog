@@ -1,3 +1,17 @@
+2011-10-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up BuiltInPDFView a little
+        https://bugs.webkit.org/show_bug.cgi?id=71133
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: (WebKit::BuiltInPDFView::createScrollbar):
+        Removed an incorrect FIXME. Custom scrollbars specified in a document don't apply
+        to subframes, and thus shouldn't apply to PDFs.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: (WebKit::BuiltInPDFView::zoomAnimatorTransformChanged):
+        Moved to a correct location. This is not a Plugin method, but a ScrollView one.
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead

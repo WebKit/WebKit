@@ -161,7 +161,6 @@ void BuiltInPDFView::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 
 PassRefPtr<Scrollbar> BuiltInPDFView::createScrollbar(ScrollbarOrientation orientation)
 {
-    // FIXME: Support custom scrollbar styles.
     RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar)
         didAddHorizontalScrollbar(widget.get());
