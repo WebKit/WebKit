@@ -104,11 +104,12 @@ ScriptExecutionContext::ScriptExecutionContext()
 ScriptExecutionContext::~ScriptExecutionContext()
 {
     m_inDestructor = true;
-    for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != m_activeDOMObjects.end(); iter = m_activeDOMObjects.begin()) {
-        ActiveDOMObject* object = iter->first;
-        m_activeDOMObjects.remove(iter);
-        ASSERT(object->scriptExecutionContext() == this);
-        object->contextDestroyed();
+
+    for (HashSet<ContextDestructionObserver*>::iterator iter = m_destructionObservers.begin(); iter != m_destructionObservers.end(); iter = m_destructionObservers.begin()) {
+        ContextDestructionObserver* observer = *iter;
+        m_destructionObservers.remove(observer);
+        ASSERT(observer->scriptExecutionContext() == this);
+        observer->contextDestroyed();
     }
 
     HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
@@ -288,7 +289,7 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     closeMessagePorts();
 }
 
-void ScriptExecutionContext::createdActiveDOMObject(ActiveDOMObject* object, void* upcastPointer)
+void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject* object, void* upcastPointer)
 {
     ASSERT(object);
     ASSERT(upcastPointer);
@@ -298,12 +299,25 @@ void ScriptExecutionContext::createdActiveDOMObject(ActiveDOMObject* object, voi
     m_activeDOMObjects.add(object, upcastPointer);
 }
 
-void ScriptExecutionContext::destroyedActiveDOMObject(ActiveDOMObject* object)
+void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject* object)
 {
     ASSERT(object);
     if (m_iteratingActiveDOMObjects)
         CRASH();
     m_activeDOMObjects.remove(object);
+}
+
+void ScriptExecutionContext::didCreateDestructionObserver(ContextDestructionObserver* observer)
+{
+    ASSERT(observer);
+    ASSERT(!m_inDestructor);
+    m_destructionObservers.add(observer);
+}
+
+void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionObserver* observer)
+{
+    ASSERT(observer);
+    m_destructionObservers.remove(observer);
 }
 
 void ScriptExecutionContext::closeMessagePorts() {

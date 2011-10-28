@@ -33,14 +33,25 @@ namespace WebCore {
 
     class ScriptExecutionContext;
 
-    class ActiveDOMObject {
+    // FIXME: Move this class to it's own file.
+    class ContextDestructionObserver {
+    public:
+        ContextDestructionObserver(ScriptExecutionContext*);
+        virtual void contextDestroyed();
+
+        ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
+
+    protected:
+        virtual ~ContextDestructionObserver();
+
+        ScriptExecutionContext* m_scriptExecutionContext;
+    };
+
+    class ActiveDOMObject : public ContextDestructionObserver {
     public:
         ActiveDOMObject(ScriptExecutionContext*, void* upcastPointer);
 
-        ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
         virtual bool hasPendingActivity() const;
-
-        virtual void contextDestroyed();
 
         // canSuspend() is used by the caller if there is a choice between suspending and stopping.
         // For example, a page won't be suspended and placed in the back/forward cache if it has
@@ -76,7 +87,6 @@ namespace WebCore {
         virtual ~ActiveDOMObject();
 
     private:
-        ScriptExecutionContext* m_scriptExecutionContext;
         unsigned m_pendingActivityCount;
     };
 

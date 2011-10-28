@@ -114,10 +114,14 @@ public:
     virtual void resumeActiveDOMObjects();
     virtual void stopActiveDOMObjects();
 
-    void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
-    void destroyedActiveDOMObject(ActiveDOMObject*);
+    void didCreateActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
+    void willDestroyActiveDOMObject(ActiveDOMObject*);
+
     typedef const HashMap<ActiveDOMObject*, void*> ActiveDOMObjectsMap;
     ActiveDOMObjectsMap& activeDOMObjects() const { return m_activeDOMObjects; }
+
+    void didCreateDestructionObserver(ContextDestructionObserver*);
+    void willDestroyDestructionObserver(ContextDestructionObserver*);
 
     virtual void suspendScriptedAnimationControllerCallbacks() { }
     virtual void resumeScriptedAnimationControllerCallbacks() { }
@@ -199,7 +203,7 @@ private:
     RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
     HashSet<MessagePort*> m_messagePorts;
-
+    HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
     bool m_iteratingActiveDOMObjects;
     bool m_inDestructor;

@@ -1,3 +1,30 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Factor ContextDestructionObserver out of ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=71153
+
+        Reviewed by Sam Weinig.
+
+        This patch paves the way to make more objects observe the destruction
+        of ScriptExecutioContext without needing to add ifdefs to
+        ScriptExecutionContext.h/cpp.  (As an example, see DOMURL.)
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ContextDestructionObserver::ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::~ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::contextDestroyed):
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        * dom/ActiveDOMObject.h:
+        (WebCore::ContextDestructionObserver::scriptExecutionContext):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::didCreateActiveDOMObject):
+        (WebCore::ScriptExecutionContext::willDestroyActiveDOMObject):
+        (WebCore::didCreateDestructionObserver):
+        (WebCore::willDestroyDestructionObserver):
+        * dom/ScriptExecutionContext.h:
+
 2011-10-28  Tim Horton  <timothy_horton@apple.com>
 
         One more unreviewed build fix due to r98775.
