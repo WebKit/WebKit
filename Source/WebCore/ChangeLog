@@ -1,3 +1,11 @@
+2011-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        One more unreviewed build fix due to r98775.
+
+        No new tests.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-10-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Track wheel event handler registration and pass to input filter

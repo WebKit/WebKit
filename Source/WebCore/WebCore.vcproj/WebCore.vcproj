@@ -32410,6 +32410,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSCrossfadeValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSCrossfadeValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSCursorImageValue.cpp"
 				>
 			</File>
