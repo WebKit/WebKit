@@ -77,6 +77,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_usingTiledLayer(false)
     , m_masksToBounds(false)
     , m_drawsContent(false)
+    , m_contentsVisible(true)
     , m_acceleratesDrawing(false)
     , m_maintainsPixelAlignment(false)
     , m_appliesPageScale(false)
@@ -502,6 +503,11 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     if (m_drawsContent) {
         writeIndent(ts, indent + 1);
         ts << "(drawsContent " << m_drawsContent << ")\n";
+    }
+
+    if (!m_contentsVisible) {
+        writeIndent(ts, indent + 1);
+        ts << "(contentsVisible " << m_contentsVisible << ")\n";
     }
 
     if (!m_backfaceVisibility) {

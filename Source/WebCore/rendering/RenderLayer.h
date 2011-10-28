@@ -385,8 +385,9 @@ public:
     void updateNormalFlowList();
     Vector<RenderLayer*>* normalFlowList() const { return m_normalFlowList; }
 
+    // FIXME: We should ASSERT(!m_visibleContentStatusDirty) here, but see https://bugs.webkit.org/show_bug.cgi?id=71044
     bool hasVisibleContent() const { return m_hasVisibleContent; }
-    bool hasVisibleDescendant() const { return m_hasVisibleDescendant; }
+    bool hasVisibleDescendant() const { ASSERT(!m_visibleDescendantStatusDirty); return m_hasVisibleDescendant; }
     void setHasVisibleContent(bool);
     void dirtyVisibleContentStatus();
 
@@ -544,7 +545,7 @@ private:
     LayoutUnit renderBoxX() const { return renderBoxLocation().x(); }
     LayoutUnit renderBoxY() const { return renderBoxLocation().y(); }
 
-    void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
+    void collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
     void updateLayerListsIfNeeded();
     void updateCompositingAndLayerListsIfNeeded();

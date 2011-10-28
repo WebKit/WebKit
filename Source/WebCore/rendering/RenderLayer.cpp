@@ -4006,9 +4006,10 @@ void RenderLayer::updateZOrderLists()
     if (!isStackingContext() || !m_zOrderListsDirty)
         return;
 
+    bool includeHiddenLayers = compositor()->inCompositingMode();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         if (!m_reflection || reflectionLayer() != child)
-            child->collectLayers(m_posZOrderList, m_negZOrderList);
+            child->collectLayers(includeHiddenLayers, m_posZOrderList, m_negZOrderList);
 
     // Sort the two lists.
     if (m_posZOrderList)
@@ -4037,12 +4038,13 @@ void RenderLayer::updateNormalFlowList()
     m_normalFlowListDirty = false;
 }
 
-void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
+void RenderLayer::collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
 {
     updateVisibilityStatus();
 
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isNormalFlowOnly() && !renderer()->isRenderFlowThread()) {
+    bool includeHiddenLayer = includeHiddenLayers || (m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext()));
+    if (includeHiddenLayer && !isNormalFlowOnly() && !renderer()->isRenderFlowThread()) {
         // Determine which buffer the child should be in.
         Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 
@@ -4056,11 +4058,11 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context.
-    if (m_hasVisibleDescendant && !isStackingContext()) {
+    if ((includeHiddenLayers || m_hasVisibleDescendant) && !isStackingContext()) {
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
             if (!m_reflection || reflectionLayer() != child)
-                child->collectLayers(posBuffer, negBuffer);
+                child->collectLayers(includeHiddenLayers, posBuffer, negBuffer);
         }
     }
 }

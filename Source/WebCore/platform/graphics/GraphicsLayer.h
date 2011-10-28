@@ -264,6 +264,9 @@ public:
     bool drawsContent() const { return m_drawsContent; }
     virtual void setDrawsContent(bool b) { m_drawsContent = b; }
 
+    bool contentsAreVisible() const { return m_contentsVisible; }
+    virtual void setContentsVisible(bool b) { m_contentsVisible = b; }
+
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
 
@@ -424,6 +427,7 @@ protected:
     bool m_usingTiledLayer : 1;
     bool m_masksToBounds : 1;
     bool m_drawsContent : 1;
+    bool m_contentsVisible : 1;
     bool m_acceleratesDrawing : 1;
     bool m_maintainsPixelAlignment : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.

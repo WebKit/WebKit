@@ -1,3 +1,57 @@
+2011-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        The HTML5 video element in Safari does not respect "visibility:hidden" CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=38829
+
+        Reviewed by James Robinson.
+        
+        Make compositing and CSS visibility play nicely together.
+        
+        The main issue was that an old optimization (see bug 4377) caused
+        visibility:hidden layers to not appear in the z-order lists, but those
+        layers could still become composited, but would remain detached. In addition,
+        composited layers which were visibility:hidden would become visible sometimes.
+        
+        With this fix, the z-order lists always contain all layers when the page
+        is in compositing mode. GraphicsLayer is changed to ensure that visibility:hidden
+        layers show no content, and visible descendants of hidden layers work correctly.
+
+        Tests: compositing/visibility/visibility-composited-transforms.html
+               compositing/visibility/visibility-composited.html
+               compositing/visibility/visibility-image-layers-dynamic.html
+               compositing/visibility/visibility-image-layers.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer): Init m_contentsVisible to true.
+        (WebCore::GraphicsLayer::dumpProperties): Dump m_contentsVisible if not true.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsAreVisible): Getter for m_contentsVisible.
+        (WebCore::GraphicsLayer::setContentsVisible): Setter for m_contentsVisible.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsVisible): Override setContentsVisible.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Handle ContentsVisibilityChanged
+        flag
+        (WebCore::GraphicsLayerCA::updateSublayerList): Only parent the m_contentsLayer if the layer
+        has visible contents.
+        (WebCore::GraphicsLayerCA::updateContentsVisibility): For bits painted into the layer itself,
+        we hide it by clearing the backing store.
+        * platform/graphics/ca/GraphicsLayerCA.h: Removed obsolete comment on the DrawsContentChanged flag,
+        added ContentsVisibilityChanged flag.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateZOrderLists): If we're in compositing mode, include all layers
+        in the z-order lists.
+        (WebCore::RenderLayer::collectLayers): New param to specify whether we need to collect all layers.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasVisibleDescendant): Add comment about the need for an assertion in hasVisibleContent()
+        , and assertion in hasVisibleDescendant().
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Call setContentsVisible() on the GraphicsLayer.
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): We can use simple container layers in cases
+        where visibility:hidden causes layer content to not be drawn.
+        (WebCore::RenderLayerBacking::hasVisibleNonCompositingDescendants): Renamed from hasNonCompositingDescendants()
+        because it now also looks at visibility to decide when things are visible.
+        * rendering/RenderLayerBacking.h: hasNonCompositingDescendants() renamed to hasVisibleNonCompositingDescendants().
+
 2011-10-22  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Build fixes for glib 2.31 (current master)

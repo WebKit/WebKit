@@ -490,6 +490,18 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
     noteLayerPropertyChanged(DrawsContentChanged);
 }
 
+void GraphicsLayerCA::setContentsVisible(bool contentsVisible)
+{
+    if (contentsVisible == m_contentsVisible)
+        return;
+
+    GraphicsLayer::setContentsVisible(contentsVisible);
+    noteLayerPropertyChanged(ContentsVisibilityChanged);
+    // Visibility affects whether the contentsLayer is parented.
+    if (m_contentsLayer)
+        noteSublayersChanged();
+}
+
 void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     if (acceleratesDrawing == m_acceleratesDrawing)
@@ -952,6 +964,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     if (m_uncommittedChanges & DrawsContentChanged)
         updateLayerDrawsContent(pageScaleFactor, positionRelativeToBase);
 
+    if (m_uncommittedChanges & ContentsVisibilityChanged)
+        updateContentsVisibility();
+
     if (m_uncommittedChanges & ContentsOpaqueChanged)
         updateContentsOpaque();
 
@@ -1021,7 +1036,7 @@ void GraphicsLayerCA::updateSublayerList()
                 newSublayers.append(static_cast<GraphicsLayerCA*>(m_replicaLayer)->primaryLayer());
             // Add the primary layer. Even if we have negative z-order children, the primary layer always comes behind.
             newSublayers.append(m_layer);
-        } else if (m_contentsLayer) {
+        } else if (m_contentsLayer && m_contentsVisible) {
             // FIXME: add the contents layer in the correct order with negative z-order children.
             // This does not cause visible rendering issues because currently contents layers are only used
             // for replaced elements that don't have children.
@@ -1051,7 +1066,8 @@ void GraphicsLayerCA::updateSublayerList()
             // If we have a transform layer, then the contents layer is parented in the 
             // primary layer (which is itself a child of the transform layer).
             m_layer->removeAllSublayers();
-            m_layer->appendSublayer(m_contentsLayer.get());
+            if (m_contentsVisible)
+                m_layer->appendSublayer(m_contentsLayer.get());
         }
     } else
         m_layer->setSublayers(newSublayers);
@@ -1173,6 +1189,23 @@ void GraphicsLayerCA::updateMasksToBounds()
     }
 
     updateDebugIndicators();
+}
+
+void GraphicsLayerCA::updateContentsVisibility()
+{
+    // Note that m_contentsVisible also affects whether m_contentsLayer is parented.
+    if (m_contentsVisible) {
+        if (m_drawsContent)
+            m_layer->setNeedsDisplay();
+    } else {
+        m_layer.get()->setContents(0);
+
+        if (LayerMap* layerCloneMap = m_layerClones.get()) {
+            LayerMap::const_iterator end = layerCloneMap->end();
+            for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
+                it->second->setContents(0);
+        }
+    }
 }
 
 void GraphicsLayerCA::updateContentsOpaque()

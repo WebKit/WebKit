@@ -360,6 +360,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (!renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity))
         updateLayerOpacity(renderer()->style());
     
+    m_owningLayer->updateVisibilityStatus();
+    m_graphicsLayer->setContentsVisible(m_owningLayer->hasVisibleContent());
+    
     RenderStyle* style = renderer()->style();
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer()->hasReflection());
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
@@ -788,14 +791,15 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         return false;
 
     RenderStyle* style = renderObject->style();
+    bool isVisible = m_owningLayer->hasVisibleContent();
 
     // Reject anything that has a border, a border-radius or outline,
     // or any background (color or image).
     // FIXME: we could optimize layers for simple backgrounds.
-    if (hasBoxDecorationsOrBackground(renderObject))
+    if (isVisible && hasBoxDecorationsOrBackground(renderObject))
         return false;
 
-    if (m_owningLayer->hasOverflowControls())
+    if (isVisible && m_owningLayer->hasOverflowControls())
         return false;
 
     // If we have got this far and the renderer has no children, then we're ok.
@@ -827,21 +831,21 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
             return false;
 
         // Check to see if all the body's children are compositing layers.
-        if (hasNonCompositingDescendants())
+        if (hasVisibleNonCompositingDescendants())
             return false;
         
         return true;
     }
 
     // Check to see if all the renderer's children are compositing layers.
-    if (hasNonCompositingDescendants())
+    if (isVisible && hasVisibleNonCompositingDescendants())
         return false;
     
     return true;
 }
 
 // Conservative test for having no rendered children.
-bool RenderLayerBacking::hasNonCompositingDescendants() const
+bool RenderLayerBacking::hasVisibleNonCompositingDescendants() const
 {
     // Some HTML can cause whitespace text nodes to have renderers, like:
     // <div>
@@ -858,13 +862,25 @@ bool RenderLayerBacking::hasNonCompositingDescendants() const
         }
     }
 
+    if (Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
+            if (!curLayer->isComposited() && curLayer->hasVisibleContent())
+                return true;
+        }
+    }
+
     if (m_owningLayer->isStackingContext()) {
+        if (!m_owningLayer->hasVisibleDescendant())
+            return false;
+
         // Use the m_hasCompositingDescendant bit to optimize?
         if (Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                if (!curLayer->isComposited())
+                if (!curLayer->isComposited() && curLayer->hasVisibleContent())
                     return true;
             }
         }
@@ -873,18 +889,9 @@ bool RenderLayerBacking::hasNonCompositingDescendants() const
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                if (!curLayer->isComposited())
+                if (!curLayer->isComposited() && curLayer->hasVisibleContent())
                     return true;
             }
-        }
-    }
-
-    if (Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* curLayer = normalFlowList->at(i);
-            if (!curLayer->isComposited())
-                return true;
         }
     }
 

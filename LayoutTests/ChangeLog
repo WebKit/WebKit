@@ -1,3 +1,21 @@
+2011-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        The HTML5 video element in Safari does not respect "visibility:hidden" CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=38829
+        
+        Test various configurations of compositing layers and visibility.
+
+        Reviewed by James Robinson.
+
+        * compositing/visibility/visibility-composited-expected.png: Added.
+        * compositing/visibility/visibility-composited-transforms-expected.png: Added.
+        * compositing/visibility/visibility-composited-transforms.html: Added.
+        * compositing/visibility/visibility-composited.html: Added.
+        * compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+        * compositing/visibility/visibility-image-layers-dynamic.html: Added.
+        * compositing/visibility/visibility-image-layers-expected.png: Added.
+        * compositing/visibility/visibility-image-layers.html: Added.
+
 2011-10-28  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Remove js-test-post-function.js
