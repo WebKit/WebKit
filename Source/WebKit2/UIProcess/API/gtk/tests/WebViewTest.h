@@ -22,6 +22,7 @@
 
 #include "TestMain.h"
 #include <webkit2/webkit2.h>
+#include <wtf/text/CString.h>
 
 class WebViewTest: public Test {
 public:
@@ -29,10 +30,17 @@ public:
     WebViewTest();
     virtual ~WebViewTest();
 
+    void loadURI(const char* uri);
+    void loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI);
+    void goBack();
+    void goForward();
+    void goToBackForwardListItem(WebKitBackForwardListItem*);
+
     void wait(double seconds);
 
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;
+    CString m_activeURI;
 };
 
 #endif // WebViewTest_h

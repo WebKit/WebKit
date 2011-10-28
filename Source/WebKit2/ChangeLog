@@ -1,3 +1,77 @@
+2011-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_get_uri() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=70814
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (didStartProvisionalLoadForFrame): Update WebView URI to make sure
+        it's updated to provisional URL.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Update
+        WebView URI if there's a server redirection.
+        (didCommitLoadForFrame): Update WebView URI to make sure it
+        contains the final one.
+        (didSameDocumentNavigationForFrame): Update WebView URI when a
+        navigation action within the same document is performed.
+        (webkitWebLoaderClientAttachLoaderClientToPage): Add
+        implementation for didSameDocumentNavigationForFrame callback.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add URI property.
+        (webkitWebViewUpdateURI): Check whether current active URI has
+        changed to updated it and emit ::notify signal if it changes.
+        (webkit_web_view_load_uri): Call webkitWebViewUpdateURI() to make
+        sure the active URI is updated when load operation is started.
+        (webkit_web_view_load_alternate_html): Ditto.
+        (webkit_web_view_reload): Ditto.
+        (webkit_web_view_reload_bypass_cache): Ditto.
+        (webkit_web_view_go_back): Ditto.
+        (webkit_web_view_go_forward): Ditto.
+        (webkit_web_view_get_uri): Ditto.
+        (webkit_web_view_go_to_back_forward_list_item): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Add
+        webkitWebViewUpdateURI().
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (provisionalLoadStartedCallback): Check provisional URL is the
+        requested URI.
+        (provisionalLoadReceivedServerRedirectCallback): Check provisional
+        URL after server redirection is the expected redirected URI.
+        (provisionalLoadFailedCallback): Check active URI.
+        (loadCommittedCallback): Ditto.
+        (loadFinishedCallback): Ditto.
+        (loadFailedCallback): Ditto
+        (LoadTrackingTest::LoadTrackingTest): Check active URI is NULL
+        before any loading operation has started.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h:
+        (LoadTrackingTest::setRedirectURI): Set the redirect URI to check
+        it after a server redirection.
+        * UIProcess/API/gtk/tests/TestBackForwardList.cpp:
+        (testBackForwardListNavigation): Use WebViewTest methods for
+        navigation actions instead of using WebKitWebView API directly.
+        (testBackForwardListLimitAndCache): Ditto.
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (testLoadingStatus): Ditto.
+        (testLoadingError): Ditto.
+        (testLoadAlternateContent): Ditto.
+        (testLoadCancelled): Ditto.
+        (testWebViewReload): Ditto.
+        (testLoadProgress): Ditto.
+        (testWebViewActiveURI): Add a test to check that notify signal is
+        emitted when active URI changes and it's correctly updated when
+        loader client signals are emitted.
+        (beforeAll): Add active-uri test.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp: Add custom load methods
+        wrapping the WebKitWebView ones, to initialize the active URI to
+        the requested one, so that it can be checked by the loader client
+        test.
+        (WebViewTest::loadURI):
+        (WebViewTest::loadAlternateHTML):
+        (WebViewTest::goBack):
+        (WebViewTest::goForward):
+        (WebViewTest::goToBackForwardListItem):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2011-10-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Synchronize tiling with accelerated compositing

@@ -57,6 +57,7 @@ static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WK
 
     gboolean returnValue;
     WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
+    webkitWebViewUpdateURI(webView);
     g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[PROVISIONAL_LOAD_STARTED], 0, webView, &returnValue);
 }
 
@@ -67,6 +68,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, W
 
     gboolean returnValue;
     WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
+    webkitWebViewUpdateURI(webView);
     g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[PROVISIONAL_LOAD_RECEIVED_SERVER_REDIRECT], 0, webView, &returnValue);
 }
 
@@ -92,6 +94,7 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 
     gboolean returnValue;
     WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
+    webkitWebViewUpdateURI(webView);
     g_signal_emit(WEBKIT_WEB_LOADER_CLIENT(clientInfo), signals[LOAD_COMMITTED], 0, webView,  &returnValue);
 }
 
@@ -120,6 +123,14 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
                   resourceError.failingURL().utf8().data(), webError.get(), &returnValue);
 }
 
+static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void*)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    webkitWebViewUpdateURI(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+}
+
 static void didChangeProgress(WKPageRef page, const void* clientInfo)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
@@ -144,7 +155,7 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // didFinishDocumentLoadForFrame
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
-        0, // didSameDocumentNavigationForFrame
+        didSameDocumentNavigationForFrame,
         0, // didReceiveTitleForFrame
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame

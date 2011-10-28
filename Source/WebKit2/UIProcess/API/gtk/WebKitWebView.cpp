@@ -42,13 +42,15 @@ enum {
     PROP_0,
 
     PROP_WEB_CONTEXT,
-    PROP_ESTIMATED_LOAD_PROGRESS
+    PROP_ESTIMATED_LOAD_PROGRESS,
+    PROP_URI
 };
 
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
     CString customTextEncoding;
     double estimatedLoadProgress;
+    CString activeURI;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
     GRefPtr<WebKitBackForwardList> backForwardList;
@@ -104,6 +106,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
+        break;
+    case PROP_URI:
+        g_value_set_string(value, webkit_web_view_get_uri(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -164,6 +169,19 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "An estimate of the percent completion for a document load",
                                                         0.0, 1.0, 0.0,
                                                         WEBKIT_PARAM_READABLE));
+    /**
+     * WebKitWebView:uri:
+     *
+     * The current active URI of the #WebKitWebView.
+     * See webkit_web_view_get_uri() for more details.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_URI,
+                                    g_param_spec_string("uri",
+                                                        "URI",
+                                                        "The current active URI of the view",
+                                                        0,
+                                                        WEBKIT_PARAM_READABLE));
 }
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
@@ -172,6 +190,21 @@ void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estima
         return;
     webView->priv->estimatedLoadProgress = estimatedLoadProgress;
     g_object_notify(G_OBJECT(webView), "estimated-load-progress");
+}
+
+void webkitWebViewUpdateURI(WebKitWebView* webView)
+{
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKPageCopyActiveURL(toAPI(page)));
+    CString activeURI;
+    if (wkURL)
+        activeURI = toImpl(wkURL.get())->string().utf8();
+
+    if (webView->priv->activeURI == activeURI)
+        return;
+
+    webView->priv->activeURI = activeURI;
+    g_object_notify(G_OBJECT(webView), "uri");
 }
 
 /**
@@ -271,6 +304,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURL(toAPI(page), url.get());
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -299,6 +333,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     WKRetainPtr<WKURLRef> unreachableURL = unreachableURI ? adoptWK(WKURLCreateWithUTF8CString(unreachableURI)) : 0;
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), unreachableURL.get());
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -313,6 +348,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReload(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -327,6 +363,7 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReloadFromOrigin(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -361,6 +398,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoBack(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -391,6 +429,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+    webkitWebViewUpdateURI(webView);
 }
 
 /**
@@ -406,6 +445,67 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return WKPageCanGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
+ * webkit_web_view_get_uri:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the current active URI of @web_view. The active URI might change during
+ * a load operation:
+ *
+ * <orderedlist>
+ * <listitem><para>
+ *   When nothing has been loaded yet on @web_view the active URI is %NULL.
+ * </para></listitem>
+ * <listitem><para>
+ *   When a new load operation starts the active URI is the requested URI:
+ *   <itemizedlist>
+ *   <listitem><para>
+ *     If the load operation was started by webkit_web_view_load_uri(),
+ *     the requested URI is the given one.
+ *   </para></listitem>
+ *   <listitem><para>
+ *     If the load operation was started by webkit_web_view_load_alternate_html(),
+ *     the requested URI is "about:blank".
+ *   </para></listitem>
+ *   <listitem><para>
+ *     If the load operation was started by webkit_web_view_go_back() or
+ *     webkit_web_view_go_forward(), the requested URI is the original URI
+ *     of the previous/next item in the #WebKitBackForwardList of @web_view.
+ *   </para></listitem>
+ *   <listitem><para>
+ *     If the load operation was started by
+ *     webkit_web_view_go_to_back_forward_list_item(), the requested URI
+ *     is the opriginal URI of the given #WebKitBackForwardListItem.
+ *   </para></listitem>
+ *   </itemizedlist>
+ * </para></listitem>
+ * <listitem><para>
+ *   If there is a server redirection during the load operation,
+ *   the active URI is the redirected URI. When the signal
+ *   #WebKitWebLoaderClient::provisional-load-received-server-redirect
+ *   is emitted, the active URI is already updated to the redirected URI.
+ * </para></listitem>
+ * <listitem><para>
+ *   When the signal #WebKitWebLoaderClient::load-committed is emitted,
+ *   the active URI is the final one and it will not change unless
+ *   a new load operation is started or a navigation action within the
+ *   same page is performed.
+ * </para></listitem>
+ * </orderedlist>
+ *
+ * You can monitor the active URI by connecting to the notify::uri
+ * signal of @web_view.
+ *
+ * Returns: the current active URI of @web_view or %NULL
+ *    if nothing has been loaded yet.
+ */
+const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->activeURI.data();
 }
 
 /**
@@ -499,4 +599,5 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
 
     WKPageGoToBackForwardListItem(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))),
                                   webkitBackForwardListItemGetWKItem(listItem));
+    webkitWebViewUpdateURI(webView);
 }

@@ -30,5 +30,6 @@
 #include <WebKit2/WebKit2.h>
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
+void webkitWebViewUpdateURI(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

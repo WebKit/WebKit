@@ -30,7 +30,8 @@ static WebKitTestServer* kServer;
 
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 {
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/redirect").data());
+    test->setRedirectURI(kServer->getURIForPath("/normal").data());
+    test->loadURI(kServer->getURIForPath("/redirect").data());
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -43,7 +44,7 @@ static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 
 static void testLoadingError(LoadTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/error").data());
+    test->loadURI(kServer->getURIForPath("/error").data());
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -63,9 +64,7 @@ static void assertNormalLoadHappenedAndClearEvents(Vector<LoadTrackingTest::Load
 
 static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_alternate_html(test->m_webView,
-                                        "<html><body>Alternate Content</body></html>",
-                                        0, kServer->getURIForPath("/alternate").data());
+    test->loadAlternateHTML("<html><body>Alternate Content</body></html>", 0, kServer->getURIForPath("/alternate").data());
     test->waitUntilLoadFinished();
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
@@ -92,7 +91,7 @@ public:
 
 static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/cancelled").data());
+    test->loadURI(kServer->getURIForPath("/cancelled").data());
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -108,7 +107,7 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
     webkit_web_view_reload(test->m_webView);
     test->wait(0.25); // Wait for a quarter of a second.
 
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/normal").data());
+    test->loadURI(kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 
@@ -119,9 +118,64 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadProgress(LoadTrackingTest* test, gconstpointer)
 {
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath("/normal").data());
+    test->loadURI(kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
     g_assert_cmpfloat(test->m_estimatedProgress, ==, 1);
+}
+
+class ViewURITrackingTest: public LoadTrackingTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ViewURITrackingTest);
+
+    static void uriChanged(GObject*, GParamSpec*, ViewURITrackingTest* test)
+    {
+        g_assert_cmpstr(test->m_activeURI.data(), !=, webkit_web_view_get_uri(test->m_webView));
+        test->m_activeURI = webkit_web_view_get_uri(test->m_webView);
+    }
+
+    ViewURITrackingTest()
+        : m_activeURI(webkit_web_view_get_uri(m_webView))
+    {
+        g_assert(m_activeURI.isNull());
+        g_signal_connect(m_webView, "notify::uri", G_CALLBACK(uriChanged), this);
+    }
+
+    void provisionalLoadStarted(WebKitWebLoaderClient*)
+    {
+        checkActiveURI("/redirect");
+    }
+
+    void provisionalLoadReceivedServerRedirect(WebKitWebLoaderClient*)
+    {
+        checkActiveURI("/normal");
+    }
+
+    void loadCommitted(WebKitWebLoaderClient*)
+    {
+        checkActiveURI("/normal");
+    }
+
+    void loadFinished(WebKitWebLoaderClient* client)
+    {
+        checkActiveURI("/normal");
+        LoadTrackingTest::loadFinished(client);
+    }
+
+    CString m_activeURI;
+
+private:
+    void checkActiveURI(const char* uri)
+    {
+        // g_assert_cmpstr is a macro, so we need to cache the temporary string.
+        CString serverURI = kServer->getURIForPath(uri);
+        g_assert_cmpstr(m_activeURI.data(), ==, serverURI.data());
+    }
+};
+
+static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/redirect").data());
+    test->waitUntilLoadFinished();
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
@@ -170,6 +224,10 @@ void beforeAll()
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);
     LoadTrackingTest::add("WebKitWebView", "reload", testWebViewReload);
+
+    // This test checks that web view notify::uri signal is correctly emitted
+    // and the uri is already updated when loader client signals are emitted.
+    ViewURITrackingTest::add("WebKitWebView", "active-uri", testWebViewActiveURI);
 }
 
 void afterAll()

@@ -164,7 +164,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     CString uriPage1 = kServer->getURIForPath("/Page1");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    webkit_web_view_load_uri(test->m_webView, uriPage1.data());
+    test->loadURI(uriPage1.data());
     test->waitUntilLoadFinished();
 
     g_assert(!webkit_web_view_can_go_back(test->m_webView));
@@ -181,7 +181,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     CString uriPage2 = kServer->getURIForPath("/Page2");
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-    webkit_web_view_load_uri(test->m_webView, uriPage2.data());
+    test->loadURI(uriPage2.data());
     test->waitUntilLoadFinished();
 
     g_assert(webkit_web_view_can_go_back(test->m_webView));
@@ -198,7 +198,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     g_assert(!webkit_back_forward_list_get_forward_list(test->m_list));
 
     test->m_changedFlags = BackForwardListTest::CurrentItem;
-    webkit_web_view_go_back(test->m_webView);
+    test->goBack();
     test->waitUntilLoadFinished();
 
     g_assert(!webkit_web_view_can_go_back(test->m_webView));
@@ -215,7 +215,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     BackForwardListTest::checkList(test->m_list, BackForwardListTest::Forward, items, 1);
 
     test->m_changedFlags = BackForwardListTest::CurrentItem;
-    webkit_web_view_go_forward(test->m_webView);
+    test->goForward();
     test->waitUntilLoadFinished();
 
     g_assert(webkit_web_view_can_go_back(test->m_webView));
@@ -232,7 +232,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     g_assert(!webkit_back_forward_list_get_forward_list(test->m_list));
 
     test->m_changedFlags = BackForwardListTest::CurrentItem;
-    webkit_web_view_go_to_back_forward_list_item(test->m_webView, itemPage1);
+    test->goToBackForwardListItem(itemPage1);
     test->waitUntilLoadFinished();
 
     g_assert(itemPage1 == webkit_back_forward_list_get_current_item(test->m_list));
@@ -243,7 +243,7 @@ static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpo
     for (size_t i = 0; i < kBackForwardListLimit; i++) {
         GOwnPtr<char> path(g_strdup_printf("/Page%d", i));
         test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
-        webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath(path.get()).data());
+        test->loadURI(kServer->getURIForPath(path.get()).data());
         test->waitUntilLoadFinished();
     }
 
@@ -253,7 +253,7 @@ static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpo
 
     GOwnPtr<char> path(g_strdup_printf("/Page%d", kBackForwardListLimit));
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem | BackForwardListTest::RemovedItems;
-    webkit_web_view_load_uri(test->m_webView, kServer->getURIForPath(path.get()).data());
+    test->loadURI(kServer->getURIForPath(path.get()).data());
     test->waitUntilLoadFinishedAndCheckRemovedItems(removedItems.get());
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, kBackForwardListLimit);

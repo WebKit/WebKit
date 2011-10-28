@@ -39,6 +39,8 @@ public:
     virtual void loadFailed(WebKitWebLoaderClient*, const char* failingURI, GError*);
     virtual void estimatedProgressChanged();
 
+    void setRedirectURI(const char* uri) { m_redirectURI = uri; }
+
     enum LoadEvents {
         ProvisionalLoadStarted,
         ProvisionalLoadReceivedServerRedirect,
@@ -50,6 +52,7 @@ public:
     bool m_runLoadUntilCompletion;
     Vector<LoadEvents> m_loadEvents;
     float m_estimatedProgress;
+    CString m_redirectURI;
 };
 
 #endif // LoadTrackingTest_h

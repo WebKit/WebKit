@@ -24,18 +24,23 @@
 
 static gboolean provisionalLoadStartedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
+    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
     test->provisionalLoadStarted(client);
     return TRUE;
 }
 
 static gboolean provisionalLoadReceivedServerRedirectCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
+    test->m_activeURI = webkit_web_view_get_uri(test->m_webView);
+    if (!test->m_redirectURI.isNull())
+        g_assert_cmpstr(test->m_redirectURI.data(), ==, test->m_activeURI.data());
     test->provisionalLoadReceivedServerRedirect(client);
     return TRUE;
 }
 
 static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
+    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
     g_assert(error);
     test->provisionalLoadFailed(client, failingURI, error);
     return TRUE;
@@ -43,18 +48,21 @@ static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, Web
 
 static gboolean loadCommittedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
+    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
     test->loadCommitted(client);
     return TRUE;
 }
 
 static gboolean loadFinishedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
 {
+    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
     test->loadFinished(client);
     return TRUE;
 }
 
 static gboolean loadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
 {
+    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
     g_assert(error);
     test->loadFailed(client, failingURI, error);
     return TRUE;
@@ -76,6 +84,8 @@ LoadTrackingTest::LoadTrackingTest()
     g_signal_connect(client, "load-finished", G_CALLBACK(loadFinishedCallback), this);
     g_signal_connect(client, "load-failed", G_CALLBACK(loadFailedCallback), this);
     g_signal_connect(m_webView, "notify::estimated-load-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
+
+    g_assert(!webkit_web_view_get_uri(m_webView));
 }
 
 LoadTrackingTest::~LoadTrackingTest()

@@ -124,6 +124,8 @@ webkit_web_view_get_back_forward_list        (WebKitWebView             *web_vie
 WEBKIT_API void
 webkit_web_view_go_to_back_forward_list_item (WebKitWebView             *web_view,
                                               WebKitBackForwardListItem *list_item);
+WEBKIT_API const gchar *
+webkit_web_view_get_uri                      (WebKitWebView             *web_view);
 
 WEBKIT_API const gchar *
 webkit_web_view_get_custom_charset           (WebKitWebView             *web_view);
