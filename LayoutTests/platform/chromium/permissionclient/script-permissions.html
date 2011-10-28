@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpPermissionClientCallbacks();
+}
+
+function log(a)
+{
+    document.getElementById("log").innerHTML += a + "<br>";
+}
+
+function test()
+{
+    if (window.layoutTestController && layoutTestController.setScriptsAllowed)
+        layoutTestController.setScriptsAllowed(false);
+    else
+        log("This test requires layoutTestController.setScriptsAllowed, so it be can't run in a browser.");
+
+    // Try to load an external script.
+    var script = document.createElement('script');
+    script.src = "resources/script.js";
+    document.getElementById("script").appendChild(script);
+}
+</script>
+</head>
+<body onload="test()">
+<div id="script"></div>
+<div id="log"></div>
+</body>
+</html>

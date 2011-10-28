@@ -300,6 +300,7 @@ namespace WebCore {
         virtual void didChangeScrollOffset() { }
 
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
+        virtual bool allowScriptFromSource(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
         virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowImage(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
         virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }

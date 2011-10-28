@@ -200,6 +200,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("windowCount", &LayoutTestController::windowCount);
     bindMethod("setTextDirection", &LayoutTestController::setTextDirection);
     bindMethod("setImagesAllowed", &LayoutTestController::setImagesAllowed);
+    bindMethod("setScriptsAllowed", &LayoutTestController::setScriptsAllowed);
     bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
     bindMethod("setPluginsAllowed", &LayoutTestController::setPluginsAllowed);
 
@@ -797,6 +798,13 @@ void LayoutTestController::setImagesAllowed(const CppArgumentList& arguments, Cp
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setImagesAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void LayoutTestController::setScriptsAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setScriptsAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 

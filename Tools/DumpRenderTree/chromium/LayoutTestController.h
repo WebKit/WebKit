@@ -395,6 +395,7 @@ public:
 
     // WebPermissionClient related.
     void setImagesAllowed(const CppArgumentList&, CppVariant*);
+    void setScriptsAllowed(const CppArgumentList&, CppVariant*);
     void setStorageAllowed(const CppArgumentList&, CppVariant*);
     void setPluginsAllowed(const CppArgumentList&, CppVariant*);
     void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);

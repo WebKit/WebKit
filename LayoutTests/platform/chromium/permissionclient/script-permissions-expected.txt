@@ -1,0 +1,2 @@
+PERMISSION CLIENT: allowScriptFromSource((file test):platform/chromium/permissionclient/resources/script.js): false
+

@@ -187,6 +187,15 @@ bool FrameLoaderClientImpl::allowJavaScript(bool enabledPerSettings)
     return enabledPerSettings;
 }
 
+bool FrameLoaderClientImpl::allowScriptFromSource(bool enabledPerSettings, const KURL& scriptURL)
+{
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview && webview->permissionClient())
+        return webview->permissionClient()->allowScriptFromSource(m_webFrame, enabledPerSettings, scriptURL);
+
+    return enabledPerSettings;
+}
+
 bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();

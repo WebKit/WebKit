@@ -54,6 +54,14 @@ bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, cons
     return allowed;
 }
 
+bool WebPermissions::allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& scriptURL)
+{
+    bool allowed = enabledPerSettings && m_scriptsAllowed;
+    if (layoutTestController()->shouldDumpPermissionClientCallbacks())
+        fprintf(stdout, "PERMISSION CLIENT: allowScriptFromSource(%s): %s\n", m_shell->normalizeLayoutTestURL(scriptURL.spec()).c_str(), allowed ? "true" : "false");
+    return allowed;
+}
+
 bool WebPermissions::allowStorage(WebKit::WebFrame*, bool)
 {
     return m_storageAllowed;
@@ -81,6 +89,11 @@ void WebPermissions::setImagesAllowed(bool imagesAllowed)
     m_imagesAllowed = imagesAllowed;
 }
 
+void WebPermissions::setScriptsAllowed(bool scriptsAllowed)
+{
+    m_scriptsAllowed = scriptsAllowed;
+}
+
 void WebPermissions::setStorageAllowed(bool storageAllowed)
 {
     m_storageAllowed = storageAllowed;
@@ -104,6 +117,7 @@ void WebPermissions::setRunningInsecureContentAllowed(bool allowed)
 void WebPermissions::reset()
 {
     m_imagesAllowed = true;
+    m_scriptsAllowed = true;
     m_storageAllowed = true;
     m_pluginsAllowed = true;
     m_displayingInsecureContentAllowed = false;

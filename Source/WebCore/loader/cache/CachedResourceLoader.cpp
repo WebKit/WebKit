@@ -317,6 +317,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::Script:
         if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url))
             return false;
+
+        if (frame()) {
+            Settings* settings = frame()->settings();
+            if (!frame()->loader()->client()->allowScriptFromSource(!settings || settings->isJavaScriptEnabled(), url)) {
+                frame()->loader()->client()->didNotAllowScript();
+                return false;
+            }
+        }
         break;
     case CachedResource::CSSStyleSheet:
         if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url))

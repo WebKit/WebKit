@@ -43,6 +43,7 @@ public:
 
     // Override WebPermissionClient methods.
     virtual bool allowImage(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& imageURL);
+    virtual bool allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& scriptURL);
     virtual bool allowStorage(WebKit::WebFrame*, bool local);
     virtual bool allowPlugins(WebKit::WebFrame*, bool enabledPerSettings);
     virtual bool allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
@@ -52,12 +53,13 @@ public:
 
     // Hooks to set the different policies.
     void setImagesAllowed(bool);
+    void setScriptsAllowed(bool);
     void setStorageAllowed(bool);
     void setPluginsAllowed(bool);
     void setDisplayingInsecureContentAllowed(bool);
     void setRunningInsecureContentAllowed(bool);
 
-    // Resets the policy to allow images, storage, displaying insecure, but not running insecure.
+    // Resets the policy to allow everything, except for running insecure content.
     void reset();
 
 private:
@@ -67,6 +69,7 @@ private:
     TestShell* m_shell;
 
     bool m_imagesAllowed;
+    bool m_scriptsAllowed;
     bool m_storageAllowed;
     bool m_pluginsAllowed;
     bool m_displayingInsecureContentAllowed;

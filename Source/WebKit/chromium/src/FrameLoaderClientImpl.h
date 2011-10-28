@@ -197,6 +197,7 @@ public:
     virtual void registerForIconNotification(bool listen = true);
     virtual void didChangeScrollOffset();
     virtual bool allowJavaScript(bool enabledPerSettings);
+    virtual bool allowScriptFromSource(bool enabledPerSettings, const WebCore::KURL& scriptURL);
     virtual bool allowPlugins(bool enabledPerSettings);
     virtual bool allowImage(bool enabledPerSettings, const WebCore::KURL& imageURL);
     virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, WebCore::SecurityOrigin*, const WebCore::KURL&);

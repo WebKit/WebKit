@@ -1,3 +1,16 @@
+2011-10-28  Jochen Eisinger  <jochen@chromium.org>
+
+        Add allowScriptFromSource callback to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=71013
+
+        Reviewed by Darin Fisher.
+
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowScriptFromSource):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowScriptFromSource):
+        * src/FrameLoaderClientImpl.h:
+
 2011-10-26  Nat Duca  <nduca@chromium.org>
 
         [chromium] Implement frame rate control portions of CCScheduler

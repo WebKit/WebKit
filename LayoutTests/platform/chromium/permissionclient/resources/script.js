@@ -1,0 +1,1 @@
+log('FAIL: script loaded');

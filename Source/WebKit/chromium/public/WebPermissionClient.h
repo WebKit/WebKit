@@ -58,6 +58,9 @@ public:
     // Controls whether scripts are allowed to execute for this frame.
     virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 
+    // Controls whether scripts loaded from the given URL are allowed to execute for this frame.
+    virtual bool allowScriptFromSource(WebFrame*, bool enabledPerSettings, const WebURL& scriptURL) { return enabledPerSettings; }
+
     // Controls whether insecrure content is allowed to display for this frame.
     virtual bool allowDisplayingInsecureContent(WebFrame*, bool enabledPerSettings, const WebSecurityOrigin&, const WebURL&) { return enabledPerSettings; }
 
