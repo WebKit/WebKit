@@ -298,7 +298,6 @@ class BuildBot(object):
             "Leopard.*\((?:Build|Test)",
             "Windows.*Build",
             "Windows.*\(Test",
-            "WinCairo",
             "WinCE",
             "EFL",
             "GTK.*32",

@@ -1,3 +1,13 @@
+2011-10-27  Adam Barth  <abarth@webkit.org>
+
+        Remove WinCairo from the set of core builders.  WinCairo rarely builds
+        and is never green.
+
+        Rubber-stamped by Eric Seidel.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-10-27  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Connecting to localhost:8880 takes one second on Windows
