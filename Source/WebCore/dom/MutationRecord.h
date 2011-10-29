@@ -47,13 +47,15 @@ class QualifiedName;
 class MutationRecord : public RefCounted<MutationRecord> {
 public:
     static PassRefPtr<MutationRecord> createChildList(PassRefPtr<Node> target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
-    static PassRefPtr<MutationRecord> createAttributes(PassRefPtr<Node> target, const QualifiedName&);
+    static PassRefPtr<MutationRecord> createAttributes(PassRefPtr<Node> target, const QualifiedName&, const AtomicString& oldValue);
     static PassRefPtr<MutationRecord> createCharacterData(PassRefPtr<Node> target);
+
+    static PassRefPtr<MutationRecord> createWithNullOldValue(PassRefPtr<MutationRecord>);
 
     virtual ~MutationRecord();
 
     virtual const AtomicString& type() = 0;
-    Node* target() { return m_target.get(); }
+    virtual Node* target() = 0;
 
     virtual NodeList* addedNodes() { return 0; }
     virtual NodeList* removedNodes() { return 0; }
@@ -64,15 +66,7 @@ public:
     virtual const AtomicString& attributeNamespace() { return nullAtom; }
 
     virtual String oldValue() { return String(); }
-    virtual void setOldValue(const String&) { }
-
-protected:
-    explicit MutationRecord(PassRefPtr<Node> target);
-
-private:
-    RefPtr<Node> m_target;
 };
-
 
 } // namespace WebCore
 

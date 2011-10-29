@@ -10,7 +10,7 @@
 <script>
 
 window.jsTestIsAsync = true;
-var mutations, mutations2;
+var mutations, mutations2, mutationsWithOldValue;
 var calls;
 
 function testBasic() {
@@ -294,9 +294,162 @@ function testOrderingWrtDOMSubtreeModified() {
 
     start();
 }
-var tests = [testBasic, testWrongType, testMultipleRegistration, testMultipleObservers, testNamespaceURI, testPropertyAccess, testOrderingWrtDOMSubtreeModified];
+
+function testOldValue() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing basic oldValue delivery.');
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.setAttribute('foo', 'bar');
+        div.setAttribute('foo', 'baz');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].oldValue', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"foo"');
+        shouldBe('mutations[1].oldValue', '"bar"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testOldValueAsRequested() {
+    var div;
+    var observerWithOldValue;
+    var observer;
+
+    function start() {
+        debug('Testing that oldValue is delivered as requested (or not).');
+        mutationsWithOldValue = null;
+        mutations = null;
+        div = document.createElement('div');
+        div.setAttribute('foo', 'bar');
+        observerWithOldValue = new WebKitMutationObserver(function(mutations) {
+            window.mutationsWithOldValue = mutations;
+        });
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observerWithOldValue.observe(div, { attributes: true, attributeOldValue: true });
+        observer.observe(div, { attributes: true });
+        div.setAttribute('foo', 'baz');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutationsWithOldValue.length', '1');
+        shouldBe('mutationsWithOldValue[0].type', '"attributes"');
+        shouldBe('mutationsWithOldValue[0].attributeName', '"foo"');
+        shouldBe('mutationsWithOldValue[0].oldValue', '"bar"');
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].oldValue', 'null');
+        observerWithOldValue.disconnect();
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testOldValueUnionMultipleObservations() {
+    var div;
+    var span;
+    var observer;
+
+    function start() {
+        debug('An observer with multiple observations will get attributeOldValue if any entries request it.');
+        mutations = null;
+        div = document.createElement('div');
+        span = div.appendChild(document.createElement('span'));
+        span.setAttribute('foo', 'bar');
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(div, { attributes: true, attributeOldValue: true, subtree: true });
+        observer.observe(span, { attributes: true });
+        span.setAttribute('foo', 'baz');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].oldValue', '"bar"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testIDLAttribute() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing setting an attribute via reflected IDL attribute.');
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.id = 'foo';
+        div.id = 'bar';
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"id"');
+        shouldBe('mutations[0].oldValue', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"id"');
+        shouldBe('mutations[1].oldValue', '"foo"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+var tests = [
+    testBasic,
+    testWrongType,
+    testMultipleRegistration,
+    testMultipleObservers,
+    testNamespaceURI,
+    testPropertyAccess,
+    testOrderingWrtDOMSubtreeModified,
+    testOldValue,
+    testOldValueAsRequested,
+    testOldValueUnionMultipleObservations,
+    testIDLAttribute
+];
 var testIndex = 0;
- 
+
 function runNextTest() {
     if (testIndex < tests.length)
         tests[testIndex++]();

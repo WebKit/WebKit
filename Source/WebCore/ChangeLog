@@ -1,3 +1,30 @@
+2011-10-28  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Support attributeOldValue for attribute mutations
+        https://bugs.webkit.org/show_bug.cgi?id=70861
+
+        Reviewed by Ryosuke Niwa.
+
+        Respect 'attributeOldValue' when passed to WebKitMutationObserver.observe().
+
+        If multiple observers have different attributeOldValue settings in
+        their registrations, two different MutationRecords are created (one is
+        a wrapper around the other).
+
+        If a single observer has multiple registrations that apply to a single
+        mutation, and those registrations have different values for
+        attributeOldValue, the observer is passed the oldValue.
+
+        * dom/Element.cpp:
+        (WebCore::hasOldValue):
+        (WebCore::enqueueAttributesMutationRecord):
+        (WebCore::Element::setAttribute):
+        * dom/MutationRecord.cpp:
+        (WebCore::MutationRecord::createAttributes):
+        (WebCore::MutationRecord::createWithNullOldValue):
+        * dom/MutationRecord.h:
+        (WebCore::MutationRecord::oldValue):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Delete ExceptionCode.cpp, which is empty

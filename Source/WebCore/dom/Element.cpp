@@ -617,16 +617,43 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 }
 
 #if ENABLE(MUTATION_OBSERVERS)
-static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name)
+static inline bool hasOldValue(MutationObserverOptions options)
+{
+    return options & WebKitMutationObserver::AttributeOldValue;
+}
+
+static inline bool isOldValueRequested(const HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers)
+{
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::const_iterator iter = observers.begin(); iter != observers.end(); ++iter) {
+        if (hasOldValue(iter->second))
+            return true;
+    }
+    return false;
+}
+
+static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name, const AtomicString& oldValue)
 {
     HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
     element->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
     if (observers.isEmpty())
         return;
 
-    RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name);
-    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
-        iter->first->enqueueMutationRecord(mutation);
+    RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name, isOldValueRequested(observers) ? oldValue : nullAtom);
+    RefPtr<MutationRecord> mutationWithNullOldValue;
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter) {
+        WebKitMutationObserver* observer = iter->first;
+        if (hasOldValue(iter->second)) {
+            observer->enqueueMutationRecord(mutation);
+            continue;
+        }
+        if (!mutationWithNullOldValue) {
+            if (mutation->oldValue().isNull())
+                mutationWithNullOldValue = mutation;
+            else
+                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).get();
+        }
+        observer->enqueueMutationRecord(mutationWithNullOldValue);
+    }
 }
 #endif
 
@@ -652,7 +679,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
 #if ENABLE(MUTATION_OBSERVERS)
     // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    enqueueAttributesMutationRecord(this, attributeName);
+    enqueueAttributesMutationRecord(this, attributeName, old ? old->value() : nullAtom);
 #endif
 
     if (isIdAttributeName(old ? old->name() : attributeName))
@@ -690,7 +717,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 #if ENABLE(MUTATION_OBSERVERS)
     // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    enqueueAttributesMutationRecord(this, name);
+    enqueueAttributesMutationRecord(this, name, old ? old->value() : nullAtom);
 #endif
 
     if (isIdAttributeName(name))

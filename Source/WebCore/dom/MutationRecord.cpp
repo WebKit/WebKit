@@ -47,7 +47,7 @@ namespace {
 class ChildListRecord : public MutationRecord {
 public:
     ChildListRecord(PassRefPtr<Node> target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling)
-        : MutationRecord(target)
+        : m_target(target)
         , m_addedNodes(added)
         , m_removedNodes(removed)
         , m_previousSibling(previousSibling)
@@ -56,12 +56,14 @@ public:
     }
 
 private:
-    virtual const AtomicString& type();
-    virtual NodeList* addedNodes() { return m_addedNodes.get(); }
-    virtual NodeList* removedNodes() { return m_removedNodes.get(); }
-    virtual Node* previousSibling() { return m_previousSibling.get(); }
-    virtual Node* nextSibling() { return m_nextSibling.get(); }
+    virtual const AtomicString& type() OVERRIDE;
+    virtual Node* target() OVERRIDE { return m_target.get(); }
+    virtual NodeList* addedNodes() OVERRIDE { return m_addedNodes.get(); }
+    virtual NodeList* removedNodes() OVERRIDE { return m_removedNodes.get(); }
+    virtual Node* previousSibling() OVERRIDE { return m_previousSibling.get(); }
+    virtual Node* nextSibling() OVERRIDE { return m_nextSibling.get(); }
 
+    RefPtr<Node> m_target;
     RefPtr<NodeList> m_addedNodes;
     RefPtr<NodeList> m_removedNodes;
     RefPtr<Node> m_previousSibling;
@@ -70,38 +72,61 @@ private:
 
 class AttributesRecord : public MutationRecord {
 public:
-    AttributesRecord(PassRefPtr<Node> target, const QualifiedName& name)
-        : MutationRecord(target)
+    AttributesRecord(PassRefPtr<Node> target, const QualifiedName& name, const AtomicString& oldValue)
+        : m_target(target)
         , m_attributeName(name.localName())
         , m_attributeNamespace(name.namespaceURI())
+        , m_oldValue(oldValue)
     {
     }
 
 private:
-    virtual const AtomicString& type();
-    virtual const AtomicString& attributeName() { return m_attributeName; }
-    virtual const AtomicString& attributeNamespace() { return m_attributeNamespace; }
-    virtual String oldValue() { return m_oldValue; }
-    virtual void setOldValue(const String& value) { m_oldValue = value; }
+    virtual const AtomicString& type() OVERRIDE;
+    virtual Node* target() OVERRIDE { return m_target.get(); }
+    virtual const AtomicString& attributeName() OVERRIDE { return m_attributeName; }
+    virtual const AtomicString& attributeNamespace() OVERRIDE { return m_attributeNamespace; }
+    virtual String oldValue() OVERRIDE { return m_oldValue; }
 
+    RefPtr<Node> m_target;
     AtomicString m_attributeName;
     AtomicString m_attributeNamespace;
-    String m_oldValue;
+    AtomicString m_oldValue;
 };
 
 class CharacterDataRecord : public MutationRecord {
 public:
     CharacterDataRecord(PassRefPtr<Node> target)
-        : MutationRecord(target)
+        : m_target(target)
     {
     }
 
 private:
-    virtual const AtomicString& type();
-    virtual String oldValue() { return m_oldValue; }
-    virtual void setOldValue(const String& value) { m_oldValue = value; }
+    virtual const AtomicString& type() OVERRIDE;
+    virtual Node* target() OVERRIDE { return m_target.get(); }
 
-    String m_oldValue;
+    RefPtr<Node> m_target;
+};
+
+class MutationRecordWithNullOldValue : public MutationRecord {
+public:
+    MutationRecordWithNullOldValue(PassRefPtr<MutationRecord> record)
+        : m_record(record)
+    {
+    }
+
+private:
+    virtual const AtomicString& type() OVERRIDE { return m_record->type(); }
+    virtual Node* target() OVERRIDE { return m_record->target(); }
+    virtual NodeList* addedNodes() OVERRIDE { return m_record->addedNodes(); }
+    virtual NodeList* removedNodes() OVERRIDE { return m_record->removedNodes(); }
+    virtual Node* previousSibling() OVERRIDE { return m_record->previousSibling(); }
+    virtual Node* nextSibling() OVERRIDE { return m_record->nextSibling(); }
+    virtual const AtomicString& attributeName() OVERRIDE { return m_record->attributeName(); }
+    virtual const AtomicString& attributeNamespace() OVERRIDE { return m_record->attributeNamespace(); }
+
+    virtual String oldValue() OVERRIDE { return String(); }
+
+    RefPtr<MutationRecord> m_record;
 };
 
 const AtomicString& ChildListRecord::type()
@@ -129,9 +154,9 @@ PassRefPtr<MutationRecord> MutationRecord::createChildList(PassRefPtr<Node> targ
     return adoptRef(static_cast<MutationRecord*>(new ChildListRecord(target, added, removed, previousSibling, nextSibling)));
 }
 
-PassRefPtr<MutationRecord> MutationRecord::createAttributes(PassRefPtr<Node> target, const QualifiedName& name)
+PassRefPtr<MutationRecord> MutationRecord::createAttributes(PassRefPtr<Node> target, const QualifiedName& name, const AtomicString& oldValue)
 {
-    return adoptRef(static_cast<MutationRecord*>(new AttributesRecord(target, name)));
+    return adoptRef(static_cast<MutationRecord*>(new AttributesRecord(target, name, oldValue)));
 }
 
 PassRefPtr<MutationRecord> MutationRecord::createCharacterData(PassRefPtr<Node> target)
@@ -139,9 +164,9 @@ PassRefPtr<MutationRecord> MutationRecord::createCharacterData(PassRefPtr<Node> 
     return adoptRef(static_cast<MutationRecord*>(new CharacterDataRecord(target)));
 }
 
-MutationRecord::MutationRecord(PassRefPtr<Node> target)
-    : m_target(target)
+PassRefPtr<MutationRecord> MutationRecord::createWithNullOldValue(PassRefPtr<MutationRecord> record)
 {
+    return adoptRef(static_cast<MutationRecord*>(new MutationRecordWithNullOldValue(record)));
 }
 
 MutationRecord::~MutationRecord()
