@@ -1,3 +1,24 @@
+2011-10-29  Anna Cavender  <annacc@chromium.org>
+
+        Make sure TextTracks are destructed if HTMLMediaElement goes away.
+        https://bugs.webkit.org/show_bug.cgi?id=71148
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-text-track-destructor-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+            Destroy the client (this) on TextTracks.
+        (WebCore::HTMLMediaElement::loadTextTracks):
+            Move TextTrack creation to loadNextTextTrack.
+        (WebCore::HTMLMediaElement::loadNextTextTrack):
+            Keep track of new TextTrack in a list.
+        (WebCore::HTMLMediaElement::addTrack):
+            Keep track of new TextTrack in a list.
+        * html/HTMLMediaElement.h:
+            Add m_textTracks and loadNextTextTrack().
+
 2011-10-29  Jochen Eisinger  <jochen@chromium.org>
 
         Implement IDBFactory.deleteDatabase

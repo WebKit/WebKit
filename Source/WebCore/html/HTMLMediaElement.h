@@ -49,6 +49,7 @@ class MediaElementAudioSourceNode;
 #endif
 class Event;
 class HTMLSourceElement;
+class HTMLTrackElement;
 class MediaControls;
 class MediaError;
 class KURL;
@@ -352,6 +353,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     void loadTextTracks();
+    void loadNextTextTrack(HTMLTrackElement*);
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
@@ -506,6 +508,10 @@ private:
     // The value is set just after the MediaElementAudioSourceNode is created.
     // The value is cleared in MediaElementAudioSourceNode::~MediaElementAudioSourceNode().
     MediaElementAudioSourceNode* m_audioSourceNode;
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    Vector<RefPtr<TextTrack> > m_textTracks;
 #endif
 };
 

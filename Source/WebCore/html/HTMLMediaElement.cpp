@@ -224,6 +224,10 @@ HTMLMediaElement::~HTMLMediaElement()
     document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
     document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
+#if ENABLE(VIDEO_TRACK)
+    for (unsigned i = 0; i < m_textTracks.size(); ++i)
+        m_textTracks[i]->setClient(0);
+#endif
 }
 
 void HTMLMediaElement::willMoveToNewOwnerDocument()
@@ -839,11 +843,20 @@ void HTMLMediaElement::loadTextTracks()
         return;
 
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(trackTag)) {
-            HTMLTrackElement* track = static_cast<HTMLTrackElement*>(node);
-            track->load(ActiveDOMObject::scriptExecutionContext(), this);
-        }
+        if (node->hasTagName(trackTag))
+            loadNextTextTrack(static_cast<HTMLTrackElement*>(node));
     }
+}
+
+void HTMLMediaElement::loadNextTextTrack(HTMLTrackElement* track)
+{
+    // FIXME(71124): This should schedule an *asynchronous* load.
+    track->load(ActiveDOMObject::scriptExecutionContext(), this);
+    RefPtr<TextTrack> textTrack = track->track();
+    if (textTrack)
+        m_textTracks.append(textTrack.release());
+    
+    // FIXME(71123): Set the text track mode accordingly.
 }
 
 void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
@@ -1976,7 +1989,9 @@ float HTMLMediaElement::percentLoaded() const
 #if ENABLE(VIDEO_TRACK)
 PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language)
 {
-    return TextTrack::create(this, kind, label, language);
+    RefPtr<TextTrack> textTrack = TextTrack::create(this, kind, label, language);
+    m_textTracks.append(textTrack);
+    return textTrack.release();
 }
 #endif
 

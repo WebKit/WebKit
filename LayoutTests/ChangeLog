@@ -1,3 +1,13 @@
+2011-10-29  Anna Cavender  <annacc@chromium.org>
+
+        Make sure TextTracks are destructed if HTMLMediaElement goes away.
+        https://bugs.webkit.org/show_bug.cgi?id=71148
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-text-track-destructor-crash-expected.txt: Added.
+        * media/track/track-text-track-destructor-crash.html: Added.
+
 2011-10-29  Jochen Eisinger  <jochen@chromium.org>
 
         Implement IDBFactory.deleteDatabase
