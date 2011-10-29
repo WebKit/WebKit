@@ -12,4 +12,4 @@ layer at (0,0) size 800x261
         RenderText {#text} at (434,0) size 4x21
           text run at (434,0) width 4: "."
       RenderBlock {DIV} at (0,37) size 400x200 [border: (200px solid #FF0000) none]
-        RenderBlock {DIV} at (0,0) size 200x200 [border: (200px solid #008000) none]
+        RenderBlock {DIV} at (0,0) size 400x200 [border: (200px solid #008000) none]
