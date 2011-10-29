@@ -1,3 +1,10 @@
+2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ and Qt rebaselines after r98794.
+
+        * platform/gtk/editing/pasteboard/5134759-expected.txt:
+        * platform/qt/editing/pasteboard/5134759-expected.txt:
+
 2011-10-29  Robert Hogan  <robert@webkit.org>
 
         Second attempt to add results for tests introduced in http://trac.webkit.org/changeset/98812
