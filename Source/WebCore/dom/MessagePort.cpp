@@ -41,9 +41,9 @@
 namespace WebCore {
 
 MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
-    : m_started(false)
+    : ContextDestructionObserver(&scriptExecutionContext)
+    , m_started(false)
     , m_closed(false)
-    , m_scriptExecutionContext(&scriptExecutionContext)
 {
     m_scriptExecutionContext->createdMessagePort(this);
 
@@ -152,11 +152,10 @@ void MessagePort::entangle(PassOwnPtr<MessagePortChannel> remote)
 
 void MessagePort::contextDestroyed()
 {
-    ASSERT(m_scriptExecutionContext);
     // Must be closed before blowing away the cached context, to ensure that we get no more calls to messageAvailable().
     // ScriptExecutionContext::closeMessagePorts() takes care of that.
     ASSERT(m_closed);
-    m_scriptExecutionContext = 0;
+    ContextDestructionObserver::contextDestroyed();
 }
 
 const AtomicString& MessagePort::interfaceName() const

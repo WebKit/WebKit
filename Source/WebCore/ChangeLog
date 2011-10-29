@@ -1,3 +1,25 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        MessagePort should be a ContextDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=71167
+
+        Reviewed by Eric Seidel.
+
+        I couldn't quite get rid of all the uses of the
+        ScriptExecutionContext::m_messagePorts in this patch.  I hope to get
+        rid of them in the future as the "extra data" design for
+        ScriptExecutionContext emerges.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ContextDestructionObserver::contextDestroyed):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::contextDestroyed):
+        * dom/MessagePort.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::closeMessagePorts):
+
 2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         The copy and paste result in nested scrollbars on http://dojotoolkit.org/widgets

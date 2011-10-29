@@ -54,6 +54,7 @@ ContextDestructionObserver::~ContextDestructionObserver()
 
 void ContextDestructionObserver::contextDestroyed()
 {
+    ASSERT(m_scriptExecutionContext);
     m_scriptExecutionContext = 0;
 }
 
