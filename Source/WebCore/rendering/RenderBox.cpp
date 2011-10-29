@@ -1768,8 +1768,7 @@ LayoutUnit RenderBox::computeLogicalWidthUsing(LogicalWidthType widthType, Layou
     if (logicalWidth.isIntrinsicOrAuto()) {
         LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
         LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
-        if (availableLogicalWidth)
-            logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
+        logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
         if (sizesToIntrinsicLogicalWidth(widthType)) {
             logicalWidthResult = max(logicalWidthResult, minPreferredLogicalWidth());

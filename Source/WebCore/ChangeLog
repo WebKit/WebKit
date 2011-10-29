@@ -1,3 +1,17 @@
+2011-10-03  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: block-non-replaced-width-008.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69278
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+          Include the margins in the calculation of logical width even when the containing block's
+          width is zero. This is required by section '10.3.3 Block-level, non-replaced elements in
+          normal flow' in the CSS 2.1 spec. Tested by block-non-replaced-width-008.htm in the CSS
+          test suite.
+
 2011-10-29  Anna Cavender  <annacc@chromium.org>
 
         Make sure TextTracks are destructed if HTMLMediaElement goes away.

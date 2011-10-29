@@ -61,23 +61,23 @@ layer at (14,35) size 138x16
   RenderBlock {DIV} at (0,0) size 138x16
     RenderText {#text} at (1,0) size 53x16
       text run at (1,0) width 53: "New Mail"
-layer at (174,35) size 35x16
-  RenderBlock {DIV} at (0,0) size 35x16
+layer at (174,35) size 2x16 scrollWidth 35
+  RenderBlock {DIV} at (0,0) size 2x16
     RenderText {#text} at (1,0) size 33x16
       text run at (1,0) width 33: "Reply"
-layer at (183,35) size 54x16
-  RenderBlock {DIV} at (0,0) size 54x16
+layer at (183,35) size 2x16 scrollWidth 54
+  RenderBlock {DIV} at (0,0) size 2x16
     RenderText {#text} at (1,0) size 52x16
       text run at (1,0) width 52: "Reply All"
 layer at (36,105) size 596x16
   RenderBlock {DIV} at (0,0) size 596x16
     RenderText {#text} at (1,0) size 53x16
       text run at (1,0) width 53: "New Mail"
-layer at (676,105) size 35x16
-  RenderBlock {DIV} at (0,0) size 35x16
+layer at (676,105) size 2x16 scrollWidth 35
+  RenderBlock {DIV} at (0,0) size 2x16
     RenderText {#text} at (1,0) size 33x16
       text run at (1,0) width 33: "Reply"
-layer at (685,105) size 54x16
-  RenderBlock {DIV} at (0,0) size 54x16
+layer at (685,105) size 2x16 scrollWidth 54
+  RenderBlock {DIV} at (0,0) size 2x16
     RenderText {#text} at (1,0) size 52x16
       text run at (1,0) width 52: "Reply All"
