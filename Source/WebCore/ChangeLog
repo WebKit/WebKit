@@ -1,3 +1,21 @@
+2011-10-29  Antti Koivisto  <antti@apple.com>
+
+        Tighten font change conditions in matched declaration cache
+        https://bugs.webkit.org/show_bug.cgi?id=71026
+
+        Reviewed by Darin Adler.
+
+        We currently test if font description has changed to see if all properties need to be applied. However
+        only a few size related metrics can actually affect other properties. We can just test those, making 
+        the cache somewhat more effective while also making the equality test faster.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::fontDifferenceAffectsNonInherited):
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+    
+            Test for text computedSize, xHeight and orientation only. Other text properties don't affect computed
+            values of non-text CSS properties.
+
 2011-10-29  Adam Barth  <abarth@webkit.org>
 
         DOMURL should keep its own state rather than storing it on ScriptExecutionContext
