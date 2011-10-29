@@ -1,3 +1,15 @@
+2011-10-28  Rafael Weinstein  <rafaelw@chromium.org>
+
+        webkit.py gdb visualizer is broken after change to StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=71154
+
+        Reviewed by Tony Chang.
+
+        r98624 changed StringImpl m_data to m_data32. This changes updates
+        webkit.py to match.
+
+        * gdb/webkit.py:
+
 2011-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in check-for-inappropriate-objc-class-names

@@ -111,7 +111,7 @@ class WTFStringPrinter(StringPrinter):
         if self.get_length() == 0:
             return '(null)'
 
-        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data'],
+        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data16'],
                                  self.get_length())
 
 
@@ -126,7 +126,7 @@ class JSCUStringPrinter(StringPrinter):
         if self.get_length() == 0:
             return ''
 
-        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data'],
+        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data16'],
                                  self.get_length())
 
 
