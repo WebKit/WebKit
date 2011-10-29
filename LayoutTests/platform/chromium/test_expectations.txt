@@ -3951,3 +3951,5 @@ BUGWK71139 SNOWLEOPARD : http/tests/security/cross-frame-access-custom.html = CR
 BUGWK71139 SNOWLEOPARD : fast/frames/content-opacity-2.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/parser/close-while-stopping.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
+
+BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT

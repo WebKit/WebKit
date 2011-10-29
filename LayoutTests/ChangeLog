@@ -1,5 +1,12 @@
 2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add flaky test expectation to fast/forms/input-step-as-double.html on Chromium.
+        The failure is tracked by the bug 71181.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK+ and Qt rebaselines after r98794.
 
         * platform/gtk/editing/pasteboard/5134759-expected.txt:
