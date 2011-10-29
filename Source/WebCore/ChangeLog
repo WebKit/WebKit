@@ -1,3 +1,16 @@
+2011-10-28  John Sullivan  <sullivan@apple.com>
+
+        Improvement to the fix for:
+        https://bugs.webkit.org/show_bug.cgi?id=71142
+        Whether backspace goes Back should be configurable
+
+        Reviewed by Dan Bernstein.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+        Do the frame->settings() check after the !page check, since
+        a null page means null settings.
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Make DOMURL a ContextDestructionObserver
