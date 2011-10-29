@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x53
+    RenderBody {BODY} at (8,16) size 784x21
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 169x21
+          text run at (0,0) width 169: "There should be no red."
+layer at (8,149) size 100x100
+  RenderBlock (positioned) {DIV} at (0,32) size 100x100 [bgcolor=#FF0000]
+layer at (8,149) size 100x100
+  RenderBlock (positioned) {DIV} at (0,64) size 100x100 [bgcolor=#008000]

@@ -1,3 +1,22 @@
+2011-10-29  Robert Hogan  <robert@webkit.org>
+
+        Platform-specific results for r98805
+
+        Unreviewed, add new results. 
+
+        * platform/gtk/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+        * platform/mac/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+        * platform/qt/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/qt/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/qt/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/qt/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+
 2011-10-29  Anna Cavender  <annacc@chromium.org>
 
         Make sure TextTracks are destructed if HTMLMediaElement goes away.
