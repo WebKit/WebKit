@@ -1,3 +1,15 @@
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Potential crash in ReplaceNodeWithSpanCommand
+        https://bugs.webkit.org/show_bug.cgi?id=71145
+
+        Reviewed by Ojan Vafai.
+
+        Fix a potential crash without tests because we don't have a reduction.
+
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         MessagePort should be a ContextDestructionObserver

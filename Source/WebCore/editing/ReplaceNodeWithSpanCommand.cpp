@@ -52,7 +52,7 @@ static void swapInNodePreservingAttributesAndChildren(HTMLElement* newNode, HTML
 {
     ASSERT(nodeToReplace->inDocument());
     ExceptionCode ec = 0;
-    ContainerNode* parentNode = nodeToReplace->parentNode();
+    RefPtr<ContainerNode> parentNode = nodeToReplace->parentNode();
     parentNode->insertBefore(newNode, nodeToReplace, ec);
     ASSERT(!ec);
 
