@@ -13,7 +13,5 @@ After:
 | <div>
 |   "This should not be underlined.<#selection-caret>"
 |   <span>
-|     style="text-decoration: underline; color: blue;"
-|     <span>
-|       style="color:red;"
-|       "This should be underlined."
+|     style="color: red; text-decoration: underline; "
+|     "This should be underlined."

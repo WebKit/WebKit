@@ -61,7 +61,7 @@ enum TriState { FalseTriState, TrueTriState, MixedTriState };
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
-    enum PropertiesToInclude { AllProperties, OnlyEditingInheritableProperties, EditingInheritablePropertiesAndBackgroundColorInEffect };
+    enum PropertiesToInclude { AllProperties, OnlyEditingInheritableProperties, EditingPropertiesInEffect };
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
     enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;

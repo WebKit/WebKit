@@ -17,8 +17,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 39x18
             text run at (0,0) width 39: "Hello "
           RenderInline {SPAN} at (0,0) size 45x18
-            RenderInline {DIV} at (0,0) size 45x18
-              RenderText {#text} at (39,0) size 45x18
-                text run at (39,0) width 45: "World!"
+            RenderText {#text} at (39,0) size 45x18
+              text run at (39,0) width 45: "World!"
         RenderBlock (anonymous) at (0,18) size 784x0
-caret: position 6 of child 0 {#text} of child 0 {DIV} of child 1 {SPAN} of child 0 {DIV} of child 2 {DIV} of body
+caret: position 6 of child 0 {#text} of child 1 {SPAN} of child 0 {DIV} of child 2 {DIV} of body

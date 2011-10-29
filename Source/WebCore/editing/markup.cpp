@@ -185,9 +185,8 @@ void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Docu
 
 void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, CSSStyleDeclaration* style, Document* document, bool isBlock)
 {
-    // All text-decoration-related elements should have been treated as special ancestors
-    // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
-    ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
+    // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
+    ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
     DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span style=\""));
     out.append(isBlock ? divStyle : styleSpanOpen);
@@ -519,26 +518,11 @@ static PassRefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* n
 
 static bool isElementPresentational(const Node* node)
 {
-    if (node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
-        || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag))
-        return true;
-    RefPtr<EditingStyle> style = styleFromMatchedRulesAndInlineDecl(node);
-    return style && style->style() && !propertyMissingOrEqualToNone(style->style(), CSSPropertyTextDecoration);
+    return node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
+        || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag);
 }
 
-static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot)
-{
-    if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
-        return true;
-    
-    RefPtr<EditingStyle> style = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
-    if (!style || !style->style())
-        return false;
-
-    return style->style()->getPropertyCSSValue(CSSPropertyBackgroundImage) || style->style()->getPropertyCSSValue(CSSPropertyBackgroundColor);
-}
-
-static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelectedRoot, EAnnotateForInterchange shouldAnnotate)
+static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterchange shouldAnnotate)
 {
     ExceptionCode ec;
     Node* commonAncestor = range->commonAncestorContainer(ec);
@@ -572,9 +556,6 @@ static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelected
 
     if (Node *enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor : commonAncestor), aTag))
         specialCommonAncestor = enclosingAnchor;
-
-    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot && shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot))
-        specialCommonAncestor = fullySelectedRoot;
 
     return specialCommonAncestor;
 }
@@ -620,7 +601,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // FIXME: Do this for all fully selected blocks, not just the body.
     if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), range))
         fullySelectedRoot = body;
-    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), fullySelectedRoot, shouldAnnotate);
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), shouldAnnotate);
     StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange.get(), specialCommonAncestor);
     Node* pastEnd = updatedRange->pastLastNode();
 

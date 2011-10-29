@@ -55,6 +55,7 @@ namespace WebCore {
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
 static const int editingProperties[] = {
     CSSPropertyBackgroundColor,
+    CSSPropertyTextDecoration,
 
     // CSS inheritable properties
     CSSPropertyColor,
@@ -79,11 +80,11 @@ static const int editingProperties[] = {
     CSSPropertyWebkitTextStrokeWidth,
 };
 
-static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style, bool includeBackgroundColor = false)
+static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style, bool includeNonInheritableProperties = false)
 {
-    if (includeBackgroundColor)
+    if (includeNonInheritableProperties)
         return style->copyPropertiesInSet(editingProperties, WTF_ARRAY_LENGTH(editingProperties));
-    return style->copyPropertiesInSet(editingProperties + 1, WTF_ARRAY_LENGTH(editingProperties) - 1);
+    return style->copyPropertiesInSet(editingProperties + 2, WTF_ARRAY_LENGTH(editingProperties) - 2);
 }
 
 static inline bool isEditingProperty(int id)
@@ -362,9 +363,11 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
     m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
 
-    if (propertiesToInclude == EditingInheritablePropertiesAndBackgroundColorInEffect) {
+    if (propertiesToInclude == EditingPropertiesInEffect) {
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
             m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
+        if (RefPtr<CSSValue> value = computedStyleAtPosition->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect))
+            m_mutableStyle->setProperty(CSSPropertyTextDecoration, value->cssText());
     }
 
     if (node && node->computedStyle()) {
@@ -854,7 +857,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<EditingStyle> style = EditingStyle::create(position, EditingInheritablePropertiesAndBackgroundColorInEffect);
+    RefPtr<EditingStyle> style = EditingStyle::create(position, EditingPropertiesInEffect);
 
     RefPtr<CSSValue> unicodeBidi;
     RefPtr<CSSValue> direction;
@@ -900,8 +903,8 @@ void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSProperty
         mergeStyle(element->inlineStyleDecl(), mode);
         return;
     case OnlyEditingInheritableProperties:
-    case EditingInheritablePropertiesAndBackgroundColorInEffect:
-        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), propertiesToInclude == EditingInheritablePropertiesAndBackgroundColorInEffect).get(), mode);
+    case EditingPropertiesInEffect:
+        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), propertiesToInclude == EditingPropertiesInEffect).get(), mode);
         return;
     }
 }
@@ -936,7 +939,7 @@ PassRefPtr<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node* conte
 {
     RefPtr<EditingStyle> wrappingStyle;
     if (shouldAnnotate) {
-        wrappingStyle = EditingStyle::create(context, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+        wrappingStyle = EditingStyle::create(context, EditingStyle::EditingPropertiesInEffect);
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
         // to help us differentiate those styles from ones that the user has applied.
@@ -955,7 +958,7 @@ PassRefPtr<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node* conte
     for (Node* node = context; node && !node->isDocumentNode(); node = node->parentNode()) {
         if (node->isStyledElement()) {
             wrappingStyle->mergeInlineAndImplicitStyleOfElement(static_cast<StyledElement*>(node), EditingStyle::DoNotOverrideValues,
-                EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+                EditingStyle::EditingPropertiesInEffect);
         }
     }
 
@@ -1068,7 +1071,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
         m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), styleFromMatchedRules.get());
 
     // 2. Remove style present in context and not overriden by matched rules.
-    RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingInheritablePropertiesAndBackgroundColorInEffect);
+    RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingPropertiesInEffect);
     if (computedStyle->m_mutableStyle) {
         computedStyle->removePropertiesInElementDefaultStyle(element);
         m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), computedStyle->m_mutableStyle.get());

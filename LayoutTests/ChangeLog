@@ -1,3 +1,26 @@
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The copy and paste result in nested scrollbars on http://dojotoolkit.org/widgets
+        https://bugs.webkit.org/show_bug.cgi?id=70799
+
+        Reviewed by Enrica Casucci.
+
+        Added a test to copy contents inside a body with background and text-decoration properties.
+
+        WebKit should not copy body element.
+
+        * editing/deleting/delete-line-break-before-underlined-content-expected.txt: an erroneous inline div
+        is replaced by a span.
+        * editing/deleting/deleting-line-break-preserves-underline-color-expected.txt: two style spans are
+        merged into one.
+        * editing/pasteboard/19644-2-expected.txt: div is replaced by span. This is okay because it's the only
+        content in the body. Even though we now only put the gray background under text as inline style as
+        opposed to apply at the block level, that's what execCommand('BackColor'...) does and what user expects.
+        * editing/pasteboard/avoid-copying-body-with-background-expected.txt: Added.
+        * editing/pasteboard/avoid-copying-body-with-background.html: Added.
+        * editing/pasteboard/preserve-underline-color-expected.txt:
+        * platform/mac/editing/pasteboard/5134759-expected.txt:
+
 2011-10-28  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Support attributeOldValue for attribute mutations

@@ -1,7 +1,5 @@
 This test for a bug copy/pasting underlined text. The color of the underline should be the color of the element that has the text-decoration property.
 | <span>
-|   style="text-decoration: underline; color: blue; "
-|   <span>
-|     style="color: red; "
-|     "This should be underlined.<#selection-caret>"
+|   style="color: rgb(255, 0, 0); text-decoration: underline; "
+|   "This should be underlined.<#selection-caret>"
 | <br>

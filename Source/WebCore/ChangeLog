@@ -1,3 +1,38 @@
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The copy and paste result in nested scrollbars on http://dojotoolkit.org/widgets
+        https://bugs.webkit.org/show_bug.cgi?id=70799
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by WebKit's treating a fully selected root with background property as a special common ancestor.
+        A variant of this bug was caused by treating any element with text-decoration property as a presentational element.
+
+        Fixed the above two bugs by not serializing the said nodes. The effective background color was already serialized
+        by wrappingStyleForSerialization, there was nothing to be done besides stop including it in highestAncestorToWrapMarkup.
+
+        For text-decoration property, added the logic to compute the effective value in EditingStyle::init. Also treat it
+        as a non-inheritable editing property so that the rest of EditingStyle just works.
+
+        Test: editing/pasteboard/avoid-copying-body-with-background.html
+
+        * editing/EditingStyle.cpp: Added CSSPropertyTextDecoration to the list of editing properties.
+        (WebCore::copyEditingProperties):
+        (WebCore::EditingStyle::init): Compute the effective text decoration when propertiesToInclude is
+        EditingPropertiesInEffect.
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::EditingStyle::mergeInlineStyleOfElement):
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        * editing/EditingStyle.h: Renamed EditingInheritablePropertiesAndBackgroundColorInEffect to
+        EditingPropertiesInEffect.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag): Removed an assertion that's no longer valid.
+        (WebCore::isElementPresentational): Don't consider an element with text-decoration as a presentational element.
+        (WebCore::highestAncestorToWrapMarkup): Don't consider fully selected root as a special common ancestor ever.
+        Background color is computed property when we compute the wrapping style.
+        (WebCore::createMarkup):
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Rename ExceptionCodeDescription.in to DOMExceptions.in
