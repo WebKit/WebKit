@@ -239,6 +239,47 @@ bool IDBLevelDBBackingStore::updateIDBDatabaseMetaData(int64_t rowId, const Stri
     return true;
 }
 
+static bool deleteRange(LevelDBTransaction* transaction, const Vector<char>& begin, const Vector<char>& end)
+{
+    OwnPtr<LevelDBIterator> it = transaction->createIterator();
+    for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next()) {
+        if (!transaction->remove(it->key()))
+            return false;
+    }
+
+    return true;
+}
+
+
+bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
+{
+    if (m_currentTransaction)
+        return false;
+
+    RefPtr<IDBLevelDBBackingStore::Transaction> transaction = IDBLevelDBBackingStore::Transaction::create(this);
+    transaction->begin();
+
+    int64_t databaseId;
+    String version;
+    if (!getIDBDatabaseMetaData(name, version, databaseId)) {
+        transaction->rollback();
+        return true;
+    }
+
+    const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::kOriginName);
+    const Vector<char> stopKey = DatabaseMetaDataKey::encode(databaseId + 1, DatabaseMetaDataKey::kOriginName);
+    if (!deleteRange(m_currentTransaction.get(), startKey, stopKey)) {
+        transaction->rollback();
+        return false;
+    }
+
+    const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
+    m_currentTransaction->remove(key);
+
+    transaction->commit();
+    return true;
+}
+
 static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vector<char>& stopKey, int64_t objectStoreId, int64_t metaDataType)
 {
     if (!it->isValid() || compareKeys(it->key(), stopKey) >= 0)
@@ -414,17 +455,6 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
     }
 
     assignedObjectStoreId = objectStoreId;
-
-    return true;
-}
-
-static bool deleteRange(LevelDBTransaction* transaction, const Vector<char>& begin, const Vector<char>& end)
-{
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
-    for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next()) {
-        if (!transaction->remove(it->key()))
-            return false;
-    }
 
     return true;
 }
@@ -1381,8 +1411,6 @@ bool IDBLevelDBBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, 
     // FIXME: this is checking for presence of the domain, not the database itself
     return fileExists(path+"/CURRENT");
 }
-
-// FIXME: deleteDatabase should be part of IDBBackingStore.
 
 } // namespace WebCore
 

@@ -1,3 +1,19 @@
+2011-10-29  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement IDBFactory.deleteDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=62622
+
+        Reviewed by Tony Chang.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::deleteDatabase):
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::getDatabaseNames):
+        (WebKit::WebIDBFactoryImpl::open):
+        (WebKit::WebIDBFactoryImpl::deleteDatabase):
+        * src/WebIDBFactoryImpl.h:
+
 2011-10-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
  
         Add support for sending scroll-update events from EventSender.

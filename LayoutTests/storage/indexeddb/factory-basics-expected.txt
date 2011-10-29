@@ -8,17 +8,23 @@ PASS indexedDB == null is false
 PASS typeof indexedDB.open === 'function' is true
 PASS typeof indexedDB.cmp === 'function' is true
 PASS typeof indexedDB.getDatabaseNames === 'function' is true
-deleteDatabase API is not yet implemented, so this will fail:
-FAIL typeof indexedDB.deleteDatabase === 'function' should be true. Was false.
+PASS typeof indexedDB.deleteDatabase === 'function' is true
 indexedDB.getDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
 indexedDB.open(name, description)
+event.target.result.close()
 indexedDB.getDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is true
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+indexedDB.deleteDatabase('storage/indexeddb/factory-basics')
+indexedDB.getDatabaseNames()
+databaseNames = event.target.result
+PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
+PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+indexedDB.deleteDatabase('DATABASE THAT DOES NOT EXIST')
 PASS successfullyParsed is true
 
 TEST COMPLETE

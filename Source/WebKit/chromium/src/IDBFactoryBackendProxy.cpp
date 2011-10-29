@@ -91,6 +91,19 @@ void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> c
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
+void IDBFactoryBackendProxy::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
+{
+    WebSecurityOrigin origin(prpOrigin);
+    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
+    WebViewImpl* webView = webFrame->viewImpl();
+    if (webView->permissionClient() && !webView->permissionClient()->allowIndexedDB(webFrame, name, origin)) {
+        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
+        return;
+    }
+
+    m_webIDBFactory->deleteDatabase(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

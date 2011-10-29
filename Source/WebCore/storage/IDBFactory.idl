@@ -32,6 +32,8 @@ module storage {
 
         [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name)
             raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
+            raises (IDBDatabaseException);
 
         short cmp(in IDBKey first, in IDBKey second)
             raises (IDBDatabaseException);

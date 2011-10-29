@@ -1,3 +1,19 @@
+2011-10-29  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement IDBFactory.deleteDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=62622
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/factory-basics-expected.txt: Updated.
+        * storage/indexeddb/factory-basics.html: Updated.
+        * storage/indexeddb/factory-deletedatabase-expected.txt: Added.
+        * storage/indexeddb/factory-deletedatabase-interactions-expected.txt: Added.
+        * storage/indexeddb/factory-deletedatabase-interactions.html: Added.
+        * storage/indexeddb/factory-deletedatabase.html: Added.
+        * storage/indexeddb/open-close-version-expected.txt: Updated.
+        * storage/indexeddb/open-close-version.html: Updated.
+
 2011-10-27  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: dynamic-top-change-001 to 004 fail

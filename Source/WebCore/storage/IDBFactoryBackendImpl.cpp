@@ -122,6 +122,30 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }
 
+void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
+{
+    const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
+
+    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
+    if (it != m_databaseBackendMap.end()) {
+        // If there are any connections to the database, directly delete the
+        // database.
+        it->second->deleteDatabase(callbacks);
+        return;
+    }
+
+    // FIXME: Everything from now on should be done on another thread.
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
+    if (!backingStore) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        return;
+    }
+
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
+    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+    databaseBackend->deleteDatabase(callbacks);
+}
+
 PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDir)
 {
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get());

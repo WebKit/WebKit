@@ -46,6 +46,7 @@ public:
 
     virtual void getDatabaseNames(WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
     virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
+    virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
 
 private:
     WTF::RefPtr<WebCore::IDBFactoryBackendInterface> m_idbFactoryBackend;

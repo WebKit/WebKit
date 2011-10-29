@@ -42,6 +42,7 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBRequest.h"
+#include "IDBVersionChangeRequest.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
@@ -95,6 +96,28 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
     GroupSettings* groupSettings = document->page()->group().groupSettings();
     m_factoryBackend->open(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    return request;
+}
+
+PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+{
+    if (!context->isDocument()) {
+        // FIXME: make this work with workers.
+        return 0;
+    }
+
+    Document* document = static_cast<Document*>(context);
+    if (!document->frame() || !document->page())
+        return 0;
+
+    if (name.isNull()) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
+
+    RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(document, IDBAny::createNull(), "");
+    GroupSettings* groupSettings = document->page()->group().groupSettings();
+    m_factoryBackend->deleteDatabase(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
     return request;
 }
 

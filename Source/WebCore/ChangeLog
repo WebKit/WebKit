@@ -1,3 +1,39 @@
+2011-10-29  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement IDBFactory.deleteDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=62622
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/factory-deletedatabase-interactions.html
+               storage/indexeddb/factory-deletedatabase.html
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::PendingDeleteCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingDeleteCall::callbacks):
+        (WebCore::IDBDatabaseBackendImpl::PendingDeleteCall::PendingDeleteCall):
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::openInternal):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::deleteDatabase):
+        * storage/IDBFactory.h:
+        * storage/IDBFactory.idl:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::deleteDatabase):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::deleteRange):
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+
 2011-10-28  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: dynamic-top-change-001 to 004 fail

@@ -1,0 +1,232 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the deleteDatabase call and its interaction with open/setVersion");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function Connection(id) {
+    id = String(id);
+    var self = this;
+    this.open = function(opts) {
+        window.steps.push(evalAndLog("'" + id + ".open'"));
+        var req = indexedDB.open(window.dbname);
+        req.onerror = unexpectedErrorCallback;
+        req.onsuccess = function (e) {
+            self.handle = e.target.result;
+            window.steps.push(evalAndLog("'" + id + ".open.onsuccess'"));
+            self.handle.onversionchange = function(e) {
+                window.steps.push(evalAndLog("'" + id + ".onversionchange'"));
+                if (opts && opts.onversion) { opts.onversion.call(self); }
+            };
+            if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+        };
+    };
+
+    this.close = function() {
+        window.steps.push(evalAndLog("'" + id + ".close'"));
+        this.handle.close();
+    };
+
+    this.setVersion = function(opts) {
+        window.steps.push(evalAndLog("'" + id + ".setVersion'"));
+        var req = this.handle.setVersion(String(window.ver++));
+        req.onabort = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onabort'"));
+            if (opts && opts.onabort) { opts.onabort.call(self); }
+        };
+        req.onblocked = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onblocked'"));
+            if (opts && opts.onblocked) { opts.onblocked.call(self); }
+        };
+        req.onsuccess = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onsuccess'"));
+            if (self.handle.objectStoreNames.contains("test-store" + window.ver)) {
+                self.handle.deleteObjectStore("test-store" + window.ver);
+            }
+            var store = self.handle.createObjectStore("test-store" + window.ver);
+            var count = 0;
+            do_async_puts(); // Keep this transaction running for a while
+            function do_async_puts() {
+                var req = store.put(count, count);
+                req.onerror = unexpectedErrorCallback;
+                req.onsuccess = function (e) {
+                    if (++count < 10) {
+                        do_async_puts();
+                    } else {
+                        window.steps.push(evalAndLog("'" + id + ".setVersion.transaction-complete'"));
+                        if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+                    }
+                };
+            }
+        };
+        req.onerror = function (e) {
+            window.steps.push(evalAndLog("'" + id + ".setVersion.onerror'"));
+            if (opts && opts.onerror) { opts.onerror.call(self); }
+        };
+    };
+}
+
+function deleteDatabase(id, name, opts) {
+    window.steps.push(evalAndLog("'deleteDatabase(" + id + ")'"));
+    var req = indexedDB.deleteDatabase(name);
+    req.onsuccess = function (e) {
+        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onsuccess'"));
+        if (opts && opts.onsuccess) { opts.onsuccess.call(null); }
+    };
+    req.onerror = function (e) {
+        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onerror'"));
+        if (opts && opts.onerror) { opts.onerror.call(null); }
+    };
+    req.onblocked = function (e) {
+        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onblocked'"));
+        if (opts && opts.onblocked) { opts.onblocked.call(null); }
+    };
+}
+
+// run a series of steps that take a continuation function
+function runSteps(commands) {
+    if (commands.length) {
+        var command = commands.shift();
+        command(function() { runSteps(commands); });
+    }
+}
+
+function test() {
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    test1();
+}
+
+function test1() {
+    debug("");
+    debug("TEST: deleteDatabase blocked on open handles");
+    evalAndLog("window.dbname = 'test1'; window.ver = 1; window.steps = []");
+    var h = new Connection("h");
+    runSteps([function(doNext) { h.open({onsuccess: doNext,
+                                onversion: function() {
+                                    debug("    h closing, but not immediately");
+                                    setTimeout(function() { h.close(); }, 0);
+                                }}); },
+        function(doNext) { deleteDatabase("", window.dbname, {
+                           onsuccess: finishTest}); },
+        ]);
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h.open",
+                               "h.open.onsuccess",
+                               "deleteDatabase()",
+                               "h.onversionchange",
+                               "deleteDatabase().onblocked",
+                               "h.close",
+                               "deleteDatabase().onsuccess"
+                               ].toString());
+        test2();
+    }
+}
+
+function test2() {
+    debug("");
+    debug("TEST: deleteDatabase not blocked when handles close immediately");
+    evalAndLog("window.dbname = 'test2'; window.ver = 1; window.steps = []");
+    var h = new Connection("h");
+    runSteps([function(doNext) { h.open({onsuccess: doNext,
+                                          onversion: function() {
+                                              debug("    h closing immediately");
+                                              h.close();
+                                          }}); },
+        function(doNext) { deleteDatabase("", window.dbname, {
+                           onsuccess: finishTest}); },
+        ]);
+    function finishTest() {
+        debug("NOTE: Will FAIL with extra bogus deleteDatabase().onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130");
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h.open",
+                               "h.open.onsuccess",
+                               "deleteDatabase()",
+                               "h.onversionchange",
+                               "h.close",
+                               "deleteDatabase().onsuccess"
+                               ].toString());
+        test3();
+    }
+}
+
+function test3() {
+    debug("");
+    debug("TEST: deleteDatabase is delayed if a VERSION_CHANGE transaction is running");
+    evalAndLog("window.dbname = 'test3'; window.ver = 1; window.steps = []");
+    var h = new Connection("h");
+    runSteps([function(doNext) { h.open({onsuccess: doNext,
+                                onversion: function() {
+                                    debug("    h closing, but not immediately");
+                                    setTimeout(function() { h.close(); }, 0);
+                                }}); },
+              function(doNext) { h.setVersion(); doNext(); },
+              function(doNext) { deleteDatabase("", window.dbname,
+                                {onsuccess: finishTest}); },
+              ]);
+
+    function finishTest() {
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h.open",
+                               "h.open.onsuccess",
+                               "h.setVersion",
+                               "deleteDatabase()",
+                               "h.setVersion.onsuccess",
+                               "h.setVersion.transaction-complete",
+                               "h.onversionchange",
+                               "deleteDatabase().onblocked",
+                               "h.close",
+                               "deleteDatabase().onsuccess"
+                               ].toString());
+        test4();
+    }
+}
+
+function test4() {
+    debug("");
+    debug("TEST: multiple deleteDatabase calls");
+    evalAndLog("window.dbname = 'test4'; window.ver = 1; window.steps = []");
+    var h = new Connection("h");
+    runSteps([function(doNext) { h.open({onsuccess: doNext,
+                                onversion: function() {
+                                    debug("    h closing, but not immediately");
+                                    setTimeout(function() { h.close(); }, 0);
+                                }}); },
+        function(doNext) { deleteDatabase("1", window.dbname); doNext(); },
+        function(doNext) { deleteDatabase("2", window.dbname, {
+                           onsuccess: finishTest}); },
+        ]);
+    function finishTest() {
+        debug("NOTE: Will FAIL with extra bogus h.onversionchange/h.close steps; https://bugs.webkit.org/show_bug.cgi?id=71129");
+        shouldBeEqualToString("window.steps.toString()",
+                              ["h.open",
+                               "h.open.onsuccess",
+                               "deleteDatabase(1)",
+                               "deleteDatabase(2)",
+                               "h.onversionchange",
+                               "deleteDatabase(1).onblocked",
+                               "deleteDatabase(2).onblocked",
+                               "h.close",
+                               "deleteDatabase(1).onsuccess",
+                               "deleteDatabase(2).onsuccess"
+                               ].toString());
+        done();
+    }
+}
+
+test();
+
+</script>
+</body>
+</html>

@@ -60,17 +60,18 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 
 void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
-    WebString path = dataDir;
-
-    m_idbFactoryBackend->getDatabaseNames(IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path);
+    m_idbFactoryBackend->getDatabaseNames(IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);
 }
 
 
 void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
-    WebString path = dataDir;
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);
+}
 
-    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path);
+void WebIDBFactoryImpl::deleteDatabase(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
+{
+    m_idbFactoryBackend->deleteDatabase(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);
 }
 
 } // namespace WebKit

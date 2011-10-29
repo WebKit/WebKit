@@ -301,8 +301,8 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent);
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
-    // If the result was of type IDBCursor, then we'll fire again.
-    if (m_result && m_result->type() != IDBAny::IDBCursorType && m_result->type() != IDBAny::IDBCursorWithValueType)
+    // If the result was of type IDBCursor, or a onBlocked event, then we'll fire again.
+    if (event->type() != eventNames().blockedEvent && m_result && m_result->type() != IDBAny::IDBCursorType && m_result->type() != IDBAny::IDBCursorWithValueType)
         m_finished = true;
 
     if (m_transaction) {

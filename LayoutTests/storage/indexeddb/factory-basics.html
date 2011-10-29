@@ -22,7 +22,6 @@ function test()
     shouldBeTrue("typeof indexedDB.cmp === 'function'");
     shouldBeTrue("typeof indexedDB.getDatabaseNames === 'function'");
 
-    debug("deleteDatabase API is not yet implemented, so this will fail:");
     shouldBeTrue("typeof indexedDB.deleteDatabase === 'function'");
 
     name = 'storage/indexeddb/factory-basics';
@@ -47,6 +46,7 @@ function getDatabaseNamesSuccess1()
 
 function openSuccess()
 {
+    evalAndLog("event.target.result.close()");
     request = evalAndLog("indexedDB.getDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess2;
     request.onerror = unexpectedErrorCallback;
@@ -59,8 +59,32 @@ function getDatabaseNamesSuccess2()
     shouldBeTrue("databaseNames.contains('" + name + "')");
     shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
 
-    // FIXME: test indexedDB.deleteDatabase(databaseName)
+    request = evalAndLog("indexedDB.deleteDatabase('" + name + "')");
+    request.onsuccess = deleteDatabaseSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
 
+function deleteDatabaseSuccess()
+{
+    request = evalAndLog("indexedDB.getDatabaseNames()");
+    request.onsuccess = getDatabaseNamesSuccess3;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function getDatabaseNamesSuccess3()
+{
+    var databaseNames;
+    evalAndLog("databaseNames = event.target.result");
+    shouldBeFalse("databaseNames.contains('" + name + "')");
+    shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
+
+    request = evalAndLog("indexedDB.deleteDatabase('DATABASE THAT DOES NOT EXIST')");
+    request.onsuccess = deleteDatabaseSuccess2;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function deleteDatabaseSuccess2()
+{
     done();
 }
 

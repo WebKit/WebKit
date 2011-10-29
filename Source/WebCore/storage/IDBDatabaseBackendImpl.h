@@ -58,6 +58,7 @@ public:
     // FIXME: Rename "open" to something more descriptive, like registerFrontEndCallbacks.
     void open(PassRefPtr<IDBDatabaseCallbacks>);
     void openConnection(PassRefPtr<IDBCallbacks>);
+    void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     virtual String name() const { return m_name; }
     virtual String version() const { return m_version; }
@@ -77,6 +78,7 @@ public:
 private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
+    void openInternal();
     void loadObjectStores();
     void processPendingCalls();
 
@@ -109,6 +111,9 @@ private:
 
     class PendingOpenCall;
     Deque<RefPtr<PendingOpenCall> > m_pendingOpenCalls;
+
+    class PendingDeleteCall;
+    Deque<RefPtr<PendingDeleteCall> > m_pendingDeleteCalls;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;

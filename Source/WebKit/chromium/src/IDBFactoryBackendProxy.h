@@ -46,6 +46,7 @@ public:
 
     virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
     virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
+    virtual void deleteDatabase(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
 
 private:
     IDBFactoryBackendProxy();

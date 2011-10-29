@@ -137,7 +137,7 @@ function test2() {
               ]);
 
     function finishTest() {
-        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123");
+        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130");
         shouldBeEqualToString("window.steps.toString()",
                               ["h1.open",
                                "h1.open.onsuccess",
@@ -210,7 +210,7 @@ function test4() {
               ]);
 
     function finishTest() {
-        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; crbug.com/100123");
+        debug("NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130");
         shouldBeEqualToString("window.steps.toString()",
                               ["h1.open",
                                "h1.open.onsuccess",
@@ -289,8 +289,6 @@ function test6() {
         done();
     }
 }
-
-var successfullyParsed = true;
 
 test();
 

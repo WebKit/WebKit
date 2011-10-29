@@ -44,6 +44,7 @@ namespace WebCore {
 class IDBKey;
 class IDBKeyRange;
 class IDBFactoryBackendInterface;
+class IDBVersionChangeRequest;
 class ScriptExecutionContext;
 
 class IDBFactory : public RefCounted<IDBFactory> {
@@ -57,6 +58,7 @@ public:
     PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*);
 
     PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);
+    PassRefPtr<IDBVersionChangeRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
 
     short cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, ExceptionCode&);
 
