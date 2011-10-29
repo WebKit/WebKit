@@ -82,7 +82,7 @@ namespace WebCore {
         virtual bool hasData();
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-        virtual PassRefPtr<DataTransferItems> items();
+        virtual PassRefPtr<DataTransferItemList> items();
 #endif
 
     private:

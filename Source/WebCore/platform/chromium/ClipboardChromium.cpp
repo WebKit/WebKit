@@ -31,7 +31,7 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
-#include "DataTransferItemsChromium.h"
+#include "DataTransferItemListChromium.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
@@ -324,9 +324,9 @@ bool ClipboardChromium::hasData()
 }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-PassRefPtr<DataTransferItems> ClipboardChromium::items()
+PassRefPtr<DataTransferItemList> ClipboardChromium::items()
 {
-    RefPtr<DataTransferItemsChromium> items = DataTransferItemsChromium::create(this, m_frame->document()->scriptExecutionContext());
+    RefPtr<DataTransferItemListChromium> items = DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
 
     if (!m_dataObject)
         return items;

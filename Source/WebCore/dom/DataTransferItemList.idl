@@ -28,32 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DataTransferItemsChromium.h"
+module core {
 
-#if ENABLE(DATA_TRANSFER_ITEMS)
+    interface [
+        Conditional=DATA_TRANSFER_ITEMS,
+        HasIndexGetter,
+#if defined(V8_BINDING) && V8_BINDING
+        CustomDeleteProperty,
+#endif
+    ] DataTransferItemList {
+        readonly attribute long length;
+        DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index);
 
-#include "Clipboard.h"
-#include "DataTransferItemChromium.h"
-#include "ExceptionCode.h"
+        void clear();
+        void add(in [Optional=CallWithDefaultValue] DOMString data, 
+                 in [Optional=CallWithDefaultValue] DOMString type) raises(DOMException);
+    };
 
-namespace WebCore {
-
-PassRefPtr<DataTransferItemsChromium> DataTransferItemsChromium::create(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-{
-    return adoptRef(new DataTransferItemsChromium(owner, context));
 }
-
-DataTransferItemsChromium::DataTransferItemsChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : DataTransferItems(owner, context)
-{
-}
-
-void DataTransferItemsChromium::addPasteboardItem(const String& type)
-{
-    m_items.append(DataTransferItemChromium::createFromPasteboard(m_owner, m_context, type));
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(DATA_TRANSFER_ITEMS)

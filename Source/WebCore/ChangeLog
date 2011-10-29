@@ -1,3 +1,52 @@
+2011-10-29  Daniel Cheng  <dcheng@chromium.org>
+
+        Rename DataTransferItems to DataTransferItemList
+        https://bugs.webkit.org/show_bug.cgi?id=71151
+
+        Per feedback that Items and Item are hard to distinguish between, the HTML5 spec renamed
+        DataTransferItems to DataTransferItemList:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#the-datatransferitemlist-interface
+
+        Reviewed by Tony Chang.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Clipboard.h:
+        * dom/Clipboard.idl:
+        * dom/DataTransferItemList.cpp: Renamed from Source/WebCore/dom/DataTransferItems.cpp.
+        (WebCore::DataTransferItemList::DataTransferItemList):
+        (WebCore::DataTransferItemList::length):
+        (WebCore::DataTransferItemList::item):
+        (WebCore::DataTransferItemList::deleteItem):
+        (WebCore::DataTransferItemList::clear):
+        (WebCore::DataTransferItemList::add):
+        * dom/DataTransferItemList.h: Renamed from Source/WebCore/dom/DataTransferItems.h.
+        (WebCore::DataTransferItemList::~DataTransferItemList):
+        * dom/DataTransferItemList.idl: Renamed from Source/WebCore/dom/DataTransferItems.idl.
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::items):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/DataTransferItemListChromium.cpp: Renamed from Source/WebCore/platform/chromium/DataTransferItemsChromium.cpp.
+        (WebCore::DataTransferItemListChromium::create):
+        (WebCore::DataTransferItemListChromium::DataTransferItemListChromium):
+        (WebCore::DataTransferItemListChromium::addPasteboardItem):
+        * platform/chromium/DataTransferItemListChromium.h: Renamed from Source/WebCore/platform/chromium/DataTransferItemsChromium.h.
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::items):
+        * platform/qt/ClipboardQt.h:
+        * platform/qt/DataTransferItemListQt.cpp: Renamed from Source/WebCore/platform/qt/DataTransferItemsQt.cpp.
+        (WebCore::DataTransferItemListQt::create):
+        (WebCore::DataTransferItemListQt::DataTransferItemListQt):
+        (WebCore::DataTransferItemListQt::addPasteboardItem):
+        * platform/qt/DataTransferItemListQt.h: Renamed from Source/WebCore/platform/qt/DataTransferItemsQt.h.
+
 2011-10-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: block-non-replaced-width-008.htm

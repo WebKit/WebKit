@@ -126,9 +126,7 @@ DOM_CLASSES = \
     DOMURL \
     DOMWindow \
     DataTransferItem \
-    DataTransferItem \
-    DataTransferItems \
-    DataTransferItems \
+    DataTransferItemList \
     DataView \
     Database \
     DatabaseCallback \

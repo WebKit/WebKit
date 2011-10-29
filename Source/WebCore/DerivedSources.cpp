@@ -71,7 +71,7 @@
 #include "JSDatabaseCallback.cpp"
 #include "JSDatabaseSync.cpp"
 #include "JSDataTransferItem.cpp"
-#include "JSDataTransferItems.cpp"
+#include "JSDataTransferItemList.cpp"
 #include "JSDataView.cpp"
 #include "JSDedicatedWorkerContext.cpp"
 #include "JSDeviceOrientationEvent.cpp"

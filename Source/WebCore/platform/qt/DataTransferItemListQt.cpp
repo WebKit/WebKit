@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DataTransferItemsQt.h"
+#include "DataTransferItemListQt.h"
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
@@ -34,17 +34,17 @@
 
 namespace WebCore {
 
-PassRefPtr<DataTransferItemsQt> DataTransferItemsQt::create(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
+PassRefPtr<DataTransferItemListQt> DataTransferItemListQt::create(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
 {
-    return adoptRef(new DataTransferItemsQt(owner, context));
+    return adoptRef(new DataTransferItemListQt(owner, context));
 }
 
-DataTransferItemsQt::DataTransferItemsQt(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : DataTransferItems(owner,  context)
+DataTransferItemListQt::DataTransferItemListQt(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
+    : DataTransferItemList(owner,  context)
 {
 }
 
-void DataTransferItemsQt::addPasteboardItem(const String& type)
+void DataTransferItemListQt::addPasteboardItem(const String& type)
 {
     m_items.append(DataTransferItemQt::createFromPasteboard(m_owner, m_context, type));
 }

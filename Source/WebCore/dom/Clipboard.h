@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-    class DataTransferItems;
+    class DataTransferItemList;
     class DragData;
     class FileList;
     class Frame;
@@ -98,7 +98,7 @@ namespace WebCore {
         void setDragHasStarted() { m_dragStarted = true; }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-        virtual PassRefPtr<DataTransferItems> items() = 0;
+        virtual PassRefPtr<DataTransferItemList> items() = 0;
 #endif
         
     protected:

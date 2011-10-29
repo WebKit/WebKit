@@ -30,7 +30,7 @@
 #include "ClipboardQt.h"
 
 #include "CachedImage.h"
-#include "DataTransferItemsQt.h"
+#include "DataTransferItemListQt.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
@@ -355,13 +355,13 @@ bool ClipboardQt::hasData()
 }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-PassRefPtr<DataTransferItems> ClipboardQt::items()
+PassRefPtr<DataTransferItemList> ClipboardQt::items()
 {
 
     if (!m_frame && !m_frame->document())
         return 0;
 
-    RefPtr<DataTransferItemsQt> items = DataTransferItemsQt::create(this, m_frame->document()->scriptExecutionContext());
+    RefPtr<DataTransferItemListQt> items = DataTransferItemListQt::create(this, m_frame->document()->scriptExecutionContext());
 
     if (!m_readableData)
         return items;

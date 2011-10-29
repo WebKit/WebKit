@@ -141,7 +141,7 @@ SET(WebCore_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
-    dom/DataTransferItems.idl
+    dom/DataTransferItemList.idl
     dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
     dom/DocumentFragment.idl
@@ -1475,7 +1475,7 @@ IF (ENABLE_DATA_TRANSFER_ITEMS)
     )
     LIST(APPEND WebCore_SOURCES
         dom/DataTransferItem.cpp
-        dom/DataTransferItems.cpp
+        dom/DataTransferItemList.cpp
         dom/StringCallback.cpp
     )
 ENDIF ()

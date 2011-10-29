@@ -118,7 +118,7 @@ IDL_BINDINGS += \
     dom/CompositionEvent.idl \
     dom/CustomEvent.idl \
     dom/DataTransferItem.idl \
-    dom/DataTransferItems.idl \
+    dom/DataTransferItemList.idl \
     dom/DeviceMotionEvent.idl \
     dom/DeviceOrientationEvent.idl \
     dom/DocumentFragment.idl \

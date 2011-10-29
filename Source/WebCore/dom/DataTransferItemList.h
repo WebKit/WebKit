@@ -28,38 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItemsChromium_h
-#define DataTransferItemsChromium_h
+#ifndef DataTransferItemList_h
+#define DataTransferItemList_h
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "DataTransferItems.h"
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include "DataTransferItem.h"
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Clipboard;
-class DataTransferItemChromium;
-class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class DataTransferItemsChromium : public DataTransferItems {
+class DataTransferItemList : public RefCounted<DataTransferItemList> {
 public:
-    static PassRefPtr<DataTransferItemsChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+    virtual ~DataTransferItemList() { }
 
-private:
-    friend class ClipboardChromium;
+    virtual size_t length() const;
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    virtual void deleteItem(unsigned long index, ExceptionCode&);
+    virtual void clear();
+    virtual void add(const String& data, const String& type, ExceptionCode&);
 
-    DataTransferItemsChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+protected:
+    DataTransferItemList(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-    virtual void addPasteboardItem(const String& type);
+protected:
+    RefPtr<Clipboard> m_owner;
+    // Indirectly owned by our parent.
+    ScriptExecutionContext* m_context;
+    Vector<RefPtr<DataTransferItem> > m_items;
+
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
 
-#endif // DataTransferItemsChromium_h
+#endif // DataTransferItemList_h
 

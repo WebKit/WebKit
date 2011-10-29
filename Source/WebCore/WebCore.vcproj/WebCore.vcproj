@@ -2682,7 +2682,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDataTransferItems.cpp"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDataTransferItemList.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -2734,7 +2734,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDataTransferItems.h"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDataTransferItemList.h"
 				>
 			</File>
 			<File
@@ -44022,7 +44022,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\DataTransferItems.cpp"
+				RelativePath="..\dom\DataTransferItemList.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -44074,7 +44074,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\DataTransferItems.h"
+				RelativePath="..\dom\DataTransferItemList.h"
 				>
 			</File>
 			<File

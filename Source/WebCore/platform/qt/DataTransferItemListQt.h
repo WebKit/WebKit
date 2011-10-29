@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataTransferItemsQt_h
-#define DataTransferItemsQt_h
+#ifndef DataTransferItemListQt_h
+#define DataTransferItemListQt_h
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "DataTransferItems.h"
+#include "DataTransferItemList.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -38,13 +38,13 @@ class Clipboard;
 class DataTransferItemQt;
 class ScriptExecutionContext;
 
-class DataTransferItemsQt : public DataTransferItems {
+class DataTransferItemListQt : public DataTransferItemList {
 public:
-    static PassRefPtr<DataTransferItemsQt> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+    static PassRefPtr<DataTransferItemListQt> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
     friend class ClipboardQt;
 private:
-    DataTransferItemsQt(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+    DataTransferItemListQt(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
     virtual void addPasteboardItem(const String& type);
 };

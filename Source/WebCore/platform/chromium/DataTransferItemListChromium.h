@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,76 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DataTransferItems.h"
-
-#include "DataTransferItem.h"
-#include "ExceptionCode.h"
+#ifndef DataTransferItemListChromium_h
+#define DataTransferItemListChromium_h
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
+#include "DataTransferItemList.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
-DataTransferItems::DataTransferItems(PassRefPtr<Clipboard> clipboard, ScriptExecutionContext* context)
-    : m_owner(clipboard)
-    , m_context(context)
-{
-}
+class Clipboard;
+class DataTransferItemChromium;
+class ScriptExecutionContext;
 
-size_t DataTransferItems::length() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return 0;
+typedef int ExceptionCode;
 
-    return m_items.size();
-}
+class DataTransferItemListChromium : public DataTransferItemList {
+public:
+    static PassRefPtr<DataTransferItemListChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-PassRefPtr<DataTransferItem> DataTransferItems::item(unsigned long index)
-{
-    if (m_owner->policy() == ClipboardNumb || index >= length())
-        return 0;
+private:
+    friend class ClipboardChromium;
 
-    return m_items[index];
-}
+    DataTransferItemListChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-void DataTransferItems::deleteItem(unsigned long index, ExceptionCode& ec)
-{
-    if (m_owner->policy() != ClipboardWritable) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    virtual void addPasteboardItem(const String& type);
+};
 
-    if (index >= length())
-        return;
+} // namespace WebCore
 
-    m_items.remove(index);
-}
+#endif // ENABLE(DATA_TRANSFER_ITEMS)
 
-void DataTransferItems::clear()
-{
-    if (m_owner->policy() != ClipboardWritable)
-        return;
+#endif // DataTransferItemListChromium_h
 
-    m_items.clear();
-
-}
-
-void DataTransferItems::add(const String& data, const String& type, ExceptionCode& ec)
-{
-    if (m_owner->policy() != ClipboardWritable)
-        return;
-
-    // Only one 'string' item with a given type is allowed in the collection.
-    for (size_t i = 0; i < m_items.size(); ++i) {
-        if (m_items[i]->type() == type && m_items[i]->kind() == DataTransferItem::kindString) {
-            ec = INVALID_STATE_ERR;
-            return;
-        }
-    }
-
-    m_items.append(DataTransferItem::create(m_owner, m_context, data, type));
-}
-
-}
-
-#endif
