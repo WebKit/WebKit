@@ -35,22 +35,12 @@
 namespace WebCore {
 
 DOMURL::DOMURL(ScriptExecutionContext* scriptExecutionContext)
-    : m_scriptExecutionContext(scriptExecutionContext)
+    : ContextDestructionObserver(scriptExecutionContext)
 {
-    if (m_scriptExecutionContext)
-        m_scriptExecutionContext->createdDomUrl(this);
 }
 
 DOMURL::~DOMURL()
 {
-    if (m_scriptExecutionContext)
-        m_scriptExecutionContext->destroyedDomUrl(this);
-}
-
-void DOMURL::contextDestroyed()
-{
-    ASSERT(m_scriptExecutionContext);
-    m_scriptExecutionContext = 0;
 }
 
 #if ENABLE(MEDIA_STREAM)

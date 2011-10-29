@@ -133,11 +133,6 @@ public:
     void destroyedMessagePort(MessagePort*);
     const HashSet<MessagePort*>& messagePorts() const { return m_messagePorts; }
 
-#if ENABLE(BLOB)
-    void createdDomUrl(DOMURL*);
-    void destroyedDomUrl(DOMURL*);
-    const HashSet<DOMURL*>& domUrls() const { return m_domUrls; }
-#endif
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }
 
@@ -214,7 +209,6 @@ private:
 #if ENABLE(BLOB)
     HashSet<String> m_publicBlobURLs;
     HashSet<String> m_publicStreamURLs;
-    HashSet<DOMURL*> m_domUrls;
 #endif
 
     virtual void refScriptExecutionContext() = 0;

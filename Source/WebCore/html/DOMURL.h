@@ -28,6 +28,7 @@
 
 #if ENABLE(BLOB)
 
+#include "ActiveDOMObject.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,7 +39,7 @@ class Blob;
 class MediaStream;
 class ScriptExecutionContext;
 
-class DOMURL : public RefCounted<DOMURL> {
+class DOMURL : public RefCounted<DOMURL>, public ContextDestructionObserver {
 public:
     static PassRefPtr<DOMURL> create(ScriptExecutionContext* scriptExecutionContext) { return adoptRef(new DOMURL(scriptExecutionContext)); }
     ~DOMURL();
@@ -49,13 +50,8 @@ public:
     String createObjectURL(Blob*);
     void revokeObjectURL(const String&);
 
-    void contextDestroyed();
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-
 private:
     explicit DOMURL(ScriptExecutionContext*);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

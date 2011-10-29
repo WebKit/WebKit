@@ -36,7 +36,7 @@ namespace WebCore {
     // FIXME: Move this class to it's own file.
     class ContextDestructionObserver {
     public:
-        ContextDestructionObserver(ScriptExecutionContext*);
+        explicit ContextDestructionObserver(ScriptExecutionContext*);
         virtual void contextDestroyed();
 
         ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
