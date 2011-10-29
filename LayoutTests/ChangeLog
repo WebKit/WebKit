@@ -1,5 +1,35 @@
 2011-10-29  Adam Barth  <abarth@webkit.org>
 
+        Add results for tests introduced in http://trac.webkit.org/changeset/98805.
+
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-001-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-002-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-003-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-004-expected.txt: Removed.
+        * platform/chromium-mac-leopard/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/chromium-win-vista/css2.1: Removed.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+        * platform/chromium/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/chromium/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/chromium/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/chromium/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+
+2011-10-29  Adam Barth  <abarth@webkit.org>
+
         Update results after http://trac.webkit.org/changeset/98794 to remove
         0x0 DIV from the render tree.
 
