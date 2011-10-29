@@ -1,3 +1,13 @@
+2011-10-28  Dean Jackson  <dino@apple.com>
+
+        Remove this horribly outdated file. It was showing up in
+        Google searches and shouldn't be used as official
+        documentation.
+
+        Rubber-stamped by Simon Fraser.
+
+        * specs/MediaQueriesExtensions.html: Removed.
+
 2011-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Style guide should mention the preference of index over iterator
