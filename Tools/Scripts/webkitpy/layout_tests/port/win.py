@@ -102,6 +102,10 @@ class WinPort(ApplePort):
         fallback_names.extend(['mac-lion', 'mac'])
         return map(self._webkit_baseline_path, fallback_names)
 
+    # This port may need to override setup_environ_for_server
+    # to match behavior of setPathForRunningWebKitApp from ORWT.
+    # $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
     # We might use setup_environ_for_server for such a hack (or modify apache_http_server.py).

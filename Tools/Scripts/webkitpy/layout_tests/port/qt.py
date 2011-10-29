@@ -141,8 +141,9 @@ class QtPort(WebKitPort):
         return None
 
     def setup_environ_for_server(self, server_name=None):
-        env = WebKitPort.setup_environ_for_server(self, server_name)
-        env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
+        clean_env = WebKitPort.setup_environ_for_server(self, server_name)
+        clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
+        self._copy_value_from_environment(clean_env, 'QT_DRT_WEBVIEW_MODE')
         return env
 
     # FIXME: We should find a way to share this implmentation with Gtk,

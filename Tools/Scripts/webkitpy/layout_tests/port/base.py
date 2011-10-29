@@ -648,13 +648,43 @@ class Port(object):
         """Perform port-specific work at the beginning of a test run."""
         pass
 
-    def setup_environ_for_server(self, server_name=None):
-        """Perform port-specific work at the beginning of a server launch.
+    # FIXME: os.environ access should be moved to onto a common/system class to be more easily mockable.
+    def _value_or_default_from_environ(self, name, default=None):
+        if name in os.environ:
+            return os.environ[name]
+        return default
 
-        Returns:
-           Operating-system's environment.
-        """
-        return os.environ.copy()
+    def _copy_value_from_environ_if_set(self, clean_env, name):
+        if name in os.environ:
+            clean_env[name] = os.environ[name]
+
+    def setup_environ_for_server(self, server_name=None):
+        # We intentionally copy only a subset of os.environ when
+        # launching subprocesses to ensure consistent test results.
+        clean_env = {}
+        variables_to_copy = [
+            # For Linux:
+            'XAUTHORITY',
+            'HOME',
+            'LANG',
+            'LD_LIBRARY_PATH',
+            'DBUS_SESSION_BUS_ADDRESS',
+
+            # Darwin:
+            'DYLD_LIBRARY_PATH',
+            'HOME',
+
+            # CYGWIN:
+            'HOMEDRIVE',
+            'HOMEPATH',
+            '_NT_SYMBOL_PATH',
+        ]
+        for variable in variables_to_copy:
+            self._copy_value_from_environ_if_set(clean_env, variable)
+
+        # For Linux:
+        clean_env['DISPLAY'] = self._value_or_default_from_environ('DISPLAY', ':1')
+        return clean_env
 
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by

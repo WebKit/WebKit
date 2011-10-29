@@ -102,6 +102,7 @@ class MacPort(ApplePort):
                 env['MallocStackLogging'] = '1'
             if self.get_option('guard_malloc'):
                 env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+        env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
     # Belongs on a Platform object.
