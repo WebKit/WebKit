@@ -1,3 +1,13 @@
+2011-10-29  Anna Cavender  <annacc@chromium.org>
+
+        Add track-text-track-destructor-crash.html to Skipped files for mac and win
+        https://bugs.webkit.org/show_bug.cgi?id=71182
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r98813.
