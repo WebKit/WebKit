@@ -27,7 +27,6 @@
 #ifndef MessagePort_h
 #define MessagePort_h
 
-#include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MessagePortChannel.h"
@@ -53,7 +52,7 @@ namespace WebCore {
     // setPendingActivity / unsetPendingActivity instead of duplicating
     // ActiveDOMObject's features and relying on JavaScript garbage collection
     // to get its lifetime right.
-    class MessagePort : public RefCounted<MessagePort>, public EventTarget, public ContextDestructionObserver {
+    class MessagePort : public RefCounted<MessagePort>, public EventTarget {
     public:
         static PassRefPtr<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }
         ~MessagePort();
@@ -122,6 +121,7 @@ namespace WebCore {
         bool m_started;
         bool m_closed;
 
+        ScriptExecutionContext* m_scriptExecutionContext;
         EventTargetData m_eventTargetData;
     };
 

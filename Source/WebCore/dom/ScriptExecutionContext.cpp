@@ -112,6 +112,11 @@ ScriptExecutionContext::~ScriptExecutionContext()
         observer->contextDestroyed();
     }
 
+    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
+    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
+        ASSERT((*iter)->scriptExecutionContext() == this);
+        (*iter)->contextDestroyed();
+    }
 #if ENABLE(SQL_DATABASE)
     if (m_databaseThread) {
         ASSERT(m_databaseThread->terminationRequested());
@@ -295,8 +300,7 @@ void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionOb
     m_destructionObservers.remove(observer);
 }
 
-void ScriptExecutionContext::closeMessagePorts()
-{
+void ScriptExecutionContext::closeMessagePorts() {
     HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
     for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
         ASSERT((*iter)->scriptExecutionContext() == this);
