@@ -1,5 +1,11 @@
 2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rebaseline after r98775.
+
+        * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt:
+
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         The copy and paste result in nested scrollbars on http://dojotoolkit.org/widgets
         https://bugs.webkit.org/show_bug.cgi?id=70799
 

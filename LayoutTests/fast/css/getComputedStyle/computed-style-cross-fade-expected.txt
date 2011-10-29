@@ -20,3 +20,4 @@ PASS testCrossfade("background-image: -webkit-cross-fade(,,,,,)", "background-im
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
