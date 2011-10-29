@@ -1,5 +1,12 @@
 2011-10-29  Adam Barth  <abarth@webkit.org>
 
+        Update results after http://trac.webkit.org/changeset/98794 to remove
+        0x0 DIV from the render tree.
+
+        * platform/chromium-win/editing/pasteboard/5134759-expected.txt:
+
+2011-10-29  Adam Barth  <abarth@webkit.org>
+
         Update line number in baseline.
 
         * platform/chromium-linux-x86/fast/dom: Removed.
