@@ -1,3 +1,18 @@
+2011-10-28  Chris Rogers  <crogers@google.com>
+
+        SincResampler must be able to resample progressively
+        https://bugs.webkit.org/show_bug.cgi?id=71131
+
+        Reviewed by Kenneth Russell.
+
+        No new tests.  There is not yet an implementation using progressive resampling to test.
+
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::SincResampler):
+        (WebCore::SincResampler::consumeSource):
+        (WebCore::SincResampler::process):
+        * platform/audio/SincResampler.h:
+
 2011-10-28  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Support attributeOldValue for attribute mutations
