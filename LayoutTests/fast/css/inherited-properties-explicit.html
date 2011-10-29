@@ -1,0 +1,50 @@
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<style>
+.a { margin-left:5px; }
+.b { margin-left:inherit; }
+.c { margin-left:10px; }
+</style>
+<div class=a>
+    <div class="" id=test1a></div>
+</div>
+<div>
+    <div class=a>
+        <div class="" id=test1b></div>
+    </div>
+</div>
+<div class=a>
+    <div class="b" id=test2a></div>
+</div>
+<div>
+    <div class=a>
+        <div class="b" id=test2b></div>
+    </div>
+</div>
+<div class=a>
+    <div class="b c" id=test3a></div>
+</div>
+<div>
+    <div class=a>
+        <div class="b c" id=test3b></div>
+    </div>
+</div>
+<p>
+Test that the matched declaration cache handles explicitly inherited properties correctly.
+<p>
+<script>
+function test(e, p) {
+    var testDiv = document.getElementById(e);
+    var cssValue = window.getComputedStyle(testDiv).getPropertyCSSValue(p);
+    return cssValue.cssText;
+}
+shouldBeEqualToString("test('test1a', 'margin-left')", "0px");
+shouldBeEqualToString("test('test1b', 'margin-left')", "0px");
+shouldBeEqualToString("test('test2a', 'margin-left')", "5px");
+shouldBeEqualToString("test('test2b', 'margin-left')", "5px");
+shouldBeEqualToString("test('test3a', 'margin-left')", "10px");
+shouldBeEqualToString("test('test3b', 'margin-left')", "10px");
+</script>

@@ -1,3 +1,15 @@
+2011-10-28  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r98542): tables/mozilla_expected_failures/bugs/bug14007-2.html
+        https://bugs.webkit.org/show_bug.cgi?id=71032
+
+        Reviewed by Ryosuke Niwa.
+        
+        In an effort to gain Hyatt points, add a less obscure test for this case.
+
+        * fast/css/inherited-properties-explicit-expected.txt: Added.
+        * fast/css/inherited-properties-explicit.html: Added.
+
 2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r98617.
