@@ -1,3 +1,21 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Delete ExceptionCode.cpp, which is empty
+        https://bugs.webkit.org/show_bug.cgi?id=71159
+
+        Reviewed by Eric Seidel.
+
+        This file has been stripped down to nothing and can be removed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/ExceptionCode.cpp: Removed.
+
 2011-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98776.

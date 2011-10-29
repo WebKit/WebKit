@@ -557,7 +557,6 @@ SET(WebCore_SOURCES
     dom/EventNames.cpp
     dom/EventTarget.cpp
     dom/ExceptionBase.cpp
-    dom/ExceptionCode.cpp
     dom/ExceptionCodePlaceholder.cpp
     dom/IconURL.cpp
     dom/KeyboardEvent.cpp

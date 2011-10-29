@@ -78,7 +78,6 @@
 #include "EventNames.cpp"
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
-#include "ExceptionCode.cpp"
 #include "ExceptionCodePlaceholder.cpp"
 #include "IconURL.cpp"
 #include "KeyboardEvent.cpp"

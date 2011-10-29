@@ -5240,7 +5240,6 @@
             'dom/EventTarget.cpp',
             'dom/ExceptionBase.cpp',
             'dom/ExceptionBase.h',
-            'dom/ExceptionCode.cpp',
             'dom/ExceptionCodePlaceholder.cpp',
             'dom/HashChangeEvent.h',
             'dom/IgnoreDestructiveWriteCountIncrementer.h',
