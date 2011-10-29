@@ -143,7 +143,8 @@ protected:
     bool m_childrenAffectedByBackwardPositionalRules : 1;
     bool m_firstChildState : 1;
     bool m_lastChildState : 1;
-    unsigned m_childIndex : 21; // Plenty of bits to cache an index.
+    bool m_explicitInheritance : 1;
+    unsigned m_childIndex : 20; // Plenty of bits to cache an index.
 
     // non-inherited attributes
     DataRef<StyleBoxData> m_box;
@@ -163,7 +164,7 @@ protected:
     DataRef<SVGRenderStyle> m_svgStyle;
 #endif
 
-// !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp
+// !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp and implicitlyInherited() in CSSStyleSelector.cpp
 
     // inherit
     struct InheritedFlags {
@@ -1352,6 +1353,9 @@ public:
 
     Color visitedDependentColor(int colorProperty) const;
 
+    void setHasExplicitlyInheritedProperties() { m_explicitInheritance = true; }
+    bool hasExplicitlyInheritedProperties() const { return m_explicitInheritance; }
+    
     // Initial values for all the properties
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
     static EBorderStyle initialBorderStyle() { return BNONE; }

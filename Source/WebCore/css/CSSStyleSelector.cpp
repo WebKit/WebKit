@@ -2497,6 +2497,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 
+    if (isInherit && m_parentStyle && !m_parentStyle->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(property))
+        m_parentStyle->setHasExplicitlyInheritedProperties();
+
     // check lookup table for implementations and use when available
     const PropertyHandler& handler = m_applyProperty.propertyHandler(property);
     if (handler.isValid()) {

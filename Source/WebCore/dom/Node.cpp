@@ -302,9 +302,6 @@ void Node::stopIgnoringLeaks()
 
 Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
 {
-    // FIXME: The behavior of this function is just totally wrong.  It doesn't handle
-    // explicit inheritance of non-inherited properties and so you end up not re-resolving
-    // style in cases where you need to.
     StyleChange ch = NoInherit;
     EDisplay display1 = s1 ? s1->display() : NONE;
     bool fl1 = s1 && s1->hasPseudoStyle(FIRST_LETTER);
@@ -324,7 +321,9 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
         ch = NoChange;
     else if (s1->inheritedNotEqual(s2))
         ch = Inherit;
-    
+    else if (s1->hasExplicitlyInheritedProperties() || s2->hasExplicitlyInheritedProperties())
+        ch = Inherit;
+
     // For nth-child and other positional rules, treat styles as different if they have
     // changed positionally in the DOM. This way subsequent sibling resolutions won't be confused
     // by the wrong child index and evaluate to incorrect results.

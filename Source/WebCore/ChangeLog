@@ -1,3 +1,31 @@
+2011-10-28  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: dynamic-top-change-001 to 004 fail
+        https://bugs.webkit.org/show_bug.cgi?id=68149
+
+        Reviewed by David Hyatt.
+
+        In these tests a child inherits its top value from its parent and the parent's top value
+        is later updated by an onload event. The updated value is expected to cascade to the child.
+
+        The tests were failing because updating the value did not cascade immediately to the child inheriting it, though
+        it could be forced eventually with a full recalculation of the RenderStyle by changing the zoom factor
+        or opening the inspector.
+
+        The fix is to let the parent RenderStyle know that a child inherits a property explicitly and
+        recalculate children's style if the parent ever changes. This only happens if the property is inherited
+        explicitly, it does not apply to cases where the property is inherited by default.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setHasExplicitlyInheritedProperties):
+        (WebCore::InheritedFlags::hasExplicitlyInheritedProperties):
+
 2011-10-29  Antti Koivisto  <antti@apple.com>
 
         Tighten font change conditions in matched declaration cache

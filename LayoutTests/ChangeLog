@@ -1,3 +1,25 @@
+2011-10-27  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: dynamic-top-change-001 to 004 fail
+        https://bugs.webkit.org/show_bug.cgi?id=68149
+
+        Reviewed by David Hyatt.
+
+        * css2.1/20110323/dynamic-top-change-001.htm: Added.
+        * css2.1/20110323/dynamic-top-change-002.htm: Added.
+        * css2.1/20110323/dynamic-top-change-003.htm: Added.
+        * css2.1/20110323/dynamic-top-change-004.htm: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-color-expected.png:
+          See https://bugs.webkit.org/show_bug.cgi?id=68149#c15
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+
 2011-10-28  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r98542): tables/mozilla_expected_failures/bugs/bug14007-2.html
