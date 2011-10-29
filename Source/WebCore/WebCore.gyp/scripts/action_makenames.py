@@ -119,7 +119,7 @@ def main(args):
         inputBasename = os.path.basename(input)
         if inputBasename == 'make_names.pl' \
             or inputBasename == 'make_event_factory.pl' \
-            or inputBasename == 'make_exception_code_description.pl':
+            or inputBasename == 'make_dom_exceptions.pl':
             assert makeNamesInput == None
             makeNamesInput = inputAbs
         elif inputBasename.endswith('TagNames.in') \
@@ -132,7 +132,7 @@ def main(args):
             attrInput = inputAbsPosix
         elif inputBasename.endswith('EventFactory.in') \
             or inputBasename.endswith('EventTargetFactory.in') \
-            or inputBasename.endswith('ExceptionCodeDescription.in'):
+            or inputBasename.endswith('DOMExceptions.in'):
             eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):
             options.append(inputAbsPosix)

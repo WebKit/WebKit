@@ -1,5 +1,14 @@
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
+        Rename ExceptionCodeDescription.in to DOMExceptions.in
+        https://bugs.webkit.org/show_bug.cgi?id=71157
+
+        Reviewed by Eric Seidel.
+
+        * Source/cmake/WebKitMacros.cmake:
+
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
         ExceptionCode.cpp shouldn't need to know about every feature that throws exceptions
         https://bugs.webkit.org/show_bug.cgi?id=70890
 

@@ -49,7 +49,7 @@ ENDMACRO ()
 
 
 MACRO (GENERATE_EXCEPTION_CODE_DESCRIPTION _infile _outfile)
-    SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_exception_code_description.pl)
+    SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_dom_exceptions.pl)
 
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}

@@ -698,8 +698,8 @@
         {
           'action_name': 'ExceptionCodeDescription',
           'inputs': [
-            '../dom/make_exception_code_description.pl',
-            '../dom/ExceptionCodeDescription.in',
+            '../dom/make_dom_exceptions.pl',
+            '../dom/DOMExceptions.in',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.cpp',

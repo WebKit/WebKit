@@ -36,7 +36,7 @@ EVENT_FACTORY = $$PWD/dom/EventFactory.in
 
 EVENT_TARGET_FACTORY = $$PWD/dom/EventTargetFactory.in
 
-EXCEPTION_CODE_DESCRIPTION = $$PWD/dom/ExceptionCodeDescription.in
+DOM_EXCEPTIONS = $$PWD/dom/DOMExceptions.in
 
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
@@ -774,10 +774,10 @@ addExtraCompiler(eventtargetfactory)
 
 # GENERATOR 5-G:
 exceptioncodedescription.output = $${WC_GENERATED_SOURCES_DIR}/ExceptionCodeDescription.cpp
-exceptioncodedescription.input = EXCEPTION_CODE_DESCRIPTION
-exceptioncodedescription.wkScript = $$PWD/dom/make_exception_code_description.pl
-exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$exceptioncodedescription.wkScript --input $$EXCEPTION_CODE_DESCRIPTION --outputDir $$WC_GENERATED_SOURCES_DIR
-exceptioncodedescription.depends = $$PWD/dom/make_exception_code_description.pl $$EXCEPTION_CODE_DESCRIPTION
+exceptioncodedescription.input = DOM_EXCEPTIONS
+exceptioncodedescription.wkScript = $$PWD/dom/make_dom_exceptions.pl
+exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$exceptioncodedescription.wkScript --input $$DOM_EXCEPTIONS --outputDir $$WC_GENERATED_SOURCES_DIR
+exceptioncodedescription.depends = $$PWD/dom/make_dom_exceptions.pl $$DOM_EXCEPTIONS
 addExtraCompiler(exceptioncodedescription)
 
 # GENERATOR 8-A:

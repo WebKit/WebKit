@@ -1,3 +1,23 @@
+2011-10-28  Adam Barth  <abarth@webkit.org>
+
+        Rename ExceptionCodeDescription.in to DOMExceptions.in
+        https://bugs.webkit.org/show_bug.cgi?id=71157
+
+        Reviewed by Eric Seidel.
+
+        This file is now used for more than just the descriptions of the exceptions.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_makenames.py:
+        * dom/DOMExceptions.in: Copied from Source/WebCore/dom/ExceptionCodeDescription.in.
+        * dom/ExceptionCodeDescription.in: Removed.
+        * dom/make_dom_exceptions.pl: Copied from Source/WebCore/dom/make_exception_code_description.pl.
+        * dom/make_exception_code_description.pl: Removed.
+
 2011-10-28  Chris Rogers  <crogers@google.com>
 
         SincResampler must be able to resample progressively
