@@ -75,8 +75,5 @@ Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTE
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
-Failed assertion: expected exception of type TypeError, got: Error: TYPE_MISMATCH_ERR: DOM Exception 17
-Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
-Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: INDEX_SIZE_ERR: DOM Exception 1
 Failed assertion: expected exception of type TypeError, got: Error: SYNTAX_ERR: DOM Exception 12

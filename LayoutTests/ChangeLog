@@ -1,5 +1,12 @@
 2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac rebaseline after r98617.
+
+        * platform/mac/canvas/philip/tests/2d.imageData.put.wrongtype-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rebaseline after r98775.
 
         * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt:
