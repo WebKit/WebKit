@@ -617,7 +617,7 @@ void RenderLayer::updateVisibilityStatus()
     if (m_visibleDescendantStatusDirty) {
         m_hasVisibleDescendant = false;
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
-            child->updateVisibilityStatus();
+            child->updateVisibilityStatus();        
             if (child->m_hasVisibleContent || child->m_hasVisibleDescendant) {
                 m_hasVisibleDescendant = true;
                 break;
@@ -3970,29 +3970,16 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 
 void RenderLayer::dirtyZOrderLists()
 {
-    dirtyZOrderListsInternal();
-    
-#if USE(ACCELERATED_COMPOSITING)
-    if (!renderer()->documentBeingDestroyed())
-        compositor()->setCompositingLayersNeedRebuild();
-#endif
-}
-
-void RenderLayer::dirtyZOrderListsInternal()
-{
     if (m_posZOrderList)
         m_posZOrderList->clear();
     if (m_negZOrderList)
         m_negZOrderList->clear();
     m_zOrderListsDirty = true;
-}
 
-void RenderLayer::dirtyZOrderListsIncludingDescendants()
-{
-    dirtyZOrderListsInternal();
-
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->dirtyZOrderListsIncludingDescendants();
+#if USE(ACCELERATED_COMPOSITING)
+    if (!renderer()->documentBeingDestroyed())
+        compositor()->setCompositingLayersNeedRebuild();
+#endif
 }
 
 void RenderLayer::dirtyStackingContextZOrderLists()
