@@ -1,3 +1,16 @@
+2011-10-29  Robert Hogan  <robert@webkit.org>
+
+        Add results for tests introduced in http://trac.webkit.org/changeset/98812.
+
+        Unreviewed, platform-specific results.
+
+        * platform/chromium-cg-mac-snowleopard/css2.1/20110323/block-non-replaced-width-008-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/css2.1/20110323/block-non-replaced-width-008-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/replaced/width100percent-searchfield-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-searchfield-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png.
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-008-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-008-expected.txt: Added.
+
 2011-10-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: block-non-replaced-width-008.htm
