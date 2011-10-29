@@ -1,5 +1,14 @@
 2011-10-29  Robert Hogan  <robert@webkit.org>
 
+        Second attempt to add results for tests introduced in http://trac.webkit.org/changeset/98812
+
+        * platform/chromium-linux/css2.1/20110323/block-non-replaced-width-008-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-008-expected.txt:
+        * platform/chromium/css2.1/20110323/block-non-replaced-width-008-expected.png: Renamed from LayoutTests/platform/chromium-cg-mac-snowleopard/css2.1/20110323/block-non-replaced-width-008-expected.png.
+        * platform/chromium/css2.1/20110323/block-non-replaced-width-008-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac-snowleopard/css2.1/20110323/block-non-replaced-width-008-expected.txt.
+
+2011-10-29  Robert Hogan  <robert@webkit.org>
+
         Qt and Gtk Results for tests updated by  http://trac.webkit.org/changeset/98812
 
         Unreviewed, platform-specific results.
