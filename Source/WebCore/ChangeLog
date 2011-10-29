@@ -1,3 +1,24 @@
+2011-10-29  Adam Barth  <abarth@webkit.org>
+
+        DOMURL should keep its own state rather than storing it on ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=71169
+
+        Reviewed by Eric Seidel.
+
+        This patch untwists this code.  I think this code was originally
+        twisted because these APIs moved onto DOMURL after they were first
+        implemented.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/FileWriter.h:
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::contextDestroyed):
+        (WebCore::DOMURL::createObjectURL):
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/DOMURL.h:
+
 2011-10-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98795.

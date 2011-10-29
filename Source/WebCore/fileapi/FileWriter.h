@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class Blob;
 class ScriptExecutionContext;
 
 class FileWriter : public FileWriterBase, public ActiveDOMObject, public EventTarget, public AsyncFileWriterClient {

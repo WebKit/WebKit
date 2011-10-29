@@ -47,10 +47,8 @@
 
 namespace WebCore {
 
-class Blob;
 class ContentSecurityPolicy;
 class DOMTimer;
-class DOMURL;
 class EventListener;
 class EventQueue;
 class EventTarget;
@@ -66,10 +64,6 @@ class DatabaseThread;
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 class FileThread;
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-class MediaStream;
 #endif
 
 class ScriptExecutionContext {
@@ -153,14 +147,6 @@ public:
     void removeTimeout(int timeoutId);
     DOMTimer* findTimeout(int timeoutId);
 
-#if ENABLE(BLOB)
-#if ENABLE(MEDIA_STREAM)
-    KURL createPublicBlobURL(MediaStream*);
-#endif // ENABLE(MEDIA_STREAM)
-    KURL createPublicBlobURL(Blob*);
-    void revokePublicBlobURL(const KURL&);
-#endif // ENABLE(BLOB)
-
 #if USE(JSC)
     JSC::JSGlobalData* globalData();
 #endif
@@ -205,11 +191,6 @@ private:
 
     typedef HashMap<int, DOMTimer*> TimeoutMap;
     TimeoutMap m_timeouts;
-
-#if ENABLE(BLOB)
-    HashSet<String> m_publicBlobURLs;
-    HashSet<String> m_publicStreamURLs;
-#endif
 
     virtual void refScriptExecutionContext() = 0;
     virtual void derefScriptExecutionContext() = 0;

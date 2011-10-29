@@ -30,6 +30,7 @@
 
 #include "ActiveDOMObject.h"
 #include "PlatformString.h"
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -52,6 +53,13 @@ public:
 
 private:
     explicit DOMURL(ScriptExecutionContext*);
+
+    virtual void contextDestroyed();
+
+    HashSet<String> m_publicBlobURLs;
+#if ENABLE(MEDIA_STREAM)
+    HashSet<String> m_publicStreamURLs;
+#endif
 };
 
 } // namespace WebCore
