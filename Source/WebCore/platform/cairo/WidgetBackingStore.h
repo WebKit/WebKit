@@ -51,11 +51,13 @@ public:
     ~WidgetBackingStore();
     cairo_surface_t* cairoSurface();
     void scroll(const IntRect& scrollRect, const IntSize& scrollOffset);
+    const IntSize& size() { return m_size; }
 
 private:
     WidgetBackingStore(PlatformWidget, const IntSize&);
 
     OwnPtr<WidgetBackingStorePrivate> m_private;
+    IntSize m_size;
 };
 
 } // namespace WebCore

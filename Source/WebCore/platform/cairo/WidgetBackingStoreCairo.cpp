@@ -72,6 +72,7 @@ PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(PlatformWidget widget,
 
 WidgetBackingStore::WidgetBackingStore(PlatformWidget widget, const IntSize& size)
     : m_private(WidgetBackingStorePrivate::create(widget, size))
+    , m_size(size)
 {
 }
 

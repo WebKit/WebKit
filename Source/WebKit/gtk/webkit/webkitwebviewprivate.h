@@ -29,6 +29,7 @@
 #include "GOwnPtr.h"
 #include "Page.h"
 #include "ResourceHandle.h"
+#include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
 
 namespace WebKit {
@@ -42,6 +43,7 @@ extern "C" {
 typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 struct _WebKitWebViewPrivate {
     WebCore::Page* corePage;
+    OwnPtr<WebCore::WidgetBackingStore> backingStore;
     GRefPtr<WebKitWebSettings> webSettings;
     GRefPtr<WebKitWebInspector> webInspector;
     GRefPtr<WebKitViewportAttributes> viewportAttributes;

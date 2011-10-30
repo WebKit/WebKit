@@ -186,12 +186,17 @@ PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurfa
     return newSurface.release();
 }
 
+void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const IntSize& offset, const IntRect& rect)
+{
+    cairo_set_source_surface(to, from, offset.width(), offset.height());
+    cairo_rectangle(to, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(to);
+}
+
 void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& offset, const IntRect& rect)
 {
     RefPtr<cairo_t> context = adoptRef(cairo_create(to));
-    cairo_set_source_surface(context.get(), from, offset.width(), offset.height());
-    cairo_rectangle(context.get(), rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_fill(context.get());
+    copyRectFromCairoSurfaceToContext(from, context.get(), offset, rect);
 }
 
 } // namespace WebCore

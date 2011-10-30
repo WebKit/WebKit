@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Icon.h"
+#include "InspectorController.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "NavigationAction.h"
@@ -46,6 +47,7 @@
 #include "PlatformString.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuGtk.h"
+#include "RefPtrCairo.h"
 #include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
 #include "WindowFeatures.h"
@@ -61,6 +63,7 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
+#include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SQL_DATABASE)
@@ -75,7 +78,9 @@ ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
     , m_adjustmentWatcher(webView)
     , m_closeSoonTimer(0)
-    , m_pendingScrollInvalidations(false)
+    , m_displayTimer(this, &ChromeClient::paint)
+    , m_lastDisplayTime(0)
+    , m_repaintSoonSourceId(0)
 {
     ASSERT(m_webView);
 }
@@ -377,29 +382,201 @@ void ChromeClient::registerProtocolHandler(const String& scheme, const String& b
 } 
 #endif 
 
+static gboolean repaintEverythingSoonTimeout(ChromeClient* client)
+{
+    client->paint(0);
+    return FALSE;
+}
+
+static void clipOutOldWidgetArea(cairo_t* cr, const IntSize& oldSize, const IntSize& newSize)
+{
+    cairo_move_to(cr, oldSize.width(), 0);
+    cairo_line_to(cr, newSize.width(), 0);
+    cairo_line_to(cr, newSize.width(), newSize.height());
+    cairo_line_to(cr, 0, newSize.height());
+    cairo_line_to(cr, 0, oldSize.height());
+    cairo_line_to(cr, oldSize.width(), oldSize.height());
+    cairo_close_path(cr);
+    cairo_clip(cr);
+}
+
+static void clearEverywhereInBackingStore(WebKitWebView* webView, cairo_t* cr)
+{
+    // The strategy here is to quickly draw white into this new canvas, so that
+    // when a user quickly resizes the WebView in an environment that has opaque
+    // resizing (like Gnome Shell), there are no drawing artifacts.
+    if (!webView->priv->transparent) {
+        cairo_set_source_rgb(cr, 1, 1, 1);
+        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    } else
+        cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr);
+}
+
+void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize)
+{
+    WidgetBackingStore* backingStore = m_webView->priv->backingStore.get();
+
+    // Grow the backing store by at least 1.5 times the current size. This prevents
+    // lots of unnecessary allocations during an opaque resize.
+    if (backingStore) {
+        const IntSize& oldSize = backingStore->size();
+        if (newSize.width() > oldSize.width())
+            newSize.setWidth(std::max(newSize.width(), static_cast<int>(oldSize.width() * 1.5)));
+        if (newSize.height() > oldSize.height())
+            newSize.setHeight(std::max(newSize.height(), static_cast<int>(oldSize.height() * 1.5)));
+    }
+
+    // If we did not have a backing store before or if the backing store is growing, we need
+    // to reallocate a new one and set it up so that we don't see artifacts while resizing.
+    if (!backingStore
+        || newSize.width() > backingStore->size().width()
+        || newSize.height() > backingStore->size().height()) {
+
+        OwnPtr<WidgetBackingStore> newBackingStore =
+            WebCore::WidgetBackingStore::create(GTK_WIDGET(m_webView), newSize);
+        RefPtr<cairo_t> cr = adoptRef(cairo_create(newBackingStore->cairoSurface()));
+
+        clearEverywhereInBackingStore(m_webView, cr.get());
+
+        // Now we copy the old backing store image over the new cleared surface to prevent
+        // annoying flashing as the widget grows. We do the "real" paint in a timeout
+        // since we don't want to block resizing too long.
+        if (backingStore) {
+            cairo_set_source_surface(cr.get(), backingStore->cairoSurface(), 0, 0);
+            cairo_rectangle(cr.get(), 0, 0, backingStore->size().width(), backingStore->size().height());
+            cairo_fill(cr.get());
+        }
+
+        m_webView->priv->backingStore = newBackingStore.release();
+        backingStore = m_webView->priv->backingStore.get();
+
+    } else if (oldWidgetSize.width() < newSize.width() || oldWidgetSize.height() < newSize.height()) {
+        // The widget is growing, but we did not need to create a new backing store.
+        // We should clear any old data outside of the old widget region.
+        RefPtr<cairo_t> cr = adoptRef(cairo_create(backingStore->cairoSurface()));
+        clipOutOldWidgetArea(cr.get(), oldWidgetSize, newSize);
+        clearEverywhereInBackingStore(m_webView, cr.get());
+    }
+
+    // We need to force a redraw and ignore the framerate cap.
+    m_lastDisplayTime = 0;
+    m_dirtyRegion.unite(IntRect(IntPoint(), backingStore->size()));
+
+    // WebCore timers by default have a lower priority which leads to more artifacts when opaque
+    // resize is on, thus we use g_timeout_add here to force a higher timeout priority.
+    if (!m_repaintSoonSourceId)
+        m_repaintSoonSourceId = g_timeout_add(0, reinterpret_cast<GSourceFunc>(repaintEverythingSoonTimeout), this);
+}
+
+static void coalesceRectsIfPossible(const IntRect& clipRect, Vector<IntRect>& rects)
+{
+    const unsigned int cRectThreshold = 10;
+    const float cWastedSpaceThreshold = 0.75f;
+    bool useUnionedRect = (rects.size() <= 1) || (rects.size() > cRectThreshold);
+    if (!useUnionedRect) {
+        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
+        // We do this by computing the percentage of "wasted space" in the union. If that wasted space
+        // is too large, then we will do individual rect painting instead.
+        float unionPixels = (clipRect.width() * clipRect.height());
+        float singlePixels = 0;
+        for (size_t i = 0; i < rects.size(); ++i)
+            singlePixels += rects[i].width() * rects[i].height();
+        float wastedSpace = 1 - (singlePixels / unionPixels);
+        if (wastedSpace <= cWastedSpaceThreshold)
+            useUnionedRect = true;
+    }
+
+    if (!useUnionedRect)
+        return;
+
+    rects.clear();
+    rects.append(clipRect);
+}
+
+static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegion)
+{
+    if (!webView->priv->backingStore)
+        return;
+
+    Vector<IntRect> rects = dirtyRegion.rects();
+    coalesceRectsIfPossible(dirtyRegion.bounds(), rects);
+    frame->view()->updateLayoutAndStyleIfNeededRecursive();
+
+    RefPtr<cairo_t> backingStoreContext = adoptRef(cairo_create(webView->priv->backingStore->cairoSurface()));
+    GraphicsContext gc(backingStoreContext.get());
+    for (size_t i = 0; i < rects.size(); i++) {
+        const IntRect& rect = rects[i];
+
+        gc.save();
+        gc.clip(rect);
+        if (webView->priv->transparent)
+            gc.clearRect(rect);
+        frame->view()->paint(&gc, rect);
+        gc.restore();
+    }
+
+    gc.save();
+    gc.clip(dirtyRegion.bounds());
+    frame->page()->inspectorController()->drawHighlight(gc);
+    gc.restore();
+}
+
+void ChromeClient::performAllPendingScrolls()
+{
+    if (!m_webView->priv->backingStore)
+        return;
+
+    // Scroll all pending scroll rects and invalidate those parts of the widget.
+    for (size_t i = 0; i < m_rectsToScroll.size(); i++) {
+        IntRect& scrollRect = m_rectsToScroll[i];
+        m_webView->priv->backingStore->scroll(scrollRect, m_scrollOffsets[i]);
+        gtk_widget_queue_draw_area(GTK_WIDGET(m_webView),
+                                   scrollRect.x(), scrollRect.y(),
+                                   scrollRect.width(), scrollRect.height());
+    }
+
+    m_rectsToScroll.clear();
+    m_scrollOffsets.clear();
+}
+
+
+void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
+{
+    static const double minimumFrameInterval = 1.0 / 60.0; // No more than 60 frames a second.
+    double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
+    double timeUntilNextDisplay = minimumFrameInterval - timeSinceLastDisplay;
+
+    if (timeUntilNextDisplay > 0) {
+        m_displayTimer.startOneShot(timeUntilNextDisplay);
+        return;
+    }
+
+    Frame* frame = core(m_webView)->mainFrame();
+    if (!frame || !frame->contentRenderer() || !frame->view())
+        return;
+
+    performAllPendingScrolls();
+    paintWebView(m_webView, frame, m_dirtyRegion);
+
+    const IntRect& rect = m_dirtyRegion.bounds();
+    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), rect.x(), rect.y(), rect.width(), rect.height());
+
+    m_dirtyRegion = Region();
+    m_lastDisplayTime = currentTime();
+    m_repaintSoonSourceId = 0;
+}
+
 void ChromeClient::invalidateWindow(const IntRect&, bool immediate)
 {
-    // If we've invalidated regions for scrolling, force GDK to process those invalidations
-    // now. This will also cause child windows to move right away. This prevents redraw
-    // artifacts with child windows (e.g. Flash plugin instances).
-    if (immediate && m_pendingScrollInvalidations) {
-        m_pendingScrollInvalidations = false;
-        if (GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView)))
-            gdk_window_process_updates(window, TRUE);
-    }
 }
 
 void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
 {
-    GdkRectangle rect = updateRect;
-    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
-
-    if (window && !updateRect.isEmpty()) {
-        gdk_window_invalidate_rect(window, &rect, FALSE);
-        // We don't currently do immediate updates since they delay other UI elements.
-        //if (immediate)
-        //    gdk_window_process_updates(window, FALSE);
-    }
+    if (updateRect.isEmpty())
+        return;
+    m_dirtyRegion.unite(updateRect);
+    m_displayTimer.startOneShot(0);
 }
 
 void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
@@ -410,49 +587,28 @@ void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bo
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
-    if (!window)
-        return;
+    m_rectsToScroll.append(rectToScroll);
+    m_scrollOffsets.append(delta);
 
-    m_pendingScrollInvalidations = true;
+    // The code to calculate the scroll repaint region is originally from WebKit2.
+    // Get the part of the dirty region that is in the scroll rect.
+    Region dirtyRegionInScrollRect = intersect(rectToScroll, m_dirtyRegion);
+    if (!dirtyRegionInScrollRect.isEmpty()) {
+        // There are parts of the dirty region that are inside the scroll rect.
+        // We need to subtract them from the region, move them and re-add them.
+        m_dirtyRegion.subtract(rectToScroll);
 
-    // We cannot use gdk_window_scroll here because it is only able to
-    // scroll the whole window at once, and we often need to scroll
-    // portions of the window only (think frames).
-    GdkRectangle area = clipRect;
-    GdkRectangle moveRect;
+        // Move the dirty parts.
+        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, delta), rectToScroll);
 
-    GdkRectangle sourceRect = area;
-    sourceRect.x -= delta.width();
-    sourceRect.y -= delta.height();
-
-#ifdef GTK_API_VERSION_2
-    GdkRegion* invalidRegion = gdk_region_rectangle(&area);
-
-    if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
-        GdkRegion* moveRegion = gdk_region_rectangle(&moveRect);
-        gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
-        gdk_region_offset(moveRegion, delta.width(), delta.height());
-        gdk_region_subtract(invalidRegion, moveRegion);
-        gdk_region_destroy(moveRegion);
+        // And add them back.
+        m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
     }
 
-    gdk_window_invalidate_region(window, invalidRegion, FALSE);
-    gdk_region_destroy(invalidRegion);
-#else
-    cairo_region_t* invalidRegion = cairo_region_create_rectangle(&area);
-
-    if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
-        cairo_region_t* moveRegion = cairo_region_create_rectangle(&moveRect);
-        gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
-        cairo_region_translate(moveRegion, delta.width(), delta.height());
-        cairo_region_subtract(invalidRegion, moveRegion);
-        cairo_region_destroy(moveRegion);
-    }
-
-    gdk_window_invalidate_region(window, invalidRegion, FALSE);
-    cairo_region_destroy(invalidRegion);
-#endif
+    // Compute the scroll repaint region.
+    Region scrollRepaintRegion = subtract(rectToScroll, translate(rectToScroll, delta));
+    m_dirtyRegion.unite(scrollRepaintRegion);
+    m_displayTimer.startOneShot(0);
 
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }

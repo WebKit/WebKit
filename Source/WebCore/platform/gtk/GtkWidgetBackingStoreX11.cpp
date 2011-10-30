@@ -77,6 +77,7 @@ PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(GtkWidget* widget, con
 
 WidgetBackingStore::WidgetBackingStore(GtkWidget* widget, const IntSize& size)
     : m_private(WidgetBackingStorePrivate::create(widget, size))
+    , m_size(size)
 {
 }
 

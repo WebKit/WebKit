@@ -1,3 +1,45 @@
+2011-10-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Switch to a backing store approach for painting WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=70213
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Paint the WebView into a backing store. This prevents expose events from
+        triggering a layout, making scrolling and resizing much smoother.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient): Initialize new members.
+        (WebKit::repaintEverythingSoonTimeout): Added this helper which repaints
+        the WebView more quickly during resize events.
+        (WebKit::clipOutOldWidgetArea): Clips out the old widget area, so that we
+        can clear out invalid pixels when growing the widget into a pre-existing
+        backing store.
+        (WebKit::clearEverywhereInBackingStore): Clear out the entire backing store.
+        (WebKit::ChromeClient::widgetSizeChanged): Handle widget size changes by
+        intelligently resizing or reusing the existing backing store.
+        (WebKit::coalesceRectsIfPossible): Moved this method from webkitwebview.cpp.
+        (WebKit::paintWebView): Moved this method from webkitwebview.cpp.
+        (WebKit::ChromeClient::performAllPendingScrolls): If there are any pending
+        scrolling operations, perform them by scrolling the backing store.
+        (WebKit::ChromeClient::paint): Added this timer callback, which paints the
+        WebView after a short timeout.
+        (WebKit::ChromeClient::invalidateWindow): No need to do anything here any longer.
+        (WebKit::ChromeClient::invalidateContentsAndWindow): Now unite the rect with
+        the existing dirty region and queue the paint timeout.
+        (WebKit::ChromeClient::scroll): Now just queue a scroll event in the repaint timeout.
+        Intelligently calculate the area to move and the dirty area using code derived
+        from WebKit2.
+        * WebCoreSupport/ChromeClientGtk.h: Added new method definitions and also use
+        the WebCore namespace to avoid lots of uses of "WebCore::".
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_draw): Now just blit the backing store into the widget.
+        (webkit_web_view_expose): Ditto.
+        (webkit_web_view_size_allocate): Let the ChromeClient know the widget size changed.
+        (webkit_web_view_init): Turn off GDK double buffering as we have our own double
+        buffer.
+        * webkit/webkitwebviewprivate.h: Add the backing store member.
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead

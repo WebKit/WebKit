@@ -33,6 +33,7 @@
 #include "AXObjectCache.h"
 #include "AbstractDatabase.h"
 #include "BackForwardListImpl.h"
+#include "CairoUtilities.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"
 #include "ClipboardUtilitiesGtk.h"
@@ -67,7 +68,6 @@
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include "InspectorClientGtk.h"
-#include "InspectorController.h"
 #include "MemoryCache.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
@@ -622,108 +622,39 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     }
 }
 
-static bool shouldCoalesce(const IntRect& rect, const Vector<IntRect>& rects)
-{
-    const unsigned int cRectThreshold = 10;
-    const float cWastedSpaceThreshold = 0.75f;
-    bool useUnionedRect = (rects.size() <= 1) || (rects.size() > cRectThreshold);
-    if (useUnionedRect)
-        return true;
-    // Attempt to guess whether or not we should use the unioned rect or the individual rects.
-    // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
-    // is too large, then we will do individual rect painting instead.
-    float unionPixels = (rect.width() * rect.height());
-    float singlePixels = 0;
-    for (size_t i = 0; i < rects.size(); ++i)
-        singlePixels += rects[i].width() * rects[i].height();
-    float wastedSpace = 1 - (singlePixels / unionPixels);
-    if (wastedSpace <= cWastedSpaceThreshold)
-        useUnionedRect = true;
-    return useUnionedRect;
-}
-
-static void paintWebView(Frame* frame, gboolean transparent, GraphicsContext& context, const IntRect& clipRect, const Vector<IntRect>& rects)
-{
-    bool coalesce = true;
-
-    if (rects.size() > 0)
-        coalesce = shouldCoalesce(clipRect, rects);
-
-    if (coalesce) {
-        context.clip(clipRect);
-        if (transparent)
-            context.clearRect(clipRect);
-        frame->view()->paint(&context, clipRect);
-    } else {
-        for (size_t i = 0; i < rects.size(); i++) {
-            IntRect rect = rects[i];
-            context.save();
-            context.clip(rect);
-            if (transparent)
-                context.clearRect(rect);
-            frame->view()->paint(&context, rect);
-            context.restore();
-        }
-    }
-
-    context.save();
-    context.clip(clipRect);
-    frame->page()->inspectorController()->drawHighlight(context);
-    context.restore();
-}
 #ifdef GTK_API_VERSION_2
 static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = webView->priv;
+    int rectCount;
+    GOwnPtr<GdkRectangle> rects;
+    gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
 
-    Frame* frame = core(webView)->mainFrame();
-    if (frame->contentRenderer() && frame->view()) {
-        frame->view()->updateLayoutAndStyleIfNeededRecursive();
-
-        RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));
-        GraphicsContext gc(cr.get());
-        gc.setGdkExposeEvent(event);
-
-        int rectCount;
-        GOwnPtr<GdkRectangle> rects;
-        gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
-        Vector<IntRect> paintRects;
-        for (int i = 0; i < rectCount; i++)
-            paintRects.append(IntRect(rects.get()[i]));
-
-        paintWebView(frame, priv->transparent, gc, static_cast<IntRect>(event->area), paintRects);
+    RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));
+    for (int i = 0; i < rectCount; i++) {
+        copyRectFromCairoSurfaceToContext(WEBKIT_WEB_VIEW(widget)->priv->backingStore->cairoSurface(),
+                                          cr.get(), IntSize(), IntRect(rects.get()[i]));
     }
-
     return FALSE;
 }
 #else
 static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = webView->priv;
     GdkRectangle clipRect;
-
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    Frame* frame = core(webView)->mainFrame();
-    if (frame->contentRenderer() && frame->view()) {
-        GraphicsContext gc(cr);
-        IntRect rect = clipRect;
-        cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
-
-        frame->view()->updateLayoutAndStyleIfNeededRecursive();
-
-        Vector<IntRect> rects;
-        if (!rectList->status && rectList->num_rectangles > 0) {
-            for (int i = 0; i < rectList->num_rectangles; i++)
-                rects.append(enclosingIntRect(FloatRect(rectList->rectangles[i])));
-        }
-        paintWebView(frame, priv->transparent, gc, rect, rects);
-
+    cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
+    if (rectList->status || !rectList->num_rectangles) {
         cairo_rectangle_list_destroy(rectList);
+        return FALSE;
     }
+
+    Vector<IntRect> rects;
+    for (int i = 0; i < rectList->num_rectangles; i++) {
+        copyRectFromCairoSurfaceToContext(WEBKIT_WEB_VIEW(widget)->priv->backingStore->cairoSurface(),
+                                          cr, IntSize(), enclosingIntRect(FloatRect(rectList->rectangles[i])));
+    }
+    cairo_rectangle_list_destroy(rectList);
 
     return FALSE;
 }
@@ -914,14 +845,16 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
     GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-
     Page* page = core(webView);
-    Frame* frame = page->mainFrame();
-    if (!frame->view())
-        return;
+    IntSize oldSize;
+    if (FrameView* frameView = page->mainFrame()->view()) {
+        oldSize = frameView->size();
+        frameView->resize(allocation->width, allocation->height);
+    }
 
-    frame->view()->resize(allocation->width, allocation->height);
-    static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
+    WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
+    chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));
+    chromeClient->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
 }
 
 static void webkit_web_view_grab_focus(GtkWidget* widget)
@@ -3347,6 +3280,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->viewportAttributes->priv->webView = webView;
 
     gtk_widget_set_can_focus(GTK_WIDGET(webView), TRUE);
+    gtk_widget_set_double_buffered(GTK_WIDGET(webView), FALSE);
+
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
 
