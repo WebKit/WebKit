@@ -2234,17 +2234,6 @@ static bool isCacheableInMatchedDeclarationCache(const RenderStyle* style, const
     return true;
 }
 
-static bool fontDifferenceAffectsNonInherited(const RenderStyle* style, const RenderStyle* cachedStyle)
-{
-    if (style->fontMetrics().xHeight() != cachedStyle->fontMetrics().xHeight())
-        return true;
-    if (style->fontDescription().computedSize() != cachedStyle->fontDescription().computedSize())
-        return true;
-    if (style->fontDescription().orientation() != cachedStyle->fontDescription().orientation())
-        return true;
-    return false;
-}
-
 void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
 {
     unsigned cacheHash = matchResult.isCacheable ? computeDeclarationHash(m_matchedDecls.data(), m_matchedDecls.size()) : 0;
@@ -2279,8 +2268,8 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     if (m_lineHeightValue)
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
-    // Many properties depend on the font size. If it changes we just apply all properties.
-    if (cachedStyle && fontDifferenceAffectsNonInherited(m_style.get(), cachedStyle))
+    // Many properties depend on the font. If it changes we just apply all properties.
+    if (cachedStyle && cachedStyle->fontDescription() != m_style->fontDescription())
         applyInheritedOnly = false;
 
     // Now do the normal priority UA properties.

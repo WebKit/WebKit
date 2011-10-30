@@ -1,3 +1,15 @@
+2011-10-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r98803.
+        http://trac.webkit.org/changeset/98803
+        https://bugs.webkit.org/show_bug.cgi?id=71186
+
+        Causing test and assertion failures on some platforms
+        (Requested by anttik on #webkit).
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+
 2011-10-29  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
