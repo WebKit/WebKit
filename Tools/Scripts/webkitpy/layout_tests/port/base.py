@@ -678,6 +678,9 @@ class Port(object):
             'HOMEDRIVE',
             'HOMEPATH',
             '_NT_SYMBOL_PATH',
+
+            # Windows:
+            'PATH',
         ]
         for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(clean_env, variable)

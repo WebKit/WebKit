@@ -1,3 +1,33 @@
+2011-10-30  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests is locale dependent
+        https://bugs.webkit.org/show_bug.cgi?id=68691
+
+        Unreviewed.  I would have preferred to have this reviewed,
+        but relevant reviewers are asleep and bots are broken.
+
+        This was a regression from moving to a clean environment.
+        ChromiumWin (and possibly other ports), need the "PATH"
+        environment copied over.  This wasn't caught in my testing
+        because although we had unittests to cover this, they
+        weren't being run on anything but windows.  The vast majority
+        of this change is just fixing the unittests to use our
+        modern MockFileSystem/MockUser/MockExecutive so they can
+        be run on any system (and removing the platform checks from
+        the unittests so they are run everywhere).
+
+        The actual fix is the single line "PATH" string added to base.py.
+        The rest of this change is just fixing the Chromium port unittests
+        to run on all systems (including changing the Chromium port to
+        use FileSystem.path_to_module instead of __file__).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+
 2011-10-29  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests is locale dependent
