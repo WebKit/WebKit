@@ -1850,6 +1850,10 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
 
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
 {
+#if !USE(AUTOMATIC_TEXT_REPLACEMENT)
+    UNUSED_PARAM(doReplacement);
+#endif
+
     if (unifiedTextCheckerEnabled()) {
         m_spellingCorrector->applyPendingCorrection(selectionAfterTyping);
 

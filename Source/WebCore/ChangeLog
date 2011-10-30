@@ -1,3 +1,10 @@
+2011-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+
 2011-10-29  Daniel Cheng  <dcheng@chromium.org>
 
         Rename DataTransferItems to DataTransferItemList
