@@ -96,10 +96,7 @@ CallFrame* CallFrame::trueCallerFrameSlow()
         
         CallFrame* inlinedCaller = machineCaller + inlineCallFrame->stackOffset;
         
-        JSObject* callee = machineCaller->registers()[inlineCallFrame->calleeVR].function();
-        JSCell* calleeAsFunctionCell = getJSFunction(callee);
-        ASSERT(calleeAsFunctionCell);
-        JSFunction* calleeAsFunction = asFunction(calleeAsFunctionCell);
+        JSFunction* calleeAsFunction = inlineCallFrame->callee.get();
         
         // Fill in the inlinedCaller
         inlinedCaller->setCodeBlock(machineCaller->codeBlock());
@@ -112,7 +109,7 @@ CallFrame* CallFrame::trueCallerFrameSlow()
         
         inlinedCaller->setInlineCallFrame(inlineCallFrame);
         inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->numArgumentsIncludingThis);
-        inlinedCaller->setCallee(callee);
+        inlinedCaller->setCallee(calleeAsFunction);
         
         inlineCallFrame = nextInlineCallFrame;
     }

@@ -1585,8 +1585,10 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     if (hasCodeOrigins()) {
         // Make sure that executables that we have inlined don't die.
         // FIXME: If they would have otherwise died, we should probably trigger recompilation.
-        for (size_t i = 0; i < inlineCallFrames().size(); ++i)
+        for (size_t i = 0; i < inlineCallFrames().size(); ++i) {
             visitor.append(&inlineCallFrames()[i].executable);
+            visitor.append(&inlineCallFrames()[i].callee);
+        }
     }
 #endif
 

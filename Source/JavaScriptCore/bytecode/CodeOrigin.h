@@ -34,6 +34,7 @@ namespace JSC {
 
 struct InlineCallFrame;
 class ExecutableBase;
+class JSFunction;
 
 struct CodeOrigin {
     uint32_t bytecodeIndex;
@@ -75,9 +76,9 @@ struct CodeOrigin {
 
 struct InlineCallFrame {
     WriteBarrier<ExecutableBase> executable;
-    unsigned stackOffset;
-    unsigned calleeVR;
+    WriteBarrier<JSFunction> callee;
     CodeOrigin caller;
+    unsigned stackOffset;
     unsigned numArgumentsIncludingThis : 31;
     bool isCall : 1;
 };

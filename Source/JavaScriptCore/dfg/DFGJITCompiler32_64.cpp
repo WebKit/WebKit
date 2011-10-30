@@ -490,8 +490,6 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         
         void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlockForCaller->getJITCode().start()) + mapping->m_machineCodeOffset);
 
-        loadPtr(payloadFor((VirtualRegister)inlineCallFrame->calleeVR), GPRInfo::regT4);
-        loadPtr(MacroAssembler::Address(GPRInfo::regT4, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), GPRInfo::regT2);
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
             add32(Imm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
@@ -501,14 +499,14 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         
         storePtr(TrustedImmPtr(baselineCodeBlock), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CodeBlock)));
         store32(Imm32(JSValue::CellTag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
-        storePtr(GPRInfo::regT2, payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
+        storePtr(TrustedImmPtr(inlineCallFrame->callee->scope()), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
         store32(Imm32(JSValue::CellTag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
         storePtr(callerFrameGPR, payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
         storePtr(TrustedImmPtr(jumpTarget), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
         store32(Imm32(JSValue::Int32Tag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
         store32(Imm32(inlineCallFrame->numArgumentsIncludingThis), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
         store32(Imm32(JSValue::CellTag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
-        storePtr(GPRInfo::regT4, payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
+        storePtr(TrustedImmPtr(inlineCallFrame->callee.get()), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
     }
     
     if (exit.m_codeOrigin.inlineCallFrame)

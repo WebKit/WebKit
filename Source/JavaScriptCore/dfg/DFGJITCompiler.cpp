@@ -534,8 +534,6 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         
         void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlockForCaller->getJITCode().start()) + mapping->m_machineCodeOffset);
 
-        loadPtr(addressFor((VirtualRegister)inlineCallFrame->calleeVR), GPRInfo::regT1);
-        loadPtr(MacroAssembler::Address(GPRInfo::regT1, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), GPRInfo::regT2);
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
             addPtr(Imm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
@@ -544,11 +542,11 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             callerFrameGPR = GPRInfo::callFrameRegister;
         
         storePtr(TrustedImmPtr(baselineCodeBlock), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CodeBlock)));
-        storePtr(GPRInfo::regT2, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
+        storePtr(TrustedImmPtr(inlineCallFrame->callee->scope()), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
         storePtr(callerFrameGPR, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
         storePtr(TrustedImmPtr(jumpTarget), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
         storePtr(TrustedImmPtr(JSValue::encode(jsNumber(inlineCallFrame->numArgumentsIncludingThis))), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
-        storePtr(GPRInfo::regT1, addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
+        storePtr(TrustedImmPtr(inlineCallFrame->callee.get()), addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
     }
     
     if (exit.m_codeOrigin.inlineCallFrame)
