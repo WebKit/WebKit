@@ -1,3 +1,9 @@
+2011-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove crash expectations from tests that have not been crashing on Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-29  Anna Cavender  <annacc@chromium.org>
 
         Add track-text-track-destructor-crash.html to Skipped files for mac and win
