@@ -2,6 +2,13 @@
 
         Build fix.
 
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
+2011-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
         * editing/Editor.cpp:
         (WebCore::Editor::markMisspellingsAfterTypingToWord):
 

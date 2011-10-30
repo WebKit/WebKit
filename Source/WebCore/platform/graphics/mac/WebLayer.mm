@@ -92,7 +92,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
         indicatorBox.size.height = 27;
         CGContextSaveGState(context);
         
-        CGContextSetAlpha(context, 0.5);
+        CGContextSetAlpha(context, 0.5f);
         CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
 
         if (isTiledLayer)
