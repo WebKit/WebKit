@@ -123,6 +123,15 @@ class ChromiumWinPort(chromium.ChromiumPort):
 
     def setup_environ_for_server(self, server_name=None):
         env = chromium.ChromiumPort.setup_environ_for_server(self, server_name)
+
+        # FIXME: lighttpd depends on some environment variable we're not whitelisting.
+        # We should add the variable to an explicit whitelist in base.Port.
+        # FIXME: This is a temporary hack to get the cr-win bot online until
+        # someone from the cr-win port can take a look.
+        for key, value in os.environ.items():
+            if key not in env:
+                env[key] = value
+
         # Put the cygwin directory first in the path to find cygwin1.dll.
         env["PATH"] = "%s;%s" % (self.path_from_chromium_base("third_party", "cygwin", "bin"), env["PATH"])
         # Configure the cygwin directory so that pywebsocket finds proper

@@ -3,6 +3,19 @@
         new-run-webkit-tests is locale dependent
         https://bugs.webkit.org/show_bug.cgi?id=68691
 
+        Unreviewed.
+
+        This is a temporary hack until someone from the cr-win port
+        can take a look and determine which environment variable
+        lighttpd is missing.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
+2011-10-30  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests is locale dependent
+        https://bugs.webkit.org/show_bug.cgi?id=68691
+
         Unreviewed.  I would have preferred to have this reviewed,
         but relevant reviewers are asleep and bots are broken.
 
