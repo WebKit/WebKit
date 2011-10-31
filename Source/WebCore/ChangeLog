@@ -1,3 +1,20 @@
+2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        window.onerror doesn't work with inline (attribute) scripts
+        https://bugs.webkit.org/show_bug.cgi?id=70991
+
+        Uncaught syntax errors in inline event handlers are now reported to
+        window.onerror handler.
+
+        Reviewed by Geoffrey Garen.
+
+        Tests: fast/events/window-onerror-exception-in-attr.html
+               fast/events/window-onerror-syntax-error-in-attr.html
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction): report exception as usual
+        if it happens during event handler compilation.
+
 2011-10-31  Emil A Eklund  <eae@chromium.org>
 
         Overridden LayoutRect method still uses IntRects

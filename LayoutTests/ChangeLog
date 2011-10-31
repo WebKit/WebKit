@@ -1,3 +1,21 @@
+2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        window.onerror doesn't work with inline (attribute) scripts
+        https://bugs.webkit.org/show_bug.cgi?id=70991
+
+        Added a couple of window.onerror tests for the cases when uncaught exception
+        occurs in inline event handler. Test for non-syntax errors passed before this change
+        as well and just extends test coverage for window.onerror functionality.
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/events/window-onerror-exception-in-attr-expected.txt: Added.
+        * fast/events/window-onerror-exception-in-attr.html: Added.
+        * fast/events/window-onerror-syntax-error-in-attr-expected.txt: Added.
+        * fast/events/window-onerror-syntax-error-in-attr.html: Added.
+        * platform/chromium/fast/events/window-onerror-exception-in-attr-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror-syntax-error-in-attr-expected.txt: Added.
+
 2011-10-31  John Gregg  <johnnyg@google.com>
 
         Unreviewed, more expectations changes for svg.

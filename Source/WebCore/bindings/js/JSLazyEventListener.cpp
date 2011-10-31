@@ -98,6 +98,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec, exec->lexicalGlobalObject(), args, Identifier(exec, stringToUString(m_functionName)), stringToUString(m_sourceURL), m_lineNumber); // FIXME: is globalExec ok?
     if (exec->hadException()) {
+        reportCurrentException(exec);
         exec->clearException();
         return 0;
     }
