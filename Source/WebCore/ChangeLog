@@ -1,3 +1,22 @@
+2011-10-31  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98389
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            REGRESSION(97821): HistoryController::itemsAreClones crashes a lot
+            https://bugs.webkit.org/show_bug.cgi?id=70827
+            <rdar://problem/10342925>
+
+            Reviewed by Adam Barth.
+
+            Check that m_currentItem is non-null before passing it to itemsAreClones. While I wasn't
+            able to make a test case that would reproduce this crash, we do check m_currentItem for null
+            everywhere else, and the crash log indicates that this would fix the crash.
+
+            * loader/HistoryController.cpp:
+            (WebCore::HistoryController::recursiveUpdateForCommit):
+
 2011-10-27  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98503
