@@ -54,10 +54,10 @@ public:
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 
+    void requestStyleSheet();
+
 private:
     CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
-
-    virtual void insertedIntoParent();
 
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);

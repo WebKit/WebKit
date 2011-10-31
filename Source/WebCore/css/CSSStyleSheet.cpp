@@ -88,7 +88,8 @@ void CSSStyleSheet::append(PassRefPtr<CSSRule> child)
 {
     CSSRule* c = child.get();
     m_children.append(child);
-    c->insertedIntoParent();
+    if (c->isImportRule())
+        static_cast<CSSImportRule*>(c)->requestStyleSheet();
 }
 
 void CSSStyleSheet::remove(unsigned index)
@@ -136,7 +137,8 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
 
     CSSRule* c = r.get();
     m_children.insert(index, r.release());
-    c->insertedIntoParent();
+    if (c->isImportRule())
+        static_cast<CSSImportRule*>(c)->requestStyleSheet();
 
     styleSheetChanged();
 

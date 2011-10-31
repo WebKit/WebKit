@@ -96,8 +96,6 @@ public:
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
 
-    virtual void insertedIntoParent() { }
-
     KURL baseURL() const
     {
         if (CSSStyleSheet* parentSheet = parentStyleSheet())

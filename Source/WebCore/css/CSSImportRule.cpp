@@ -109,7 +109,7 @@ bool CSSImportRule::isLoading() const
     return m_loading || (m_styleSheet && m_styleSheet->isLoading());
 }
 
-void CSSImportRule::insertedIntoParent()
+void CSSImportRule::requestStyleSheet()
 {
     CSSStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet || !parentSheet->document())
