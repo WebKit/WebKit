@@ -233,8 +233,9 @@ private:
     NPP_t m_npp;
     NPWindow m_npWindow;
 
-    WebCore::IntRect m_frameRect;
-    WebCore::IntRect m_clipRect;
+    // FIXME: Get rid of these.
+    WebCore::IntRect m_frameRectInWindowCoordinates;
+    WebCore::IntRect m_clipRectInWindowCoordinates;
 
     CString m_userAgent;
 

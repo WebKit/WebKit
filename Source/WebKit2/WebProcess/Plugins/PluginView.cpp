@@ -730,7 +730,6 @@ void PluginView::viewGeometryDidChange()
     // FIXME: The clip rect isn't correct.
     IntRect clipRect = boundsRect();
     m_plugin->geometryDidChange(size(), clipRect, transform);
-
 }
 
 void PluginView::viewVisibilityDidChange()

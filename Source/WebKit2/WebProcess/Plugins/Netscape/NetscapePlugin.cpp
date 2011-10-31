@@ -118,7 +118,7 @@ void NetscapePlugin::invalidate(const NPRect* invalidRect)
     IntRect rect;
     
     if (!invalidRect)
-        rect = IntRect(0, 0, m_frameRect.width(), m_frameRect.height());
+        rect = IntRect(0, 0, m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height());
     else
         rect = IntRect(invalidRect->left, invalidRect->top,
                        invalidRect->right - invalidRect->left, invalidRect->bottom - invalidRect->top);
@@ -484,15 +484,15 @@ void NetscapePlugin::callSetWindow()
     m_npWindow.x = 0;
     m_npWindow.y = 0;
 #else
-    m_npWindow.x = m_frameRect.x();
-    m_npWindow.y = m_frameRect.y();
+    m_npWindow.x = m_frameRectInWindowCoordinates.x();
+    m_npWindow.y = m_frameRectInWindowCoordinates.y();
 #endif
-    m_npWindow.width = m_frameRect.width();
-    m_npWindow.height = m_frameRect.height();
-    m_npWindow.clipRect.top = m_clipRect.y();
-    m_npWindow.clipRect.left = m_clipRect.x();
-    m_npWindow.clipRect.bottom = m_clipRect.maxY();
-    m_npWindow.clipRect.right = m_clipRect.maxX();
+    m_npWindow.width = m_frameRectInWindowCoordinates.width();
+    m_npWindow.height = m_frameRectInWindowCoordinates.height();
+    m_npWindow.clipRect.top = m_clipRectInWindowCoordinates.y();
+    m_npWindow.clipRect.left = m_clipRectInWindowCoordinates.x();
+    m_npWindow.clipRect.bottom = m_clipRectInWindowCoordinates.maxY();
+    m_npWindow.clipRect.right = m_clipRectInWindowCoordinates.maxX();
 
     NPP_SetWindow(&m_npWindow);
 }
@@ -640,17 +640,17 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 
 PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 {
-    if (!supportsSnapshotting() || m_frameRect.isEmpty())
+    if (!supportsSnapshotting() || m_frameRectInWindowCoordinates.isEmpty())
         return 0;
 
     ASSERT(m_isStarted);
     
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRect.size(), ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRectInWindowCoordinates.size(), ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
-    context->translate(-m_frameRect.x(), -m_frameRect.y());
+    context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
 
-    platformPaint(context.get(), m_frameRect, true);
+    platformPaint(context.get(), m_frameRectInWindowCoordinates, true);
     
     return bitmap.release();
 }
@@ -660,17 +660,17 @@ bool NetscapePlugin::isTransparent()
     return m_isTransparent;
 }
 
-void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
+void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRectInWindowCoordinates, const IntRect& clipRectInWindowCoordinates)
 {
     ASSERT(m_isStarted);
 
-    if (m_frameRect == frameRect && m_clipRect == clipRect) {
+    if (m_frameRectInWindowCoordinates == frameRectInWindowCoordinates && m_clipRectInWindowCoordinates == clipRectInWindowCoordinates) {
         // Nothing to do.
         return;
     }
 
-    m_frameRect = frameRect;
-    m_clipRect = clipRect;
+    m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
+    m_clipRectInWindowCoordinates = clipRectInWindowCoordinates;
 
     platformGeometryDidChange();
     callSetWindow();
