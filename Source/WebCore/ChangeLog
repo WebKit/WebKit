@@ -1,3 +1,14 @@
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
+        More work on making plug-ins work better with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=71241
+
+        Reviewed by Darin Adler.
+
+        Export symbols used by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineGetter

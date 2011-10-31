@@ -1,3 +1,23 @@
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
+        More work on making plug-ins work better with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=71241
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::geometryDidChange):
+        Implement NetscapePlugin::geometryDidChange and store the plug-in size,
+        the clip rect and the root view transform. Use the transform to compute the window
+        relative frame and clip rects.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add new member variables.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+        Always call the new Plugin::geometryDidChange.
+
 2011-10-27  Anders Carlsson  <andersca@apple.com>
 
         Rename a couple of NetscapePlugin and PluginProxy member variables

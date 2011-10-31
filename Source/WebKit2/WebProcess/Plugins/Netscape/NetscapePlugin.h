@@ -29,6 +29,7 @@
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
 #include "RunLoop.h"
+#include <WebCore/AffineTransform.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
@@ -232,6 +233,14 @@ private:
     RefPtr<NetscapePluginModule> m_pluginModule;
     NPP_t m_npp;
     NPWindow m_npWindow;
+
+    WebCore::IntSize m_pluginSize;
+
+    // The clip rect in plug-in coordinates.
+    WebCore::IntRect m_clipRect;
+
+    // A transform that can be used to convert from root view coordinates to plug-in coordinates.
+    WebCore::AffineTransform m_pluginToRootViewTransform;
 
     // FIXME: Get rid of these.
     WebCore::IntRect m_frameRectInWindowCoordinates;

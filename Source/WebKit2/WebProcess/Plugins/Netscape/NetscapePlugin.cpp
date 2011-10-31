@@ -678,8 +678,25 @@ void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRectInWindo
 
 void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
-    // FIXME: This isn't called yet.
-    ASSERT_NOT_REACHED();
+    ASSERT(m_isStarted);
+
+    if (pluginSize == m_pluginSize && m_clipRect == clipRect && m_pluginToRootViewTransform == pluginToRootViewTransform) {
+        // Nothing to do.
+        return;
+    }
+
+    m_pluginSize = pluginSize;
+    m_clipRect = clipRect;
+    m_pluginToRootViewTransform = pluginToRootViewTransform;
+
+    IntPoint frameRectLocationInWindowCoordinates = m_pluginToRootViewTransform.mapPoint(IntPoint());
+    m_frameRectInWindowCoordinates = IntRect(frameRectLocationInWindowCoordinates, m_pluginSize);
+
+    IntPoint clipRectLocationInWindowCoordinates = m_pluginToRootViewTransform.mapPoint(clipRect.location());
+    m_clipRectInWindowCoordinates = IntRect(clipRectLocationInWindowCoordinates, m_clipRect.size());
+
+    platformGeometryDidChange();
+    callSetWindow();
 }
 
 void NetscapePlugin::visibilityDidChange()

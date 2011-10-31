@@ -720,7 +720,6 @@ void PluginView::viewGeometryDidChange()
         // Get the frame rect in window coordinates.
         IntRect rect = parent()->contentsToWindow(frameRect());
         m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
-        return;
     }
 
     // FIXME: Just passing a translation matrix isn't good enough.
