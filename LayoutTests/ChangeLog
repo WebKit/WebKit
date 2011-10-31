@@ -1,3 +1,18 @@
+2011-10-31  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add pixel baselines for tests in fast/ directory.
+
+        * platform/efl/fast/backgrounds: [...]
+        * platform/efl/fast/block: [...]
+        * platform/efl/fast/body-propagation: [...]
+        * platform/efl/fast/borders: [...]
+        * platform/efl/fast/box-shadow: [...]
+        * platform/efl/fast/canvas: [...]
+        * platform/efl/fast/clip: [...]
+        * platform/efl/fast/compact: [...]
+        * platform/efl/fast/css-generated-content: [...]
+        * platform/efl/fast/css: [...]
+
 2011-10-31  Anna Cavender  <annacc@chromium.org>
 
         Implement load notification and events for <track>.
