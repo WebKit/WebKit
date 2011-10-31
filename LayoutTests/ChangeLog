@@ -1,3 +1,9 @@
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Mark fast/canvas/shadow-offset-3.html as PASS CRASH on GPU LINUX DEBUG.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Using keyboard to increment/decrement units is inconsistent
