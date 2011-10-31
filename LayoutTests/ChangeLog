@@ -1,5 +1,11 @@
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Fixed duplicate lines in test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. More rebaselines after r98852.
 
         * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-003-expected.png: Added.
