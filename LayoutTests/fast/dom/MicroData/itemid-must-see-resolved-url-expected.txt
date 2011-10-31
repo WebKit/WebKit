@@ -1,0 +1,16 @@
+This tests the itemid attribute must see the resolved itemId URL.
+
+Created element of type: div
+Set attribute: itemid, value: foo
+PASS createElement('div',{itemid:'foo'}).itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/foo' is true
+
+Created element of type: div
+Set attribute: itemid, value: foo bar
+PASS createElement('div',{itemid:'foo bar'}).itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/foo%20bar' is true
+
+Created element of type: div
+PASS element.itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/bar' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

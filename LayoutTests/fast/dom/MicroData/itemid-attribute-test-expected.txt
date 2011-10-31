@@ -1,0 +1,35 @@
+itemid attribute simple test.
+
+Created element of type: div
+Set attribute: itemid, value: http://example.com/foo
+
+The itemId attribute must be defined.
+PASS element.itemId is defined.
+PASS element.itemId is 'http://example.com/foo'
+
+itemId attribute must be case-senaitive.
+Created element of type: div
+Set attribute: itemid, value: http://example.com/FOO
+PASS createElement('div', {itemid: 'http://example.com/FOO'}).itemId == 'http://example.com/FOO'; is true
+
+itemId must strip leading and trailing whitespace.
+Created element of type: div
+Set attribute: itemid, value:  http://example.com/foo 
+PASS createElement('div', {itemid: ' http://example.com/foo '}).itemId == 'http://example.com/foo'; is true
+
+itemId must strip leading whitespace.
+Created element of type: div
+Set attribute: itemid, value:   http://example.com/foo
+PASS createElement('div', {itemid: '  http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+itemId must strip trailing whitespace.
+Created element of type: div
+Set attribute: itemid, value: http://example.com/foo  
+PASS createElement('div', {itemid: 'http://example.com/foo  '}).itemId == 'http://example.com/foo'; is true
+
+itemId must be read/write.
+PASS element.itemId = 'http://example.com/bar'; element.itemId == 'http://example.com/bar' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

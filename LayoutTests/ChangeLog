@@ -1,3 +1,17 @@
+2011-10-31  Arko Saha  <arko@motorola.com>
+
+        Microdata: Support for itemid attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=71007
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test-cases for itemid attribute.
+
+        * fast/dom/MicroData/itemid-attribute-test-expected.txt: Added.
+        * fast/dom/MicroData/itemid-attribute-test.html: Added.
+        * fast/dom/MicroData/itemid-must-see-resolved-url-expected.txt: Added.
+        * fast/dom/MicroData/itemid-must-see-resolved-url.html: Added.
+
 2011-10-31  Benjamin Poulain  <benjamin@webkit.org>
 
         The test input-paste-undo.html needs update to work properly

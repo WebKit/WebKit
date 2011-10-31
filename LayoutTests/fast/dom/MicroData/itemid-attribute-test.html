@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>itemid attribute simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemid: 'http://example.com/foo'});
+
+debug("<br>The itemId attribute must be defined.");
+shouldBeDefined("element.itemId");
+shouldBe("element.itemId", "'http://example.com/foo'");
+
+debug("<br>itemId attribute must be case-senaitive.");
+shouldBeTrue("createElement('div', {itemid: 'http://example.com/FOO'}).itemId == 'http://example.com/FOO';");
+
+debug("<br>itemId must strip leading and trailing whitespace.");
+shouldBeTrue("createElement('div', {itemid: ' http://example.com/foo '}).itemId == 'http://example.com/foo';");
+
+debug("<br>itemId must strip leading whitespace.");
+shouldBeTrue("createElement('div', {itemid: '  http://example.com/foo'}).itemId == 'http://example.com/foo';");
+
+debug("<br>itemId must strip trailing whitespace.");
+shouldBeTrue("createElement('div', {itemid: 'http://example.com/foo  '}).itemId == 'http://example.com/foo';");
+
+debug("<br>itemId must be read/write.");
+shouldBeTrue("element.itemId = 'http://example.com/bar'; element.itemId == 'http://example.com/bar'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

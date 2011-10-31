@@ -1,3 +1,20 @@
+2011-10-31  Arko Saha  <arko@motorola.com>
+
+        Microdata: Support for itemid attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=71007
+
+        Reviewed by Ryosuke Niwa.
+
+        itemid attribute: To give a global identifier for the Microdata items.
+        The itemid attribute, if specified, must have a value that is a valid URL potentially
+        surrounded by spaces.
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#attr-itemid
+
+        Tests: fast/dom/MicroData/itemid-attribute-test.html
+               fast/dom/MicroData/itemid-must-see-resolved-url.html
+
+        * html/HTMLElement.idl:
+
 2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         window.onerror doesn't work with inline (attribute) scripts

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests the itemid attribute must see the resolved itemId URL.</p>
+<div id="console"></div>
+<script>
+var currentUri = location.href;
+
+shouldBeTrue("createElement('div',{itemid:'foo'}).itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/foo'");
+debug('');
+shouldBeTrue("createElement('div',{itemid:'foo bar'}).itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/foo%20bar'");
+debug('');
+
+var element = createElement('div',{});
+element.itemId = 'bar'
+shouldBeTrue("element.itemId == currentUri.substring(0, currentUri.lastIndexOf('/')) + '/bar'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
