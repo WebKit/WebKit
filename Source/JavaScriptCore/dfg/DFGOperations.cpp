@@ -42,6 +42,14 @@
 #define SYMBOL_STRING(name) #name
 #endif
 
+#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
+#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
+#elif CPU(X86) && COMPILER(MINGW)
+#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
+#else
+#define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
+#endif
+
 #if CPU(X86_64)
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
@@ -49,7 +57,7 @@
     ".globl " SYMBOL_STRING(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%rsp), %" STRINGIZE(register) "\n" \
-        "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
+        "jmp " SYMBOL_STRING_RELOCATION(function##WithReturnAddress) "\n" \
     );
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
@@ -63,7 +71,7 @@
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%esp), %eax\n" \
         "mov %eax, " STRINGIZE(offset) "(%esp)\n" \
-        "jmp " SYMBOL_STRING(function) "WithReturnAddress" "\n" \
+        "jmp " SYMBOL_STRING_RELOCATION(function##WithReturnAddress) "\n" \
     );
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 16)
@@ -509,7 +517,7 @@ asm (
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%r13), %r13\n"
     "mov %r13, %rdi\n"
-    "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
+    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
 );
 #elif CPU(X86)
 asm (
@@ -517,7 +525,7 @@ asm (
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
     "mov %edi, 4(%esp)\n"
-    "jmp " SYMBOL_STRING(getHostCallReturnValueWithExecState) "\n"
+    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
 

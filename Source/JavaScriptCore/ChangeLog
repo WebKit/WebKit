@@ -1,3 +1,20 @@
+2011-10-31  Andy Wingo  <wingo@igalia.com>
+
+        Fix DFG JIT compilation on Linux targets.
+        https://bugs.webkit.org/show_bug.cgi?id=70904
+
+        Reviewed by Darin Adler.
+
+        * jit/JITStubs.cpp (SYMBOL_STRING_RELOCATION): Simplify this
+        macro.
+
+        * dfg/DFGOperations.cpp (SYMBOL_STRING_RELOCATION): Copy the
+        simplified definition from jit/JITStubs.cpp.
+        (FUNCTION_WRAPPER_WITH_RETURN_ADDRESS, getHostCallReturnValue):
+        Use the macro to access trampoline targets through the PLT on PIC
+        systems, instead of introducing a text relocation.  Otherwise, the
+        library fails to link.
+
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineGetter
