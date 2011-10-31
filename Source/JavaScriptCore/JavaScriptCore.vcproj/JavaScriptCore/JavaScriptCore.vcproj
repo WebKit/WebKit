@@ -838,6 +838,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSGlobalThis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSGlobalThis.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSLock.cpp"
 				>
 			</File>

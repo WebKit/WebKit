@@ -127,6 +127,7 @@ SET(JavaScriptCore_SOURCES
     runtime/JSGlobalData.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectFunctions.cpp
+    runtime/JSGlobalThis.cpp
     runtime/JSLock.cpp
     runtime/JSNotAnObject.cpp
     runtime/JSObject.cpp

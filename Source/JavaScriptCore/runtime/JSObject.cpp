@@ -29,13 +29,14 @@
 #include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalThis.h"
+#include "Lookup.h"
 #include "NativeErrorConstructor.h"
+#include "Nodes.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "Lookup.h"
-#include "Nodes.h"
-#include "Operations.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 
@@ -564,6 +565,8 @@ JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
 
 JSObject* JSObject::unwrappedObject()
 {
+    if (isGlobalThis())
+        return static_cast<JSGlobalThis*>(this)->unwrappedObject();
     return this;
 }
 

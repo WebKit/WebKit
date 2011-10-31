@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -43,11 +43,12 @@ enum JSType {
     JSFunctionType      = 12,
     NumberObjectType    = 13,
     ErrorInstanceType   = 14,
+    GlobalThisType      = 15,
 
     // VariableObjectType must be less than all of the types of its subclasses and only its subclasses.
-    VariableObjectType  = 15,
-    GlobalObjectType    = 16,
-    ActivationObjectType = 17,
+    VariableObjectType  = 16,
+    GlobalObjectType    = 17,
+    ActivationObjectType = 18,
 };
 
 } // namespace JSC

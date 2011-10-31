@@ -1,3 +1,39 @@
+2011-10-31  Sam Weinig  <sam@webkit.org>
+
+        Remove need for virtual JSObject::unwrappedObject
+        https://bugs.webkit.org/show_bug.cgi?id=71034
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.exp:
+        Update exports.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add JSGlobalThis.cpp.
+
+        * runtime/JSGlobalThis.cpp: Added.
+        (JSC::JSGlobalThis::visitChildren):
+        (JSC::JSGlobalThis::unwrappedObject):
+        * runtime/JSGlobalThis.h:
+        (JSC::JSGlobalThis::createStructure):
+        Move underlying object from JSDOMWindowShell down to JSGlobalThis
+        and corresponding visitChildren method.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::unwrappedObject):
+        Change unwrappedObject from virtual, to just needing an if check.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::isGlobalThis):
+        * runtime/JSType.h:
+        Add isGlobalThis predicate and type.
+
 2011-10-31  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         WTF::StringImpl::create(const char*, unsigned) calls itself

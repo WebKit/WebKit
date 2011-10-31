@@ -136,7 +136,7 @@ namespace JSC {
         UString toString(ExecState*) const;
 
         static JSObject* toThisObject(JSCell*, ExecState*);
-        virtual JSObject* unwrappedObject();
+        JSObject* unwrappedObject();
 
         bool getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificFunction) const;
 
@@ -195,6 +195,7 @@ namespace JSC {
         bool isVariableObject() const;
         bool isActivationObject() const;
         bool isErrorInstance() const;
+        bool isGlobalThis() const;
 
         void seal(JSGlobalData&);
         void freeze(JSGlobalData&);
@@ -422,6 +423,11 @@ inline bool JSObject::isActivationObject() const
 inline bool JSObject::isErrorInstance() const
 {
     return structure()->typeInfo().type() == ErrorInstanceType;
+}
+
+inline bool JSObject::isGlobalThis() const
+{
+    return structure()->typeInfo().type() == GlobalThisType;
 }
 
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)

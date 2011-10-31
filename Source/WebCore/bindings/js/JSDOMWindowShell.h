@@ -43,11 +43,11 @@ namespace WebCore {
         JSDOMWindowShell(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
         virtual ~JSDOMWindowShell();
 
-        JSDOMWindow* window() const { return m_window.get(); }
+        JSDOMWindow* window() const { return static_cast<JSDOMWindow*>(m_unwrappedObject.get()); }
         void setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)
         {
             ASSERT_ARG(window, window);
-            m_window.set(globalData, this, window);
+            m_unwrappedObject.set(globalData, this, window);
             setPrototype(globalData, window->prototype());
         }
         void setWindow(PassRefPtr<DOMWindow>);
@@ -65,7 +65,7 @@ namespace WebCore {
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info); 
+            return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::GlobalThisType, StructureFlags), &s_info); 
         }
 
         DOMWrapperWorld* world() { return m_world.get(); }
@@ -76,9 +76,8 @@ namespace WebCore {
 
     private:
         void* operator new(size_t);
-        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
+        static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 
-        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
         virtual JSC::UString className() const;
         static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -92,9 +91,7 @@ namespace WebCore {
         virtual bool defineOwnProperty(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&, bool shouldThrow);
         virtual JSC::JSValue lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSValue lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
-        virtual JSC::JSObject* unwrappedObject();
 
-        JSC::WriteBarrier<JSDOMWindow> m_window;
         RefPtr<DOMWrapperWorld> m_world;
     };
 

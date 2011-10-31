@@ -612,6 +612,7 @@
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3135640F302FA3003DFD3A /* DebuggerActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3135620F302FA3003DFD3A /* DebuggerActivation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */; };
+		BC3C4CA01458F5450025FB62 /* JSGlobalThis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C9F1458F5450025FB62 /* JSGlobalThis.cpp */; };
 		BC5F7BBE11823B590052C02C /* Atomics.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBB11823B590052C02C /* Atomics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5F7BC011823B590052C02C /* ThreadSafeRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1337,6 +1338,7 @@
 		BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerActivation.cpp; sourceTree = "<group>"; };
 		BC337BDE0E1AF0B80076918A /* GetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetter.h; sourceTree = "<group>"; };
 		BC337BEA0E1B00CB0076918A /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
+		BC3C4C9F1458F5450025FB62 /* JSGlobalThis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalThis.cpp; sourceTree = "<group>"; };
 		BC5F7BBB11823B590052C02C /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomics.h; sourceTree = "<group>"; };
 		BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadingPrimitives.h; sourceTree = "<group>"; };
 		BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeRefCounted.h; sourceTree = "<group>"; };
@@ -2126,6 +2128,7 @@
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				8604F503143CE1C100B295F5 /* JSGlobalThis.h */,
+				BC3C4C9F1458F5450025FB62 /* JSGlobalThis.cpp */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
@@ -3412,6 +3415,7 @@
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
 				0FE228EE1436AB2C00196C48 /* Heuristics.cpp in Sources */,
 				0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */,
+				BC3C4CA01458F5450025FB62 /* JSGlobalThis.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

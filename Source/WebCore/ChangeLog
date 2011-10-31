@@ -1,3 +1,35 @@
+2011-10-31  Sam Weinig  <sam@webkit.org>
+
+        Remove need for virtual JSObject::unwrappedObject
+        https://bugs.webkit.org/show_bug.cgi?id=71034
+
+        Reviewed by Geoffrey Garen.
+
+        Move the member containing the global object from the JSDOMWindowShell
+        down to the JSGlobalThis class, and update JSDOMWindowShell to go through
+        an inline helper (which just casts) to get the window.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        (WebCore::JSDOMWindowShell::className):
+        (WebCore::JSDOMWindowShell::getOwnPropertySlot):
+        (WebCore::JSDOMWindowShell::getOwnPropertyDescriptor):
+        (WebCore::JSDOMWindowShell::put):
+        (WebCore::JSDOMWindowShell::putWithAttributes):
+        (WebCore::JSDOMWindowShell::defineOwnProperty):
+        (WebCore::JSDOMWindowShell::deleteProperty):
+        (WebCore::JSDOMWindowShell::getPropertyNames):
+        (WebCore::JSDOMWindowShell::getOwnPropertyNames):
+        (WebCore::JSDOMWindowShell::defineGetter):
+        (WebCore::JSDOMWindowShell::defineSetter):
+        (WebCore::JSDOMWindowShell::lookupGetter):
+        (WebCore::JSDOMWindowShell::lookupSetter):
+        (WebCore::JSDOMWindowShell::impl):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::window):
+        (WebCore::JSDOMWindowShell::setWindow):
+        (WebCore::JSDOMWindowShell::createStructure):
+
 2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit nests pre on copy and paste when the pre is the root editable element

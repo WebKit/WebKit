@@ -41,6 +41,15 @@ public:
         return globalThis;
     }
 
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
+    {
+        return Structure::create(globalData, 0, prototype, TypeInfo(GlobalThisType, StructureFlags), &s_info); 
+    }
+
+    static JS_EXPORTDATA const JSC::ClassInfo s_info;
+
+    JSGlobalObject* unwrappedObject();
+
 protected:
     JSGlobalThis(JSGlobalData& globalData, Structure* structure)
         : JSNonFinalObject(globalData, structure)
@@ -51,8 +60,14 @@ protected:
     {
         Base::finishCreation(globalData);
     }
+
+    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<JSGlobalObject> m_unwrappedObject;
 };
 
-}
+} // namespace JSC
 
-#endif
+#endif // JSGlobalThis_h
