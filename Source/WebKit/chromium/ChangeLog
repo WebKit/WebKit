@@ -1,3 +1,141 @@
+2011-10-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] The Chromium port calls OwnPtr::get and RefPtr::get way more often than needed
+        https://bugs.webkit.org/show_bug.cgi?id=71205
+
+        Reviewed by Ryosuke Niwa.
+
+        WebKit style is to use the implicit Boolean conversions rather than
+        calling get() on these pointer types.  This patch cleans up most (all?)
+        of these style issues in the Chromium port in the hopes that they'll be
+        copy/pasted less in the future.
+
+        * src/ApplicationCacheHostInternal.h:
+        (WebCore::ApplicationCacheHostInternal::toWebApplicationCacheHost):
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::start):
+        (WebCore::AudioDestinationChromium::stop):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::setMainDocumentError):
+        (WebKit::FrameLoaderClientImpl::committedLoad):
+        (WebKit::FrameLoaderClientImpl::finishedLoading):
+        (WebKit::FrameLoaderClientImpl::redirectDataToPlugin):
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::postMessageToRemote):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::connect):
+        (WebCore::SocketStreamHandleInternal::send):
+        (WebCore::SocketStreamHandleInternal::didOpenStream):
+        (WebCore::SocketStreamHandleInternal::didSendData):
+        (WebCore::SocketStreamHandleInternal::didReceiveData):
+        (WebCore::SocketStreamHandleInternal::didClose):
+        (WebCore::SocketStreamHandleInternal::didFail):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::hitTest):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::findChildByExpression):
+        (WebKit::WebFrameImpl::loadHistoryItem):
+        (WebKit::WebFrameImpl::characterIndexForPoint):
+        (WebKit::WebFrameImpl::selectionAsText):
+        (WebKit::WebFrameImpl::selectionAsMarkup):
+        (WebKit::WebFrameImpl::getPrintPageShrink):
+        (WebKit::WebFrameImpl::printPage):
+        (WebKit::WebFrameImpl::printEnd):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::type):
+        * src/WebIDBKeyRange.cpp:
+        (WebKit::WebIDBKeyRange::lower):
+        (WebKit::WebIDBKeyRange::upper):
+        (WebKit::WebIDBKeyRange::lowerOpen):
+        (WebKit::WebIDBKeyRange::upperOpen):
+        * src/WebImageCG.cpp:
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        (WebKit::WebMediaPlayerClientImpl::cancelLoad):
+        (WebKit::WebMediaPlayerClientImpl::play):
+        (WebKit::WebMediaPlayerClientImpl::pause):
+        (WebKit::WebMediaPlayerClientImpl::sourceAppend):
+        (WebKit::WebMediaPlayerClientImpl::sourceEndOfStream):
+        (WebKit::WebMediaPlayerClientImpl::naturalSize):
+        (WebKit::WebMediaPlayerClientImpl::hasVideo):
+        (WebKit::WebMediaPlayerClientImpl::hasAudio):
+        (WebKit::WebMediaPlayerClientImpl::setVisible):
+        (WebKit::WebMediaPlayerClientImpl::duration):
+        (WebKit::WebMediaPlayerClientImpl::currentTime):
+        (WebKit::WebMediaPlayerClientImpl::seek):
+        (WebKit::WebMediaPlayerClientImpl::seeking):
+        (WebKit::WebMediaPlayerClientImpl::setEndTime):
+        (WebKit::WebMediaPlayerClientImpl::setRate):
+        (WebKit::WebMediaPlayerClientImpl::paused):
+        (WebKit::WebMediaPlayerClientImpl::supportsFullscreen):
+        (WebKit::WebMediaPlayerClientImpl::supportsSave):
+        (WebKit::WebMediaPlayerClientImpl::setVolume):
+        (WebKit::WebMediaPlayerClientImpl::networkState):
+        (WebKit::WebMediaPlayerClientImpl::readyState):
+        (WebKit::WebMediaPlayerClientImpl::maxTimeSeekable):
+        (WebKit::WebMediaPlayerClientImpl::buffered):
+        (WebKit::WebMediaPlayerClientImpl::dataRate):
+        (WebKit::WebMediaPlayerClientImpl::totalBytesKnown):
+        (WebKit::WebMediaPlayerClientImpl::totalBytes):
+        (WebKit::WebMediaPlayerClientImpl::bytesLoaded):
+        (WebKit::WebMediaPlayerClientImpl::setSize):
+        (WebKit::WebMediaPlayerClientImpl::paintCurrentFrameInContext):
+        (WebKit::WebMediaPlayerClientImpl::setPreload):
+        (WebKit::WebMediaPlayerClientImpl::hasSingleSecurityOrigin):
+        (WebKit::WebMediaPlayerClientImpl::movieLoadType):
+        (WebKit::WebMediaPlayerClientImpl::mediaTimeForTimeValue):
+        (WebKit::WebMediaPlayerClientImpl::decodedFrameCount):
+        (WebKit::WebMediaPlayerClientImpl::droppedFrameCount):
+        (WebKit::WebMediaPlayerClientImpl::audioDecodedByteCount):
+        (WebKit::WebMediaPlayerClientImpl::videoDecodedByteCount):
+        (WebKit::WebMediaPlayerClientImpl::acceleratedRenderingInUse):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::startDelayedLoad):
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::extraData):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::theme):
+        (WebKit::WebViewImpl::mainFrameImpl):
+        (WebKit::WebViewImpl::tabKeyCyclesThroughElements):
+        (WebKit::WebViewImpl::hideSelectPopup):
+        (WebKit::WebViewImpl::popupClosed):
+        (WebKit::WebViewImpl::focusedWebCoreFrame):
+        (WebKit::WebViewImpl::close):
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::handleInputEvent):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::compositionRange):
+        (WebKit::WebViewImpl::caretOrSelectionRange):
+        (WebKit::WebViewImpl::settings):
+        (WebKit::WebViewImpl::pageEncoding):
+        (WebKit::WebViewImpl::setPageEncoding):
+        (WebKit::WebViewImpl::setInitialFocus):
+        (WebKit::WebViewImpl::clearFocusedNode):
+        (WebKit::WebViewImpl::copyImageAt):
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit::WebViewImpl::dragTargetDragLeave):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver):
+        (WebKit::WebViewImpl::inspectElementAt):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postMessageTask):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::waitForOperationToComplete):
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+
 2011-10-31  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Add missing declaration in WebSettings.h

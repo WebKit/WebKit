@@ -303,7 +303,7 @@ void WebURLRequest::setDownloadToFile(bool downloadToFile)
 WebURLRequest::ExtraData* WebURLRequest::extraData() const
 {
     RefPtr<ResourceRequest::ExtraData> data = m_private->m_resourceRequest->extraData();
-    if (!data.get())
+    if (!data)
         return 0;
     return static_cast<ExtraDataContainer*>(data.get())->extraData();
 }

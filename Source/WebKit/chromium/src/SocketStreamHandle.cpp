@@ -91,14 +91,14 @@ void SocketStreamHandleInternal::connect(const KURL& url)
 {
     m_socket = adoptPtr(webKitPlatformSupport()->createSocketStreamHandle());
     LOG(Network, "connect");
-    ASSERT(m_socket.get());
+    ASSERT(m_socket);
     m_socket->connect(url, this);
 }
 
 int SocketStreamHandleInternal::send(const char* data, int len)
 {
     LOG(Network, "send len=%d", len);
-    ASSERT(m_socket.get());
+    ASSERT(m_socket);
     if (m_pendingAmountSent + len >= m_maxPendingSendAllowed)
         len = m_maxPendingSendAllowed - m_pendingAmountSent - 1;
 
@@ -125,7 +125,7 @@ void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHand
     LOG(Network, "SocketStreamHandleInternal::didOpen %d",
         maxPendingSendAllowed);
     ASSERT(maxPendingSendAllowed > 0);
-    if (m_handle && m_socket.get()) {
+    if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_maxPendingSendAllowed = maxPendingSendAllowed;
         m_handle->m_state = SocketStreamHandleBase::Open;
@@ -141,7 +141,7 @@ void SocketStreamHandleInternal::didSendData(WebSocketStreamHandle* socketHandle
 {
     LOG(Network, "SocketStreamHandleInternal::didSendData %d", amountSent);
     ASSERT(amountSent > 0);
-    if (m_handle && m_socket.get()) {
+    if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_pendingAmountSent -= amountSent;
         ASSERT(m_pendingAmountSent >= 0);
@@ -152,7 +152,7 @@ void SocketStreamHandleInternal::didSendData(WebSocketStreamHandle* socketHandle
 void SocketStreamHandleInternal::didReceiveData(WebSocketStreamHandle* socketHandle, const WebData& data)
 {
     LOG(Network, "didReceiveData");
-    if (m_handle && m_socket.get()) {
+    if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         if (m_handle->m_client)
             m_handle->m_client->didReceiveSocketStreamData(m_handle, data.data(), data.size());
@@ -162,7 +162,7 @@ void SocketStreamHandleInternal::didReceiveData(WebSocketStreamHandle* socketHan
 void SocketStreamHandleInternal::didClose(WebSocketStreamHandle* socketHandle)
 {
     LOG(Network, "didClose");
-    if (m_handle && m_socket.get()) {
+    if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_socket.clear();
         SocketStreamHandle* h = m_handle;
@@ -175,7 +175,7 @@ void SocketStreamHandleInternal::didClose(WebSocketStreamHandle* socketHandle)
 void SocketStreamHandleInternal::didFail(WebSocketStreamHandle* socketHandle, const WebSocketStreamError& err)
 {
     LOG(Network, "didFail");
-    if (m_handle && m_socket.get()) {
+    if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_socket.clear();
         SocketStreamHandle* h = m_handle;
@@ -204,14 +204,14 @@ SocketStreamHandle::~SocketStreamHandle()
 
 int SocketStreamHandle::platformSend(const char* buf, int len)
 {
-    if (!m_internal.get())
+    if (!m_internal)
         return 0;
     return m_internal->send(buf, len);
 }
 
 void SocketStreamHandle::platformClose()
 {
-    if (m_internal.get())
+    if (m_internal)
         m_internal->close();
 }
 

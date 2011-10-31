@@ -77,7 +77,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider
       return;
     
     m_audioDevice = adoptPtr(webKitPlatformSupport()->createAudioDevice(m_callbackBufferSize, numberOfChannels, sampleRate, this));
-    ASSERT(m_audioDevice.get());
+    ASSERT(m_audioDevice);
 }
 
 AudioDestinationChromium::~AudioDestinationChromium()
@@ -87,7 +87,7 @@ AudioDestinationChromium::~AudioDestinationChromium()
 
 void AudioDestinationChromium::start()
 {
-    if (!m_isPlaying && m_audioDevice.get()) {
+    if (!m_isPlaying && m_audioDevice) {
         m_audioDevice->start();
         m_isPlaying = true;
     }
@@ -95,7 +95,7 @@ void AudioDestinationChromium::start()
 
 void AudioDestinationChromium::stop()
 {
-    if (m_isPlaying && m_audioDevice.get()) {
+    if (m_isPlaying && m_audioDevice) {
         m_audioDevice->stop();
         m_isPlaying = false;
     }

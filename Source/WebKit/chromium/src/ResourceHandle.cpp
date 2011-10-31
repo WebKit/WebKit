@@ -66,7 +66,7 @@ void ResourceHandleInternal::start()
     m_state = ConnectionStateStarted;
 
     m_loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
-    ASSERT(m_loader.get());
+    ASSERT(m_loader);
 
     WrappedResourceRequest wrappedRequest(m_request);
     wrappedRequest.setAllowStoredCredentials(allowStoredCredentials());
@@ -257,7 +257,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context,
                                                Vector<char>& data)
 {
     OwnPtr<WebURLLoader> loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
-    ASSERT(loader.get());
+    ASSERT(loader);
 
     WrappedResourceRequest requestIn(request);
     requestIn.setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);

@@ -182,7 +182,7 @@ void PlatformMessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChann
     WebString messageString = message->message()->toWireString();
     OwnPtr<WebCore::MessagePortChannelArray> channels = message->channels();
     WebMessagePortChannelArray* webChannels = 0;
-    if (channels.get() && channels->size()) {
+    if (channels && channels->size()) {
         webChannels = new WebMessagePortChannelArray(channels->size());
         for (size_t i = 0; i < channels->size(); ++i) {
             WebCore::PlatformMessagePortChannel* platformChannel = (*channels)[i]->channel();

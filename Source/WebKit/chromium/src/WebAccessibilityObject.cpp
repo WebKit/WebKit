@@ -532,7 +532,7 @@ WebAccessibilityObject WebAccessibilityObject::hitTest(const WebPoint& point) co
     IntPoint contentsPoint = m_private->documentFrameView()->windowToContents(point);
     RefPtr<AccessibilityObject> hit = m_private->accessibilityHitTest(contentsPoint);
 
-    if (hit.get())
+    if (hit)
         return WebAccessibilityObject(hit);
 
     if (m_private->boundingBoxRect().contains(contentsPoint))

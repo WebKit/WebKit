@@ -401,17 +401,17 @@ WebViewImpl::~WebViewImpl()
 
 RenderTheme* WebViewImpl::theme() const
 {
-    return m_page.get() ? m_page->theme() : RenderTheme::defaultTheme().get();
+    return m_page ? m_page->theme() : RenderTheme::defaultTheme().get();
 }
 
 WebFrameImpl* WebViewImpl::mainFrameImpl()
 {
-    return m_page.get() ? WebFrameImpl::fromFrame(m_page->mainFrame()) : 0;
+    return m_page ? WebFrameImpl::fromFrame(m_page->mainFrame()) : 0;
 }
 
 bool WebViewImpl::tabKeyCyclesThroughElements() const
 {
-    ASSERT(m_page.get());
+    ASSERT(m_page);
     return m_page->tabKeyCyclesThroughElements();
 }
 
@@ -921,7 +921,7 @@ bool WebViewImpl::mapKeyCodeForScroll(int keyCode,
 
 void WebViewImpl::hideSelectPopup()
 {
-    if (m_selectPopup.get())
+    if (m_selectPopup)
         m_selectPopup->hidePopup();
 }
 
@@ -952,7 +952,7 @@ void  WebViewImpl::popupOpened(WebCore::PopupContainer* popupContainer)
 void  WebViewImpl::popupClosed(WebCore::PopupContainer* popupContainer)
 {
     if (popupContainer->popupType() == WebCore::PopupContainer::Select) {
-        ASSERT(m_selectPopup.get());
+        ASSERT(m_selectPopup);
         m_selectPopup = 0;
     }
 }
@@ -967,7 +967,7 @@ void WebViewImpl::hideAutofillPopup()
 
 Frame* WebViewImpl::focusedWebCoreFrame() const
 {
-    return m_page.get() ? m_page->focusController()->focusedOrMainFrame() : 0;
+    return m_page ? m_page->focusController()->focusedOrMainFrame() : 0;
 }
 
 WebViewImpl* WebViewImpl::fromPage(Page* page)
@@ -985,7 +985,7 @@ void WebViewImpl::close()
 {
     RefPtr<WebFrameImpl> mainFrameImpl;
 
-    if (m_page.get()) {
+    if (m_page) {
         // Initiate shutdown for the entire frameset.  This will cause a lot of
         // notifications to be sent.
         if (m_page->mainFrame()) {
@@ -996,7 +996,7 @@ void WebViewImpl::close()
     }
 
     // Should happen after m_page.clear().
-    if (m_devToolsAgent.get())
+    if (m_devToolsAgent)
         m_devToolsAgent.clear();
 
     // Reset the delegate to prevent notifications being sent as we're being
@@ -1118,7 +1118,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
 
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
     RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
-    if (imageBuffer.get() && pixelArray.get()) {
+    if (imageBuffer && pixelArray) {
         m_layerTreeHost->compositeAndReadback(pixelArray->data(), invertRect);
         imageBuffer->putPremultipliedImageData(pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
@@ -1209,7 +1209,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
     m_currentInputEvent = &inputEvent;
 
-    if (m_mouseCaptureNode.get() && WebInputEvent::isMouseEventType(inputEvent.type)) {
+    if (m_mouseCaptureNode && WebInputEvent::isMouseEventType(inputEvent.type)) {
         // Save m_mouseCaptureNode since mouseCaptureLost() will clear it.
         RefPtr<Node> node = m_mouseCaptureNode;
 
@@ -1344,7 +1344,7 @@ void WebViewImpl::setFocus(bool enable)
         hideSelectPopup();
 
         // Clear focus on the currently focused frame if any.
-        if (!m_page.get())
+        if (!m_page)
             return;
 
         Frame* frame = m_page->mainFrame();
@@ -1352,7 +1352,7 @@ void WebViewImpl::setFocus(bool enable)
             return;
 
         RefPtr<Frame> focusedFrame = m_page->focusController()->focusedFrame();
-        if (focusedFrame.get()) {
+        if (focusedFrame) {
             // Finish an ongoing composition to delete the composition node.
             Editor* editor = focusedFrame->editor();
             if (editor && editor->hasComposition())
@@ -1462,7 +1462,7 @@ bool WebViewImpl::compositionRange(size_t* location, size_t* length)
         return false;
 
     RefPtr<Range> range = editor->compositionRange();
-    if (!range.get())
+    if (!range)
         return false;
 
     if (TextIterator::getLocationAndLengthFromRange(focused->selection()->rootEditableElementOrDocumentElement(), range.get(), *location, *length))
@@ -1568,7 +1568,7 @@ bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
         return false;
 
     RefPtr<Range> range = selection->selection().firstRange();
-    if (!range.get())
+    if (!range)
         return false;
 
     if (TextIterator::getLocationAndLengthFromRange(selection->rootEditableElementOrDocumentElement(), range.get(), *location, *length))
@@ -1624,13 +1624,13 @@ WebSettings* WebViewImpl::settings()
 {
     if (!m_webSettings)
         m_webSettings = adoptPtr(new WebSettingsImpl(m_page->settings()));
-    ASSERT(m_webSettings.get());
+    ASSERT(m_webSettings);
     return m_webSettings.get();
 }
 
 WebString WebViewImpl::pageEncoding() const
 {
-    if (!m_page.get())
+    if (!m_page)
         return WebString();
 
     // FIXME: Is this check needed?
@@ -1642,7 +1642,7 @@ WebString WebViewImpl::pageEncoding() const
 
 void WebViewImpl::setPageEncoding(const WebString& encodingName)
 {
-    if (!m_page.get())
+    if (!m_page)
         return;
 
     // Only change override encoding, don't change default encoding.
@@ -1707,7 +1707,7 @@ void WebViewImpl::setFocusedFrame(WebFrame* frame)
 
 void WebViewImpl::setInitialFocus(bool reverse)
 {
-    if (!m_page.get())
+    if (!m_page)
         return;
 
     // Since we don't have a keyboard event, we'll create one.
@@ -1732,11 +1732,11 @@ void WebViewImpl::setInitialFocus(bool reverse)
 void WebViewImpl::clearFocusedNode()
 {
     RefPtr<Frame> frame = focusedWebCoreFrame();
-    if (!frame.get())
+    if (!frame)
         return;
 
     RefPtr<Document> document = frame->document();
-    if (!document.get())
+    if (!document)
         return;
 
     RefPtr<Node> oldFocusedNode = document->focusedNode();
@@ -1744,7 +1744,7 @@ void WebViewImpl::clearFocusedNode()
     // Clear the focused node.
     document->setFocusedNode(0);
 
-    if (!oldFocusedNode.get())
+    if (!oldFocusedNode)
         return;
 
     // If a text field has focus, we need to make sure the selection controller
@@ -1933,7 +1933,7 @@ void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
 
 void WebViewImpl::copyImageAt(const WebPoint& point)
 {
-    if (!m_page.get())
+    if (!m_page)
         return;
 
     HitTestResult result = hitTestResultForWindowPos(point);
@@ -1990,7 +1990,7 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     const WebPoint& screenPoint,
     WebDragOperationsMask operationsAllowed)
 {
-    ASSERT(!m_currentDragData.get());
+    ASSERT(!m_currentDragData);
 
     m_currentDragData = webDragData;
     m_operationsAllowed = operationsAllowed;
@@ -2010,7 +2010,7 @@ WebDragOperation WebViewImpl::dragTargetDragOver(
 
 void WebViewImpl::dragTargetDragLeave()
 {
-    ASSERT(m_currentDragData.get());
+    ASSERT(m_currentDragData);
 
     DragData dragData(
         m_currentDragData.get(),
@@ -2029,7 +2029,7 @@ void WebViewImpl::dragTargetDragLeave()
 void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
                                  const WebPoint& screenPoint)
 {
-    ASSERT(m_currentDragData.get());
+    ASSERT(m_currentDragData);
 
     // If this webview transitions from the "drop accepting" state to the "not
     // accepting" state, then our IPC message reply indicating that may be in-
@@ -2059,7 +2059,7 @@ void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
 
 WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPoint, const WebPoint& screenPoint, DragAction dragAction)
 {
-    ASSERT(m_currentDragData.get());
+    ASSERT(m_currentDragData);
 
     DragData dragData(
         m_currentDragData.get(),
@@ -2096,7 +2096,7 @@ unsigned long WebViewImpl::createUniqueIdentifierForRequest()
 
 void WebViewImpl::inspectElementAt(const WebPoint& point)
 {
-    if (!m_page.get())
+    if (!m_page)
         return;
 
     if (point.x == -1 || point.y == -1)
@@ -2177,8 +2177,8 @@ void WebViewImpl::applyAutofillSuggestions(
         return;
     }
 
-    HTMLInputElement* inputElem =
-        static_cast<HTMLInputElement*>(focusedNode.get());
+    HTMLInputElement* inputElem = focusedNode->toInputElement();
+    ASSERT(inputElem);
 
     // The first time the Autofill popup is shown we'll create the client and
     // the popup.
@@ -2188,7 +2188,7 @@ void WebViewImpl::applyAutofillSuggestions(
     m_autofillPopupClient->initialize(
         inputElem, names, labels, icons, uniqueIDs, separatorIndex);
 
-    if (!m_autofillPopup.get()) {
+    if (!m_autofillPopup) {
         m_autofillPopup = PopupContainer::create(m_autofillPopupClient.get(),
                                                  PopupContainer::Suggestion,
                                                  autofillPopupSettings);

@@ -173,7 +173,7 @@ void WebWorkerBase::postMessageTask(ScriptExecutionContext* context,
     if (!thisPtr->client())
         return;
 
-    WebMessagePortChannelArray webChannels(channels.get() ? channels->size() : 0);
+    WebMessagePortChannelArray webChannels(channels ? channels->size() : 0);
     for (size_t i = 0; i < webChannels.size(); ++i) {
         webChannels[i] = (*channels)[i]->channel()->webChannelRelease();
         webChannels[i]->setClient(0);

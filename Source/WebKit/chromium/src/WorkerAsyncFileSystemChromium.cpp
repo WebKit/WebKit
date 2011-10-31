@@ -77,7 +77,7 @@ WorkerAsyncFileSystemChromium::~WorkerAsyncFileSystemChromium()
 
 bool WorkerAsyncFileSystemChromium::waitForOperationToComplete()
 {
-    if (!m_bridgeForCurrentOperation.get())
+    if (!m_bridgeForCurrentOperation)
         return false;
 
     RefPtr<WorkerFileSystemCallbacksBridge> bridge = m_bridgeForCurrentOperation.release();
@@ -213,7 +213,7 @@ void WorkerAsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, 
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    ASSERT(!m_synchronous || !m_bridgeForCurrentOperation.get());
+    ASSERT(!m_synchronous || !m_bridgeForCurrentOperation);
 
     m_modeForCurrentOperation = fileSystemOperationsMode;
     m_modeForCurrentOperation.append(String::number(m_workerContext->thread()->runLoop().createUniqueId()));

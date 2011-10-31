@@ -104,7 +104,7 @@ WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
 {
     // VideoLayerChromium may outlive this object so clear the back pointer.
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_videoLayer.get())
+    if (m_videoLayer)
         m_videoLayer->releaseProvider();
 #endif
 }
@@ -120,7 +120,7 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     ASSERT(m_mediaPlayer);
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
-    if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer.get())
+    if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer)
         m_videoLayer = VideoLayerChromium::create(0, this);
 #endif
 }
@@ -147,7 +147,7 @@ void WebMediaPlayerClientImpl::repaint()
 {
     ASSERT(m_mediaPlayer);
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_videoLayer.get() && supportsAcceleratedRendering())
+    if (m_videoLayer && supportsAcceleratedRendering())
         m_videoLayer->setNeedsDisplay(IntRect(0, 0, m_videoLayer->bounds().width(), m_videoLayer->bounds().height()));
 #endif
     m_mediaPlayer->repaint();
@@ -232,7 +232,7 @@ void WebMediaPlayerClientImpl::loadInternal()
 {
     Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
     m_webMediaPlayer = createWebMediaPlayer(this, frame);
-    if (m_webMediaPlayer.get()) {
+    if (m_webMediaPlayer) {
 #if ENABLE(WEB_AUDIO)
         // Make sure if we create/re-create the WebMediaPlayer that we update our wrapper.
         m_audioSourceProvider.wrap(m_webMediaPlayer->audioSourceProvider());
@@ -243,7 +243,7 @@ void WebMediaPlayerClientImpl::loadInternal()
 
 void WebMediaPlayerClientImpl::cancelLoad()
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->cancelLoad();
 }
 
@@ -265,27 +265,27 @@ PlatformMedia WebMediaPlayerClientImpl::platformMedia() const
 
 void WebMediaPlayerClientImpl::play()
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->play();
 }
 
 void WebMediaPlayerClientImpl::pause()
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->pause();
 }
 
 #if ENABLE(MEDIA_SOURCE)
 bool WebMediaPlayerClientImpl::sourceAppend(const unsigned char* data, unsigned length)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->sourceAppend(data, length);
     return false;
 }
 
 void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus status)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->sourceEndOfStream(static_cast<WebMediaPlayer::EndOfStreamStatus>(status));
 }
 #endif
@@ -298,121 +298,121 @@ void WebMediaPlayerClientImpl::prepareToPlay()
 
 IntSize WebMediaPlayerClientImpl::naturalSize() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->naturalSize();
     return IntSize();
 }
 
 bool WebMediaPlayerClientImpl::hasVideo() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->hasVideo();
     return false;
 }
 
 bool WebMediaPlayerClientImpl::hasAudio() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->hasAudio();
     return false;
 }
 
 void WebMediaPlayerClientImpl::setVisible(bool visible)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setVisible(visible);
 }
 
 float WebMediaPlayerClientImpl::duration() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->duration();
     return 0.0f;
 }
 
 float WebMediaPlayerClientImpl::currentTime() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->currentTime();
     return 0.0f;
 }
 
 void WebMediaPlayerClientImpl::seek(float time)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->seek(time);
 }
 
 bool WebMediaPlayerClientImpl::seeking() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->seeking();
     return false;
 }
 
 void WebMediaPlayerClientImpl::setEndTime(float time)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setEndTime(time);
 }
 
 void WebMediaPlayerClientImpl::setRate(float rate)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setRate(rate);
 }
 
 bool WebMediaPlayerClientImpl::paused() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->paused();
     return false;
 }
 
 bool WebMediaPlayerClientImpl::supportsFullscreen() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->supportsFullscreen();
     return false;
 }
 
 bool WebMediaPlayerClientImpl::supportsSave() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->supportsSave();
     return false;
 }
 
 void WebMediaPlayerClientImpl::setVolume(float volume)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setVolume(volume);
 }
 
 MediaPlayer::NetworkState WebMediaPlayerClientImpl::networkState() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return static_cast<MediaPlayer::NetworkState>(m_webMediaPlayer->networkState());
     return MediaPlayer::Empty;
 }
 
 MediaPlayer::ReadyState WebMediaPlayerClientImpl::readyState() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return static_cast<MediaPlayer::ReadyState>(m_webMediaPlayer->readyState());
     return MediaPlayer::HaveNothing;
 }
 
 float WebMediaPlayerClientImpl::maxTimeSeekable() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->maxTimeSeekable();
     return 0.0f;
 }
 
 PassRefPtr<TimeRanges> WebMediaPlayerClientImpl::buffered() const
 {
-    if (m_webMediaPlayer.get()) {
+    if (m_webMediaPlayer) {
         const WebTimeRanges& webRanges = m_webMediaPlayer->buffered();
 
         // FIXME: Save the time ranges in a member variable and update it when needed.
@@ -426,35 +426,35 @@ PassRefPtr<TimeRanges> WebMediaPlayerClientImpl::buffered() const
 
 int WebMediaPlayerClientImpl::dataRate() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->dataRate();
     return 0;
 }
 
 bool WebMediaPlayerClientImpl::totalBytesKnown() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->totalBytesKnown();
     return false;
 }
 
 unsigned WebMediaPlayerClientImpl::totalBytes() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return static_cast<unsigned>(m_webMediaPlayer->totalBytes());
     return 0;
 }
 
 unsigned WebMediaPlayerClientImpl::bytesLoaded() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return static_cast<unsigned>(m_webMediaPlayer->bytesLoaded());
     return 0;
 }
 
 void WebMediaPlayerClientImpl::setSize(const IntSize& size)
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setSize(WebSize(size.width(), size.height()));
 }
 
@@ -474,7 +474,7 @@ void WebMediaPlayerClientImpl::paintCurrentFrameInContext(GraphicsContext* conte
     // Normally GraphicsContext operations do nothing when painting is disabled.
     // Since we're accessing platformContext() directly we have to manually
     // check.
-    if (m_webMediaPlayer.get() && !context->paintingDisabled()) {
+    if (m_webMediaPlayer && !context->paintingDisabled()) {
 #if WEBKIT_USING_SKIA
         PlatformGraphicsContext* platformContext = context->platformContext();
         WebCanvas* canvas = platformContext->canvas();
@@ -496,7 +496,7 @@ void WebMediaPlayerClientImpl::setPreload(MediaPlayer::Preload preload)
 {
     m_preload = preload;
 
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         m_webMediaPlayer->setPreload(static_cast<WebMediaPlayer::Preload>(preload));
 
     if (m_delayingLoad && m_preload != MediaPlayer::None)
@@ -505,14 +505,14 @@ void WebMediaPlayerClientImpl::setPreload(MediaPlayer::Preload preload)
 
 bool WebMediaPlayerClientImpl::hasSingleSecurityOrigin() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->hasSingleSecurityOrigin();
     return false;
 }
 
 MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return static_cast<MediaPlayer::MovieLoadType>(
             m_webMediaPlayer->movieLoadType());
     return MediaPlayer::Unknown;
@@ -520,35 +520,35 @@ MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
 
 float WebMediaPlayerClientImpl::mediaTimeForTimeValue(float timeValue) const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->mediaTimeForTimeValue(timeValue);
     return timeValue;
 }
 
 unsigned WebMediaPlayerClientImpl::decodedFrameCount() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->decodedFrameCount();
     return 0;
 }
 
 unsigned WebMediaPlayerClientImpl::droppedFrameCount() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->droppedFrameCount();
     return 0;
 }
 
 unsigned WebMediaPlayerClientImpl::audioDecodedByteCount() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->audioDecodedByteCount();
     return 0;
 }
 
 unsigned WebMediaPlayerClientImpl::videoDecodedByteCount() const
 {
-    if (m_webMediaPlayer.get())
+    if (m_webMediaPlayer)
         return m_webMediaPlayer->videoDecodedByteCount();
     return 0;
 }
@@ -568,7 +568,7 @@ bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 
 bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 {
-    return m_videoLayer.get() && m_videoLayer->layerTreeHost();
+    return m_videoLayer && m_videoLayer->layerTreeHost();
 }
 
 VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
@@ -585,7 +585,7 @@ VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
 void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
 {
     if (videoFrame && videoFrame == m_currentVideoFrame) {
-        if (m_webMediaPlayer.get()) {
+        if (m_webMediaPlayer) {
             m_webMediaPlayer->putCurrentFrame(
                 VideoFrameChromiumImpl::toWebVideoFrame(videoFrame));
         }
@@ -642,7 +642,7 @@ MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& t
 void WebMediaPlayerClientImpl::startDelayedLoad()
 {
     ASSERT(m_delayingLoad);
-    ASSERT(!m_webMediaPlayer.get());
+    ASSERT(!m_webMediaPlayer);
 
     m_delayingLoad = false;
 

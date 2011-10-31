@@ -68,7 +68,7 @@ public:
 
     static WebKit::WebApplicationCacheHost* toWebApplicationCacheHost(ApplicationCacheHost* innerHost)
     {
-        if (innerHost && innerHost->m_internal.get())
+        if (innerHost && innerHost->m_internal)
             return innerHost->m_internal->m_outerHost.get();
         return 0;
     }

@@ -744,7 +744,7 @@ WebFrame* WebFrameImpl::findChildByExpression(const WebString& xpath) const
         XPathResult::ORDERED_NODE_ITERATOR_TYPE,
         0, // XPathResult object
         ec);
-    if (!xpathResult.get())
+    if (!xpathResult)
         return 0;
 
     Node* node = xpathResult->iterateNext(ec);
@@ -937,7 +937,7 @@ void WebFrameImpl::loadRequest(const WebURLRequest& request)
 void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
 {
     RefPtr<HistoryItem> historyItem = PassRefPtr<HistoryItem>(item);
-    ASSERT(historyItem.get());
+    ASSERT(historyItem);
 
     m_frame->loader()->prepareForHistoryNavigation();
     RefPtr<HistoryItem> currentItem = m_frame->loader()->history()->currentItem();
@@ -1182,7 +1182,7 @@ size_t WebFrameImpl::characterIndexForPoint(const WebPoint& webPoint) const
     IntPoint point = frame()->view()->windowToContents(webPoint);
     HitTestResult result = frame()->eventHandler()->hitTestResultAtPoint(point, false);
     RefPtr<Range> range = frame()->rangeForPoint(result.point());
-    if (!range.get())
+    if (!range)
         return notFound;
 
     size_t location, length;
@@ -1308,7 +1308,7 @@ WebString WebFrameImpl::selectionAsText() const
         return pluginContainer->plugin()->selectionAsText();
 
     RefPtr<Range> range = frame()->selection()->toNormalizedRange();
-    if (!range.get())
+    if (!range)
         return WebString();
 
     String text = range->text();
@@ -1326,7 +1326,7 @@ WebString WebFrameImpl::selectionAsMarkup() const
         return pluginContainer->plugin()->selectionAsMarkup();
 
     RefPtr<Range> range = frame()->selection()->toNormalizedRange();
-    if (!range.get())
+    if (!range)
         return WebString();
 
     return createMarkup(range.get(), 0);
@@ -1422,7 +1422,7 @@ int WebFrameImpl::printBegin(const WebSize& pageSize,
 float WebFrameImpl::getPrintPageShrink(int page)
 {
     // Ensure correct state.
-    if (!m_printContext.get() || page < 0) {
+    if (!m_printContext || page < 0) {
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -1433,7 +1433,7 @@ float WebFrameImpl::getPrintPageShrink(int page)
 float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 {
     // Ensure correct state.
-    if (!m_printContext.get() || page < 0 || !frame() || !frame()->document()) {
+    if (!m_printContext || page < 0 || !frame() || !frame()->document()) {
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -1449,8 +1449,8 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 
 void WebFrameImpl::printEnd()
 {
-    ASSERT(m_printContext.get());
-    if (m_printContext.get())
+    ASSERT(m_printContext);
+    if (m_printContext)
         m_printContext->end();
     m_printContext.clear();
 }
@@ -1643,7 +1643,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
     int originalEndOffset = searchRange->endOffset();
 
     ExceptionCode ec = 0, ec2 = 0;
-    if (m_resumeScopingFromRange.get()) {
+    if (m_resumeScopingFromRange) {
         // This is a continuation of a scoping operation that timed out and didn't
         // complete last time around, so we should start from where we left off.
         searchRange->setStart(m_resumeScopingFromRange->startContainer(),

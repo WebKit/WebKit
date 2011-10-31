@@ -108,14 +108,14 @@ WebImage::WebImage(const PassRefPtr<Image>& image)
     : m_imageRef(0)
 {
     NativeImagePtr p;
-    if (image.get() && (p = image->nativeImageForCurrentFrame()))
+    if (image && (p = image->nativeImageForCurrentFrame()))
         assign(p);
 }
 
 WebImage& WebImage::operator=(const PassRefPtr<Image>& image)
 {
     NativeImagePtr p;
-    if (image.get() && (p = image->nativeImageForCurrentFrame()))
+    if (image && (p = image->nativeImageForCurrentFrame()))
         assign(p);
     else
         reset();
