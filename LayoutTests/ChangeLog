@@ -1,3 +1,9 @@
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Marked animations/change-keyframes.html as failing on SNOWLEOPARD DEBUG.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-31  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not map scripts generated with document.write to the document resources.

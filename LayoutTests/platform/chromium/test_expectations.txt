@@ -3933,3 +3933,4 @@ BUGWK71209 GPU : compositing/visibility/visibility-image-layers.html = IMAGE
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
+BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
