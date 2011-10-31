@@ -1,3 +1,10 @@
+2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Add ResourcePreviewView.js to the list of inspector front-end
+        files on Qt.
+
+        * inspector/front-end/WebKit.qrc:
+
 2011-10-31  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not map scripts generated with document.write to the document resources.
