@@ -143,7 +143,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
         graphicsContext->setCompositeOperation(CompositeCopy);
 
-        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), IntPoint(), IntRect(0, 0, m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height()));
+        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), IntPoint(), pluginBounds());
 
         m_pluginBackingStoreContainsValidData = true;
     }
@@ -180,7 +180,7 @@ void PluginProxy::geometryDidChange()
 {
     ASSERT(m_isStarted);
 
-    if (m_frameRectInWindowCoordinates.isEmpty() || !needsBackingStore()) {
+    if (m_pluginSize.isEmpty() || !needsBackingStore()) {
         ShareableBitmap::Handle pluginBackingStoreHandle;
         m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_frameRectInWindowCoordinates, m_clipRectInWindowCoordinates, contentsScaleFactor(), pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
         return;
@@ -462,7 +462,7 @@ float PluginProxy::contentsScaleFactor()
 
 bool PluginProxy::updateBackingStore()
 {
-    IntSize backingStoreSize = m_frameRectInWindowCoordinates.size();
+    IntSize backingStoreSize = m_pluginSize;
     backingStoreSize.scale(contentsScaleFactor());
     
     if (!m_backingStore) {
@@ -488,6 +488,11 @@ uint64_t PluginProxy::windowNPObjectID()
     releaseNPObject(windowScriptNPObject);
 
     return windowNPObjectID;
+}
+
+IntRect PluginProxy::pluginBounds()
+{
+    return IntRect(IntPoint(), m_pluginSize);
 }
 
 void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)

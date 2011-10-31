@@ -115,6 +115,7 @@ private:
     bool needsBackingStore() const;
     bool updateBackingStore();
     uint64_t windowNPObjectID();
+    WebCore::IntRect pluginBounds();
 
     void geometryDidChange();
 

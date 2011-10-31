@@ -1,5 +1,19 @@
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
+        Remove some uses of m_frameRectInWindowCoordinates from PluginProxy
+        https://bugs.webkit.org/show_bug.cgi?id=71252
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::geometryDidChange):
+        (WebKit::PluginProxy::updateBackingStore):
+        (WebKit::PluginProxy::pluginBounds):
+        * WebProcess/Plugins/PluginProxy.h:
+
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
         Implement PluginProxy::geometryDidChange
         https://bugs.webkit.org/show_bug.cgi?id=71251
 
