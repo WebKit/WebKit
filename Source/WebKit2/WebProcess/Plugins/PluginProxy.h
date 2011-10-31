@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "Plugin.h"
+#include <WebCore/AffineTransform.h>
 #include <WebCore/IntRect.h>
 
 #if PLATFORM(MAC)
@@ -138,6 +139,16 @@ private:
 
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;
+
+    WebCore::IntSize m_pluginSize;
+
+    // The clip rect in plug-in coordinates.
+    WebCore::IntRect m_clipRect;
+
+    // A transform that can be used to convert from root view coordinates to plug-in coordinates.
+    WebCore::AffineTransform m_pluginToRootViewTransform;
+
+    // FIXME: Get rid of the window coordinate based rects.
 
     // The plug-in rect in window coordinates.
     WebCore::IntRect m_frameRectInWindowCoordinates;

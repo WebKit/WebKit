@@ -216,7 +216,14 @@ void PluginProxy::deprecatedGeometryDidChange(const IntRect& frameRectInWindowCo
 
 void PluginProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
-    // FIXME: Actually do something here.
+    if (pluginSize == m_pluginSize && m_clipRect == clipRect && m_pluginToRootViewTransform == pluginToRootViewTransform) {
+        // Nothing to do.
+        return;
+    }
+    
+    m_pluginSize = pluginSize;
+    m_clipRect = clipRect;
+    m_pluginToRootViewTransform = pluginToRootViewTransform;
 }
 
 void PluginProxy::visibilityDidChange()

@@ -1,5 +1,19 @@
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
+        Implement PluginProxy::geometryDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=71251
+
+        Reviewed by Sam Weinig.
+
+        Keep track of the plug-in size, the clip rect in plug-in coordinates and the
+        transformation matrix from the root view to the plug-in.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
         Fix the X11 build.
 
         * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
