@@ -43,7 +43,6 @@ public:
     WebIDBKey() { }
     ~WebIDBKey() { reset(); }
 
-    WEBKIT_EXPORT static WebIDBKey createNull();
     WEBKIT_EXPORT static WebIDBKey createString(const WebString&);
     WEBKIT_EXPORT static WebIDBKey createDate(double);
     WEBKIT_EXPORT static WebIDBKey createNumber(double);
@@ -59,7 +58,6 @@ public:
     }
 
     WEBKIT_EXPORT void assign(const WebIDBKey&);
-    WEBKIT_EXPORT void assignNull();
     WEBKIT_EXPORT void assignString(const WebString&);
     WEBKIT_EXPORT void assignDate(double);
     WEBKIT_EXPORT void assignNumber(double);
@@ -67,12 +65,10 @@ public:
     WEBKIT_EXPORT void reset();
 
     enum Type {
-        NullType = 0,
+        InvalidType = 0,
         StringType,
         DateType,
-        NumberType,
-        // Types not in WebCore::IDBKey:
-        InvalidType
+        NumberType
     };
 
     WEBKIT_EXPORT Type type() const;

@@ -41,13 +41,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBKey WebIDBKey::createNull()
-{
-    WebIDBKey key;
-    key.assignNull();
-    return key;
-}
-
 WebIDBKey WebIDBKey::createString(const WebString& string)
 {
     WebIDBKey key;
@@ -91,11 +84,6 @@ WebSerializedScriptValue WebIDBKey::injectIDBKeyIntoSerializedValue(const WebIDB
 void WebIDBKey::assign(const WebIDBKey& value)
 {
     m_private = value.m_private;
-}
-
-void WebIDBKey::assignNull()
-{
-    m_private = 0;
 }
 
 void WebIDBKey::assignString(const WebString& string)
