@@ -1,5 +1,13 @@
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed.
+        Removed 10.5 CG expectation for css2.1/20110323/block-non-replaced-width-008.htm, marked it as fail.
+
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/block-non-replaced-width-008-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Mark fast/canvas/shadow-offset-3.html as PASS CRASH on GPU LINUX DEBUG.
 
         * platform/chromium/test_expectations.txt:
