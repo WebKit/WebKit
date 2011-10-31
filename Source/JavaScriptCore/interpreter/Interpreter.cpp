@@ -4989,7 +4989,7 @@ skip_id_custom_self:
         JSObject* baseObj = asObject(callFrame->r(base).jsValue());
         Identifier& ident = codeBlock->identifier(property);
         ASSERT(callFrame->r(function).jsValue().isObject());
-        baseObj->defineGetter(callFrame, ident, asObject(callFrame->r(function).jsValue()));
+        baseObj->methodTable()->defineGetter(baseObj, callFrame, ident, asObject(callFrame->r(function).jsValue()));
 
         vPC += OPCODE_LENGTH(op_put_getter);
         NEXT_INSTRUCTION();

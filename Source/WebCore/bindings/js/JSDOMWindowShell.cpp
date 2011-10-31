@@ -143,9 +143,10 @@ void JSDOMWindowShell::getOwnPropertyNames(ExecState* exec, PropertyNameArray& p
     m_window->getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void JSDOMWindowShell::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+void JSDOMWindowShell::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    m_window->defineGetter(exec, propertyName, getterFunction, attributes);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    thisObject->m_window->methodTable()->defineGetter(thisObject->m_window.get(), exec, propertyName, getterFunction, attributes);
 }
 
 void JSDOMWindowShell::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)

@@ -185,7 +185,7 @@ namespace JSC {
         void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
         void initializeGetterSetterProperty(ExecState*, const Identifier&, GetterSetter*, unsigned attributes);
 
-        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
+        static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
         virtual JSValue lookupGetter(ExecState*, const Identifier& propertyName);
         virtual JSValue lookupSetter(ExecState*, const Identifier& propertyName);

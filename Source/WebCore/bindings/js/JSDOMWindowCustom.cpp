@@ -384,17 +384,18 @@ void JSDOMWindow::getOwnPropertyNames(ExecState* exec, PropertyNameArray& proper
     Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+void JSDOMWindow::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
     // Only allow defining getters by frames in the same origin.
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return;
 
     // Don't allow shadowing location using defineGetter.
     if (propertyName == "location")
         return;
 
-    Base::defineGetter(exec, propertyName, getterFunction, attributes);
+    Base::defineGetter(thisObject, exec, propertyName, getterFunction, attributes);
 }
 
 void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)

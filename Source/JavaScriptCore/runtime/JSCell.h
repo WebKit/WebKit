@@ -132,6 +132,9 @@ namespace JSC {
         // Base implementation; for non-object classes implements getPropertySlot.
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
+
+        // Dummy implementations of override-able static functions for classes to put in their MethodTable
+        static NO_RETURN_DUE_TO_ASSERT void defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
         
     private:
         WriteBarrier<Structure> m_structure;

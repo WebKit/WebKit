@@ -1,3 +1,36 @@
+2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::defineGetter
+        https://bugs.webkit.org/show_bug.cgi?id=71134
+
+        Reviewed by Darin Adler.
+
+        Added defineGetter to the MethodTable.  Replaced all virtual versions of defineGetter
+        with static versions.  Replaced all call sites with lookups in the MethodTable.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::defineGetter):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defineGetter):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineGetter):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::putDescriptor):
+        * runtime/JSObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+
 2011-10-31  Michael Saboff  <msaboff@apple.com>
 
         Towards 8-bit Strings: Move Lexer and Parser Objects out of JSGlobalData

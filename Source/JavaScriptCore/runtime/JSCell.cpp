@@ -158,4 +158,9 @@ void slowValidateCell(JSCell* cell)
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
 }
 
+void JSCell::defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

@@ -163,11 +163,12 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
     }
 }
 
-void JSGlobalObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes)
+void JSGlobalObject::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes)
 {
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
     PropertySlot slot;
-    if (!symbolTableGet(propertyName, slot))
-        JSVariableObject::defineGetter(exec, propertyName, getterFunc, attributes);
+    if (!thisObject->symbolTableGet(propertyName, slot))
+        JSVariableObject::defineGetter(thisObject, exec, propertyName, getterFunc, attributes);
 }
 
 void JSGlobalObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes)

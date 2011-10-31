@@ -1,3 +1,26 @@
+2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::defineGetter
+        https://bugs.webkit.org/show_bug.cgi?id=71134
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Added defineGetter to the MethodTable.  Replaced all virtual versions of defineGetter
+        with static versions.  Replaced all call sites with lookups in the MethodTable.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::defineGetter):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::defineGetter):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::defineGetter):
+        (WebCore::JSLocationPrototype::defineGetter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2011-10-31  Arko Saha  <arko@motorola.com>
 
         Microdata: Support for itemid attribute.

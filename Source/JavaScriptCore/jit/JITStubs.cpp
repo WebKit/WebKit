@@ -3747,7 +3747,7 @@ DEFINE_STUB_FUNCTION(void, op_put_getter)
     ASSERT(stackFrame.args[0].jsValue().isObject());
     JSObject* baseObj = asObject(stackFrame.args[0].jsValue());
     ASSERT(stackFrame.args[2].jsValue().isObject());
-    baseObj->defineGetter(callFrame, stackFrame.args[1].identifier(), asObject(stackFrame.args[2].jsValue()));
+    baseObj->methodTable()->defineGetter(baseObj, callFrame, stackFrame.args[1].identifier(), asObject(stackFrame.args[2].jsValue()), 0);
 }
 
 DEFINE_STUB_FUNCTION(void, op_put_setter)

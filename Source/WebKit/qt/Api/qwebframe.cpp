@@ -513,7 +513,7 @@ void QWebFramePrivate::addQtSenderToGlobalObject()
     JSObjectRef function = JSObjectMakeFunctionWithCallback(context, propertyName.get(), qtSenderCallback);
 
     // JSC public API doesn't support setting a Getter for a property of a given object, https://bugs.webkit.org/show_bug.cgi?id=61374.
-    window->defineGetter(exec, propertyName.get()->identifier(&exec->globalData()), ::toJS(function),
+    window->methodTable()->defineGetter(window, exec, propertyName.get()->identifier(&exec->globalData()), ::toJS(function),
                          JSC::ReadOnly | JSC::DontEnum | JSC::DontDelete);
 }
 #endif

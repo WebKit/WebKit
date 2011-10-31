@@ -93,9 +93,10 @@ bool DebuggerActivation::getOwnPropertyDescriptor(ExecState* exec, const Identif
     return m_activation->getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void DebuggerActivation::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+void DebuggerActivation::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    m_activation->defineGetter(exec, propertyName, getterFunction, attributes);
+    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    thisObject->m_activation->methodTable()->defineGetter(thisObject->m_activation.get(), exec, propertyName, getterFunction, attributes);
 }
 
 void DebuggerActivation::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)

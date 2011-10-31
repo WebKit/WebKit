@@ -61,6 +61,9 @@ namespace JSC {
 
         typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
         ToThisObjectFunctionPtr toThisObject;
+
+        typedef void (*DefineGetterFunctionPtr)(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
+        DefineGetterFunctionPtr defineGetter;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -93,6 +96,7 @@ struct MemberCheck##member { \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
         &ClassName::toThisObject, \
+        &ClassName::defineGetter, \
     }, \
     sizeof(ClassName)
 

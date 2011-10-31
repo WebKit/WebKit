@@ -1,3 +1,16 @@
+2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::defineGetter
+        https://bugs.webkit.org/show_bug.cgi?id=71134
+
+        Reviewed by Darin Adler.
+
+        Added defineGetter to the MethodTable.  Replaced all virtual versions of defineGetter
+        with static versions.  Replaced all call sites with lookups in the MethodTable.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::addQtSenderToGlobalObject):
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead
