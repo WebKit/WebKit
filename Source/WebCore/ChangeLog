@@ -1,3 +1,9 @@
+2011-10-31  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: reorder inspector js files to fix remote mode.
+
+        * inspector/front-end/inspector.html:
+
 2011-10-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [refactoring] TextPrompt: ensure encapsulation, extract history management
