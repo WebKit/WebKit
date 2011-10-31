@@ -22,6 +22,7 @@
 #include "QtWebPageProxy.h"
 
 #include "QtWebError.h"
+#include "qwebpreferences.h"
 #include "qwebpreferences_p.h"
 
 #include "ClientImpl.h"
@@ -104,7 +105,6 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtPolicyInterface
     : m_viewInterface(viewInterface)
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
-    , m_preferences(0)
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_loadProgress(0)
 {
@@ -459,12 +459,9 @@ void QtWebPageProxy::processDidCrash()
 
 QWebPreferences* QtWebPageProxy::preferences() const
 {
-    if (!m_preferences) {
-        WKPageGroupRef pageGroupRef = WKPageGetPageGroup(pageRef());
-        m_preferences = QWebPreferencesPrivate::createPreferences(pageGroupRef);
-    }
-
-    return m_preferences;
+    if (!m_preferences)
+        m_preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(const_cast<QtWebPageProxy*>(this)));
+    return m_preferences.get();
 }
 
 void QtWebPageProxy::setCustomUserAgent(const QString& userAgent)

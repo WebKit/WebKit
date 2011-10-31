@@ -201,7 +201,7 @@ private:
     RefPtr<WebContext> m_context;
     QWKHistory* m_history;
 
-    mutable QWebPreferences* m_preferences;
+    mutable OwnPtr<QWebPreferences> m_preferences;
 
     OwnPtr<QUndoStack> m_undoStack;
     int m_loadProgress;

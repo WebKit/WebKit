@@ -29,6 +29,8 @@ class QWebPreferencesPrivate;
 class QWEBKIT_EXPORT QWebPreferences : public QObject {
     Q_OBJECT
 public:
+    ~QWebPreferences();
+
     Q_PROPERTY(bool autoLoadImages READ autoLoadImages WRITE setAutoLoadImages NOTIFY autoLoadImagesChanged FINAL)
     Q_PROPERTY(bool javascriptEnabled READ javascriptEnabled WRITE setJavascriptEnabled NOTIFY javascriptEnabledChanged FINAL)
     Q_PROPERTY(bool pluginsEnabled READ pluginsEnabled WRITE setPluginsEnabled NOTIFY pluginsEnabledChanged FINAL)
@@ -125,7 +127,6 @@ private:
     Q_DISABLE_COPY(QWebPreferences)
 
     QWebPreferences();
-    ~QWebPreferences();
 
     QWebPreferencesPrivate *d;
 

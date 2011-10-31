@@ -19,6 +19,8 @@
 
 #include "WKPreferences.h"
 
+class QtWebPageProxy;
+
 class QWebPreferencesPrivate {
 public:
 
@@ -50,7 +52,7 @@ public:
         DefaultFixedFontSize
     };
 
-    static QWebPreferences* createPreferences(WKPageGroupRef);
+    static QWebPreferences* createPreferences(QtWebPageProxy*);
 
     void setAttribute(WebAttribute attr, bool enable);
     bool testAttribute(WebAttribute attr) const;
@@ -61,7 +63,9 @@ public:
     void setFontSize(FontSizeType type, unsigned size);
     unsigned fontSize(FontSizeType type) const;
 
-    WKPreferencesRef ref;
+    WKPreferencesRef preferencesRef() const;
+
+    QtWebPageProxy* qtWebPageProxy;
 
     static QWebPreferencesPrivate* get(QWebPreferences*);
 };

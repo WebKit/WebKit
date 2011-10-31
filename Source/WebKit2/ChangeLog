@@ -1,3 +1,33 @@
+2011-10-31  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Make QWebPreferences hold a QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=71219
+
+        Reviewed by Andreas Kling.
+
+        Change QWebPreferences to keep a pointer to QtWebPageProxy.  The reason is that
+        some features we want to control (like the messaging exchange between WebView and
+        the web process) are not available via WKPreferencesRef.
+
+        QtWebPageProxy now uses an OwnPtr to keep the QWebPreferences to clarify the
+        ownership relationship. Before this change the QWebPreferences created was leaking.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::createPreferences):
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferencesPrivate::setFontFamily):
+        (QWebPreferencesPrivate::fontFamily):
+        (QWebPreferencesPrivate::setFontSize):
+        (QWebPreferencesPrivate::fontSize):
+        (QWebPreferencesPrivate::preferencesRef):
+        * UIProcess/API/qt/qwebpreferences.h:
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::preferences):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_settings_new_with_settings() to WebKit2 GTK+ API
