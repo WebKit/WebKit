@@ -1,3 +1,177 @@
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed tests rebaseline following r98852.
+
+        * fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/block/float/015-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/as-background-image/background-image-tiled-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-cg-mac-snowleopard/css1/text_properties/vertical_align-expected.png: Renamed from LayoutTests/platform/chromium-cg-mac/css1/text_properties/vertical_align-expected.png.
+        * platform/chromium-cg-mac-snowleopard/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-cg-mac-snowleopard/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Renamed from LayoutTests/platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/chromium-linux/fast/block/float/015-expected.png:
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-linux/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/chromium-linux/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/chromium-linux/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/same-image-two-instances-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/svg-as-relative-image-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.png: Renamed from LayoutTests/platform/chromium-mac/css1/text_properties/vertical_align-expected.png.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/block/float/015-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-background-image/background-image-tiled-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/animated-svg-as-image-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/as-image/animated-svg-as-image-expected.png.
+        * platform/chromium-mac-snowleopard/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/same-image-two-instances-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/svg-as-relative-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Renamed from LayoutTests/platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-win/css1/text_properties/vertical_align-expected.txt:
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/015-expected.png:
+        * platform/chromium-win/fast/block/float/015-expected.txt:
+        * platform/chromium-win/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.txt:
+        * platform/chromium-win/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/chromium-win/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Added.
+        * platform/chromium-win/svg/as-background-image/background-image-tiled-expected.png: Added.
+        * platform/chromium-win/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/chromium-win/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/chromium-win/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-win/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-win/svg/as-image/same-image-two-instances-expected.png: Added.
+        * platform/chromium-win/svg/as-image/same-image-two-instances-expected.txt: Added.
+        * platform/chromium-win/svg/as-image/svg-as-relative-image-expected.png: Added.
+        * platform/chromium-win/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Added.
+        * platform/chromium-win/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/chromium-win/svg/as-image/svg-image-change-content-size-expected.txt: Added.
+        * platform/chromium-win/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Copied from LayoutTests/platform/chromium-win/svg/zoom/page/relative-sized-document-scrollbars-expected.png.
+        * platform/chromium-win/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/chromium/tables/mozilla_expected_failures/bugs/bug85016-expected.txt: Added.
+        * svg/as-background-image/svg-as-background-4-expected.txt: Renamed from LayoutTests/platform/chromium-win/svg/as-background-image/svg-as-background-4-expected.txt.
+        * svg/as-image/svg-as-relative-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/svg-as-relative-image-expected.txt.
+        * svg/zoom/page/relative-sized-document-scrollbars-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/relative-sized-document-scrollbars-expected.txt.
+
 2011-10-31  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Add pixel baselines for tests in fast/ directory.
