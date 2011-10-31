@@ -336,6 +336,8 @@ namespace WebCore {
 
         virtual void numWheelEventHandlersChanged(unsigned) = 0;
         
+        virtual bool isSVGImageChromeClient() const { return false; }
+
     protected:
         virtual ~ChromeClient() { }
     };

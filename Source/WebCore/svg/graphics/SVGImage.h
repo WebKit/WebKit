@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class Page;
+class RenderBox;
 class SVGImageChromeClient;
 
 class SVGImage : public Image {
@@ -43,6 +44,11 @@ public:
     {
         return adoptRef(new SVGImage(observer));
     }
+
+    static PassRefPtr<SVGImage> createWithDataAndSize(ImageObserver*, SharedBuffer*, const IntSize&, float zoom);
+
+    void setContainerZoom(float);
+    RenderBox* embeddedContentBox() const;
 
     virtual bool isSVGImage() const { return true; }
 
@@ -53,8 +59,6 @@ private:
 
     virtual void setContainerSize(const IntSize&);
     virtual bool usesContainerSize() const;
-    virtual bool hasRelativeWidth() const;
-    virtual bool hasRelativeHeight() const;
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual IntSize size() const;

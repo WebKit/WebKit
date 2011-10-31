@@ -1,3 +1,142 @@
+2011-10-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        CSS 2.1 failure: background-intrinsic-*
+        https://bugs.webkit.org/show_bug.cgi?id=47156
+
+        SVGs do not work as tiled background images
+        https://bugs.webkit.org/show_bug.cgi?id=16281
+
+        Apply preserveAspectRatio and synthesize viewboxes in <img>
+        https://bugs.webkit.org/show_bug.cgi?id=34521
+
+        SVG background doesn't resize properly when dimensions are changed
+        https://bugs.webkit.org/show_bug.cgi?id=42944
+
+        Images with percent height inside a floated div should use intrinsic height.
+        https://bugs.webkit.org/show_bug.cgi?id=45439
+
+        SVG image in HTML changes size as the window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=52045
+
+        Reviewed by Antti Koivisto.
+
+        Implement intrinsic sizing support for SVGImage (svg embedded through <html:img>/<svg:image>/background-image/border-image/...).
+        This is demanded by CSS 2.1, and covered by new layout tests in LayoutTests/css2.1 and several new custom testcases.
+
+        Tests: css2.1/20110323/background-intrinsic-001.htm
+               css2.1/20110323/background-intrinsic-002.htm
+               css2.1/20110323/background-intrinsic-003.htm
+               css2.1/20110323/background-intrinsic-004.htm
+               css2.1/20110323/background-intrinsic-005.htm
+               css2.1/20110323/background-intrinsic-006.htm
+               css2.1/20110323/background-intrinsic-007.htm
+               css2.1/20110323/background-intrinsic-008.htm
+               css2.1/20110323/background-intrinsic-009.htm
+               svg/as-background-image/background-image-preserveaspectRatio-support.html (adapted from testcase from bug 34521)
+               svg/as-background-image/background-image-tiled.html (reduction from bug 16281)
+               svg/as-background-image/same-image-two-instances-background-image.html
+               svg/as-image/img-preserveAspectRatio-support-1.html (reduction from bug 34521)
+               svg/as-image/same-image-two-instances.html
+               svg/as-image/svg-as-relative-image-with-explicit-size.html
+               svg/as-image/svg-image-change-content-size.xhtml (reduction from bug 42944)
+               svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
+               svg/zoom/page/zoom-svg-as-image.html
+               svg/zoom/page/zoom-svg-as-relative-image.html
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient): Pass default zoom factor.
+        (WebCore::CSSImageGeneratorValue::getImage): Ditto.
+        * loader/cache/CachedImage.cpp: Enable SVGImage <-> IntSize cache.
+        (WebCore::CachedImage::lookupImageForSize): Use recently introduced ImageBySizeCache, to lookup an image for a certain size.
+        (WebCore::CachedImage::lookupOrCreateImageForRenderer): Use recently introduced ImageBySizeCache, to dynamically create copies of m_image if needed.
+        (WebCore::CachedImage::imageForRenderer): Lookup image by renderer, which first looks up a size for a renderer, then uses lookupImageForSize().
+        (WebCore::CachedImage::setContainerSizeForRenderer): For SVGImages, pass on container size handling to ImageBySizeCache.
+        (WebCore::CachedImage::imageSizeForRenderer): Figure out the image size, respecting per-renderer overrides, for a certain renderer.
+        (WebCore::CachedImage::computeIntrinsicDimensions): Remove unnecessary RenderObject parameter.
+        * loader/cache/CachedImage.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::isSVGImageChromeClient): Used to identify whether a RenderSVGRoot is embedded through a SVGImage. Returns false, by default.
+        * platform/graphics/Image.h:
+        (WebCore::Image::setImageObserver): Add helper.
+        * rendering/ImageBySizeCache.cpp: Cleanup code.
+        (WebCore::ImageBySizeCache::addClient): Assert the passed renderer is valid.
+        (WebCore::ImageBySizeCache::removeClient): Ditto. Allow removeClient() to be called w/o prio addClient() usage.
+        (WebCore::ImageBySizeCache::getImage): Add zoom parameter.
+        (WebCore::ImageBySizeCache::getRequestedSizeAndZoom): Add way to get requested size from cache, instead of actual cached sizes.
+        (WebCore::ImageBySizeCache::imageForSize): Respect empty sizes, just return 0, instead of asserting.
+        (WebCore::ImageBySizeCache::imageForRenderer): Added a helper that retrieves an image for a renderer, by lookup up its size and using imageForSize().
+        * rendering/ImageBySizeCache.h: Cleaup code, introduce struct that replaces the std::pair<IntSize, int>.
+        (WebCore::SizeZoomAndCount::SizeZoomAndCount):
+        * rendering/RenderBoxModelObject.cpp: Implement CSS 2.1 intrinsic size negotiation for images.
+        (WebCore::resolveWidthForRatio): New inline helper function used by calculateImageIntrinsicDimensions.
+        (WebCore::resolveHeightForRatio): Ditto.
+        (WebCore::resolveAgainstIntrinsicWidthOrHeightAndRatio): Ditto.
+        (WebCore::resolveAgainstIntrinsicRatio):  Ditto.
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions): New helper function, containing the main algorithm, which is a pure transcription of the spec.
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Use new calculateImageIntrinsicDimensions() helper to figure out the intrinsic size.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Propagate calculateFillTileSize() result to the image resource, via setContainerSizeForRenderer().
+        (WebCore::RenderBoxModelObject::paintNinePieceImage): Use new calculateImageIntrinsicDimensions() helper to figure out the intrinsic size.
+        * rendering/RenderBoxModelObject.h: Clarify some variable names, added calculateImageIntrinsicDimensions().
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage): Use IntSize(), instead of IntSize(0, 0).
+        (WebCore::RenderImage::updateIntrinsicSizeIfNeeded): Refactored from imageDimensionsChanged().
+        (WebCore::RenderImage::imageDimensionsChanged): Use updateIntrinsicSizeIfNeeded().
+        (WebCore::RenderImage::computeReplacedLogicalWidth): Use RenderReplaced::computeReplacedLogicalWidth() exclusively. For this to work, the intrinsic size must be correct.
+        (WebCore::RenderImage::computeIntrinsicRatioInformation): Default implementation for non-SVGImages.
+        (WebCore::RenderImage::needsPreferredWidthsRecalculation): Return true, just like RenderPart, if embeddedContentBox is not null.
+        (WebCore::RenderImage::embeddedContentBox): Returns the RenderSVGRoot* renderer of the embedded SVG, if possible.
+        * rendering/RenderImage.h: Remove isLogicalWidth/HeightSpecified() / computeReplacedLogicalHeight() / calcAspectRatioLogicalWidth/Height().
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::setContainerSizeForRenderer): Pass around new "float containerZoomFactor" parameter.
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::image): embeddedContentBox() is now calling image() earlier than before. We now have to handle the case that the image is pending.
+        (WebCore::RenderImageResourceStyleImage::setContainerSizeForRenderer): Pass zoom factor.
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths): Pass effective zoom to setContainerSizeForRenderer().
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeIntrinsicLogicalWidth): Generalized this code, as RenderImage is using it as well now. Marginal changes needed.
+        (WebCore::RenderReplaced::computeIntrinsicLogicalHeight): Ditto.
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth): Ditto.
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::computeIntrinsicDimensions): Stop passing m_renderer to CachedImage, it's no longer needed.
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer): Add "float containerZoomFactor" parameter.
+        * rendering/style/StyleCachedImage.h: Add "float containerZoomFactor" parameter to setContainerSizeForRenderer.
+        * rendering/style/StyleGeneratedImage.h:
+        (WebCore::StyleGeneratedImage::setContainerSizeForRenderer): Ditto.
+        * rendering/style/StyleImage.h: Ditto.
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::setContainerSizeForRenderer): Ditto.
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout): Always supply a container size when embedding SVGs in <svg:image>.
+        * rendering/svg/RenderSVGRoot.cpp: Move "override container size" from SVGSVGElement into RenderSVGRoot, where it belongs.
+        (WebCore::RenderSVGRoot::isEmbeddedThroughImageElement): Add helper method to determine whether we're loaded through SVGImage.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): If we have a valid container size, it has precendence (only supplied via external SVGImages).
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Ditto.
+        (WebCore::RenderSVGRoot::layout): Remove calcViewport() usage, no need to track/override the viewport size anymore, all done in coputeReplacedLogical* now.
+        (WebCore::RenderSVGRoot::paint): Use borderBoxRect() which now always matches the previously computed m_viewportSize. 
+        (WebCore::RenderSVGRoot::computeRectForRepaint): Ditto.
+        * rendering/svg/RenderSVGRoot.h: Move "override container size" from SVGSVGElement into RenderSVGRoot, where it belongs.
+        (WebCore::RenderSVGRoot::containerSize):
+        (WebCore::RenderSVGRoot::setContainerSize):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::determineViewport): Resolve lengths against override container size in documents embedded through SVGImage.
+        * svg/SVGSVGElement.cpp: Remove "override container size" handling from SVGSVGElement.
+        (WebCore::SVGSVGElement::SVGSVGElement): Ditto.
+        (WebCore::SVGSVGElement::currentViewBoxRect): Always synthesize a viewBox, if we're embedded through SVGImage, as demanded by SVG 1.1 2nd Edition.
+        * svg/SVGSVGElement.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::isSVGImageChromeClient): Return true, used to identify whether RenderSVGRoot is embedded through SVGImage.
+        (WebCore::SVGImage::createWithDataAndSize): Add new helper function.
+        (WebCore::SVGImage::setContainerZoom): Forwarded to Page::setPageZoomFactor.
+        (WebCore::SVGImage::setContainerSize): Assert that container size is not empty. We should never receive an empty container size.
+        (WebCore::SVGImage::usesContainerSize): Adapt to override container size changes, it now lives in RenderSVGRoot instead of SVGSVGElement.
+        (WebCore::SVGImage::size): New algorithm to figure out the size of an embedded SVG, as demanded by the CSS/SVG specs.
+        (WebCore::SVGImage::embeddedContentBox): Add helper which returns the RenderSVGRoot of the document.
+        (WebCore::SVGImage::computeIntrinsicDimensions): Implement intrinsic ratio calculation. 
+        (WebCore::SVGImage::dataChanged): Force calling FrameView::setCanHaveScrollbars(false), as SVG images now always synthesize a viewBox, and thus never receive scrollbars.
+        * svg/graphics/SVGImage.h:
+
 2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Add ResourcePreviewView.js to the list of inspector front-end

@@ -1,3 +1,138 @@
+2011-10-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        CSS 2.1 failure: background-intrinsic-*
+        https://bugs.webkit.org/show_bug.cgi?id=47156
+
+        Reviewed by Antti Koivisto.
+
+        Add all *intrinsic* tests from the CSS 2.1 Testsuite - we pass all of them now.
+        All tests regarding SVG are now imported in LayoutTests, none are failing anymore.
+
+        Add several new testcases covering the SVG Image size negotiation logic, as defined in CSS 2.1.
+
+        * css2.1/20110323/background-intrinsic-001.htm: Added.
+        * css2.1/20110323/background-intrinsic-002.htm: Added.
+        * css2.1/20110323/background-intrinsic-003.htm: Added.
+        * css2.1/20110323/background-intrinsic-004.htm: Added.
+        * css2.1/20110323/background-intrinsic-005.htm: Added.
+        * css2.1/20110323/background-intrinsic-006.htm: Added.
+        * css2.1/20110323/background-intrinsic-007.htm: Added.
+        * css2.1/20110323/background-intrinsic-008.htm: Added.
+        * css2.1/20110323/background-intrinsic-009.htm: Added.
+        * css2.1/20110323/resources/green-intrinsic-height-ratio.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-height.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-none.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-ratio-landscape.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-ratio-portrait.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-width-height.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-width-pc-height-pc.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-width-ratio.svg: Added.
+        * css2.1/20110323/resources/green-intrinsic-width.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-height-ratio.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-height.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-none.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-ratio-landscape.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-ratio-portrait.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-width-height.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-width-pc-height-pc.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-width-ratio.svg: Added.
+        * css2.1/20110323/resources/red-intrinsic-width.svg: Added.
+        * fast/backgrounds/size/contain-and-cover-zoomed.html: Added.
+        * fast/images/percent-height-image-expected.txt: Update results, testcase is fixed now.
+        * fast/images/percent-height-image.html: Make test async, to make it work cross-browser. With this patch we now pass this testcase.
+        * platform/mac-snowleopard/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Removed.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/mac/css1/text_properties/vertical_align-expected.txt: Update for rounding differences.
+        * platform/mac/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-003-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/mac/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-expected.png: Updated for rounding differences.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Added.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/mac/fast/block/float/015-expected.png: Slight changes, due 49x50 -> 50x50 size change.
+        * platform/mac/fast/block/float/015-expected.txt: Ditto.
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png: Slight changes due to rounding.
+        * platform/mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Ditto.
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.png: Ditto.
+        * platform/mac/fast/repaint/block-layout-inline-children-replaced-expected.txt: Ditto.
+        * platform/mac/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/mac/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Added.
+        * platform/mac/svg/as-background-image/background-image-tiled-expected.png: Added.
+        * platform/mac/svg/as-background-image/background-image-tiled-expected.txt: Added.
+        * platform/mac/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/mac/svg/as-background-image/same-image-two-instances-background-image-expected.txt: Added.
+        * platform/mac/svg/as-background-image/svg-as-background-4-expected.png: Adapt to preserveAspectRatio changes in hearts.svg.
+        * platform/mac/svg/as-border-image/svg-as-border-image-expected.png: This needed a rebaseline, it was forgotten before.
+        * platform/mac/svg/as-image/animated-svg-as-image-expected.png: Progression, now both images share the same size & ratio, as desired.
+        * platform/mac/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/mac/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/mac/svg/as-image/same-image-two-instances-expected.png: Added.
+        * platform/mac/svg/as-image/same-image-two-instances-expected.txt: Added.
+        * platform/mac/svg/as-image/svg-as-relative-image-expected.png: Adapt to green-relative-size-rect.svg - a circle got added to make it easier to compare.
+        * platform/mac/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Added.
+        * platform/mac/svg/as-image/svg-as-relative-image-with-explicit-size-expected.txt: Added.
+        * platform/mac/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/mac/svg/as-image/svg-image-change-content-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Updated, scrollbars are gone - now matching Opera/FF.
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.txt: Ditto.
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.png: Updated, scrollbars are gone - now matching Opera/FF.
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt: Ditto.
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-image-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-image-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * svg/as-background-image/background-image-preserveaspectRatio-support.html: Added.
+        * svg/as-background-image/background-image-tiled.html: Added.
+        * svg/as-background-image/resources/construction-tape.svg: Added.
+        * svg/as-background-image/resources/hearts.svg: Fix testcase, by adding pAR="none", which is now respected. Now the image looks as desired across Opera/FF and us.
+        * svg/as-background-image/same-image-two-instances-background-image.html: Added.
+        * svg/as-image/img-preserveAspectRatio-support-1.html: Added.
+        * svg/as-image/resources/circle-default-meet.svg: Added.
+        * svg/as-image/resources/circle-default-none.svg: Added.
+        * svg/as-image/resources/circle-default-slice.svg: Added.
+        * svg/as-image/resources/circle-nosize.svg: Added.
+        * svg/as-image/resources/circle-viewbox-default.svg: Added.
+        * svg/as-image/resources/circle-viewbox-meet.svg: Added.
+        * svg/as-image/resources/circle-viewbox-none.svg: Added.
+        * svg/as-image/resources/circle-viewbox-slice.svg: Added.
+        * svg/as-image/resources/green-relative-size-rect.svg: Use relative units everywhere as intended. Add circle to make it easy to spot ratio changes.
+        * svg/as-image/same-image-two-instances.html: Added.
+        * svg/as-image/svg-as-relative-image-with-explicit-size.html: Added.
+        * svg/as-image/svg-image-change-content-size.xhtml: Added.
+        * svg/zoom/page/resources/relative-sized-background-with-viewBox.svg: Added.
+        * svg/zoom/page/zoom-background-image-tiled.html: Added.
+        * svg/zoom/page/zoom-background-images.html: Added.
+        * svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html: Added.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html: Added.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size.html: Added.
+        * svg/zoom/page/zoom-svg-as-image.html: Added.
+        * svg/zoom/page/zoom-svg-as-relative-image.html: Added.
+
 2011-10-31  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, skiped failing test inspector/debugger/selected-call-frame-after-formatting-source.html on QT.

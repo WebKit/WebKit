@@ -63,12 +63,6 @@ public:
 
     FloatRect viewport() const;
 
-    void setContainerSize(const LayoutSize& containerSize) { m_containerSize = containerSize; m_hasSetContainerSize = true; }
-    LayoutSize containerSize() const { return m_containerSize; }
-    bool hasSetContainerSize() const { return m_hasSetContainerSize; }
-    int relativeWidthValue() const;
-    int relativeHeightValue() const;
-
     float pixelUnitToMillimeterX() const;
     float pixelUnitToMillimeterY() const;
     float screenPixelToMillimeterX() const;
@@ -181,8 +175,6 @@ private:
     RefPtr<SMILTimeContainer> m_timeContainer;
     FloatPoint m_translation;
     mutable OwnPtr<SVGViewSpec> m_viewSpec;
-    LayoutSize m_containerSize;
-    bool m_hasSetContainerSize;
 };
 
 } // namespace WebCore

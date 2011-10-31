@@ -58,15 +58,14 @@ public:
 
     bool canRender(const RenderObject* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
-    // These are only used for SVGImage right now
-    void setContainerSizeForRenderer(const RenderObject*, const IntSize&);
+    void setContainerSizeForRenderer(const RenderObject*, const IntSize&, float);
     bool usesImageContainerSize() const;
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
     
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
-    void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+    void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual void didAddClient(CachedResourceClient*);
     
@@ -96,8 +95,7 @@ public:
 
 private:
     Image* lookupImageForSize(const IntSize&) const;
-    Image* lookupImageForRenderer(const RenderObject*) const;
-    PassRefPtr<Image> lookupOrCreateImageForRenderer(const RenderObject*);
+    Image* lookupOrCreateImageForRenderer(const RenderObject*);
 
     void createImage();
     size_t maximumDecodedImageSize();

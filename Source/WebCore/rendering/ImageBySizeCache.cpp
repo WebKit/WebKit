@@ -32,47 +32,51 @@ ImageBySizeCache::ImageBySizeCache()
 {
 }
 
-void ImageBySizeCache::addClient(const RenderObject* renderer, const IntSize& size)
+void ImageBySizeCache::addClient(const RenderObject* renderer, const IntSize& size, float zoom)
 {
+    ASSERT(renderer);
     if (!size.isEmpty())
         m_sizes.add(size);
     
     RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
     if (it == m_clients.end())
-        m_clients.add(renderer, SizeCountPair(size, 1));
+        m_clients.add(renderer, SizeZoomAndCount(size, zoom, 1));
     else {
-        SizeCountPair& sizeCount = it->second;
-        ++sizeCount.second;
+        SizeZoomAndCount& sizeCount = it->second;
+        sizeCount.requestedSize = size;
+        sizeCount.requestedZoom = zoom;
+        ++sizeCount.count;
     }
 }
 
 void ImageBySizeCache::removeClient(const RenderObject* renderer)
 {
+    ASSERT(renderer);
     RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
     ASSERT(it != m_clients.end());
 
-    SizeCountPair& sizeCount = it->second;
-    IntSize size = sizeCount.first;
+    SizeZoomAndCount& sizeCount = it->second;
+    IntSize size = sizeCount.actualSize;
     if (!size.isEmpty()) {
         m_sizes.remove(size);
         if (!m_sizes.contains(size))
             m_images.remove(size);
     }
     
-    if (!--sizeCount.second)
+    if (!--sizeCount.count)
         m_clients.remove(renderer);
 }
 
-Image* ImageBySizeCache::getImage(const RenderObject* renderer, const IntSize& size)
+Image* ImageBySizeCache::getImage(const RenderObject* renderer, const IntSize& size, float zoom)
 {
     RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
-    ASSERT(it != m_clients.end());
-
-    SizeCountPair& sizeCount = it->second;
-    IntSize oldSize = sizeCount.first;
-    if (oldSize != size) {
-        removeClient(renderer);
-        addClient(renderer, size);
+    if (it != m_clients.end()) {
+        SizeZoomAndCount& sizeCount = it->second;
+        IntSize oldSize = sizeCount.actualSize;
+        if (oldSize != size) {
+            removeClient(renderer);
+            addClient(renderer, size, zoom);
+        }
     }
 
     // Don't generate an image for empty sizes.
@@ -81,6 +85,16 @@ Image* ImageBySizeCache::getImage(const RenderObject* renderer, const IntSize& s
 
     // Look up the image in our cache.
     return m_images.get(size).get();
+}
+
+void ImageBySizeCache::getRequestedSizeAndZoom(const RenderObject* renderer, IntSize& size, float& zoom)
+{
+    RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
+    if (it == m_clients.end())
+        return;
+    SizeZoomAndCount& sizeCount = it->second;
+    size = sizeCount.requestedSize;
+    zoom = sizeCount.requestedZoom;
 }
 
 void ImageBySizeCache::putImage(const IntSize& size, PassRefPtr<Image> image)
@@ -97,18 +111,22 @@ void ImageBySizeCache::clear()
 
 Image* ImageBySizeCache::imageForSize(const IntSize& size) const
 {
+    if (size.isEmpty())
+        return 0;
     HashMap<IntSize, RefPtr<Image> >::const_iterator it = m_images.find(size);
     if (it == m_images.end())
         return 0;
     return it->second.get();
 }
 
-IntSize ImageBySizeCache::sizeForClient(const RenderObject* renderer) const
+Image* ImageBySizeCache::imageForRenderer(const RenderObject* renderer) const
 {
+    if (!renderer)
+        return 0;
     RenderObjectSizeCountMap::const_iterator it = m_clients.find(renderer);
     if (it == m_clients.end())
-        return IntSize();
-    return it->second.first;
+        return 0;
+    return imageForSize(it->second.actualSize);
 }
 
 } // namespace WebCore

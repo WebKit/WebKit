@@ -43,7 +43,9 @@
 #include "HTMLFormElement.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
+#include "Length.h"
 #include "Page.h"
+#include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "ResourceError.h"
 #include "SVGDocument.h"
@@ -62,8 +64,9 @@ public:
     {
     }
 
+    virtual bool isSVGImageChromeClient() const { return true; }
     SVGImage* image() const { return m_image; }
-    
+
 private:
     virtual void chromeDestroyed()
     {
@@ -99,11 +102,31 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
+PassRefPtr<SVGImage> SVGImage::createWithDataAndSize(ImageObserver* observer, SharedBuffer* data, const IntSize& size, float zoom)
+{
+    ASSERT(!size.isEmpty());
+
+    RefPtr<SVGImage> image = adoptRef(new SVGImage(0));
+    image->setData(data, true);
+    image->setContainerSize(size);
+    image->setContainerZoom(zoom);
+    image->setImageObserver(observer);
+    return image.release();
+}
+
+void SVGImage::setContainerZoom(float containerZoom)
+{
+    if (!m_page)
+        return;
+    Frame* frame = m_page->mainFrame();
+    frame->setPageZoomFactor(containerZoom);
+}
+
 void SVGImage::setContainerSize(const IntSize& containerSize)
 {
-    if (containerSize.isEmpty())
-        return;
-
+    ASSERT(!containerSize.isEmpty());
+    ASSERT(!imageObserver());
+    
     if (!m_page)
         return;
     Frame* frame = m_page->mainFrame();
@@ -111,7 +134,11 @@ void SVGImage::setContainerSize(const IntSize& containerSize)
     if (!rootElement)
         return;
 
-    rootElement->setContainerSize(containerSize);
+    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
+    if (!renderer)
+        return;
+    renderer->setContainerSize(containerSize);
+    frame->view()->resize(size());
 }
 
 bool SVGImage::usesContainerSize() const
@@ -122,8 +149,9 @@ bool SVGImage::usesContainerSize() const
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return false;
-
-    return rootElement->hasSetContainerSize();
+    if (RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer()))
+        return !renderer->containerSize().isEmpty();
+    return false;
 }
 
 IntSize SVGImage::size() const
@@ -134,44 +162,24 @@ IntSize SVGImage::size() const
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return IntSize();
-    
-    SVGLength width = rootElement->width();
-    SVGLength height = rootElement->height();
-    
-    IntSize svgSize;
-    if (width.unitType() == LengthTypePercentage) 
-        svgSize.setWidth(rootElement->relativeWidthValue());
-    else
-        svgSize.setWidth(static_cast<int>(width.value(rootElement)));
 
-    if (height.unitType() == LengthTypePercentage) 
-        svgSize.setHeight(rootElement->relativeHeightValue());
-    else
-        svgSize.setHeight(static_cast<int>(height.value(rootElement)));
+    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
+    if (!renderer)
+        return IntSize();
 
-    return svgSize;
-}
+    // If a container size is available it has precedence.
+    IntSize containerSize = renderer->containerSize();
+    if (!containerSize.isEmpty())
+        return containerSize;
 
-bool SVGImage::hasRelativeWidth() const
-{
-    if (!m_page)
-        return false;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_page->mainFrame()->document())->rootElement();
-    if (!rootElement)
-        return false;
+    // Assure that a container size is always given for a non-identity zoom level.
+    ASSERT(renderer->style()->effectiveZoom() == 1);
+    IntSize size = enclosingIntRect(rootElement->currentViewBoxRect()).size();
+    if (!size.isEmpty())
+        return size;
 
-    return rootElement->width().unitType() == LengthTypePercentage;
-}
-
-bool SVGImage::hasRelativeHeight() const
-{
-    if (!m_page)
-        return false;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_page->mainFrame()->document())->rootElement();
-    if (!rootElement)
-        return false;
-
-    return rootElement->height().unitType() == LengthTypePercentage;
+    // As last resort, use CSS default intrinsic size.
+    return IntSize(300, 150);
 }
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
@@ -213,6 +221,17 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
         imageObserver()->didDraw(this);
 }
 
+RenderBox* SVGImage::embeddedContentBox() const
+{
+    if (!m_page)
+        return 0;
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
+    if (!rootElement)
+        return 0;
+    return toRenderBox(rootElement->renderer());
+}
+
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (!m_page)
@@ -227,8 +246,8 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 
     intrinsicWidth = renderer->style()->width();
     intrinsicHeight = renderer->style()->height();
-    // FIXME: Add intrinsicRatio calculation from webkit.org/b/47156.
-    intrinsicRatio = FloatSize();
+    if (rootElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+        intrinsicRatio = rootElement->currentViewBoxRect().size();
 }
 
 NativeImagePtr SVGImage::nativeImageForCurrentFrame()
@@ -295,12 +314,15 @@ bool SVGImage::dataChanged(bool allDataReceived)
         frame->init();
         FrameLoader* loader = frame->loader();
         loader->setForcedSandboxFlags(SandboxAll);
+
+        frame->view()->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
+        frame->view()->setTransparent(true); // SVG Images are transparent.
+
         ASSERT(loader->activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
         loader->activeDocumentLoader()->writer()->setMIMEType("image/svg+xml");
         loader->activeDocumentLoader()->writer()->begin(KURL()); // create the empty document
         loader->activeDocumentLoader()->writer()->addData(data()->data(), data()->size());
         loader->activeDocumentLoader()->writer()->end();
-        frame->view()->setTransparent(true); // SVG Images are transparent.
     }
 
     return m_page;

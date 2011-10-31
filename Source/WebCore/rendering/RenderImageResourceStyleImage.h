@@ -46,10 +46,10 @@ public:
     virtual void shutdown();
 
     virtual bool hasImage() const { return true; }
-    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const { return m_styleImage->image(m_renderer, IntSize(width, height)); }
+    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const;
     virtual bool errorOccurred() const { return m_styleImage->errorOccurred(); }
 
-    virtual void setContainerSizeForRenderer(const IntSize& size) { m_styleImage->setContainerSizeForRenderer(m_renderer, size); }
+    virtual void setContainerSizeForRenderer(const IntSize&);
     virtual bool usesImageContainerSize() const { return m_styleImage->usesImageContainerSize(); }
     virtual bool imageHasRelativeWidth() const { return m_styleImage->imageHasRelativeWidth(); }
     virtual bool imageHasRelativeHeight() const { return m_styleImage->imageHasRelativeHeight(); }

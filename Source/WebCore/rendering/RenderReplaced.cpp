@@ -201,8 +201,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
 int RenderReplaced::computeIntrinsicLogicalWidth(RenderBox* contentRenderer, bool includeMaxWidth) const
 {
     if (m_hasIntrinsicSize) {
-        ASSERT(!contentRenderer);
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(calcAspectRatioLogicalWidth(), includeMaxWidth);
+        if (!contentRenderer || !contentRenderer->style()->logicalWidth().isFixed())
+            return computeReplacedLogicalWidthRespectingMinMaxWidth(calcAspectRatioLogicalWidth(), includeMaxWidth);
     }
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
@@ -212,8 +212,8 @@ int RenderReplaced::computeIntrinsicLogicalWidth(RenderBox* contentRenderer, boo
 int RenderReplaced::computeIntrinsicLogicalHeight(RenderBox* contentRenderer) const
 {
     if (m_hasIntrinsicSize) {
-        ASSERT(!contentRenderer);
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(calcAspectRatioLogicalHeight());
+        if (!contentRenderer || !contentRenderer->style()->logicalHeight().isFixed())
+            return computeReplacedLogicalHeightRespectingMinMaxHeight(calcAspectRatioLogicalHeight());
     }
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
@@ -235,7 +235,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
         contentRenderer->computeIntrinsicRatioInformation(intrinsicRatio, isPercentageIntrinsicSize);
         contentRenderStyle = contentRenderer->style();
         ASSERT(contentRenderStyle);
-    }
+    } else
+        computeIntrinsicRatioInformation(intrinsicRatio, isPercentageIntrinsicSize);
 
     if (style()->logicalWidth().isAuto()) {
         bool heightIsAuto = style()->logicalHeight().isAuto();
