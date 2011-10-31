@@ -110,7 +110,9 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
 
+    float contentsScaleFactor();
     bool needsBackingStore() const;
+    bool updateBackingStore();
     uint64_t windowNPObjectID();
 
     void geometryDidChange();

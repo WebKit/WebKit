@@ -1,3 +1,22 @@
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Factor code to resize the plug-in backing store out into a separate function
+        https://bugs.webkit.org/show_bug.cgi?id=71250
+
+        Reviewed by Adam Roben.
+
+        Add a PluginProxy::contentsScaleFactor helper function to get rid of a bunch of PLATFORM(MAC) #ifdefs,
+        and move the code to update the backing store out into a separate function.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::geometryDidChange):
+        (WebKit::PluginProxy::contentsScaleFactor):
+        (WebKit::PluginProxy::updateBackingStore):
+        (WebKit::PluginProxy::update):
+        * WebProcess/Plugins/PluginProxy.h:
+
 2011-10-31  Jeff Miller  <jeffm@apple.com>
 
         Add more APIs to WKUserContentURLPattern.h
