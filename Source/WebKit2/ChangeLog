@@ -1,5 +1,17 @@
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
+        Fix the X11 build.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
         Factor code to resize the plug-in backing store out into a separate function
         https://bugs.webkit.org/show_bug.cgi?id=71250
 

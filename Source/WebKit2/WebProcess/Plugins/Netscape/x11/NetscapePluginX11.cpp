@@ -213,12 +213,12 @@ void NetscapePlugin::platformGeometryDidChange()
     if (m_drawable)
         XFreePixmap(display, m_drawable);
 
-    if (m_frameRect.isEmpty()) {
+    if (m_frameRectInWindowCoordinates.isEmpty()) {
         m_drawable = 0;
         return;
     }
 
-    m_drawable = XCreatePixmap(display, rootWindowID(), m_frameRect.width(), m_frameRect.height(), displayDepth());
+    m_drawable = XCreatePixmap(display, rootWindowID(), m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height(), displayDepth());
 
     XSync(display, false); // Make sure that the server knows about the Drawable.
 }
@@ -245,7 +245,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
 #if PLATFORM(QT)
     QPainter* painter = context->platformContext();
-    painter->translate(m_frameRect.x(), m_frameRect.y());
+    painter->translate(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 #elif !PLATFORM(GTK)
     notImplemented();
     return;
@@ -259,8 +259,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     exposeEvent.drawable = m_drawable;
 
     IntRect exposedRect(dirtyRect);
-    exposedRect.intersect(m_frameRect);
-    exposedRect.move(-m_frameRect.x(), -m_frameRect.y());
+    exposedRect.intersect(m_frameRectInWindowCoordinates);
+    exposedRect.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     exposeEvent.x = exposedRect.x();
     exposeEvent.y = exposedRect.y();
 
@@ -279,19 +279,19 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     ASSERT(qtDrawable.depth() == static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->depth);
     painter->drawPixmap(QPoint(exposedRect.x(), exposedRect.y()), qtDrawable, exposedRect);
 
-    painter->translate(-m_frameRect.x(), -m_frameRect.y());
+    painter->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
 #elif PLATFORM(GTK)
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay,
                                                                                  m_drawable,
                                                                                  static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->visual,
-                                                                                 m_frameRect.width(),
-                                                                                 m_frameRect.height()));
+                                                                                 m_frameRectInWindowCoordinates.width(),
+                                                                                 m_frameRectInWindowCoordinates.height()));
     cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
 
-    cairo_set_source_surface(cr, drawableSurface.get(), m_frameRect.x(), m_frameRect.y());
+    cairo_set_source_surface(cr, drawableSurface.get(), m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 
-    cairo_rectangle(cr, m_frameRect.x() + exposedRect.x(), m_frameRect.y() + exposedRect.y(), exposedRect.width(), exposedRect.height());
+    cairo_rectangle(cr, m_frameRectInWindowCoordinates.x() + exposedRect.x(), m_frameRectInWindowCoordinates.y() + exposedRect.y(), exposedRect.width(), exposedRect.height());
     cairo_clip(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);
@@ -414,10 +414,10 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     switch (event.type()) {
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
-        setXButtonEventFields(xEvent, event, m_frameRect.location());
+        setXButtonEventFields(xEvent, event, m_frameRectInWindowCoordinates.location());
         break;
     case WebEvent::MouseMove:
-        setXMotionEventFields(xEvent, event, m_frameRect.location());
+        setXMotionEventFields(xEvent, event, m_frameRectInWindowCoordinates.location());
         break;
     case WebEvent::NoType:
     case WebEvent::Wheel:
@@ -455,7 +455,7 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_frameRect.location());
+    setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_frameRectInWindowCoordinates.location());
 
     return !NPP_HandleEvent(&xEvent);
 }
@@ -482,7 +482,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, m_frameRect.location(), EnterNotify);
+    setXCrossingEventFields(xEvent, event, m_frameRectInWindowCoordinates.location(), EnterNotify);
 
     return !NPP_HandleEvent(&xEvent);
 }
@@ -494,7 +494,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, m_frameRect.location(), LeaveNotify);
+    setXCrossingEventFields(xEvent, event, m_frameRectInWindowCoordinates.location(), LeaveNotify);
 
     return !NPP_HandleEvent(&xEvent);
 }
