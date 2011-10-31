@@ -9,7 +9,7 @@ Running: testAlterColor
 color: #EE3;
 
 Running: testAlterNumber
-opacity: 10.6;
+opacity: 11.6;
 
 Running: testAlterBigNumber
 -webkit-transform: rotate(1000000000000000065537deg);

@@ -1,3 +1,16 @@
+2011-10-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Using keyboard to increment/decrement units is inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=71119
+
+        Reviewed by Pavel Feldman.
+
+        This change makes the behavior consistent with that described at http://trac.webkit.org/wiki/WebInspector
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.alteredFloatNumber):
+        (WebInspector.StylesSidebarPane.prototype._attributesModified):
+
 2011-10-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Switch to a backing store approach for painting WebKitWebView

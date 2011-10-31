@@ -48,8 +48,13 @@ function test()
         {
             var opacityTreeElement = section.findTreeElementWithName("opacity");
             opacityTreeElement.startEditing(opacityTreeElement.valueElement);
+            // 0.5 (initial)
+            opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up", false, true, false)); // Alt-Up
+            // 0.6
             opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+            // 1.6
             opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageUp"));
+            // 11.6
             InspectorTest.addResult(opacityTreeElement.listItemElement.textContent);
             next();
         },

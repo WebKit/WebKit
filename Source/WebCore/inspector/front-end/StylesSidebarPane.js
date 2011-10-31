@@ -133,39 +133,25 @@ WebInspector.StylesSidebarPane.CSSNumberRegex = /^(-?(?:\d+(?:\.\d+)?|\.\d+))$/;
 WebInspector.StylesSidebarPane.alteredFloatNumber = function(number, event)
 {
     var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
-    // If the number is near zero or the number is one and the direction will take it near zero.
-    var numberNearZero = (number < 1 && number > -1);
-    if (number === 1 && event.keyIdentifier === "Down")
-        numberNearZero = true;
-    else if (number === -1 && event.keyIdentifier === "Up")
-        numberNearZero = true;
 
-    var result;
-    if (numberNearZero && event.altKey && arrowKeyPressed) {
-        if (event.keyIdentifier === "Down")
-            result = Math.ceil(number - 1);
-        else
-            result = Math.floor(number + 1);
-    } else {
-        // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
-        // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
-        var changeAmount = 1;
-        if (event.shiftKey && !arrowKeyPressed)
-            changeAmount = 100;
-        else if (event.shiftKey || !arrowKeyPressed)
-            changeAmount = 10;
-        else if (event.altKey || numberNearZero)
-            changeAmount = 0.1;
+    // Jump by 10 when shift is down or jump by 0.1 when Alt/Option is down.
+    // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
+    var changeAmount = 1;
+    if (event.shiftKey && !arrowKeyPressed)
+        changeAmount = 100;
+    else if (event.shiftKey || !arrowKeyPressed)
+        changeAmount = 10;
+    else if (event.altKey)
+        changeAmount = 0.1;
 
-        if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
-            changeAmount *= -1;
+    if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
+        changeAmount *= -1;
 
-        // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
-        // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
-        result = Number((number + changeAmount).toFixed(6));
-        if (!String(result).match(WebInspector.StylesSidebarPane.CSSNumberRegex))
-            return null;
-    }
+    // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
+    // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
+    var result = Number((number + changeAmount).toFixed(6));
+    if (!String(result).match(WebInspector.StylesSidebarPane.CSSNumberRegex))
+        return null;
 
     return result;
 }
@@ -284,7 +270,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (this.node !== event.data.node)
             return;
 
-        // Changing style attribute will anyways generate _styleInvalidated message. 
+        // Changing style attribute will anyways generate _styleInvalidated message.
         if (event.data.name === "style")
             return;
 
