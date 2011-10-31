@@ -3922,6 +3922,8 @@ BUGWK71084 WIN : http/tests/inspector/extensions-ignore-cache.html = FAIL CRASH
 BUGWK71127 : fast/js/array-functions-non-arrays.html = TEXT
 BUGWK71127 : fast/js/toString-overrides.html = TEXT
 BUGWK71127 : fast/js/toString-recursion.html = TEXT
+BUGWK71127 : fast/js/kde/RegExp.html = TEXT
+BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
 
 BUGWK71139 SNOWLEOPARD : http/tests/security/cross-frame-access-custom.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/frames/content-opacity-2.html = CRASH PASS
