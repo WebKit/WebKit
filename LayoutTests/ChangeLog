@@ -1,3 +1,9 @@
+2011-10-31  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, skiped failing test inspector/debugger/selected-call-frame-after-formatting-source.html on QT.
+
+        * platform/qt/Skipped:
+
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Marked animations/change-keyframes.html as failing on SNOWLEOPARD DEBUG.

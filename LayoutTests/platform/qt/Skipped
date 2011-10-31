@@ -2239,6 +2239,10 @@ inspector/console/console-trace-in-eval.html
 inspector/debugger/source-frame.html
 inspector/styles/styles-update-from-js.html
 
+# Test fails because script pretty-print does not work in inspector on JSC when paused on breakpoint. 
+# https://bugs.webkit.org/show_bug.cgi?id=71120
+inspector/debugger/selected-call-frame-after-formatting-source.html
+
 # Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths
 # from Font, making it possible to reuse the simple text code path for SVG Fonts
 # https://bugs.webkit.org/show_bug.cgi?id=59085
