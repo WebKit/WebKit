@@ -1438,7 +1438,7 @@ EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, E
  * @return @c EINA_TRUE if the scripts can open the new windows
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_scripts_can_open_windows_get(const Evas_Object *o);
 
 /**
  * Enables/disables if the scripts can open the new windows.
@@ -1451,7 +1451,7 @@ EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o)
  *
  * @see ewk_view_setting_enable_scripts_set
  */
-EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool allow);
+EAPI Eina_Bool    ewk_view_setting_scripts_can_open_windows_set(Evas_Object *o, Eina_Bool allow);
 
 /**
  * Returns whether scripts can close windows automatically.

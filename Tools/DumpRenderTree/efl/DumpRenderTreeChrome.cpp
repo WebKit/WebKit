@@ -70,7 +70,7 @@ Evas_Object* DumpRenderTreeChrome::createNewWindow()
 {
     Evas_Object* newView = createView();
 
-    ewk_view_setting_scripts_window_open_set(newView, EINA_TRUE);
+    ewk_view_setting_scripts_can_open_windows_set(newView, EINA_TRUE);
     ewk_view_setting_scripts_can_close_windows_set(newView, EINA_TRUE);
 
     m_extraViews.append(newView);
@@ -172,7 +172,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_setting_page_cache_set(mainView(), EINA_FALSE);
     ewk_view_setting_enable_auto_resize_window_set(mainView(), EINA_TRUE);
     ewk_view_setting_enable_plugins_set(mainView(), EINA_TRUE);
-    ewk_view_setting_scripts_window_open_set(mainView(), EINA_TRUE);
+    ewk_view_setting_scripts_can_open_windows_set(mainView(), EINA_TRUE);
     ewk_view_setting_scripts_can_close_windows_set(mainView(), EINA_TRUE);
 
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);

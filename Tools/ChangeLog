@@ -1,3 +1,14 @@
+2011-10-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Rename ewk_view_setting_scripts_window_open_{get,set} after r93833
+        https://bugs.webkit.org/show_bug.cgi?id=71228
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createNewWindow):
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2011-10-31  Eric Seidel  <eric@webkit.org>
 
         webkitpy tests depend too much on the user's environment

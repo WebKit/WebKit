@@ -1,3 +1,23 @@
+2011-10-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Rename ewk_view_setting_scripts_window_open_{get,set} after r93833
+        https://bugs.webkit.org/show_bug.cgi?id=71228
+
+        Reviewed by Antonio Gomes.
+
+        r93833 has introduced
+        ewk_view_setting_scripts_can_close_windows_{get,set}, but its
+        counterpart to allow scripts to open windows kept its weird name.
+
+        This makes the functions to allow windows to open and close windows to
+        have confusingly different name patterns.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_scripts_can_open_windows_get):
+        (ewk_view_setting_scripts_can_open_windows_set):
+        * ewk/ewk_view.h:
+
 2011-10-31  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Make cache flush when max size of cache has been changed

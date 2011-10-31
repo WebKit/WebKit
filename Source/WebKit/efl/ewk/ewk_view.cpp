@@ -179,7 +179,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool enablePlugins : 1;
         Eina_Bool enableFrameFlattening : 1;
         Eina_Bool encodingDetector : 1;
-        Eina_Bool scriptsWindowOpen : 1;
+        Eina_Bool scriptsCanOpenWindows : 1;
         Eina_Bool scriptsCanCloseWindows : 1;
         Eina_Bool resizableTextareas : 1;
         Eina_Bool privateBrowsing : 1;
@@ -681,7 +681,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.enableScripts = priv->pageSettings->isScriptEnabled();
     priv->settings.enablePlugins = priv->pageSettings->arePluginsEnabled();
     priv->settings.enableFrameFlattening = priv->pageSettings->frameFlatteningEnabled();
-    priv->settings.scriptsWindowOpen = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
+    priv->settings.scriptsCanOpenWindows = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
     priv->settings.scriptsCanCloseWindows = priv->pageSettings->allowScriptsToCloseWindows();
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
     priv->settings.privateBrowsing = priv->pageSettings->privateBrowsingEnabled();
@@ -2009,21 +2009,21 @@ Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object* ewkView, Ein
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_scripts_window_open_get(const Evas_Object* ewkView)
+Eina_Bool ewk_view_setting_scripts_can_open_windows_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
-    return priv->settings.scriptsWindowOpen;
+    return priv->settings.scriptsCanOpenWindows;
 }
 
-Eina_Bool ewk_view_setting_scripts_window_open_set(Evas_Object* ewkView, Eina_Bool allow)
+Eina_Bool ewk_view_setting_scripts_can_open_windows_set(Evas_Object* ewkView, Eina_Bool allow)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
     allow = !!allow;
-    if (priv->settings.scriptsWindowOpen != allow) {
+    if (priv->settings.scriptsCanOpenWindows != allow) {
         priv->pageSettings->setJavaScriptCanOpenWindowsAutomatically(allow);
-        priv->settings.scriptsWindowOpen = allow;
+        priv->settings.scriptsCanOpenWindows = allow;
     }
     return EINA_TRUE;
 }
