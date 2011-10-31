@@ -156,7 +156,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     if (!lexicalGlobalObject->evalEnabled())
         return throwError(exec, createEvalError(exec, "Eval is disabled"));
-    RefPtr<EvalNode> evalNode = globalData->parser->parse<EvalNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
+    RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
     if (!evalNode) {
         ASSERT(exception);
         return exception;
@@ -260,7 +260,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, JSParseNormal, &exception);
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
     if (programNode)
         return 0;
     ASSERT(exception);
@@ -286,7 +286,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
     if (!programNode) {
         ASSERT(exception);
         return exception;
@@ -429,7 +429,8 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
     JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
-    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalObject, 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
+    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(globalData, globalObject, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, FunctionBodyNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, 0, 0, &exception);
+
     if (!body) {
         ASSERT(exception);
         return nullptr;
@@ -644,7 +645,7 @@ void FunctionExecutable::unlinkCalls()
 FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
 {
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> program = exec->globalData().parser->parse<ProgramNode>(lexicalGlobalObject, debugger, exec, source, 0, JSParseNormal, exception);
+    RefPtr<ProgramNode> program = parse<ProgramNode>(&exec->globalData(), lexicalGlobalObject, source, 0, JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, debugger, exec, exception);
     if (!program) {
         ASSERT(*exception);
         return 0;

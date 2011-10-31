@@ -23,18 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSParser_h
-#define JSParser_h
-
-#include "UString.h"
+#ifndef ParserTokens_h
+#define ParserTokens_h
 
 namespace JSC {
 
-class ExecState;
-class FunctionParameters;
 class Identifier;
-class JSGlobalData;
-class SourceCode;
 
 enum {
     UnaryOpTokenFlag = 64,
@@ -147,7 +141,7 @@ union JSTokenData {
 };
 
 struct JSTokenInfo {
-    JSTokenInfo() : line(0) {}
+    JSTokenInfo() : line(0) { }
     int line;
     int startOffset;
     int endOffset;
@@ -161,7 +155,8 @@ struct JSToken {
 
 enum JSParserStrictness { JSParseNormal, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
-
-UString jsParse(JSGlobalData*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
+    
 }
-#endif // JSParser_h
+
+
+#endif // ParserTokens_h

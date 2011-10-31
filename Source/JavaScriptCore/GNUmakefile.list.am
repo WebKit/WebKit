@@ -262,8 +262,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/os-win32/stdbool.h \
 	Source/JavaScriptCore/os-win32/stdint.h \
 	Source/JavaScriptCore/parser/ASTBuilder.h \
-	Source/JavaScriptCore/parser/JSParser.cpp \
-	Source/JavaScriptCore/parser/JSParser.h \
 	Source/JavaScriptCore/parser/Lexer.cpp \
 	Source/JavaScriptCore/parser/Lexer.h \
 	Source/JavaScriptCore/parser/NodeConstructors.h \

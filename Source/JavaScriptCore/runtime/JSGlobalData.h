@@ -64,9 +64,9 @@ namespace JSC {
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
-    class Lexer;
+    class Keywords;
     class NativeExecutable;
-    class Parser;
+    class ParserArena;
     class RegExpCache;
     class Stringifier;
     class Structure;
@@ -219,8 +219,8 @@ namespace JSC {
                 : wtfThreadData().stack();
         }
 
-        Lexer* lexer;
-        Parser* parser;
+        ParserArena* parserArena;
+        Keywords* keywords;
         Interpreter* interpreter;
 #if ENABLE(JIT)
         OwnPtr<JITThunks> jitStubs;

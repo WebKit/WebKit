@@ -410,8 +410,6 @@
             'os-win32/stdbool.h',
             'os-win32/stdint.h',
             'parser/ASTBuilder.h',
-            'parser/JSParser.cpp',
-            'parser/JSParser.h',
             'parser/Lexer.cpp',
             'parser/Lexer.h',
             'parser/NodeConstructors.h',

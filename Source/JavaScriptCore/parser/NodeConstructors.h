@@ -29,86 +29,86 @@ namespace JSC {
 
     inline void* ParserArenaFreeable::operator new(size_t size, JSGlobalData* globalData)
     {
-        return globalData->parser->arena().allocateFreeable(size);
+        return globalData->parserArena->allocateFreeable(size);
     }
 
     inline void* ParserArenaDeletable::operator new(size_t size, JSGlobalData* globalData)
     {
-        return globalData->parser->arena().allocateDeletable(size);
+        return globalData->parserArena->allocateDeletable(size);
     }
 
     inline ParserArenaRefCounted::ParserArenaRefCounted(JSGlobalData* globalData)
     {
-        globalData->parser->arena().derefWithArena(adoptRef(this));
+        globalData->parserArena->derefWithArena(adoptRef(this));
     }
 
-    inline Node::Node(JSGlobalData* globalData)
-        : m_line(globalData->lexer->lastLineNumber())
+    inline Node::Node(int lineNumber)
+        : m_lineNumber(lineNumber)
     {
     }
 
-    inline ExpressionNode::ExpressionNode(JSGlobalData* globalData, ResultType resultType)
-        : Node(globalData)
+    inline ExpressionNode::ExpressionNode(int lineNumber, ResultType resultType)
+        : Node(lineNumber)
         , m_resultType(resultType)
     {
     }
 
-    inline StatementNode::StatementNode(JSGlobalData* globalData)
-        : Node(globalData)
+    inline StatementNode::StatementNode(int lineNumber)
+        : Node(lineNumber)
         , m_lastLine(-1)
     {
     }
 
-    inline NullNode::NullNode(JSGlobalData* globalData)
-        : ExpressionNode(globalData, ResultType::nullType())
+    inline NullNode::NullNode(int lineNumber)
+        : ExpressionNode(lineNumber, ResultType::nullType())
     {
     }
 
-    inline BooleanNode::BooleanNode(JSGlobalData* globalData, bool value)
-        : ExpressionNode(globalData, ResultType::booleanType())
+    inline BooleanNode::BooleanNode(int lineNumber, bool value)
+        : ExpressionNode(lineNumber, ResultType::booleanType())
         , m_value(value)
     {
     }
 
-    inline NumberNode::NumberNode(JSGlobalData* globalData, double value)
-        : ExpressionNode(globalData, ResultType::numberType())
+    inline NumberNode::NumberNode(int lineNumber, double value)
+        : ExpressionNode(lineNumber, ResultType::numberType())
         , m_value(value)
     {
     }
 
-    inline StringNode::StringNode(JSGlobalData* globalData, const Identifier& value)
-        : ExpressionNode(globalData, ResultType::stringType())
+    inline StringNode::StringNode(int lineNumber, const Identifier& value)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_value(value)
     {
     }
 
-    inline RegExpNode::RegExpNode(JSGlobalData* globalData, const Identifier& pattern, const Identifier& flags)
-        : ExpressionNode(globalData)
+    inline RegExpNode::RegExpNode(int lineNumber, const Identifier& pattern, const Identifier& flags)
+        : ExpressionNode(lineNumber)
         , m_pattern(pattern)
         , m_flags(flags)
     {
     }
 
-    inline ThisNode::ThisNode(JSGlobalData* globalData)
-        : ExpressionNode(globalData)
+    inline ThisNode::ThisNode(int lineNumber)
+        : ExpressionNode(lineNumber)
     {
     }
 
-    inline ResolveNode::ResolveNode(JSGlobalData* globalData, const Identifier& ident, int startOffset)
-        : ExpressionNode(globalData)
+    inline ResolveNode::ResolveNode(int lineNumber, const Identifier& ident, int startOffset)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_startOffset(startOffset)
     {
     }
 
-    inline ElementNode::ElementNode(JSGlobalData*, int elision, ExpressionNode* node)
+    inline ElementNode::ElementNode(int elision, ExpressionNode* node)
         : m_next(0)
         , m_elision(elision)
         , m_node(node)
     {
     }
 
-    inline ElementNode::ElementNode(JSGlobalData*, ElementNode* l, int elision, ExpressionNode* node)
+    inline ElementNode::ElementNode(ElementNode* l, int elision, ExpressionNode* node)
         : m_next(0)
         , m_elision(elision)
         , m_node(node)
@@ -116,24 +116,24 @@ namespace JSC {
         l->m_next = this;
     }
 
-    inline ArrayNode::ArrayNode(JSGlobalData* globalData, int elision)
-        : ExpressionNode(globalData)
+    inline ArrayNode::ArrayNode(int lineNumber, int elision)
+        : ExpressionNode(lineNumber)
         , m_element(0)
         , m_elision(elision)
         , m_optional(true)
     {
     }
 
-    inline ArrayNode::ArrayNode(JSGlobalData* globalData, ElementNode* element)
-        : ExpressionNode(globalData)
+    inline ArrayNode::ArrayNode(int lineNumber, ElementNode* element)
+        : ExpressionNode(lineNumber)
         , m_element(element)
         , m_elision(0)
         , m_optional(false)
     {
     }
 
-    inline ArrayNode::ArrayNode(JSGlobalData* globalData, int elision, ElementNode* element)
-        : ExpressionNode(globalData)
+    inline ArrayNode::ArrayNode(int lineNumber, int elision, ElementNode* element)
+        : ExpressionNode(lineNumber)
         , m_element(element)
         , m_elision(elision)
         , m_optional(true)
@@ -148,118 +148,118 @@ namespace JSC {
     }
 
     inline PropertyNode::PropertyNode(JSGlobalData* globalData, double name, ExpressionNode* assign, Type type)
-        : m_name(globalData->parser->arena().identifierArena().makeNumericIdentifier(globalData, name))
+        : m_name(globalData->parserArena->identifierArena().makeNumericIdentifier(globalData, name))
         , m_assign(assign)
         , m_type(type)
     {
     }
 
-    inline PropertyListNode::PropertyListNode(JSGlobalData* globalData, PropertyNode* node)
-        : Node(globalData)
+    inline PropertyListNode::PropertyListNode(int lineNumber, PropertyNode* node)
+        : Node(lineNumber)
         , m_node(node)
         , m_next(0)
     {
     }
 
-    inline PropertyListNode::PropertyListNode(JSGlobalData* globalData, PropertyNode* node, PropertyListNode* list)
-        : Node(globalData)
+    inline PropertyListNode::PropertyListNode(int lineNumber, PropertyNode* node, PropertyListNode* list)
+        : Node(lineNumber)
         , m_node(node)
         , m_next(0)
     {
         list->m_next = this;
     }
 
-    inline ObjectLiteralNode::ObjectLiteralNode(JSGlobalData* globalData)
-        : ExpressionNode(globalData)
+    inline ObjectLiteralNode::ObjectLiteralNode(int lineNumber)
+        : ExpressionNode(lineNumber)
         , m_list(0)
     {
     }
 
-    inline ObjectLiteralNode::ObjectLiteralNode(JSGlobalData* globalData, PropertyListNode* list)
-        : ExpressionNode(globalData)
+    inline ObjectLiteralNode::ObjectLiteralNode(int lineNumber, PropertyListNode* list)
+        : ExpressionNode(lineNumber)
         , m_list(list)
     {
     }
 
-    inline BracketAccessorNode::BracketAccessorNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments)
-        : ExpressionNode(globalData)
+    inline BracketAccessorNode::BracketAccessorNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments)
+        : ExpressionNode(lineNumber)
         , m_base(base)
         , m_subscript(subscript)
         , m_subscriptHasAssignments(subscriptHasAssignments)
     {
     }
 
-    inline DotAccessorNode::DotAccessorNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident)
-        : ExpressionNode(globalData)
+    inline DotAccessorNode::DotAccessorNode(int lineNumber, ExpressionNode* base, const Identifier& ident)
+        : ExpressionNode(lineNumber)
         , m_base(base)
         , m_ident(ident)
     {
     }
 
-    inline ArgumentListNode::ArgumentListNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : Node(globalData)
+    inline ArgumentListNode::ArgumentListNode(int lineNumber, ExpressionNode* expr)
+        : Node(lineNumber)
         , m_next(0)
         , m_expr(expr)
     {
     }
 
-    inline ArgumentListNode::ArgumentListNode(JSGlobalData* globalData, ArgumentListNode* listNode, ExpressionNode* expr)
-        : Node(globalData)
+    inline ArgumentListNode::ArgumentListNode(int lineNumber, ArgumentListNode* listNode, ExpressionNode* expr)
+        : Node(lineNumber)
         , m_next(0)
         , m_expr(expr)
     {
         listNode->m_next = this;
     }
 
-    inline ArgumentsNode::ArgumentsNode(JSGlobalData*)
+    inline ArgumentsNode::ArgumentsNode()
         : m_listNode(0)
     {
     }
 
-    inline ArgumentsNode::ArgumentsNode(JSGlobalData*, ArgumentListNode* listNode)
+    inline ArgumentsNode::ArgumentsNode(ArgumentListNode* listNode)
         : m_listNode(listNode)
     {
     }
 
-    inline NewExprNode::NewExprNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : ExpressionNode(globalData)
+    inline NewExprNode::NewExprNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
         , m_args(0)
     {
     }
 
-    inline NewExprNode::NewExprNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args)
-        : ExpressionNode(globalData)
+    inline NewExprNode::NewExprNode(int lineNumber, ExpressionNode* expr, ArgumentsNode* args)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
         , m_args(args)
     {
     }
 
-    inline EvalFunctionCallNode::EvalFunctionCallNode(JSGlobalData* globalData, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline EvalFunctionCallNode::EvalFunctionCallNode(int lineNumber, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_args(args)
     {
     }
 
-    inline FunctionCallValueNode::FunctionCallValueNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline FunctionCallValueNode::FunctionCallValueNode(int lineNumber, ExpressionNode* expr, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_expr(expr)
         , m_args(args)
     {
     }
 
-    inline FunctionCallResolveNode::FunctionCallResolveNode(JSGlobalData* globalData, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline FunctionCallResolveNode::FunctionCallResolveNode(int lineNumber, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
         , m_args(args)
     {
     }
 
-    inline FunctionCallBracketNode::FunctionCallBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline FunctionCallBracketNode::FunctionCallBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -267,8 +267,8 @@ namespace JSC {
     {
     }
 
-    inline FunctionCallDotNode::FunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline FunctionCallDotNode::FunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -276,31 +276,31 @@ namespace JSC {
     {
     }
 
-    inline CallFunctionCallDotNode::CallFunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : FunctionCallDotNode(globalData, base, ident, args, divot, startOffset, endOffset)
+    inline CallFunctionCallDotNode::CallFunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : FunctionCallDotNode(lineNumber, base, ident, args, divot, startOffset, endOffset)
     {
     }
 
-    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : FunctionCallDotNode(globalData, base, ident, args, divot, startOffset, endOffset)
+    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : FunctionCallDotNode(lineNumber, base, ident, args, divot, startOffset, endOffset)
     {
     }
 
-    inline PrePostResolveNode::PrePostResolveNode(JSGlobalData* globalData, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData, ResultType::numberType()) // could be reusable for pre?
+    inline PrePostResolveNode::PrePostResolveNode(int lineNumber, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber, ResultType::numberType()) // could be reusable for pre?
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
     {
     }
 
-    inline PostfixResolveNode::PostfixResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(globalData, ident, divot, startOffset, endOffset)
+    inline PostfixResolveNode::PostfixResolveNode(int lineNumber, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : PrePostResolveNode(lineNumber, ident, divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline PostfixBracketNode::PostfixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PostfixBracketNode::PostfixBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -308,8 +308,8 @@ namespace JSC {
     {
     }
 
-    inline PostfixDotNode::PostfixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PostfixDotNode::PostfixDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -317,69 +317,69 @@ namespace JSC {
     {
     }
 
-    inline PostfixErrorNode::PostfixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PostfixErrorNode::PostfixErrorNode(int lineNumber, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_expr(expr)
         , m_operator(oper)
     {
     }
 
-    inline DeleteResolveNode::DeleteResolveNode(JSGlobalData* globalData, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline DeleteResolveNode::DeleteResolveNode(int lineNumber, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
     {
     }
 
-    inline DeleteBracketNode::DeleteBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline DeleteBracketNode::DeleteBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
     {
     }
 
-    inline DeleteDotNode::DeleteDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline DeleteDotNode::DeleteDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
     {
     }
 
-    inline DeleteValueNode::DeleteValueNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : ExpressionNode(globalData)
+    inline DeleteValueNode::DeleteValueNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline VoidNode::VoidNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : ExpressionNode(globalData)
+    inline VoidNode::VoidNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline TypeOfResolveNode::TypeOfResolveNode(JSGlobalData* globalData, const Identifier& ident)
-        : ExpressionNode(globalData, ResultType::stringType())
+    inline TypeOfResolveNode::TypeOfResolveNode(int lineNumber, const Identifier& ident)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_ident(ident)
     {
     }
 
-    inline TypeOfValueNode::TypeOfValueNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : ExpressionNode(globalData, ResultType::stringType())
+    inline TypeOfValueNode::TypeOfValueNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_expr(expr)
     {
     }
 
-    inline PrefixResolveNode::PrefixResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(globalData, ident, divot, startOffset, endOffset)
+    inline PrefixResolveNode::PrefixResolveNode(int lineNumber, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : PrePostResolveNode(lineNumber, ident, divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline PrefixBracketNode::PrefixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PrefixBracketNode::PrefixBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -387,8 +387,8 @@ namespace JSC {
     {
     }
 
-    inline PrefixDotNode::PrefixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PrefixDotNode::PrefixDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -396,43 +396,43 @@ namespace JSC {
     {
     }
 
-    inline PrefixErrorNode::PrefixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline PrefixErrorNode::PrefixErrorNode(int lineNumber, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_expr(expr)
         , m_operator(oper)
     {
     }
 
-    inline UnaryOpNode::UnaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr, OpcodeID opcodeID)
-        : ExpressionNode(globalData, type)
+    inline UnaryOpNode::UnaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr, OpcodeID opcodeID)
+        : ExpressionNode(lineNumber, type)
         , m_expr(expr)
         , m_opcodeID(opcodeID)
     {
     }
 
-    inline UnaryPlusNode::UnaryPlusNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : UnaryOpNode(globalData, ResultType::numberType(), expr, op_to_jsnumber)
+    inline UnaryPlusNode::UnaryPlusNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::numberType(), expr, op_to_jsnumber)
     {
     }
 
-    inline NegateNode::NegateNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : UnaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr, op_negate)
+    inline NegateNode::NegateNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr, op_negate)
     {
     }
 
-    inline BitwiseNotNode::BitwiseNotNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : UnaryOpNode(globalData, ResultType::forBitOp(), expr, op_bitnot)
+    inline BitwiseNotNode::BitwiseNotNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::forBitOp(), expr, op_bitnot)
     {
     }
 
-    inline LogicalNotNode::LogicalNotNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : UnaryOpNode(globalData, ResultType::booleanType(), expr, op_not)
+    inline LogicalNotNode::LogicalNotNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::booleanType(), expr, op_not)
     {
     }
 
-    inline BinaryOpNode::BinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : ExpressionNode(globalData)
+    inline BinaryOpNode::BinaryOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : ExpressionNode(lineNumber)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_opcodeID(opcodeID)
@@ -440,8 +440,8 @@ namespace JSC {
     {
     }
 
-    inline BinaryOpNode::BinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : ExpressionNode(globalData, type)
+    inline BinaryOpNode::BinaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : ExpressionNode(lineNumber, type)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_opcodeID(opcodeID)
@@ -449,140 +449,140 @@ namespace JSC {
     {
     }
 
-    inline MultNode::MultNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_mul, rightHasAssignments)
+    inline MultNode::MultNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr1, expr2, op_mul, rightHasAssignments)
     {
     }
 
-    inline DivNode::DivNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_div, rightHasAssignments)
+    inline DivNode::DivNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr1, expr2, op_div, rightHasAssignments)
     {
     }
 
 
-    inline ModNode::ModNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_mod, rightHasAssignments)
+    inline ModNode::ModNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr1, expr2, op_mod, rightHasAssignments)
     {
     }
 
-    inline AddNode::AddNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forAdd(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_add, rightHasAssignments)
+    inline AddNode::AddNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forAdd(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_add, rightHasAssignments)
     {
     }
 
-    inline SubNode::SubNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_sub, rightHasAssignments)
+    inline SubNode::SubNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr1, expr2, op_sub, rightHasAssignments)
     {
     }
 
-    inline LeftShiftNode::LeftShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, op_lshift, rightHasAssignments)
+    inline LeftShiftNode::LeftShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_lshift, rightHasAssignments)
     {
     }
 
-    inline RightShiftNode::RightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, op_rshift, rightHasAssignments)
+    inline RightShiftNode::RightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_rshift, rightHasAssignments)
     {
     }
 
-    inline UnsignedRightShiftNode::UnsignedRightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_urshift, rightHasAssignments)
+    inline UnsignedRightShiftNode::UnsignedRightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberTypeCanReuse(), expr1, expr2, op_urshift, rightHasAssignments)
     {
     }
 
-    inline LessNode::LessNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_less, rightHasAssignments)
+    inline LessNode::LessNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_less, rightHasAssignments)
     {
     }
 
-    inline GreaterNode::GreaterNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_greater, rightHasAssignments)
+    inline GreaterNode::GreaterNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_greater, rightHasAssignments)
     {
     }
 
-    inline LessEqNode::LessEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_lesseq, rightHasAssignments)
+    inline LessEqNode::LessEqNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_lesseq, rightHasAssignments)
     {
     }
 
-    inline GreaterEqNode::GreaterEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_greatereq, rightHasAssignments)
+    inline GreaterEqNode::GreaterEqNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_greatereq, rightHasAssignments)
     {
     }
 
-    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(globalData, type, expr1, expr2, opcodeID, rightHasAssignments)
+    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, type, expr1, expr2, opcodeID, rightHasAssignments)
     {
     }
 
-    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(globalData, expr1, expr2, opcodeID, rightHasAssignments)
+    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, expr1, expr2, opcodeID, rightHasAssignments)
     {
     }
 
-    inline InstanceOfNode::InstanceOfNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ThrowableBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_instanceof, rightHasAssignments)
+    inline InstanceOfNode::InstanceOfNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : ThrowableBinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_instanceof, rightHasAssignments)
     {
     }
 
-    inline InNode::InNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ThrowableBinaryOpNode(globalData, expr1, expr2, op_in, rightHasAssignments)
+    inline InNode::InNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : ThrowableBinaryOpNode(lineNumber, expr1, expr2, op_in, rightHasAssignments)
     {
     }
 
-    inline EqualNode::EqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_eq, rightHasAssignments)
+    inline EqualNode::EqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_eq, rightHasAssignments)
     {
     }
 
-    inline NotEqualNode::NotEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_neq, rightHasAssignments)
+    inline NotEqualNode::NotEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_neq, rightHasAssignments)
     {
     }
 
-    inline StrictEqualNode::StrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_stricteq, rightHasAssignments)
+    inline StrictEqualNode::StrictEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_stricteq, rightHasAssignments)
     {
     }
 
-    inline NotStrictEqualNode::NotStrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_nstricteq, rightHasAssignments)
+    inline NotStrictEqualNode::NotStrictEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_nstricteq, rightHasAssignments)
     {
     }
 
-    inline BitAndNode::BitAndNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, op_bitand, rightHasAssignments)
+    inline BitAndNode::BitAndNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitand, rightHasAssignments)
     {
     }
 
-    inline BitOrNode::BitOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, op_bitor, rightHasAssignments)
+    inline BitOrNode::BitOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitor, rightHasAssignments)
     {
     }
 
-    inline BitXOrNode::BitXOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(globalData, ResultType::forBitOp(), expr1, expr2, op_bitxor, rightHasAssignments)
+    inline BitXOrNode::BitXOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitxor, rightHasAssignments)
     {
     }
 
-    inline LogicalOpNode::LogicalOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper)
-        : ExpressionNode(globalData, ResultType::booleanType())
+    inline LogicalOpNode::LogicalOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper)
+        : ExpressionNode(lineNumber, ResultType::booleanType())
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_operator(oper)
     {
     }
 
-    inline ConditionalNode::ConditionalNode(JSGlobalData* globalData, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
-        : ExpressionNode(globalData)
+    inline ConditionalNode::ConditionalNode(int lineNumber, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
+        : ExpressionNode(lineNumber)
         , m_logical(logical)
         , m_expr1(expr1)
         , m_expr2(expr2)
     {
     }
 
-    inline ReadModifyResolveNode::ReadModifyResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline ReadModifyResolveNode::ReadModifyResolveNode(int lineNumber, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
         , m_right(right)
@@ -591,16 +591,16 @@ namespace JSC {
     {
     }
 
-    inline AssignResolveNode::AssignResolveNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments)
-        : ExpressionNode(globalData)
+    inline AssignResolveNode::AssignResolveNode(int lineNumber, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_right(right)
         , m_rightHasAssignments(rightHasAssignments)
     {
     }
 
-    inline ReadModifyBracketNode::ReadModifyBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline ReadModifyBracketNode::ReadModifyBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -611,8 +611,8 @@ namespace JSC {
     {
     }
 
-    inline AssignBracketNode::AssignBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline AssignBracketNode::AssignBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -622,8 +622,8 @@ namespace JSC {
     {
     }
 
-    inline AssignDotNode::AssignDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline AssignDotNode::AssignDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -632,8 +632,8 @@ namespace JSC {
     {
     }
 
-    inline ReadModifyDotNode::ReadModifyDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline ReadModifyDotNode::ReadModifyDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -643,8 +643,8 @@ namespace JSC {
     {
     }
 
-    inline AssignErrorNode::AssignErrorNode(JSGlobalData* globalData, ExpressionNode* left, Operator oper, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(globalData)
+    inline AssignErrorNode::AssignErrorNode(int lineNumber, ExpressionNode* left, Operator oper, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_left(left)
         , m_operator(oper)
@@ -652,74 +652,74 @@ namespace JSC {
     {
     }
 
-    inline CommaNode::CommaNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2)
-        : ExpressionNode(globalData)
+    inline CommaNode::CommaNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2)
+        : ExpressionNode(lineNumber)
     {
         m_expressions.append(expr1);
         m_expressions.append(expr2);
     }
 
-    inline ConstStatementNode::ConstStatementNode(JSGlobalData* globalData, ConstDeclNode* next)
-        : StatementNode(globalData)
+    inline ConstStatementNode::ConstStatementNode(int lineNumber, ConstDeclNode* next)
+        : StatementNode(lineNumber)
         , m_next(next)
     {
     }
 
-    inline SourceElements::SourceElements(JSGlobalData*)
+    inline SourceElements::SourceElements()
     {
     }
 
-    inline EmptyStatementNode::EmptyStatementNode(JSGlobalData* globalData)
-        : StatementNode(globalData)
+    inline EmptyStatementNode::EmptyStatementNode(int lineNumber)
+        : StatementNode(lineNumber)
     {
     }
 
-    inline DebuggerStatementNode::DebuggerStatementNode(JSGlobalData* globalData)
-        : StatementNode(globalData)
+    inline DebuggerStatementNode::DebuggerStatementNode(int lineNumber)
+        : StatementNode(lineNumber)
     {
     }
     
-    inline ExprStatementNode::ExprStatementNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : StatementNode(globalData)
+    inline ExprStatementNode::ExprStatementNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline VarStatementNode::VarStatementNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : StatementNode(globalData)
+    inline VarStatementNode::VarStatementNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
     
-    inline IfNode::IfNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock)
-        : StatementNode(globalData)
+    inline IfNode::IfNode(int lineNumber, ExpressionNode* condition, StatementNode* ifBlock)
+        : StatementNode(lineNumber)
         , m_condition(condition)
         , m_ifBlock(ifBlock)
     {
     }
 
-    inline IfElseNode::IfElseNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
-        : IfNode(globalData, condition, ifBlock)
+    inline IfElseNode::IfElseNode(int lineNumber, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
+        : IfNode(lineNumber, condition, ifBlock)
         , m_elseBlock(elseBlock)
     {
     }
 
-    inline DoWhileNode::DoWhileNode(JSGlobalData* globalData, StatementNode* statement, ExpressionNode* expr)
-        : StatementNode(globalData)
+    inline DoWhileNode::DoWhileNode(int lineNumber, StatementNode* statement, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_statement(statement)
         , m_expr(expr)
     {
     }
 
-    inline WhileNode::WhileNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement)
-        : StatementNode(globalData)
+    inline WhileNode::WhileNode(int lineNumber, ExpressionNode* expr, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_statement(statement)
     {
     }
 
-    inline ForNode::ForNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl)
-        : StatementNode(globalData)
+    inline ForNode::ForNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl)
+        : StatementNode(lineNumber)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
@@ -729,38 +729,38 @@ namespace JSC {
         ASSERT(statement);
     }
 
-    inline ContinueNode::ContinueNode(JSGlobalData* globalData)
-        : StatementNode(globalData)
+    inline ContinueNode::ContinueNode(JSGlobalData* globalData, int lineNumber)
+        : StatementNode(lineNumber)
         , m_ident(globalData->propertyNames->nullIdentifier)
     {
     }
 
-    inline ContinueNode::ContinueNode(JSGlobalData* globalData, const Identifier& ident)
-        : StatementNode(globalData)
+    inline ContinueNode::ContinueNode(int lineNumber, const Identifier& ident)
+        : StatementNode(lineNumber)
         , m_ident(ident)
     {
     }
     
-    inline BreakNode::BreakNode(JSGlobalData* globalData)
-        : StatementNode(globalData)
+    inline BreakNode::BreakNode(JSGlobalData* globalData, int lineNumber)
+        : StatementNode(lineNumber)
         , m_ident(globalData->propertyNames->nullIdentifier)
     {
     }
 
-    inline BreakNode::BreakNode(JSGlobalData* globalData, const Identifier& ident)
-        : StatementNode(globalData)
+    inline BreakNode::BreakNode(int lineNumber, const Identifier& ident)
+        : StatementNode(lineNumber)
         , m_ident(ident)
     {
     }
     
-    inline ReturnNode::ReturnNode(JSGlobalData* globalData, ExpressionNode* value)
-        : StatementNode(globalData)
+    inline ReturnNode::ReturnNode(int lineNumber, ExpressionNode* value)
+        : StatementNode(lineNumber)
         , m_value(value)
     {
     }
 
-    inline WithNode::WithNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement, uint32_t divot, uint32_t expressionLength)
-        : StatementNode(globalData)
+    inline WithNode::WithNode(int lineNumber, ExpressionNode* expr, StatementNode* statement, uint32_t divot, uint32_t expressionLength)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_statement(statement)
         , m_divot(divot)
@@ -768,21 +768,21 @@ namespace JSC {
     {
     }
 
-    inline LabelNode::LabelNode(JSGlobalData* globalData, const Identifier& name, StatementNode* statement)
-        : StatementNode(globalData)
+    inline LabelNode::LabelNode(int lineNumber, const Identifier& name, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_name(name)
         , m_statement(statement)
     {
     }
 
-    inline ThrowNode::ThrowNode(JSGlobalData* globalData, ExpressionNode* expr)
-        : StatementNode(globalData)
+    inline ThrowNode::ThrowNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline TryNode::TryNode(JSGlobalData* globalData, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock)
-        : StatementNode(globalData)
+    inline TryNode::TryNode(int lineNumber, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock)
+        : StatementNode(lineNumber)
         , m_tryBlock(tryBlock)
         , m_exceptionIdent(exceptionIdent)
         , m_catchBlock(catchBlock)
@@ -791,82 +791,82 @@ namespace JSC {
     {
     }
 
-    inline ParameterNode::ParameterNode(JSGlobalData*, const Identifier& ident)
+    inline ParameterNode::ParameterNode(const Identifier& ident)
         : m_ident(ident)
         , m_next(0)
     {
     }
 
-    inline ParameterNode::ParameterNode(JSGlobalData*, ParameterNode* l, const Identifier& ident)
+    inline ParameterNode::ParameterNode(ParameterNode* l, const Identifier& ident)
         : m_ident(ident)
         , m_next(0)
     {
         l->m_next = this;
     }
 
-    inline FuncExprNode::FuncExprNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
-        : ExpressionNode(globalData)
+    inline FuncExprNode::FuncExprNode(int lineNumber, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+        : ExpressionNode(lineNumber)
         , m_body(body)
     {
         m_body->finishParsing(source, parameter, ident);
     }
 
-    inline FuncDeclNode::FuncDeclNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
-        : StatementNode(globalData)
+    inline FuncDeclNode::FuncDeclNode(int lineNumber, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+        : StatementNode(lineNumber)
         , m_body(body)
     {
         m_body->finishParsing(source, parameter, ident);
     }
 
-    inline CaseClauseNode::CaseClauseNode(JSGlobalData*, ExpressionNode* expr, SourceElements* statements)
+    inline CaseClauseNode::CaseClauseNode(ExpressionNode* expr, SourceElements* statements)
         : m_expr(expr)
         , m_statements(statements)
     {
     }
 
-    inline ClauseListNode::ClauseListNode(JSGlobalData*, CaseClauseNode* clause)
+    inline ClauseListNode::ClauseListNode(CaseClauseNode* clause)
         : m_clause(clause)
         , m_next(0)
     {
     }
 
-    inline ClauseListNode::ClauseListNode(JSGlobalData*, ClauseListNode* clauseList, CaseClauseNode* clause)
+    inline ClauseListNode::ClauseListNode(ClauseListNode* clauseList, CaseClauseNode* clause)
         : m_clause(clause)
         , m_next(0)
     {
         clauseList->m_next = this;
     }
 
-    inline CaseBlockNode::CaseBlockNode(JSGlobalData*, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2)
+    inline CaseBlockNode::CaseBlockNode(ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2)
         : m_list1(list1)
         , m_defaultClause(defaultClause)
         , m_list2(list2)
     {
     }
 
-    inline SwitchNode::SwitchNode(JSGlobalData* globalData, ExpressionNode* expr, CaseBlockNode* block)
-        : StatementNode(globalData)
+    inline SwitchNode::SwitchNode(int lineNumber, ExpressionNode* expr, CaseBlockNode* block)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_block(block)
     {
     }
 
-    inline ConstDeclNode::ConstDeclNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* init)
-        : ExpressionNode(globalData)
+    inline ConstDeclNode::ConstDeclNode(int lineNumber, const Identifier& ident, ExpressionNode* init)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_next(0)
         , m_init(init)
     {
     }
 
-    inline BlockNode::BlockNode(JSGlobalData* globalData, SourceElements* statements)
-        : StatementNode(globalData)
+    inline BlockNode::BlockNode(int lineNumber, SourceElements* statements)
+        : StatementNode(lineNumber)
         , m_statements(statements)
     {
     }
 
-    inline ForInNode::ForInNode(JSGlobalData* globalData, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
-        : StatementNode(globalData)
+    inline ForInNode::ForInNode(JSGlobalData* globalData, int lineNumber, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_ident(globalData->propertyNames->nullIdentifier)
         , m_init(0)
         , m_lexpr(l)
@@ -876,17 +876,17 @@ namespace JSC {
     {
     }
 
-    inline ForInNode::ForInNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, int divot, int startOffset, int endOffset)
-        : StatementNode(globalData)
+    inline ForInNode::ForInNode(JSGlobalData* globalData, int lineNumber, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, int divot, int startOffset, int endOffset)
+        : StatementNode(lineNumber)
         , m_ident(ident)
         , m_init(0)
-        , m_lexpr(new (globalData) ResolveNode(globalData, ident, divot - startOffset))
+        , m_lexpr(new (globalData) ResolveNode(lineNumber, ident, divot - startOffset))
         , m_expr(expr)
         , m_statement(statement)
         , m_identIsVarDecl(true)
     {
         if (in) {
-            AssignResolveNode* node = new (globalData) AssignResolveNode(globalData, ident, in, true);
+            AssignResolveNode* node = new (globalData) AssignResolveNode(lineNumber, ident, in, true);
             node->setExceptionSourceCode(divot, divot - startOffset, endOffset - divot);
             m_init = node;
         }

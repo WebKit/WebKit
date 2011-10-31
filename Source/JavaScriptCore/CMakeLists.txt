@@ -77,7 +77,6 @@ SET(JavaScriptCore_SOURCES
     jit/JITStubs.cpp
     jit/ThunkGenerators.cpp
 
-    parser/JSParser.cpp
     parser/Lexer.cpp
     parser/Nodes.cpp
     parser/Parser.cpp

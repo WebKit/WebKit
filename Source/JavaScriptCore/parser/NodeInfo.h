@@ -21,7 +21,6 @@
 #define NodeInfo_h
 
 #include "Nodes.h"
-#include "Parser.h"
 
 namespace JSC {
 

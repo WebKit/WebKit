@@ -49,7 +49,7 @@
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
-#include "Parser.h"
+#include "ParserArena.h"
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
 #endif
@@ -182,8 +182,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #if ENABLE(ASSEMBLER)
     , executableAllocator(*this)
 #endif
-    , lexer(new Lexer(this))
-    , parser(new Parser)
+    , parserArena(new ParserArena)
+    , keywords(new Keywords(this))
     , interpreter(0)
     , heap(this, heapSize)
 #if ENABLE(DFG_JIT)
@@ -337,9 +337,6 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(regExpPrototypeTable));
     fastDelete(const_cast<HashTable*>(stringTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
-
-    delete parser;
-    delete lexer;
 
     deleteAllValues(opaqueJSClassData);
 

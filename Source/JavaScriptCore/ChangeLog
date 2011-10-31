@@ -1,3 +1,474 @@
+2011-10-31  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8-bit Strings: Move Lexer and Parser Objects out of JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=71138
+
+        Restructure and movement of Lexer and Parser code.
+        Moved Lexer and Parser objects out of JSGlobalData.
+        Added a new ParserTokens class and instance to JSGlobalData that
+        have JavaScript token related definitions.
+        Replaced JSGlobalData arguments to Node classes with lineNumber,
+        as that was the only use of the JSGlobalData.
+        Combined JSParser and Parser classes into one class,
+        eliminating JSParser.h and .cpp.
+        Various supporting #include changes.
+
+        These mostly mechanical changes are done in preparation to
+        making the Lexer and Parser template classes.
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::toArgumentList):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::ASTBuilder):
+        (JSC::ASTBuilder::createSourceElements):
+        (JSC::ASTBuilder::createCommaExpr):
+        (JSC::ASTBuilder::createLogicalNot):
+        (JSC::ASTBuilder::createUnaryPlus):
+        (JSC::ASTBuilder::createVoid):
+        (JSC::ASTBuilder::thisExpr):
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::createObjectLiteral):
+        (JSC::ASTBuilder::createArray):
+        (JSC::ASTBuilder::createNumberExpr):
+        (JSC::ASTBuilder::createString):
+        (JSC::ASTBuilder::createBoolean):
+        (JSC::ASTBuilder::createNull):
+        (JSC::ASTBuilder::createBracketAccess):
+        (JSC::ASTBuilder::createDotAccess):
+        (JSC::ASTBuilder::createRegExp):
+        (JSC::ASTBuilder::createNewExpr):
+        (JSC::ASTBuilder::createConditionalExpr):
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createArguments):
+        (JSC::ASTBuilder::createArgumentsList):
+        (JSC::ASTBuilder::createPropertyList):
+        (JSC::ASTBuilder::createElementList):
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::createClause):
+        (JSC::ASTBuilder::createClauseList):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createExprStatement):
+        (JSC::ASTBuilder::createIfStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createEmptyStatement):
+        (JSC::ASTBuilder::createVarStatement):
+        (JSC::ASTBuilder::createReturnStatement):
+        (JSC::ASTBuilder::createBreakStatement):
+        (JSC::ASTBuilder::createContinueStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        (JSC::ASTBuilder::createWhileStatement):
+        (JSC::ASTBuilder::createDoWhileStatement):
+        (JSC::ASTBuilder::createLabelStatement):
+        (JSC::ASTBuilder::createWithStatement):
+        (JSC::ASTBuilder::createThrowStatement):
+        (JSC::ASTBuilder::createDebugger):
+        (JSC::ASTBuilder::createConstStatement):
+        (JSC::ASTBuilder::appendConstDecl):
+        (JSC::ASTBuilder::combineCommaNodes):
+        (JSC::ASTBuilder::appendBinaryOperation):
+        (JSC::ASTBuilder::createAssignment):
+        (JSC::ASTBuilder::createNumber):
+        (JSC::ASTBuilder::makeTypeOfNode):
+        (JSC::ASTBuilder::makeDeleteNode):
+        (JSC::ASTBuilder::makeNegateNode):
+        (JSC::ASTBuilder::makeBitwiseNotNode):
+        (JSC::ASTBuilder::makeMultNode):
+        (JSC::ASTBuilder::makeDivNode):
+        (JSC::ASTBuilder::makeModNode):
+        (JSC::ASTBuilder::makeAddNode):
+        (JSC::ASTBuilder::makeSubNode):
+        (JSC::ASTBuilder::makeLeftShiftNode):
+        (JSC::ASTBuilder::makeRightShiftNode):
+        (JSC::ASTBuilder::makeURightShiftNode):
+        (JSC::ASTBuilder::makeBitOrNode):
+        (JSC::ASTBuilder::makeBitAndNode):
+        (JSC::ASTBuilder::makeBitXOrNode):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        (JSC::ASTBuilder::makeBinaryNode):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::makePrefixNode):
+        (JSC::ASTBuilder::makePostfixNode):
+        * parser/JSParser.cpp: Removed.
+        * parser/JSParser.h: Removed.
+        * parser/Lexer.cpp:
+        (JSC::Keywords::Keywords):
+        (JSC::Lexer::Lexer):
+        (JSC::Lexer::~Lexer):
+        (JSC::Lexer::setCode):
+        (JSC::Lexer::parseIdentifier):
+        * parser/Lexer.h:
+        (JSC::Keywords::isKeyword):
+        (JSC::Keywords::getKeyword):
+        (JSC::Keywords::~Keywords):
+        (JSC::Lexer::setIsReparsing):
+        (JSC::Lexer::isReparsing):
+        (JSC::Lexer::lineNumber):
+        (JSC::Lexer::setLastLineNumber):
+        (JSC::Lexer::lastLineNumber):
+        (JSC::Lexer::prevTerminator):
+        (JSC::Lexer::sawError):
+        (JSC::Lexer::getErrorMessage):
+        (JSC::Lexer::currentOffset):
+        (JSC::Lexer::setOffset):
+        (JSC::Lexer::setLineNumber):
+        (JSC::Lexer::sourceProvider):
+        (JSC::Lexer::isWhiteSpace):
+        (JSC::Lexer::isLineTerminator):
+        (JSC::Lexer::convertHex):
+        (JSC::Lexer::convertUnicode):
+        (JSC::Lexer::makeIdentifier):
+        (JSC::Lexer::lexExpectIdentifier):
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaFreeable::operator new):
+        (JSC::ParserArenaDeletable::operator new):
+        (JSC::ParserArenaRefCounted::ParserArenaRefCounted):
+        (JSC::Node::Node):
+        (JSC::ExpressionNode::ExpressionNode):
+        (JSC::StatementNode::StatementNode):
+        (JSC::NullNode::NullNode):
+        (JSC::BooleanNode::BooleanNode):
+        (JSC::NumberNode::NumberNode):
+        (JSC::StringNode::StringNode):
+        (JSC::RegExpNode::RegExpNode):
+        (JSC::ThisNode::ThisNode):
+        (JSC::ResolveNode::ResolveNode):
+        (JSC::ElementNode::ElementNode):
+        (JSC::ArrayNode::ArrayNode):
+        (JSC::PropertyNode::PropertyNode):
+        (JSC::PropertyListNode::PropertyListNode):
+        (JSC::ObjectLiteralNode::ObjectLiteralNode):
+        (JSC::BracketAccessorNode::BracketAccessorNode):
+        (JSC::DotAccessorNode::DotAccessorNode):
+        (JSC::ArgumentListNode::ArgumentListNode):
+        (JSC::ArgumentsNode::ArgumentsNode):
+        (JSC::NewExprNode::NewExprNode):
+        (JSC::EvalFunctionCallNode::EvalFunctionCallNode):
+        (JSC::FunctionCallValueNode::FunctionCallValueNode):
+        (JSC::FunctionCallResolveNode::FunctionCallResolveNode):
+        (JSC::FunctionCallBracketNode::FunctionCallBracketNode):
+        (JSC::FunctionCallDotNode::FunctionCallDotNode):
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        (JSC::PrePostResolveNode::PrePostResolveNode):
+        (JSC::PostfixResolveNode::PostfixResolveNode):
+        (JSC::PostfixBracketNode::PostfixBracketNode):
+        (JSC::PostfixDotNode::PostfixDotNode):
+        (JSC::PostfixErrorNode::PostfixErrorNode):
+        (JSC::DeleteResolveNode::DeleteResolveNode):
+        (JSC::DeleteBracketNode::DeleteBracketNode):
+        (JSC::DeleteDotNode::DeleteDotNode):
+        (JSC::DeleteValueNode::DeleteValueNode):
+        (JSC::VoidNode::VoidNode):
+        (JSC::TypeOfResolveNode::TypeOfResolveNode):
+        (JSC::TypeOfValueNode::TypeOfValueNode):
+        (JSC::PrefixResolveNode::PrefixResolveNode):
+        (JSC::PrefixBracketNode::PrefixBracketNode):
+        (JSC::PrefixDotNode::PrefixDotNode):
+        (JSC::PrefixErrorNode::PrefixErrorNode):
+        (JSC::UnaryOpNode::UnaryOpNode):
+        (JSC::UnaryPlusNode::UnaryPlusNode):
+        (JSC::NegateNode::NegateNode):
+        (JSC::BitwiseNotNode::BitwiseNotNode):
+        (JSC::LogicalNotNode::LogicalNotNode):
+        (JSC::BinaryOpNode::BinaryOpNode):
+        (JSC::MultNode::MultNode):
+        (JSC::DivNode::DivNode):
+        (JSC::ModNode::ModNode):
+        (JSC::AddNode::AddNode):
+        (JSC::SubNode::SubNode):
+        (JSC::LeftShiftNode::LeftShiftNode):
+        (JSC::RightShiftNode::RightShiftNode):
+        (JSC::UnsignedRightShiftNode::UnsignedRightShiftNode):
+        (JSC::LessNode::LessNode):
+        (JSC::GreaterNode::GreaterNode):
+        (JSC::LessEqNode::LessEqNode):
+        (JSC::GreaterEqNode::GreaterEqNode):
+        (JSC::ThrowableBinaryOpNode::ThrowableBinaryOpNode):
+        (JSC::InstanceOfNode::InstanceOfNode):
+        (JSC::InNode::InNode):
+        (JSC::EqualNode::EqualNode):
+        (JSC::NotEqualNode::NotEqualNode):
+        (JSC::StrictEqualNode::StrictEqualNode):
+        (JSC::NotStrictEqualNode::NotStrictEqualNode):
+        (JSC::BitAndNode::BitAndNode):
+        (JSC::BitOrNode::BitOrNode):
+        (JSC::BitXOrNode::BitXOrNode):
+        (JSC::LogicalOpNode::LogicalOpNode):
+        (JSC::ConditionalNode::ConditionalNode):
+        (JSC::ReadModifyResolveNode::ReadModifyResolveNode):
+        (JSC::AssignResolveNode::AssignResolveNode):
+        (JSC::ReadModifyBracketNode::ReadModifyBracketNode):
+        (JSC::AssignBracketNode::AssignBracketNode):
+        (JSC::AssignDotNode::AssignDotNode):
+        (JSC::ReadModifyDotNode::ReadModifyDotNode):
+        (JSC::AssignErrorNode::AssignErrorNode):
+        (JSC::CommaNode::CommaNode):
+        (JSC::ConstStatementNode::ConstStatementNode):
+        (JSC::SourceElements::SourceElements):
+        (JSC::EmptyStatementNode::EmptyStatementNode):
+        (JSC::DebuggerStatementNode::DebuggerStatementNode):
+        (JSC::ExprStatementNode::ExprStatementNode):
+        (JSC::VarStatementNode::VarStatementNode):
+        (JSC::IfNode::IfNode):
+        (JSC::IfElseNode::IfElseNode):
+        (JSC::DoWhileNode::DoWhileNode):
+        (JSC::WhileNode::WhileNode):
+        (JSC::ForNode::ForNode):
+        (JSC::ContinueNode::ContinueNode):
+        (JSC::BreakNode::BreakNode):
+        (JSC::ReturnNode::ReturnNode):
+        (JSC::WithNode::WithNode):
+        (JSC::LabelNode::LabelNode):
+        (JSC::ThrowNode::ThrowNode):
+        (JSC::TryNode::TryNode):
+        (JSC::ParameterNode::ParameterNode):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        (JSC::CaseClauseNode::CaseClauseNode):
+        (JSC::ClauseListNode::ClauseListNode):
+        (JSC::CaseBlockNode::CaseBlockNode):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::ConstDeclNode::ConstDeclNode):
+        (JSC::BlockNode::BlockNode):
+        (JSC::ForInNode::ForInNode):
+        * parser/NodeInfo.h:
+        * parser/Nodes.cpp:
+        (JSC::StatementNode::setLoc):
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::Node::lineNo):
+        * parser/Parser.cpp:
+        (JSC::Parser::Parser):
+        (JSC::Parser::~Parser):
+        (JSC::Parser::parseInner):
+        (JSC::Parser::allowAutomaticSemicolon):
+        (JSC::Parser::parseSourceElements):
+        (JSC::Parser::parseVarDeclaration):
+        (JSC::Parser::parseConstDeclaration):
+        (JSC::Parser::parseDoWhileStatement):
+        (JSC::Parser::parseWhileStatement):
+        (JSC::Parser::parseVarDeclarationList):
+        (JSC::Parser::parseConstDeclarationList):
+        (JSC::Parser::parseForStatement):
+        (JSC::Parser::parseBreakStatement):
+        (JSC::Parser::parseContinueStatement):
+        (JSC::Parser::parseReturnStatement):
+        (JSC::Parser::parseThrowStatement):
+        (JSC::Parser::parseWithStatement):
+        (JSC::Parser::parseSwitchStatement):
+        (JSC::Parser::parseSwitchClauses):
+        (JSC::Parser::parseSwitchDefaultClause):
+        (JSC::Parser::parseTryStatement):
+        (JSC::Parser::parseDebuggerStatement):
+        (JSC::Parser::parseBlockStatement):
+        (JSC::Parser::parseStatement):
+        (JSC::Parser::parseFormalParameters):
+        (JSC::Parser::parseFunctionBody):
+        (JSC::Parser::parseFunctionInfo):
+        (JSC::Parser::parseFunctionDeclaration):
+        (JSC::LabelInfo::LabelInfo):
+        (JSC::Parser::parseExpressionOrLabelStatement):
+        (JSC::Parser::parseExpressionStatement):
+        (JSC::Parser::parseIfStatement):
+        (JSC::Parser::parseExpression):
+        (JSC::Parser::parseAssignmentExpression):
+        (JSC::Parser::parseConditionalExpression):
+        (JSC::isUnaryOp):
+        (JSC::Parser::isBinaryOperator):
+        (JSC::Parser::parseBinaryExpression):
+        (JSC::Parser::parseProperty):
+        (JSC::Parser::parseObjectLiteral):
+        (JSC::Parser::parseStrictObjectLiteral):
+        (JSC::Parser::parseArrayLiteral):
+        (JSC::Parser::parsePrimaryExpression):
+        (JSC::Parser::parseArguments):
+        (JSC::Parser::parseMemberExpression):
+        (JSC::Parser::parseUnaryExpression):
+        * parser/Parser.h:
+        (JSC::isEvalNode):
+        (JSC::EvalNode):
+        (JSC::DepthManager::DepthManager):
+        (JSC::DepthManager::~DepthManager):
+        (JSC::ScopeLabelInfo::ScopeLabelInfo):
+        (JSC::Scope::Scope):
+        (JSC::Scope::startSwitch):
+        (JSC::Scope::endSwitch):
+        (JSC::Scope::startLoop):
+        (JSC::Scope::endLoop):
+        (JSC::Scope::inLoop):
+        (JSC::Scope::breakIsValid):
+        (JSC::Scope::continueIsValid):
+        (JSC::Scope::pushLabel):
+        (JSC::Scope::popLabel):
+        (JSC::Scope::getLabel):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::isFunction):
+        (JSC::Scope::isFunctionBoundary):
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareWrite):
+        (JSC::Scope::preventNewDecls):
+        (JSC::Scope::allowsNewDecls):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::setNeedsFullActivation):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::getUncapturedWrittenVariables):
+        (JSC::Scope::getCapturedVariables):
+        (JSC::Scope::setStrictMode):
+        (JSC::Scope::strictMode):
+        (JSC::Scope::isValidStrictMode):
+        (JSC::Scope::shadowsArguments):
+        (JSC::Scope::copyCapturedVariablesToVector):
+        (JSC::Scope::saveFunctionInfo):
+        (JSC::Scope::restoreFunctionInfo):
+        (JSC::ScopeRef::ScopeRef):
+        (JSC::ScopeRef::operator->):
+        (JSC::ScopeRef::index):
+        (JSC::ScopeRef::hasContainingScope):
+        (JSC::ScopeRef::containingScope):
+        (JSC::Parser::AllowInOverride::AllowInOverride):
+        (JSC::Parser::AllowInOverride::~AllowInOverride):
+        (JSC::Parser::AutoPopScopeRef::AutoPopScopeRef):
+        (JSC::Parser::AutoPopScopeRef::~AutoPopScopeRef):
+        (JSC::Parser::AutoPopScopeRef::setPopped):
+        (JSC::Parser::currentScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::popScope):
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::declareWrite):
+        (JSC::Parser::findCachedFunctionInfo):
+        (JSC::Parser::isFunctionBodyNode):
+        (JSC::Parser::next):
+        (JSC::Parser::nextExpectIdentifier):
+        (JSC::Parser::nextTokenIsColon):
+        (JSC::Parser::consume):
+        (JSC::Parser::getToken):
+        (JSC::Parser::match):
+        (JSC::Parser::tokenStart):
+        (JSC::Parser::tokenLine):
+        (JSC::Parser::tokenEnd):
+        (JSC::Parser::getTokenName):
+        (JSC::Parser::updateErrorMessageSpecialCase):
+        (JSC::Parser::updateErrorMessage):
+        (JSC::Parser::updateErrorWithNameAndMessage):
+        (JSC::Parser::startLoop):
+        (JSC::Parser::endLoop):
+        (JSC::Parser::startSwitch):
+        (JSC::Parser::endSwitch):
+        (JSC::Parser::setStrictMode):
+        (JSC::Parser::strictMode):
+        (JSC::Parser::isValidStrictMode):
+        (JSC::Parser::declareParameter):
+        (JSC::Parser::breakIsValid):
+        (JSC::Parser::continueIsValid):
+        (JSC::Parser::pushLabel):
+        (JSC::Parser::popLabel):
+        (JSC::Parser::getLabel):
+        (JSC::Parser::autoSemiColon):
+        (JSC::Parser::canRecurse):
+        (JSC::Parser::lastTokenEnd):
+        (JSC::Parser::DepthManager::DepthManager):
+        (JSC::Parser::DepthManager::~DepthManager):
+        (JSC::Parser::parse):
+        (JSC::parse):
+        * parser/ParserTokens.h: Added.
+        (JSC::JSTokenInfo::JSTokenInfo):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::subExpression):
+        * parser/SourceProviderCacheItem.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::SyntaxChecker):
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+        (JSC::SyntaxChecker::createCommaExpr):
+        (JSC::SyntaxChecker::makeAssignNode):
+        (JSC::SyntaxChecker::makePrefixNode):
+        (JSC::SyntaxChecker::makePostfixNode):
+        (JSC::SyntaxChecker::makeTypeOfNode):
+        (JSC::SyntaxChecker::makeDeleteNode):
+        (JSC::SyntaxChecker::makeNegateNode):
+        (JSC::SyntaxChecker::makeBitwiseNotNode):
+        (JSC::SyntaxChecker::createLogicalNot):
+        (JSC::SyntaxChecker::createUnaryPlus):
+        (JSC::SyntaxChecker::createVoid):
+        (JSC::SyntaxChecker::thisExpr):
+        (JSC::SyntaxChecker::createResolve):
+        (JSC::SyntaxChecker::createObjectLiteral):
+        (JSC::SyntaxChecker::createArray):
+        (JSC::SyntaxChecker::createNumberExpr):
+        (JSC::SyntaxChecker::createString):
+        (JSC::SyntaxChecker::createBoolean):
+        (JSC::SyntaxChecker::createNull):
+        (JSC::SyntaxChecker::createBracketAccess):
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::createRegExp):
+        (JSC::SyntaxChecker::createNewExpr):
+        (JSC::SyntaxChecker::createConditionalExpr):
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::createArguments):
+        (JSC::SyntaxChecker::createArgumentsList):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::createPropertyList):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createExprStatement):
+        (JSC::SyntaxChecker::createIfStatement):
+        (JSC::SyntaxChecker::createForLoop):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createEmptyStatement):
+        (JSC::SyntaxChecker::createVarStatement):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        (JSC::SyntaxChecker::createWhileStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createDoWhileStatement):
+        (JSC::SyntaxChecker::createLabelStatement):
+        (JSC::SyntaxChecker::createThrowStatement):
+        (JSC::SyntaxChecker::createDebugger):
+        (JSC::SyntaxChecker::createConstStatement):
+        (JSC::SyntaxChecker::appendConstDecl):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        (JSC::SyntaxChecker::combineCommaNodes):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::tryJSONPParse):
+
 2011-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r97118): Reproducible crash in JSCell::toPrimitive when adding

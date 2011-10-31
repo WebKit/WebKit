@@ -200,18 +200,18 @@ bool ArrayNode::isSimpleArray() const
     return true;
 }
 
-ArgumentListNode* ArrayNode::toArgumentList(JSGlobalData* globalData) const
+ArgumentListNode* ArrayNode::toArgumentList(JSGlobalData* globalData, int lineNumber) const
 {
     ASSERT(!m_elision && !m_optional);
     ElementNode* ptr = m_element;
     if (!ptr)
         return 0;
-    ArgumentListNode* head = new (globalData) ArgumentListNode(globalData, ptr->value());
+    ArgumentListNode* head = new (globalData) ArgumentListNode(lineNumber, ptr->value());
     ArgumentListNode* tail = head;
     ptr = ptr->next();
     for (; ptr; ptr = ptr->next()) {
         ASSERT(!ptr->elision());
-        tail = new (globalData) ArgumentListNode(globalData, tail, ptr->value());
+        tail = new (globalData) ArgumentListNode(lineNumber, tail, ptr->value());
     }
     return head;
 }
@@ -471,7 +471,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                 if (m_args->m_listNode->m_next) {
                     ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                     ASSERT(!m_args->m_listNode->m_next->m_next);
-                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.globalData());
+                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.globalData(), 0);
                     RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
                     CallArguments callArguments(generator, m_args);
                     generator.emitNode(callArguments.thisRegister(), oldList->m_expr);

@@ -63,7 +63,7 @@ bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSour
             entry.m_pathEntryName = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
             path.append(entry);
         }
-        if (m_exec->globalData().lexer->isKeyword(entry.m_pathEntryName))
+        if (m_exec->globalData().keywords->isKeyword(entry.m_pathEntryName))
             return false;
         TokenType tokenType = m_lexer.next();
         while (tokenType != TokAssign) {

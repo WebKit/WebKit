@@ -39,13 +39,17 @@
 using namespace WTF;
 using namespace Unicode;
 
-#include "JSParser.h"
 #include "KeywordLookup.h"
-#include "Lookup.h"
 #include "Lexer.lut.h"
+#include "Parser.h"
 
 namespace JSC {
 
+Keywords::Keywords(JSGlobalData* globalData)
+    : m_globalData(globalData)
+    , m_keywordTable(JSC::mainTable)
+{
+}
 
 enum CharacterType {
     // Types for the main switch
@@ -225,13 +229,11 @@ static const unsigned short typesOfASCIICharacters[128] = {
 Lexer::Lexer(JSGlobalData* globalData)
     : m_isReparsing(false)
     , m_globalData(globalData)
-    , m_keywordTable(JSC::mainTable)
 {
 }
 
 Lexer::~Lexer()
 {
-    m_keywordTable.deleteTable();
 }
     
 UString Lexer::getInvalidCharMessage()
@@ -267,9 +269,9 @@ ALWAYS_INLINE int Lexer::currentOffset() const
     return currentCharacter() - m_codeStart;
 }
 
-void Lexer::setCode(const SourceCode& source, ParserArena& arena)
+void Lexer::setCode(const SourceCode& source, ParserArena* arena)
 {
-    m_arena = &arena.identifierArena();
+    m_arena = &arena->identifierArena();
 
     m_lineNumber = source.firstLine();
     m_delimited = false;
@@ -490,7 +492,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
         ASSERT(shouldCreateIdentifier);
         // Keywords must not be recognized if there was an \uXXXX in the identifier.
         if (remaining < maxTokenLength) {
-            const HashEntry* entry = m_keywordTable.entry(m_globalData, *ident);
+            const HashEntry* entry = m_globalData->keywords->getKeyword(*ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
                 return IDENT;
@@ -502,11 +504,6 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
 
     m_buffer16.resize(0);
     return IDENT;
-}
-
-bool Lexer::isKeyword(const Identifier& ident)
-{
-    return m_keywordTable.entry(m_globalData, ident);
 }
 
 template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSTokenData* tokenData, bool strictMode)

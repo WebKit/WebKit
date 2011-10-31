@@ -1790,14 +1790,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\parser\JSParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\parser\JSParser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\parser\Lexer.cpp"
 				>
 			</File>
