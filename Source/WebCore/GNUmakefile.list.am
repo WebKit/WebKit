@@ -1091,8 +1091,6 @@ webcore_sources += \
 	Source/WebCore/css/SelectorChecker.h \
 	Source/WebCore/css/ShadowValue.cpp \
 	Source/WebCore/css/ShadowValue.h \
-	Source/WebCore/css/StyleBase.cpp \
-	Source/WebCore/css/StyleBase.h \
 	Source/WebCore/css/StyleMedia.cpp \
 	Source/WebCore/css/StyleMedia.h \
 	Source/WebCore/css/StyleSheet.cpp \

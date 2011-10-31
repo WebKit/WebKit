@@ -23,16 +23,17 @@
 
 #include "KURLHash.h"
 #include "PlatformString.h"
-#include "StyleBase.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class CSSRule;
 class CachedCSSStyleSheet;
 class MediaList;
 class Node;
 
-class StyleSheet : public StyleBase {
+class StyleSheet : public RefCounted<StyleSheet> {
 public:
     virtual ~StyleSheet();
 
@@ -41,7 +42,11 @@ public:
 
     Node* ownerNode() const { return m_parentNode; }
     void clearOwnerNode() { m_parentNode = 0; }
-    StyleSheet *parentStyleSheet() const;
+
+    StyleSheet* parentStyleSheet() const;
+
+    CSSRule* parentRule() const { return m_parentRule; }
+    void setParentRule(CSSRule* rule) { m_parentRule = rule; }
 
     // Note that href is the URL that started the redirect chain that led to
     // this style sheet. This property probably isn't useful for much except
@@ -63,13 +68,17 @@ public:
     virtual KURL completeURL(const String& url) const;
     virtual bool parseString(const String&, bool strict = true) = 0;
 
+    virtual bool isCSSStyleSheet() const { return false; }
+    virtual bool isXSLStyleSheet() const { return false; }
+
+    KURL baseURL() const;
+
 protected:
     StyleSheet(Node* ownerNode, const String& href, const KURL& finalURL);
-    StyleSheet(StyleBase* owner, const String& href, const KURL& finalURL);
+    StyleSheet(CSSRule* parentRule, const String& href, const KURL& finalURL);
 
 private:
-    virtual bool isStyleSheet() const { return true; }
-
+    CSSRule* m_parentRule;
     Node* m_parentNode;
     String m_originalURL;
     KURL m_finalURL;

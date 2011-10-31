@@ -32930,14 +32930,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\StyleBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\StyleBase.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\StyleMedia.cpp"
 				>
 			</File>

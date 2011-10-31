@@ -22,7 +22,6 @@
 #define CSSStyleDeclaration_h
 
 #include "CSSRule.h"
-#include "StyleBase.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

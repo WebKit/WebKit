@@ -27,14 +27,12 @@
 #define CachedStyleSheetClient_h
 
 #include "CachedResourceClient.h"
-#include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 class CachedCSSStyleSheet;
 
 class CachedStyleSheetClient : public CachedResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CachedStyleSheetClient() { }
     static CachedResourceClientType expectedType() { return StyleSheetType; }

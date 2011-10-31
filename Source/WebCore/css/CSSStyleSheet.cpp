@@ -79,8 +79,8 @@ CSSStyleSheet::~CSSStyleSheet()
     // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
     // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
     for (unsigned i = 0; i < length(); ++i) {
-        ASSERT(item(i)->parent() == this);
-        item(i)->setParent(0);
+        ASSERT(item(i)->parentStyleSheet() == this);
+        item(i)->setParentStyleSheet(0);
     }
 }
 
@@ -98,7 +98,7 @@ void CSSStyleSheet::remove(unsigned index)
 
 CSSRule *CSSStyleSheet::ownerRule() const
 {
-    return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
+    return parentRule();
 }
 
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
@@ -172,7 +172,7 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
     }
 
     ec = 0;
-    item(index)->setParent(0);
+    item(index)->setParentStyleSheet(0);
     m_children.remove(index);
     styleSheetChanged();
 }
@@ -236,8 +236,8 @@ void CSSStyleSheet::checkLoaded()
     // ScriptableDocumentParser::executeScriptsWaitingForStylesheets().
     // See <rdar://problem/6622300>.
     RefPtr<CSSStyleSheet> protector(this);
-    if (parent())
-        parent()->checkLoaded();
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
+        styleSheet->checkLoaded();
     m_loadCompleted = ownerNode() ? ownerNode()->sheetLoaded() : true;
 }
 
@@ -249,34 +249,24 @@ void CSSStyleSheet::startLoadingDynamicSheet()
 
 Document* CSSStyleSheet::document()
 {
-    StyleBase* styleObject = this;
-    while (styleObject) {
-        if (styleObject->isCSSStyleSheet()) {
-            Node* ownerNode = static_cast<CSSStyleSheet*>(styleObject)->ownerNode();
-            if (ownerNode)
-                return ownerNode->document();
-        }
-        if (styleObject->isRule())
-            styleObject = static_cast<CSSRule*>(styleObject)->parentStyleSheet();
-        else
-            styleObject = styleObject->parent();
+    for (CSSStyleSheet* sheet = this; sheet; sheet = sheet->parentStyleSheet()) {
+        if (Node* ownerNode = sheet->ownerNode())
+            return ownerNode->document();
     }
-
     return 0;
 }
 
 void CSSStyleSheet::styleSheetChanged()
 {
-    StyleBase* root = this;
-    while (StyleBase* parent = root->parent())
-        root = parent;
-    Document* documentToUpdate = root->isCSSStyleSheet() ? static_cast<CSSStyleSheet*>(root)->document() : 0;
+    CSSStyleSheet* rootSheet = this;
+    while (CSSStyleSheet* parent = rootSheet->parentStyleSheet())
+        rootSheet = parent;
 
     /* FIXME: We don't need to do everything updateStyleSelector does,
      * basically we just need to recreate the document's selector with the
      * already existing style sheets.
      */
-    if (documentToUpdate)
+    if (Document* documentToUpdate = rootSheet->document())
         documentToUpdate->styleSelectorChanged(DeferRecalcStyle);
 }
 

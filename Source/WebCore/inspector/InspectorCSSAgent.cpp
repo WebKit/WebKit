@@ -173,11 +173,7 @@ CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(CSSRule* rule)
     if (!rule)
         return 0;
 
-    StyleSheet* styleSheet = rule->stylesheet();
-    if (styleSheet && styleSheet->isCSSStyleSheet())
-        return static_cast<CSSStyleSheet*>(styleSheet);
-
-    return 0;
+    return rule->parentStyleSheet();
 }
 
 // static

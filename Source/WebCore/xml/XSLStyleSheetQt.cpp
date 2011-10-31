@@ -42,8 +42,8 @@ XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const 
 XSLStyleSheet::~XSLStyleSheet()
 {
     for (unsigned i = 0; i < m_children.size(); ++i) {
-        ASSERT(m_children.at(i)->parent() == this);
-        m_children.at(i)->setParent(0);
+        ASSERT(m_children.at(i)->parentStyleSheet() == this);
+        m_children.at(i)->setParentStyleSheet(0);
     }
 }
 

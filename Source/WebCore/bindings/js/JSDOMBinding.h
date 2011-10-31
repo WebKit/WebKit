@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "MediaList.h"
-#include "StyleBase.h"
 #include <heap/Weak.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/Lookup.h>
@@ -184,14 +183,24 @@ enum ParameterMissingPolicy {
         return node;
     }
 
-    inline void* root(StyleBase* styleBase)
-    {
-        while (styleBase->parent())
-            styleBase = styleBase->parent();
+    inline void* root(StyleSheet*);
 
-        if (Node* node = styleBase->node())
-            return root(node);
-        return styleBase;
+    inline void* root(CSSRule* rule)
+    {
+        if (rule->parentRule())
+            return root(rule->parentRule());
+        if (rule->parentStyleSheet())
+            return root(rule->parentStyleSheet());
+        return rule;
+    }
+
+    inline void* root(StyleSheet* styleSheet)
+    {
+        if (styleSheet->parentRule())
+            return root(styleSheet->parentRule());
+        if (styleSheet->ownerNode())
+            return root(styleSheet->ownerNode());
+        return styleSheet;
     }
 
     inline void* root(CSSStyleDeclaration* style)

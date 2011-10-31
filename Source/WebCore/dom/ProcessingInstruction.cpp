@@ -242,7 +242,13 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_cachedSheet = 0;
 
     m_loading = false;
-    m_sheet->checkLoaded();
+
+    if (m_isCSS)
+        static_cast<CSSStyleSheet*>(m_sheet.get())->checkLoaded();
+#if ENABLE(XSLT)
+    else if (m_isXSL)
+        static_cast<XSLStyleSheet*>(m_sheet.get())->checkLoaded();
+#endif
 }
 
 void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)

@@ -493,7 +493,6 @@ SET(WebCore_SOURCES
     css/RGBColor.cpp
     css/SelectorChecker.cpp
     css/ShadowValue.cpp
-    css/StyleBase.cpp
     css/StyleMedia.cpp
     css/StyleSheet.cpp
     css/StyleSheetList.cpp

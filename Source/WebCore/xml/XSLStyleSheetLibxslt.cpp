@@ -55,12 +55,12 @@ SOFT_LINK(libxslt, xsltLoadStylesheetPI, xsltStylesheetPtr, (xmlDocPtr doc), (do
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& originalURL, const KURL& finalURL)
-    : StyleSheet(parentRule, originalURL, finalURL)
+    : StyleSheet(static_cast<Node*>(0), originalURL, finalURL)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
     , m_stylesheetDoc(0)
     , m_stylesheetDocTaken(false)
-    , m_parentStyleSheet(0)
+    , m_parentStyleSheet(parentRule ? parentRule->parentStyleSheet() : 0)
 {
 }
 
@@ -80,8 +80,8 @@ XSLStyleSheet::~XSLStyleSheet()
         xmlFreeDoc(m_stylesheetDoc);
 
     for (unsigned i = 0; i < m_children.size(); ++i) {
-        ASSERT(m_children.at(i)->parent() == this);
-        m_children.at(i)->setParent(0);
+        ASSERT(m_children.at(i)->parentStyleSheet() == this);
+        m_children.at(i)->setParentStyleSheet(0);
     }
 }
 
@@ -98,8 +98,8 @@ void XSLStyleSheet::checkLoaded()
 {
     if (isLoading())
         return;
-    if (parent())
-        parent()->checkLoaded();
+    if (XSLStyleSheet* styleSheet = parentStyleSheet())
+        styleSheet->checkLoaded();
     if (ownerNode())
         ownerNode()->sheetLoaded();
 }
@@ -229,9 +229,10 @@ void XSLStyleSheet::loadChildSheets()
 
 void XSLStyleSheet::loadChildSheet(const String& href)
 {
-    RefPtr<XSLImportRule> childRule = XSLImportRule::create(this, href);
-    m_children.append(childRule);
-    childRule->loadSheet();
+    OwnPtr<XSLImportRule> childRule = XSLImportRule::create(this, href);
+    XSLImportRule* c = childRule.get();
+    m_children.append(childRule.release());
+    c->loadSheet();
 }
 
 xsltStylesheetPtr XSLStyleSheet::compileStyleSheet()

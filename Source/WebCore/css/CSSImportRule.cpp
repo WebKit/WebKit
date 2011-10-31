@@ -49,7 +49,7 @@ CSSImportRule::~CSSImportRule()
     if (m_lstMedia)
         m_lstMedia->setParentStyleSheet(0);
     if (m_styleSheet)
-        m_styleSheet->setParent(0);
+        m_styleSheet->setParentRule(0);
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
 }
@@ -57,7 +57,7 @@ CSSImportRule::~CSSImportRule()
 void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     if (m_styleSheet)
-        m_styleSheet->setParent(0);
+        m_styleSheet->setParentRule(0);
     m_styleSheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
     bool crossOriginCSS = false;
@@ -126,12 +126,12 @@ void CSSImportRule::insertedIntoParent()
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    StyleBase* root = this;
-    for (StyleBase* curr = parent(); curr; curr = curr->parent()) {
+    CSSStyleSheet* rootSheet = parentSheet;
+    for (CSSStyleSheet* sheet = parentSheet; sheet; sheet = sheet->parentStyleSheet()) {
         // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL.
-        if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->finalURL().string())
+        if (absHref == sheet->finalURL().string())
             return;
-        root = curr;
+        rootSheet = sheet;
     }
 
     ResourceRequest request(parentSheet->document()->completeURL(absHref));
@@ -143,7 +143,7 @@ void CSSImportRule::insertedIntoParent()
         // if the import rule is issued dynamically, the sheet may be
         // removed from the pending sheet count, so let the doc know
         // the sheet being imported is pending.
-        if (parentSheet && parentSheet->loadCompleted() && root == parentSheet)
+        if (parentSheet && parentSheet->loadCompleted() && rootSheet == parentSheet)
             parentSheet->startLoadingDynamicSheet();
         m_loading = true;
         m_cachedSheet->addClient(this);

@@ -102,7 +102,7 @@ private:
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);
 #endif
 
-    Vector<RefPtr<XSLImportRule> > m_children;
+    Vector<OwnPtr<XSLImportRule> > m_children;
 
     Document* m_ownerDocument;
     bool m_embedded;

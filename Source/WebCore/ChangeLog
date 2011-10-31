@@ -1,3 +1,133 @@
+2011-10-31  Andreas Kling  <kling@webkit.org>
+
+        Kill StyleBase.
+        https://bugs.webkit.org/show_bug.cgi?id=71218
+
+        Reviewed by Antti Koivisto.
+
+        Remove the StyleBase class and make all subclasses stand alone. CSSRule and StyleSheet
+        now inherit from RefCounted<T> instead, and XSLImportRule doesn't even need that,
+        so StyleBase is replaced by nothing.
+
+        * css/StyleBase.cpp:
+        * css/StyleBase.h:
+
+            Removed.
+
+        * css/CSSRule.cpp:
+        * css/CSSRule.h:
+        (WebCore::CSSRule::~CSSRule):
+        (WebCore::CSSRule::useStrictParsing):
+        (WebCore::CSSRule::setParentStyleSheet):
+        (WebCore::CSSRule::setParentRule):
+        (WebCore::CSSRule::parentStyleSheet):
+        (WebCore::CSSRule::parentRule):
+        (WebCore::CSSRule::baseURL):
+        (WebCore::CSSRule::CSSRule):
+
+            CSSRule now inherits directly from RefCounted, and has either a CSSRule or a
+            CSSStyleSheet as its parent. Made these getters/setters inline since they are
+            trivial now.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Purge StyleBase.* from the build systems.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+
+            New root() functions for CSSRule and StyleSheet.
+
+        * bindings/js/JSNodeCustom.h:
+
+            Remove StyleBase.h include.
+
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::parentStyleSheet):
+
+            Added CSS-specific parentStyleSheet() so we don't have to cast it to a
+            CSSStyleSheet* at the call sites.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        (WebCore::StyleSheet::parentStyleSheet):
+        (WebCore::StyleSheet::baseURL):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::parentRule):
+        (WebCore::StyleSheet::setParentRule):
+        (WebCore::StyleSheet::isCSSStyleSheet):
+        (WebCore::StyleSheet::isXSLStyleSheet):
+
+            StyleSheet now inherits directly from RefCounted and always has a parent CSSRule
+            though it can be null. parentStyleSheet() returns that rule's parent style sheet.
+            Moved the relevant guts from StyleBase down here.
+
+        * loader/cache/CachedStyleSheetClient.h:
+
+            Remove unnecessary WTF_MAKE_FAST_ALLOCATED, we get it from CachedResourceClient.
+
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::XSLImportRule):
+        (WebCore::XSLImportRule::~XSLImportRule):
+        (WebCore::XSLImportRule::parentStyleSheet):
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLImportRule.h:
+        (WebCore::XSLImportRule::create):
+        (WebCore::XSLImportRule::setParentStyleSheet):
+
+            Remove inheritance from StyleBase, and have create() return a PassOwnPtr instead.
+            This is fine, since XSLStyleSheet is the only object that ever manages these rules.
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedIntoDocument):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::~CSSStyleSheet):
+        (WebCore::CSSStyleSheet::ownerRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::checkLoaded):
+        (WebCore::CSSStyleSheet::document):
+        (WebCore::CSSStyleSheet::styleSheetChanged):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::~CSSImportRule):
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        (WebCore::CSSMediaRule::~CSSMediaRule):
+        (WebCore::CSSMediaRule::append):
+        (WebCore::CSSMediaRule::insertRule):
+        (WebCore::CSSMediaRule::deleteRule):
+        * css/CSSRegionStyleRule.cpp:
+        (WebCore::CSSRegionStyleRule::CSSRegionStyleRule):
+        (WebCore::CSSRegionStyleRule::~CSSRegionStyleRule):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/CSSStyleDeclaration.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::setName):
+        (WebCore::WebKitCSSKeyframesRule::append):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::parentStyleSheet):
+        * xml/XSLStyleSheet.h:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+        (WebCore::XSLStyleSheet::checkLoaded):
+        (WebCore::XSLStyleSheet::loadChildSheet):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+
+            Use the new, more explicit, parenting functions of StyleSheet.
+
 2011-10-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         CSS 2.1 failure: background-intrinsic-*

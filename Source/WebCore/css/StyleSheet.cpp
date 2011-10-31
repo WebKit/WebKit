@@ -22,13 +22,14 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
+#include "Document.h"
 #include "MediaList.h"
 #include "Node.h"
 
 namespace WebCore {
 
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
-    : StyleBase(0)
+    : m_parentRule(0)
     , m_parentNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -36,8 +37,8 @@ StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& 
 {
 }
 
-StyleSheet::StyleSheet(StyleBase* owner, const String& originalURL, const KURL& finalURL)
-    : StyleBase(owner)
+StyleSheet::StyleSheet(CSSRule* parentRule, const String& originalURL, const KURL& finalURL)
+    : m_parentRule(parentRule)
     , m_parentNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -53,10 +54,8 @@ StyleSheet::~StyleSheet()
 
 StyleSheet* StyleSheet::parentStyleSheet() const
 {
-    if (!parent())
-        return 0;
-    ASSERT(parent()->isRule());
-    return static_cast<CSSRule*>(parent())->parentStyleSheet();
+    ASSERT(isCSSStyleSheet());
+    return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
 void StyleSheet::setMedia(PassRefPtr<MediaList> media)
@@ -69,6 +68,17 @@ void StyleSheet::setMedia(PassRefPtr<MediaList> media)
 
     m_media = media;
     m_media->setParentStyleSheet(static_cast<CSSStyleSheet*>(this));
+}
+
+KURL StyleSheet::baseURL() const
+{
+    if (!m_finalURL.isNull())
+        return m_finalURL;
+    if (StyleSheet* parentSheet = parentStyleSheet())
+        return parentSheet->baseURL();
+    if (!m_parentNode)
+        return KURL();
+    return m_parentNode->document()->baseURL();
 }
 
 KURL StyleSheet::completeURL(const String& url) const

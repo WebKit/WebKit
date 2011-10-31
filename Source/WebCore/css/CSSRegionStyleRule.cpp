@@ -40,7 +40,7 @@ CSSRegionStyleRule::CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSP
     , m_ruleList(rules)
 {
     for (unsigned index = 0; index < m_ruleList->length(); ++index)
-        m_ruleList->item(index)->setParent(this);
+        m_ruleList->item(index)->setParentRule(this);
 
     m_selectorList.adoptSelectorVector(*selectors);
 }
@@ -48,7 +48,7 @@ CSSRegionStyleRule::CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSP
 CSSRegionStyleRule::~CSSRegionStyleRule()
 {
     for (unsigned index = 0; index < m_ruleList->length(); ++index)
-        m_ruleList->item(index)->setParent(0);
+        m_ruleList->item(index)->setParentRule(0);
 }
 
 String CSSRegionStyleRule::cssText() const

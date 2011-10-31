@@ -2,6 +2,7 @@
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,8 +31,10 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class CSSRule : public StyleBase {
+class CSSRule : public RefCounted<CSSRule> {
 public:
+    virtual ~CSSRule() { }
+
     // FIXME: Change name to Type.
     enum CSSRuleType {
         UNKNOWN_RULE,
@@ -59,8 +62,35 @@ public:
     virtual bool isRegionStyleRule() const { return false; }
     virtual bool isImportRule() const { return false; }
 
-    CSSStyleSheet* parentStyleSheet() const;
-    CSSRule* parentRule() const;
+    bool useStrictParsing() const
+    {
+        if (parentRule())
+            return parentRule()->useStrictParsing();
+        if (parentStyleSheet())
+            return parentStyleSheet()->useStrictParsing();
+        return true;
+    }
+
+    void setParentStyleSheet(CSSStyleSheet* styleSheet)
+    {
+        m_parentIsRule = false;
+        m_parentStyleSheet = styleSheet;
+    }
+
+    void setParentRule(CSSRule* rule)
+    {
+        m_parentIsRule = true;
+        m_parentRule = rule;
+    }
+
+    CSSStyleSheet* parentStyleSheet() const
+    {
+        if (m_parentIsRule)
+            return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
+        return m_parentStyleSheet;
+    }
+
+    CSSRule* parentRule() const { return m_parentIsRule ? m_parentRule : 0; }
 
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&);
@@ -69,14 +99,26 @@ public:
 
     virtual void insertedIntoParent() { }
 
+    KURL baseURL() const
+    {
+        if (CSSStyleSheet* parentSheet = parentStyleSheet())
+            return parentSheet->baseURL();
+        return KURL();
+    }
+
 protected:
     CSSRule(CSSStyleSheet* parent)
-        : StyleBase(parent)
+        : m_parentIsRule(false)
+        , m_parentStyleSheet(parent)
     {
     }
 
 private:
-    virtual bool isRule() const { return true; }
+    bool m_parentIsRule;
+    union {
+        CSSRule* m_parentRule;
+        CSSStyleSheet* m_parentStyleSheet;
+    };
 };
 
 } // namespace WebCore

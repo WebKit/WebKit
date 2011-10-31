@@ -63,6 +63,13 @@ public:
 
     virtual ~CSSStyleSheet();
 
+    CSSStyleSheet* parentStyleSheet() const
+    {
+        StyleSheet* parentSheet = StyleSheet::parentStyleSheet();
+        ASSERT(!parentSheet || parentSheet->isCSSStyleSheet());
+        return static_cast<CSSStyleSheet*>(parentSheet);
+    }
+
     CSSRule* ownerRule() const;
     PassRefPtr<CSSRuleList> cssRules(bool omitCharsetRules = false);
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);

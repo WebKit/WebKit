@@ -27,7 +27,6 @@
 #define JSNodeCustom_h
 
 #include "JSDOMBinding.h"
-#include "StyleBase.h"
 #include <wtf/AlwaysInline.h>
 
 namespace WebCore {

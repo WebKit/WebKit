@@ -36,7 +36,7 @@ CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, P
     m_lstMedia->setParentStyleSheet(parent);
     int length = m_lstCSSRules->length();
     for (int i = 0; i < length; i++)
-        m_lstCSSRules->item(i)->setParent(this);
+        m_lstCSSRules->item(i)->setParentRule(this);
 }
 
 CSSMediaRule::~CSSMediaRule()
@@ -46,7 +46,7 @@ CSSMediaRule::~CSSMediaRule()
 
     int length = m_lstCSSRules->length();
     for (int i = 0; i < length; i++)
-        m_lstCSSRules->item(i)->setParent(0);
+        m_lstCSSRules->item(i)->setParentRule(0);
 }
 
 unsigned CSSMediaRule::append(CSSRule* rule)
@@ -54,7 +54,7 @@ unsigned CSSMediaRule::append(CSSRule* rule)
     if (!rule)
         return 0;
 
-    rule->setParent(this);
+    rule->setParentRule(this);
     return m_lstCSSRules->insertRule(rule, m_lstCSSRules->length());
 }
 
@@ -86,11 +86,11 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
         return 0;
     }
 
-    newRule->setParent(this);
+    newRule->setParentRule(this);
     unsigned returnedIndex = m_lstCSSRules->insertRule(newRule.get(), index);
 
-    if (stylesheet())
-        stylesheet()->styleSheetChanged();
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
+        styleSheet->styleSheetChanged();
 
     return returnedIndex;
 }
@@ -106,8 +106,8 @@ void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 
     m_lstCSSRules->deleteRule(index);
 
-    if (stylesheet())
-        stylesheet()->styleSheetChanged();
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
+        styleSheet->styleSheetChanged();
 }
 
 String CSSMediaRule::cssText() const

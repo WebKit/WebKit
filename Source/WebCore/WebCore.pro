@@ -447,7 +447,6 @@ SOURCES += \
     css/RGBColor.cpp \
     css/SelectorChecker.cpp \
     css/ShadowValue.cpp \
-    css/StyleBase.cpp \
     css/StyleMedia.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
@@ -1527,7 +1526,6 @@ HEADERS += \
     css/RGBColor.h \
     css/SelectorChecker.h \
     css/ShadowValue.h \
-    css/StyleBase.h \
     css/StyleMedia.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \

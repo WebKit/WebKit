@@ -46,7 +46,7 @@ WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
         WebKitCSSKeyframeRule* rule = item(i);
         if (CSSMutableStyleDeclaration* style = rule->style())
             style->setParentRule(0);
-        rule->setParent(0);
+        rule->setParentRule(0);
     }
 }
 
@@ -61,8 +61,8 @@ void WebKitCSSKeyframesRule::setName(const String& name)
 
     // Since the name is used in the keyframe map list in CSSStyleSelector, we need
     // to recompute the style sheet to get the updated name.
-    if (stylesheet())
-        stylesheet()->styleSheetChanged();
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
+        styleSheet->styleSheetChanged();
 }
 
 unsigned WebKitCSSKeyframesRule::length() const
@@ -90,7 +90,7 @@ void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
         return;
 
     m_lstCSSRules->append(rule);
-    rule->setParent(this);
+    rule->setParentRule(this);
 
     if (CSSMutableStyleDeclaration* style = rule->style())
         style->setParentRule(this);
