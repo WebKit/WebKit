@@ -3929,3 +3929,4 @@ BUGWK71139 SNOWLEOPARD : fast/parser/close-while-stopping.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
+BUGWK71209 GPU : compositing/visibility/visibility-image-layers.html = IMAGE
