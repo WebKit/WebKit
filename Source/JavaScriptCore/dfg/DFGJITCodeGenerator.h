@@ -397,6 +397,10 @@ protected:
             ASSERT(registerFormat == DataFormatJSInteger);
             m_jit.load32(JITCompiler::payloadFor(spillMe), info.gpr());
             m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr());
+        } else if (info.spillFormat() == DataFormatDouble) {
+            ASSERT(registerFormat == DataFormatJSDouble);
+            m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
+            m_jit.subPtr(GPRInfo::tagTypeNumberRegister, info.gpr());
         } else
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
 #else

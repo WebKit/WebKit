@@ -1,3 +1,21 @@
+2011-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r97118): Reproducible crash in JSCell::toPrimitive when adding
+        https://bugs.webkit.org/show_bug.cgi?id=71227
+
+        Reviewed by Oliver Hunt.
+        
+        No new tests, since while I can see exactly where the DFG went wrong on the
+        site in question from looking at the generated machine code, and while I can
+        certainly believe that such a scenario would happen, I cannot visualize how
+        to make it happen reproducibly. It requires an odd combination of double
+        values getting spilled and then refilled, but then reboxed at just the right
+        time so that the spilled value is an unboxed double while the in-register
+        value is a boxed double.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+
 2011-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         JSParser::parsePrimaryExpression should have an overflow check
