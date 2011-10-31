@@ -1,3 +1,15 @@
+2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Interpreter build fix
+
+        Unreviewed build fix
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
 2011-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exits should add to value profiles
