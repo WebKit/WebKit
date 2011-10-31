@@ -951,7 +951,6 @@ BUGCR32444 LINUX WIN : svg/hixie/text/003.html = FAIL
 BUGCR3244 LINUX WIN : fast/backgrounds/svg-as-mask.html = FAIL
 BUGCR3244 LINUX WIN : svg/batik/masking/maskRegions.svg = FAIL
 BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
-BUGCR3244 WIN DEBUG : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 SLOW WIN RELEASE : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 LINUX : fast/backgrounds/animated-svg-as-mask.html = FAIL
 // More tests that fail because of masks not working properly.
@@ -3939,3 +3938,6 @@ BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 BUGWK71226 : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGWK71226 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
+BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE
+BUGWK71226 MAC WIN7 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT
+
