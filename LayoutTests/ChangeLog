@@ -1,3 +1,20 @@
+2011-10-31  John Gregg  <johnnyg@google.com>
+
+        Chromium rebaselines, unreviewed.
+
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-gpu-win/media/audio-repaint-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline after r98852.

@@ -61,7 +61,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,97) size 140x39 [r=3 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (0,0) size 132x28
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -78,7 +78,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,137) size 140x39 [r=4 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (0,0) size 132x28
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -96,7 +96,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,177) size 140x39 [r=5 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (52,0) size 21x21
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -113,7 +113,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,217) size 140x39 [r=6 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (0,0) size 97x21
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -130,7 +130,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,257) size 140x39 [r=7 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (52,0) size 21x21
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -147,7 +147,7 @@ layer at (0,0) size 800x347
             RenderTableCell {TD} at (321,297) size 140x39 [r=8 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 138x34 [border: (1px dashed #008000)]
                 layer at (0,0) size 132x28
-                  RenderView at (0,0) size 132x28
+                  RenderView at (0,0) size 117x13
                 layer at (0,0) size 132x28
                   RenderSVGRoot {svg} at (0,0) size 97x28
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
