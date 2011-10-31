@@ -1,3 +1,12 @@
+2011-10-31  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Add missing declaration in WebSettings.h
+        https://bugs.webkit.org/show_bug.cgi?id=71165
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+
 2011-10-29  Jochen Eisinger  <jochen@chromium.org>
 
         Implement IDBFactory.deleteDatabase
