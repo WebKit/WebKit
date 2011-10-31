@@ -181,14 +181,21 @@ void FormDataBuilder::finishMultiPartHeader(Vector<char>& buffer)
     append(buffer, "\r\n\r\n");
 }
 
-void FormDataBuilder::addKeyValuePairAsFormData(Vector<char>& buffer, const CString& key, const CString& value)
+void FormDataBuilder::addKeyValuePairAsFormData(Vector<char>& buffer, const CString& key, const CString& value, FormData::EncodingType encodingType)
 {
-    if (!buffer.isEmpty())
-        append(buffer, '&');
-
-    encodeStringAsFormData(buffer, key);
-    append(buffer, '=');
-    encodeStringAsFormData(buffer, value);
+    if (encodingType == FormData::TextPlain) {
+        if (!buffer.isEmpty())
+            append(buffer, "\r\n");
+        append(buffer, key);
+        append(buffer, '=');
+        append(buffer, value);
+    } else {
+        if (!buffer.isEmpty())
+            append(buffer, '&');
+        encodeStringAsFormData(buffer, key);
+        append(buffer, '=');
+        encodeStringAsFormData(buffer, value);
+    }
 }
 
 void FormDataBuilder::encodeStringAsFormData(Vector<char>& buffer, const CString& string)

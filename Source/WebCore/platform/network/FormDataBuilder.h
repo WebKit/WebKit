@@ -21,6 +21,7 @@
 #ifndef FormDataBuilder_h
 #define FormDataBuilder_h
 
+#include "FormData.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 
@@ -43,7 +44,7 @@ public:
     static void finishMultiPartHeader(Vector<char>&);
 
     // Helper functions used by HTMLFormElement for non multi-part form data
-    static void addKeyValuePairAsFormData(Vector<char>&, const CString& key, const CString& value);
+    static void addKeyValuePairAsFormData(Vector<char>&, const CString& key, const CString& value, FormData::EncodingType = FormData::FormURLEncoded);
     static void encodeStringAsFormData(Vector<char>&, const CString&);
 
 private:

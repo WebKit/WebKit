@@ -99,10 +99,10 @@ PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding)
+PassRefPtr<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding, EncodingType encodingType)
 {
     RefPtr<FormData> result = create();
-    result->appendKeyValuePairItems(list, encoding, false, 0);
+    result->appendKeyValuePairItems(list, encoding, false, 0, encodingType);
     return result.release();
 }
 
@@ -180,7 +180,7 @@ void FormData::appendBlob(const KURL& blobURL)
 }
 #endif
 
-void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncoding& encoding, bool isMultiPartForm, Document* document)
+void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncoding& encoding, bool isMultiPartForm, Document* document, EncodingType encodingType)
 {
     if (isMultiPartForm)
         m_boundary = FormDataBuilder::generateUniqueBoundaryString();
@@ -263,7 +263,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             if (encodedData.isEmpty() && key.data() == "isindex")
                 FormDataBuilder::encodeStringAsFormData(encodedData, value.data());
             else
-                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key.data(), value.data());
+                FormDataBuilder::addKeyValuePairAsFormData(encodedData, key.data(), value.data(), encodingType);
         }
     }
 

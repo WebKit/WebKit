@@ -1,3 +1,30 @@
+2011-10-31  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        text/plain form encoding ignored and incorrectly specified in request header.
+        https://bugs.webkit.org/show_bug.cgi?id=20795
+
+        Reviewed by Darin Adler.
+
+        Added tests for GET and POST methods for text/plain enctype.
+        Forms submitted using GET with a content-type of text/plain actually,
+        send data in URL encoded in the URL.
+        Forms with POST method and content-type of text/plain actually send data in text/plain.
+        Modified expected results for mailto tests as per the new behavior.
+
+        * fast/forms/form-get-textplain-expected.txt: Added.
+        * fast/forms/form-get-textplain.html: Added.
+        * fast/forms/mailto/post-multiple-items-text-plain-expected.txt:
+        * fast/forms/mailto/post-text-plain-expected.txt:
+        * fast/forms/mailto/post-text-plain-with-accept-charset-expected.txt:
+        * http/tests/misc/form-post-textplain-expected.txt: Added.
+        * http/tests/misc/form-post-textplain.html: Added.
+        * http/tests/misc/resources/form-post-textplain.php: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/forms/mailto/formenctype-attribute-button-html-expected.txt:
+        * platform/gtk/fast/forms/mailto/formenctype-attribute-input-html-expected.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/test_expectations.txt:
+
 2011-10-31  Arko Saha  <arko@motorola.com>
 
         Microdata: Support for itemid attribute.

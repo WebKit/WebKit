@@ -91,11 +91,17 @@ inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
 
 class FormData : public RefCounted<FormData> {
 public:
+    enum EncodingType {
+        FormURLEncoded, // for application/x-www-form-urlencoded
+        TextPlain, // for text/plain
+        MultipartFormData // for multipart/form-data
+    };
+
     static PassRefPtr<FormData> create();
     static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
-    static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&);
+    static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
     static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
     PassRefPtr<FormData> copy() const;
     PassRefPtr<FormData> deepCopy() const;
@@ -129,11 +135,20 @@ public:
     void setIdentifier(int64_t identifier) { m_identifier = identifier; }
     int64_t identifier() const { return m_identifier; }
 
+    static EncodingType parseEncodingType(const String& type)
+    {
+        if (equalIgnoringCase(type, "text/plain"))
+            return TextPlain;
+        if (equalIgnoringCase(type, "multipart/form-data"))
+            return MultipartFormData;
+        return FormURLEncoded;
+    }
+
 private:
     FormData();
     FormData(const FormData&);
 
-    void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*);
+    void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*, EncodingType = FormURLEncoded);
 
     Vector<FormDataElement> m_elements;
 

@@ -3880,6 +3880,10 @@ BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html
 
 BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRASH
 
+// Needs rebaseline
+BUGWK20795 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
+BUGWK20795 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
+
 BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
 
 BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT

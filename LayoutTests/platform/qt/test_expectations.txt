@@ -19,6 +19,10 @@ BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
 BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
 BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 
+// Needs rebaseline
+BUGWK20795 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
+BUGWK20795 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
+
 BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
