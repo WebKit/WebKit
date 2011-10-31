@@ -638,6 +638,7 @@ static void enqueueAttributesMutationRecord(Element* element, const QualifiedNam
     if (observers.isEmpty())
         return;
 
+    // FIXME: Factor this logic out to avoid duplication with characterDataOldValue.
     RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name, isOldValueRequested(observers) ? oldValue : nullAtom);
     RefPtr<MutationRecord> mutationWithNullOldValue;
     for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter) {

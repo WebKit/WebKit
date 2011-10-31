@@ -95,16 +95,19 @@ private:
 
 class CharacterDataRecord : public MutationRecord {
 public:
-    CharacterDataRecord(PassRefPtr<Node> target)
+    CharacterDataRecord(PassRefPtr<Node> target, const String& oldValue)
         : m_target(target)
+        , m_oldValue(oldValue)
     {
     }
 
 private:
     virtual const AtomicString& type() OVERRIDE;
     virtual Node* target() OVERRIDE { return m_target.get(); }
+    virtual String oldValue() OVERRIDE { return m_oldValue; }
 
     RefPtr<Node> m_target;
+    String m_oldValue;
 };
 
 class MutationRecordWithNullOldValue : public MutationRecord {
@@ -159,9 +162,9 @@ PassRefPtr<MutationRecord> MutationRecord::createAttributes(PassRefPtr<Node> tar
     return adoptRef(static_cast<MutationRecord*>(new AttributesRecord(target, name, oldValue)));
 }
 
-PassRefPtr<MutationRecord> MutationRecord::createCharacterData(PassRefPtr<Node> target)
+PassRefPtr<MutationRecord> MutationRecord::createCharacterData(PassRefPtr<Node> target, const String& oldValue)
 {
-    return adoptRef(static_cast<MutationRecord*>(new CharacterDataRecord(target)));
+    return adoptRef(static_cast<MutationRecord*>(new CharacterDataRecord(target, oldValue)));
 }
 
 PassRefPtr<MutationRecord> MutationRecord::createWithNullOldValue(PassRefPtr<MutationRecord> record)

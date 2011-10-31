@@ -190,16 +190,52 @@ void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengt
         toRenderText(renderer())->setTextWithOffset(m_data, offsetOfReplacedData, lengthOfReplacedData);
 }
 
+#if ENABLE(MUTATION_OBSERVERS)
+static inline bool hasOldValue(MutationObserverOptions options)
+{
+    return options & WebKitMutationObserver::CharacterDataOldValue;
+}
+
+static bool isOldValueRequested(const HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers)
+{
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::const_iterator iter = observers.begin(); iter != observers.end(); ++iter) {
+        if (hasOldValue(iter->second))
+            return true;
+    }
+    return false;
+}
+
+static void enqueueCharacterDataMutationRecord(Node* node, const String& oldData)
+{
+    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
+    node->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
+    if (observers.isEmpty())
+        return;
+
+    // FIXME: Factor this logic out to avoid duplication with attributeOldValue.
+    RefPtr<MutationRecord> mutation = MutationRecord::createCharacterData(node, isOldValueRequested(observers) ? oldData : String());
+    RefPtr<MutationRecord> mutationWithNullOldValue;
+    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter) {
+        WebKitMutationObserver* observer = iter->first;
+        if (hasOldValue(iter->second)) {
+            observer->enqueueMutationRecord(mutation);
+            continue;
+        }
+        if (!mutationWithNullOldValue) {
+            if (mutation->oldValue().isNull())
+                mutationWithNullOldValue = mutation;
+            else
+                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation);
+        }
+        observer->enqueueMutationRecord(mutationWithNullOldValue);
+    }
+}
+#endif // ENABLE(MUTATION_OBSERVERS)
+
 void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
 #if ENABLE(MUTATION_OBSERVERS)
-    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
-    getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
-    if (!observers.isEmpty()) {
-        RefPtr<MutationRecord> mutation = MutationRecord::createCharacterData(this);
-        for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter)
-                iter->first->enqueueMutationRecord(mutation);
-    }
+    enqueueCharacterDataMutationRecord(this, oldData);
 #endif
     if (parentNode())
         parentNode()->childrenChanged();

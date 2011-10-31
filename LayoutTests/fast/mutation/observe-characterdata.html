@@ -12,6 +12,7 @@
 window.jsTestIsAsync = true;
 var mutations;
 var mutations2;
+var mutationsWithOldValue;
 var calls;
 var charDataNode;
 
@@ -191,7 +192,121 @@ function testOrderingWrtDOMSubtreeModified() {
     start();
 }
 
-var tests = [testBasic, testWrongType, testMultipleObservers, testOrderingWrtDOMSubtreeModified];
+function testOldValue() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('Testing that oldValue is returned when requested.');
+        mutations = null;
+        div = document.createElement('div');
+        div.textContent = 'foo';
+        charDataNode = div.firstChild;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(charDataNode, {characterData: true, characterDataOldValue: true});
+        charDataNode.textContent = 'bar';
+        charDataNode.textContent = 'baz';
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].type', '"characterData"');
+        shouldBe('mutations[0].target', 'charDataNode');
+        shouldBe('mutations[0].oldValue', '"foo"');
+        shouldBe('mutations[1].type', '"characterData"');
+        shouldBe('mutations[1].target', 'charDataNode');
+        shouldBe('mutations[1].oldValue', '"bar"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testOldValueAsRequested() {
+    var div;
+    var observerWithOldValue;
+    var observer;
+
+    function start() {
+        debug('Testing that oldValue is delivered as requested (or not).');
+        mutations = null;
+        mutationsWithOldValue = null;
+        div = document.createElement('div');
+        div.textContent = 'foo';
+        charDataNode = div.firstChild;
+        observerWithOldValue = new WebKitMutationObserver(function(mutations) {
+            window.mutationsWithOldValue = mutations;
+        });
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observerWithOldValue.observe(charDataNode, {characterData: true, characterDataOldValue: true});
+        observer.observe(charDataNode, {characterData: true});
+        charDataNode.textContent = 'bar';
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutationsWithOldValue.length', '1');
+        shouldBe('mutationsWithOldValue[0].type', '"characterData"');
+        shouldBe('mutationsWithOldValue[0].oldValue', '"foo"');
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"characterData"');
+        shouldBe('mutations[0].oldValue', 'null');
+        observerWithOldValue.disconnect();
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testOldValueUnionMultipleObservations() {
+    var div;
+    var observer;
+
+    function start() {
+        debug('An observer with multiple observations will get characterDataOldValue if any entries request it.');
+        mutations = null;
+        div = document.createElement('div');
+        div.textContent = 'foo';
+        charDataNode = div.firstChild;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+        observer.observe(div, {characterData: true, characterDataOldValue: true, subtree: true});
+        observer.observe(charDataNode, {characterData: true});
+        charDataNode.textContent = 'bar';
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"characterData"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+var tests = [
+    testBasic,
+    testWrongType,
+    testMultipleObservers,
+    testOrderingWrtDOMSubtreeModified,
+    testOldValue,
+    testOldValueAsRequested,
+    testOldValueUnionMultipleObservations
+];
 var testIndex = 0;
 
 function runNextTest() {

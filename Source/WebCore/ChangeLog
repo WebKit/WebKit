@@ -1,3 +1,18 @@
+2011-10-27  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Support characterDataOldValue for characterData mutations
+        https://bugs.webkit.org/show_bug.cgi?id=70862
+
+        Reviewed by Ojan Vafai.
+
+        * dom/CharacterData.cpp:
+        (WebCore::hasOldValue):
+        (WebCore::isOldValueRequested):
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/MutationRecord.cpp:
+        (WebCore::MutationRecord::createCharacterData):
+        * dom/MutationRecord.h:
+
 2011-10-31  Sam Weinig  <sam@webkit.org>
 
         Remove need for virtual JSObject::unwrappedObject
