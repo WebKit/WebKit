@@ -6,9 +6,11 @@
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
-parent.document.iframeReady();
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/close-on-unload");
-location.reload();
+var reloadCount = parent.document.iframeReady();
+if (!reloadCount) {
+    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/close-on-unload");
+    location.reload();
+}
 </script>
 </body>
 </html>

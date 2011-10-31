@@ -18,13 +18,13 @@ var reloadCount = 0;
 document.iframeReady = function ()
 {
     if (reloadCount == 0)
-       debug("PASS iframe is ready.");
-    if (reloadCount == 1) {
-       debug("PASS reloaded iframe while WebSocket is busy");
-       finishJSTest();
-       return;
-    }
-    reloadCount += 1;
+        debug("PASS iframe is ready.");
+    else if (reloadCount == 1) {
+        debug("PASS reloaded iframe while WebSocket is busy");
+        finishJSTest();
+    } else
+        testFailed("iframe should not get reloaded more than once. (reloadCount = " + reloadCount + ")");
+    return reloadCount++;
 };
 
 frameDiv = document.createElement("iframe");
