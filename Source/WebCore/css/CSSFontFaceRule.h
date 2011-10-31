@@ -54,10 +54,6 @@ public:
 private:
     CSSFontFaceRule(CSSStyleSheet* parent);
 
-    virtual bool isFontFaceRule() const { return true; }
-    // Inherited from CSSRule
-    virtual CSSRuleType type() const { return FONT_FACE_RULE; }
-
     RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 

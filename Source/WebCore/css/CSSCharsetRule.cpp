@@ -24,7 +24,7 @@
 namespace WebCore {
 
 CSSCharsetRule::CSSCharsetRule(CSSStyleSheet* parent, const String& encoding)
-    : CSSRule(parent)
+    : CSSRule(parent, CSSRule::CHARSET_RULE)
     , m_encoding(encoding)
 {
 }

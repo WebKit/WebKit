@@ -230,7 +230,7 @@ public:
 
     void addStyleRule(CSSStyleRule* item);
     void addRule(CSSStyleRule* rule, CSSSelector* sel);
-    void addPageRule(CSSStyleRule* rule, CSSSelector* sel);
+    void addPageRule(CSSPageRule*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
                       CSSStyleRule* rule, CSSSelector* sel);
     void shrinkToFit();
@@ -1899,9 +1899,9 @@ void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
     m_universalRules.append(RuleData(rule, sel, m_ruleCount++));
 }
 
-void RuleSet::addPageRule(CSSStyleRule* rule, CSSSelector* sel)
+void RuleSet::addPageRule(CSSPageRule* rule)
 {
-    m_pageRules.append(RuleData(rule, sel, m_pageRules.size()));
+    m_pageRules.append(RuleData(rule, rule->selectorList().first(), m_pageRules.size()));
 }
 
 void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
@@ -1920,6 +1920,8 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         CSSRule* rule = sheet->item(i);
         if (rule->isStyleRule())
             addStyleRule(static_cast<CSSStyleRule*>(rule));
+        else if (rule->isPageRule())
+            addPageRule(static_cast<CSSPageRule*>(rule));
         else if (rule->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(rule);
             if (!import->media() || medium.eval(import->media(), styleSelector))
@@ -1933,10 +1935,11 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < rules->length(); j++) {
                     CSSRule *childItem = rules->item(j);
-                    if (childItem->isStyleRule()) {
-                        // It is a StyleRule, so append it to our list
+                    if (childItem->isStyleRule())
                         addStyleRule(static_cast<CSSStyleRule*>(childItem));
-                    } else if (childItem->isFontFaceRule() && styleSelector) {
+                    else if (childItem->isPageRule())
+                        addPageRule(static_cast<CSSPageRule*>(childItem));
+                    else if (childItem->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
                         const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childItem);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
@@ -1961,13 +1964,8 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
 
 void RuleSet::addStyleRule(CSSStyleRule* rule)
 {
-    if (rule->isPageRule()) {
-        CSSPageRule* pageRule = static_cast<CSSPageRule*>(rule);
-        addPageRule(pageRule, pageRule->selectorList().first());
-    } else {
-        for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
-            addRule(rule, s);
-    }
+    for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
+        addRule(rule, s);
 }
 
 static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& features, const CSSSelector* selector)

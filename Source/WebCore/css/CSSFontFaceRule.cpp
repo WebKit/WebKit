@@ -27,7 +27,7 @@
 namespace WebCore {
 
 CSSFontFaceRule::CSSFontFaceRule(CSSStyleSheet* parent)
-    : CSSRule(parent)
+    : CSSRule(parent, CSSRule::FONT_FACE_RULE)
 {
 }
 

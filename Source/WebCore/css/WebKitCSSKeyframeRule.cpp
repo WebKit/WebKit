@@ -31,7 +31,7 @@
 namespace WebCore {
 
 WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(CSSStyleSheet* parent)
-    : CSSRule(parent)
+    : CSSRule(parent, CSSRule::WEBKIT_KEYFRAME_RULE)
 {
 }
 

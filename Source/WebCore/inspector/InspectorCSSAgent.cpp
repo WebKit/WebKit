@@ -179,8 +179,7 @@ CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(CSSRule* rule)
 // static
 CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 {
-    // NOTE: CSSPageRule inherits from CSSStyleRule, so isStyleRule() is not enough.
-    if (rule->type() != CSSRule::STYLE_RULE)
+    if (!rule->isStyleRule())
         return 0;
     return static_cast<CSSStyleRule*>(rule);
 }

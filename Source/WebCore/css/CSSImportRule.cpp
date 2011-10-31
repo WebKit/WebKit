@@ -32,7 +32,7 @@
 namespace WebCore {
 
 CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
-    : CSSRule(parent)
+    : CSSRule(parent, CSSRule::IMPORT_RULE)
     , m_strHref(href)
     , m_lstMedia(media)
     , m_cachedSheet(0)

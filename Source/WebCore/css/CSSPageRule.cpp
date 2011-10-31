@@ -28,7 +28,7 @@
 namespace WebCore {
 
 CSSPageRule::CSSPageRule(CSSStyleSheet* parent, int sourceLine)
-    : CSSStyleRule(parent, sourceLine)
+    : CSSStyleRule(parent, sourceLine, CSSRule::PAGE_RULE)
 {
 }
 

@@ -1,3 +1,64 @@
+2011-10-31  Andreas Kling  <kling@webkit.org>
+
+        CSSRule: Devirtualize type() and isFooRule()
+        https://bugs.webkit.org/show_bug.cgi?id=71221
+
+        Reviewed by Antti Koivisto.
+
+        Store the rule type in a CSSRule member (packed with the parent-is-rule flag)
+        and let the isFooRule() functions return type() == FOO_TYPE.
+
+        CSSPageRule will no longer return true for isStyleRule(), tweaked call sites
+        accordingly.
+
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::CSSCharsetRule):
+        * css/CSSCharsetRule.h:
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::CSSFontFaceRule):
+        * css/CSSFontFaceRule.h:
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        * css/CSSImportRule.h:
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        * css/CSSMediaRule.h:
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        * css/CSSPageRule.h:
+        * css/CSSRegionStyleRule.cpp:
+        (WebCore::CSSRegionStyleRule::CSSRegionStyleRule):
+        * css/CSSRegionStyleRule.h:
+        * css/CSSRule.h:
+        (WebCore::CSSRule::type):
+        (WebCore::CSSRule::isCharsetRule):
+        (WebCore::CSSRule::isFontFaceRule):
+        (WebCore::CSSRule::isKeyframeRule):
+        (WebCore::CSSRule::isKeyframesRule):
+        (WebCore::CSSRule::isMediaRule):
+        (WebCore::CSSRule::isPageRule):
+        (WebCore::CSSRule::isStyleRule):
+        (WebCore::CSSRule::isRegionStyleRule):
+        (WebCore::CSSRule::isImportRule):
+        (WebCore::CSSRule::CSSRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        * css/CSSStyleRule.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleSet::addPageRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::RuleSet::addStyleRule):
+        * css/CSSUnknownRule.h:
+        (WebCore::CSSUnknownRule::CSSUnknownRule):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::WebKitCSSKeyframeRule):
+        * css/WebKitCSSKeyframeRule.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::WebKitCSSKeyframesRule):
+        * css/WebKitCSSKeyframesRule.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asCSSStyleRule):
+
 2011-10-31  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: reorder inspector js files to fix remote mode.

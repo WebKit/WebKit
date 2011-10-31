@@ -45,10 +45,6 @@ public:
 
 private:
     CSSPageRule(CSSStyleSheet* parent, int sourceLine);
-
-    virtual bool isPageRule() const { return true; }
-    // Inherited from CSSRule
-    virtual CSSRuleType type() const { return PAGE_RULE; }
 };
 
 } // namespace WebCore

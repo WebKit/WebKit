@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine)
-    : CSSRule(parent)
+CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type type)
+    : CSSRule(parent, type)
     , m_sourceLine(sourceLine)
 {
 }

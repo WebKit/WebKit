@@ -57,10 +57,6 @@ public:
 private:
     CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
 
-    virtual bool isImportRule() const { return true; }
-    // from CSSRule
-    virtual CSSRuleType type() const { return IMPORT_RULE; }
-
     virtual void insertedIntoParent();
 
     // from CachedResourceClient

@@ -58,10 +58,6 @@ public:
 private:
     CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules);
 
-    virtual bool isRegionStyleRule() const { return true; }
-
-    virtual CSSRuleType type() const { return WEBKIT_REGION_STYLE_RULE; }
-
     CSSSelectorList m_selectorList;
     RefPtr<CSSRuleList> m_ruleList;
 };

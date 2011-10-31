@@ -35,8 +35,7 @@ class CSSRule : public RefCounted<CSSRule> {
 public:
     virtual ~CSSRule() { }
 
-    // FIXME: Change name to Type.
-    enum CSSRuleType {
+    enum Type {
         UNKNOWN_RULE,
         STYLE_RULE,
         CHARSET_RULE,
@@ -50,17 +49,17 @@ public:
         WEBKIT_REGION_STYLE_RULE
     };
 
-    virtual CSSRuleType type() const = 0;
+    Type type() const { return static_cast<Type>(m_type); }
 
-    virtual bool isCharsetRule() const { return false; }
-    virtual bool isFontFaceRule() const { return false; }
-    virtual bool isKeyframeRule() const { return false; }
-    virtual bool isKeyframesRule() const { return false; }
-    virtual bool isMediaRule() const { return false; }
-    virtual bool isPageRule() const { return false; }
-    virtual bool isStyleRule() const { return false; }
-    virtual bool isRegionStyleRule() const { return false; }
-    virtual bool isImportRule() const { return false; }
+    bool isCharsetRule() const { return type() == CHARSET_RULE; }
+    bool isFontFaceRule() const { return type() == FONT_FACE_RULE; }
+    bool isKeyframeRule() const { return type() == WEBKIT_KEYFRAME_RULE; }
+    bool isKeyframesRule() const { return type() == WEBKIT_KEYFRAMES_RULE; }
+    bool isMediaRule() const { return type() == MEDIA_RULE; }
+    bool isPageRule() const { return type() == PAGE_RULE; }
+    bool isStyleRule() const { return type() == STYLE_RULE; }
+    bool isRegionStyleRule() const { return type() == WEBKIT_REGION_STYLE_RULE; }
+    bool isImportRule() const { return type() == IMPORT_RULE; }
 
     bool useStrictParsing() const
     {
@@ -107,14 +106,16 @@ public:
     }
 
 protected:
-    CSSRule(CSSStyleSheet* parent)
+    CSSRule(CSSStyleSheet* parent, Type type)
         : m_parentIsRule(false)
+        , m_type(type)
         , m_parentStyleSheet(parent)
     {
     }
 
 private:
-    bool m_parentIsRule;
+    bool m_parentIsRule : 1;
+    unsigned m_type : 31; // Plenty of space for additional flags here.
     union {
         CSSRule* m_parentRule;
         CSSStyleSheet* m_parentStyleSheet;

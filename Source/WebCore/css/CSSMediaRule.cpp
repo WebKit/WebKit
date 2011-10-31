@@ -29,7 +29,7 @@
 namespace WebCore {
 
 CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, PassRefPtr<CSSRuleList> rules)
-    : CSSRule(parent)
+    : CSSRule(parent, CSSRule::MEDIA_RULE)
     , m_lstMedia(media)
     , m_lstCSSRules(rules)
 {

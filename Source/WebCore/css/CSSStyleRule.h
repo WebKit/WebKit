@@ -61,13 +61,9 @@ public:
     int sourceLine() { return m_sourceLine; }
 
 protected:
-    CSSStyleRule(CSSStyleSheet* parent, int sourceLine);
+    CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type = CSSRule::STYLE_RULE);
 
 private:
-    virtual bool isStyleRule() const { return true; }
-    // Inherited from CSSRule
-    virtual CSSRuleType type() const { return STYLE_RULE; }
-
     RefPtr<CSSMutableStyleDeclaration> m_style;
     CSSSelectorList m_selectorList;
     int m_sourceLine;
