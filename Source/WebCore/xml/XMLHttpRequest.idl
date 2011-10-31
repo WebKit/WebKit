@@ -71,9 +71,17 @@ module xml {
         void setRequestHeader(in DOMString header, in DOMString value)
             raises(DOMException);
 
-        // void send();
-        // void send(in DOMString data);
+        [Custom] void send()
+            raises(DOMException);
+        [Custom] void send(in ArrayBuffer data)
+            raises(DOMException);
+        [Conditional=BLOB, Custom] void send(in Blob data)
+            raises(DOMException);
         [Custom] void send(in Document data)
+            raises(DOMException);
+        [Custom] void send(in DOMString data)
+            raises(DOMException);
+        [Custom] void send(in DOMFormData data)
             raises(DOMException);
 
         void abort();
