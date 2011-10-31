@@ -512,10 +512,23 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             if (isStyleSpanOrSpanWithOnlyStyleAttribute(element)) {
                 insertedNodes.willRemoveNodePreservingChildren(element);
                 removeNodePreservingChildren(element);
+                continue;
             } else
                 removeNodeAttribute(element, styleAttr);
         } else if (newInlineStyle->style()->length() != inlineStyle->length())
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());
+
+        // FIXME: Tolerate differences in id, class, and style attributes.
+        if (isNonTableCellHTMLBlockElement(element) && areIdenticalElements(element, element->parentNode())
+            && VisiblePosition(firstPositionInNode(element->parentNode())) == VisiblePosition(firstPositionInNode(element))
+            && VisiblePosition(lastPositionInNode(element->parentNode())) == VisiblePosition(lastPositionInNode(element))) {
+            insertedNodes.willRemoveNodePreservingChildren(element);
+            removeNodePreservingChildren(element);
+            continue;
+        }
+
+        if (element->parentNode()->rendererIsRichlyEditable())
+            removeNodeAttribute(element, contenteditableAttr);
 
         // WebKit used to not add display: inline and float: none on copy.
         // Keep this code around for backward compatibility
@@ -976,8 +989,6 @@ void ReplaceSelectionCommand::doApply()
         node = next;
     }
 
-    removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
-
     removeUnrenderedTextNodesAtEnds(insertedNodes);
 
     if (!handledStyleSpans)
@@ -1003,6 +1014,8 @@ void ReplaceSelectionCommand::doApply()
             removeNode(nodeToRemove);
         }
     }
+
+    removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
 
     // Setup m_startOfInsertedContent and m_endOfInsertedContent. This should be the last two lines of code that access insertedNodes.
     m_startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.firstNodeInserted());

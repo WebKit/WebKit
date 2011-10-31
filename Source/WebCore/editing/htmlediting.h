@@ -109,7 +109,8 @@ bool isListItem(Node*);
 bool isNodeRendered(const Node*);
 bool isNodeVisiblyContainedWithin(Node*, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-    
+bool areIdenticalElements(const Node*, const Node*);
+bool isNonTableCellHTMLBlockElement(const Node*);
 TextDirection directionOfEnclosingBlock(const Position&);
 
 // -------------------------------------------------------------------------

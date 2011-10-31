@@ -1,3 +1,26 @@
+2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit nests pre on copy and paste when the pre is the root editable element
+        https://bugs.webkit.org/show_bug.cgi?id=70800
+
+        Reviewed by Darin Adler.
+
+        Added tests for copying and pasting contents inside pre. WebKit should not nest pre's.
+
+        * editing/execCommand/insert-list-with-noneditable-content-expected.txt: A redundant
+        contenteditable attribute is removed.
+        * editing/pasteboard/4930986-2-expected.txt: Trailing space in style attribute is removed.
+        * editing/pasteboard/contenteditable-pre-2-expected.txt: Added.
+        * editing/pasteboard/contenteditable-pre-2.html: Added.
+        * editing/pasteboard/contenteditable-pre-expected.txt: Added.
+        * editing/pasteboard/contenteditable-pre.html: Added.
+        * editing/pasteboard/copy-null-characters-expected.txt: A redundant contenteditable attribute
+        is removed.
+        * editing/pasteboard/paste-code-in-pre-expected.txt: Pre no longer nests itself erroneously.
+        * editing/pasteboard/paste-pre-001-expected.txt: Ditto.
+        * editing/pasteboard/paste-pre-002-expected.txt: Ditto.
+        * editing/selection/4895428-4-expected.txt: A redundant contenteditable attribute is removed.
+
 2011-10-31  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         text/plain form encoding ignored and incorrectly specified in request header.

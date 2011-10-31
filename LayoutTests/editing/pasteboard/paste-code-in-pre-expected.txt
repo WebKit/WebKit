@@ -3,7 +3,4 @@ You should see markup in the editable region below. See <rdar://5027857>.
 | <pre>
 |   contenteditable="true"
 |   id="pre"
-|   <pre>
-|     contenteditable="true"
-|     id="pre"
-|     "<input type='button'>foo<br>bar<b>baz</b><#selection-caret>"
+|   "<input type='button'>foo<br>bar<b>baz</b><#selection-caret>"

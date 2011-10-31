@@ -1188,41 +1188,6 @@ bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
     return offsetInText > caretMinOffset(node) && offsetInText < caretMaxOffset(node);
 }
 
-static bool areIdenticalElements(Node *first, Node *second)
-{
-    // check that tag name and all attribute names and values are identical
-
-    if (!first->isElementNode())
-        return false;
-    
-    if (!second->isElementNode())
-        return false;
-
-    Element *firstElement = static_cast<Element *>(first);
-    Element *secondElement = static_cast<Element *>(second);
-    
-    if (!firstElement->tagQName().matches(secondElement->tagQName()))
-        return false;
-
-    NamedNodeMap *firstMap = firstElement->attributes();
-    NamedNodeMap *secondMap = secondElement->attributes();
-
-    unsigned firstLength = firstMap->length();
-
-    if (firstLength != secondMap->length())
-        return false;
-
-    for (unsigned i = 0; i < firstLength; i++) {
-        Attribute *attribute = firstMap->attributeItem(i);
-        Attribute *secondAttribute = secondMap->getAttributeItem(attribute->name());
-
-        if (!secondAttribute || attribute->value() != secondAttribute->value())
-            return false;
-    }
-    
-    return true;
-}
-
 bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start, const Position& end)
 {
     Node* startNode = start.containerNode();

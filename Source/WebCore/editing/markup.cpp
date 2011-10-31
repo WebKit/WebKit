@@ -427,21 +427,6 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     return lastClosed;
 }
 
-static bool isNonTableCellHTMLBlockElement(const Node* node)
-{
-    return node->hasTagName(listingTag)
-        || node->hasTagName(olTag)
-        || node->hasTagName(preTag)
-        || node->hasTagName(tableTag)
-        || node->hasTagName(ulTag)
-        || node->hasTagName(xmpTag)
-        || node->hasTagName(h1Tag)
-        || node->hasTagName(h2Tag)
-        || node->hasTagName(h3Tag)
-        || node->hasTagName(h4Tag)
-        || node->hasTagName(h5Tag);
-}
-
 static bool isHTMLBlockElement(const Node* node)
 {
     return node->hasTagName(tdTag)
@@ -449,9 +434,6 @@ static bool isHTMLBlockElement(const Node* node)
         || isNonTableCellHTMLBlockElement(node);
 }
 
-// FIXME: Do we want to handle mail quotes here instead?
-// This is currently handled in highestAncestorToWrapMarkup but it might make more
-// sense to move that into here.
 static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
 {
     if (!commonAncestorBlock)

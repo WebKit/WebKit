@@ -7,4 +7,4 @@ bar
 foo
 bar
 execCutCommand: <div id="test" class="editing"> <pre><br></pre> </div>
-execPasteCommand: <div id="test" class="editing"> <pre><pre>foo bar</pre></pre> </div>
+execPasteCommand: <div id="test" class="editing"> <pre>foo bar</pre> </div>

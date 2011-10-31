@@ -24,7 +24,6 @@ If there are NULL characters in text nodes, they should not be copied to the cli
 |     <b>
 |       "bold"
 |   <div>
-|     contenteditable="true"
 |     id="source"
 |     "Copy paste me"
 |   <span>

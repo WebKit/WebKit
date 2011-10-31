@@ -1,3 +1,28 @@
+2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit nests pre on copy and paste when the pre is the root editable element
+        https://bugs.webkit.org/show_bug.cgi?id=70800
+
+        Reviewed by Darin Adler.
+
+        Fixed the bug by removing nested block elements in removeRedundantStylesAndKeepStyleSpanInline.
+
+        Tests: editing/pasteboard/contenteditable-pre-2.html
+               editing/pasteboard/contenteditable-pre.html
+
+        * editing/ApplyStyleCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): Remove block
+        elements if it's identical to its parent and there are no contents between the two. Also remove
+        contenteditable attribute from an element if the parent is already richly editable.
+        (WebCore::ReplaceSelectionCommand::doApply): Remove redundant styles after removing the placeholder
+        br so that the above check doesn't get affected by the placeholder.
+        * editing/htmlediting.cpp:
+        (WebCore::areIdenticalElements): Moved from ApplyStyleCommand.
+        (WebCore::isNonTableCellHTMLBlockElement): Moved from markup.cpp.
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+
 2011-10-31  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         text/plain form encoding ignored and incorrectly specified in request header.

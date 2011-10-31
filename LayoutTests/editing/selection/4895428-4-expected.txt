@@ -19,7 +19,6 @@ This tests to see if an editable selection containing a focusable node is dragga
 |   <#selection-anchor>
 |   <table>
 |     border="1"
-|     contenteditable="false"
 |     <tbody>
 |       <tr>
 |         <td>

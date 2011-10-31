@@ -1140,6 +1140,48 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
     return renderer && ((renderer->isTable() && !renderer->isInline()) || (renderer->isImage() && !renderer->isInline()) || renderer->isHR());
 }
 
+bool areIdenticalElements(const Node* first, const Node* second)
+{
+    // check that tag name and all attribute names and values are identical
+
+    if (!first->isElementNode() || !second->isElementNode())
+        return false;
+
+    if (!toElement(first)->tagQName().matches(toElement(second)->tagQName()))
+        return false;
+
+    NamedNodeMap* firstMap = toElement(first)->attributes();
+    NamedNodeMap* secondMap = toElement(second)->attributes();
+    unsigned firstLength = firstMap->length();
+
+    if (firstLength != secondMap->length())
+        return false;
+
+    for (unsigned i = 0; i < firstLength; i++) {
+        Attribute* attribute = firstMap->attributeItem(i);
+        Attribute* secondAttribute = secondMap->getAttributeItem(attribute->name());
+        if (!secondAttribute || attribute->value() != secondAttribute->value())
+            return false;
+    }
+
+    return true;
+}
+
+bool isNonTableCellHTMLBlockElement(const Node* node)
+{
+    return node->hasTagName(listingTag)
+        || node->hasTagName(olTag)
+        || node->hasTagName(preTag)
+        || node->hasTagName(tableTag)
+        || node->hasTagName(ulTag)
+        || node->hasTagName(xmpTag)
+        || node->hasTagName(h1Tag)
+        || node->hasTagName(h2Tag)
+        || node->hasTagName(h3Tag)
+        || node->hasTagName(h4Tag)
+        || node->hasTagName(h5Tag);
+}
+
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
 {
     if (!range)
