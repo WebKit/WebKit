@@ -196,13 +196,13 @@ endif
 dist-hook: doc-dist-hook
 
 doc-dist-hook: dist-check-gtkdoc dist-hook-local
-	@mkdir $(distdir)/tmpl
-	@mkdir $(distdir)/html
-	@-cp ./Documentation/tmpl/*.sgml $(distdir)/tmpl
-	@cp ./Documentation/html/* $(distdir)/html
+	@mkdir -p $(distdir)/$(DOC_MODULE)/tmpl
+	@mkdir -p $(distdir)/$(DOC_MODULE)/html
+	@-cp ./Documentation/tmpl/*.sgml $(distdir)/$(DOC_MODULE)/tmpl
+	@cp ./Documentation/html/* $(distdir)/$(DOC_MODULE)/html
 	@-cp ./Documentation/$(DOC_MODULE).types $(distdir)/
 	@-cp ./Documentation/$(DOC_MODULE)-sections.txt $(distdir)/
 	@cd $(distdir) && rm -f $(DISTCLEANFILES)
-	@$(GTKDOC_REBASE) --online --relative --html-dir=$(distdir)/html
+	@$(GTKDOC_REBASE) --online --relative --html-dir=$(distdir)/$(DOC_MODULE)/html
 
 .PHONY : dist-hook-local docs

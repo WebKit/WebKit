@@ -1,3 +1,13 @@
+2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Install html and tmpl dirs in a $(DOC_MODULE) dir in tarball
+        https://bugs.webkit.org/show_bug.cgi?id=71224
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.gtk-doc.am: Copy html and tmpl dirs to
+        $(distdir)/$(DOC_MODULE).
+
 2011-10-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Switch to a backing store approach for painting WebKitWebView
