@@ -1,3 +1,9 @@
+2011-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline after r98852.
+
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+
 2011-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit nests pre on copy and paste when the pre is the root editable element
