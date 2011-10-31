@@ -1,3 +1,16 @@
+2011-10-31  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        WTF::StringImpl::create(const char*, unsigned) calls itself
+        https://bugs.webkit.org/show_bug.cgi?id=71206
+
+        The original implementation just calls itself, causing infinite recursion.
+        Cast the first parameter to const LChar* to fix that.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::create):
+
 2011-10-31  Andy Wingo  <wingo@igalia.com>
 
         Fix DFG JIT compilation on Linux targets.
