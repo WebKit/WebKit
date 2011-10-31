@@ -151,6 +151,7 @@ webkit_back_forward_list_item_get_type
 <FILE>WebKitSettings</FILE>
 WebKitSettings
 webkit_settings_new
+webkit_settings_new_with_settings
 webkit_settings_get_auto_load_images
 webkit_settings_set_auto_load_images
 webkit_settings_get_enable_frame_flattening

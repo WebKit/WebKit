@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include "TestMain.h"
+#include <JavaScriptCore/GRefPtr.h>
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
@@ -105,9 +106,22 @@ static void testWebKitSettings(Test*, gconstpointer)
 #endif
 }
 
+void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
+{
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new_with_settings("enable-javascript", FALSE,
+                                                                                   "auto-load-images", FALSE,
+                                                                                   "load-icons-ignoring-image-load-setting", TRUE,
+                                                                                   NULL));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(settings.get()));
+    g_assert(!webkit_settings_get_enable_javascript(settings.get()));
+    g_assert(!webkit_settings_get_auto_load_images(settings.get()));
+    g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
+}
+
 void beforeAll()
 {
     Test::add("WebKitSettings", "webkit-settings", testWebKitSettings);
+    Test::add("WebKitSettings", "new-with-settings", testWebKitSettingsNewWithSettings);
 }
 
 void afterAll()

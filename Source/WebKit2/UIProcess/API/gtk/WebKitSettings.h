@@ -71,90 +71,94 @@ WEBKIT_API GType
 webkit_settings_get_type(void);
 
 WEBKIT_API WebKitSettings *
-webkit_settings_new(void);
+webkit_settings_new                                            (void);
+
+WEBKIT_API WebKitSettings *
+webkit_settings_new_with_settings                              (const gchar    *first_setting_name,
+                                                                ...);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_javascript                          (WebKitSettings* settings);
+webkit_settings_get_enable_javascript                          (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_javascript                          (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_javascript                          (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_auto_load_images                           (WebKitSettings* settings);
+webkit_settings_get_auto_load_images                           (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_auto_load_images                           (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_auto_load_images                           (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_load_icons_ignoring_image_load_setting     (WebKitSettings* settings);
+webkit_settings_get_load_icons_ignoring_image_load_setting     (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_load_icons_ignoring_image_load_setting     (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_load_icons_ignoring_image_load_setting     (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_offline_web_application_cache       (WebKitSettings* settings);
+webkit_settings_get_enable_offline_web_application_cache       (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_offline_web_application_cache       (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_offline_web_application_cache       (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_html5_local_storage                 (WebKitSettings* settings);
+webkit_settings_get_enable_html5_local_storage                 (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_html5_local_storage                 (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_html5_local_storage                 (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_html5_database                      (WebKitSettings* settings);
+webkit_settings_get_enable_html5_database                      (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_html5_database                      (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_html5_database                      (WebKitSettings *settings,
+                                                                gboolean        enabled);
 WEBKIT_API gboolean
-webkit_settings_get_enable_xss_auditor                         (WebKitSettings* settings);
+webkit_settings_get_enable_xss_auditor                         (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_xss_auditor                         (WebKitSettings* settings,
-                                                                gboolean enabled);
-
-WEBKIT_API gboolean
-webkit_settings_get_enable_frame_flattening                    (WebKitSettings* settings);
-
-WEBKIT_API void
-webkit_settings_set_enable_frame_flattening                    (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_xss_auditor                         (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_plugins                             (WebKitSettings* settings);
+webkit_settings_get_enable_frame_flattening                    (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_plugins                             (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_frame_flattening                    (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_java                                (WebKitSettings* settings);
+webkit_settings_get_enable_plugins                             (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_java                                (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_plugins                             (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_javascript_can_open_windows_automatically  (WebKitSettings* settings);
+webkit_settings_get_enable_java                                (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_javascript_can_open_windows_automatically  (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_java                                (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_hyperlink_auditing                  (WebKitSettings* settings);
+webkit_settings_get_javascript_can_open_windows_automatically  (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_hyperlink_auditing                  (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_javascript_can_open_windows_automatically  (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_enable_hyperlink_auditing                  (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_hyperlink_auditing                  (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 G_END_DECLS
 

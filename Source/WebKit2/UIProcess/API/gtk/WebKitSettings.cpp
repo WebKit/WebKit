@@ -388,13 +388,34 @@ void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WKPageRef wkPa
  * webkit_settings_new:
  *
  * Creates a new #WebKitSettings instance with default values. It must
- * be manually attached to a WebView.
+ * be manually attached to a #WebKitWebView.
+ * See also webkit_settings_new_with_settings().
  *
  * Returns: a new #WebKitSettings instance.
  */
 WebKitSettings* webkit_settings_new()
 {
     return WEBKIT_SETTINGS(g_object_new(WEBKIT_TYPE_SETTINGS, NULL));
+}
+
+/**
+ * webkit_settings_new_with_settings:
+ * @first_setting_name: name of first setting to set
+ * @...: value of first setting, followed by more settings,
+ *    %NULL-terminated
+ *
+ * Creates a new #WebKitSettings instance with the given settings. It must
+ * be manually attached to a #WebKitWebView.
+ *
+ * Returns: a new #WebKitSettings instance.
+ */
+WebKitSettings* webkit_settings_new_with_settings(const gchar* firstSettingName, ...)
+{
+    va_list args;
+    va_start(args, firstSettingName);
+    WebKitSettings* settings = WEBKIT_SETTINGS(g_object_new_valist(WEBKIT_TYPE_SETTINGS, firstSettingName, args));
+    va_end(args);
+    return settings;
 }
 
 /**

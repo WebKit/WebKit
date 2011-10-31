@@ -1,5 +1,23 @@
 2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add webkit_settings_new_with_settings() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=71111
+
+        Reviewed by Martin Robinson.
+
+        Convenient method to create a WebKitSettings object with initial
+        settings.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_new_with_settings):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettingsNewWithSettings):
+        (beforeAll):
+
+2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add methods to get/set the settings of a web view to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=71109
 
