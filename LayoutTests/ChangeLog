@@ -1,3 +1,16 @@
+2011-10-31  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70658
+        [JSC] Implement MessagePort transfer in JSC bindings implementation of webkitPostMessage.
+        Some 'FAIL's remain in expected test results. These are due to the fact that 
+        JSC bindings chose not to throw type error exception for non-serializable values - 
+        non-serializable values are serialized as null.
+
+        Reviewed by David Levin.
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/events/message-port-multi-expected.txt:
+
 2011-10-31  John Gregg  <johnnyg@google.com>
 
         Unreviewed, inspector/debugger/bind-script-to-resource.html fails after r98847

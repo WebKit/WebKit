@@ -31,7 +31,7 @@ Received message '7' with 2 ports.
 Received message '2147483648' with 0 ports.
 Received message '2147483648' with 0 ports.
 Received message '[object Object]' with 2 ports.
-Received message '[object Object]' with 2 ports.
-Received message '[object Object],[object Object]' with 2 ports.
+Received message '[object MessagePort]' with 2 ports.
+Received message '[object MessagePort],[object MessagePort]' with 2 ports.
 Received message 'done' with 0 ports.
 

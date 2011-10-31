@@ -1,3 +1,21 @@
+2011-10-31  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=70658
+        [JSC] Implement MessagePort transfer in JSC bindings implementation of webkitPostMessage.
+        Transfer of MessagePorts implemented.
+
+        Reviewed by David Levin.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+
 2011-10-31  Andreas Kling  <kling@webkit.org>
 
         CSSRule: Devirtualize insertedIntoParent()

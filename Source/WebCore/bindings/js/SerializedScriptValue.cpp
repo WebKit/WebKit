@@ -36,6 +36,7 @@
 #include "JSFile.h"
 #include "JSFileList.h"
 #include "JSImageData.h"
+#include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "SharedBuffer.h"
 #include <limits>
@@ -88,6 +89,7 @@ enum SerializationTag {
     EmptyStringTag = 17,
     RegExpTag = 18,
     ObjectReferenceTag = 19,
+    MessagePortReferenceTag = 20,
     ErrorTag = 255
 };
 
@@ -133,6 +135,7 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    | ImageData
  *    | Blob
  *    | ObjectReferenceTag <opIndex:IndexType>
+ *    | MessagePortReferenceTag <value:uint32_t>
  *
  * String :-
  *      EmptyStringTag
@@ -251,9 +254,9 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
 
 class CloneSerializer : CloneBase {
 public:
-    static SerializationReturnCode serialize(ExecState* exec, JSValue value, Vector<uint8_t>& out)
+    static SerializationReturnCode serialize(ExecState* exec, JSValue value, MessagePortArray* messagePorts, Vector<uint8_t>& out)
     {
-        CloneSerializer serializer(exec, out);
+        CloneSerializer serializer(exec, messagePorts, out);
         return serializer.serialize(value);
     }
 
@@ -270,12 +273,20 @@ public:
     }
 
 private:
-    CloneSerializer(ExecState* exec, Vector<uint8_t>& out)
+    CloneSerializer(ExecState* exec, MessagePortArray* messagePorts, Vector<uint8_t>& out)
         : CloneBase(exec)
         , m_buffer(out)
         , m_emptyIdentifier(exec, UString("", 0))
     {
         write(CurrentVersion);
+        if (messagePorts) {
+            JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+            for (size_t i = 0; i < messagePorts->size(); i++) {
+                JSC::JSValue value = toJS(exec, globalObject, messagePorts->at(i).get());
+                if (value.getObject())
+                    m_transferredMessagePorts.add(value.getObject(), i);
+            }
+        }
     }
 
     SerializationReturnCode serialize(JSValue in);
@@ -474,6 +485,16 @@ private:
                 write(UString(flags, flagCount));
                 return true;
             }
+            if (obj->inherits(&JSMessagePort::s_info)) {
+                ObjectPool::iterator index = m_transferredMessagePorts.find(obj);
+                if (index != m_transferredMessagePorts.end()) {
+                    write(MessagePortReferenceTag);
+                    uint32_t i = index->second;
+                    write(i);
+                    return true;
+                }
+                return false;
+            }
 
             CallData unusedData;
             if (getCallData(value, unusedData) == CallTypeNone)
@@ -604,6 +625,7 @@ private:
     Vector<uint8_t>& m_buffer;
     typedef HashMap<JSObject*, uint32_t> ObjectPool;
     ObjectPool m_objectPool;
+    ObjectPool m_transferredMessagePorts;
     typedef HashMap<RefPtr<StringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
     StringConstantPool m_constantPool;
     Identifier m_emptyIdentifier;
@@ -784,11 +806,12 @@ public:
         return String(str.impl());
     }
 
-    static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
+    static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts,
+                                             const Vector<uint8_t>& buffer)
     {
         if (!buffer.size())
             return make_pair(jsNull(), UnspecifiedError);
-        CloneDeserializer deserializer(exec, globalObject, buffer);
+        CloneDeserializer deserializer(exec, globalObject, messagePorts, buffer);
         if (!deserializer.isValid())
             return make_pair(JSValue(), ValidationError);
         return deserializer.deserialize();
@@ -833,13 +856,14 @@ private:
         size_t m_index;
     };
 
-    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
+    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, const Vector<uint8_t>& buffer)
         : CloneBase(exec)
         , m_globalObject(globalObject)
         , m_isDOMGlobalObject(globalObject->inherits(&JSDOMGlobalObject::s_info))
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
         , m_version(0xFFFFFFFF)
+        , m_messagePorts(messagePorts)
     {
         if (!read(m_version))
             m_version = 0xFFFFFFFF;
@@ -1178,6 +1202,16 @@ private:
             }
             return m_gcBuffer.at(index);
         }
+        case MessagePortReferenceTag: {
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || !m_messagePorts || index >= m_messagePorts->size()) {
+                fail();
+                return JSValue();
+            }
+            return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()),
+                        m_messagePorts->at(index).get());
+        }
         default:
             m_ptr--; // Push the tag back
             return JSValue();
@@ -1190,6 +1224,7 @@ private:
     const uint8_t* m_end;
     unsigned m_version;
     Vector<CachedString> m_constantPool;
+    MessagePortArray* m_messagePorts;
 };
 
 DeserializationResult CloneDeserializer::deserialize()
@@ -1276,6 +1311,7 @@ DeserializationResult CloneDeserializer::deserialize()
             if (!readStringData(cachedString, wasTerminator)) {
                 if (!wasTerminator)
                     goto error;
+
                 JSObject* outObject = outputObjectStack.last();
                 outValue = outObject;
                 outputObjectStack.removeLast();
@@ -1339,10 +1375,10 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
     m_data.swap(buffer);
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value, MessagePortArray*, SerializationErrorMode throwExceptions)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value, MessagePortArray* messagePorts, SerializationErrorMode throwExceptions)
 {
     Vector<uint8_t> buffer;
-    SerializationReturnCode code = CloneSerializer::serialize(exec, value, buffer);
+    SerializationReturnCode code = CloneSerializer::serialize(exec, value, messagePorts, buffer);
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, code);
 
@@ -1395,9 +1431,9 @@ String SerializedScriptValue::toString()
 }
 
 JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject, 
-                                           MessagePortArray*, SerializationErrorMode throwExceptions)
+                                           MessagePortArray* messagePorts, SerializationErrorMode throwExceptions)
 {
-    DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, m_data);
+    DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, messagePorts, m_data);
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, result.second);
     return result.first;
