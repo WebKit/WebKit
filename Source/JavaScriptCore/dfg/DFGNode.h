@@ -967,7 +967,7 @@ struct Node {
     
     static bool shouldSpeculateInteger(Node& op1, Node& op2)
     {
-        return !(op1.shouldNotSpeculateInteger() || op2.shouldNotSpeculateInteger()) && (op1.shouldSpeculateInteger() || op2.shouldSpeculateInteger());
+        return op1.shouldSpeculateInteger() && op2.shouldSpeculateInteger();
     }
     
     static bool shouldSpeculateNumber(Node& op1, Node& op2)

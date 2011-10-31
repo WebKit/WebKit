@@ -1,5 +1,18 @@
 2011-10-30  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG ValueAdd(string, int) should not fail speculation
+        https://bugs.webkit.org/show_bug.cgi?id=71195
+
+        Reviewed by Geoff Garen.
+        
+        1% speed-up on V8.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldNotSpeculateInteger):
+        (JSC::DFG::Node::shouldSpeculateInteger):
+
+2011-10-30  Filip Pizlo  <fpizlo@apple.com>
+
         The DFG inliner should not flush the callee
         https://bugs.webkit.org/show_bug.cgi?id=71191
 
