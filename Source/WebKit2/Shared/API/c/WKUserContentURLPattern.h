@@ -37,7 +37,11 @@ WK_EXPORT WKTypeID WKUserContentURLPatternGetTypeID();
 
 WK_EXPORT WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef);
 
+WK_EXPORT WKStringRef WKUserContentURLPatternCopyHost(WKUserContentURLPatternRef urlPatternRef);
+WK_EXPORT WKStringRef WKUserContentURLPatternCopyScheme(WKUserContentURLPatternRef urlPatternRef);
+WK_EXPORT bool WKUserContentURLPatternIsValid(WKUserContentURLPatternRef urlPatternRef);
 WK_EXPORT bool WKUserContentURLPatternMatchesURL(WKUserContentURLPatternRef urlPatternRef, WKURLRef urlRef);
+WK_EXPORT bool WKUserContentURLPatternMatchesSubdomains(WKUserContentURLPatternRef urlPatternRef);
 
 #ifdef __cplusplus
 }

@@ -27,6 +27,7 @@
 #include "WKUserContentURLPattern.h"
 
 #include "WKAPICast.h"
+#include "WKString.h"
 #include "WebUserContentURLPattern.h"
 
 using namespace WebKit;
@@ -42,7 +43,27 @@ WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef)
     return toAPI(userContentURLPattern.release().leakRef());
 }
 
+WKStringRef WKUserContentURLPatternCopyHost(WKUserContentURLPatternRef urlPatternRef)
+{
+    return toCopiedAPI(toImpl(urlPatternRef)->host());
+}
+
+WKStringRef WKUserContentURLPatternCopyScheme(WKUserContentURLPatternRef urlPatternRef)
+{
+    return toCopiedAPI(toImpl(urlPatternRef)->scheme());
+}
+
+bool WKUserContentURLPatternIsValid(WKUserContentURLPatternRef urlPatternRef)
+{
+    return toImpl(urlPatternRef)->isValid();
+}
+
 bool WKUserContentURLPatternMatchesURL(WKUserContentURLPatternRef urlPatternRef, WKURLRef urlRef)
 {
     return toImpl(urlPatternRef)->matchesURL(toWTFString(urlRef));
+}
+
+bool WKUserContentURLPatternMatchesSubdomains(WKUserContentURLPatternRef urlPatternRef)
+{
+    return toImpl(urlPatternRef)->matchesSubdomains();
 }

@@ -1,3 +1,27 @@
+2011-10-31  Jeff Miller  <jeffm@apple.com>
+
+        Add more APIs to WKUserContentURLPattern.h
+        https://bugs.webkit.org/show_bug.cgi?id=71245
+        
+        Add additional WKUserContentURLPattern APIs to match what was provided by
+        the equivalent WebKit1 API.
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/WKUserContentURLPattern.cpp:
+        (WKUserContentURLPatternCopyHost): Added.
+        (WKUserContentURLPatternCopyScheme): Added.
+        (WKUserContentURLPatternIsValid): Added.
+        (WKUserContentURLPatternMatchesSubdomains): Added.
+        
+        * Shared/API/c/WKUserContentURLPattern.h: Added new APIs.
+        
+        * Shared/WebUserContentURLPattern.h:
+        (WebKit::WebUserContentURLPattern::host): Added.
+        (WebKit::WebUserContentURLPattern::scheme): Added.
+        (WebKit::WebUserContentURLPattern::isValid): Added.
+        (WebKit::WebUserContentURLPattern::matchesSubdomains): Added.
+
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
         More work on making plug-ins work better with transforms

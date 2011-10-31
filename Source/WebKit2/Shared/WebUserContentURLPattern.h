@@ -43,7 +43,11 @@ public:
         return adoptRef(new WebUserContentURLPattern(pattern));
     }
 
+    const String& host() const { return m_pattern.host(); }
+    const String& scheme() const { return m_pattern.scheme(); }
+    bool isValid() const { return m_pattern.isValid(); };
     bool matchesURL(const String& url) const { return m_pattern.matches(WebCore::KURL(WebCore::ParsedURLString, url)); }
+    bool matchesSubdomains() const { return m_pattern.matchSubdomains(); }
 
     const String& patternString() const { return m_patternString; }
 
