@@ -104,25 +104,25 @@ InlineTextBox* RenderSVGInlineText::createTextBox()
     return box;
 }
 
-IntRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int*)
+LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int*)
 {
     if (!box->isInlineTextBox())
-        return IntRect();
+        return LayoutRect();
 
     InlineTextBox* textBox = static_cast<InlineTextBox*>(box);
     if (static_cast<unsigned>(caretOffset) < textBox->start() || static_cast<unsigned>(caretOffset) > textBox->start() + textBox->len())
-        return IntRect();
+        return LayoutRect();
 
     // Use the edge of the selection rect to determine the caret rect.
     if (static_cast<unsigned>(caretOffset) < textBox->start() + textBox->len()) {
         IntRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
         int x = box->isLeftToRightDirection() ? rect.x() : rect.maxX();
-        return IntRect(x, rect.y(), caretWidth, rect.height());
+        return LayoutRect(x, rect.y(), caretWidth, rect.height());
     }
 
     IntRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
     int x = box->isLeftToRightDirection() ? rect.maxX() : rect.x();
-    return IntRect(x, rect.y(), caretWidth, rect.height());
+    return LayoutRect(x, rect.y(), caretWidth, rect.height());
 }
 
 LayoutRect RenderSVGInlineText::linesBoundingBox() const

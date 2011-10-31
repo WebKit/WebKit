@@ -2309,15 +2309,15 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
     
 }
 
-LayoutRect FrameView::windowClipRect(bool clipToContents) const
+IntRect FrameView::windowClipRect(bool clipToContents) const
 {
     ASSERT(m_frame->view() == this);
 
     if (paintsEntireContents())
-        return LayoutRect(LayoutPoint(), contentsSize());
+        return IntRect(IntPoint(), contentsSize());
 
     // Set our clip rect to be our contents.
-    LayoutRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
+    IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
     if (!m_frame || !m_frame->ownerElement())
         return clipRect;
 
@@ -2333,14 +2333,14 @@ LayoutRect FrameView::windowClipRect(bool clipToContents) const
     return clipRect;
 }
 
-LayoutRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
+IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
 {
     // If we have no layer, just return our window clip rect.
     if (!layer)
         return windowClipRect();
 
     // Apply the clip from the layer.
-    LayoutRect clipRect;
+    IntRect clipRect;
     if (clipToLayerContents)
         clipRect = layer->childrenClipRect();
     else
@@ -2377,7 +2377,7 @@ void FrameView::getTickmarks(Vector<LayoutRect>& tickmarks) const
     tickmarks = frame()->document()->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
 }
 
-LayoutRect FrameView::windowResizerRect() const
+IntRect FrameView::windowResizerRect() const
 {
     Page* page = frame() ? frame()->page() : 0;
     if (!page)

@@ -1,3 +1,39 @@
+2011-10-31  Emil A Eklund  <eae@chromium.org>
+
+        Overridden LayoutRect method still uses IntRects
+        https://bugs.webkit.org/show_bug.cgi?id=71166
+
+        Reviewed by Eric Seidel.
+
+        Change all virtual controlClipRect, windowResizerRect, windowClipRect,
+        visibleContentRect, scrollCornerRect, outlineBoundsForRepaint and
+        localCaretRect functions to have the same signature.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::windowClipRectForLayer):
+        (WebCore::FrameView::windowResizerRect):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        * rendering/RenderButton.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::visibleContentRect):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localCaretRect):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::linesBoundingBox):
+        * rendering/RenderText.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        * rendering/svg/RenderSVGInlineText.h:
+
 2011-10-31  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70658

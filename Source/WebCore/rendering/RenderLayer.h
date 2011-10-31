@@ -608,7 +608,7 @@ private:
     virtual LayoutPoint scrollPosition() const;
     virtual LayoutPoint minimumScrollPosition() const;
     virtual LayoutPoint maximumScrollPosition() const;
-    virtual LayoutRect visibleContentRect(bool includeScrollbars) const;
+    virtual IntRect visibleContentRect(bool includeScrollbars) const;
     virtual LayoutUnit visibleHeight() const;
     virtual LayoutUnit visibleWidth() const;
     virtual LayoutSize contentsSize() const;

@@ -82,7 +82,7 @@ public:
                            float& beginMaxW, float& endMaxW,
                            float& minW, float& maxW, bool& stripFrontSpaces);
 
-    virtual IntRect linesBoundingBox() const;
+    virtual LayoutRect linesBoundingBox() const;
     IntRect linesVisualOverflowBoundingBox() const;
 
     FloatPoint firstRunOrigin() const;
@@ -95,7 +95,7 @@ public:
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState s);
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
-    virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
     virtual LayoutUnit marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual LayoutUnit marginRight() const { return style()->marginRight().calcMinValue(0); }

@@ -1723,18 +1723,18 @@ LayoutPoint RenderLayer::maximumScrollPosition() const
     return m_scrollOrigin + m_scrollSize - visibleContentRect(true).size();
 }
 
-LayoutRect RenderLayer::visibleContentRect(bool includeScrollbars) const
+IntRect RenderLayer::visibleContentRect(bool includeScrollbars) const
 {
-    LayoutUnit verticalScrollbarWidth = 0;
-    LayoutUnit horizontalScrollbarHeight = 0;
+    int verticalScrollbarWidth = 0;
+    int horizontalScrollbarHeight = 0;
     if (includeScrollbars) {
         verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()) ? verticalScrollbar()->width() : 0;
         horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()) ? horizontalScrollbar()->height() : 0;
     }
     
-    return LayoutRect(LayoutPoint(scrollXOffset(), scrollYOffset()),
-                      LayoutSize(max<LayoutUnit>(0, m_layerSize.width() - verticalScrollbarWidth), 
-                                 max<LayoutUnit>(0, m_layerSize.height() - horizontalScrollbarHeight)));
+    return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
+                   IntSize(max(0, m_layerSize.width() - verticalScrollbarWidth), 
+                           max(0, m_layerSize.height() - horizontalScrollbarHeight)));
 }
 
 LayoutSize RenderLayer::overhangAmount() const

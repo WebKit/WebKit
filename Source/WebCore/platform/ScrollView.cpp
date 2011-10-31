@@ -929,25 +929,25 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
         hostWindow()->invalidateContentsAndWindow(contentsToWindow(paintRect), now /*immediate*/);
 }
 
-IntRect ScrollView::scrollCornerRect() const
+LayoutRect ScrollView::scrollCornerRect() const
 {
-    IntRect cornerRect;
+    LayoutRect cornerRect;
 
     if (hasOverlayScrollbars())
         return cornerRect;
 
     if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-        cornerRect.unite(IntRect(m_horizontalScrollbar->width(),
-                                 height() - m_horizontalScrollbar->height(),
-                                 width() - m_horizontalScrollbar->width(),
-                                 m_horizontalScrollbar->height()));
+        cornerRect.unite(LayoutRect(m_horizontalScrollbar->width(),
+                                    height() - m_horizontalScrollbar->height(),
+                                    width() - m_horizontalScrollbar->width(),
+                                    m_horizontalScrollbar->height()));
     }
 
     if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-        cornerRect.unite(IntRect(width() - m_verticalScrollbar->width(),
-                                 m_verticalScrollbar->height(),
-                                 m_verticalScrollbar->width(),
-                                 height() - m_verticalScrollbar->height()));
+        cornerRect.unite(LayoutRect(width() - m_verticalScrollbar->width(),
+                                    m_verticalScrollbar->height(),
+                                    m_verticalScrollbar->width(),
+                                    height() - m_verticalScrollbar->height()));
     }
     
     return cornerRect;

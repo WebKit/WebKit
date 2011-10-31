@@ -2081,12 +2081,12 @@ LayoutSize RenderObject::offsetFromAncestorContainer(RenderObject* container) co
     return offset;
 }
 
-IntRect RenderObject::localCaretRect(InlineBox*, int, int* extraWidthToEndOfLine)
+LayoutRect RenderObject::localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine)
 {
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = 0;
 
-    return IntRect();
+    return LayoutRect();
 }
 
 RenderView* RenderObject::view() const

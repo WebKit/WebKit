@@ -160,10 +160,10 @@ public:
 
     void adjustViewSize();
     
-    virtual LayoutRect windowClipRect(bool clipToContents = true) const;
-    LayoutRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
+    virtual IntRect windowClipRect(bool clipToContents = true) const;
+    IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
-    virtual LayoutRect windowResizerRect() const;
+    virtual IntRect windowResizerRect() const;
 
     virtual void setFixedVisibleContentRect(const IntRect&) OVERRIDE;
     void setScrollPosition(const LayoutPoint&);

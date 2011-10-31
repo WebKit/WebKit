@@ -92,7 +92,7 @@ public:
     virtual int scrollPosition(Scrollbar*) const = 0;
     void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
-    virtual IntRect scrollCornerRect() const = 0;
+    virtual LayoutRect scrollCornerRect() const = 0;
     void invalidateScrollCorner(const IntRect&);
     virtual void getTickmarks(Vector<IntRect>&) const { }
 

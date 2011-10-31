@@ -279,7 +279,7 @@ public:
 
     virtual bool isPointInScrollbarCorner(const IntPoint&);
     virtual bool scrollbarCornerPresent() const;
-    virtual IntRect scrollCornerRect() const;
+    virtual LayoutRect scrollCornerRect() const;
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;

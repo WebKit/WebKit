@@ -637,14 +637,14 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
     return createVisiblePosition(lastBoxAbove ? lastBoxAbove->start() + lastBoxAbove->len() : 0, DOWNSTREAM);
 }
 
-IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
 {
     if (!inlineBox)
-        return IntRect();
+        return LayoutRect();
 
     ASSERT(inlineBox->isInlineTextBox());
     if (!inlineBox->isInlineTextBox())
-        return IntRect();
+        return LayoutRect();
 
     InlineTextBox* box = toInlineTextBox(inlineBox);
 
@@ -1469,9 +1469,9 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
     return w;
 }
 
-IntRect RenderText::linesBoundingBox() const
+LayoutRect RenderText::linesBoundingBox() const
 {
-    IntRect result;
+    LayoutRect result;
     
     ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
     if (firstTextBox() && lastTextBox()) {
