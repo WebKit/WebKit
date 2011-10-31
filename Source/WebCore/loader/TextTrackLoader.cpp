@@ -161,7 +161,7 @@ bool TextTrackLoader::load(const KURL& url)
     
     ResourceRequest cueRequest(document->completeURL(url));
     CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
-    m_cachedCueData = static_cast<CachedTextTrack*>(cachedResourceLoader->requestCues(cueRequest));
+    m_cachedCueData = static_cast<CachedTextTrack*>(cachedResourceLoader->requestTextTrack(cueRequest));
     if (m_cachedCueData)
         m_cachedCueData->addClient(this);
     

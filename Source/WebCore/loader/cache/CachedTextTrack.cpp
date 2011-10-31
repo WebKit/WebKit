@@ -39,7 +39,7 @@
 namespace WebCore {
 
 CachedTextTrack::CachedTextTrack(const ResourceRequest& resourceRequest)
-    : CachedResource(resourceRequest, CueResource)
+    : CachedResource(resourceRequest, TextTrackResource)
 {
 }
 

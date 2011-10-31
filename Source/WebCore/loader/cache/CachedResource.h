@@ -74,7 +74,7 @@ public:
         , LinkSubresource
 #endif
 #if ENABLE(VIDEO_TRACK)
-        , CueResource
+        , TextTrackResource
 #endif
     };
 

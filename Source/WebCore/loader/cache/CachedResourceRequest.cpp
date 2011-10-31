@@ -71,8 +71,8 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
         return ResourceRequest::TargetIsSubresource;
 #endif
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::CueResource:
-        return ResourceRequest::TargetIsCue;
+    case CachedResource::TextTrackResource:
+        return ResourceRequest::TargetIsTextTrack;
 #endif
     }
     ASSERT_NOT_REACHED();

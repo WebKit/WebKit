@@ -86,7 +86,7 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedResource(request, CachedResource::LinkSubresource);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::CueResource:
+    case CachedResource::TextTrackResource:
         return new CachedTextTrack(request);
 #endif
     }
@@ -162,9 +162,9 @@ CachedFont* CachedResourceLoader::requestFont(ResourceRequest& request)
 }
 
 #if ENABLE(VIDEO_TRACK)
-CachedTextTrack* CachedResourceLoader::requestCues(ResourceRequest& request)
+CachedTextTrack* CachedResourceLoader::requestTextTrack(ResourceRequest& request)
 {
-    return static_cast<CachedTextTrack*>(requestResource(CachedResource::CueResource, request, String(), defaultCachedResourceOptions()));
+    return static_cast<CachedTextTrack*>(requestResource(CachedResource::TextTrackResource, request, String(), defaultCachedResourceOptions()));
 }
 #endif
 
@@ -240,7 +240,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
                 return false;
         break;
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::CueResource:
+    case CachedResource::TextTrackResource:
 #endif
     case CachedResource::ImageResource:
     case CachedResource::FontResource: {
@@ -288,7 +288,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::LinkSubresource:
 #endif
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::CueResource:
+    case CachedResource::TextTrackResource:
 #endif
         // These types of resources can be loaded from any origin.
         // FIXME: Are we sure about CachedResource::FontResource?
@@ -353,7 +353,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 #endif
         break;
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::CueResource:
+    case CachedResource::TextTrackResource:
         // Cues aren't called out in the CPS spec yet, but they only work with a media element
         // so use the media policy.
         if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url))

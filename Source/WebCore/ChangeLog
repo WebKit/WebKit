@@ -1,3 +1,22 @@
+2011-10-31  Nate Chapin  <japhet@chromium.org>
+
+        Rename the remaining uses of Cue in WebCore/loader/
+        to TextTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=71231
+
+        Reviewed by Eric Carlson.
+
+        No new tests, strictly a renaming.
+
+        * loader/TextTrackLoader.cpp:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        * loader/cache/CachedTextTrack.cpp:
+        * platform/network/chromium/ResourceRequest.h:
+
 2011-10-27  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Support characterDataOldValue for characterData mutations

@@ -72,7 +72,7 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
             return ResourceLoadPriorityVeryLow;
 #endif
 #if ENABLE(VIDEO_TRACK)
-        case CachedResource::CueResource:
+        case CachedResource::TextTrackResource:
             return ResourceLoadPriorityLow;
 #endif
     }
