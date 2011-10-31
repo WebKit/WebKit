@@ -2176,6 +2176,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuil
 
 template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(TreeBuilder& context)
 {
+    failIfStackOverflow();
     switch (m_token.m_type) {
     case OPENBRACE:
         if (strictMode())
