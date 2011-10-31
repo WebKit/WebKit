@@ -2669,6 +2669,11 @@ void WebViewImpl::applyScrollDelta(const IntSize& scrollDelta)
     mainFrameImpl()->frameView()->scrollBy(scrollDelta);
 }
 
+void WebViewImpl::didCommitAndDrawFrame(int frameNumber)
+{
+    // FIXME: route this up to RenderWidget's didFlushPaint.
+}
+
 void WebViewImpl::didRecreateGraphicsContext(bool success)
 {
 

@@ -220,6 +220,7 @@ public:
     virtual void animateAndLayout(double frameBeginTime);
     virtual void applyScrollDelta(const WebCore::IntSize&);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
+    virtual void didCommitAndDrawFrame(int frameNumber);
     virtual void didRecreateGraphicsContext(bool success);
     virtual void scheduleComposite();
 

@@ -44,11 +44,11 @@ TEST(CCDelayBasedTimeSourceTest, TaskPostedAndTickCalled)
     RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(1000.0 / 60.0, &thread);
     timer->setClient(&client);
 
-    timer->setMonotonicallyIncreasingTime(0);
+    timer->setMonotonicallyIncreasingTimeMs(0);
     timer->setActive(true);
     EXPECT_TRUE(thread.hasPendingTask());
 
-    timer->setMonotonicallyIncreasingTime(16);
+    timer->setMonotonicallyIncreasingTimeMs(16);
     thread.runPendingTask();
     EXPECT_TRUE(client.tickCalled());
 }
@@ -110,8 +110,8 @@ TEST(CCDelayBasedTimeSourceTest, AchievesTargetRateWithNoNoise)
         totalFrameTime += delay;
 
         // Run the callback exactly when asked
-        double now = timer->monotonicallyIncreasingTime() + delay;
-        timer->setMonotonicallyIncreasingTime(now);
+        double now = timer->monotonicallyIncreasingTimeMs() + delay;
+        timer->setMonotonicallyIncreasingTimeMs(now);
         thread.runPendingTask();
     }
     double averageInterval = totalFrameTime / static_cast<double>(numIterations);

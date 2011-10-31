@@ -1,3 +1,70 @@
+2011-10-28  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Connect CCThreadProxy to FrameRateController and SchedulerStateMachine via CCScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=71100
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.h:
+        (WebCore::CCDelayBasedTimeSource::monotonicallyIncreasingTime):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHostClient::didCommitAndDrawFrame):
+        (WebCore::CCLayerTreeHost::didCommitAndDrawFrame):
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCSchedulerFrameRateControllerClientAdapter::create):
+        (WebCore::CCSchedulerFrameRateControllerClientAdapter::~CCSchedulerFrameRateControllerClientAdapter):
+        (WebCore::CCSchedulerFrameRateControllerClientAdapter::beginFrame):
+        (WebCore::CCSchedulerFrameRateControllerClientAdapter::CCSchedulerFrameRateControllerClientAdapter):
+        (WebCore::CCScheduler::CCScheduler):
+        (WebCore::CCScheduler::~CCScheduler):
+        (WebCore::CCScheduler::setNeedsAnimate):
+        (WebCore::CCScheduler::setNeedsCommit):
+        (WebCore::CCScheduler::setNeedsRedraw):
+        (WebCore::CCScheduler::beginFrameComplete):
+        (WebCore::CCScheduler::didSwapBuffersComplete):
+        (WebCore::CCScheduler::didSwapBuffersAbort):
+        (WebCore::CCScheduler::onBeginFrame):
+        (WebCore::CCScheduler::processScheduledActions):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        (WebCore::CCScheduler::create):
+        (WebCore::CCScheduler::commitPending):
+        (WebCore::CCScheduler::redrawPending):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::nextAction):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        (WebCore::CCSchedulerStateMachine::beginUpdateMoreResourcesComplete):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        (WebCore::CCSchedulerStateMachine::redrawPending):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::doCommit):
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::hasMoreUpdates):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::requestReadbackOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsAnimateOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsCommitOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnImplThread):
+        (WebCore::CCThreadProxy::finishAllRenderingOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionBeginFrame):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        (WebCore::CCThreadProxy::hasMoreResourceUpdates):
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        (WebCore::CCThreadProxy::scheduledActionCommit):
+        (WebCore::CCThreadProxy::drawLayersAndSwapOnImplThread):
+        (WebCore::CCThreadProxy::didCommitAndDrawFrame):
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwap):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-10-31  Nate Chapin  <japhet@chromium.org>
 
         Rename the remaining uses of Cue in WebCore/loader/

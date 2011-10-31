@@ -28,6 +28,7 @@
 
 #include "cc/CCThread.h"
 #include "cc/CCThreadTask.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -72,6 +73,11 @@ void CCDelayBasedTimeSource::onTick()
 {
     updateState();
     this->deref();
+}
+
+double CCDelayBasedTimeSource::monotonicallyIncreasingTimeMs() const
+{
+    return WTF::monotonicallyIncreasingTime() * 1000.0;
 }
 
 // This code tries to achieve an average tick rate as close to m_intervalMs as possible.
@@ -125,7 +131,7 @@ void CCDelayBasedTimeSource::updateState()
     if (m_state == STATE_INACTIVE)
         return;
 
-    double now = monotonicallyIncreasingTime();
+    double now = monotonicallyIncreasingTimeMs();
 
     if (m_state == STATE_STARTING) {
         m_tickTarget = now;

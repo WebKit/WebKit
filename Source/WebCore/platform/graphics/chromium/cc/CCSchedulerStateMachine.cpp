@@ -32,10 +32,11 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     : m_commitState(COMMIT_STATE_IDLE)
     , m_needsRedraw(false)
     , m_needsCommit(false)
-    , m_updatedThisFrame(false) { }
+    , m_updateMoreResourcesPending(false) { }
 
-CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(bool insideVSyncTick) const
+CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(ImmediateState immediateState) const
 {
+    bool insideVSyncTick = immediateState & IMMEDIATE_STATE_INSIDE_VSYNC;
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
         if (m_needsRedraw && insideVSyncTick)
@@ -52,8 +53,8 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(bool insideV
     case COMMIT_STATE_UPDATING_RESOURCES:
         if (m_needsRedraw && insideVSyncTick)
             return ACTION_DRAW;
-        if (!m_updatedThisFrame)
-            return ACTION_UPDATE_MORE_RESOURCES;
+        if (!m_updateMoreResourcesPending)
+            return ACTION_BEGIN_UPDATE_MORE_RESOURCES;
         return ACTION_NONE;
 
     case COMMIT_STATE_READY_TO_COMMIT:
@@ -74,15 +75,9 @@ void CCSchedulerStateMachine::updateState(Action action)
         m_needsCommit = false;
         return;
 
-    case ACTION_UPDATE_MORE_RESOURCES:
+    case ACTION_BEGIN_UPDATE_MORE_RESOURCES:
         ASSERT(m_commitState == COMMIT_STATE_UPDATING_RESOURCES);
-        // getNextState() in COMMIT_STATE_UPDATING_RESOURCES will only return
-        // ACTION_UPDATE_MORE_RESOURCES when m_updatedThisFrame is true. Here,
-        // set m_updatedThisFrame to true to prevent additional
-        // ACTION_UPDATE_MORE_RESOURCES from being issued.
-        // This will then be cleared by a draw action, effectively limiting us
-        // to one ACTION_UPDATE_MORE_RESOURCES per frame.
-        m_updatedThisFrame = true;
+        m_updateMoreResourcesPending = true;
         return;
 
     case ACTION_COMMIT:
@@ -91,7 +86,6 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_DRAW:
-        m_updatedThisFrame = false;
         m_needsRedraw = false;
         return;
     }
@@ -113,10 +107,13 @@ void CCSchedulerStateMachine::beginFrameComplete()
     m_commitState = COMMIT_STATE_UPDATING_RESOURCES;
 }
 
-void CCSchedulerStateMachine::updateResourcesComplete()
+void CCSchedulerStateMachine::beginUpdateMoreResourcesComplete(bool morePending)
 {
     ASSERT(m_commitState == COMMIT_STATE_UPDATING_RESOURCES);
-    m_commitState = COMMIT_STATE_READY_TO_COMMIT;
+    ASSERT(m_updateMoreResourcesPending);
+    m_updateMoreResourcesPending = false;
+    if (!morePending)
+        m_commitState = COMMIT_STATE_READY_TO_COMMIT;
 }
 
 }

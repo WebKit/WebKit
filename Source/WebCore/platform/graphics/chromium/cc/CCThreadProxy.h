@@ -29,6 +29,7 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCMainThread.h"
 #include "cc/CCProxy.h"
+#include "cc/CCScheduler.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -37,11 +38,10 @@ class CCInputHandler;
 class CCLayerTreeHost;
 class CCScheduler;
 class CCScopedMainThreadProxy;
+class CCTextureUpdater;
 class CCThread;
-class CCThreadProxySchedulerClient;
 
-class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
-    friend class CCThreadProxySchedulerClient;
+class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient, CCSchedulerClient {
 public:
     static void setThread(CCThread*);
 
@@ -70,20 +70,33 @@ public:
     virtual void setNeedsRedrawOnImplThread();
     virtual void setNeedsCommitOnImplThread();
 
+    // CCSchedulerClient implementation
+    virtual bool hasMoreResourceUpdates() const;
+    virtual void scheduledActionBeginFrame();
+    virtual void scheduledActionDrawAndSwap();
+    virtual void scheduledActionUpdateMoreResources();
+    virtual void scheduledActionCommit();
+
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
 
     // Called on CCMainThread
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet>);
+    void didCommitAndDrawFrame(int frameNumber);
 
     // Called on CCThread
-    void postBeginFrameAndCommitOnImplThread();
+    struct ReadbackRequest {
+        CCCompletionEvent completion;
+        bool success;
+        void* pixels;
+        IntRect rect;
+    };
     PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
-    void commitOnImplThread(CCCompletionEvent*);
+    void beginFrameCompleteOnImplThread(CCCompletionEvent*);
     void drawLayersAndSwapOnImplThread();
     void drawLayersOnImplThread();
-    void drawLayersAndReadbackOnImplThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
+    void requestReadbackOnImplThread(ReadbackRequest*);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
     void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
@@ -94,23 +107,34 @@ private:
     // Accessed on main thread only.
     bool m_animationRequested;
     bool m_commitRequested;
-    bool m_redrawAfterCommit;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
     int m_lastExecutedBeginFrameAndCommitSequenceNumber;
 
-    // Used on the CCThread only
+    // Used on the CCThread only.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
     int m_numBeginFrameAndCommitsIssuedOnImplThread;
 
     OwnPtr<CCInputHandler> m_inputHandlerOnImplThread;
 
     OwnPtr<CCScheduler> m_schedulerOnImplThread;
-    OwnPtr<CCThreadProxySchedulerClient> m_schedulerClientOnImplThread;
 
     RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
+
+    // Set when the main thread is waiing on a readback.
+    ReadbackRequest* m_readbackRequestOnImplThread;
+
+    // Set when the main thread is waiting on a finishAllRendering call.
+    CCCompletionEvent* m_finishAllRenderingCompletionEventOnImplThread;
+
+    // Set when the main thread is waiting on a commit to complete.
+    CCCompletionEvent* m_commitCompletionEventOnImplThread;
+    OwnPtr<CCTextureUpdater> m_currentTextureUpdaterOnImplThread;
+
+    // Set when the next draw should post didCommitAndDrawFrame to the main thread.
+    bool m_nextFrameIsNewlyCommittedFrameOnImplThread;
 
     static CCThread* s_ccThread;
 };

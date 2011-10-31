@@ -63,7 +63,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
 
     // Trigger one frame, make sure the vsync callback is called
     elapsed += thread.pendingDelay();
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.frameBegun());
     client.reset();
@@ -72,13 +72,13 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
     controller.didBeginFrame();
 
     // Tell the controller the frame ended 5ms later
-    timeSource->setMonotonicallyIncreasingTime(timeSource->monotonicallyIncreasingTime() + 5);
+    timeSource->setMonotonicallyIncreasingTimeMs(timeSource->monotonicallyIncreasingTimeMs() + 5);
     controller.didFinishFrame();
 
     // Trigger another frame, make sure vsync runs again
     elapsed += thread.pendingDelay();
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.frameBegun());
 }
@@ -100,7 +100,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger one frame, make sure the vsync callback is called
     elapsed += thread.pendingDelay();
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.frameBegun());
     client.reset();
@@ -110,8 +110,8 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger another frame, make sure vsync callback runs again
     elapsed += thread.pendingDelay();
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.frameBegun());
     client.reset();
@@ -121,13 +121,13 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger another frame. Since two frames are pending, we should not draw.
     elapsed += thread.pendingDelay();
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_FALSE(client.frameBegun());
 
     // Tell the controller the first frame ended 5ms later
-    timeSource->setMonotonicallyIncreasingTime(timeSource->monotonicallyIncreasingTime() + 5);
+    timeSource->setMonotonicallyIncreasingTimeMs(timeSource->monotonicallyIncreasingTimeMs() + 5);
     controller.didFinishFrame();
 
     // Tick should not have been called
@@ -135,8 +135,8 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger yet another frame. Since one frames is pending, another vsync callback should run.
     elapsed += thread.pendingDelay();
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.frameBegun());
 }

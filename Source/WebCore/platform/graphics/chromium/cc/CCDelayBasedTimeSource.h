@@ -27,7 +27,6 @@
 
 #include "cc/CCTimeSource.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -47,7 +46,7 @@ public:
     virtual void setActive(bool);
 
     // Virtual for testing.
-    virtual double monotonicallyIncreasingTime() const { return WTF::monotonicallyIncreasingTime(); }
+    virtual double monotonicallyIncreasingTimeMs() const;
 
 protected:
     CCDelayBasedTimeSource(double intervalMs, CCThread*);

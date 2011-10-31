@@ -55,14 +55,20 @@ public:
         return m_commitState != COMMIT_STATE_IDLE;
     }
 
+    bool redrawPending() const { return m_needsRedraw; }
+
     enum Action {
         ACTION_NONE,
         ACTION_BEGIN_FRAME,
-        ACTION_UPDATE_MORE_RESOURCES,
+        ACTION_BEGIN_UPDATE_MORE_RESOURCES,
         ACTION_COMMIT,
         ACTION_DRAW,
     };
-    Action nextAction(bool insideVSyncTick) const;
+    enum ImmediateState {
+        IMMEDIATE_STATE_NONE = 0,
+        IMMEDIATE_STATE_INSIDE_VSYNC = 1,
+    };
+    Action nextAction(ImmediateState) const;
     void updateState(Action);
 
     // Indicates that a redraw is required, either due to the impl tree changing
@@ -80,16 +86,15 @@ public:
     void beginFrameComplete();
 
     // Call this only in response to receiving an ACTION_UPDATE_MORE_RESOURCES
-    // from nextState. Indicatest that all resouces have been updated and that
-    // the main thread tree can be committed to the impl tree.
-    void updateResourcesComplete();
+    // from nextState. Indicatest that the specific update request completed.
+    void beginUpdateMoreResourcesComplete(bool morePending);
 
 protected:
     CommitState m_commitState;
 
     bool m_needsRedraw;
     bool m_needsCommit;
-    bool m_updatedThisFrame;
+    bool m_updateMoreResourcesPending;
 };
 
 }

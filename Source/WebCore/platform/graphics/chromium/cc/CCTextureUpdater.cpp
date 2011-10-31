@@ -61,6 +61,11 @@ void CCTextureUpdater::append(ManagedTexture* texture, LayerTextureUpdater* upda
     m_entries.append(entry);
 }
 
+bool CCTextureUpdater::hasMoreUpdates() const
+{
+    return m_entries.size();
+}
+
 bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
 {
     size_t maxIndex = min(m_entryIndex + count, m_entries.size());

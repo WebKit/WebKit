@@ -165,6 +165,10 @@ public:
         return context;
     }
 
+    virtual void didCommitAndDrawFrame(int frameNumber)
+    {
+    }
+
     virtual void didRecreateGraphicsContext(bool)
     {
     }

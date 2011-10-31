@@ -54,8 +54,8 @@ public:
     void setNeedsRedraw(bool b) { m_needsRedraw = b; }
     bool needsRedraw() const { return m_needsRedraw; }
 
-    void setUpdatedThisFrame(bool b) { m_updatedThisFrame = b; }
-    bool updatedThisFrame() const { return m_updatedThisFrame; }
+    void setUpdateMoreResourcesPending(bool b) { m_updateMoreResourcesPending = b; }
+    bool updateMoreResourcesPending() const { return m_updateMoreResourcesPending; }
 };
 
 TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
@@ -66,9 +66,9 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
         state.setNeedsRedraw(false);
         state.setNeedsCommit(false);
-        state.setUpdatedThisFrame(false);
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(true));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
     }
 
     // If commit requested, begin a frame
@@ -77,8 +77,8 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
         state.setNeedsRedraw(false);
         state.setNeedsCommit(true);
-        state.setUpdatedThisFrame(false);
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
     }
 
     // Begin the frame, make sure needsCommit and commitState update correctly.
@@ -99,25 +99,25 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
         state.setCommitState(allCommitStates[i]);
         state.setNeedsRedraw(true);
 
-        // Case 1: needsCommit=false updatedThisFrame=false vsync=false.
+        // Case 1: needsCommit=false updateMoreResourcesPending=false vsync=false.
         state.setNeedsCommit(false);
-        state.setUpdatedThisFrame(false);
-        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(false));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
-        // Case 2: needsCommit=false updatedThisFrame=true vsync=false.
+        // Case 2: needsCommit=false updateMoreResourcesPending=true vsync=false.
         state.setNeedsCommit(false);
-        state.setUpdatedThisFrame(true);
-        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(false));
+        state.setUpdateMoreResourcesPending(true);
+        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
-        // Case 3: needsCommit=true updatedThisFrame=false vsync=false.
+        // Case 3: needsCommit=true updateMoreResourcesPending=false vsync=false.
         state.setNeedsCommit(true);
-        state.setUpdatedThisFrame(false);
-        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(false));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
-        // Case 4: needsCommit=true updatedThisFrame=true vsync=false.
+        // Case 4: needsCommit=true updateMoreResourcesPending=true vsync=false.
         state.setNeedsCommit(true);
-        state.setUpdatedThisFrame(true);
-        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(false));
+        state.setUpdateMoreResourcesPending(true);
+        EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
     }
 
     // When on vsync, you should always draw. Expect if you're ready to commit, in which case commit.
@@ -131,56 +131,99 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
         else
             expectedAction = CCSchedulerStateMachine::ACTION_COMMIT;
 
-        // Case 1: needsCommit=false updatedThisFrame=false vsync=true.
+        // Case 1: needsCommit=false updateMoreResourcesPending=false vsync=true.
         state.setNeedsCommit(false);
-        state.setUpdatedThisFrame(false);
-        EXPECT_EQ(expectedAction, state.nextAction(true));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_EQ(expectedAction, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 
-        // Case 2: needsCommit=false updatedThisFrame=true vsync=true.
+        // Case 2: needsCommit=false updateMoreResourcesPending=true vsync=true.
         state.setNeedsCommit(false);
-        state.setUpdatedThisFrame(true);
-        EXPECT_EQ(expectedAction, state.nextAction(true));
+        state.setUpdateMoreResourcesPending(true);
+        EXPECT_EQ(expectedAction, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 
-        // Case 3: needsCommit=true updatedThisFrame=false vsync=true.
+        // Case 3: needsCommit=true updateMoreResourcesPending=false vsync=true.
         state.setNeedsCommit(true);
-        state.setUpdatedThisFrame(false);
-        EXPECT_EQ(expectedAction, state.nextAction(true));
+        state.setUpdateMoreResourcesPending(false);
+        EXPECT_EQ(expectedAction, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 
-        // Case 4: needsCommit=true updatedThisFrame=true vsync=true.
+        // Case 4: needsCommit=true updateMoreResourcesPending=true vsync=true.
         state.setNeedsCommit(true);
-        state.setUpdatedThisFrame(true);
-        EXPECT_EQ(expectedAction, state.nextAction(true));
+        state.setUpdateMoreResourcesPending(true);
+        EXPECT_EQ(expectedAction, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
     }
 }
 
-TEST(CCSchedulerStateMachineTest, TestUpdatesResourcesOncePerFrame)
+TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_OneRoundOfUpdates)
 {
-    // When no redraw is needed --- update until done
-    {
-        StateMachine state;
-        state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
-        state.setNeedsRedraw(false);
-        state.setUpdatedThisFrame(false);
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(false));
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(true));
-    }
+    StateMachine state;
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
+    state.setNeedsRedraw(false);
+    state.setUpdateMoreResourcesPending(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 
-    // Once we update resources, don't do it again until a draw
-    {
-        StateMachine state;
-        state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
-        state.setNeedsRedraw(true);
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(false));
-        state.updateState(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES);
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
+    // Begin an update.
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 
-        // once we've drawn again, it should allow us to update (regardless of vsync state)
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(true));
-        state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
+    // End update with no more updates pending.
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+}
 
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(true));
-        EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(false));
-    }
+TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_TwoRoundsOfUpdates)
+{
+    StateMachine state;
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
+    state.setNeedsRedraw(false);
+    state.setUpdateMoreResourcesPending(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Begin an udpate.
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Ack the update with more pending.
+    state.beginUpdateMoreResourcesComplete(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Begin another update, end it with none epending.
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+}
+
+TEST(CCSchedulerStateMachineTest, TestUpdates_WithRedraw_OneRoundOfUpdates)
+{
+    StateMachine state;
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
+    state.setNeedsRedraw(true);
+    state.setUpdateMoreResourcesPending(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+
+    // Begin an update.
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Draw.
+    state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Finish update, levae more resources pending.
+    state.beginUpdateMoreResourcesComplete(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
+
+    // Begin another update. Finish it immediately.
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
 }
 
 TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
@@ -189,8 +232,8 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
     state.setNeedsCommit(true);
 
     // Begin the frame.
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
-    state.updateState(state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    state.updateState(state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
 
     // Now, while the frame is in progress, set another commit.
@@ -200,18 +243,18 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
     // Let the frame finish.
     state.beginFrameComplete();
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(false));
-    state.updateState(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES);
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
-    state.updateResourcesComplete();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    state.beginUpdateMoreResourcesComplete(false);
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_READY_TO_COMMIT, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(false));
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(true));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
     state.updateState(CCSchedulerStateMachine::ACTION_COMMIT);
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
 
-    // verify that another commit will begin
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
+    // Verify that another commit will begin.
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 }
 
 TEST(CCSchedulerStateMachineTest, TestFullCycle)
@@ -220,23 +263,24 @@ TEST(CCSchedulerStateMachineTest, TestFullCycle)
 
     // Start clean and set commit.
     state.setNeedsCommit(true);
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
     // Begin the frame.
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_FRAME);
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
     EXPECT_FALSE(state.needsCommit());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
     // Tell the scheduler the frame finished.
     state.beginFrameComplete();
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_UPDATE_MORE_RESOURCES, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
-    // Tell the scheduler the update is done.
-    state.updateResourcesComplete();
+    // Tell the scheduler the update began and finished
+    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
+    state.beginUpdateMoreResourcesComplete(false);
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_READY_TO_COMMIT, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
     // Commit.
     state.updateState(CCSchedulerStateMachine::ACTION_COMMIT);
@@ -244,16 +288,16 @@ TEST(CCSchedulerStateMachineTest, TestFullCycle)
     EXPECT_TRUE(state.needsRedraw());
 
     // Expect to do nothing until vsync.
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 
     // At vsync, draw.
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(true));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC));
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
 
     // Should be synchronized, no draw needed, no action needed.
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
     EXPECT_FALSE(state.needsRedraw());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(false));
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE));
 }
 
 TEST(CCSchedulerStateMachineTest, TestFullCycleWithCommitRequestInbetween)

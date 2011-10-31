@@ -81,6 +81,7 @@ private:
     int m_numFailedRecreateAttempts;
     bool m_graphicsContextLost;
     int m_timesRecreateShouldFail; // Used during testing.
+    bool m_nextFrameIsNewlyCommittedFrame;
 };
 
 // For use in the single-threaded case. In debug builds, it pretends that the

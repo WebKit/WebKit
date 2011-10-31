@@ -206,7 +206,7 @@ void CCLayerTreeHost::setNeedsAnimate()
 void CCLayerTreeHost::setNeedsCommitThenRedraw()
 {
     if (m_settings.enableCompositorThread) {
-        TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
+        TRACE_EVENT("CCLayerTreeHost::setNeedsCommitThenRedraw", this, 0);
         m_proxy->setNeedsCommitThenRedraw();
     } else
         m_client->scheduleComposite();

@@ -81,6 +81,29 @@ protected:
     long long m_pendingTaskDelay;
 };
 
+class FakeCCTimeSource : public WebCore::CCTimeSource {
+public:
+    FakeCCTimeSource()
+        : m_active(false)
+        , m_client(0) { }
+
+    virtual ~FakeCCTimeSource() { }
+
+    virtual void setClient(WebCore::CCTimeSourceClient* client) { m_client = client; }
+    virtual void setActive(bool b) { m_active = b; }
+
+    void tick()
+    {
+        ASSERT(m_active);
+        if (m_client)
+            m_client->onTimerTick();
+    }
+
+protected:
+    bool m_active;
+    WebCore::CCTimeSourceClient* m_client;
+};
+
 class FakeCCDelayBasedTimeSource : public WebCore::CCDelayBasedTimeSource {
 public:
     static PassRefPtr<FakeCCDelayBasedTimeSource> create(double intervalMs, WebCore::CCThread* thread)
@@ -88,15 +111,15 @@ public:
         return adoptRef(new FakeCCDelayBasedTimeSource(intervalMs, thread));
     }
 
-    void setMonotonicallyIncreasingTime(double time) { m_monotonicallyIncreasingTime = time; }
-    virtual double monotonicallyIncreasingTime() const { return m_monotonicallyIncreasingTime; }
+    void setMonotonicallyIncreasingTimeMs(double time) { m_monotonicallyIncreasingTimeMs = time; }
+    virtual double monotonicallyIncreasingTimeMs() const { return m_monotonicallyIncreasingTimeMs; }
 
 protected:
     FakeCCDelayBasedTimeSource(double intervalMs, WebCore::CCThread* thread)
         : CCDelayBasedTimeSource(intervalMs, thread)
-        , m_monotonicallyIncreasingTime(0) { }
+        , m_monotonicallyIncreasingTimeMs(0) { }
 
-    double m_monotonicallyIncreasingTime;
+    double m_monotonicallyIncreasingTimeMs;
 };
 
 }

@@ -50,6 +50,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_numFailedRecreateAttempts(0)
     , m_graphicsContextLost(false)
     , m_timesRecreateShouldFail(0)
+    , m_nextFrameIsNewlyCommittedFrame(false)
 {
     TRACE_EVENT("CCSingleThreadProxy::CCSingleThreadProxy", this, 0);
     ASSERT(CCProxy::isMainThread());
@@ -175,6 +176,7 @@ void CCSingleThreadProxy::doCommit()
 #endif
     }
     m_layerTreeHost->commitComplete();
+    m_nextFrameIsNewlyCommittedFrame = true;
 }
 
 void CCSingleThreadProxy::setNeedsCommitThenRedraw()
@@ -291,6 +293,11 @@ bool CCSingleThreadProxy::doComposite()
         m_numFailedRecreateAttempts = 0;
         setNeedsCommitThenRedraw();
         return false;
+    }
+
+    if (m_nextFrameIsNewlyCommittedFrame) {
+        m_nextFrameIsNewlyCommittedFrame = false;
+        m_layerTreeHost->didCommitAndDrawFrame(m_layerTreeHostImpl->sourceFrameNumber());
     }
 
     return true;

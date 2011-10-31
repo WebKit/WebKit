@@ -25,6 +25,9 @@
 #ifndef CCScheduler_h
 #define CCScheduler_h
 
+#include "cc/CCFrameRateController.h"
+#include "cc/CCSchedulerStateMachine.h"
+
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -34,40 +37,51 @@ class CCThread;
 
 class CCSchedulerClient {
 public:
-    virtual void scheduleBeginFrameAndCommit() = 0;
-    virtual void scheduleDrawAndSwap() = 0;
+    virtual bool hasMoreResourceUpdates() const = 0;
+
+    virtual void scheduledActionBeginFrame() = 0;
+    virtual void scheduledActionDrawAndSwap() = 0;
+    virtual void scheduledActionUpdateMoreResources() = 0;
+    virtual void scheduledActionCommit() = 0;
 
 protected:
     virtual ~CCSchedulerClient() { }
 };
 
-class CCScheduler {
+class CCScheduler : CCFrameRateControllerClient {
     WTF_MAKE_NONCOPYABLE(CCScheduler);
 public:
-    static PassOwnPtr<CCScheduler> create(CCSchedulerClient* client)
+    static PassOwnPtr<CCScheduler> create(CCSchedulerClient* client, PassOwnPtr<CCFrameRateController> frameRateController)
     {
-        return adoptPtr(new CCScheduler(client));
+        return adoptPtr(new CCScheduler(client, frameRateController));
     }
 
-    void requestAnimate();
-    void requestCommit();
-    void requestRedraw();
+    virtual ~CCScheduler();
 
-    void didCommit();
-    void didDrawAndSwap();
+    void setNeedsAnimate();
+    void setNeedsCommit();
+    void setNeedsRedraw();
+
+    void beginFrameComplete();
+
     void didSwapBuffersComplete();
     void didSwapBuffersAbort();
 
-    bool commitPending() const { return m_commitPending; }
-    bool redrawPending() const { return m_redrawPending; }
+    bool commitPending() const { return m_stateMachine.commitPending(); }
+    bool redrawPending() const { return m_stateMachine.redrawPending(); }
+
+    // CCFrameRateControllerClient implementation
+    virtual void beginFrame();
 
 private:
-    explicit CCScheduler(CCSchedulerClient*);
+    CCScheduler(CCSchedulerClient*, PassOwnPtr<CCFrameRateController>);
+
+    void processScheduledActions(CCSchedulerStateMachine::ImmediateState);
 
     CCSchedulerClient* m_client;
-
-    bool m_commitPending;
-    bool m_redrawPending;
+    OwnPtr<CCFrameRateController> m_frameRateController;
+    CCSchedulerStateMachine m_stateMachine;
+    bool m_updateMoreResourcesPending;
 };
 
 }

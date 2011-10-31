@@ -1,3 +1,16 @@
+2011-10-28  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Connect CCThreadProxy to FrameRateController and SchedulerStateMachine via CCScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=71100
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::StateMachine::setUpdateMoreResourcesPending):
+        (WebCore::StateMachine::updateMoreResourcesPending):
+        (WebCore::TEST):
+        * tests/CCSchedulerTest.cpp:
+
 2011-10-31  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove null key support (part 2)

@@ -57,6 +57,7 @@ public:
     virtual void applyScrollDelta(const IntSize&) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
+    virtual void didCommitAndDrawFrame(int frameNumber) = 0;
 
     // Used only in the single-threaded path.
     virtual void scheduleComposite() = 0;
@@ -111,6 +112,7 @@ public:
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didRecreateGraphicsContext(bool success);
+    void didCommitAndDrawFrame(int frameNumber) { m_client->didCommitAndDrawFrame(frameNumber); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
 
     // CCLayerTreeHost interface to WebView.

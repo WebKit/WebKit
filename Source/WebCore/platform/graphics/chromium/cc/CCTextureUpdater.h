@@ -43,6 +43,8 @@ public:
 
     void append(ManagedTexture*, LayerTextureUpdater*, const IntRect& sourceRect, const IntRect& destRect);
 
+    bool hasMoreUpdates() const;
+
     // Update some textures. Returns true if more textures left to process.
     bool update(GraphicsContext3D*, size_t count);
 
