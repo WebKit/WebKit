@@ -177,7 +177,7 @@ size_t ImageBuffer::dataSize() const
 GraphicsContext* ImageBuffer::context() const
 {
     // Force a flush if last flush was more than 20ms ago 
-    if (m_context->isAcceleratedContext()) { 
+    if (m_accelerateRendering) { 
         double elapsedTime = currentTimeMS() - m_data.m_lastFlushTime; 
         double maxFlushInterval = 20; // in ms 
 
