@@ -1,3 +1,13 @@
+2011-10-31  John Gregg  <johnnyg@google.com>
+
+        RenderImage.cpp calls SVGImage even if it's not defined
+        https://bugs.webkit.org/show_bug.cgi?id=71247
+
+        This fixes a compile error when ENABLE_SVG=0.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::embeddedContentBox):
+
 2011-10-31  Pavel Podivilov  <podivilov@chromium.org>
 
         Update XMLHttpRequest.send idl declaration to match implementation.

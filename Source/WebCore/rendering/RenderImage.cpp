@@ -544,9 +544,11 @@ RenderBox* RenderImage::embeddedContentBox() const
     if (!m_imageResource)
         return 0;
 
+#if ENABLE(SVG)
     RefPtr<Image> image = m_imageResource->image();
     if (image && image->isSVGImage())
         return static_pointer_cast<SVGImage>(image)->embeddedContentBox();
+#endif
 
     return 0;
 }
