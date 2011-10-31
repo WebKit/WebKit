@@ -40,52 +40,6 @@ console.trace = function() {}
 var WebInspector = {}
 
 /**
- * @param {string} url
- * @param {string=} linkText
- * @param {string=} classes
- * @param {boolean=} isExternal
- * @param {string=} tooltipText
- */
-WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, tooltipText) {}
-
-/**
- * @param {string} url
- * @param {string=} linkText
- * @param {string=} classes
- * @param {boolean=} isExternal
- * @param {string=} tooltipText
- */
-WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipText) {}
-
-/** @param {string} url */
-WebInspector.linkifyStringAsFragment = function(url) {}
-/** @param {string} url */
-WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(url, linkifier) {}
-
-/**
- * @param {string=} classes
- * @param {string=} tooltipText
- */
-WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipText) {}
-
-/**
- * @param {string} url
- * @param {number=} lineNumber
- */
-WebInspector.formatLinkText = function(url, lineNumber) {}
-
-/**
- * @param {string} url
- */
-WebInspector.displayNameForURL = function(url) {}
-
-/**
- * @param {string} url
- * @param {string} href
- */
-WebInspector.completeURL = function(url, href) {}
-
-/**
  * @param {string} str
  * @param {...*} varArgs
  */
@@ -107,12 +61,6 @@ JSON.stringify = function(str) {}
 Element.prototype.scrollIntoViewIfNeeded = function(param) {}
 
 /**
- * @return {number}
- */
-Element.prototype.selectionLeftOffset = function() {}
-
-
-/**
  * @param {boolean=} onlyFirst
  */
 Array.prototype.remove = function(obj, onlyFirst) {}
@@ -125,12 +73,6 @@ WebInspector.extensionServer.notifyPanelShown = function(panel) {}
 WebInspector.extensionServer.notifyPanelHidden = function(panel) {}
 WebInspector.extensionServer.notifyObjectSelected = function(object) {}
 
-/**
- * @param {string} url
- * @return {?WebInspector.Resource}
- */
-WebInspector.resourceForURL = function(url) {}
-
 WebInspector.debuggerPresentationModel = {
     linkifyLocation: function(url, lineNumber, columnNumber, className) {}
 }
@@ -140,15 +82,6 @@ WebInspector.debuggerPresentationModel = {
  * @return {?WebInspector.Resource}
  */
 WebInspector.networkResourceById = function(requestId)
-{
-}
-
-/**
- * @param {WebInspector.ContextMenu} contextMenu
- * @param {Node} contextNode
- * @param {Event} event
- */
-WebInspector.populateHrefContextMenu = function(contextMenu, contextNode, event)
 {
 }
 
@@ -219,8 +152,6 @@ Event.prototype.initWebKitWheelEvent = function(vararg) {}
  * @param {boolean=} showConsole
  */
 WebInspector.log = function(message, messageLevel, showConsole) {}
-
-WebInspector.resourceURLForRelatedNode = function(node, url) {}
 
 WebInspector.addMainEventListeners = function(doc) {}
 

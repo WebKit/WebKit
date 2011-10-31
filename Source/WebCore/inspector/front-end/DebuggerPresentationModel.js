@@ -906,7 +906,7 @@ WebInspector.DebuggerPresentationModel.Linkifier = function(model, formatter)
 WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
     /**
      * @param {string} sourceURL
-     * @param {number=} lineNumber
+     * @param {number} lineNumber
      * @param {number=} columnNumber
      * @param {string=} classes
      */
@@ -921,7 +921,7 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
 
     /**
      * @param {string} sourceURL
-     * @param {number=} lineNumber
+     * @param {number} lineNumber
      * @param {string=} classes
      */
     linkifyResource: function(sourceURL, lineNumber, classes)

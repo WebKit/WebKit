@@ -88,6 +88,14 @@ WebInspector.ProfileType.prototype = {
     }
 }
 
+WebInspector.registerLinkifierPlugin(function(title)
+{
+    var profileStringMatches = WebInspector.ProfileType.URLRegExp.exec(title);
+    if (profileStringMatches)
+        title = WebInspector.panels.profiles.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
+    return title;
+});
+
 WebInspector.ProfilesPanel = function()
 {
     WebInspector.Panel.call(this, "profiles");

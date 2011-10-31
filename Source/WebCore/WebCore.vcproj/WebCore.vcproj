@@ -68937,6 +68937,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceUtils.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourceView.js"
 					>
 				</File>

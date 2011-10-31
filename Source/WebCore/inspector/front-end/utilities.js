@@ -343,7 +343,8 @@ Text.prototype.select = function(start, end)
     return this;
 }
 
-Element.prototype.__defineGetter__("selectionLeftOffset", function() {
+Element.prototype.selectionLeftOffset = function()
+{
     // Calculate selection offset relative to the current element.
 
     var selection = window.getSelection();
@@ -362,7 +363,7 @@ Element.prototype.__defineGetter__("selectionLeftOffset", function() {
     }
 
     return leftOffset;
-});
+}
 
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {

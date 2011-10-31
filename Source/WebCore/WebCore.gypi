@@ -6350,6 +6350,7 @@
             'inspector/front-end/ResourceResponseView.js',
             'inspector/front-end/ResourceTimingView.js',
             'inspector/front-end/ResourceTreeModel.js',
+            'inspector/front-end/ResourceUtils.js',
             'inspector/front-end/ResourceView.js',
             'inspector/front-end/ResourcesPanel.js',
             'inspector/front-end/ResourcePreviewView.js',
