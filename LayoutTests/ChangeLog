@@ -1,3 +1,31 @@
+2011-10-31  Benjamin Poulain  <benjamin@webkit.org>
+
+        The test input-paste-undo.html needs update to work properly
+        https://bugs.webkit.org/show_bug.cgi?id=71091
+
+        Reviewed by David Kilzer.
+
+        Update the test to select the text that needs to be copied
+        so that it effectively go in the pasteboard on execCommand.
+
+        The test now dumps result as text, testing if the height does not
+        change with the form edition.
+
+        * fast/forms/input-paste-undo-expected.txt: Added.
+        * fast/forms/input-paste-undo.html:
+        * platform/chromium-linux/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-paste-undo-expected.txt: Removed.
+        * platform/efl/fast/forms/input-paste-undo-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/gtk/fast/forms/input-paste-undo-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/mac/fast/forms/input-paste-undo-expected.png: Removed.
+        * platform/mac/fast/forms/input-paste-undo-expected.txt: Removed.
+        * platform/qt/fast/forms/input-paste-undo-expected.txt: Removed.
+
 2011-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         window.onerror doesn't work with inline (attribute) scripts
