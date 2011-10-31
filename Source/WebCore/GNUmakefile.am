@@ -657,6 +657,7 @@ SCRIPTS_BINDINGS = \
 	$(WebCore)/bindings/scripts/CodeGenerator.pm \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
 	$(WebCore)/bindings/scripts/IDLStructure.pm \
+	$(WebCore)/bindings/scripts/InFilesCompiler.pm \
 	$(WebCore)/bindings/scripts/InFilesParser.pm \
 	$(WebCore)/bindings/scripts/generate-bindings.pl \
 	$(WebCore)/bindings/scripts/preprocessor.pm
@@ -857,20 +858,16 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.l \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.y \
-	Source/WebCore/bindings/scripts/CodeGenerator.pm \
-	Source/WebCore/bindings/scripts/IDLParser.pm \
-	Source/WebCore/bindings/scripts/IDLStructure.pm \
-	Source/WebCore/bindings/scripts/InFilesParser.pm \
-	Source/WebCore/bindings/scripts/generate-bindings.pl \
-	Source/WebCore/bindings/scripts/preprocessor.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
-	Source/WebCore/bindings/scripts/generate-bindings.pl \
-	Source/WebCore/bindings/scripts/gobject-generate-headers.pl \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
 	Source/WebCore/bindings/scripts/IDLStructure.pm \
+	Source/WebCore/bindings/scripts/InFilesCompiler.pm \
 	Source/WebCore/bindings/scripts/InFilesParser.pm \
+	Source/WebCore/bindings/scripts/generate-bindings.pl \
+	Source/WebCore/bindings/scripts/gobject-generate-headers.pl \
+	Source/WebCore/bindings/scripts/preprocessor.pm \
 	Source/WebCore/ChangeLog \
 	Source/WebCore/css/CSSGrammar.y \
 	Source/WebCore/css/CSSPropertyNames.in \

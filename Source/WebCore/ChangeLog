@@ -1,3 +1,10 @@
+2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.am: Add InFilesCompiler.pm to SCRIPTS_BINDINGS and
+        EXTRA_DIST. Also remove duplicated entries in EXTRA_DIST.
+
 2011-10-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: factor out ResourceUtils, clean up externs.

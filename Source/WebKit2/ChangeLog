@@ -1,3 +1,10 @@
+2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.am: Remove docs/GNUmakefile.in from EXTRA_DIST,
+        since its generation was removed from configure.ac in r98498.
+
 2011-10-28  Jeff Miller  <jeffm@apple.com>
 
         More work on WebKit2 should respect WebKitOmitPDFSupport preference on the Mac

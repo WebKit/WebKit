@@ -1395,7 +1395,6 @@ EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
 	$(WebKit2)/UIProcess/API/gtk/docs/version.xml.in \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types \
-	$(WebKit2)/UIProcess/API/gtk/docs/GNUmakefile.in \
 	$(WebKit2)/Scripts/generate-message-receiver.py \
 	$(WebKit2)/Scripts/generate-messages-header.py \
 	$(WebKit2)/Scripts/webkit2/__init__.py \
