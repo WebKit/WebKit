@@ -45,21 +45,19 @@ class GetGoogleChromePortTest(unittest.TestCase):
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
 
     def _verify_baseline_path(self, expected_path, port_name):
-        # FIXME: This should use a MockFileSystem, MockUser and MockExecutive.
-        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None)
+        port = google_chrome.GetGoogleChromePort(port_name=port_name,
+                                                 options=None)
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, port._filesystem.basename(path))
 
     def _verify_expectations_overrides(self, port_name):
-        # FIXME: Make this more robust when we have the Tree() abstraction.
+        # FIXME: make this more robust when we have the Tree() abstraction.
         # we should be able to test for the files existing or not, and
         # be able to control the contents better.
-        # FIXME: What is the Tree() abstraction?
 
-        fs = filesystem_mock.MockFileSystem()
-        chromium_port = factory.get("chromium-cg-mac", filesystem=fs)
+        chromium_port = factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
-        # FIXME: This should use a MockFileSystem, MockUser and MockExecutive.
+        fs = filesystem_mock.MockFileSystem()
         port = google_chrome.GetGoogleChromePort(port_name=port_name,
                                                  options=None, filesystem=fs)
 

@@ -30,9 +30,9 @@ import unittest
 import StringIO
 
 from webkitpy.common.system import logtesting
-from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.common.system import executive_mock
+from webkitpy.common.system import filesystem_mock
+from webkitpy.tool import mocktool
 from webkitpy.thirdparty.mock import Mock
 
 
@@ -47,7 +47,7 @@ from webkitpy.layout_tests.port import port_testcase
 
 class ChromiumDriverTest(unittest.TestCase):
     def setUp(self):
-        mock_port = Mock()  # FIXME: This should use a tighter mock.
+        mock_port = Mock()
         mock_port.get_option = lambda option_name: ''
         self.driver = chromium.ChromiumDriver(mock_port, worker_number=0)
 
@@ -69,7 +69,7 @@ class ChromiumDriverTest(unittest.TestCase):
         self.assertEqual(did_crash, expected_crash)
 
     def test_write_command_and_read_line(self):
-        self.driver._proc = Mock()  # FIXME: This should use a tighter mock.
+        self.driver._proc = Mock()
         # Set up to read 3 lines before we get an IOError
         self.driver._proc.stdout = StringIO.StringIO("first\nsecond\nthird\n")
 
@@ -91,7 +91,7 @@ class ChromiumDriverTest(unittest.TestCase):
     def test_stop(self):
         self.pid = None
         self.wait_called = False
-        self.driver._proc = Mock()  # FIXME: This should use a tighter mock.
+        self.driver._proc = Mock()
         self.driver._proc.pid = 1
         self.driver._proc.stdin = StringIO.StringIO()
         self.driver._proc.stdout = StringIO.StringIO()
@@ -183,42 +183,53 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         pass
 
     class TestMacPort(chromium_mac.ChromiumMacPort):
-        def __init__(self, options=None):
-            options = options or MockOptions()
-            chromium_mac.ChromiumMacPort.__init__(self, options=options,
-                filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
+            chromium_mac.ChromiumMacPort.__init__(self,
+                                                  options=options,
+                                                  filesystem=filesystem_mock.MockFileSystem())
 
         def default_configuration(self):
             self.default_configuration_called = True
             return 'default'
 
     class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
-        def __init__(self, options=None):
-            options = options or MockOptions()
-            chromium_linux.ChromiumLinuxPort.__init__(self, options=options,
-                filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
+            chromium_linux.ChromiumLinuxPort.__init__(self,
+                                                      options=options,
+                                                      filesystem=filesystem_mock.MockFileSystem())
 
         def default_configuration(self):
             self.default_configuration_called = True
             return 'default'
 
     class TestWinPort(chromium_win.ChromiumWinPort):
-        def __init__(self, options=None):
-            options = options or MockOptions()
-            chromium_win.ChromiumWinPort.__init__(self, options=options,
-                filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        def __init__(self, options):
+            # FIXME: This should use MockExecutive and MockUser as well.
+            chromium_win.ChromiumWinPort.__init__(self,
+                                                  options=options,
+                                                  filesystem=filesystem_mock.MockFileSystem())
 
         def default_configuration(self):
             self.default_configuration_called = True
             return 'default'
 
     def test_path_to_image_diff(self):
-        self.assertTrue(ChromiumPortTest.TestLinuxPort()._path_to_image_diff().endswith('/out/default/ImageDiff'))
-        self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_image_diff().endswith('/xcodebuild/default/ImageDiff'))
-        self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_image_diff().endswith('/default/ImageDiff.exe'))
+        mock_options = mocktool.MockOptions()
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/out/default/ImageDiff'))
+        port = ChromiumPortTest.TestMacPort(options=mock_options)
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/xcodebuild/default/ImageDiff'))
+        port = ChromiumPortTest.TestWinPort(options=mock_options)
+        self.assertTrue(port._path_to_image_diff().endswith(
+            '/default/ImageDiff.exe'))
 
     def test_skipped_layout_tests(self):
-        mock_options = MockOptions(configuration='release')
+        mock_options = mocktool.MockOptions()
+        mock_options.configuration = 'release'
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
         fake_test = 'fast/js/not-good.js'
@@ -233,12 +244,12 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         self.assertTrue("fast/js/not-good.js" in skipped_tests)
 
     def test_default_configuration(self):
-        mock_options = MockOptions()
+        mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
         self.assertEquals(mock_options.configuration, 'default')
         self.assertTrue(port.default_configuration_called)
 
-        mock_options = MockOptions(configuration=None)
+        mock_options = mocktool.MockOptions(configuration=None)
         port = ChromiumPortTest.TestLinuxPort(mock_options)
         self.assertEquals(mock_options.configuration, 'default')
         self.assertTrue(port.default_configuration_called)
@@ -248,7 +259,9 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
             def _path_to_image_diff(self):
                 return "/path/to/image_diff"
 
-        port = ChromiumPortTest.TestLinuxPort()
+        mock_options = mocktool.MockOptions()
+        port = ChromiumPortTest.TestLinuxPort(mock_options)
+
         mock_image_diff = "MOCK Image Diff"
 
         def mock_run_command(args):
@@ -256,15 +269,15 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
             return 1
 
         # Images are different.
-        port._executive = MockExecutive2(run_command_fn=mock_run_command)
+        port._executive = executive_mock.MockExecutive2(run_command_fn=mock_run_command)
         self.assertEquals(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # Images are the same.
-        port._executive = MockExecutive2(exit_code=0)
+        port._executive = executive_mock.MockExecutive2(exit_code=0)
         self.assertEquals(None, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # There was some error running image_diff.
-        port._executive = MockExecutive2(exit_code=2)
+        port._executive = executive_mock.MockExecutive2(exit_code=2)
         exception_raised = False
         try:
             port.diff_image("EXPECTED", "ACTUAL")
@@ -277,7 +290,7 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         if not port:
             return
 
-        filesystem = MockFileSystem()
+        filesystem = filesystem_mock.MockFileSystem()
         port._filesystem = filesystem
         port.path_from_chromium_base = lambda *comps: '/' + '/'.join(comps)
 
@@ -297,14 +310,15 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
     def test_check_sys_deps(self):
-        port = ChromiumPortTest.TestLinuxPort()
+        mock_options = mocktool.MockOptions()
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
         # Success
-        port._executive = MockExecutive2(exit_code=0)
+        port._executive = executive_mock.MockExecutive2(exit_code=0)
         self.assertTrue(port.check_sys_deps(needs_http=False))
 
         # Failure
-        port._executive = MockExecutive2(exit_code=1,
+        port._executive = executive_mock.MockExecutive2(exit_code=1,
             output='testing output failure')
         self.assertFalse(port.check_sys_deps(needs_http=False))
         self.assertLog([

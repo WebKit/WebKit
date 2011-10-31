@@ -141,10 +141,9 @@ class QtPort(WebKitPort):
         return None
 
     def setup_environ_for_server(self, server_name=None):
-        clean_env = WebKitPort.setup_environ_for_server(self, server_name)
-        clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
-        self._copy_value_from_environ_if_set(clean_env, 'QT_DRT_WEBVIEW_MODE')
-        return clean_env
+        env = WebKitPort.setup_environ_for_server(self, server_name)
+        env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
+        return env
 
     # FIXME: We should find a way to share this implmentation with Gtk,
     # or teach run-launcher how to call run-safari and move this down to WebKitPort.

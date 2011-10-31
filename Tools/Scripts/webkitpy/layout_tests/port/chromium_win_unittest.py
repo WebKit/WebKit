@@ -52,40 +52,53 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self._port = None
 
     def port_maker(self, platform):
+        if platform not in ('cygwin', 'win32'):
+            return None
         return chromium_win.ChromiumWinPort
 
+    def _mock_path_from_chromium_base(self, *comps):
+        return self._port._filesystem.join("/chromium/src", *comps)
+
     def test_uses_apache(self):
-        self.assertFalse(self.make_port()._uses_apache())
+        port = self.make_port()
+        if not port:
+            return
+
+        self.assertFalse(port._uses_apache())
 
     def test_setup_environ_for_server(self):
         port = self.make_port()
+        if not port:
+            return
+
         port._executive = mocktool.MockExecutive(should_log=True)
+        self._port = port
+        port.path_from_chromium_base = self._mock_path_from_chromium_base
         output = outputcapture.OutputCapture()
-        # FIXME: This test should not use the real os.environ
         orig_environ = os.environ.copy()
         env = output.assert_outputs(self, port.setup_environ_for_server)
         self.assertEqual(orig_environ["PATH"], os.environ["PATH"])
         self.assertNotEqual(env["PATH"], os.environ["PATH"])
 
-    def test_setup_environ_for_server_cygpath(self):
-        port = self.make_port()
-        env = port.setup_environ_for_server(port.driver_name())
-        self.assertEquals(env['CYGWIN_PATH'], '/mock-checkout/Source/WebKit/chromium/third_party/cygwin/bin')
-
     def test_setup_environ_for_server_register_cygwin(self):
         port = self.make_port(options=ChromiumWinTest.RegisterCygwinOption())
+        if not port:
+            return
+
         port._executive = mocktool.MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['/mock-checkout/Source/WebKit/chromium/third_party/cygwin/setup_mount.bat'], cwd=None\n"
+        port.path_from_chromium_base = self._mock_path_from_chromium_base
+        self._port = port
+        setup_mount = self._mock_path_from_chromium_base("third_party", "cygwin", "setup_mount.bat")
+        expected_stderr = "MOCK run_command: %s, cwd=None\n" % [setup_mount]
         output = outputcapture.OutputCapture()
         output.assert_outputs(self, port.setup_environ_for_server, expected_stderr=expected_stderr)
 
     def assert_name(self, port_name, windows_version, expected):
-        # FIXME: This should use make_port or pass MockFileSystem/MockUser/MockExecutive directly.
-        port = chromium_win.ChromiumWinPort(port_name=port_name, windows_version=windows_version)
+        port = chromium_win.ChromiumWinPort(port_name=port_name,
+                                            windows_version=windows_version)
         self.assertEquals(expected, port.name())
 
     def test_versions(self):
-        # FIXME: This should use make_port or pass MockFileSystem/MockUser/MockExecutive directly.
         port = chromium_win.ChromiumWinPort()
         self.assertTrue(port.name() in ('chromium-win-xp', 'chromium-win-vista', 'chromium-win-win7'))
 
@@ -113,7 +126,6 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assertRaises(KeyError, self.assert_name, None, (7, 1), 'chromium-win-xp')
 
     def test_baseline_path(self):
-        # FIXME: This should use make_port or pass MockFileSystem/MockUser/MockExecutive directly.
         port = chromium_win.ChromiumWinPort(port_name='chromium-win-xp')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win-xp'))
 
@@ -124,14 +136,17 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win'))
 
     def test_build_path(self):
-        mock_filesystem = MockFileSystem(files={
-            '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe': 'exe'
-        })
+        mock = MockFileSystem(files={
+            '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe': 'exe'})
 
-        port = chromium_win.ChromiumWinPort(filesystem=mock_filesystem)
+        port = chromium_win.ChromiumWinPort(filesystem=mock)
         self.assertEquals(
             '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe',
             port._path_to_driver('Release'))
         self.assertEquals(
             '/mock-checkout/Source/WebKit/chromium/build/Debug/DumpRenderTree.exe',
             port._path_to_driver('Debug'))
+
+
+if __name__ == '__main__':
+    port_testcase.main()

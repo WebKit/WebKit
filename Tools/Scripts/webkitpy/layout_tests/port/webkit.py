@@ -220,11 +220,6 @@ class WebKitPort(Port):
 
         return (output_image, diff_percent)
 
-    def setup_environ_for_server(self, server_name=None):
-        clean_env = super(WebKitPort, self).setup_environ_for_server(server_name)
-        self._copy_value_from_environ_if_set(clean_env, 'WEBKIT_TESTFONTS')
-        return clean_env
-
     def default_results_directory(self):
         # Results are store relative to the built products to make it easy
         # to have multiple copies of webkit checked out and built.

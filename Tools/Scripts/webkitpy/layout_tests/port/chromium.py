@@ -221,22 +221,28 @@ class ChromiumPort(Port):
         """Returns the full path to path made by joining the top of the
         Chromium source tree and the list of path components in |*comps|."""
         if not self._chromium_base_dir:
-            chromium_module_path = self._filesystem.path_to_module(self.__module__)
-            offset = chromium_module_path.find('third_party')
+            abspath = self._filesystem.abspath(__file__)
+            offset = abspath.find('third_party')
             if offset == -1:
-                self._chromium_base_dir = self._filesystem.join(chromium_module_path[0:chromium_module_path.find('Tools')], 'Source', 'WebKit', 'chromium')
+                self._chromium_base_dir = self._filesystem.join(
+                    abspath[0:abspath.find('Tools')],
+                    'Source', 'WebKit', 'chromium')
             else:
-                self._chromium_base_dir = chromium_module_path[0:offset]
+                self._chromium_base_dir = abspath[0:offset]
         return self._filesystem.join(self._chromium_base_dir, *comps)
 
     def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations.txt')
+        return self.path_from_webkit_base('LayoutTests', 'platform',
+            'chromium', 'test_expectations.txt')
 
     def default_results_directory(self):
         try:
-            return self.path_from_chromium_base('webkit', self.get_option('configuration'), 'layout-test-results')
+            return self.path_from_chromium_base('webkit',
+                self.get_option('configuration'),
+                'layout-test-results')
         except AssertionError:
-            return self._build_path(self.get_option('configuration'), 'layout-test-results')
+            return self._build_path(self.get_option('configuration'),
+                                    'layout-test-results')
 
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
