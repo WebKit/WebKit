@@ -1,3 +1,15 @@
+2011-10-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] MiniBrowser doesn't resize as the size is always overridden
+        https://bugs.webkit.org/show_bug.cgi?id=71212
+
+        Reviewed by Simon Hausmann.
+
+        Remove call overriden the size.
+
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2011-10-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r98819, r98823, r98825, and r98830.
