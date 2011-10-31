@@ -1,3 +1,28 @@
+2011-10-31  Anna Cavender  <annacc@chromium.org>
+
+        Implement load notification and events for <track>.
+        https://bugs.webkit.org/show_bug.cgi?id=71054
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/track/track-load-error-readyState.html
+               media/track/track-load-from-element-readyState.html
+               media/track/track-load-from-src-readyState.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::trackWasAdded):
+        (WebCore::HTMLMediaElement::trackWillBeRemoved):
+        (WebCore::HTMLMediaElement::trackSourceChanged):
+        * html/HTMLMediaElement.h:
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedIntoTree):
+        (WebCore::HTMLTrackElement::willRemove):
+        (WebCore::HTMLTrackElement::parseMappedAttribute):
+        (WebCore::HTMLTrackElement::attributeChanged):
+        * html/HTMLTrackElement.h:
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+
 2011-10-31  Andreas Kling  <kling@webkit.org>
 
         CSSRule: Devirtualize type() and isFooRule()

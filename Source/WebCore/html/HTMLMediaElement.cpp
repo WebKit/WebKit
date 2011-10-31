@@ -1993,6 +1993,38 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const Strin
     m_textTracks.append(textTrack);
     return textTrack.release();
 }
+
+void HTMLMediaElement::trackWasAdded(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+    loadNextTextTrack(track);
+}
+ 
+void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+}
+
+void HTMLMediaElement::trackSourceChanged(HTMLTrackElement* track)
+{
+#if !LOG_DISABLED
+    if (track->hasTagName(trackTag)) {
+        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::trackSourceChanged - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+    loadNextTextTrack(track);
+}
 #endif
 
 bool HTMLMediaElement::havePotentialSourceChild()

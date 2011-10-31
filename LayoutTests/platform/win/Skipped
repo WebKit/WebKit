@@ -1405,6 +1405,9 @@ fast/mutation
 
 # Tests for <track>.  Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=43668
+media/track/track-load-error-readyState.html
+media/track/track-load-from-element-readyState.html
+media/track/track-load-from-src-readyState.html
 media/track/track-mutable.html
 media/track/track-text-track-cue-list.html
 media/track/track-text-track-destructor-crash.html

@@ -181,6 +181,9 @@ public:
 
 #if ENABLE(VIDEO_TRACK)
     PassRefPtr<TextTrack> addTrack(const String& kind, const String& label = "", const String& language = "");
+    virtual void trackWasAdded(HTMLTrackElement*);
+    virtual void trackWillBeRemoved(HTMLTrackElement*);
+    virtual void trackSourceChanged(HTMLTrackElement*);
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
