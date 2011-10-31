@@ -18,4 +18,12 @@
 */
 
 #include <QtQuickTest/quicktest.h>
-QUICK_TEST_MAIN(qmltests)
+#include <QtWidgets/QApplication>
+
+int main(int argc, char** argv)
+{
+    // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
+    // This can be removed as soon as we do not use QtWidgets any more.
+    QApplication app(argc, argv);
+    return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
+}

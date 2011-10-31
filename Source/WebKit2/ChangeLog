@@ -1,3 +1,15 @@
+2011-10-31  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix qmltests after r98460 added widgets dependency.
+
+        Reviewed by Simon Hausmann.
+
+        Use QApplication and QtWidgets until we get rid of the widgets dependency of QScroller.
+
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+
 2011-10-31  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Make QWebPreferences hold a QtWebPageProxy
