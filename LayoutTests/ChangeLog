@@ -1,3 +1,9 @@
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Marked tests as failing after r98852.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-31  John Gregg  <johnnyg@google.com>
 
         Unreviewed, expectations for fast/js tests.
