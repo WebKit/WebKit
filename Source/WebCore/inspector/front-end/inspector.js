@@ -29,95 +29,6 @@
  */
 
 var WebInspector = {
-    resources: {},
-    missingLocalizedStrings: {},
-    pendingDispatches: 0,
-
-    get platform()
-    {
-        if (!("_platform" in this))
-            this._platform = InspectorFrontendHost.platform();
-
-        return this._platform;
-    },
-
-    get platformFlavor()
-    {
-        if (!("_platformFlavor" in this))
-            this._platformFlavor = this._detectPlatformFlavor();
-
-        return this._platformFlavor;
-    },
-
-    _detectPlatformFlavor: function()
-    {
-        const userAgent = navigator.userAgent;
-
-        if (this.platform === "windows") {
-            var match = userAgent.match(/Windows NT (\d+)\.(?:\d+)/);
-            if (match && match[1] >= 6)
-                return WebInspector.PlatformFlavor.WindowsVista;
-            return null;
-        } else if (this.platform === "mac") {
-            var match = userAgent.match(/Mac OS X\s*(?:(\d+)_(\d+))?/);
-            if (!match || match[1] != 10)
-                return WebInspector.PlatformFlavor.MacSnowLeopard;
-            switch (Number(match[2])) {
-                case 4:
-                    return WebInspector.PlatformFlavor.MacTiger;
-                case 5:
-                    return WebInspector.PlatformFlavor.MacLeopard;
-                case 6:
-                default:
-                    return WebInspector.PlatformFlavor.MacSnowLeopard;
-            }
-        }
-
-        return null;
-    },
-
-    get port()
-    {
-        if (!("_port" in this))
-            this._port = InspectorFrontendHost.port();
-
-        return this._port;
-    },
-
-    get previousFocusElement()
-    {
-        return this._previousFocusElement;
-    },
-
-    get currentFocusElement()
-    {
-        return this._currentFocusElement;
-    },
-
-    set currentFocusElement(x)
-    {
-        if (this._currentFocusElement !== x)
-            this._previousFocusElement = this._currentFocusElement;
-        this._currentFocusElement = x;
-
-        if (this._currentFocusElement) {
-            this._currentFocusElement.focus();
-
-            // Make a caret selection inside the new element if there isn't a range selection and
-            // there isn't already a caret selection inside.
-            var selection = window.getSelection();
-            if (selection.isCollapsed && !this._currentFocusElement.isInsertionCaretInside()) {
-                var selectionRange = this._currentFocusElement.ownerDocument.createRange();
-                selectionRange.setStart(this._currentFocusElement, 0);
-                selectionRange.setEnd(this._currentFocusElement, 0);
-
-                selection.removeAllRanges();
-                selection.addRange(selectionRange);
-            }
-        } else if (this._previousFocusElement)
-            this._previousFocusElement.blur();
-    },
-
     currentPanel: function()
     {
         return this._currentPanel;
@@ -445,13 +356,8 @@ WebInspector.doLoadedDone = function()
 {
     InspectorFrontendHost.loaded();
 
-    var platform = WebInspector.platform;
-    document.body.addStyleClass("platform-" + platform);
-    var flavor = WebInspector.platformFlavor;
-    if (flavor)
-        document.body.addStyleClass("platform-" + flavor);
-    var port = WebInspector.port;
-    document.body.addStyleClass("port-" + port);
+    WebInspector.installPortStyles();
+
     if (WebInspector.socket)
         document.body.addStyleClass("remote");
 
@@ -584,29 +490,6 @@ WebInspector.windowResize = function(event)
     this.toolbar.resize();
 }
 
-WebInspector.windowFocused = function(event)
-{
-    // Fires after blur, so when focusing on either the main inspector
-    // or an <iframe> within the inspector we should always remove the
-    // "inactive" class.
-    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
-        document.body.removeStyleClass("inactive");
-}
-
-WebInspector.windowBlurred = function(event)
-{
-    // Leaving the main inspector or an <iframe> within the inspector.
-    // We can add "inactive" now, and if we are moving the focus to another
-    // part of the inspector then windowFocused will correct this.
-    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
-        document.body.addStyleClass("inactive");
-}
-
-WebInspector.focusChanged = function(event)
-{
-    this.currentFocusElement = event.target;
-}
-
 WebInspector.setAttachedWindow = function(attached)
 {
     this.attached = attached;
@@ -727,8 +610,8 @@ WebInspector.documentKeyDown = function(event)
         return;
     }
 
-    if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
-        this.currentFocusElement.handleKeyEvent(event);
+    if (WebInspector.currentFocusElement() && WebInspector.currentFocusElement().handleKeyEvent) {
+        WebInspector.currentFocusElement().handleKeyEvent(event);
         if (event.handled) {
             event.preventDefault();
             return;
@@ -1050,14 +933,10 @@ WebInspector.showProfileForURL = function(url)
 
 WebInspector.addMainEventListeners = function(doc)
 {
-    doc.addEventListener("focus", this.focusChanged.bind(this), true);
     doc.addEventListener("keydown", this.documentKeyDown.bind(this), false);
     doc.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     doc.addEventListener("copy", this.documentCopy.bind(this), true);
     doc.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
-
-    doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);
-    doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), false);
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
@@ -1065,29 +944,6 @@ WebInspector.frontendReused = function()
 {
     this.resourceTreeModel.frontendReused();
     this.reset();
-}
-
-WebInspector.UIString = function(string)
-{
-    if (window.localizedStrings && string in window.localizedStrings)
-        string = window.localizedStrings[string];
-    else {
-        if (!(string in WebInspector.missingLocalizedStrings)) {
-            if (!WebInspector.InspectorBackendStub)
-                console.warn("Localized string \"" + string + "\" not found.");
-            WebInspector.missingLocalizedStrings[string] = true;
-        }
-
-        if (Preferences.showMissingLocalizedStrings)
-            string += " (not localized)";
-    }
-
-    return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
-}
-
-WebInspector.useLowerCaseMenuTitles = function()
-{
-    return WebInspector.platform === "windows" && Preferences.useLowerCaseMenuTitlesOnWindows;
 }
 
 WebInspector._toolbarItemClicked = function(event)

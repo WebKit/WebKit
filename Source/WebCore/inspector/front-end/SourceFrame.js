@@ -43,7 +43,7 @@ WebInspector.SourceFrame = function(delegate, url)
     this._textModel = new WebInspector.TextEditorModel();
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
-    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);
+    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform(), this._url, textViewerDelegate);
 
     this.popoverHelper = new WebInspector.ObjectPopoverHelper(this._textViewer.element,
             this._getPopoverAnchor.bind(this), this.onShowPopover.bind(this), this.onHidePopover.bind(this), true);

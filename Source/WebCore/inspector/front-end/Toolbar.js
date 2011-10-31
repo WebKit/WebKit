@@ -67,7 +67,7 @@ WebInspector.Toolbar.prototype = {
 
     _toolbarDragStart: function(event)
     {
-        if ((!WebInspector.attached && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port == "qt")
+        if ((!WebInspector.attached && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
             return;
 
         var target = event.target;

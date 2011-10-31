@@ -144,8 +144,8 @@ WebInspector.Drawer.prototype = {
 
         this._savedHeight = this.element.offsetHeight;
 
-        if (this.element === WebInspector.currentFocusElement || this.element.isAncestor(WebInspector.currentFocusElement))
-            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
+        if (this.element === WebInspector.currentFocusElement() || this.element.isAncestor(WebInspector.currentFocusElement()))
+            WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
 
         var anchoredItems = document.getElementById("anchored-status-bar-items");
 

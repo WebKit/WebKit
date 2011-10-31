@@ -58,6 +58,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.showNetworkPanelInitiatorColumn = true;
     Preferences.haveExtensions = true;
     Preferences.sharedWorkersListURL = "chrome://workers/";
+    Preferences.localizeUI = false;
 })();
 
 // Recognize WebP as a valid image mime type.

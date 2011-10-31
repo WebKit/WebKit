@@ -142,7 +142,7 @@ WebInspector.KeyboardShortcut._keyName = function(key)
         return key.toUpperCase();
     if (typeof key.name === "string")
         return key.name;
-    return key.name[WebInspector.platform] || key.name.other;
+    return key.name[WebInspector.platform()] || key.name.other;
 }
 
 WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers = function(keyCode, modifiers)

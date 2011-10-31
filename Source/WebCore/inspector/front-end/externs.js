@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// WebKit Web Facing API
 var console = {}
 /** @param {...*} vararg */
 console.warn = function(vararg) {}
@@ -37,35 +38,42 @@ console.assert = function(vararg) {}
 console.error = function(vararg) {}
 console.trace = function() {}
 
-var WebInspector = {}
-
-/**
- * @param {string} str
- * @param {...*} varArgs
- */
-WebInspector.UIString = function(str, varArgs) {}
-var InspectorBackend = {}
-InspectorBackend.runAfterPendingDispatches = function(message) {}
-
 var JSON = {}
 /** @param {string} str */
 JSON.parse = function(str) {}
-
 /** @param {Object} obj */
 /** @return {string} */
 JSON.stringify = function(str) {}
 
-/**
- * @param {boolean=} param
- */
+/** @param {boolean=} param */
 Element.prototype.scrollIntoViewIfNeeded = function(param) {}
+/** @type {boolean} */
+Event.prototype.isMetaOrCtrlForTest = false;
+/** @param {...*} vararg */
+Event.prototype.initWebKitWheelEvent = function(vararg) {}
+/** @param {Element} element */
+window.getComputedStyle = function(element) {}
 
-/**
- * @param {boolean=} onlyFirst
- */
+/** @param {boolean=} onlyFirst */
 Array.prototype.remove = function(obj, onlyFirst) {}
-
 Array.prototype.keySet = function() {}
+
+DOMApplicationCache.prototype.UNCACHED = 0;
+DOMApplicationCache.prototype.IDLE = 1;
+DOMApplicationCache.prototype.CHECKING = 2;
+DOMApplicationCache.prototype.DOWNLOADING = 3;
+DOMApplicationCache.prototype.UPDATEREADY = 4;
+DOMApplicationCache.prototype.OBSOLETE = 5;
+
+
+
+// Inspector Backend
+var InspectorBackend = {}
+InspectorBackend.runAfterPendingDispatches = function(message) {}
+
+
+// FIXME: remove everything below.
+var WebInspector = {}
 
 WebInspector.extensionServer = {}
 WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
@@ -73,22 +81,11 @@ WebInspector.extensionServer.notifyPanelShown = function(panel) {}
 WebInspector.extensionServer.notifyPanelHidden = function(panel) {}
 WebInspector.extensionServer.notifyObjectSelected = function(object) {}
 
-WebInspector.debuggerPresentationModel = {
-    linkifyLocation: function(url, lineNumber, columnNumber, className) {}
-}
-
 /**
  * @param {NetworkAgent.RequestId} requestId
  * @return {?WebInspector.Resource}
  */
 WebInspector.networkResourceById = function(requestId)
-{
-}
-
-/**
- * @return {boolean}
- */
-WebInspector.useLowerCaseMenuTitles = function()
 {
 }
 
@@ -110,42 +107,10 @@ WebInspector.currentPanel = function() {}
 WebInspector.setCurrentPanel = function(panel) {}
 
 /**
- * @type {?Element}
- */
-WebInspector.currentFocusElement = null;
-
-/**
- * @type {?Element}
- */
-WebInspector.previousFocusElement = null;
-
-/**
  * @param {WebInspector.View} view
  */
 WebInspector.showViewInDrawer = function(view) {}
 
-/**
- * @type {WebInspector.AdvancedSearchController}
- */
-WebInspector.advancedSearchController = null;
-
-/**
- * @type {string}
- */
-WebInspector.platformFlavor = "";
-
-/** @param {Element} element */
-window.getComputedStyle = function(element) {}
-
-/**
- * @type {boolean}
- */
-Event.prototype.isMetaOrCtrlForTest = false;
-
-/**
- * @param {...*} vararg
- */
-Event.prototype.initWebKitWheelEvent = function(vararg) {}
 
 /**
  * @param {string=} messageLevel
@@ -156,13 +121,6 @@ WebInspector.log = function(message, messageLevel, showConsole) {}
 WebInspector.addMainEventListeners = function(doc) {}
 
 WebInspector.openResource = function(url, external) {}
-
-DOMApplicationCache.prototype.UNCACHED = 0;
-DOMApplicationCache.prototype.IDLE = 1;
-DOMApplicationCache.prototype.CHECKING = 2;
-DOMApplicationCache.prototype.DOWNLOADING = 3;
-DOMApplicationCache.prototype.UPDATEREADY = 4;
-DOMApplicationCache.prototype.OBSOLETE = 5;
 
 WebInspector.openRequestInNetworkPanel = function(request) {}
 

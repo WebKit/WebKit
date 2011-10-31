@@ -1,3 +1,12 @@
+2011-10-31  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move localization support into UIUtil.js, reduce externs.
+        https://bugs.webkit.org/show_bug.cgi?id=71220
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/DevTools.js:
+
 2011-10-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium] The Chromium port calls OwnPtr::get and RefPtr::get way more often than needed

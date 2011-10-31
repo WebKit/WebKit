@@ -288,8 +288,8 @@ WebInspector.startEditing = function(element, config)
         if (pasteCallback)
             element.removeEventListener("paste", pasteEventListener, true);
 
-        if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
-            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
+        if (element === WebInspector.currentFocusElement() || element.isAncestor(WebInspector.currentFocusElement()))
+            WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
     }
 
     /** @this {Element} */
@@ -361,7 +361,7 @@ WebInspector.startEditing = function(element, config)
     if (pasteCallback)
         element.addEventListener("paste", pasteEventListener, true);
 
-    WebInspector.currentFocusElement = element;
+    WebInspector.setCurrentFocusElement(element);
     return {
         cancel: editingCancelled.bind(element),
         commit: editingCommitted.bind(element)
@@ -421,6 +421,34 @@ Number.bytesToString = function(bytes, higherResolution)
         return WebInspector.UIString("%.0fMB", megabytes);
 }
 
+WebInspector._missingLocalizedStrings = {};
+
+/**
+ * @param {string} string
+ * @param {...*} vararg
+ */
+WebInspector.UIString = function(string, vararg)
+{
+    if (Preferences.localizeUI) {
+        if (window.localizedStrings && string in window.localizedStrings)
+            string = window.localizedStrings[string];
+        else {
+            if (!(string in WebInspector._missingLocalizedStrings)) {
+                console.warn("Localized string \"" + string + "\" not found.");
+                WebInspector._missingLocalizedStrings[string] = true;
+            }
+    
+            if (Preferences.showMissingLocalizedStrings)
+                string += " (not localized)";
+        }
+    }
+    return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
+}
+
+WebInspector.useLowerCaseMenuTitles = function()
+{
+    return WebInspector.platform() === "windows" && Preferences.useLowerCaseMenuTitlesOnWindows;
+}
 
 WebInspector.formatLocalized = function(format, substitutions, formatters, initialValue, append)
 {
@@ -441,3 +469,142 @@ WebInspector.copyLinkAddressLabel = function()
 {
     return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy link address" : "Copy Link Address");
 }
+
+WebInspector.platform = function()
+{
+    if (!WebInspector._platform)
+        WebInspector._platform = InspectorFrontendHost.platform();
+    return WebInspector._platform;
+}
+
+WebInspector.isMac = function()
+{
+    if (typeof WebInspector._isMac === "undefined")
+        WebInspector._isMac = WebInspector.platform() === "mac";
+
+    return WebInspector._isMac;
+}
+
+WebInspector.PlatformFlavor = {
+    WindowsVista: "windows-vista",
+    MacTiger: "mac-tiger",
+    MacLeopard: "mac-leopard",
+    MacSnowLeopard: "mac-snowleopard"
+}
+
+WebInspector.platformFlavor = function()
+{
+    function detectFlavor()
+    {
+        const userAgent = navigator.userAgent;
+
+        if (WebInspector.platform() === "windows") {
+            var match = userAgent.match(/Windows NT (\d+)\.(?:\d+)/);
+            if (match && match[1] >= 6)
+                return WebInspector.PlatformFlavor.WindowsVista;
+            return null;
+        } else if (WebInspector.platform() === "mac") {
+            var match = userAgent.match(/Mac OS X\s*(?:(\d+)_(\d+))?/);
+            if (!match || match[1] != 10)
+                return WebInspector.PlatformFlavor.MacSnowLeopard;
+            switch (Number(match[2])) {
+                case 4:
+                    return WebInspector.PlatformFlavor.MacTiger;
+                case 5:
+                    return WebInspector.PlatformFlavor.MacLeopard;
+                case 6:
+                default:
+                    return WebInspector.PlatformFlavor.MacSnowLeopard;
+            }
+        }
+    }
+
+    if (!WebInspector._platformFlavor)
+        WebInspector._platformFlavor = detectFlavor();
+
+    return WebInspector._platformFlavor;
+}
+
+WebInspector.port = function()
+{
+    if (!WebInspector._port)
+        WebInspector._port = InspectorFrontendHost.port();
+
+    return WebInspector._port;
+}
+
+WebInspector.installPortStyles = function()
+{
+    var platform = WebInspector.platform();
+    document.body.addStyleClass("platform-" + platform);
+    var flavor = WebInspector.platformFlavor();
+    if (flavor)
+        document.body.addStyleClass("platform-" + flavor);
+    var port = WebInspector.port();
+    document.body.addStyleClass("port-" + port);
+}
+
+WebInspector._windowFocused = function(event)
+{
+    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
+        document.body.removeStyleClass("inactive");
+}
+
+WebInspector._windowBlurred = function(event)
+{
+    if (event.target.document.nodeType === Node.DOCUMENT_NODE)
+        document.body.addStyleClass("inactive");
+}
+
+WebInspector.previousFocusElement = function()
+{
+    return WebInspector._previousFocusElement;
+}
+
+WebInspector.currentFocusElement = function()
+{
+    return WebInspector._currentFocusElement;
+}
+
+WebInspector._focusChanged = function(event)
+{
+    WebInspector.setCurrentFocusElement(event.target);
+}
+
+WebInspector.setCurrentFocusElement = function(x)
+{
+    if (WebInspector._currentFocusElement !== x)
+        WebInspector._previousFocusElement = WebInspector._currentFocusElement;
+    WebInspector._currentFocusElement = x;
+
+    if (WebInspector._currentFocusElement) {
+        WebInspector._currentFocusElement.focus();
+
+        // Make a caret selection inside the new element if there isn't a range selection and
+        // there isn't already a caret selection inside.
+        var selection = window.getSelection();
+        if (selection.isCollapsed && !WebInspector._currentFocusElement.isInsertionCaretInside()) {
+            var selectionRange = WebInspector._currentFocusElement.ownerDocument.createRange();
+            selectionRange.setStart(WebInspector._currentFocusElement, 0);
+            selectionRange.setEnd(WebInspector._currentFocusElement, 0);
+
+            selection.removeAllRanges();
+            selection.addRange(selectionRange);
+        }
+    } else if (WebInspector._previousFocusElement)
+        WebInspector._previousFocusElement.blur();
+}
+
+;(function() {
+
+function windowLoaded()
+{
+    window.addEventListener("focus", WebInspector._windowFocused, false);
+    window.addEventListener("blur", WebInspector._windowBlurred, false);
+    document.addEventListener("focus", WebInspector._focusChanged.bind(this), true);
+    window.removeEventListener("DOMContentLoaded", windowLoaded, false);
+}
+
+window.addEventListener("DOMContentLoaded", windowLoaded, false);
+
+})();

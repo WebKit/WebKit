@@ -64,8 +64,8 @@ WebInspector.GoToLineDialog = function(view)
     this._view = view;
     view.element.appendChild(this._element);
 
-    this._previousFocusElement = WebInspector.currentFocusElement;
-    WebInspector.currentFocusElement = this._input;
+    this._previousFocusElement = WebInspector.currentFocusElement();
+    WebInspector.setCurrentFocusElement(this._input);
     this._input.select();
 }
 
@@ -107,7 +107,7 @@ WebInspector.GoToLineDialog.prototype = {
             return;
         this._isHiding = true;
 
-        WebInspector.currentFocusElement = this._previousFocusElement;
+        WebInspector.setCurrentFocusElement(this._previousFocusElement);
         WebInspector.GoToLineDialog._instance = null;
         this._element.parentElement.removeChild(this._element);
     },

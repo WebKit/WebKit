@@ -337,7 +337,7 @@ WebInspector.SearchView.prototype = {
 
     focus: function()
     {
-        WebInspector.currentFocusElement = this._search;
+        WebInspector.setCurrentFocusElement(this._search);
         this._search.select();
     },
 
@@ -671,3 +671,8 @@ WebInspector.FileBasedSearchResultsPane.SearchResult = function(file, searchMatc
     this.file = file;
     this.searchMatches = searchMatches;
 }
+
+/**
+ * @type {WebInspector.AdvancedSearchController}
+ */
+WebInspector.advancedSearchController = null;

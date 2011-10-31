@@ -79,7 +79,7 @@ WebInspector.Panel.prototype = {
         if ("_toolbarItem" in this)
             this._toolbarItem.addStyleClass("toggled-on");
 
-        WebInspector.currentFocusElement = this.defaultFocusedElement;
+        WebInspector.setCurrentFocusElement(this.defaultFocusedElement);
 
         this.restoreSidebarWidth();
         WebInspector.extensionServer.notifyPanelShown(this.name);

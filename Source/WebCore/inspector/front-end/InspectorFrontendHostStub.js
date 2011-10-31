@@ -28,21 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PlatformFlavor = {
-    WindowsVista: "windows-vista",
-    MacTiger: "mac-tiger",
-    MacLeopard: "mac-leopard",
-    MacSnowLeopard: "mac-snowleopard"
-}
-
-WebInspector.isMac = function()
-{
-    if (typeof WebInspector._isMac === "undefined")
-        WebInspector._isMac = WebInspector.platform === "mac";
-
-    return WebInspector._isMac;
-}
-
 if (!window.InspectorFrontendHost) {
 
 /**
@@ -52,8 +37,6 @@ WebInspector.InspectorFrontendHostStub = function()
 {
     this._attachedWindowHeight = 0;
 }
-
-WebInspector._platformFlavor = WebInspector.PlatformFlavor.MacLeopard;
 
 WebInspector.InspectorFrontendHostStub.prototype = {
     platform: function()
@@ -170,5 +153,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 }
 
 var InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
+Preferences.localizeUI = false;
 
 }

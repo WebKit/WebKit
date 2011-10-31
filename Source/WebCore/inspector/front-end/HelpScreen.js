@@ -63,8 +63,8 @@ WebInspector.HelpScreen.prototype = {
         document.body.appendChild(this._element);
         this._isShown = true;
         this._onHide = onHide;
-        this._previousFocusElement = WebInspector.currentFocusElement;
-        WebInspector.currentFocusElement = this.contentElement;
+        this._previousFocusElement = WebInspector.currentFocusElement();
+        WebInspector.setCurrentFocusElement(this.contentElement);
     },
 
     hide: function()
@@ -74,7 +74,7 @@ WebInspector.HelpScreen.prototype = {
 
         this._isShown = false;
         document.body.removeChild(this._element);
-        WebInspector.currentFocusElement = this._previousFocusElement;
+        WebInspector.setCurrentFocusElement(this._previousFocusElement);
         if (this._onHide) {
             this._onHide();
             delete this._onHide;
@@ -93,6 +93,6 @@ WebInspector.HelpScreen.prototype = {
     {
          // Pretend we're modal, grab focus back if we're still shown.
         if (this._isShown)
-            WebInspector.currentFocusElement = this.contentElement;
+            WebInspector.setCurrentFocusElement(this.contentElement);
     }
 }

@@ -57,7 +57,8 @@ var Preferences = {
     canDisableCache: false,
     showNetworkPanelInitiatorColumn: false,
     haveExtensions: false,
-    sharedWorkersListURL: undefined
+    sharedWorkersListURL: undefined,
+    localizeUI: true
 }
 
 /**

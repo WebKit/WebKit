@@ -190,7 +190,7 @@ WebInspector.SearchController.prototype = {
 
     _onSearchFieldManualFocus: function(event)
     {
-        WebInspector.currentFocusElement = event.target;
+        WebInspector.setCurrentFocusElement(event.target);
     },
 
     _onKeyDown: function(event)
@@ -200,15 +200,15 @@ WebInspector.SearchController.prototype = {
             // If focus belongs here and text is empty - nothing to do, return unhandled.
             // When search was selected manually and is currently blank, we'd like Esc stay unhandled
             // and hit console drawer handler.
-            if (event.target.value === "" && WebInspector.currentFocusElement === WebInspector.previousFocusElement)
+            if (event.target.value === "" && WebInspector.currentFocusElement() === WebInspector.previousFocusElement())
                 return;
             event.preventDefault();
             event.stopPropagation();
 
             this.cancelSearch();
-            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
-            if (WebInspector.currentFocusElement === event.target)
-                WebInspector.currentFocusElement.currentFocusElement.select();
+            WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
+            if (WebInspector.currentFocusElement() === event.target)
+                WebInspector.currentFocusElement().select();
             return false;
         }
 

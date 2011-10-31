@@ -37,15 +37,14 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
     --module jsmodule_util:2 \
         --js Source/WebCore/inspector/front-end/utilities.js \
         --js Source/WebCore/inspector/front-end/treeoutline.js \
-    --module jsmodule_host:1 \
-        --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_common:6:jsmodule_util,jsmodule_host \
+    --module jsmodule_common:7:jsmodule_util \
         --js Source/WebCore/inspector/front-end/BinarySearch.js \
         --js Source/WebCore/inspector/front-end/Object.js \
         --js Source/WebCore/inspector/front-end/PartialQuickSort.js \
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
+        --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
     --module jsmodule_sdk:25:jsmodule_common \
         --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
         --js Source/WebCore/inspector/front-end/CompilerSourceMappingProvider.js \

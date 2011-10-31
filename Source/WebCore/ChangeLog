@@ -1,3 +1,60 @@
+2011-10-31  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move localization support into UIUtil.js, reduce externs.
+        https://bugs.webkit.org/show_bug.cgi?id=71220
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView.prototype.focus):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.afterShow):
+        * inspector/front-end/Drawer.js:
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog.prototype._hide):
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen.prototype.show):
+        (WebInspector.HelpScreen.prototype.hide):
+        (WebInspector.HelpScreen.prototype._onBlur):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut._keyName):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype._onSearchFieldManualFocus):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.startEditing.cleanUpAfterEditing):
+        (WebInspector.startEditing.var):
+        (WebInspector.startEditing):
+        (WebInspector.UIString):
+        (WebInspector.useLowerCaseMenuTitles):
+        (WebInspector.platform):
+        (WebInspector.isMac):
+        (WebInspector.platformFlavor):
+        (WebInspector.port):
+        (WebInspector.installPortStyles):
+        (WebInspector._windowFocused):
+        (WebInspector._windowBlurred):
+        (WebInspector.previousFocusElement):
+        (WebInspector.currentFocusElement):
+        (WebInspector._focusChanged):
+        (WebInspector.setCurrentFocusElement):
+        * inspector/front-end/externs.js:
+        (Event.prototype.initWebKitWheelEvent):
+        (window.getComputedStyle):
+        (InspectorBackend.runAfterPendingDispatches):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        (WebInspector.addMainEventListeners):
+
 2011-10-31  Andreas Kling  <kling@webkit.org>
 
         Kill StyleBase.

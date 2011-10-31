@@ -232,7 +232,7 @@ WebInspector.ConsoleView.prototype = {
 
     afterShow: function()
     {
-        WebInspector.currentFocusElement = this.promptElement;
+        WebInspector.setCurrentFocusElement(this.promptElement);
     },
 
     storeScrollPositions: function()
