@@ -1,3 +1,65 @@
+2011-10-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed holiday gardening after r98852.
+
+        CSS 2.1 failure: background-intrinsic-*
+        https://bugs.webkit.org/show_bug.cgi?id=47156
+
+        * platform/qt/css1/text_properties/vertical_align-expected.png:
+        * platform/qt/css1/text_properties/vertical_align-expected.txt:
+        * platform/qt/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-003-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-003-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/qt/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/qt/fast/block/float/015-expected.png:
+        * platform/qt/fast/block/float/015-expected.txt:
+        * platform/qt/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/qt/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Added.
+        * platform/qt/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/qt/fast/repaint/block-layout-inline-children-replaced-expected.txt:
+        * platform/qt/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/qt/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Added.
+        * platform/qt/svg/as-background-image/background-image-tiled-expected.png: Added.
+        * platform/qt/svg/as-background-image/background-image-tiled-expected.txt: Added.
+        * platform/qt/svg/as-background-image/same-image-two-instances-background-image-expected.png: Added.
+        * platform/qt/svg/as-background-image/same-image-two-instances-background-image-expected.txt: Added.
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/qt/svg/as-image/same-image-two-instances-expected.png: Added.
+        * platform/qt/svg/as-image/same-image-two-instances-expected.txt: Added.
+        * platform/qt/svg/as-image/svg-as-relative-image-with-explicit-size-expected.png: Added.
+        * platform/qt/svg/as-image/svg-as-relative-image-with-explicit-size-expected.txt: Added.
+        * platform/qt/svg/as-image/svg-image-change-content-size-expected.png: Added.
+        * platform/qt/svg/as-image/svg-image-change-content-size-expected.txt: Added.
+        * platform/qt/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/page/relative-sized-document-scrollbars-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-as-image-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-as-image-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+
 2011-10-27  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Support characterDataOldValue for characterData mutations
