@@ -633,7 +633,11 @@ void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache* tileUnusedCache)
 void ewk_tile_unused_cache_max_set(Ewk_Tile_Unused_Cache* tileUnusedCache, size_t max)
 {
     EINA_SAFETY_ON_NULL_RETURN(tileUnusedCache);
+    size_t oldMax = tileUnusedCache->memory.max;
     tileUnusedCache->memory.max = max;
+    /* Cache flush when new max is lower then old one */
+    if (oldMax > max)
+        ewk_tile_unused_cache_auto_flush(tileUnusedCache);
 }
 
 size_t ewk_tile_unused_cache_max_get(const Ewk_Tile_Unused_Cache* tileUnusedCache)

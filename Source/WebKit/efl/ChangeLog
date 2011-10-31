@@ -1,3 +1,19 @@
+2011-10-31  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Make cache flush when max size of cache has been changed
+        https://bugs.webkit.org/show_bug.cgi?id=70805
+
+        Reviewed by Ryosuke Niwa.
+
+        Calls the ewk_tile_unused_cache_auto_flush function after changing max
+        size of cache when ewk_tile_unused_cache_max_set is called. Without
+        this change when new value is lower than the old one the cache may use
+        more memory than max value set. This situation is not expected by the
+        user.
+
+        * ewk/ewk_tiled_model.cpp:
+        (ewk_tile_unused_cache_max_set):
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead
