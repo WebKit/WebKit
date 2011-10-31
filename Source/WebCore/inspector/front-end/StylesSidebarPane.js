@@ -1824,56 +1824,16 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var context = {
             expanded: this.expanded,
             hasChildren: this.hasChildren,
-            keyDownListener: isEditingName ? null : this.editingValueKeyDown.bind(this),
             isEditingName: isEditingName,
+            previousContent: selectElement.textContent
         };
 
         // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
 
-        if (!isEditingName)
-            selectElement.addEventListener("keydown", context.keyDownListener, false);
         if (selectElement.parentElement)
             selectElement.parentElement.addStyleClass("child-editing");
         selectElement.textContent = selectElement.textContent; // remove color swatch and the like
-
-        function shouldCommitValueSemicolon(text, cursorPosition)
-        {
-            // FIXME: should this account for semicolons inside comments?
-            var openQuote = "";
-            for (var i = 0; i < cursorPosition; ++i) {
-                var ch = text[i];
-                if (ch === "\\" && openQuote !== "")
-                    ++i; // skip next character inside string
-                else if (!openQuote && (ch === "\"" || ch === "'"))
-                    openQuote = ch;
-                else if (openQuote === ch)
-                    openQuote = "";
-            }
-            return !openQuote;
-        }
-
-        function nameValueFinishHandler(context, isEditingName, event)
-        {
-            // FIXME: the ":"/";" detection does not work for non-US layouts due to the event being keydown rather than keypress.
-            var isFieldInputTerminated = (event.keyCode === WebInspector.KeyboardShortcut.Keys.Semicolon.code) &&
-                (isEditingName ? event.shiftKey : (!event.shiftKey && shouldCommitValueSemicolon(event.target.textContent, event.target.selectionLeftOffset())));
-            if (isEnterKey(event) || isFieldInputTerminated) {
-                // Enter or colon (for name)/semicolon outside of string (for value).
-                event.preventDefault();
-                return "move-forward";
-            } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code || event.keyIdentifier === "U+001B")
-                return "cancel";
-            else if (!isEditingName && this._newProperty && event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code) {
-                // For a new property, when Backspace is pressed at the beginning of new property value, move back to the property name.
-                var selection = window.getSelection();
-                if (selection.isCollapsed && !selection.focusOffset) {
-                    event.preventDefault();
-                    return "move-backward";
-                }
-            } else if (event.keyIdentifier === "U+0009") // Tab key.
-                return "move-" + (event.shiftKey ? "backward" : "forward");
-        }
 
         function pasteHandler(context, event)
         {
@@ -1897,7 +1857,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
             this.nameElement.normalize();
             this.valueElement.normalize();
 
-            return "move-forward";
+            this.editingCommitted(null, event.target.textContent, context.previousContent, context, "forward");
+        }
+
+        function blurListener(context, event)
+        {
+            this.editingCommitted(null, event.target.textContent, context.previousContent, context, "");
         }
 
         delete this.originalPropertyText;
@@ -1906,23 +1871,74 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (selectElement.parentElement)
             selectElement.parentElement.scrollIntoViewIfNeeded(false);
 
-        var config = new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
-        config.setCustomFinishHandler(nameValueFinishHandler.bind(this, context, isEditingName));
-        config.setPasteHandler(isEditingName ? pasteHandler.bind(this, context) : null);
-        WebInspector.startEditing(selectElement, config);
+        this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(isEditingName ? WebInspector.CSSCompletions.cssNameCompletions : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent), this, isEditingName);
+        var proxyElement = this._prompt.attachAndStartEditing(selectElement, blurListener.bind(this, context));
 
-        this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(selectElement, isEditingName ? WebInspector.CSSCompletions.cssNameCompletions : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent));
+        proxyElement.addEventListener("keydown", this.editingNameValueKeyDown.bind(this, context), false);
+        if (isEditingName)
+            proxyElement.addEventListener("paste", pasteHandler.bind(this, context));
+
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
     },
 
-    editingValueKeyDown: function(event)
+    editingNameValueKeyDown: function(context, event)
     {
         if (event.handled)
             return;
-        if (this._handleUpOrDownKeyPressed(event))
-            return;
 
-        this._applyFreeFlowStyleTextEdit(false);
+        var isEditingName = context.isEditingName;
+        var result;
+
+        function shouldCommitValueSemicolon(text, cursorPosition)
+        {
+            // FIXME: should this account for semicolons inside comments?
+            var openQuote = "";
+            for (var i = 0; i < cursorPosition; ++i) {
+                var ch = text[i];
+                if (ch === "\\" && openQuote !== "")
+                    ++i; // skip next character inside string
+                else if (!openQuote && (ch === "\"" || ch === "'"))
+                    openQuote = ch;
+                else if (openQuote === ch)
+                    openQuote = "";
+            }
+            return !openQuote;
+        }
+
+        // FIXME: the ":"/";" detection does not work for non-US layouts due to the event being keydown rather than keypress.
+        var isFieldInputTerminated = (event.keyCode === WebInspector.KeyboardShortcut.Keys.Semicolon.code) &&
+            (isEditingName ? event.shiftKey : (!event.shiftKey && shouldCommitValueSemicolon(event.target.textContent, event.target.selectionLeftOffset())));
+        if (isEnterKey(event) || isFieldInputTerminated) {
+            // Enter or colon (for name)/semicolon outside of string (for value).
+            event.preventDefault();
+            result = "forward";
+        } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code || event.keyIdentifier === "U+001B")
+            result = "cancel";
+        else if (!isEditingName && this._newProperty && event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code) {
+            // For a new property, when Backspace is pressed at the beginning of new property value, move back to the property name.
+            var selection = window.getSelection();
+            if (selection.isCollapsed && !selection.focusOffset) {
+                event.preventDefault();
+                result = "backward";
+            }
+        } else if (event.keyIdentifier === "U+0009") { // Tab key.
+            result = event.shiftKey ? "backward" : "forward";
+            event.preventDefault();
+        }
+
+        if (result) {
+            switch (result) {
+            case "cancel":
+                this.editingCancelled(null, context);
+                break;
+            case "forward":
+            case "backward":
+                this.editingCommitted(null, event.target.textContent, context.previousContent, context, result);
+                break;
+            }
+
+            event.stopPropagation();
+        }
     },
 
     _applyFreeFlowStyleTextEdit: function(now)
@@ -1945,71 +1961,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this._applyFreeFlowStyleTextEdit(true);
     },
 
-    _handleUpOrDownKeyPressed: function(event)
-    {
-        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
-        var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
-        if (!arrowKeyPressed && !pageKeyPressed)
-            return false;
-
-        var selection = window.getSelection();
-        if (!selection.rangeCount)
-            return false;
-
-        var selectionRange = selection.getRangeAt(0);
-        if (selectionRange.commonAncestorContainer !== this.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this.valueElement))
-            return false;
-
-        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.valueElement);
-        var wordString = wordRange.toString();
-        var replacementString;
-        var prefix, suffix, number;
-
-        var matches;
-        matches = /(.*#)([\da-fA-F]+)(.*)/.exec(wordString);
-        if (matches && matches.length) {
-            prefix = matches[1];
-            suffix = matches[3];
-            number = WebInspector.StylesSidebarPane.alteredHexNumber(matches[2], event);
-
-            replacementString = prefix + number + suffix;
-        } else {
-            matches = /(.*?)(-?(?:\d+(?:\.\d+)?|\.\d+))(.*)/.exec(wordString);
-            if (matches && matches.length) {
-                prefix = matches[1];
-                suffix = matches[3];
-                number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
-                if (number === null) {
-                    // Need to check for null explicitly.
-                    return false;
-                }
-
-                replacementString = prefix + number + suffix;
-            }
-        }
-
-        if (replacementString) {
-            var replacementTextNode = document.createTextNode(replacementString);
-
-            wordRange.deleteContents();
-            wordRange.insertNode(replacementTextNode);
-
-            var finalSelectionRange = document.createRange();
-            finalSelectionRange.setStart(replacementTextNode, 0);
-            finalSelectionRange.setEnd(replacementTextNode, replacementString.length);
-
-            selection.removeAllRanges();
-            selection.addRange(finalSelectionRange);
-
-            event.handled = true;
-            event.preventDefault();
-
-            // Synthesize property text disregarding any comments, custom whitespace etc.
-            this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent, false, false, false);
-        }
-        return true;
-    },
-
     editingEnded: function(context)
     {
         if (this._applyFreeFlowStyleTextEditTimer)
@@ -2019,8 +1970,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (context.expanded)
             this.expand();
         var editedElement = context.isEditingName ? this.nameElement : this.valueElement;
-        if (!context.isEditingName)
-            editedElement.removeEventListener("keydown", context.keyDownListener, false);
+        // The proxyElement has been deleted, no need to remove listener.
         if (editedElement.parentElement)
             editedElement.parentElement.removeStyleClass("child-editing");
 
@@ -2160,7 +2110,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         // BUG 53242. This cannot go into editingEnded(), as it should always happen first for any editing outcome.
         if (this._prompt) {
-            this._prompt.removeFromElement();
+            this._prompt.detach();
             delete this._prompt;
         }
     },
@@ -2186,6 +2136,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // if the editing is canceled.
             this.originalPropertyText = this.property.propertyText;
         }
+
+        if (!this.treeOutline)
+            return;
 
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
@@ -2242,30 +2195,40 @@ WebInspector.StylePropertyTreeElement.prototype.__proto__ = TreeElement.prototyp
  * @constructor
  * @extends {WebInspector.TextPrompt}
  */
-WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(element, cssCompletions)
+WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(cssCompletions, sidebarPane, isEditingName)
 {
-    WebInspector.TextPrompt.call(this, element, this._buildPropertyCompletions.bind(this), WebInspector.StylesSidebarPane.StyleValueDelimiters, true);
+    WebInspector.TextPrompt.call(this, this._buildPropertyCompletions.bind(this), WebInspector.StylesSidebarPane.StyleValueDelimiters);
     this._cssCompletions = cssCompletions;
+    this._sidebarPane = sidebarPane;
+    this._isEditingName = isEditingName;
 }
 
 WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
-    upKeyPressed: function(event)
+    onKeyDown: function(event)
     {
-        this._handleNameOrValueUpDown(event);
-    },
+        switch (event.keyIdentifier) {
+        case "Up":
+        case "Down":
+        case "PageUp":
+        case "PageDown":
+            if (this._handleNameOrValueUpDown(event)) {
+                event.preventDefault();
+                return;
+            }
+            break;
+        case "U+0009":
+            this.acceptAutoComplete();
+            return;
+        }
 
-    downKeyPressed: function(event)
-    {
-        this._handleNameOrValueUpDown(event);
-    },
-
-    tabKeyPressed: function(event)
-    {
-        this.acceptAutoComplete();
+        WebInspector.TextPrompt.prototype.onKeyDown.call(this, event);
     },
 
     _handleNameOrValueUpDown: function(event)
     {
+        if (!this._isEditingName && this._handleUpOrDownValue(event))
+            return true;
+
         var reverse = event.keyIdentifier === "Up";
         if (this.autoCompleteElement)
             this.complete(false, reverse); // Accept the current suggestion, if any.
@@ -2275,7 +2238,74 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         }
 
         this.complete(false, reverse); // Actually increment/decrement the suggestion.
-        event.handled = true;
+        return true;
+    },
+
+    _handleUpOrDownValue: function(event)
+    {
+        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+        var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
+        if (!arrowKeyPressed && !pageKeyPressed)
+            return false;
+
+        var selection = window.getSelection();
+        if (!selection.rangeCount)
+            return false;
+
+        var selectionRange = selection.getRangeAt(0);
+        if (selectionRange.commonAncestorContainer !== this._sidebarPane.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this._sidebarPane.valueElement))
+            return false;
+
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this._sidebarPane.valueElement);
+        var wordString = wordRange.toString();
+        var replacementString;
+        var prefix, suffix, number;
+
+        var matches;
+        matches = /(.*#)([\da-fA-F]+)(.*)/.exec(wordString);
+        if (matches && matches.length) {
+            prefix = matches[1];
+            suffix = matches[3];
+            number = WebInspector.StylesSidebarPane.alteredHexNumber(matches[2], event);
+
+            replacementString = prefix + number + suffix;
+        } else {
+            matches = /(.*?)(-?(?:\d+(?:\.\d+)?|\.\d+))(.*)/.exec(wordString);
+            if (matches && matches.length) {
+                prefix = matches[1];
+                suffix = matches[3];
+                number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
+                if (number === null) {
+                    // Need to check for null explicitly.
+                    return false;
+                }
+
+                replacementString = prefix + number + suffix;
+            }
+        }
+
+        if (replacementString) {
+            var replacementTextNode = document.createTextNode(replacementString);
+
+            wordRange.deleteContents();
+            wordRange.insertNode(replacementTextNode);
+
+            var finalSelectionRange = document.createRange();
+            finalSelectionRange.setStart(replacementTextNode, 0);
+            finalSelectionRange.setEnd(replacementTextNode, replacementString.length);
+
+            selection.removeAllRanges();
+            selection.addRange(finalSelectionRange);
+
+            event.handled = true;
+            event.preventDefault();
+
+            // Synthesize property text disregarding any comments, custom whitespace etc.
+            this._sidebarPane.applyStyleText(this._sidebarPane.nameElement.textContent + ": " + this._sidebarPane.valueElement.textContent, false, false, false);
+
+            return true;
+        }
+        return false;
     },
 
     _selectCurrentWordSuffix: function()
@@ -2285,9 +2315,9 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        if (!selectionRange.commonAncestorContainer.isDescendant(this.element))
+        if (!selectionRange.commonAncestorContainer.isDescendant(this._element))
             return;
-        var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.element, "forward");
+        var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this._element, "forward");
         if (!wordSuffixRange.toString())
             return;
         selection.removeAllRanges();

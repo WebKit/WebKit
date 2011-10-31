@@ -38,15 +38,14 @@ WebInspector.DatabaseQueryView = function(database)
     this.element.addStyleClass("monospace");
     this.element.tabIndex = 0;
 
-    this.element.addEventListener("selectstart", this._selectStart.bind(this), false);
-
     this.promptElement = document.createElement("div");
     this.promptElement.className = "database-query-prompt";
     this.promptElement.appendChild(document.createElement("br"));
     this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.element.appendChild(this.promptElement);
 
-    this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " ");
+    this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), " ");
+    this.prompt.attach(this.promptElement);
 }
 
 WebInspector.DatabaseQueryView.Events = {
@@ -107,24 +106,6 @@ WebInspector.DatabaseQueryView.prototype = {
         }
     },
 
-    _selectStart: function(event)
-    {
-        if (this._selectionTimeout)
-            clearTimeout(this._selectionTimeout);
-
-        this.prompt.clearAutoComplete();
-
-        function moveBackIfOutside()
-        {
-            delete this._selectionTimeout;
-            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
-                this.prompt.moveCaretToEndOfPrompt();
-            this.prompt.autoCompleteSoon();
-        }
-
-        this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
-    },
-
     _enterKeyPressed: function(event)
     {
         event.preventDefault();
@@ -136,8 +117,7 @@ WebInspector.DatabaseQueryView.prototype = {
         if (!query.length)
             return;
 
-        this.prompt.history.push(query);
-        this.prompt.historyOffset = 0;
+        this.prompt.pushHistoryItem(query);
         this.prompt.text = "";
 
         this.database.executeSql(query, this._queryFinished.bind(this, query), this._queryError.bind(this, query));

@@ -65,9 +65,6 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.messagesElement.appendChild(this.promptElement);
     this.messagesElement.appendChild(document.createElement("br"));
 
-    this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
-    this.prompt.history = WebInspector.settings.consoleHistory.get();
-
     this.topGroup = new WebInspector.ConsoleGroup(null);
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
     this.currentGroup = this.topGroup;
@@ -112,6 +109,10 @@ WebInspector.ConsoleView = function(hideContextSelector)
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 
     this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+
+    this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), ExpressionStopCharacters + ".");
+    this.prompt.attach(this.promptElement);
+    this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
 }
 
 WebInspector.ConsoleView.Events = {
@@ -622,11 +623,10 @@ WebInspector.ConsoleView.prototype = {
             if (!result)
                 return;
 
-            this.prompt.history.push(str);
-            this.prompt.historyOffset = 0;
+            this.prompt.pushHistoryItem(str);
             this.prompt.text = "";
 
-            WebInspector.settings.consoleHistory.set(this.prompt.history.slice(-30));
+            WebInspector.settings.consoleHistory.set(this.prompt.historyData.slice(-30));
 
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }

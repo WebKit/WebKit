@@ -1,3 +1,61 @@
+2011-10-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [refactoring] TextPrompt: ensure encapsulation, extract history management
+        https://bugs.webkit.org/show_bug.cgi?id=70936
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView):
+        (WebInspector.DatabaseQueryView.prototype._enterKeyPressed):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._attributesModified):
+        (WebInspector.StylePropertyTreeElement.prototype.selectElement):
+        (WebInspector.StylePropertyTreeElement.prototype.selectElement.context):
+        (WebInspector.StylePropertyTreeElement.prototype.selectElement.event):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.context.event):
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        (WebInspector.TextPrompt.prototype.get proxyElement):
+        (WebInspector.TextPrompt.prototype.attach):
+        (WebInspector.TextPrompt.prototype.attachAndStartEditing):
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.prototype.detach):
+        (WebInspector.TextPrompt.prototype.get text):
+        (WebInspector.TextPrompt.prototype.set text):
+        (WebInspector.TextPrompt.prototype._removeFromElement):
+        (WebInspector.TextPrompt.prototype._startEditing):
+        (WebInspector.TextPrompt.prototype._stopEditing):
+        (WebInspector.TextPrompt.prototype._selectStart.moveBackIfOutside):
+        (WebInspector.TextPrompt.prototype._selectStart):
+        (WebInspector.TextPrompt.prototype.defaultKeyHandler):
+        (WebInspector.TextPrompt.prototype._onKeyDown):
+        (WebInspector.TextPrompt.prototype.clearAutoComplete):
+        (WebInspector.TextPrompt.prototype.complete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype.isCaretInsidePrompt):
+        (WebInspector.TextPrompt.prototype.isCaretAtEndOfPrompt):
+        (WebInspector.TextPrompt.prototype.isCaretOnFirstLine):
+        (WebInspector.TextPrompt.prototype.isCaretOnLastLine):
+        (WebInspector.TextPrompt.prototype.moveCaretToEndOfPrompt):
+        (WebInspector.TextPrompt.prototype.upKeyPressed):
+        (WebInspector.TextPrompt.prototype.downKeyPressed):
+        (WebInspector.TextPrompt.prototype.tabKeyPressed):
+        (WebInspector.TextPromptConfig):
+        (WebInspector.TextPromptWithHistory):
+        (WebInspector.TextPromptWithHistory.prototype.get historyData):
+        (WebInspector.TextPromptWithHistory.prototype.setHistoryData):
+        (WebInspector.TextPromptWithHistory.prototype.pushHistoryItem):
+        (WebInspector.TextPromptWithHistory.prototype._pushCurrentText):
+        (WebInspector.TextPromptWithHistory.prototype._previous):
+        (WebInspector.TextPromptWithHistory.prototype._next):
+        (WebInspector.TextPromptWithHistory.prototype._currentHistoryItem):
+        (WebInspector.TextPromptWithHistory.prototype.defaultKeyHandler):
+
 2011-10-31  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move localization support into UIUtil.js, reduce externs.
