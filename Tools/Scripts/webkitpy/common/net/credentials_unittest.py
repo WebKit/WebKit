@@ -35,6 +35,7 @@ from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
 
 
 # FIXME: Other unit tests probably want this class.
@@ -49,6 +50,14 @@ class _TemporaryDirectory(object):
 
     def __exit__(self, type, value, traceback):
         os.rmdir(self._directory_path)
+
+
+# Note: All tests should use this class instead of Credentials directly to avoid using a real Executive.
+class MockedCredentials(Credentials):
+    def __init__(self, *args, **kwargs):
+        if 'executive' not in kwargs:
+            kwargs['executive'] = MockExecutive()
+        Credentials.__init__(self, *args, **kwargs)
 
 
 class CredentialsTest(unittest.TestCase):
@@ -79,7 +88,7 @@ password: "SECRETSAUCE"
 """
 
     def test_keychain_lookup_on_non_mac(self):
-        class FakeCredentials(Credentials):
+        class FakeCredentials(MockedCredentials):
             def _is_mac_os_x(self):
                 return False
         credentials = FakeCredentials("bugs.webkit.org")
@@ -87,10 +96,11 @@ password: "SECRETSAUCE"
         self.assertEqual(credentials._credentials_from_keychain("foo"), ["foo", None])
 
     def test_security_output_parse(self):
-        credentials = Credentials("bugs.webkit.org")
+        credentials = MockedCredentials("bugs.webkit.org")
         self.assertEqual(credentials._parse_security_tool_output(self.example_security_output), ["test@webkit.org", "SECRETSAUCE"])
 
     def test_security_output_parse_entry_not_found(self):
+        # FIXME: This test won't work if the user has a credential for foo.example.com!
         credentials = Credentials("foo.example.com")
         if not credentials._is_mac_os_x():
             return # This test does not run on a non-Mac.
@@ -104,7 +114,7 @@ password: "SECRETSAUCE"
 
     def _assert_security_call(self, username=None):
         executive_mock = Mock()
-        credentials = Credentials("example.com", executive=executive_mock)
+        credentials = MockedCredentials("example.com", executive=executive_mock)
 
         expected_stderr = "Reading Keychain for example.com account and password.  Click \"Allow\" to continue...\n"
         OutputCapture().assert_outputs(self, credentials._run_security_tool, [username], expected_stderr=expected_stderr)
@@ -119,8 +129,7 @@ password: "SECRETSAUCE"
         self._assert_security_call(username="foo")
 
     def test_credentials_from_environment(self):
-        executive_mock = Mock()
-        credentials = Credentials("example.com", executive=executive_mock)
+        credentials = MockedCredentials("example.com")
 
         saved_environ = os.environ.copy()
         os.environ['WEBKIT_BUGZILLA_USERNAME'] = "foo"
@@ -132,7 +141,7 @@ password: "SECRETSAUCE"
 
     def test_read_credentials_without_git_repo(self):
         # FIXME: This should share more code with test_keyring_without_git_repo
-        class FakeCredentials(Credentials):
+        class FakeCredentials(MockedCredentials):
             def _is_mac_os_x(self):
                 return True
 
@@ -155,7 +164,7 @@ password: "SECRETSAUCE"
             def get_password(self, host, username):
                 return "NOMNOMNOM"
 
-        class FakeCredentials(Credentials):
+        class FakeCredentials(MockedCredentials):
             def _is_mac_os_x(self):
                 return True
 

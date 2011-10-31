@@ -34,7 +34,7 @@ import StringIO
 import sys
 import unittest
 
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system import outputcapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy import layout_tests
@@ -46,7 +46,7 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.views import printing
-from webkitpy.tool.mocktool import MockOptions
+from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
 
 
 class ManagerWrapper(Manager):
@@ -70,7 +70,8 @@ class ShardingTests(unittest.TestCase):
     def get_shards(self, num_workers, fully_parallel, test_list=None):
         test_list = test_list or self.test_list
         port = layout_tests.port.get(port_name='test')
-        port._filesystem = filesystem_mock.MockFileSystem()
+        port._filesystem = MockFileSystem()
+        # FIXME: This should use MockOptions() instead of Mock()
         self.manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
         return self.manager._shard_tests(test_list, num_workers, fully_parallel)
 
@@ -183,10 +184,10 @@ class ManagerTest(unittest.TestCase):
                     self._finished_list_called = True
 
         options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
-        port = layout_tests.port.get(port_name=options.platform, options=options)
+        # Note we do not pass a filesystem as the "test port" magically suplies its own mock filesystem.
+        port = layout_tests.port.get(port_name=options.platform, options=options, user=MockUser(), executive=MockExecutive())
         run_webkit_tests._set_up_derived_options(port, options)
-        printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(),
-                                   configure_logging=True)
+        printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(), configure_logging=True)
         manager = LockCheckingManager(port, options, printer)
         manager.collect_tests(args)
         manager.parse_expectations()
@@ -197,9 +198,9 @@ class ManagerTest(unittest.TestCase):
         tester.assertEquals(num_unexpected_results, 0)
 
     def test_interrupt_if_at_failure_limits(self):
-        port = Mock()
+        port = Mock()  # FIXME: This should be a tighter mock.
         port.TEST_PATH_SEPARATOR = '/'
-        port._filesystem = filesystem_mock.MockFileSystem()
+        port._filesystem = MockFileSystem()
         manager = Manager(port=port, options=MockOptions(), printer=Mock())
 
         manager._options = MockOptions(exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None)
@@ -225,7 +226,7 @@ class ManagerTest(unittest.TestCase):
 
     def test_needs_servers(self):
         def get_manager_with_tests(test_names):
-            port = Mock()
+            port = Mock()  # FIXME: Use a tighter mock.
             port.TEST_PATH_SEPARATOR = '/'
             manager = Manager(port, options=MockOptions(http=True), printer=Mock())
             manager._test_files = set(test_names)

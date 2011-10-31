@@ -553,10 +553,8 @@ class Port(object):
         for test_or_category in self.skipped_layout_tests():
             if test_or_category == test_name:
                 return True
-            category = self._filesystem.join(self.layout_tests_dir(),
-                                             test_or_category)
-            if (self._filesystem.isdir(category) and
-                test_name.startswith(test_or_category)):
+            category = self._filesystem.join(self.layout_tests_dir(), test_or_category)
+            if self._filesystem.isdir(category) and test_name.startswith(test_or_category):
                 return True
         return False
 

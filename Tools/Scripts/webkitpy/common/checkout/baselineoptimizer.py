@@ -43,7 +43,9 @@ def _baseline_search_hypergraph(fs):
     fallback_path = ['LayoutTests']
 
     for port_name in port_factory.all_port_names():
-        port = port_factory.get(port_name)
+        # FIXME: This should pass User and Executive as well to allow for easy mocking.
+        # Alternatively, we should get a pre-mocked PortFactory from tool.
+        port = port_factory.get(port_name, filesystem=fs)
         webkit_base = port.webkit_base()
         search_path = port.baseline_search_path()
         if search_path:
