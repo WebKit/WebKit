@@ -219,6 +219,40 @@ public:
         m_structureTransitionData.append(structureTransitionData);
         return &m_structureTransitionData.last();
     }
+    
+    ValueProfile* valueProfileFor(NodeIndex nodeIndex, CodeBlock* profiledBlock)
+    {
+        if (nodeIndex == NoNode)
+            return 0;
+        
+        Node& node = at(nodeIndex);
+        
+        switch (node.op) {
+        case GetLocal: {
+            if (!operandIsArgument(node.local()))
+                return 0;
+            int argument = node.local() + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            if (node.variableAccessData() != at(m_arguments[argument]).variableAccessData())
+                return 0;
+            return profiledBlock->valueProfileForArgument(argument);
+        }
+        
+        // Nodes derives from calls need special handling because the value profile is
+        // associated with the op_call_put_result instruction.
+        case Call:
+        case Construct:
+        case ArrayPop:
+        case ArrayPush: {
+            ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+            return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex + OPCODE_LENGTH(op_call));
+        }
+
+        default:
+            if (node.hasHeapPrediction())
+                return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex);
+            return 0;
+        }
+    }
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;

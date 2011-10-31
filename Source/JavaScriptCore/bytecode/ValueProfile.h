@@ -40,8 +40,10 @@ namespace JSC {
 struct ValueProfile {
     static const unsigned logNumberOfBuckets = 3; // 8 buckets
     static const unsigned numberOfBuckets = 1 << logNumberOfBuckets;
+    static const unsigned numberOfSpecFailBuckets = 1;
     static const unsigned bucketIndexMask = numberOfBuckets - 1;
-    static const unsigned certainty = numberOfBuckets * numberOfBuckets;
+    static const unsigned totalNumberOfBuckets = numberOfBuckets + numberOfSpecFailBuckets;
+    static const unsigned certainty = totalNumberOfBuckets * totalNumberOfBuckets;
     static const unsigned majority = certainty / 2;
     
     ValueProfile(int bytecodeOffset)
@@ -49,8 +51,14 @@ struct ValueProfile {
         , m_prediction(PredictNone)
         , m_numberOfSamplesInPrediction(0)
     {
-        for (unsigned i = 0; i < numberOfBuckets; ++i)
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
+    }
+    
+    EncodedJSValue* specFailBucket(unsigned i)
+    {
+        ASSERT(numberOfBuckets + i < totalNumberOfBuckets);
+        return m_buckets + numberOfBuckets + i;
     }
     
     const ClassInfo* classInfo(unsigned bucket) const
@@ -67,7 +75,7 @@ struct ValueProfile {
     unsigned numberOfSamples() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (!!JSValue::decode(m_buckets[i]))
                 result++;
         }
@@ -81,7 +89,7 @@ struct ValueProfile {
     
     bool isLive() const
     {
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (!!JSValue::decode(m_buckets[i]))
                 return true;
         }
@@ -98,7 +106,7 @@ struct ValueProfile {
     unsigned numberOfInt32s() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (JSValue::decode(m_buckets[i]).isInt32())
                 result++;
         }
@@ -108,7 +116,7 @@ struct ValueProfile {
     unsigned numberOfDoubles() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (JSValue::decode(m_buckets[i]).isDouble())
                 result++;
         }
@@ -118,7 +126,7 @@ struct ValueProfile {
     unsigned numberOfCells() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (!!classInfo(i))
                 result++;
         }
@@ -128,7 +136,7 @@ struct ValueProfile {
     unsigned numberOfObjects() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             const ClassInfo* ci = classInfo(i);
             if (!!ci && ci->isSubClassOf(&JSObject::s_info))
                 result++;
@@ -139,7 +147,7 @@ struct ValueProfile {
     unsigned numberOfFinalObjects() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (classInfo(i) == &JSFinalObject::s_info)
                 result++;
         }
@@ -149,7 +157,7 @@ struct ValueProfile {
     unsigned numberOfStrings() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (classInfo(i) == &JSString::s_info)
                 result++;
         }
@@ -159,7 +167,7 @@ struct ValueProfile {
     unsigned numberOfArrays() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (classInfo(i) == &JSArray::s_info)
                 result++;
         }
@@ -169,7 +177,7 @@ struct ValueProfile {
     unsigned numberOfBooleans() const
     {
         unsigned result = 0;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             if (JSValue::decode(m_buckets[i]).isBoolean())
                 result++;
         }
@@ -237,7 +245,7 @@ struct ValueProfile {
                 probabilityOfBoolean(), numberOfBooleans(),
                 predictionToString(m_prediction), m_numberOfSamplesInPrediction);
         bool first = true;
-        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
             if (!!value) {
                 if (first) {
@@ -284,7 +292,7 @@ struct ValueProfile {
     PredictedType m_prediction;
     unsigned m_numberOfSamplesInPrediction;
     
-    EncodedJSValue m_buckets[numberOfBuckets];
+    EncodedJSValue m_buckets[totalNumberOfBuckets];
 };
 
 inline int getValueProfileBytecodeOffset(ValueProfile* valueProfile)

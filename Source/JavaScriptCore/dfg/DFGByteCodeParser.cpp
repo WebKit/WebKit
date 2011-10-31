@@ -594,8 +594,8 @@ private:
             m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
         return call;
     }
-
-    PredictedType getPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    
+    PredictedType getPredictionWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
         UNUSED_PARAM(nodeIndex);
         
@@ -606,6 +606,13 @@ private:
         printf("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
         
+        return prediction;
+    }
+
+    PredictedType getPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    {
+        PredictedType prediction = getPredictionWithoutOSRExit(nodeIndex, bytecodeIndex);
+        
         if (prediction == PredictNone) {
             // We have no information about what values this node generates. Give up
             // on executing this code, since we're likely to do more damage than good.
@@ -613,6 +620,11 @@ private:
         }
         
         return prediction;
+    }
+    
+    PredictedType getPredictionWithoutOSRExit()
+    {
+        return getPredictionWithoutOSRExit(m_graph.size(), m_currentIndex);
     }
     
     PredictedType getPrediction()
@@ -1651,7 +1663,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id: {
-            PredictedType prediction = getPrediction();
+            PredictedType prediction = getPredictionWithoutOSRExit();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
@@ -1718,6 +1730,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         
             if (offset != notFound) {
                 ASSERT(structureSet.size());
+                
+                // The implementation of GetByOffset does not know to terminate speculative
+                // execution if it doesn't have a prediction, so we do it manually.
+                if (prediction == PredictNone)
+                    addToGraph(ForceOSRExit);
+                
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), base);
                 set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base)));
                 

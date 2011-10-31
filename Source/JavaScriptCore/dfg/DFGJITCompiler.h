@@ -424,6 +424,14 @@ public:
 #endif
     }
 
+    ValueProfile* valueProfileFor(NodeIndex nodeIndex)
+    {
+        if (nodeIndex == NoNode)
+            return 0;
+        
+        return m_graph.valueProfileFor(nodeIndex, baselineCodeBlockFor(m_graph[nodeIndex].codeOrigin));
+    }
+    
 private:
     // Internal implementation to compile.
     void compileEntry();

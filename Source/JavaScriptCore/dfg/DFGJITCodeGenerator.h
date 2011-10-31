@@ -1889,6 +1889,10 @@ public:
             m_gprOrInvalid = m_jit->fillJSValue(index());
         return m_gprOrInvalid;
     }
+    JSValueRegs jsValueRegs()
+    {
+        return JSValueRegs(gpr());
+    }
 #elif USE(JSVALUE32_64)
     bool isDouble() { return m_isDouble; }
 
@@ -1910,6 +1914,11 @@ public:
         fill();
         ASSERT(!m_isDouble);
         return m_register.pair.payloadGPR;
+    }
+
+    JSValueRegs jsValueRegs()
+    {
+        return JSValueRegs(tagGPR(), payloadGPR());
     }
 
     FPRReg fpr()

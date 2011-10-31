@@ -551,6 +551,10 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case GetById:
     case GetMethod:
+        if (!node.prediction()) {
+            m_isValid = false;
+            break;
+        }
         forNode(node.child1()).filter(PredictCell);
         clobberStructures(nodeIndex);
         forNode(nodeIndex).makeTop();

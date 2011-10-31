@@ -1,3 +1,134 @@
+2011-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exits should add to value profiles
+        https://bugs.webkit.org/show_bug.cgi?id=71202
+
+        Reviewed by Oliver Hunt.
+        
+        Value profiles now have an extra special slot not used by the old JIT's
+        profiling, which is reserved for OSR exits.
+        
+        The DFG's OSR exit code now knows which register, node index, and value
+        profiling site was responsible for the (possibly flawed) information that
+        led to the OSR failure. This is somewhat opportunistic and imperfect;
+        if there's a lot of control flow between the value profiling site and the
+        OSR failure point, then this mechanism simply gives up. It also gives up
+        if the OSR failure is caused by either known deficiencies in the DFG
+        (like that we always assume that the index in a strict charCodeAt access
+        is within bounds) or where the OSR failure would be catalogues and
+        profiled through other means (like slow case counters).
+        
+        This patch also adds the notion of a JSValueRegs, which is either a
+        single register in JSVALUE64 or a pair in JSVALUE32_64. We should
+        probably move the 32_64 DFG towards using this, since it often makes it
+        easier to share code between 64 and 32_64.
+        
+        Also fixed a number of pathologies that this uncovered. op_method_check 
+        didn't have a value profiling site on the slow path. GetById should not
+        always force OSR exit if it never executed in the old JIT; we may be
+        able to infer its type if it's a array or string length get. Finally,
+        these changes benefit from a slight tweak to optimization delay
+        heuristics (profile fullness is now 0.35 instead of 0.25).
+        
+        3.8% speed-up on Kraken, mostly due to ~35% on both stanford-crypto-aes
+        and imaging-darkroom.
+
+        * bytecode/ValueProfile.cpp:
+        (JSC::ValueProfile::computeStatistics):
+        (JSC::ValueProfile::computeUpdatedPrediction):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::ValueProfile::specFailBucket):
+        (JSC::ValueProfile::numberOfSamples):
+        (JSC::ValueProfile::isLive):
+        (JSC::ValueProfile::numberOfInt32s):
+        (JSC::ValueProfile::numberOfDoubles):
+        (JSC::ValueProfile::numberOfCells):
+        (JSC::ValueProfile::numberOfObjects):
+        (JSC::ValueProfile::numberOfFinalObjects):
+        (JSC::ValueProfile::numberOfStrings):
+        (JSC::ValueProfile::numberOfArrays):
+        (JSC::ValueProfile::numberOfBooleans):
+        (JSC::ValueProfile::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::JSValueRegs::JSValueRegs):
+        (JSC::DFG::JSValueRegs::operator!):
+        (JSC::DFG::JSValueRegs::gpr):
+        (JSC::DFG::JSValueSource::JSValueSource):
+        (JSC::DFG::JSValueSource::unboxedCell):
+        (JSC::DFG::JSValueSource::operator!):
+        (JSC::DFG::JSValueSource::isAddress):
+        (JSC::DFG::JSValueSource::offset):
+        (JSC::DFG::JSValueSource::base):
+        (JSC::DFG::JSValueSource::gpr):
+        (JSC::DFG::JSValueSource::asAddress):
+        (JSC::DFG::JSValueSource::notAddress):
+        (JSC::DFG::JSValueRegs::tagGPR):
+        (JSC::DFG::JSValueRegs::payloadGPR):
+        (JSC::DFG::JSValueSource::tagGPR):
+        (JSC::DFG::JSValueSource::payloadGPR):
+        (JSC::DFG::JSValueSource::hasKnownTag):
+        (JSC::DFG::JSValueSource::tag):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::jsValueRegs):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::JSValueOperand::jsValueRegs):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::valueProfileFor):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnByteArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_method_check):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_method_check):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/JSValue.h:
+
 2011-10-31  Sam Weinig  <sam@webkit.org>
 
         Remove need for virtual JSObject::unwrappedObject

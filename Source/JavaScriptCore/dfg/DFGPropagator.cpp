@@ -440,7 +440,21 @@ private:
             break;
         }
             
-        case GetById:
+        case GetById: {
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
+            else if (m_codeBlock->identifier(node.identifierNumber()) == m_globalData.propertyNames->length) {
+                // If there is no prediction from value profiles, check if we might be
+                // able to infer the type ourselves.
+                bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
+                bool isString = isStringPrediction(m_graph[node.child1()].prediction());
+                bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
+                if (isArray || isString || isByteArray)
+                    changed |= mergePrediction(PredictInt32);
+            }
+            break;
+        }
+            
         case GetMethod:
         case GetByVal: {
             if (node.getHeapPrediction())

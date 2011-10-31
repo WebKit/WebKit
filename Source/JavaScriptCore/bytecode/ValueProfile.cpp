@@ -59,7 +59,7 @@ void ValueProfile::computeStatistics(const ClassInfo* classInfo, Statistics& sta
 
 void ValueProfile::computeStatistics(Statistics& statistics) const
 {
-    for (unsigned i = 0; i < numberOfBuckets; ++i) {
+    for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
         JSValue value = JSValue::decode(m_buckets[i]);
         if (!value)
             continue;
@@ -79,7 +79,7 @@ void ValueProfile::computeStatistics(Statistics& statistics) const
 
 PredictedType ValueProfile::computeUpdatedPrediction()
 {
-    for (unsigned i = 0; i < numberOfBuckets; ++i) {
+    for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
         JSValue value = JSValue::decode(m_buckets[i]);
         if (!value)
             continue;

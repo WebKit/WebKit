@@ -36,6 +36,220 @@ namespace JSC { namespace DFG {
 typedef MacroAssembler::RegisterID GPRReg;
 #define InvalidGPRReg ((GPRReg)-1)
 
+#if USE(JSVALUE64)
+class JSValueRegs {
+public:
+    JSValueRegs()
+        : m_gpr(InvalidGPRReg)
+    {
+    }
+    
+    explicit JSValueRegs(GPRReg gpr)
+        : m_gpr(gpr)
+    {
+    }
+    
+    bool operator!() const { return m_gpr == InvalidGPRReg; }
+    
+    GPRReg gpr() const { return m_gpr; }
+    
+private:
+    GPRReg m_gpr;
+};
+
+class JSValueSource {
+public:
+    JSValueSource()
+        : m_offset(notAddress())
+        , m_base(InvalidGPRReg)
+    {
+    }
+    
+    JSValueSource(JSValueRegs regs)
+        : m_offset(notAddress())
+        , m_base(regs.gpr())
+    {
+    }
+    
+    explicit JSValueSource(GPRReg gpr)
+        : m_offset(notAddress())
+        , m_base(gpr)
+    {
+    }
+    
+    JSValueSource(MacroAssembler::Address address)
+        : m_offset(address.offset)
+        , m_base(address.base)
+    {
+        ASSERT(m_offset != notAddress());
+        ASSERT(m_base != InvalidGPRReg);
+    }
+    
+    static JSValueSource unboxedCell(GPRReg payloadGPR)
+    {
+        return JSValueSource(payloadGPR);
+    }
+    
+    bool operator!() const { return m_base == InvalidGPRReg; }
+    
+    bool isAddress() const { return m_offset != notAddress(); }
+    
+    int32_t offset() const
+    {
+        ASSERT(isAddress());
+        return m_offset;
+    }
+    
+    GPRReg base() const
+    {
+        ASSERT(isAddress());
+        return m_base;
+    }
+    
+    GPRReg gpr() const
+    {
+        ASSERT(!isAddress());
+        return m_base;
+    }
+    
+    MacroAssembler::Address asAddress() const { return MacroAssembler::Address(base(), offset()); }
+    
+private:
+    static inline int32_t notAddress() { return 0x80000000; }     
+          
+    int32_t m_offset;
+    GPRReg m_base;
+};
+#endif
+
+#if USE(JSVALUE32_64)
+class JSValueRegs {
+public:
+    JSValueRegs()
+        : m_tagGPR(static_cast<int8_t>(InvalidGPRReg))
+        , m_payloadGPR(static_cast<int8_t>(InvalidGPRReg))
+    {
+    }
+    
+    JSValueRegs(GPRReg tagGPR, GPRReg payloadGPR)
+        : m_tagGPR(tagGPR)
+        , m_payloadGPR(payloadGPR)
+    {
+        ASSERT((static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg) == (static_cast<GPRReg>(payloadGPR) == InvalidGPRReg));
+    }
+    
+    bool operator!() const { return static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg; }
+    
+    GPRReg tagGPR() const { return static_cast<GPRReg>(m_tagGPR); }
+    GPRReg payloadGPR() const { return static_cast<GPRReg>(m_payloadGPR); }
+
+private:
+    int8_t m_tagGPR;
+    int8_t m_payloadGPR;
+};
+
+class JSValueSource {
+public:
+    JSValueSource()
+        : m_offset(notAddress())
+        , m_baseOrTag(static_cast<int8_t>(InvalidGPRReg))
+        , m_payload(static_cast<int8_t>(InvalidGPRReg))
+        , m_tagType(0)
+    {
+    }
+    
+    JSValueSource(JSValueRegs regs)
+        : m_offset(notAddress())
+        , m_baseOrTag(regs.tagGPR())
+        , m_payload(regs.payloadGPR())
+        , m_tagType(0)
+    {
+    }
+    
+    JSValueSource(GPRReg tagGPR, GPRReg payloadGPR)
+        : m_offset(notAddress())
+        , m_baseOrTag(static_cast<int8_t>(tagGPR))
+        , m_payload(static_cast<int8_t>(payloadGPR))
+        , m_tagType(0)
+    {
+    }
+    
+    JSValueSource(MacroAssembler::Address address)
+        : m_offset(address.offset)
+        , m_baseOrTag(static_cast<int8_t>(address.base))
+        , m_payload(static_cast<int8_t>(InvalidGPRReg))
+        , m_tagType(0)
+    {
+        ASSERT(m_offset != notAddress());
+        ASSERT(static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg);
+    }
+    
+    static JSValueSource unboxedCell(GPRReg payloadGPR)
+    {
+        JSValueSource result;
+        result.m_offset = notAddress();
+        result.m_baseOrTag = static_cast<int8_t>(InvalidGPRReg);
+        result.m_payload = static_cast<int8_t>(payloadGPR);
+        result.m_tagType = static_cast<int8_t>(JSValue::CellTag);
+        return result;
+    }
+    
+    bool operator!() const { return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg && static_cast<GPRReg>(m_payload) == InvalidGPRReg; }
+    
+    bool isAddress() const
+    {
+        ASSERT(!!*this);
+        return m_offset != notAddress();
+    }
+    
+    int32_t offset() const
+    {
+        ASSERT(isAddress());
+        return m_offset;
+    }
+    
+    GPRReg base() const
+    {
+        ASSERT(isAddress());
+        return static_cast<GPRReg>(m_baseOrTag);
+    }
+    
+    GPRReg tagGPR() const
+    {
+        ASSERT(!isAddress() && m_baseOrTag != InvalidGPRReg);
+        return static_cast<GPRReg>(m_baseOrTag);
+    }
+    
+    GPRReg payloadGPR() const
+    {
+        ASSERT(!isAddress());
+        return static_cast<GPRReg>(m_payload);
+    }
+    
+    bool hasKnownTag() const
+    {
+        ASSERT(!!*this);
+        ASSERT(!isAddress());
+        return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg;
+    }
+    
+    uint32_t tag() const
+    {
+        return static_cast<int32_t>(m_tagType);
+    }
+    
+    MacroAssembler::Address asAddress(unsigned additionalOffset = 0) const { return MacroAssembler::Address(base(), offset() + additionalOffset); }
+    
+private:
+    static inline int32_t notAddress() { return 0x80000000; }     
+          
+    int32_t m_offset;
+    int8_t m_baseOrTag;
+    int8_t m_payload; 
+    int8_t m_tagType; // Contains the low bits of the tag.
+};
+#endif
+
 #if CPU(X86)
 
 class GPRInfo {

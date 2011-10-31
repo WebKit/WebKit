@@ -98,7 +98,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     static SamplingCounter counter("SpeculationFailure");
     emitCount(counter);
 #endif
-
+    
     // 2) Perform speculation recovery. This only comes into play when an operation
     //    starts mutating state before verifying the speculation it has already made.
     
@@ -121,7 +121,20 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         }
     }
 
-    // 3) Figure out how many scratch slots we'll need. We need one for every GPR/FPR
+    // 3) Refine some value profile, if appropriate.
+    
+    if (!!exit.m_jsValueSource && !!exit.m_valueProfile) {
+        if (exit.m_jsValueSource.isAddress()) {
+            // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
+            // since we know how to restore it.
+            loadPtr(Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
+            storePtr(GPRInfo::tagTypeNumberRegister, exit.m_valueProfile->specFailBucket(0));
+            move(TrustedImmPtr(bitwise_cast<void*>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
+        } else
+            storePtr(exit.m_jsValueSource.gpr(), exit.m_valueProfile->specFailBucket(0));
+    }
+
+    // 4) Figure out how many scratch slots we'll need. We need one for every GPR/FPR
     //    whose destination is now occupied by a DFG virtual register, and we need
     //    one for every displaced virtual register if there are more than
     //    GPRInfo::numberOfRegisters of them. Also see if there are any constants,
@@ -217,7 +230,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // From here on, the code assumes that it is profitable to maximize the distance
     // between when something is computed and when it is stored.
     
-    // 4) Perform all reboxing of integers.
+    // 5) Perform all reboxing of integers.
     
     if (haveUnboxedInt32s) {
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
@@ -238,7 +251,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         }
     }
     
-    // 5) Dump all non-poisoned GPRs. For poisoned GPRs, save them into the scratch storage.
+    // 6) Dump all non-poisoned GPRs. For poisoned GPRs, save them into the scratch storage.
     //    Note that GPRs do not have a fast change (like haveFPRs) because we expect that
     //    most OSR failure points will have at least one GPR that needs to be dumped.
     
@@ -262,7 +275,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     // At this point all GPRs are available for scratch use.
     
     if (haveFPRs) {
-        // 6) Box all doubles (relies on there being more GPRs than FPRs)
+        // 7) Box all doubles (relies on there being more GPRs than FPRs)
         
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
             const ValueRecovery& recovery = exit.valueRecovery(index);
@@ -273,7 +286,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             boxDouble(fpr, gpr);
         }
         
-        // 7) Dump all doubles into the register file, or to the scratch storage if
+        // 8) Dump all doubles into the register file, or to the scratch storage if
         //    the destination virtual register is poisoned.
         
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
@@ -290,7 +303,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     
     ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
     
-    // 8) Reshuffle displaced virtual registers. Optimize for the case that
+    // 9) Reshuffle displaced virtual registers. Optimize for the case that
     //    the number of displaced virtual registers is not more than the number
     //    of available physical registers.
     
@@ -406,7 +419,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         }
     }
     
-    // 9) Dump all poisoned virtual registers.
+    // 10) Dump all poisoned virtual registers.
     
     scratchIndex = 0;
     if (numberOfPoisonedVirtualRegisters) {
@@ -430,7 +443,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     }
     ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
     
-    // 10) Dump all constants. Optimize for Undefined, since that's a constant we see
+    // 11) Dump all constants. Optimize for Undefined, since that's a constant we see
     //     often.
 
     if (haveConstants) {
@@ -448,7 +461,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         }
     }
     
-    // 11) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    // 12) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
     //     that all new calls into this code will go to the new JIT, so the execute
     //     counter only affects call frames that performed OSR exit and call frames
     //     that were still executing the old JIT at the time of another call frame's
@@ -511,12 +524,12 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     
     doneAdjusting.link(this);
     
-    // 12) Load the result of the last bytecode operation into regT0.
+    // 13) Load the result of the last bytecode operation into regT0.
     
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
         loadPtr(addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     
-    // 13) Fix call frame(s).
+    // 14) Fix call frame(s).
     
     ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
     storePtr(TrustedImmPtr(codeBlock()->alternative()), addressFor((VirtualRegister)RegisterFile::CodeBlock));
@@ -552,7 +565,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     if (exit.m_codeOrigin.inlineCallFrame)
         addPtr(Imm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
     
-    // 14) Jump into the corresponding baseline JIT code.
+    // 15) Jump into the corresponding baseline JIT code.
     
     CodeBlock* baselineCodeBlock = baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = decodedCodeMapFor(baselineCodeBlock);

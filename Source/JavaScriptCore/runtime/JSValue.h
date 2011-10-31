@@ -49,6 +49,7 @@ namespace JSC {
     namespace DFG {
         class JITCompiler;
         class JITCodeGenerator;
+        class JSValueSource;
         class SpeculativeJIT;
     }
 #endif
@@ -110,6 +111,7 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         friend class DFG::JITCompiler;
         friend class DFG::JITCodeGenerator;
+        friend class DFG::JSValueSource;
         friend class DFG::SpeculativeJIT;
 #endif
 

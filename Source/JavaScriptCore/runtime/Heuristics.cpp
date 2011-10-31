@@ -146,7 +146,7 @@ void initializeHeuristics()
 
     SET(maximumOptimizationDelay,   5);
     SET(desiredProfileLivenessRate, 0.75);
-    SET(desiredProfileFullnessRate, 0.25);
+    SET(desiredProfileFullnessRate, 0.35);
     
     ASSERT(executionCounterValueForDontOptimizeAnytimeSoon <= executionCounterValueForOptimizeAfterLongWarmUp);
     ASSERT(executionCounterValueForOptimizeAfterLongWarmUp <= executionCounterValueForOptimizeAfterWarmUp);

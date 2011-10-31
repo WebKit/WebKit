@@ -338,7 +338,10 @@ private:
 // This structure describes how to exit the speculative path by
 // going into baseline code.
 struct OSRExit {
-    OSRExit(MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
+    OSRExit(JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
+    
+    JSValueSource m_jsValueSource;
+    ValueProfile* m_valueProfile;
     
     MacroAssembler::Jump m_check;
     NodeIndex m_nodeIndex;
@@ -505,30 +508,30 @@ private:
 #endif
 
     // Add a speculation check without additional recovery.
-    void speculationCheck(MacroAssembler::Jump jumpToFail)
+    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
     {
         if (!m_compileOkay)
             return;
-        m_osrExits.append(OSRExit(jumpToFail, this));
+        m_osrExits.append(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
     // Add a speculation check with additional recovery.
-    void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
         if (!m_compileOkay)
             return;
         m_speculationRecoveryList.append(recovery);
-        m_osrExits.append(OSRExit(jumpToFail, this, m_speculationRecoveryList.size()));
+        m_osrExits.append(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_speculationRecoveryList.size()));
     }
 
     // Called when we statically determine that a speculation will fail.
-    void terminateSpeculativeExecution()
+    void terminateSpeculativeExecution(JSValueRegs jsValueRegs, NodeIndex nodeIndex)
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
         fprintf(stderr, "SpeculativeJIT was terminated.\n");
 #endif
         if (!m_compileOkay)
             return;
-        speculationCheck(m_jit.jump());
+        speculationCheck(jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
     }
 
