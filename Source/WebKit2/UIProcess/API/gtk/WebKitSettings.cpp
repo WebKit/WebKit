@@ -32,9 +32,8 @@
 #include "WebKitSettings.h"
 
 #include "WebKitPrivate.h"
-#include <WebKit2/WKPreferences.h>
+#include "WebKitSettingsPrivate.h"
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKType.h>
 #include <glib/gi18n-lib.h>
 
 struct _WebKitSettingsPrivate {
@@ -378,6 +377,11 @@ static void webkit_settings_init(WebKitSettings* settings)
     new (priv) WebKitSettingsPrivate();
 
     priv->preferences = adoptWK(WKPreferencesCreate());
+}
+
+void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WKPageRef wkPage)
+{
+    WKPageGroupSetPreferences(WKPageGetPageGroup(wkPage), settings->priv->preferences.get());
 }
 
 /**

@@ -21,6 +21,7 @@
 #include "WebKitWebView.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitSettingsPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
 #include "WebKitWebLoaderClientPrivate.h"
@@ -54,6 +55,7 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
     GRefPtr<WebKitBackForwardList> backForwardList;
+    GRefPtr<WebKitSettings> settings;
 };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -81,6 +83,8 @@ static void webkitWebViewConstructed(GObject* object)
     webkitWebViewSetLoaderClient(webView, defaultLoaderClient.get(), toAPI(page));
 
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
+    priv->settings = adoptGRef(webkit_settings_new());
+    webkitSettingsAttachSettingsToPage(priv->settings.get(), toAPI(page));
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -600,4 +604,54 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
     WKPageGoToBackForwardListItem(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))),
                                   webkitBackForwardListItemGetWKItem(listItem));
     webkitWebViewUpdateURI(webView);
+}
+
+/**
+ * webkit_web_view_set_settings:
+ * @web_view: a #WebKitWebView
+ * @settings: a #WebKitSettings
+ *
+ * Sets the #WebKitSettings to be applied to @web_view. The
+ * existing #WebKitSettings of @web_view will be replaced by
+ * @settings. New settings are applied immediately on @web_view.
+ * The same #WebKitSettings object can be shared
+ * by multiple #WebKitWebView<!-- -->s.
+ */
+void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settings)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    if (webView->priv->settings == settings)
+        return;
+
+    webView->priv->settings = settings;
+    webkitSettingsAttachSettingsToPage(settings, toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
+}
+
+/**
+ * webkit_web_view_get_settings:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the #WebKitSettings currently applied to @web_view.
+ * If no other #WebKitSettings have been explicitly applied to
+ * @web_view with webkit_web_view_set_settings(), the default
+ * #WebKitSettings will be returned. This method always returns
+ * a valid #WebKitSettings object.
+ * To modify any of the @web_view settings, you can either create
+ * a new #WebKitSettings object with webkit_settings_new(), setting
+ * the desired preferences, and then replace the existing @web_view
+ * settings with webkit_web_view_set_settings() or get the existing
+ * @web_view settings and update it directly. #WebKitSettings objects
+ * can be shared by multiple #WebKitWebView<!-- -->s, so modifying
+ * the settings of a #WebKitWebView would affect other
+ * #WebKitWebView<!-- -->s using the same #WebKitSettings.
+ *
+ * Returns: (transfer none): the #WebKitSettings attached to @web_view
+ */
+WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->settings.get();
 }

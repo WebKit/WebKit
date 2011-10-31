@@ -47,11 +47,41 @@ static void testWebViewsShareClients(Test* test, gconstpointer)
     g_assert(client1 == client2);
 }
 
+static void testWebViewSettings(WebViewTest* test, gconstpointer)
+{
+    WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
+    g_assert(defaultSettings);
+    g_assert(webkit_settings_get_enable_javascript(defaultSettings));
+
+    GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+    g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", FALSE, NULL);
+    webkit_web_view_set_settings(test->m_webView, newSettings.get());
+
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    g_assert(settings != defaultSettings);
+    g_assert(!webkit_settings_get_enable_javascript(settings));
+
+    GRefPtr<GtkWidget> webView2 = webkit_web_view_new();
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView2.get()));
+    webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView2.get()), settings);
+    g_assert(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView2.get())) == settings);
+
+    GRefPtr<WebKitSettings> newSettings2 = adoptGRef(webkit_settings_new());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings2.get()));
+    webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView2.get()), newSettings2.get());
+    settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView2.get()));
+    g_assert(settings == newSettings2.get());
+    g_assert(webkit_settings_get_enable_javascript(settings));
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     Test::add("WebKitWebView", "webviews-share-clients", testWebViewsShareClients);
+    WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
 }
 
 void afterAll()

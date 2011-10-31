@@ -31,6 +31,7 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebLoaderClient.h>
+#include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitWebViewBase.h>
 
 G_BEGIN_DECLS
@@ -133,6 +134,13 @@ webkit_web_view_get_custom_charset           (WebKitWebView             *web_vie
 WEBKIT_API void
 webkit_web_view_set_custom_charset           (WebKitWebView             *web_view,
                                               const gchar               *charset);
+
+WEBKIT_API void
+webkit_web_view_set_settings                 (WebKitWebView             *web_view,
+                                              WebKitSettings            *settings);
+
+WEBKIT_API WebKitSettings *
+webkit_web_view_get_settings                 (WebKitWebView             *web_view);
 
 G_END_DECLS
 

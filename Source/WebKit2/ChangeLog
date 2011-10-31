@@ -1,5 +1,28 @@
 2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add methods to get/set the settings of a web view to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=71109
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add WebKitSettingsPrivate.h.
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkitSettingsAttachSettingsToPage): Set the preferences of the
+        given WebKitSettings object to the page group of the given WKPage.
+        * UIProcess/API/gtk/WebKitSettingsPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Create the default WebKitSettings for
+        the view.
+        (webkit_web_view_set_settings):
+        (webkit_web_view_get_settings):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewSettings):
+        (beforeAll):
+
+2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix make distcheck build.
 
         * GNUmakefile.am: Remove docs/GNUmakefile.in from EXTRA_DIST,
