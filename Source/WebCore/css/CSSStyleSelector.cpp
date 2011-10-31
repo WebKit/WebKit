@@ -593,9 +593,18 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
 #endif
 }
 
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl, unsigned linkMatchType)
+CSSStyleSelector::MatchedStyleDeclaration::MatchedStyleDeclaration() 
+{  
+    // Make sure all memory is zero initializes as we calculate hash over the bytes of this object.
+    memset(this, 0, sizeof(*this));
+}
+
+void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType)
 {
-    m_matchedDecls.append(MatchedStyleDeclaration(decl, linkMatchType));
+    m_matchedDecls.grow(m_matchedDecls.size() + 1);
+    MatchedStyleDeclaration& newDeclaration = m_matchedDecls.last();
+    newDeclaration.styleDeclaration = styleDeclaration;
+    newDeclaration.linkMatchType = linkMatchType;
 }
 
 void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)

@@ -330,7 +330,7 @@ private:
     void loadPendingImages();
 
     struct MatchedStyleDeclaration {
-        MatchedStyleDeclaration(CSSMutableStyleDeclaration* decl, unsigned type) : styleDeclaration(decl), linkMatchType(type) { }
+        MatchedStyleDeclaration();
         CSSMutableStyleDeclaration* styleDeclaration;
         unsigned linkMatchType;
     };
