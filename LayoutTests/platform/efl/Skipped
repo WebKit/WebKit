@@ -1,16 +1,15 @@
-# More issues where clientWith is incorrect, perhaps because of asynchronous
-# main frame scrollbar behavior.
-fast/dom/client-width-height-quirks.html
-fast/dom/client-width-height.html
+# --------------------------------------------------------------------
+# Tests which depend on features which have not been implemented yet
+# --------------------------------------------------------------------
 
 # Needs API to receive notifications about changed icons
+# https://bugs.webkit.org/show_bug.cgi?id=33812
 fast/dom/icon-url-property.html
 
 # EFL's EventSender does not implement dumpFilenameBeingDragged
 fast/events/drag-image-filename.html
 
-# EFL's EventSender does not correctly send a single wheel event when mouseScrollBy is called with
-# both x and y not-null
+# EFL's EventSender does not correctly send a single wheel event when mouseScrollBy is called with both x and y not-null
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/remove-child-onscroll.html
 
@@ -20,58 +19,7 @@ fast/events/wheelevent-direction-inverted-from-device.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 
-# EFL's DRT needs to show modal dialogs
-fast/events/show-modal-dialog-onblur-onfocus.html
-fast/events/scroll-event-during-modal-dialog.html
-fast/harness/show-modal-dialog.html
-
-# Sputnik tests rely on showModalDialog too
-# https://bugs.webkit.org/show_bug.cgi?id=53676
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html
-sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html
-
-# Other failing Sputnik tests
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.2_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.10_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.11_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.12_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.10_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.11_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.12_T2.html
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
-
-# EFL's DRT needs CONFIRM NAVIGATION messages
-fast/loader/form-submission-after-beforeunload-cancel.html
-
-# EFL's EventSender does not implement zoomPage{In,Out} and
-# textZoom{In,Out} yet
+# EFL's EventSender does not implement zoomPage{In,Out} and textZoom{In,Out} yet
 fast/css/ignore-text-zoom.html
 fast/css/preserve-user-specified-zoom-level-on-reload.html
 fast/css/zoom-body-scroll.html
@@ -125,6 +73,7 @@ fast/events/touch
 
 # EFL's EventSender does not implement leapForward yet
 editing/pasteboard/4947130.html
+editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-input-in-svg.svg
 editing/pasteboard/drag-drop-input-textarea.html
@@ -134,11 +83,10 @@ editing/pasteboard/drag-drop-url-text.html
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 editing/pasteboard/drop-inputtext-acquires-style.html
 editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-events-sideeffect.html
+editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/script-tests/dataTransfer-setData-getData.js
-editing/pasteboard/script-tests/drop-text-events-sideeffect.js
-editing/pasteboard/script-tests/drop-text-events.js
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/4895428-1.html
@@ -186,6 +134,7 @@ fast/events/crash-on-mutate-during-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
+fast/events/drag-selects-image.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
@@ -247,6 +196,42 @@ fast/events/selectstart-prevent-selection-on-right-click.html
 media/context-menu-actions.html
 media/controls-right-click-on-timebar.html
 
+# EFL's DRT needs to show modal dialogs
+fast/events/show-modal-dialog-onblur-onfocus.html
+fast/events/scroll-event-during-modal-dialog.html
+fast/harness/show-modal-dialog.html
+
+# Sputnik tests rely on showModalDialog too
+# https://bugs.webkit.org/show_bug.cgi?id=53676
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html
+
+# EFL's DRT needs CONFIRM NAVIGATION messages
+fast/loader/form-submission-after-beforeunload-cancel.html
+
+# EFL's DRT needs a PlainTextController implementation
+editing/text-iterator/basic-iteration.html
+
 # EFL's DRT needs a TextInputController
 editing/input/ime-composition-clearpreedit.html
 editing/input/password-echo-passnode.html
@@ -270,10 +255,6 @@ fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-ime-preedit.html
 fast/text/international/thai-cursor-position.html
 svg/text/caret-in-svg-text.xhtml
-
-# The EFL port has no support for Geolocation
-fast/dom/Geolocation
-fast/dom/Window/window-properties-geolocation.html
 
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
@@ -399,13 +380,21 @@ compositing/iframes/iframe-src-change.html
 compositing/iframes/invisible-nested-iframe-hide.html
 compositing/iframes/invisible-nested-iframe-show.html
 compositing/iframes/leave-compositing-iframe.html
+compositing/iframes/overlapped-iframe-iframe.html
 compositing/iframes/overlapped-iframe.html
 compositing/iframes/overlapped-nested-iframes.html
+compositing/iframes/page-cache-layer-tree.html
 compositing/iframes/resizer.html
 compositing/iframes/scrolling-iframe.html
 compositing/images/clip-on-directly-composited-image.html
 compositing/layer-creation/overflow-scroll-overlap.html
+compositing/layer-creation/overlap-child-layer.html
+compositing/layer-creation/overlap-clipping.html
+compositing/layer-creation/overlap-transformed-layer.html
+compositing/layer-creation/rotate3d-overlap.html
 compositing/layer-creation/scroll-partial-update.html
+compositing/layer-creation/spanOverlapsCanvas.html
+compositing/layer-creation/translatez-overlap.html
 compositing/overflow/clip-descendents.html
 compositing/overflow/content-gains-scrollbars.html
 compositing/overflow/content-loses-scrollbars.html
@@ -414,6 +403,20 @@ compositing/overflow/resize-painting.html
 compositing/plugins/1x1-composited-plugin.html
 compositing/plugins/large-to-small-composited-plugin.html
 compositing/plugins/small-to-large-composited-plugin.html
+compositing/rtl/rtl-absolute-overflow-scrolled.html
+compositing/rtl/rtl-absolute-overflow.html
+compositing/rtl/rtl-absolute.html
+compositing/rtl/rtl-fixed-overflow-scrolled.html
+compositing/rtl/rtl-fixed-overflow.html
+compositing/rtl/rtl-fixed.html
+compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
+compositing/rtl/rtl-iframe-absolute-overflow.html
+compositing/rtl/rtl-iframe-absolute.html
+compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
+compositing/rtl/rtl-iframe-fixed-overflow.html
+compositing/rtl/rtl-iframe-fixed.html
+compositing/rtl/rtl-iframe-relative.html
+compositing/rtl/rtl-relative.html
 compositing/tiling/crash-reparent-tiled-layer.html
 compositing/tiling/huge-layer-add-remove-child.html
 compositing/tiling/huge-layer-img.html
@@ -427,6 +430,8 @@ compositing/video/video-poster.html
 printing/page-rule-selection.html
 
 # EFL's LayoutTestController does not implement pageProperty
+printing/page-format-data.html
+
 # EFL's LayoutTestController does not implement pageSizeAndMarginsInPixels
 printing/page-format-data.html
 
@@ -512,9 +517,6 @@ fast/forms/reset-autofilled.html
 http/tests/misc/favicon-loads-with-icon-loading-override.html
 http/tests/misc/favicon-loads-with-images-disabled.html
 
-# No support for x-webkit-speech (and addMockSpeechInputResult in LayoutTestController)
-fast/speech
-
 # EFL's LayoutTestController does not implement setJavaScriptProfilingEnabled
 fast/profiler
 
@@ -571,10 +573,10 @@ fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/events/event-input-contentEditable.html
 fast/events/keydown-1.html
+fast/events/mousedown-in-subframe-scrollbar.html
 fast/events/onchange-passwordfield.html
 fast/events/onchange-searchfield.html
 fast/events/onchange-textfield.html
-fast/events/resources/mousedown-in-subframe-scrollbar.html
 fast/events/scoped/editing-commands.html
 fast/events/selectstart-on-selectall.html
 fast/events/selectstart-prevent-selectall.html
@@ -647,9 +649,17 @@ http/tests/misc/copy-resolves-urls.html
 fast/dom/HTMLScriptElement/nested-execution.html
 
 # EFL's LayoutTestController does not implement clearAllApplicationCaches
+http/tests/appcache
+
 # EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
+http/tests/appcache
+
 # EFL's LayoutTestController does not implement clearApplicationCacheForOrigin
+http/tests/appcache
+
 # EFL's LayoutTestController does not implement originsWithApplicationCache
+http/tests/appcache
+
 # EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
 http/tests/appcache
 
@@ -670,6 +680,8 @@ storage/domstorage/localstorage/storagetracker
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
 # EFL's LayoutTestController does not implement goBack
+loader/navigation-while-deferring-loads.html
+
 # EFL's LayoutTestController does not implement setDefersLoading
 loader/navigation-while-deferring-loads.html
 
@@ -832,9 +844,6 @@ fast/dom/timer-increase-then-decrease-min-interval.html
 # EFL's LayoutTestController does not implement setTextDirection
 fast/html/set-text-direction.html
 
-# EFL's DRT needs a PlainTextController implementation
-editing/text-iterator/basic-iteration.html
-
 # EFL's DRT misses an 'EDITING DELEGATE' implementation
 editing/input/attributed-substring-from-range-lines.html
 editing/text-iterator/thai-cursor-movement.html
@@ -880,9 +889,6 @@ fast/ruby/before-table-doesnt-crash.html
 fast/ruby/generated-before-counter-doesnt-crash.html
 fast/workers/worker-crash-with-invalid-location.html
 
-# EFL's EventSender aborts in keyNameFromJSValue if it does not know the key
-editing/input/emacs-ctrl-o.html
-
 # Need to call Settings::setInteractiveFormValidationEnabled(true).
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
@@ -904,65 +910,25 @@ fast/forms/validation-message-on-textarea.html
 fast/loader/recursive-before-unload-crash.html
 fast/loader/null-request-after-willSendRequest.html
 
-# New flexbox is not yet enabled. http://webkit.org/b/62048
-css3/flexbox
-
-# The EFL port has no support for plugins
-fast/dom/Window/Plug-ins.html
-fast/frames/iframe-reparenting-plugins.html
-fast/frames/sandboxed-iframe-about-blank.html
-fast/frames/sandboxed-iframe-navigation-allowed.html
-fast/frames/sandboxed-iframe-plugins.html
-fast/js/navigator-plugins-crash.html
-http/tests/plugins
-plugins
-
-# The EFL port does not support these features
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-fast/dom/Window/window-properties-device-orientation.html
-accessibility
-inspector
-http/tests/inspector
-http/tests/inspector-enabled
-java
-fast/files/blob-builder-crash.html
-fast/files/create-blob-url-crash.html
-fast/files/revoke-blob-url.html
-
-# Desktop notification not supported yet
-fast/notifications
-http/tests/notifications
-
-# WebP decoding isn't supported by the EFL port
-fast/images/webp-image-decoding.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 
-# Missing delegates:
-# Tests which need proper frame loader callbacks reporting
+# Missing delegates: tests which need proper frame loader callbacks reporting
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 fast/loader/file-protocol-fragment.html
-# Tests failing because of missing resource load delegate callbacks.
+
+# Missing delegates: tests failing because of missing resource load delegate callbacks.
 fast/loader/main-document-url-for-non-http-loads.html
 http/tests/misc/link-rel-icon-beforeload.html
-# Tests failing because of missing policy delegate callbacks.
+
+# Missing delegates: tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
 
-# Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
-fast/loader/onload-willSendRequest-null-for-script.html
-fast/loader/willSendRequest-null-for-preload.html
-
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
-
-# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
-# https://bugs.webkit.org/show_bug.cgi?id=36467
-fast/loader/stateobjects/replacestate-in-iframe.html
 
 # computedStyleIncludingVisitedInfo is not implemented
 # https://bugs.webkit.org/show_bug.cgi?id=37336
@@ -972,55 +938,128 @@ fast/history/sibling-visited-test.html
 fast/history/multiple-classes-visited.html
 fast/loader/stateobjects/state-url-sets-links-visited.html
 
-# needs FileSystem API support
-fast/filesystem
-http/tests/filesystem
-http/tests/security/filesystem-iframe-from-remote.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-http/tests/cookies/third-party-cookie-relaxing.html
-
-# needs implementing HTMLProgressElement, HTMLMeterElement, CloseEvent
-fast/js/global-constructors.html
-
 # needs proper i18n/l10n support
 fast/js/i18n-bindings-locale.html
 fast/js/navigator-language.html
 
-# needs proper animation support
+# BUG: no mimetype detection messages (LayoutTestController:dumpResourceResponseMIMETypes)
+fast/preloader/document-write-noscript.html
+fast/preloader/image.html
+fast/preloader/input.html
+fast/preloader/link.html
+fast/preloader/noscript.html
+fast/preloader/script.html
+fast/preloader/style.html
+http/tests/mime/uppercase-mime-type.html
+http/tests/loading/preload-append-scan.php
+
+# BUG: Needs setPrinting
+# https://bugs.webkit.org/show_bug.cgi?id=20011
+printing/setPrinting.html
+printing/single-line-must-not-be-split-into-two-pages.html
+
+# BUG: Support for LayoutTestController::setWillSendRequestReturnsNull not implemented
+media/media-blocked-by-willsendrequest.html
+media/video-poster-blocked-by-willsendrequest.html
+
+# BUG: Captions support needed in the media engine (via GTK+)
+media/media-captions.html
+
+# BUG: DRT does not obey layoutTestController.addURLToRedirect()
+http/tests/loading/cross-origin-XHR-willLoadRequest.html
+
+# BUG: Requires willPerformClientRedirectToURL
+http/tests/loading/onload-vs-immediate-refresh.pl
+
+# BUG: Missing DRT API.
+http/tests/loading/preload-slow-loading.php
+
+# BUG: Missing resource load callback ability in DRT
+http/tests/loading/redirect-methods.html
+http/tests/misc/favicon-loads-with-images-disabled.html
+
+# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
+http/tests/misc/will-send-request-returns-null-on-redirect.html
+http/tests/misc/favicon-loads-with-icon-loading-override.html
+
+# BUG: No authentication challenge handling
+http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/cache/subresource-fragment-identifier.html
+http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
+http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
+http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
+
+# The EFL port has no support for DOWNLOAD_ATTRIBUTE (turning it on in CMake does not work well with the current implementation of FrameLoaderClientEfl::startDownload())
+fast/dom/HTMLAnchorElement/anchor-download-unset.html
+fast/dom/HTMLAnchorElement/anchor-download.html
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+fast/dom/HTMLAnchorElement/anchor-nodownload.html
+
+# The EFL port has no support for webkitRequestAnimationFrame
 animations/animation-api-1.html
 animations/stop-animation-on-suspend.html
 fast/animation
 
-# Audio support isn't implemented by EFL port
-fast/dom/constructors-cached-navigate.html
-fast/dom/constructors-cached.html
-fast/dom/dom-constructors.html
-fast/dom/prototype-inheritance-2.html
-fast/dom/prototype-inheritance.html
-fast/dom/Window/custom-constructors.html
-fast/dom/Window/window-properties.html
-fast/dom/Window/window-property-descriptors.html
-fast/js/custom-constructors.html
-fast/js/instanceof-XMLHttpRequest.html
-media/audio-no-installed-engines.html
+# The EFL port has no support for the FileSystem API
+fast/filesystem
+http/tests/filesystem
+http/tests/security/filesystem-iframe-from-remote.html
 
-# needs proper user gesture support (dumpUserGestureInFrameLoadCallbacks in DRT
-# and in the port itself as well)
+# The EFL port has no support for Geolocation
+fast/dom/Geolocation
+fast/dom/Window/window-properties-geolocation.html
+
+# The EFL port has no support for x-webkit-speech (and addMockSpeechInputResult in LayoutTestController)
+fast/speech
+
+# The EFL port has no support for plugins
+fast/dom/Window/Plug-ins.html
+fast/frames/iframe-reparenting-plugins.html
+fast/frames/sandboxed-iframe-about-blank.html
+fast/frames/sandboxed-iframe-navigation-allowed.html
+fast/frames/sandboxed-iframe-plugins.html
+fast/js/navigator-plugins-crash.html
+http/tests/plugins
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+java
+plugins
+
+# The EFL port has no support for accessibility features
+accessibility
+
+# The EFL port has no support for the web inspector
+inspector
+http/tests/inspector
+http/tests/inspector-enabled
+
+# The EFL port has no support for device motion and orientation
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
+fast/dom/Window/window-properties-device-orientation.html
+
+# The EFL port has no support for WebGL (the rest is skipped automatically)
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+http/tests/security/webgl-remote-read-remote-image-allowed.html
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+
+# The EFL port has no support for desktop notifications
+fast/notifications
+http/tests/notifications
+
+# The EFL port has no support for WebP decoding
+fast/images/webp-image-decoding.html
+
+# The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
 
-# no usermedia support
+# The EFL port has no support for usermedia
 fast/dom/MediaStream
 
-# Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
-editing/deleting/deletionUI-single-instance.html
-fast/dom/Element/id-in-deletebutton.html
-
-# Fullscreen support is not supported
+# The EFL port has no support for the Fullscreen API
 fullscreen
 
-# No CMake switch for ENABLE_LINK_PREFETCH
+# The EFL port has no support for link prefetching (no CMake switch for ENABLE_LINK_PREFETCH)
 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
@@ -1035,33 +1074,19 @@ http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/prefetch-purpose.html
 loader/reload-subresource-when-type-changes.html
 
-# No support for webarchives
+# The EFL port has no support for webarchives
 http/tests/webarchive
 svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 webarchive
 
-# This platform does not support the Page Visibility API
+# The EFL port has no support for the Page Visibility API
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
-# No suitable baselines found on other ports
-webaudio/test-basic.html
-fast/regions/flow-content-basic.html
-webarchive/test-css-url-resources-in-stylesheets.html
-webarchive/test-css-url-resources-inline-styles.html
-webarchive/test-link-rel-icon-beforeload.html
-
-# webkit-efl's <input type="number"> is not a spinbutton
-fast/forms/input-number-events.html
-fast/forms/input-number-large-padding.html
-fast/forms/input-number-size.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/spin-button-gets-disabled-or-readonly.html
-
-# webkit-efl does not have webtiming support (via GTK+)
+# The EFL port has no support for webtiming
 fast/dom/Window/window-properties-performance.html
 fast/dom/navigation-type-back-forward.html
 fast/dom/navigation-type-navigate.html
@@ -1075,9 +1100,128 @@ http/tests/misc/webtiming-slow-load.php
 http/tests/misc/webtiming-ssl.php
 http/tests/misc/webtiming-two-redirects.php
 
-# Tests that fail across all platforms.
-# Even though some platforms don't skip these tests, there are platform-specific
-# results generated that make these tests 'pass' (via GTK+).
+# The EFL port has no support for webaudio
+webaudio
+
+# The EFL port has no support for <track> with *.vtt
+media/track
+
+# The EFL port has no support for loading a PDF as an image
+fast/images/pdf-as-background.html
+fast/images/pdf-as-image-landscape.html
+fast/images/pdf-as-image.html
+fast/images/pdf-as-tiled-background.html
+fast/replaced/pdf-as-image.html
+
+# The EFL port has no support for <details> and <summary>
+fast/html/details-add-child-1.html
+fast/html/details-add-child-2.html
+fast/html/details-add-details-child-1.html
+fast/html/details-add-details-child-2.html
+fast/html/details-add-summary-1-and-click.html
+fast/html/details-add-summary-1.html
+fast/html/details-add-summary-2-and-click.html
+fast/html/details-add-summary-2.html
+fast/html/details-add-summary-3-and-click.html
+fast/html/details-add-summary-3.html
+fast/html/details-add-summary-4-and-click.html
+fast/html/details-add-summary-4.html
+fast/html/details-add-summary-5-and-click.html
+fast/html/details-add-summary-5.html
+fast/html/details-add-summary-6-and-click.html
+fast/html/details-add-summary-6.html
+fast/html/details-add-summary-7-and-click.html
+fast/html/details-add-summary-7.html
+fast/html/details-add-summary-8-and-click.html
+fast/html/details-add-summary-8.html
+fast/html/details-add-summary-9-and-click.html
+fast/html/details-add-summary-9.html
+fast/html/details-add-summary-10-and-click.html
+fast/html/details-add-summary-10.html
+fast/html/details-add-summary-child-1.html
+fast/html/details-add-summary-child-2.html
+fast/html/details-nested-1.html
+fast/html/details-nested-2.html
+fast/html/details-no-summary1.html
+fast/html/details-no-summary2.html
+fast/html/details-no-summary3.html
+fast/html/details-no-summary4.html
+fast/html/details-open1.html
+fast/html/details-open2.html
+fast/html/details-open3.html
+fast/html/details-open4.html
+fast/html/details-open5.html
+fast/html/details-open6.html
+fast/html/details-open-javascript.html
+fast/html/details-position.html
+fast/html/details-remove-child-1.html
+fast/html/details-remove-child-2.html
+fast/html/details-remove-summary-1-and-click.html
+fast/html/details-remove-summary-1.html
+fast/html/details-remove-summary-2-and-click.html
+fast/html/details-remove-summary-2.html
+fast/html/details-remove-summary-3-and-click.html
+fast/html/details-remove-summary-3.html
+fast/html/details-remove-summary-4-and-click.html
+fast/html/details-remove-summary-4.html
+fast/html/details-remove-summary-5-and-click.html
+fast/html/details-remove-summary-5.html
+fast/html/details-remove-summary-6-and-click.html
+fast/html/details-remove-summary-6.html
+fast/html/details-remove-summary-child-1.html
+fast/html/details-remove-summary-child-2.html
+fast/html/details-replace-summary-child.html
+fast/html/details-replace-text.html
+fast/html/details-writing-mode.html
+
+# The EFL port has no support for title directionality
+fast/dom/title-directionality.html
+
+# The EFL port has no support for detecting slow unload handlers
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
+
+# The EFL port has no global history delegate
+http/tests/globalhistory
+
+# --------------------------------
+# Tests which are expected to fail
+# --------------------------------
+
+# Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+# https://bugs.webkit.org/show_bug.cgi?id=35824
+http/tests/cookies/third-party-cookie-relaxing.html
+
+# Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
+editing/deleting/deletionUI-single-instance.html
+fast/dom/Element/id-in-deletebutton.html
+
+# webkit-efl's <input type="number"> is not a spinbutton
+fast/forms/input-number-events.html
+fast/forms/input-number-large-padding.html
+fast/forms/input-number-size.html
+fast/forms/input-spinbutton-capturing.html
+fast/forms/spin-button-gets-disabled-or-readonly.html
+
+# This test is out-dated since r95899.
+# https://bugs.webkit.org/show_bug.cgi?id=65709
+canvas/philip/tests/2d.drawImage.outsidesource.html
+
+# This test verifies that a mismatch reftest will fail as intended if both results are same.
+fast/harness/sample-fail-mismatch-reftest.html
+
+# ----------------------------------------
+# Tests which also fail in other platforms
+# ----------------------------------------
+
+# Should be moved to platform/mac <rdar://5621425> (via win/, chromium/ and wincairo/)
+http/tests/misc/willCacheResponse-delegate-callback.html
+
+# Fails assertion: ASSERT(m_workerContext->hasOneRef());
+# https://bugs.webkit.org/show_bug.cgi?id=59801
+fast/workers/storage/use-same-database-in-page-and-workers.html
+
+# Tests that fail across all platforms. Even though some platforms don't skip these tests, there are platform-specific results generated that make these tests 'pass' (via GTK+).
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
@@ -1121,10 +1265,35 @@ canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
 canvas/philip/tests/type.prototype.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=65709
-# This test is out-dated since r95899.
-canvas/philip/tests/2d.drawImage.outsidesource.html
+# Test takes too long in a debug build
+# https://bugs.webkit.org/show_bug.cgi?id=67921
+perf/show-hide-table-rows.html
 
+# This test is too slow to pass
+jquery/manipulation.html
+
+# Other failing Sputnik tests
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.2_T1.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.10_T1.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.11_T2.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.12_T2.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T1.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.10_T1.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.11_T2.html
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.12_T2.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
+
+# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
+# https://bugs.webkit.org/show_bug.cgi?id=36467
+fast/loader/stateobjects/replacestate-in-iframe.html
+
+# Tests failing with other ports too.
 # https://bugs.webkit.org/show_bug.cgi?id=40272
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
@@ -1138,8 +1307,8 @@ canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.drawImage.self.2.html
 
 # A testcase for this failure is already in cairo tree, but has not yet been fixed.
+# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 # https://bugs.webkit.org/show_bug.cgi?id=54471
-# http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 canvas/philip/tests/2d.path.arc.selfintersect.1.html
 canvas/philip/tests/2d.path.arc.shape.3.html
 
@@ -1149,7 +1318,7 @@ canvas/philip/tests/2d.path.arc.shape.3.html
 canvas/philip/tests/2d.path.arc.zeroradius.html
 
 # A testcase for this failure is already in cairo tree, but has not yet been fixed.
-# http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
+# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
 canvas/philip/tests/2d.path.rect.selfintersect.html
 
 # Strangely set miter limit - calculations suggest it should be 1.414 (and the test passes
@@ -1163,6 +1332,119 @@ canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
 canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
+
+# r93794 results in ruby tests causing assertion failure
+# https://bugs.webkit.org/show_bug.cgi?id=67007
+fast/ruby/after-block-doesnt-crash.html
+fast/ruby/after-table-doesnt-crash.html
+fast/ruby/generated-after-counter-doesnt-crash.html
+fast/ruby/generated-before-and-after-counter-doesnt-crash.html
+
+# BUG: Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
+fast/forms/input-text-click-outside.html
+
+# Text shadow extents are calculated incorrectly
+# https://bugs.webkit.org/show_bug.cgi?id=65035
+fast/canvas/fillText-shadow.html
+
+# Rounding color problems inside pixman
+# https://bugs.webkit.org/show_bug.cgi?id=49964
+fast/canvas/canvas-fillPath-shadow.html
+fast/canvas/canvas-strokePath-shadow.html
+
+# The same bug description applies to the EFL port (gradient instead of solid color in the rectangle).
+# https://bugs.webkit.org/show_bug.cgi?id=58309
+fast/canvas/DrawImageSinglePixelStretch.html
+
+# Rendering of multipart images is broken: this test times out
+# https://bugs.webkit.org/show_bug.cgi?id=54251
+http/tests/multipart/invalid-image-data-standalone.html
+
+# HTTP 204 (No Content) should be ignored
+# https://bugs.webkit.org/show_bug.cgi?id=60206
+http/tests/navigation/response204.html
+
+# BUG: test timing out. Also fails on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=70110
+fast/events/media-focus-in-standalone-media-document.html
+
+# http/tests/multipart/stop-crash.html fails on GTK and Qt missing multipart/x-mixed-replace support in libsoup
+# https://bugs.webkit.org/show_bug.cgi?id=47060
+http/tests/multipart/stop-crash.html
+http/tests/multipart/load-last-non-html-frame.php
+
+# Failing on non-Chromium bots
+# https://bugs.webkit.org/show_bug.cgi?id=68278
+http/tests/history/back-with-fragment-change.php
+
+# Failing http tests (via GTK+)
+http/tests/cookies/double-quoted-value-with-semi-colon.html
+http/tests/loading/bad-scheme-subframe.html
+http/tests/loading/bad-server-subframe.html
+http/tests/loading/gmail-assert-on-load.html
+http/tests/loading/redirect-with-no-location-crash.html
+http/tests/loading/text-content-type-with-binary-extension.html
+http/tests/media/video-play-stall-seek.html
+http/tests/media/video-play-stall.html
+http/tests/misc/acid3.html
+http/tests/misc/policy-delegate-called-twice.html
+http/tests/misc/redirect-to-external-url.html
+http/tests/misc/window-dot-stop.html
+http/tests/multipart/policy-ignore-crash.php
+http/tests/security/feed-urls-from-remote.html
+
+# Test times out (via GTK+)
+# https://bugs.webkit.org/show_bug.cgi?id=64085
+http/tests/misc/iframe-reparenting-id-collision.html
+
+# Test times out (via GTK+)
+# https://bugs.webkit.org/show_bug.cgi?id=61122
+http/tests/navigation/post-307-response.html
+
+# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
+# See https://bugs.webkit.org/show_bug.cgi?id=35300
+http/tests/loading/307-after-303-after-post.html
+
+# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+# Flaky test
+# https://bugs.webkit.org/show_bug.cgi?id=67359
+http/tests/loading/empty-urls.html
+
+# ------------------------------
+# Tests which need investigation
+# ------------------------------
+
+# BUG: blue boxes should not be shown
+http/tests/misc/slow-loading-mask.html
+
+# BUG: eyes not being rendered correctly
+http/tests/misc/acid2-pixel.html
+
+# BUG: no green in the rectangle
+http/tests/multipart/invalid-image-data.html
+
+# BUG: composited area is transparent
+compositing/geometry/fixed-position.html
+compositing/geometry/vertical-scroll-composited.html
+
+# BUG: there should be no black in the three images below the text
+fast/css/shadow-multiple.html
+
+# BUG: the word "word" is not being selected
+fast/forms/input-text-double-click.html
+
+# EFL's EventSender aborts in keyNameFromJSValue if it does not know the key
+editing/input/emacs-ctrl-o.html
+
+# Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
+fast/loader/onload-willSendRequest-null-for-script.html
+fast/loader/willSendRequest-null-for-preload.html
+
+# No suitable baselines found on other ports
+fast/dom/Window/window-property-descriptors.html
+fast/regions/flow-content-basic.html
 
 # EFL-specific failing canvas/philip tests.
 canvas/philip/tests/2d.path.closePath.nextpoint.html
@@ -1181,55 +1463,9 @@ canvas/philip/tests/2d.text.draw.fontface.repeat.html
 canvas/philip/tests/2d.text.draw.space.basic.html
 canvas/philip/tests/2d.text.measure.width.basic.html
 
-# webkit.org/b/67007
-fast/ruby/after-block-doesnt-crash.html
-fast/ruby/after-table-doesnt-crash.html
-fast/ruby/generated-after-counter-doesnt-crash.html
-fast/ruby/generated-before-and-after-counter-doesnt-crash.html
-
-# No support for webaudio
-webaudio
-
-# No support for <track> with *.vtt
-media/track/track-mutable.html
-media/track/track-text-track-cue-list.html
-media/track/track-text-track.html
-media/track/track-webvtt-tc000-empty.html
-media/track/track-webvtt-tc001-utf8.html
-media/track/track-webvtt-tc002-bom.html
-media/track/track-webvtt-tc003-newlines.html
-media/track/track-webvtt-tc004-magic-header.html
-media/track/track-webvtt-tc005-header-comment.html
-media/track/track-webvtt-tc006-cue-identifiers.html
-media/track/track-webvtt-tc007-cue-no-id.html
-media/track/track-webvtt-tc008-timings-no-hours.html
-media/track/track-webvtt-tc009-timings-hour.html
-media/track/track-webvtt-tc010-no-timings.html
-media/track/track-webvtt-tc011-blank-lines.html
-media/track/track-webvtt-tc012-out-of-order.html
-media/track/track-webvtt-tc013-settings.html
-media/track/track-webvtt-tc014-alignment.html
-media/track/track-webvtt-tc015-positioning.html
-media/track/track-webvtt-tc016-align-positioning.html
-media/track/track-webvtt-tc017-line-position.html
-media/track/track-webvtt-tc018-align-text-line-position.html
-media/track/track-webvtt-tc019-cue-size.html
-media/track/track-webvtt-tc020-cue-size-align.html
-media/track/track-webvtt-tc021-valign.html
-media/track/track-webvtt-tc022-entities.html
-media/track/track-webvtt-tc023-markup.html
-media/track/track-webvtt-tc024-timestamp.html
-media/track/track-webvtt-tc025-class-markup.html
-media/track/track-webvtt-tc026-voice.html
-media/track/track-webvtt-tc027-empty-cue.html
-media/track/track-webvtt-tc028-unsupported-markup.html
-
 # BUG: onresize event is not being emitted for iframes
 fast/dynamic/paused-event-dispatch.html
 fast/frames/flattening/iframe-flattening-crash.html
-
-# BUG: no support for title directionality
-fast/dom/title-directionality.html
 
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html
@@ -1280,6 +1516,7 @@ fast/forms/input-search-press-escape-key.html
 fast/forms/input-text-enter.html
 fast/forms/textinput-not-fired-on-enter-in-input.html
 fast/frames/iframe-window-focus.html
+http/tests/misc/isindex-with-no-form.html
 
 # BUG: mouse-related bugs in the EventSender-PlatformMouseEventEfl interaction
 fast/events/mouse-click-events.html
@@ -1293,17 +1530,6 @@ fast/events/scrollbar-double-click.html
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
 
-# BUG: no mimetype detection messages (LayoutTestController:dumpResourceResponseMIMETypes)
-fast/preloader/document-write-noscript.html
-fast/preloader/image.html
-fast/preloader/input.html
-fast/preloader/link.html
-fast/preloader/noscript.html
-fast/preloader/script.html
-fast/preloader/style.html
-http/tests/mime/uppercase-mime-type.html
-http/tests/loading/preload-append-scan.php
-
 # BUG: encoding-related problems
 fast/text/offsetForPosition-cluster-at-zero.html
 fast/text/regional-indicator-symobls.html
@@ -1314,10 +1540,6 @@ fast/xsl/sort-locale.xml
 # BUG: <canvas>'s toDataURL has problems with non-image/png mimetypes
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html
 fast/canvas/toDataURL-supportedTypes.html
-
-# BUG: Bug in the test itself, as the input box can be big enough for
-#      the given coordinates to be inside it.
-fast/forms/input-text-click-outside.html
 
 # BUG: wrong test results that need investigation
 compositing/backface-visibility-hierarchical-transform.html
@@ -1437,54 +1659,7 @@ media/video-element-other-namespace-crash.html
 media/video-loop.html
 media/video-pause-immediately.html
 
-# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE)
-# Turning it on in CMake does not work well with the current implementation of FrameLoaderClientEfl::startDownload()
-fast/dom/HTMLAnchorElement/anchor-download-unset.html
-fast/dom/HTMLAnchorElement/anchor-download.html
-fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
-fast/dom/HTMLAnchorElement/anchor-nodownload.html
-
-# LayoutTestController::layerTreeAsText isn't implemented in EFL DRT
-compositing/iframes/overlapped-iframe-iframe.html
-compositing/iframes/page-cache-layer-tree.html
-compositing/layer-creation/overlap-child-layer.html
-compositing/layer-creation/overlap-clipping.html
-compositing/layer-creation/overlap-transformed-layer.html
-compositing/layer-creation/rotate3d-overlap.html
-compositing/layer-creation/spanOverlapsCanvas.html
-compositing/layer-creation/translatez-overlap.html
-compositing/rtl/rtl-absolute.html
-compositing/rtl/rtl-absolute-overflow.html
-compositing/rtl/rtl-absolute-overflow-scrolled.html
-compositing/rtl/rtl-fixed.html
-compositing/rtl/rtl-fixed-overflow.html
-compositing/rtl/rtl-fixed-overflow-scrolled.html
-compositing/rtl/rtl-iframe-absolute.html
-compositing/rtl/rtl-iframe-absolute-overflow.html
-compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
-compositing/rtl/rtl-iframe-fixed.html
-compositing/rtl/rtl-iframe-fixed-overflow.html
-compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
-compositing/rtl/rtl-iframe-relative.html
-compositing/rtl/rtl-relative.html
-
-# Fails assertion: ASSERT(m_workerContext->hasOneRef());
-# https://bugs.webkit.org/show_bug.cgi?id=59801
-fast/workers/storage/use-same-database-in-page-and-workers.html
-
-# Test takes too long in a debug build
-# https://bugs.webkit.org/show_bug.cgi?id=67921
-perf/show-hide-table-rows.html
-
-# These tests require loading a PDF as an image, which we do not support. (via Chromium and GTK+)
-fast/images/pdf-as-background.html
-fast/images/pdf-as-image-landscape.html
-fast/images/pdf-as-image.html
-fast/images/pdf-as-tiled-background.html
-fast/replaced/pdf-as-image.html
-
 # BUG: The form widgets are too big for Edje to process, however this makes the page not scrollable at all.
-# Is this really a bug?
 fast/block/float/overhanging-tall-block.html
 
 # BUG: text-rendering:optimizeLegibility and text-rendering:geometricPrecision are not being processed correctly.
@@ -1493,6 +1668,7 @@ fast/css/text-rendering.html
 # BUG: <select> form elements do not respect some properties when being rendered (probably a problem in the theme).
 fast/css/pseudo-required-optional-004.html
 fast/forms/basic-selects.html
+fast/forms/select-disabled-appearance.html
 
 # BUG: <textarea>s have some rendering with the proper size
 fast/forms/basic-textareas-quirks.html
@@ -1518,80 +1694,17 @@ fast/frames/flattening/iframe-flattening-out-of-view.html
 fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
 fast/frames/flattening/iframe-flattening-simple.html
 
-# BUG: no support for <details> and <summary>
-fast/html/details-add-child-1.html
-fast/html/details-add-child-2.html
-fast/html/details-add-details-child-1.html
-fast/html/details-add-details-child-2.html
-fast/html/details-add-summary-1-and-click.html
-fast/html/details-add-summary-1.html
-fast/html/details-add-summary-2-and-click.html
-fast/html/details-add-summary-2.html
-fast/html/details-add-summary-3-and-click.html
-fast/html/details-add-summary-3.html
-fast/html/details-add-summary-4-and-click.html
-fast/html/details-add-summary-4.html
-fast/html/details-add-summary-5-and-click.html
-fast/html/details-add-summary-5.html
-fast/html/details-add-summary-6-and-click.html
-fast/html/details-add-summary-6.html
-fast/html/details-add-summary-7-and-click.html
-fast/html/details-add-summary-7.html
-fast/html/details-add-summary-8-and-click.html
-fast/html/details-add-summary-8.html
-fast/html/details-add-summary-9-and-click.html
-fast/html/details-add-summary-9.html
-fast/html/details-add-summary-10-and-click.html
-fast/html/details-add-summary-10.html
-fast/html/details-add-summary-child-1.html
-fast/html/details-add-summary-child-2.html
-fast/html/details-nested-1.html
-fast/html/details-nested-2.html
-fast/html/details-no-summary1.html
-fast/html/details-no-summary2.html
-fast/html/details-no-summary3.html
-fast/html/details-no-summary4.html
-fast/html/details-open1.html
-fast/html/details-open2.html
-fast/html/details-open3.html
-fast/html/details-open4.html
-fast/html/details-open5.html
-fast/html/details-open6.html
-fast/html/details-open-javascript.html
-fast/html/details-position.html
-fast/html/details-remove-child-1.html
-fast/html/details-remove-child-2.html
-fast/html/details-remove-summary-1-and-click.html
-fast/html/details-remove-summary-1.html
-fast/html/details-remove-summary-2-and-click.html
-fast/html/details-remove-summary-2.html
-fast/html/details-remove-summary-3-and-click.html
-fast/html/details-remove-summary-3.html
-fast/html/details-remove-summary-4-and-click.html
-fast/html/details-remove-summary-4.html
-fast/html/details-remove-summary-5-and-click.html
-fast/html/details-remove-summary-5.html
-fast/html/details-remove-summary-6-and-click.html
-fast/html/details-remove-summary-6.html
-fast/html/details-remove-summary-child-1.html
-fast/html/details-remove-summary-child-2.html
-fast/html/details-replace-summary-child.html
-fast/html/details-replace-text.html
-fast/html/details-writing-mode.html
-
 # BUG: text opacity not being interpreted correctly
 fast/text/complex-text-opacity.html
 
 # BUG: wrong rendering inside the boxes
 fast/text/emphasis.html
 
-# BUG: international characters not being rendered correctly
-fast/text/justify-ideograph-complex.html
-fast/text/large-text-composed-char.html
-fast/text/international/bidi-AN-after-empty-run.html
+# BUG: international characters not being rendered correctly. they probably need a proper font.
 fast/text/international/bidi-AN-after-L.html
-fast/text/international/bidi-control-chars-treated-as-ZWS.html
+fast/text/international/bidi-AN-after-empty-run.html
 fast/text/international/bidi-CS-after-AN.html
+fast/text/international/bidi-control-chars-treated-as-ZWS.html
 fast/text/international/bidi-linebreak-001.html
 fast/text/international/bidi-linebreak-002.html
 fast/text/international/bidi-linebreak-003.html
@@ -1605,27 +1718,27 @@ fast/text/international/hebrew-vowels.html
 fast/text/international/hindi-spacing.html
 fast/text/international/hindi-whitespace.html
 fast/text/international/khmer-selection.html
+fast/text/international/plane2.html
+fast/text/international/text-combine-image-test.html
 fast/text/international/thai-baht-space.html
 fast/text/international/thai-line-breaks.html
 fast/text/international/vertical-text-glyph-test.html
+fast/text/justify-ideograph-complex.html
+fast/text/large-text-composed-char.html
+fast/writing-mode/japanese-lr-selection.html
+fast/writing-mode/japanese-lr-text.html
+fast/writing-mode/japanese-rl-selection.html
+fast/writing-mode/japanese-rl-text-with-broken-font.html
+fast/writing-mode/japanese-rl-text.html
+fast/writing-mode/japanese-ruby-horizontal-bt.html
+fast/writing-mode/japanese-ruby-vertical-lr.html
+fast/writing-mode/japanese-ruby-vertical-rl.html
+fast/writing-mode/vertical-font-fallback.html
 
 # BUG: form widgets do not respect RTL settings
 fast/forms/range/input-appearance-range-rtl.html
 fast/text/international/bidi-menulist.html
 fast/text/international/pop-up-button-text-alignment-and-direction.html
-
-# BUG: needs a proper font
-fast/text/international/plane2.html
-fast/text/international/text-combine-image-test.html
-fast/writing-mode/japanese-lr-selection.html
-fast/writing-mode/japanese-lr-text.html
-fast/writing-mode/japanese-rl-selection.html
-fast/writing-mode/japanese-rl-text.html
-fast/writing-mode/japanese-rl-text-with-broken-font.html
-fast/writing-mode/japanese-ruby-horizontal-bt.html
-fast/writing-mode/japanese-ruby-vertical-lr.html
-fast/writing-mode/japanese-ruby-vertical-rl.html
-fast/writing-mode/vertical-font-fallback.html
 
 # BUG: need to check if width=0 makes sense here
 fast/text/international/vertical-text-metrics-test.html
@@ -1645,10 +1758,6 @@ printing/media-queries-print.html
 # BUG: there is a "0" at the top right corner
 printing/simultaneous-position-float-change.html
 
-# BUG: Needs setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
-printing/setPrinting.html
-printing/single-line-must-not-be-split-into-two-pages.html
-
 # BUG: square button is not being drawn as a square
 fast/css/square-button-appearance.html
 
@@ -1656,14 +1765,15 @@ fast/css/square-button-appearance.html
 http/tests/misc/image-blocked-src-change.html
 http/tests/misc/image-blocked-src-no-change.html
 http/tests/misc/unloadable-script.html
+http/tests/security/frame-loading-via-document-write.html
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
+http/tests/security/local-iFrame-from-remote.html
+http/tests/security/local-image-from-remote.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-source-from-remote.html
+http/tests/security/local-video-src-from-remote.html
 media/csp-blocks-video.html
-
-# BUG: Support for LayoutTestController::setWillSendRequestReturnsNull not implemented
-media/media-blocked-by-willsendrequest.html
-media/video-poster-blocked-by-willsendrequest.html
-
-# BUG: Captions support needed in the media engine (via GTK+)
-media/media-captions.html
 
 # BUG: iframe with src="content/counting.mp4" is not opened in a MediaDocument
 media/video-document-types.html
@@ -1694,17 +1804,10 @@ fast/forms/setCustomValidity.html
 # BUG: <select> element is not being scrolled as expected.
 fast/forms/listbox-selection-2.html
 
-# This test is too slow to pass
-jquery/manipulation.html
-
-# This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow-unload-handler.html
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-
 # BUG: background color is not being applied to <input type="search">
 fast/css/pseudo-required-optional-006.html
 
-# Needs investigation: are these results platform-dependent?
+# The results may be platform-dependent.
 css3/zoom-coords.xhtml
 fast/css/font-face-data-uri.html
 fast/css/font-face-download-error.html
@@ -1714,19 +1817,6 @@ fast/css/line-height-rounding.html
 # BUG: form buttons do not have the expected height
 fast/css/button-height.html
 
-# Text shadow extents are calculated incorrectly
-# https://bugs.webkit.org/show_bug.cgi?id=65035
-fast/canvas/fillText-shadow.html
-
-# Rounding color problems inside pixman
-# https://bugs.webkit.org/show_bug.cgi?id=49964
-fast/canvas/canvas-fillPath-shadow.html
-fast/canvas/canvas-strokePath-shadow.html
-
-# The same bug description applies to the EFL port (gradient instead of solid color in the rectangle).
-# https://bugs.webkit.org/show_bug.cgi?id=58309
-fast/canvas/DrawImageSinglePixelStretch.html
-
 # BUG: the whole text is being selected
 fast/forms/input-text-drag-down.html
 
@@ -1735,9 +1825,6 @@ fast/forms/input-readonly-autoscroll.html
 
 # Needs investigation: this test passes when run alone
 fast/forms/submit-to-blank-multiple-times.html
-
-# This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html
 
 # Flaky test. https://bugs.webkit.org/show_bug.cgi?id=68536
 media/media-blocked-by-beforeload.html
@@ -1768,121 +1855,14 @@ mathml/presentation/style.xhtml
 fast/regions/overflow-size-change-in-variable-width-regions.html
 fast/regions/overflow-size-change-with-stacking-context.html
 
-# CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
-# https://bugs.webkit.org/show_bug.cgi?id=68469
-css3/filters
-
-# ENABLE_INPUT_TYPE_* are not enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=29359
-# https://bugs.webkit.org/show_bug.cgi?id=68971
-fast/forms/date
-fast/css/pseudo-in-range.html
-fast/css/pseudo-out-of-range.html
-fast/css/pseudo-in-range-invalid-value.html
-fast/forms/datetime
-fast/forms/datetimelocal
-fast/forms/month
-fast/forms/time
-fast/forms/week
-
-# MutationObservers are net yet enabled. http://webkit.org/b/68729
-fast/mutation
-
 # BUG: the first frame is not at the right position.
 media/video-frame-accurate-seek.html
 
-# Failing http tests (via GTK+)
-http/tests/cookies/double-quoted-value-with-semi-colon.html
-http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/bad-server-subframe.html
-http/tests/loading/gmail-assert-on-load.html
-http/tests/loading/redirect-with-no-location-crash.html
-http/tests/loading/text-content-type-with-binary-extension.html
-http/tests/media/video-play-stall-seek.html
-http/tests/media/video-play-stall.html
-http/tests/misc/acid3.html
-http/tests/misc/policy-delegate-called-twice.html
-http/tests/misc/redirect-to-external-url.html
-http/tests/misc/window-dot-stop.html
-http/tests/multipart/policy-ignore-crash.php
-http/tests/security/feed-urls-from-remote.html
+# BUG: tiled backing store takes too long.
+compositing/tiling/crash-huge-layer.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=64085
-http/tests/misc/iframe-reparenting-id-collision.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=61122
-http/tests/navigation/post-307-response.html
-
-# This port doesn't have a global history delegate yet
-http/tests/globalhistory
-
-# Failing on non-Chromium bots
-# https://bugs.webkit.org/show_bug.cgi?id=68278
-http/tests/history/back-with-fragment-change.php
-
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-# See https://bugs.webkit.org/show_bug.cgi?id=35300
-http/tests/loading/307-after-303-after-post.html
-
-# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
-http/tests/loading/basic-auth-resend-wrong-credentials.html
-
-# BUG: No authentication challenge handling
-http/tests/loading/basic-credentials-sent-automatically.html
-http/tests/cache/subresource-fragment-identifier.html
-http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
-http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
-http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
-
-# BUG: DRT does not obey layoutTestController.addURLToRedirect()
-http/tests/loading/cross-origin-XHR-willLoadRequest.html
-
-# BUG: Requires willPerformClientRedirectToURL
-http/tests/loading/onload-vs-immediate-refresh.pl
-
-# BUG: Missing DRT API.
-http/tests/loading/preload-slow-loading.php
-
-# BUG: Missing resource load callback ability in DRT
-http/tests/loading/redirect-methods.html
-http/tests/misc/favicon-loads-with-images-disabled.html
-
-# Tests for MediaSource API. Feature is not yet functional.
-# https://bugs.webkit.org/show_bug.cgi?id=64731
-http/tests/media/media-source/
-
-# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-
-# http/tests/multipart/stop-crash.html fails on GTK and Qt
-# missing multipart/x-mixed-replace support in libsoup
-# https://bugs.webkit.org/show_bug.cgi?id=47060
-http/tests/multipart/stop-crash.html
-http/tests/multipart/load-last-non-html-frame.php
-
-# Rendering of multipart images is broken.
-# https://bugs.webkit.org/show_bug.cgi?id=54251
-#http/tests/multipart/invalid-image-data.html
-# This one times out.
-http/tests/multipart/invalid-image-data-standalone.html
-
-# HTTP 204 (No Content) should be ignored
-# https://bugs.webkit.org/show_bug.cgi?id=60206
-http/tests/navigation/response204.html
-
-# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
-http/tests/websocket/tests/hybi/
-
-# Microdata DOM API is not yet enabled.
-fast/dom/MicroData
-
-# HiDPI tests require test infrastructure enhancements
-fast/hidpi
-
-# BUG: test timing out.
-# Also fails on Qt: https://bugs.webkit.org/show_bug.cgi?id=70110
-fast/events/media-focus-in-standalone-media-document.html
+# BUG: causing infinite ecore errors
+http/tests/websocket/tests/hixie76
 
 # Flaky tests (text diff mismatch)
 http/tests/navigation/document-location-mouseover.html
@@ -1909,3 +1889,43 @@ http/tests/websocket/tests/hixie76/error-detect.html
 http/tests/websocket/tests/hixie76/null-character.html
 http/tests/websocket/tests/hixie76/url-with-empty-query.html
 http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
+
+# ------------------------------------
+# Tests for features under development
+# ------------------------------------
+
+# New flexbox is not yet enabled. http://webkit.org/b/62048
+css3/flexbox
+
+# CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
+# https://bugs.webkit.org/show_bug.cgi?id=68469
+css3/filters
+
+# ENABLE_INPUT_TYPE_* are not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=29359
+# https://bugs.webkit.org/show_bug.cgi?id=68971
+fast/forms/date
+fast/css/pseudo-in-range.html
+fast/css/pseudo-out-of-range.html
+fast/css/pseudo-in-range-invalid-value.html
+fast/forms/datetime
+fast/forms/datetimelocal
+fast/forms/month
+fast/forms/time
+fast/forms/week
+
+# MutationObservers are net yet enabled. http://webkit.org/b/68729
+fast/mutation
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi
+
+# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
+http/tests/websocket/tests/hybi/
+
+# Microdata DOM API is not yet enabled.
+fast/dom/MicroData
+
+# Tests for MediaSource API. Feature is not yet functional.
+# https://bugs.webkit.org/show_bug.cgi?id=64731
+http/tests/media/media-source/

@@ -1,3 +1,11 @@
+2011-10-31  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Update Skipped list.
+
+        * platform/efl/Skipped: Reorder test groups so that they appear in a
+        more logical manner. Add some other tests that are failing since
+        recent updates.
+
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Marked tests as failing after r98852.
