@@ -3920,6 +3920,7 @@ BUGWK71127 : fast/js/toString-overrides.html = TEXT
 BUGWK71127 : fast/js/toString-recursion.html = TEXT
 BUGWK71127 : fast/js/kde/RegExp.html = TEXT
 BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
+BUGWK71127 : fast/js/array-prototype-properties.html = TEXT
 
 BUGWK71139 SNOWLEOPARD : http/tests/security/cross-frame-access-custom.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/frames/content-opacity-2.html = CRASH PASS
@@ -3937,5 +3938,5 @@ BUGWK71226 : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGWK71226 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
-
+  
 BUGWK71233 : inspector/debugger/bind-script-to-resource.html = TEXT

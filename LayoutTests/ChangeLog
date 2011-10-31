@@ -1,3 +1,57 @@
+2011-10-31  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, more expectations changes for svg.
+
+        * platform/chromium-cg-mac-leopard/fast/overflow/003-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/http/tests/misc/acid3-expected.png:
+        * platform/chromium-cg-mac-leopard/http/tests/misc/acid3-expected.txt: Removed.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/overflow: Added.
+        * platform/chromium-cg-mac-snowleopard/fast/overflow/003-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-cg-mac-snowleopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-cg-mac/fast/overflow: Removed.
+        * platform/chromium-cg-mac/fast/overflow/003-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/repaint/block-layout-inline-children-replaced-expected.png: Removed.
+        * platform/chromium-cg-mac/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page: Removed.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.txt: Removed.
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-background-image/svg-as-background-4-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/003-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-replaced-expected.png: Removed.
+        * platform/chromium-mac/svg/as-background-image/svg-as-background-4-expected.png: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/chromium-win/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-4-expected.txt: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/chromium/svg/zoom: Added.
+        * platform/chromium/svg/zoom/page: Added.
+        * platform/chromium/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/as-background-image/svg-as-background-4-expected.txt: Removed.
+
 2011-10-31  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] Did rebaselines of media/audio-repaint.html.
