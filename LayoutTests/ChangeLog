@@ -1,3 +1,14 @@
+2011-10-31  Kenji Imasaki  <imasaki@chromium.org>
+
+        [Chromium] Did rebaselines of media/audio-repaint.html.
+
+        Unreviewed.
+
+        * platform/chromium-gpu-linux/media/audio-repaint-expected.png: Added.
+        * platform/chromium-gpu-win/media/audio-repaint-expected.txt: Added.
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+
 2011-10-31  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70658
