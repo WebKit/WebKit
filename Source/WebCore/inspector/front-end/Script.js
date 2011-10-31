@@ -126,5 +126,10 @@ WebInspector.Script.prototype = {
             DebuggerAgent.setScriptSource(this.scriptId, newSource, undefined, didEditScriptSource.bind(this));
         } else
             callback("Script failed to parse");
+    },
+
+    isInlineScript: function()
+    {
+        return this.sourceURL && this.lineOffset !== 0 && this.columnOffset !== 0;
     }
 }

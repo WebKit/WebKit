@@ -1,3 +1,14 @@
+2011-10-31  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not map scripts generated with document.write to the document resources.
+        https://bugs.webkit.org/show_bug.cgi?id=71114
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/bind-script-to-resource-expected.txt: Added.
+        * inspector/debugger/bind-script-to-resource.html: Added.
+        * inspector/debugger/linkifier.html:
+
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed.

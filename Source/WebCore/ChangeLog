@@ -1,3 +1,26 @@
+2011-10-31  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not map scripts generated with document.write to the document resources.
+        https://bugs.webkit.org/show_bug.cgi?id=71114
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/bind-script-to-resource.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._bindScriptToRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScriptWithURL):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent.didFormatContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping):
+        * inspector/front-end/Script.js:
+
 2011-10-31  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71012
