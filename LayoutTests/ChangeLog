@@ -1,3 +1,13 @@
+2011-10-31  Jeremy Apthorp  <jeremya@google.com>
+
+        Test case for a crash relating to merging of anonymous blocks in
+        RenderFullScreen::unwrapRenderer.
+        https://bugs.webkit.org/show_bug.cgi?id=70705
+
+        Reviewed by Simon Fraser.
+
+        * fullscreen/anonymous-block-merge-crash.html: Added.
+
 2011-10-31  John Gregg  <johnnyg@google.com>
 
         Unreviewed gardening; bind-script-to-resource.html times out on chromium mac.
