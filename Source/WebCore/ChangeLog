@@ -1,3 +1,36 @@
+2011-11-01  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderObject to layout abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=71249
+
+        Switch RenderObject to LayoutRect/Size/Point abstraction.
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::addPDFURLRect):
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        (WebCore::RenderObject::absoluteFocusRingQuads):
+        (WebCore::RenderObject::addAbsoluteRectForLayer):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::viewRect):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localCaretRect):
+        (WebCore::RenderObject::addDashboardRegions):
+        (WebCore::RenderObject::maximalOutlineSize):
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteBoundingBoxRectIgnoringTransforms):
+        (WebCore::RenderObject::absoluteClippedOverflowRect):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::absoluteOutlineBounds):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        (WebCore::adjustForAbsoluteZoom):
+
 2011-11-01  Xiaomei Ji  <xji@chromium.org>
 
         Refactor: change Scrollable::m_scrollOrigin from protected to private.

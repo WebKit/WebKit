@@ -787,7 +787,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
     return false;
 }
 
-void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
+void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2,
                                       BoxSide side, Color color, EBorderStyle style,
                                       int adjacentWidth1, int adjacentWidth2, bool antialias)
 {
@@ -1097,7 +1097,7 @@ void RenderObject::paintFocusRing(GraphicsContext* context, const LayoutPoint& p
         addPDFURLRect(context, unionRect(focusRingRects));
 }        
 
-void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
+void RenderObject::addPDFURLRect(GraphicsContext* context, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -1163,7 +1163,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
         graphicsContext->endTransparencyLayer();
 }
 
-IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
+LayoutRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
 {
     if (useTransforms) {
         Vector<FloatQuad> quads;
@@ -1173,21 +1173,21 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
         if (!n)
             return IntRect();
     
-        IntRect result = quads[0].enclosingBoundingBox();
+        LayoutRect result = quads[0].enclosingBoundingBox();
         for (size_t i = 1; i < n; ++i)
             result.unite(quads[i].enclosingBoundingBox());
         return result;
     }
 
     FloatPoint absPos = localToAbsolute();
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
     absoluteRects(rects, flooredLayoutPoint(absPos));
 
     size_t n = rects.size();
     if (!n)
-        return IntRect();
+        return LayoutRect();
 
-    IntRect result = rects[0];
+    LayoutRect result = rects[0];
     for (size_t i = 1; i < n; ++i)
         result.unite(rects[i]);
     return result;
@@ -1195,22 +1195,22 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 {
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
     // FIXME: addFocusRingRects() needs to be passed this transform-unaware
     // localToAbsolute() offset here because RenderInline::addFocusRingRects()
     // implicitly assumes that. This doesn't work correctly with transformed
     // descendants.
     FloatPoint absolutePoint = localToAbsolute();
-    addFocusRingRects(rects, flooredIntPoint(absolutePoint));
+    addFocusRingRects(rects, flooredLayoutPoint(absolutePoint));
     size_t count = rects.size(); 
     for (size_t i = 0; i < count; ++i) {
-        IntRect rect = rects[i];
+        LayoutRect rect = rects[i];
         rect.move(-absolutePoint.x(), -absolutePoint.y());
         quads.append(localToAbsoluteQuad(FloatQuad(rect)));
     }
 }
 
-void RenderObject::addAbsoluteRectForLayer(IntRect& result)
+void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
 {
     if (hasLayer())
         result.unite(absoluteBoundingBoxRectIgnoringTransforms());
@@ -1399,9 +1399,9 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
         LayoutUnit shadowRight;
         style()->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
 
-        LayoutUnit borderRight = isBox() ? toRenderBox(this)->borderRight() : 0;
-        LayoutUnit boxWidth = isBox() ? toRenderBox(this)->width() : 0;
-        LayoutUnit borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight, max(style()->borderTopRightRadius().width().calcValue(boxWidth), style()->borderBottomRightRadius().width().calcValue(boxWidth)))) + max(ow, shadowRight);
+        LayoutUnit borderRight = isBox() ? toRenderBox(this)->borderRight() : LayoutUnit(0);
+        LayoutUnit boxWidth = isBox() ? toRenderBox(this)->width() : LayoutUnit(0);
+        LayoutUnit borderWidth = max<LayoutUnit>(-outlineStyle->outlineOffset(), max(borderRight, max<LayoutUnit>(style()->borderTopRightRadius().width().calcValue(boxWidth), style()->borderBottomRightRadius().width().calcValue(boxWidth)))) + max(ow, shadowRight);
         LayoutRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
             width + borderWidth,
@@ -1418,9 +1418,9 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
         LayoutUnit shadowBottom;
         style()->getBoxShadowVerticalExtent(shadowTop, shadowBottom);
 
-        LayoutUnit borderBottom = isBox() ? toRenderBox(this)->borderBottom() : 0;
-        LayoutUnit boxHeight = isBox() ? toRenderBox(this)->height() : 0;
-        LayoutUnit borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom, max(style()->borderBottomLeftRadius().height().calcValue(boxHeight), style()->borderBottomRightRadius().height().calcValue(boxHeight)))) + max(ow, shadowBottom);
+        LayoutUnit borderBottom = isBox() ? toRenderBox(this)->borderBottom() : LayoutUnit(0);
+        LayoutUnit boxHeight = isBox() ? toRenderBox(this)->height() : LayoutUnit(0);
+        LayoutUnit borderHeight = max<LayoutUnit>(-outlineStyle->outlineOffset(), max(borderBottom, max<LayoutUnit>(style()->borderBottomLeftRadius().height().calcValue(boxHeight), style()->borderBottomRightRadius().height().calcValue(boxHeight)))) + max(ow, shadowBottom);
         LayoutRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),
@@ -1463,7 +1463,7 @@ LayoutRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject*) co
     return LayoutRect();
 }
 
-void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
+void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1481,10 +1481,10 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             // anyway if its size does change.
             RenderBox* boxParent = toRenderBox(o);
 
-            IntRect repaintRect(rect);
+            LayoutRect repaintRect(rect);
             repaintRect.move(-boxParent->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-            IntRect boxRect(IntPoint(), boxParent->layer()->size());
+            LayoutRect boxRect(LayoutPoint(), boxParent->layer()->size());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())
                 return;
@@ -1941,7 +1941,7 @@ void RenderObject::updateImage(StyleImage* oldImage, StyleImage* newImage)
     }
 }
 
-IntRect RenderObject::viewRect() const
+LayoutRect RenderObject::viewRect() const
 {
     return view()->viewRect();
 }
@@ -1973,12 +1973,12 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (!o)
         return;
 
-    IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
+    LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
     if (o->isBox() && o->style()->isFlippedBlocksWritingMode())
-        transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedIntPoint(transformState.mappedPoint())) - centerPoint);
+        transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedLayoutPoint(transformState.mappedPoint())) - centerPoint);
 
-    IntSize columnOffset;
-    o->adjustForColumns(columnOffset, roundedIntPoint(transformState.mappedPoint()));
+    LayoutSize columnOffset;
+    o->adjustForColumns(columnOffset, roundedLayoutPoint(transformState.mappedPoint()));
     if (!columnOffset.isZero())
         transformState.move(columnOffset);
 
@@ -2479,15 +2479,15 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
     for (i = 0; i < count; i++) {
         StyleDashboardRegion styleRegion = styleRegions[i];
 
-        int w = box->width();
-        int h = box->height();
+        LayoutUnit w = box->width();
+        LayoutUnit h = box->height();
 
         DashboardRegionValue region;
         region.label = styleRegion.label;
-        region.bounds = IntRect(styleRegion.offset.left().value(),
-                                styleRegion.offset.top().value(),
-                                w - styleRegion.offset.left().value() - styleRegion.offset.right().value(),
-                                h - styleRegion.offset.top().value() - styleRegion.offset.bottom().value());
+        region.bounds = LayoutRect(styleRegion.offset.left().value(),
+                                   styleRegion.offset.top().value(),
+                                   w - styleRegion.offset.left().value() - styleRegion.offset.right().value(),
+                                   h - styleRegion.offset.top().value() - styleRegion.offset.bottom().value());
         region.type = styleRegion.type;
 
         region.clip = region.bounds;
@@ -2537,7 +2537,7 @@ bool RenderObject::willRenderImage(CachedImage*)
     return !document()->inPageCache() && !document()->view()->isOffscreen();
 }
 
-int RenderObject::maximalOutlineSize(PaintPhase p) const
+LayoutUnit RenderObject::maximalOutlineSize(PaintPhase p) const
 {
     if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
         return 0;
@@ -2573,9 +2573,9 @@ int RenderObject::nextOffset(int current) const
     return current + 1;
 }
 
-void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
+void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
 {
-    int outlineSize = outlineStyleForRepaint()->outlineSize();
+    LayoutUnit outlineSize = outlineStyleForRepaint()->outlineSize();
     if (const ShadowData* boxShadow = style()->boxShadow()) {
         boxShadow->adjustRectForShadow(rect, outlineSize);
         return;
