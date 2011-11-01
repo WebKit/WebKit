@@ -180,7 +180,7 @@ void tst_CommonViewTests::show()
     viewAbstraction->hide();
 }
 
-QTEST_MAIN(tst_CommonViewTests)
+QTWEBKIT_API_TEST_MAIN(tst_CommonViewTests)
 
 #include "tst_commonviewtests.moc"
 

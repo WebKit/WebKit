@@ -109,7 +109,7 @@ void tst_QDesktopWebView::stopEnabledAfterLoadStarted()
     waitForSignal(webView(), SIGNAL(loadSucceeded()));
 }
 
-QTEST_MAIN(tst_QDesktopWebView)
+QTWEBKIT_API_TEST_MAIN(tst_QDesktopWebView)
 
 #include "tst_qdesktopwebview.moc"
 

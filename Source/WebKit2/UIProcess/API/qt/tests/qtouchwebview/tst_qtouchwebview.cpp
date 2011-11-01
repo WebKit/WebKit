@@ -84,7 +84,7 @@ void tst_QTouchWebView::navigationStatusAtStartup()
 }
 
 
-QTEST_MAIN(tst_QTouchWebView)
+QTWEBKIT_API_TEST_MAIN(tst_QTouchWebView)
 
 #include "tst_qtouchwebview.moc"
 

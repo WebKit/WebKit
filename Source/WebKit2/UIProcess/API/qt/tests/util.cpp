@@ -18,6 +18,7 @@
 */
 
 #include "util.h"
+#include <stdio.h>
 
 void addQtWebProcessToPath()
 {
@@ -49,3 +50,18 @@ bool waitForSignal(QObject* obj, const char* signal, int timeout)
     return timeoutSpy.isEmpty();
 }
 
+static void messageHandler(QtMsgType type, const char* message)
+{
+    if (type == QtCriticalMsg) {
+        fprintf(stderr, "%s\n", message);
+        return;
+    }
+    // Do nothing
+}
+
+void suppressDebugOutput()
+{
+    qInstallMsgHandler(messageHandler); \
+    if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty()) \
+        qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
+}

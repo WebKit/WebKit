@@ -17,11 +17,13 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "../util.h"
 #include <QtQuickTest/quicktest.h>
 #include <QtWidgets/QApplication>
 
 int main(int argc, char** argv)
 {
+    suppressDebugOutput();
     // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
     // This can be removed as soon as we do not use QtWidgets any more.
     QApplication app(argc, argv);
