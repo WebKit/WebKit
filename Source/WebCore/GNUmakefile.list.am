@@ -2743,8 +2743,8 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamComponent.h \
 	Source/WebCore/platform/mediastream/MediaStreamDescriptor.h \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
-	Source/WebCore/platform/mediastream/PeerHandler.cpp \
-	Source/WebCore/platform/mediastream/PeerHandler.h \
+	Source/WebCore/platform/mediastream/gstreamer/PeerConnectionHandler.cpp \
+	Source/WebCore/platform/mediastream/gstreamer/PeerConnectionHandler.h \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \

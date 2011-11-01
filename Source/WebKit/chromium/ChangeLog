@@ -1,3 +1,57 @@
+2011-10-31  Tommy Widenflycht  <tommyw@google.com>
+
+        [Chromium] Media Stream API: add the Chromium WebKit interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=58550
+
+        Adds the bridging code + the minimum amount of Web* supporting code.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * bridge/PeerConnectionHandler.cpp: Renamed from Source/WebCore/platform/mediastream/PeerHandler.cpp.
+        (WebCore::PeerConnectionHandler::create):
+        (WebCore::PeerConnectionHandler::PeerConnectionHandler):
+        (WebCore::PeerConnectionHandler::~PeerConnectionHandler):
+        (WebCore::PeerConnectionHandler::produceInitialOffer):
+        (WebCore::PeerConnectionHandler::handleInitialOffer):
+        (WebCore::PeerConnectionHandler::processSDP):
+        (WebCore::PeerConnectionHandler::processPendingStreams):
+        (WebCore::PeerConnectionHandler::sendDataStreamMessage):
+        (WebCore::PeerConnectionHandler::stop):
+        * bridge/PeerConnectionHandlerInternal.cpp: Added.
+        (WebCore::PeerConnectionHandlerInternal::PeerConnectionHandlerInternal):
+        (WebCore::PeerConnectionHandlerInternal::~PeerConnectionHandlerInternal):
+        (WebCore::PeerConnectionHandlerInternal::produceInitialOffer):
+        (WebCore::PeerConnectionHandlerInternal::handleInitialOffer):
+        (WebCore::PeerConnectionHandlerInternal::processSDP):
+        (WebCore::PeerConnectionHandlerInternal::processPendingStreams):
+        (WebCore::PeerConnectionHandlerInternal::sendDataStreamMessage):
+        (WebCore::PeerConnectionHandlerInternal::stop):
+        (WebCore::PeerConnectionHandlerInternal::didCompleteICEProcessing):
+        (WebCore::PeerConnectionHandlerInternal::didGenerateSDP):
+        (WebCore::PeerConnectionHandlerInternal::didReceiveDataStreamMessage):
+        (WebCore::PeerConnectionHandlerInternal::didAddRemoteStream):
+        (WebCore::PeerConnectionHandlerInternal::didRemoveRemoteStream):
+        * bridge/PeerConnectionHandlerInternal.h: Added.
+        * public/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::createPeerConnectionHandler):
+        * public/WebMediaStreamDescriptor.h: Added.
+        (WebKit::WebMediaStreamDescriptor::WebMediaStreamDescriptor):
+        (WebKit::WebMediaStreamDescriptor::~WebMediaStreamDescriptor):
+        (WebKit::WebMediaStreamDescriptor::isNull):
+        * public/WebPeerConnectionHandler.h: Added.
+        (WebKit::WebPeerConnectionHandler::~WebPeerConnectionHandler):
+        * public/WebPeerConnectionHandlerClient.h: Added.
+        (WebKit::WebPeerConnectionHandlerClient::~WebPeerConnectionHandlerClient):
+        * src/WebMediaStreamDescriptor.cpp: Added.
+        (WebKit::WebMediaStreamDescriptor::WebMediaStreamDescriptor):
+        (WebKit::WebMediaStreamDescriptor::reset):
+        (WebKit::WebMediaStreamDescriptor::operator=):
+        (WebKit::WebMediaStreamDescriptor::operator WTF::PassRefPtr<WebCore::MediaStreamDescriptor>):
+        (WebKit::WebMediaStreamDescriptor::operator WebCore::MediaStreamDescriptor*):
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
 2011-10-31  Yuzhu Shen  <yzshen@google.com>
 
         [chromium] Calling methods of WebFontImpl causes assertions

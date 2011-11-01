@@ -32,41 +32,49 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PeerHandler.h"
+#include "PeerConnectionHandler.h"
+
+#include "PeerConnectionHandlerClient.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
+PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, securityOrigin));
+}
+
 // FIXME: remove when real implementations are available
 // Empty implementations for ports that build with MEDIA_STREAM enabled by default.
-PeerHandler::PeerHandler(PeerHandlerClient*, const String&, const String&)
+PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient*, const String&, PassRefPtr<SecurityOrigin>)
 {
 }
 
-PeerHandler::~PeerHandler()
+PeerConnectionHandler::~PeerConnectionHandler()
 {
 }
 
-void PeerHandler::produceInitialOffer(const MediaStreamDescriptorVector&)
+void PeerConnectionHandler::produceInitialOffer(const MediaStreamDescriptorVector&)
 {
 }
 
-void PeerHandler::handleInitialOffer(const String&)
+void PeerConnectionHandler::handleInitialOffer(const String&)
 {
 }
 
-void PeerHandler::processSDP(const String&)
+void PeerConnectionHandler::processSDP(const String&)
 {
 }
 
-void PeerHandler::processPendingStreams(const MediaStreamDescriptorVector&, const MediaStreamDescriptorVector&)
+void PeerConnectionHandler::processPendingStreams(const MediaStreamDescriptorVector&, const MediaStreamDescriptorVector&)
 {
 }
 
-void PeerHandler::sendDataStreamMessage(const char*, unsigned)
+void PeerConnectionHandler::sendDataStreamMessage(const char*, size_t)
 {
 }
 
-void PeerHandler::stop()
+void PeerConnectionHandler::stop()
 {
 }
 

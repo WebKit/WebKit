@@ -33,7 +33,8 @@
 #include "ExceptionBase.h"
 #include "MediaStream.h"
 #include "MediaStreamList.h"
-#include "PeerHandler.h"
+#include "PeerConnectionHandler.h"
+#include "PeerConnectionHandlerClient.h"
 #include "SignalingCallback.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
@@ -41,7 +42,16 @@
 
 namespace WebCore {
 
-class PeerConnection : public RefCounted<PeerConnection>, public PeerHandlerClient, public EventTarget, public ActiveDOMObject {
+// Note:
+// SDP stands for Session Description Protocol, which is intended for describing
+// multimedia sessions for the purposes of session announcement, session
+// invitation, and other forms of multimedia session initiation.
+//
+// More information can be found here:
+// http://tools.ietf.org/html/rfc4566
+// http://en.wikipedia.org/wiki/Session_Description_Protocol
+
+class PeerConnection : public RefCounted<PeerConnection>, public PeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<PeerConnection> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
     ~PeerConnection();
@@ -71,12 +81,12 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
 
-    // PeerHandlerClient
-    virtual void iceProcessingCompleted();
-    virtual void sdpGenerated(const String& sdp);
-    virtual void dataStreamMessageReceived(const char* data, unsigned length);
-    virtual void remoteStreamAdded(PassRefPtr<MediaStreamDescriptor>);
-    virtual void remoteStreamRemoved(MediaStreamDescriptor*);
+    // PeerConnectionHandlerClient
+    virtual void didCompleteICEProcessing();
+    virtual void didGenerateSDP(const String& sdp);
+    virtual void didReceiveDataStreamMessage(const char* data, size_t length);
+    virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>);
+    virtual void didRemoveRemoteStream(MediaStreamDescriptor*);
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -125,7 +135,7 @@ private:
     MediaStreamDescriptorVector m_pendingRemoveStreams;
     Vector<ReadyState> m_pendingReadyStates;
 
-    OwnPtr<PeerHandler> m_peerHandler;
+    OwnPtr<PeerConnectionHandler> m_peerHandler;
 };
 
 } // namespace WebCore

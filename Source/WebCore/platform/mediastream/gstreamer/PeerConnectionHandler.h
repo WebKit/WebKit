@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeerHandler_h
-#define PeerHandler_h
+#ifndef PeerConnectionHandler_h
+#define PeerConnectionHandler_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -40,43 +40,32 @@
 
 namespace WebCore {
 
-class PeerHandlerClient {
-public:
-    virtual ~PeerHandlerClient() { }
+class PeerConnectionHandlerClient;
+class SecurityOrigin;
 
-    virtual void iceProcessingCompleted() = 0;
-    virtual void sdpGenerated(const String& sdp) = 0;
-    virtual void dataStreamMessageReceived(const char* data, unsigned length) = 0;
-    virtual void remoteStreamAdded(PassRefPtr<MediaStreamDescriptor>) = 0;
-    virtual void remoteStreamRemoved(MediaStreamDescriptor*) = 0;
-};
-
-class PeerHandler {
-    WTF_MAKE_NONCOPYABLE(PeerHandler);
+class PeerConnectionHandler {
+    WTF_MAKE_NONCOPYABLE(PeerConnectionHandler);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PeerHandler> create(PeerHandlerClient* client, const String& serverConfiguration, const String& username)
-    {
-        return adoptPtr(new PeerHandler(client, serverConfiguration, username));
-    }
-    virtual ~PeerHandler();
+    static PassOwnPtr<PeerConnectionHandler> create(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
+    ~PeerConnectionHandler();
 
     void produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams);
     void handleInitialOffer(const String& sdp);
     void processSDP(const String& sdp);
     void processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams);
-    void sendDataStreamMessage(const char* data, unsigned length);
+    void sendDataStreamMessage(const char* data, size_t length);
 
     void stop();
 
 private:
-    PeerHandler(PeerHandlerClient*, const String& serverConfiguration, const String& username);
+    PeerConnectionHandler(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
 
-    PeerHandlerClient* m_client;
+    PeerConnectionHandlerClient* m_client;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // PeerHandler_h
+#endif // PeerConnectionHandler_h

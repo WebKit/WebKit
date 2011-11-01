@@ -61,6 +61,8 @@ class WebIDBFactory;
 class WebIDBKey;
 class WebMessagePortChannel;
 class WebMimeRegistry;
+class WebPeerConnectionHandler;
+class WebPeerConnectionHandlerClient;
 class WebPluginListBuilder;
 class WebSandboxSupport;
 class WebSharedWorkerRepository;
@@ -320,6 +322,10 @@ public:
 
     // Must return non-null.
     virtual WebFileSystem* fileSystem() { return 0; }
+
+    // WebRTC ----------------------------------------------------------
+
+    virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
 
 protected:
     ~WebKitPlatformSupport() { }

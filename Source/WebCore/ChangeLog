@@ -1,3 +1,41 @@
+2011-10-31  Tommy Widenflycht  <tommyw@google.com>
+
+        [Chromium] Media Stream API: add the Chromium WebKit interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=58550
+
+        Changes the PeerHandler platform interface so that embedders can more easily use it.
+
+        Reviewed by Darin Fisher.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * mediastream/PeerConnection.cpp:
+        (WebCore::PeerConnection::PeerConnection):
+        (WebCore::PeerConnection::didCompleteICEProcessing):
+        (WebCore::PeerConnection::didGenerateSDP):
+        (WebCore::PeerConnection::didReceiveDataStreamMessage):
+        (WebCore::PeerConnection::didAddRemoteStream):
+        (WebCore::PeerConnection::didRemoveRemoteStream):
+        * mediastream/PeerConnection.h:
+        * platform/mediastream/PeerConnectionHandlerClient.h: Copied from Source/WebCore/platform/mediastream/PeerHandler.cpp.
+        (WebCore::PeerConnectionHandlerClient::~PeerConnectionHandlerClient):
+        * platform/mediastream/chromium/PeerConnectionHandler.h: Copied from Source/WebCore/platform/mediastream/PeerHandler.h.
+        * platform/mediastream/gstreamer/PeerConnectionHandler.cpp: Copied from Source/WebCore/platform/mediastream/PeerHandler.cpp.
+        (WebCore::PeerConnectionHandler::create):
+        (WebCore::PeerConnectionHandler::PeerConnectionHandler):
+        (WebCore::PeerConnectionHandler::~PeerConnectionHandler):
+        (WebCore::PeerConnectionHandler::produceInitialOffer):
+        (WebCore::PeerConnectionHandler::handleInitialOffer):
+        (WebCore::PeerConnectionHandler::processSDP):
+        (WebCore::PeerConnectionHandler::processPendingStreams):
+        (WebCore::PeerConnectionHandler::sendDataStreamMessage):
+        (WebCore::PeerConnectionHandler::stop):
+        * platform/mediastream/gstreamer/PeerConnectionHandler.h: Renamed from Source/WebCore/platform/mediastream/PeerHandler.h.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
 2011-10-31  Adam Roben  <aroben@apple.com>
 
         Fix linker warnings on Windows

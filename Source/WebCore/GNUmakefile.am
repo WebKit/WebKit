@@ -61,6 +61,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/Source/WebCore/platform/leveldb \
 	-I$(srcdir)/Source/WebCore/platform/mediastream \
+	-I$(srcdir)/Source/WebCore/platform/mediastream/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/mock \
 	-I$(srcdir)/Source/WebCore/platform/network \
 	-I$(srcdir)/Source/WebCore/platform/sql \

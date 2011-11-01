@@ -55,7 +55,7 @@ PeerConnection::PeerConnection(ScriptExecutionContext* context, const String& se
     , m_initialNegotiationTimer(this, &PeerConnection::initialNegotiationTimerFired)
     , m_streamChangeTimer(this, &PeerConnection::streamChangeTimerFired)
     , m_readyStateChangeTimer(this, &PeerConnection::readyStateChangeTimerFired)
-    , m_peerHandler(PeerHandler::create(this, serverConfiguration, context->securityOrigin()->toString()))
+    , m_peerHandler(PeerConnectionHandler::create(this, serverConfiguration, context->securityOrigin()))
 {
 }
 
@@ -187,26 +187,26 @@ void PeerConnection::close(ExceptionCode& ec)
     stop();
 }
 
-void PeerConnection::iceProcessingCompleted()
+void PeerConnection::didCompleteICEProcessing()
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     changeReadyState(ACTIVE);
 }
 
-void PeerConnection::sdpGenerated(const String& sdp)
+void PeerConnection::didGenerateSDP(const String& sdp)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     m_signalingCallback->handleEvent("SDP\n" + sdp, this);
 }
 
-void PeerConnection::dataStreamMessageReceived(const char* data, unsigned length)
+void PeerConnection::didReceiveDataStreamMessage(const char* data, size_t length)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     const String& message = String::fromUTF8(data, length);
     dispatchEvent(MessageEvent::create(PassOwnPtr<MessagePortArray>(), SerializedScriptValue::create(message)));
 }
 
-void PeerConnection::remoteStreamAdded(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+void PeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
 
@@ -219,7 +219,7 @@ void PeerConnection::remoteStreamAdded(PassRefPtr<MediaStreamDescriptor> streamD
     dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
 }
 
-void PeerConnection::remoteStreamRemoved(MediaStreamDescriptor* streamDescriptor)
+void PeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     ASSERT(streamDescriptor->owner());
