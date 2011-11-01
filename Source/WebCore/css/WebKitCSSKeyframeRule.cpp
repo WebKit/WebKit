@@ -52,12 +52,6 @@ String WebKitCSSKeyframeRule::cssText() const
     return result;
 }
 
-bool WebKitCSSKeyframeRule::parseString(const String& /*string*/, bool /*strict*/)
-{
-    // FIXME
-    return false;
-}
-
 void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
 {
     m_style = style;

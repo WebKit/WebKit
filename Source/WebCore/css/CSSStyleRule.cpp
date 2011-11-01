@@ -92,12 +92,6 @@ String CSSStyleRule::cssText() const
     return result;
 }
 
-bool CSSStyleRule::parseString(const String& /*string*/, bool /*strict*/)
-{
-    // FIXME
-    return false;
-}
-
 void CSSStyleRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
 {
     m_style = style;
