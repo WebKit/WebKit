@@ -1,5 +1,12 @@
 2011-11-01  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix extensions tests.
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.showPanel):
+
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed: fix inspector extensions tests.
 
         * inspector/extensions/extensions.html:
