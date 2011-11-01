@@ -21,10 +21,12 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
+#include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSNamespace.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
+#include "CSSStyleRule.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -296,8 +298,11 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
             if (rule->isImportRule()) {
                 if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
                     styleSheetQueue.append(ruleStyleSheet);
-            }
-            rule->addSubresourceStyleURLs(urls);
+                static_cast<CSSImportRule*>(rule)->addSubresourceStyleURLs(urls);
+            } else if (rule->isFontFaceRule())
+                static_cast<CSSFontFaceRule*>(rule)->addSubresourceStyleURLs(urls);
+            else if (rule->isStyleRule() || rule->isPageRule())
+                static_cast<CSSStyleRule*>(rule)->addSubresourceStyleURLs(urls);
         }
     }
 }

@@ -94,8 +94,6 @@ public:
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&);
 
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
-
     KURL baseURL() const
     {
         if (CSSStyleSheet* parentSheet = parentStyleSheet())

@@ -52,7 +52,7 @@ public:
     // Not part of the CSSOM
     bool isLoading() const;
 
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
+    void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 
     void requestStyleSheet();
 

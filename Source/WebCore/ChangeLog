@@ -1,3 +1,20 @@
+2011-11-01  Andreas Kling  <kling@webkit.org>
+
+        CSSRule: Devirtualize addSubresourceStyleURLs()
+        https://bugs.webkit.org/show_bug.cgi?id=71285
+
+        Reviewed by Antti Koivisto.
+
+        Move addSubresourceStyleURLs() into the rules that actually implement it.
+        Add type checks and casts at the (only) call site.
+
+        * css/CSSFontFaceRule.h:
+        * css/CSSImportRule.h:
+        * css/CSSRule.h:
+        * css/CSSStyleRule.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs):
+
 2011-11-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: some popup buttons not announced by VoiceOver
