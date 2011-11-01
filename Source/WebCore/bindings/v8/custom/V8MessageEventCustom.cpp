@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
         if (scriptValue.hasNoValue())
             result = v8::Null();
         else
-            result = scriptValue.v8Value();
+            result = v8::Local<v8::Value>::New(scriptValue.v8Value());
         break;
     }
 
