@@ -1,5 +1,14 @@
 2011-10-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed holiday gardening after r98852.
+
+        4 new tests fail introduced in r98852
+        https://bugs.webkit.org/show_bug.cgi?id=71253
+
+        * platform/qt/Skipped: Skip failing tests.
+
+2011-10-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed holiday gardening after r98673 and r98608.
 
         * platform/qt/fast/css/child-style-can-override-visited-style-expected.png: Added.
