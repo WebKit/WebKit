@@ -344,7 +344,7 @@ InspectorTest.expandElementsTree = function(callback)
         expand(WebInspector.panels.elements.treeOutline);
         callback();
     }
-    WebInspector.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
     InspectorTest.findNode(function() { return false; }, onAllNodesAvailable);
 };
 

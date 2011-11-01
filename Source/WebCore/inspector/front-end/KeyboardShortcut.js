@@ -117,6 +117,11 @@ WebInspector.KeyboardShortcut.makeKeyFromEvent = function(keyboardEvent)
     return WebInspector.KeyboardShortcut._makeKeyFromCodeAndModifiers(keyboardEvent.keyCode, modifiers);
 }
 
+WebInspector.KeyboardShortcut.eventHasCtrlOrMeta = function(event)
+{
+    return WebInspector.isMac() ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+}
+
 /**
  * @param {number=} modifiers
  */

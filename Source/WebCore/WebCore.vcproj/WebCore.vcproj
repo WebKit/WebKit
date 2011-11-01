@@ -68797,6 +68797,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\InspectorView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
 					>
 				</File>

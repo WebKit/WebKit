@@ -465,7 +465,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
-        WebInspector.setCurrentPanel(this);
+        WebInspector.inspectorView.setCurrentPanel(this);
 
         this.sidebarPanes.callstack.update(callFrames);
         this._updateCallFrame(this._presentationModel.selectedCallFrame);
@@ -993,11 +993,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (this.toggleBreakpointsButton.toggled) {
             DebuggerAgent.setBreakpointsActive(true);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
-            WebInspector.mainPanelsView.element.removeStyleClass("breakpoints-deactivated");
+            WebInspector.inspectorView.element.removeStyleClass("breakpoints-deactivated");
         } else {
             DebuggerAgent.setBreakpointsActive(false);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
-            WebInspector.mainPanelsView.element.addStyleClass("breakpoints-deactivated");
+            WebInspector.inspectorView.element.addStyleClass("breakpoints-deactivated");
         }
     },
 

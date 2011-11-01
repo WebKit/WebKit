@@ -29,44 +29,13 @@
  */
 
 var WebInspector = {
-    currentPanel: function()
-    {
-        return this._currentPanel;
-    },
-
-    setCurrentPanel: function(x)
-    {
-        if (this._currentPanel === x)
-            return;
-
-        if (this._currentPanel)
-            this._currentPanel.detach();
-
-        this._currentPanel = x;
-
-        if (x) {
-            x.show();
-            WebInspector.searchController.activePanelChanged();
-        }
-        for (var panelName in WebInspector.panels) {
-            if (WebInspector.panels[panelName] === x) {
-                WebInspector.settings.lastActivePanel.set(panelName);
-                this._panelHistory.setPanel(panelName);
-                WebInspector.userMetrics.panelShown(panelName);
-            }
-        }
-
-        this._toggleConsoleButton.disabled = this._currentPanel === WebInspector.panels.console;
-    },
-
     _createPanels: function()
     {
-        WebInspector.mainPanelsView = new WebInspector.View();
-        WebInspector.mainPanelsView.markAsRoot();
-        WebInspector.mainPanelsView.element.id = "main-panels";
-        WebInspector.mainPanelsView.element.setAttribute("spellcheck", false);
+        this.panels = {};
+        WebInspector.inspectorView = new WebInspector.InspectorView();
         var parentElement = document.getElementById("main");
-        WebInspector.mainPanelsView.show(parentElement);
+        WebInspector.inspectorView.show(parentElement);
+        WebInspector.inspectorView.addEventListener(WebInspector.InspectorView.Events.PanelSelected, this._panelSelected, this);
 
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
             this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
@@ -90,6 +59,11 @@ var WebInspector = {
             this.panels.audits = new WebInspector.AuditsPanel();
         if (hiddenPanels.indexOf("console") === -1)
             this.panels.console = new WebInspector.ConsolePanel();
+    },
+
+    _panelSelected: function()
+    {
+        this._toggleConsoleButton.disabled = WebInspector.inspectorView.currentPanel() === WebInspector.panels.console;
     },
 
     _createGlobalStatusBarItems: function()
@@ -394,15 +368,12 @@ WebInspector.doLoadedDone = function()
     if (Preferences.nativeInstrumentationEnabled)
         this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
-    this.panels = {};
     this._createPanels();
     this._createGlobalStatusBarItems();
 
-    this._panelHistory = new WebInspector.PanelHistory();
     this.toolbar = new WebInspector.Toolbar();
     this.toolbar.attached = WebInspector.attached;
 
-    this.panelOrder = [];
     for (var panelName in this.panels)
         this.addPanel(this.panels[panelName]);
 
@@ -434,8 +405,7 @@ WebInspector.doLoadedDone = function()
 
 WebInspector.addPanel = function(panel)
 {
-    this.panelOrder.push(panel);
-    this.toolbar.addPanel(panel);
+    WebInspector.inspectorView.addPanel(panel);
 }
 
 var windowLoaded = function()
@@ -484,10 +454,9 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 
 WebInspector.windowResize = function(event)
 {
-    if (this.currentPanel())
-        this.currentPanel().doResize();
-    this.drawer.resize();
-    this.toolbar.resize();
+    WebInspector.inspectorView.doResize();
+    WebInspector.drawer.resize();
+    WebInspector.toolbar.resize();
 }
 
 WebInspector.setAttachedWindow = function(attached)
@@ -618,8 +587,8 @@ WebInspector.documentKeyDown = function(event)
         }
     }
 
-    if (this.currentPanel()) {
-        this.currentPanel().handleShortcut(event);
+    if (WebInspector.inspectorView.currentPanel()) {
+        WebInspector.inspectorView.currentPanel().handleShortcut(event);
         if (event.handled) {
             event.preventDefault();
             return;
@@ -638,61 +607,10 @@ WebInspector.documentKeyDown = function(event)
 
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
-        case "Left":
-            var isBackKey = !isInEditMode && (isMac ? event.metaKey : event.ctrlKey);
-            if (isBackKey && this._panelHistory.canGoBack()) {
-                this._panelHistory.goBack();
-                event.preventDefault();
-            }
-            break;
-
-        case "Right":
-            var isForwardKey = !isInEditMode && (isMac ? event.metaKey : event.ctrlKey);
-            if (isForwardKey && this._panelHistory.canGoForward()) {
-                this._panelHistory.goForward();
-                event.preventDefault();
-            }
-            break;
-
         case "U+001B": // Escape key
             event.preventDefault();
             this._escPressed();
             break;
-
-        // Windows and Mac have two different definitions of [, so accept both.
-        case "U+005B":
-        case "U+00DB": // [ key
-            if (isMac)
-                var isRotateLeft = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
-            else
-                var isRotateLeft = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-
-            if (isRotateLeft) {
-                var index = this.panelOrder.indexOf(this.currentPanel());
-                index = (index === 0) ? this.panelOrder.length - 1 : index - 1;
-                this.panelOrder[index].toolbarItem.click();
-                event.preventDefault();
-            }
-
-            break;
-
-        // Windows and Mac have two different definitions of ], so accept both.
-        case "U+005D":
-        case "U+00DD":  // ] key
-            if (isMac)
-                var isRotateRight = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
-            else
-                var isRotateRight = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
-
-            if (isRotateRight) {
-                var index = this.panelOrder.indexOf(this.currentPanel());
-                index = (index + 1) % this.panelOrder.length;
-                this.panelOrder[index].toolbarItem.click();
-                event.preventDefault();
-            }
-
-            break;
-
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 PageAgent.reload(event.shiftKey);
@@ -710,14 +628,14 @@ WebInspector.documentKeyDown = function(event)
 
 WebInspector.documentCanCopy = function(event)
 {
-    if (this.currentPanel() && this.currentPanel().handleCopyEvent)
+    if (WebInspector.inspectorView.currentPanel() && WebInspector.inspectorView.currentPanel().handleCopyEvent)
         event.preventDefault();
 }
 
 WebInspector.documentCopy = function(event)
 {
-    if (this.currentPanel() && this.currentPanel().handleCopyEvent)
-        this.currentPanel().handleCopyEvent(event);
+    if (WebInspector.inspectorView.currentPanel() && WebInspector.inspectorView.currentPanel().handleCopyEvent)
+        WebInspector.inspectorView.currentPanel().handleCopyEvent(event);
 }
 
 WebInspector.contextMenuEventFired = function(event)
@@ -748,12 +666,12 @@ WebInspector.showPanel = function(panel)
         else
             panel = "elements";
     }
-    this.setCurrentPanel(this.panels[panel]);
+    WebInspector.inspectorView.setCurrentPanel(this.panels[panel]);
 }
 
 WebInspector.startUserInitiatedDebugging = function()
 {
-    this.setCurrentPanel(this.panels.scripts);
+    WebInspector.inspectorView.setCurrentPanel(this.panels.scripts);
     WebInspector.debuggerModel.enableDebugger();
 }
 
@@ -879,10 +797,10 @@ WebInspector.inspect = function(payload, hints)
     }
 
     if (hints.databaseId) {
-        WebInspector.setCurrentPanel(WebInspector.panels.resources);
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
         WebInspector.panels.resources.selectDatabase(hints.databaseId);
     } else if (hints.domStorageId) {
-        WebInspector.setCurrentPanel(WebInspector.panels.resources);
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
         WebInspector.panels.resources.selectDOMStorage(hints.domStorageId);
     }
 
@@ -918,10 +836,10 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
     }
 
     WebInspector.searchController.disableSearchUntilExplicitAction();
-    this.setCurrentPanel(panel);
+    WebInspector.inspectorView.setCurrentPanel(panel);
     if (this.drawer)
         this.drawer.immediatelyFinishAnimation();
-    this.currentPanel().showAnchorLocation(anchor);
+    WebInspector.inspectorView.currentPanel().showAnchorLocation(anchor);
     return true;
 }
 
@@ -949,50 +867,7 @@ WebInspector.frontendReused = function()
 WebInspector._toolbarItemClicked = function(event)
 {
     var toolbarItem = event.currentTarget;
-    this.setCurrentPanel(toolbarItem.panel);
-}
-
-WebInspector.PanelHistory = function()
-{
-    this._history = [];
-    this._historyIterator = -1;
-}
-
-WebInspector.PanelHistory.prototype = {
-    canGoBack: function()
-    {
-        return this._historyIterator > 0;
-    },
-
-    goBack: function()
-    {
-        this._inHistory = true;
-        WebInspector.setCurrentPanel(WebInspector.panels[this._history[--this._historyIterator]]);
-        delete this._inHistory;
-    },
-
-    canGoForward: function()
-    {
-        return this._historyIterator < this._history.length - 1;
-    },
-
-    goForward: function()
-    {
-        this._inHistory = true;
-        WebInspector.setCurrentPanel(WebInspector.panels[this._history[++this._historyIterator]]);
-        delete this._inHistory;
-    },
-
-    setPanel: function(panelName)
-    {
-        if (this._inHistory)
-            return;
-
-        this._history.splice(this._historyIterator + 1, this._history.length - this._historyIterator - 1);
-        if (!this._history.length || this._history[this._history.length - 1] !== panelName)
-            this._history.push(panelName);
-        this._historyIterator = this._history.length - 1;
-    }
+    WebInspector.inspectorView.setCurrentPanel(toolbarItem.panel);
 }
 
 WebInspector.installSourceMappingForTest = function(url)

@@ -54,7 +54,7 @@ function test()
         function testShowView(next)
         {
             var view = new TestView("View");
-            view.show(WebInspector.mainPanelsView.element);
+            view.show(WebInspector.inspectorView.element);
             view.detach();
             next();
         },
@@ -125,13 +125,13 @@ function test()
             var parentView = new TestView("Parent");
             parentView.markAsRoot();
             var childView = new TestView("Child");
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             parentView.doResize();
             childView.show(parentView.element);
             parentView.doResize();
             parentView.detach();
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
             childView.detach();
             parentView.detach();
             next();
@@ -142,13 +142,13 @@ function test()
             var parentView = new TestView("Parent");
             var childView = new TestView("Child");
             childView.setHideOnDetach();
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             parentView.doResize();
             childView.show(parentView.element);
             parentView.doResize();
             parentView.detach();
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
             childView.detach();
             parentView.detach();
             next();
@@ -157,7 +157,7 @@ function test()
         function testViewCounter(next)
         {
             var parentView = new TestView("Parent");
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             var childView = new TestView("Child");
             childView.show(parentView.element);
@@ -179,7 +179,7 @@ function test()
         function testRemoveChild(next)
         {
             var parentView = new TestView("Parent");
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             var childView = new TestView("Child");
             childView.show(parentView.element);

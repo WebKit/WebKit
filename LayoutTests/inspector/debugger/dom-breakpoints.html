@@ -32,7 +32,7 @@ function removeElement(elementId)
 
 function test()
 {
-    WebInspector.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
 
     var pane = WebInspector.domBreakpointsSidebarPane;
     var rootElement;

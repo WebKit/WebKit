@@ -833,9 +833,15 @@ TreeElement.prototype.selectOnMouseDown = function(event)
  */
 TreeElement.prototype.select = function(omitFocus, selectedByUser)
 {
-    if (!this.treeOutline || !this.selectable || this.selected)
+    if (!this.treeOutline || !this.selectable)
         return;
 
+    if (this.selected) {
+        if (!omitFocus)
+            this.treeOutline._childrenListNode.focus();
+        return;
+    }
+    
     if (this.treeOutline.selectedTreeElement)
         this.treeOutline.selectedTreeElement.deselect();
 

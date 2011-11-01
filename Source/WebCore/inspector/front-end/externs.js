@@ -92,19 +92,14 @@ WebInspector.networkResourceById = function(requestId)
 WebInspector.panels = {};
 
 /**
+ * @type {WebInspector.InspectorView}
+ */
+WebInspector.inspectorView;
+
+/**
  * @type {WebInspector.ScriptsPanel}
  */
 WebInspector.panels.scripts = null;
-
-/**
- * @return {WebInspector.Panel} 
- */
-WebInspector.currentPanel = function() {}
-
-/**
- * @param {WebInspector.Panel} panel
- */
-WebInspector.setCurrentPanel = function(panel) {}
 
 /**
  * @param {WebInspector.View} view
@@ -177,8 +172,3 @@ function ExtensionReloadOptions() {
  * @type {WebInspector.HandlerRegistry}
  */
 WebInspector.openAnchorLocationRegistry = null;
-
-/**
- * @type {WebInspector.View}
- */
-WebInspector.mainPanelsView;

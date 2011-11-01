@@ -45,7 +45,7 @@ function test()
         function testEvents(next)
         {
             var parentView = new TestView("Parent", "parent.css");
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             var childView1 = new TestView("Child 1", "child.css", "child1.css");
             var childView2 = new TestView("Child 2", "child.css", "child2.css");
@@ -57,7 +57,7 @@ function test()
 
             parentView.detach();
 
-            parentView.show(WebInspector.mainPanelsView.element);
+            parentView.show(WebInspector.inspectorView.element);
 
             next();
         }

@@ -63,7 +63,7 @@ WebInspector.Panel.prototype = {
 
     show: function()
     {
-        WebInspector.View.prototype.show.call(this, WebInspector.mainPanelsView.element);
+        WebInspector.View.prototype.show.call(this, WebInspector.inspectorView.element);
     },
 
     wasShown: function()

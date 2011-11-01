@@ -81,6 +81,7 @@
     <file>ObjectPopoverHelper.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
+    <file>PanelContainer.js</file>
     <file>PanelEnablerView.js</file>
     <file>PartialQuickSort.js</file>
     <file>Placard.js</file>

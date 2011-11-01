@@ -1,3 +1,24 @@
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce PanelContainer class, start moving panel management from inspector.js to the new class.
+        https://bugs.webkit.org/show_bug.cgi?id=71272
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.expandElementsTree):
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesTree):
+        * inspector/debugger/debugger-expand-scope.html:
+        * inspector/debugger/debugger-proto-property.html:
+        * inspector/debugger/dom-breakpoints.html:
+        * inspector/elements/elements-img-tooltip.html:
+        * inspector/elements/elements-panel-limited-children.html:
+        * inspector/storage-panel-dom-storage.html:
+        * inspector/styles/styles-new-API.html:
+        * inspector/view-css.html:
+        * inspector/view-events.html:
+
 2011-11-01  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Add pixel baselines for fast/ tests.

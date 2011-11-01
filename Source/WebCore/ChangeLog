@@ -1,3 +1,68 @@
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
+
+        Web Inspector: introduce PanelContainer class, start moving panel management from inspector.js to the new class.
+        https://bugs.webkit.org/show_bug.cgi?id=71272
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.switchToAndFocus):
+        (WebInspector.ElementsPanel.prototype.revealAndSelectNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.setVisible):
+        * inspector/front-end/InspectorView.js: Added.
+        (WebInspector.InspectorView):
+        (WebInspector.InspectorView.prototype.addPanel):
+        (WebInspector.InspectorView.prototype.currentPanel):
+        (WebInspector.InspectorView.prototype._keyDown):
+        (WebInspector.InspectorView.prototype._canGoBackInHistory):
+        (WebInspector.InspectorView.prototype._goBackInHistory):
+        (WebInspector.InspectorView.prototype._canGoForwardInHistory):
+        (WebInspector.InspectorView.prototype._goForwardInHistory):
+        (WebInspector.InspectorView.prototype._pushToHistory):
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleBreakpointsClicked):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.updateSearchMatchesCount):
+        (WebInspector.SearchController.prototype.updateCurrentMatchIndex):
+        (WebInspector.SearchController.prototype.updateSearchLabel):
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.createPanelToolbarItem.onToolbarItemClicked):
+        (WebInspector.Toolbar.createPanelToolbarItem):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+        (WebInspector._panelSelected):
+        (WebInspector.addPanel):
+        (WebInspector.windowResize):
+        (WebInspector.documentKeyDown):
+        (WebInspector.documentCanCopy):
+        (WebInspector.documentCopy):
+        (WebInspector.showPanel):
+        (WebInspector.startUserInitiatedDebugging):
+        (WebInspector.inspect):
+        (WebInspector._showAnchorLocationInPanel):
+        (WebInspector._toolbarItemClicked):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.select):
+
 2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2] Add WebGestureEvents to the Qt build and enable PlatformGestureEvent::TapType

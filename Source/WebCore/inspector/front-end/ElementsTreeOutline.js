@@ -81,6 +81,8 @@ WebInspector.ElementsTreeOutline.prototype = {
             return;
 
         this._updateModifiedNodes();
+        if (this._selectedDOMNode)
+            this._revealAndSelectNode(this._selectedDOMNode, false);
     },
 
     addEventListener: function(eventType, listener, thisObject)

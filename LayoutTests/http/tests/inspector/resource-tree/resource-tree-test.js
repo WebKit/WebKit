@@ -63,7 +63,7 @@ InspectorTest.dumpResourcesTree = function()
             dump(children[i], prefix + "    ");
     }
 
-    WebInspector.setCurrentPanel(WebInspector.panels.resources);
+    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
     dump(WebInspector.panels.resources.resourcesListTreeElement, "");
 }
 

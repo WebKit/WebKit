@@ -307,7 +307,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         // Reset search restore.
         WebInspector.searchController.cancelSearch();
-        WebInspector.setCurrentPanel(this);
+        WebInspector.inspectorView.setCurrentPanel(this);
         this.selectDOMNode(node, true);
     },
 
@@ -973,7 +973,7 @@ WebInspector.ElementsPanel.prototype = {
 
     revealAndSelectNode: function(nodeId)
     {
-        WebInspector.setCurrentPanel(this);
+        WebInspector.inspectorView.setCurrentPanel(this);
 
         var node = WebInspector.domAgent.nodeForId(nodeId);
         if (!node)

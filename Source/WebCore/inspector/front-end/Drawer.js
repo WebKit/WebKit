@@ -123,7 +123,7 @@ WebInspector.Drawer.prototype = {
         
         function animationFinished()
         {
-            WebInspector.currentPanel().statusBarResized();
+            WebInspector.inspectorView.currentPanel().statusBarResized();
             if (this._view && this._view.afterShow)
                 this._view.afterShow();
             delete this._currentAnimation;
@@ -153,7 +153,7 @@ WebInspector.Drawer.prototype = {
         // like Elements in their updateStatusBarItems call will size things to fit the final location.
         this._mainStatusBar.style.setProperty("padding-left", (anchoredItems.offsetWidth - 1) + "px");
         document.body.removeStyleClass("drawer-visible");
-        WebInspector.currentPanel().statusBarResized();
+        WebInspector.inspectorView.currentPanel().statusBarResized();
         document.body.addStyleClass("drawer-visible");
 
         var animations = [
@@ -171,7 +171,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            WebInspector.currentPanel().doResize();
+            WebInspector.inspectorView.currentPanel().doResize();
             this._mainStatusBar.insertBefore(anchoredItems, this._mainStatusBar.firstChild);
             this._mainStatusBar.style.removeProperty("padding-left");
 
@@ -262,8 +262,8 @@ WebInspector.Drawer.prototype = {
 
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
-        if (WebInspector.currentPanel())
-            WebInspector.currentPanel().doResize();
+        if (WebInspector.inspectorView.currentPanel())
+            WebInspector.inspectorView.currentPanel().doResize();
         this._view.doResize();
 
         event.preventDefault();

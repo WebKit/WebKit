@@ -35,7 +35,7 @@ function test()
     {
         // Expand all but global scopes. Expanding global scope takes for too long
         // so we keep it collapsed.
-        var sections = WebInspector.currentPanel().sidebarPanes.scopechain._sections;
+        var sections = WebInspector.inspectorView.currentPanel().sidebarPanes.scopechain._sections;
         // global scope is always the last one.
         for (var i = 0; i < sections.length - 1; i++)
             sections[i].expand();
@@ -45,7 +45,7 @@ function test()
     function step3()
     {
     
-        var sections = WebInspector.currentPanel().sidebarPanes.scopechain._sections;
+        var sections = WebInspector.inspectorView.currentPanel().sidebarPanes.scopechain._sections;
         InspectorTest.addResult("");
         InspectorTest.addResult("Dump scope sections:");
         for (var i = 0; i < sections.length; i++) {
