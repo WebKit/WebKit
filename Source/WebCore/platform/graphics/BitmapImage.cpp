@@ -195,21 +195,39 @@ bool BitmapImage::getHotSpot(IntPoint& hotSpot) const
 
 bool BitmapImage::dataChanged(bool allDataReceived)
 {
-    // Because we're modifying the current frame, clear its (now possibly
-    // inaccurate) metadata as well.
-    destroyMetadataAndNotify((!m_frames.isEmpty() && m_frames[m_frames.size() - 1].clear(true)) ? 1 : 0);
+    // Clear all partially-decoded frames. For most image formats, there is only
+    // one frame, but at least GIF and ICO can have more. With GIFs, the frames
+    // come in order and we ask to decode them in order, waiting to request a
+    // subsequent frame until the prior one is complete. Given that we clear
+    // incomplete frames here, this means there is at most one incomplete frame
+    // (even if we use destroyDecodedData() -- since it doesn't reset the
+    // metadata), and it is after all the complete frames.
+    //
+    // With ICOs, on the other hand, we may ask for arbitrary frames at
+    // different times (e.g. because we're displaying a higher-resolution image
+    // in the content area and using a lower-resolution one for the favicon),
+    // and the frames aren't even guaranteed to appear in the file in the same
+    // order as in the directory, so an arbitrary number of the frames might be
+    // incomplete (if we ask for frames for which we've not yet reached the
+    // start of the frame data), and any or none of them might be the particular
+    // frame affected by appending new data here. Thus we have to clear all the
+    // incomplete frames to be safe.
+    int framesCleared = 0;
+    for (size_t i = 0; i < m_frames.size(); ++i) {
+        // NOTE: Don't call frameIsCompleteAtIndex() here, that will try to
+        // decode any uncached (i.e. never-decoded or
+        // cleared-on-a-previous-pass) frames!
+        if (m_frames[i].m_haveMetadata && !m_frames[i].m_isComplete)
+            framesCleared += (m_frames[i].clear(true) ? 1 : 0);
+    }
+    destroyMetadataAndNotify(framesCleared);
     
     // Feed all the data we've seen so far to the image decoder.
     m_allDataReceived = allDataReceived;
     m_source.setData(data(), allDataReceived);
     
-    // Clear the frame count.
     m_haveFrameCount = false;
-
     m_hasUniformFrameSize = true;
-
-    // Image properties will not be available until the first frame of the file
-    // reaches kCGImageStatusIncomplete.
     return isSizeAvailable();
 }
 
