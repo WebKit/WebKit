@@ -1,14 +1,25 @@
-This page tests what happens when a getter / setter on the window object conflicts with another property or declared variable.
+This page tests what happens when a getter / setter on the window object conflicts with another property or declared variable
 
-window.x is: 1
-typeof window.__lookupGetter__("x") is: undefined
-window.x is: 2
-typeof window.__lookupSetter__("x") is: undefined
-window.y is: window.y __getter__
-typeof window.__lookupGetter__("y") is: function
-window.y __setter__ called
-window.y is: window.y __getter__
-typeof window.__lookupSetter__("y") is: function
-window.z __setter__ called
-typeof window.__lookupSetter__("z") is: undefined
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.x is 1
+PASS typeof window.__lookupGetter__('x') is 'undefined'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'x').get is 'undefined'
+
+PASS window.x is 2
+PASS typeof window.__lookupGetter__('x') is 'undefined'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'x').get is 'undefined'
+
+PASS window.y is 'window.y __getter__'
+PASS typeof window.__lookupGetter__('y') is 'function'
+FAIL typeof Object.getOwnPropertyDescriptor(window, 'y').get should be function. Was undefined.
+
+PASS window.y is 'window.y __getter__'
+PASS typeof window.__lookupGetter__('y') is 'function'
+FAIL typeof Object.getOwnPropertyDescriptor(window, 'y').get should be function. Was undefined.
+
+PASS window.z is undefined.
+PASS typeof window.__lookupSetter__('z') is 'function'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'z').set is 'function'
 

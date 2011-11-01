@@ -1,52 +1,59 @@
-<p>
-This page tests what happens when a getter / setter on the window object conflicts
-with another property or declared variable.
-</p>
-
-<pre id="console"></pre>
+<script src="../js/resources/js-test-pre.js"></script>
 
 <script>
-function log(s)
-{
-    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
-}
-
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+description("This page tests what happens when a getter / setter on the window object conflicts with another property or declared variable");
 
 var x = 1;
-
 try {
     window.__defineGetter__("x", function() { return "window.x __getter__"; });
-} catch(e) { log(e); }
-log("window.x is: " + window.x);
-log("typeof window.__lookupGetter__(\"x\") is: " + typeof window.__lookupGetter__("x"));
+} catch(e) { debug(e); }
+
+shouldBe("window.x", "1");
+shouldBe("typeof window.__lookupGetter__('x')", "'undefined'");
+shouldBe("typeof Object.getOwnPropertyDescriptor(window, 'x').get", "'undefined'");
+debug("");
+
 
 try {
-window.__defineSetter__("x", function() { log("window.x __setter__ called"); });
-} catch(e) { log(e); }
+window.__defineSetter__("x", function() { debug("window.x __setter__ called"); });
+} catch(e) { debug(e); }
 x = 2;
-log("window.x is: " + window.x);
-log("typeof window.__lookupSetter__(\"x\") is: " + typeof window.__lookupGetter__("x"));
 
-y = 1;
+shouldBe("window.x", "2");
+shouldBe("typeof window.__lookupGetter__('x')", "'undefined'");
+shouldBe("typeof Object.getOwnPropertyDescriptor(window, 'x').get", "'undefined'");
+debug("");
 
+
+window.y = 1;
 try {
     window.__defineGetter__("y", function() { return "window.y __getter__"; });
-} catch(e) { log(e); }
-log("window.y is: " + window.y);
-log("typeof window.__lookupGetter__(\"y\") is: " + typeof window.__lookupGetter__("y"));
+} catch(e) { debug(e); }
+
+shouldBe("window.y", "'window.y __getter__'");
+shouldBe("typeof window.__lookupGetter__('y')", "'function'");
+shouldBe("typeof Object.getOwnPropertyDescriptor(window, 'y').get", "'function'");
+debug("");
+
 
 try {
-window.__defineSetter__("y", function() { log("window.y __setter__ called"); });
-} catch(e) { log(e); }
-y = 2;
-log("window.y is: " + window.y);
-log("typeof window.__lookupSetter__(\"y\") is: " + typeof window.__lookupGetter__("y"));
+window.__defineSetter__("y", function() { "window.y __setter__ called"; });
+} catch(e) { debug(e); }
+window.y = 2;
+
+shouldBe("window.y", "'window.y __getter__'");
+shouldBe("typeof window.__lookupGetter__('y')", "'function'");
+shouldBe("typeof Object.getOwnPropertyDescriptor(window, 'y').get", "'function'");
+debug("");
+
 
 try {
-window.__defineSetter__("z", function() { log("window.z __setter__ called"); });
-} catch(e) { log(e); }
+window.__defineSetter__("z", function() { "window.z __setter__ called"; });
+} catch(e) { debug(e); }
 window.z = 1;
-log("typeof window.__lookupSetter__(\"z\") is: " + typeof window.__lookupGetter__("z"));
+
+shouldBeUndefined("window.z");
+shouldBe("typeof window.__lookupSetter__('z')", "'function'");
+shouldBe("typeof Object.getOwnPropertyDescriptor(window, 'z').set", "'function'");
+
 </script>
