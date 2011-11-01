@@ -178,7 +178,6 @@ namespace JSC  {
 #endif
 #if ENABLE(DFG_JIT)
         bool isInlineCallFrameSlow();
-        CallFrame* trueCallerFrameSlow();
 #endif
         ExecState();
         ~ExecState();

@@ -167,7 +167,7 @@ namespace JSC {
         argc = callFrame->argumentCountIncludingThis();
         
         if (callFrame->isInlineCallFrame())
-            ASSERT(argc == numParameters);
+            ASSERT(argc == numParameters + 1);
 
         if (argc <= numParameters)
             argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numParameters;

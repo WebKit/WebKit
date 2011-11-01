@@ -1166,13 +1166,6 @@ namespace JSC {
             return false;
         return isInlineCallFrameSlow();
     }
-
-    inline ExecState* ExecState::trueCallerFrame()
-    {
-        if (LIKELY(!codeBlock() || codeBlock()->getJITType() != JITCode::DFGJIT))
-            return callerFrame()->removeHostCallFrameFlag();
-        return trueCallerFrameSlow();
-    }
 #endif
     
 } // namespace JSC

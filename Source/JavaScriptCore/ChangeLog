@@ -1,3 +1,35 @@
+2011-11-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG inlining breaks function.arguments
+        https://bugs.webkit.org/show_bug.cgi?id=71329
+
+        Reviewed by Oliver Hunt.
+        
+        The DFG was forgetting to store code origin mappings for inlined
+        call sites. Some of the fast-path optimizations for
+        CallFrame::trueCallerFrame() were wrong. An assertion in Arguments
+        was wrong.
+        
+        I also took the opportunity to decrease code duplication between
+        DFG64 and DFG32_64, because I didn't feel like writing the same
+        code twice.
+
+        * bytecode/CodeBlock.h:
+        (JSC::ExecState::isInlineCallFrame):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler32_64.cpp:
+        * dfg/DFGNode.h:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallerFrame):
+        * interpreter/CallFrame.h:
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+
 2011-11-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         StringImpl::reallocate() should have a 8-bit version
