@@ -2400,8 +2400,8 @@ BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT
 
 // Flaky because they snapshot and animation.
 // Started failing on Mac since 69314:69342.
-BUGCR10479 MAC WIN : svg/hixie/perf/001.xml = PASS IMAGE IMAGE+TEXT
-BUGCR10479 MAC WIN : svg/hixie/perf/002.xml = PASS IMAGE IMAGE+TEXT
+BUGCR10479 MAC WIN : svg/hixie/perf/001.xml = IMAGE IMAGE+TEXT
+BUGCR10479 MAC WIN : svg/hixie/perf/002.xml = IMAGE IMAGE+TEXT
 
 // FileWriter isn't in TestShell yet.
 BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
@@ -3947,3 +3947,6 @@ BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PA
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = PASS TIMEOUT
+
+BUGCASEQ DEBUG GPU : media/video-volume-slider.html = IMAGE CRASH
+BUGCASEQ DEBUG GPU : fast/canvas/shadow-offset-1.html = PASS CRASH
