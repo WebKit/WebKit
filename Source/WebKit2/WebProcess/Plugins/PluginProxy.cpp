@@ -551,24 +551,20 @@ void PluginProxy::setStatusbarText(const String& statusbarText)
 
 void PluginProxy::update(const IntRect& paintedRect)
 {
-    if (paintedRect == m_frameRectInWindowCoordinates)
+    if (paintedRect == pluginBounds())
         m_pluginBackingStoreContainsValidData = true;
-
-    IntRect paintedRectPluginCoordinates = paintedRect;
-    paintedRectPluginCoordinates.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
 
     if (m_backingStore) {
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
         graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
         graphicsContext->setCompositeOperation(CompositeCopy);
-        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRectPluginCoordinates.location(), 
-                                    paintedRectPluginCoordinates);
+        m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRect.location(), paintedRect);
     }
 
     // Ask the controller to invalidate the rect for us.
     m_waitingForPaintInResponseToUpdate = true;
-    controller()->invalidate(paintedRectPluginCoordinates);
+    controller()->invalidate(paintedRect);
 }
 
 } // namespace WebKit

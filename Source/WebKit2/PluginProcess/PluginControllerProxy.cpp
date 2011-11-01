@@ -176,6 +176,8 @@ void PluginControllerProxy::paint()
 
     m_plugin->paint(graphicsContext.get(), dirtyRect);
 
+    // Convert the dirty rect back to plug-in coordinates.
+    dirtyRect.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }
 

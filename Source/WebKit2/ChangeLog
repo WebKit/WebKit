@@ -1,5 +1,27 @@
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
+        PluginProxy::Update should pass the painted rect in plug-in coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71257
+
+        Reviewed by Adam Roben.
+
+        This is one step in the process of migrating away from window relative coordinates
+        and use plug-in relative coordinates instead, since window relative coordinates won't work
+        with transforms.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        Convert the dirty rect back to plug-in coordinates.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::update):
+        No need to convert the painted rect back to plug-in coordinates anymore.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Document that the painted rect is in plug-in coordinates.
+
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
         PluginControllerProxy should call Plugin::geometryDidChange
         https://bugs.webkit.org/show_bug.cgi?id=71255
 
