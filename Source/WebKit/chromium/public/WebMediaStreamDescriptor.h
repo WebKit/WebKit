@@ -28,6 +28,7 @@
 #include "WebCommon.h"
 #include "WebNonCopyable.h"
 #include "WebPrivatePtr.h"
+#include "WebVector.h"
 
 namespace WebCore {
 class MediaStreamDescriptor;
@@ -35,16 +36,19 @@ class MediaStreamDescriptor;
 
 namespace WebKit {
 
+class WebMediaStreamSource;
+class WebString;
+
 class WebMediaStreamDescriptor {
 public:
     WebMediaStreamDescriptor() { }
     ~WebMediaStreamDescriptor() { reset(); }
 
-    WEBKIT_EXPORT void initialize(); // FIXME: Add params.
+    WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>&);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
-    // FIXME: Add functions.
+    WEBKIT_EXPORT WebString label() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamDescriptor(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);

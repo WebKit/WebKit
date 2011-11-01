@@ -26,11 +26,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "WebMediaStreamDescriptor.h"
-
-#include "MediaStreamDescriptor.h"
-#include "MediaStreamSource.h"
 #include "WebMediaStreamSource.h"
+
+#include "MediaStreamSource.h"
 #include "WebString.h"
 #include <wtf/Vector.h>
 
@@ -38,40 +36,47 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebMediaStreamDescriptor::WebMediaStreamDescriptor(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
-    : m_private(mediaStreamDescriptor)
+WebMediaStreamSource::WebMediaStreamSource(const PassRefPtr<MediaStreamSource>& mediaStreamSource)
+    : m_private(mediaStreamSource)
 {
 }
 
-void WebMediaStreamDescriptor::reset()
+void WebMediaStreamSource::reset()
 {
     m_private.reset();
 }
 
-WebMediaStreamDescriptor& WebMediaStreamDescriptor::operator=(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
-{
-    m_private = mediaStreamDescriptor;
-    return *this;
-}
-
-WebMediaStreamDescriptor::operator PassRefPtr<WebCore::MediaStreamDescriptor>() const
+WebMediaStreamSource::operator PassRefPtr<MediaStreamSource>() const
 {
     return m_private.get();
 }
 
-WebMediaStreamDescriptor::operator WebCore::MediaStreamDescriptor*() const
+WebMediaStreamSource::operator MediaStreamSource*() const
 {
     return m_private.get();
 }
 
-void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& sources)
+void WebMediaStreamSource::initialize(const WebString& id, Type type, const WebString& name)
 {
-    MediaStreamSourceVector s;
-    for (size_t i = 0; i < sources.size(); ++i) {
-        MediaStreamSource* curr = sources[i];
-        s.append(curr);
-    }
-    m_private = MediaStreamDescriptor::create(label, s);
+    m_private = MediaStreamSource::create(id, static_cast<MediaStreamSource::Type>(type), name);
+}
+
+WebString WebMediaStreamSource::id() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private.get()->id();
+}
+
+WebMediaStreamSource::Type WebMediaStreamSource::type() const
+{
+    ASSERT(!m_private.isNull());
+    return static_cast<Type>(m_private.get()->type());
+}
+
+WebString WebMediaStreamSource::name() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private.get()->name();
 }
 
 } // namespace WebKit

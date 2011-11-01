@@ -50,6 +50,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
+#include "MediaStreamSource.h"
 #include "NotificationPresenter.h"
 #include "PageVisibilityState.h"
 #include "PasteboardPrivate.h"
@@ -78,6 +79,7 @@
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
+#include "WebMediaStreamSource.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
 #include "WebScrollbar.h"
@@ -459,3 +461,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, Platfor
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateVisible, PageVisibilityStateVisible);
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateHidden, PageVisibilityStateHidden);
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePrerender, PageVisibilityStatePrerender);
+
+#if ENABLE(MEDIA_STREAM)
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeAudio, MediaStreamSource::TypeAudio);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource::TypeVideo);
+#endif

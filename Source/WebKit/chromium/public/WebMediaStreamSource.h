@@ -22,59 +22,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebMediaStreamSource_h
+#define WebMediaStreamSource_h
 
-#if ENABLE(MEDIA_STREAM)
+#include "WebCommon.h"
+#include "WebNonCopyable.h"
+#include "WebPrivatePtr.h"
 
-#include "WebMediaStreamDescriptor.h"
-
-#include "MediaStreamDescriptor.h"
-#include "MediaStreamSource.h"
-#include "WebMediaStreamSource.h"
-#include "WebString.h"
-#include <wtf/Vector.h>
-
-using namespace WebCore;
+namespace WebCore {
+class MediaStreamSource;
+}
 
 namespace WebKit {
 
-WebMediaStreamDescriptor::WebMediaStreamDescriptor(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
-    : m_private(mediaStreamDescriptor)
-{
-}
+class WebString;
 
-void WebMediaStreamDescriptor::reset()
-{
-    m_private.reset();
-}
+class WebMediaStreamSource {
+public:
+    enum Type {
+        TypeAudio,
+        TypeVideo
+    };
 
-WebMediaStreamDescriptor& WebMediaStreamDescriptor::operator=(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
-{
-    m_private = mediaStreamDescriptor;
-    return *this;
-}
+    WebMediaStreamSource() { }
+    ~WebMediaStreamSource() { reset(); }
 
-WebMediaStreamDescriptor::operator PassRefPtr<WebCore::MediaStreamDescriptor>() const
-{
-    return m_private.get();
-}
+    WEBKIT_EXPORT void initialize(const WebString& id, Type, const WebString& name);
+    WEBKIT_EXPORT void reset();
+    bool isNull() const { return m_private.isNull(); }
 
-WebMediaStreamDescriptor::operator WebCore::MediaStreamDescriptor*() const
-{
-    return m_private.get();
-}
+    WEBKIT_EXPORT WebString id() const;
+    WEBKIT_EXPORT Type type() const;
+    WEBKIT_EXPORT WebString name() const;
 
-void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& sources)
-{
-    MediaStreamSourceVector s;
-    for (size_t i = 0; i < sources.size(); ++i) {
-        MediaStreamSource* curr = sources[i];
-        s.append(curr);
-    }
-    m_private = MediaStreamDescriptor::create(label, s);
-}
+#if WEBKIT_IMPLEMENTATION
+    WebMediaStreamSource(const WTF::PassRefPtr<WebCore::MediaStreamSource>&);
+    operator WTF::PassRefPtr<WebCore::MediaStreamSource>() const;
+    operator WebCore::MediaStreamSource*() const;
+#endif
+
+private:
+    WebPrivatePtr<WebCore::MediaStreamSource> m_private;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(MEDIA_STREAM)
-
+#endif // WebMediaStreamSource_h
