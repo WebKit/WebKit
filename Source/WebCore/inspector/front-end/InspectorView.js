@@ -87,23 +87,25 @@ WebInspector.InspectorView.prototype = {
 
     _keyDown: function(event)
     {
+        var isInEditMode = event.target.enclosingNodeOrSelfWithClass("text-prompt") || WebInspector.isEditingAnyField();
+
         switch (event.keyIdentifier) {
             case "Left":
-                var isBackKey = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
+                var isBackKey = !isInEditMode && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
                 if (isBackKey && this._canGoBackInHistory()) {
                     this._goBackInHistory();
                     event.preventDefault();
                 }
                 break;
-    
+
             case "Right":
-                var isForwardKey = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
+                var isForwardKey = !isInEditMode && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
                 if (isForwardKey && this._canGoForwardInHistory()) {
                     this._goForwardInHistory();
                     event.preventDefault();
                 }
                 break;
-    
+
             // Windows and Mac have two different definitions of [, so accept both.
             case "U+005B":
             case "U+00DB": // [ key

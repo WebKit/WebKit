@@ -1,3 +1,13 @@
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not switch panels on Cmd + ->  while in console.
+        https://bugs.webkit.org/show_bug.cgi?id=71281
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/InspectorView.js:
+        (WebInspector.InspectorView.prototype._keyDown):
+
 2011-11-01  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt] bad codegen, pointer diff in JSC::JSCallbackConstructor::JSCallbackConstructor
