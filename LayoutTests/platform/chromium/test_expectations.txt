@@ -1141,7 +1141,6 @@ BUGWK70748 GPU : media/video-display-toggle.html = IMAGE
 BUGWK70748 GPU : media/video-empty-source.html = IMAGE
 BUGWK70748 GPU : media/video-no-audio.html = IMAGE
 BUGWK70748 GPU : media/video-playing-and-pause.html = IMAGE
-BUGWK70748 GPU : media/video-volume-slider.html = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-clipped-evenodd-twice.svg = IMAGE
@@ -1692,8 +1691,7 @@ BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
 // Already marked as flaky under BUGCR10479
 // BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
 // BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
-BUGCR101797 CPU : svg/hixie/perf/007.xml = IMAGE
-BUGCR101797 CPU MAC DEBUG SLOW : svg/hixie/perf/007.xml = IMAGE
+BUGCR101797 CPU SLOW : svg/hixie/perf/007.xml = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
@@ -3678,7 +3676,6 @@ BUGWK68437 LEOPARD GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-1.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-2.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-3.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-4.html = IMAGE
@@ -3950,5 +3947,5 @@ BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = C
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
 BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
 
-BUGCASEQ DEBUG GPU : media/video-volume-slider.html = IMAGE CRASH
-BUGCASEQ DEBUG GPU : fast/canvas/shadow-offset-1.html = PASS CRASH
+BUGCASEQ GPU : media/video-volume-slider.html = IMAGE CRASH
+BUGCASEQ DEBUG GPU : fast/canvas/shadow-offset-1.html = IMAGE PASS CRASH

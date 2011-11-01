@@ -1,5 +1,11 @@
 2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Fixed conflicting entries in test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Marked inspector extensions tests as crash on win debug.
 
         * platform/chromium/test_expectations.txt:
