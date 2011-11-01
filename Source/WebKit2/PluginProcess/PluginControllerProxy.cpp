@@ -169,7 +169,7 @@ void PluginControllerProxy::paint()
     graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
 #endif
 
-    graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
+    graphicsContext->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
 
     if (m_plugin->isTransparent())
         graphicsContext->clearRect(dirtyRect);
@@ -211,10 +211,10 @@ void PluginControllerProxy::invalidate(const IntRect& rect)
 {
     // Convert the dirty rect to window coordinates.
     IntRect dirtyRect = rect;
-    dirtyRect.move(m_frameRect.x(), m_frameRect.y());
+    dirtyRect.move(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 
     // Make sure that the dirty rect is not greater than the plug-in itself.
-    dirtyRect.intersect(m_frameRect);
+    dirtyRect.intersect(m_frameRectInWindowCoordinates);
 
     m_dirtyRect.unite(dirtyRect);
 
@@ -429,12 +429,12 @@ void PluginControllerProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
     m_plugin->frameDidFail(requestID, wasCancelled);
 }
 
-void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle)
+void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform, const IntRect& frameRectInWindowCoordinates, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle)
 {
-    m_frameRect = frameRect;
-    m_clipRect = clipRect;
-
     ASSERT(m_plugin);
+
+    m_pluginSize = pluginSize;
+    m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
 
 #if PLATFORM(MAC)
     if (contentsScaleFactor != m_contentsScaleFactor) {
@@ -452,7 +452,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
         m_backingStore = ShareableBitmap::create(backingStoreHandle);
     }
 
-    m_plugin->deprecatedGeometryDidChange(frameRect, clipRect);
+    m_plugin->geometryDidChange(pluginSize, clipRect, pluginToRootViewTransform);
 }
 
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)
@@ -547,10 +547,10 @@ void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboard
 
 void PluginControllerProxy::paintEntirePlugin()
 {
-    if (m_frameRect.isEmpty())
+    if (m_frameRectInWindowCoordinates.isEmpty())
         return;
 
-    m_dirtyRect = m_frameRect;
+    m_dirtyRect = m_frameRectInWindowCoordinates;
     paint();
 }
 

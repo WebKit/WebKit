@@ -96,7 +96,7 @@ void PluginControllerProxy::platformGeometryDidChange()
     // We don't want to animate to the new size so we disable actions for this transaction.
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
-    [pluginLayer setFrame:CGRectMake(0, 0, m_frameRect.width(), m_frameRect.height())];
+    [pluginLayer setFrame:CGRectMake(0, 0, m_pluginSize.width(), m_pluginSize.height())];
     [CATransaction commit];
 }
 

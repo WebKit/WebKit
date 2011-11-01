@@ -113,7 +113,7 @@ private:
     // Message handlers.
     void frameDidFinishLoading(uint64_t requestID);
     void frameDidFail(uint64_t requestID, bool wasCancelled);
-    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
+    void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform, const WebCore::IntRect& frameRectInWindowCoordinates, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
     void didEvaluateJavaScript(uint64_t requestID, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
@@ -161,9 +161,11 @@ private:
 
     RefPtr<Plugin> m_plugin;
 
-    // The plug-in rect and clip rect in window coordinates.
-    WebCore::IntRect m_frameRect;
-    WebCore::IntRect m_clipRect;
+    WebCore::IntSize m_pluginSize;
+
+    // The plug-in frame rect in window coordinates.
+    // FIXME: Remove this.
+    WebCore::IntRect m_frameRectInWindowCoordinates;
 
     // The dirty rect in plug-in coordinates.
     WebCore::IntRect m_dirtyRect;

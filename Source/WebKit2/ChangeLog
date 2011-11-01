@@ -1,5 +1,48 @@
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
+        PluginControllerProxy should call Plugin::geometryDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=71255
+
+        Reviewed by Sam Weinig.
+
+        Pass enough information over in the GeometryDidChange message sent from
+        PluginProxy to PluginControllerProxy so that PluginControllerProxy can call
+        Plugin::geometryDidChange.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        (WebKit::PluginControllerProxy::invalidate):
+        (WebKit::PluginControllerProxy::paintEntirePlugin):
+        Update for rename from m_frameRect to m_frameRectInWindowCoordinates.
+
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        This now takes the plug-in size and the plug-in to root view transform as well.
+
+        * PluginProcess/PluginControllerProxy.h:
+        Store the plug-in size and rename m_frameRect to m_frameRectInWindowCoordinates.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Update message signature.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        Use the plug-in size instead of the frame rect size.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Add encoder/decoder for WebCore::AffineTransform.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        Compute the frame rect in window coordinates and send it over.
+
+        (WebKit::PluginProxy::deprecatedGeometryDidChange):
+        Move call to geometryDidChange() from here to the new PluginProxy::geometryDidChange.
+
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
         Remove some uses of m_frameRectInWindowCoordinates from PluginProxy
         https://bugs.webkit.org/show_bug.cgi?id=71252
 

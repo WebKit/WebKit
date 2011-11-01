@@ -63,6 +63,17 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
+void ArgumentCoder<AffineTransform>::encode(ArgumentEncoder* encoder, const AffineTransform& affineTransform)
+{
+    SimpleArgumentCoder<AffineTransform>::encode(encoder, affineTransform);
+}
+
+bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder* decoder, AffineTransform& affineTransform)
+{
+    return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
+}
+
+
 void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder* encoder, const FloatPoint& floatPoint)
 {
     SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);

@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h"
 
 namespace WebCore {
+    class AffineTransform;
     class AuthenticationChallenge;
     class Color;
     class Credential;
@@ -81,6 +82,11 @@ namespace WebCore {
 #endif
 
 namespace CoreIPC {
+
+template<> struct ArgumentCoder<WebCore::AffineTransform> {
+    static void encode(ArgumentEncoder*, const WebCore::AffineTransform&);
+    static bool decode(ArgumentDecoder*, WebCore::AffineTransform&);
+};
 
 template<> struct ArgumentCoder<WebCore::FloatPoint> {
     static void encode(ArgumentEncoder*, const WebCore::FloatPoint&);
