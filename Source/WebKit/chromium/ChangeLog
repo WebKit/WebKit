@@ -1,3 +1,13 @@
+2011-11-01  Nat Duca  <nduca@chromium.org>
+
+        CCSchedulerTests fail on Chromium Windows (dbg) after r98915
+        https://bugs.webkit.org/show_bug.cgi?id=71294
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+
 2011-11-01  Alok Priyadarshi  <alokp@chromium.org>
 
         Roll chromium DEPS.

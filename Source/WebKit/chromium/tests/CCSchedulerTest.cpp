@@ -68,7 +68,7 @@ TEST(CCSchedulerTest, RequestCommit)
     // SetNeedsCommit should begin the frame.
     scheduler->setNeedsCommit();
     EXPECT_EQ(1, client.numActions());
-    EXPECT_EQ("scheduledActionBeginFrame", client.action(0));
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(0));
     client.reset();
 
     // Since, hasMoreResourceUpdates is set to false,
@@ -76,14 +76,14 @@ TEST(CCSchedulerTest, RequestCommit)
     // commit
     scheduler->beginFrameComplete();
     EXPECT_EQ(2, client.numActions());
-    EXPECT_EQ("scheduledActionUpdateMoreResources", client.action(0));
-    EXPECT_EQ("scheduledActionCommit", client.action(1));
+    EXPECT_STREQ("scheduledActionUpdateMoreResources", client.action(0));
+    EXPECT_STREQ("scheduledActionCommit", client.action(1));
     client.reset();
 
     // Tick should draw.
     timeSource->tick();
     EXPECT_EQ(1, client.numActions());
-    EXPECT_EQ("scheduledActionDrawAndSwap", client.action(0));
+    EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
     client.reset();
 
     // Tick should do nothing.
@@ -100,7 +100,7 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     // SetNedsCommit should begin the frame.
     scheduler->setNeedsCommit();
     EXPECT_EQ(1, client.numActions());
-    EXPECT_EQ("scheduledActionBeginFrame", client.action(0));
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(0));
     client.reset();
 
     // Now setNeedsCommit again. Calling here means we need a second frame.
@@ -111,15 +111,15 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     // begin another frame.
     scheduler->beginFrameComplete();
     EXPECT_EQ(3, client.numActions());
-    EXPECT_EQ("scheduledActionUpdateMoreResources", client.action(0));
-    EXPECT_EQ("scheduledActionCommit", client.action(1));
-    EXPECT_EQ("scheduledActionBeginFrame", client.action(2));
+    EXPECT_STREQ("scheduledActionUpdateMoreResources", client.action(0));
+    EXPECT_STREQ("scheduledActionCommit", client.action(1));
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(2));
     client.reset();
 
     // Tick should draw but then begin another frame.
     timeSource->tick();
     EXPECT_EQ(1, client.numActions());
-    EXPECT_EQ("scheduledActionDrawAndSwap", client.action(0));
+    EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
     client.reset();
 }
 
