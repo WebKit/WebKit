@@ -430,7 +430,7 @@ class ChromiumDriver(Driver):
             'threaded_compositing': '--enable-threaded-compositing',
             'accelerated_2d_canvas': '--enable-accelerated-2d-canvas',
             'accelerated_drawing': '--enable-accelerated-drawing',
-            'enable_hardware_gpu': '----enable-hardware-gpu',
+            'enable_hardware_gpu': '--enable-hardware-gpu',
         }
         for nrwt_option, drt_option in option_mappings.items():
             if self._port.get_option(nrwt_option):

@@ -1,3 +1,14 @@
+2011-11-01  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] --enable-hardware-gpu flag is not recognized by run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=71318
+
+        Reviewed by James Robinson.
+        
+        Fixed a typo for --enable-hardware-gpu flag.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-11-01  Elliot Poger  <epoger@google.com>
 
         chromium-gpu port should default to chromium-gpu-mac, not chromium-gpu-cg-mac
