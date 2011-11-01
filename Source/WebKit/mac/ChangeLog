@@ -1,3 +1,17 @@
+2011-11-01  Darin Adler  <darin@apple.com>
+
+        Crash in PDF code when script has illegal UTF-8 or UTF-16 sequences
+        https://bugs.webkit.org/show_bug.cgi?id=71289
+
+        Reviewed by Dan Bernstein.
+
+        Just adding a null check. I don't have access to an actual PDF with
+        this problem but crashes from the field indicate they exist.
+
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument): Skip the code to add the script text
+        to an array when the script is null.
+
 2011-10-28  John Sullivan  <sullivan@apple.com>
 
         WebKit part of:
