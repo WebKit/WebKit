@@ -18,36 +18,24 @@
  *
  */
 
-#ifndef qtouchwebpage_p_h
-#define qtouchwebpage_p_h
+#ifndef qbasewebview_p_h
+#define qbasewebview_p_h
 
-#include "QtSGUpdateQueue.h"
-#include "QtTouchWebPageProxy.h"
-#include "qtouchwebpage.h"
-#include "qwebnavigationcontroller.h"
-#include <QMenu>
+#include "qbasewebview.h"
 
-class QRectF;
-class QSGNode;
-class QString;
-class QTouchWebPage;
+class QWebNavigationController;
+class QtWebPageProxy;
 
-class QTouchWebPagePrivate {
+class QBaseWebViewPrivate {
+    Q_DECLARE_PUBLIC(QBaseWebView)
 public:
-    QTouchWebPagePrivate(QTouchWebPage* view);
-
+    QBaseWebViewPrivate();
+    virtual ~QBaseWebViewPrivate() { }
     void setPageProxy(QtWebPageProxy*);
+    QBaseWebView* q_ptr;
+    QScopedPointer<QtWebPageProxy> pageProxy;
 
-    void _q_onAfterSceneRender();
-    void _q_onSceneGraphInitialized();
-    void paintToCurrentGLContext();
-    QtTouchWebPageProxy* touchPageProxy() { return static_cast<QtTouchWebPageProxy*>(pageProxy); }
-
-    QTouchWebPage* const q;
-    QtWebPageProxy* pageProxy;
     QWebNavigationController* navigationController;
-    WebKit::QtSGUpdateQueue sgUpdateQueue;
-    bool paintingIsInitialized;
 };
 
-#endif /* qtouchwebpage_p_h */
+#endif /* qbasewebview_p_h */

@@ -74,13 +74,13 @@ void tst_QTouchWebView::accessPage()
 
 void tst_QTouchWebView::navigationStatusAtStartup()
 {
-    QCOMPARE(webView()->page()->navigationController()->canGoBack(), false);
+    QCOMPARE(webView()->navigationController()->canGoBack(), false);
 
-    QCOMPARE(webView()->page()->navigationController()->canGoForward(), false);
+    QCOMPARE(webView()->navigationController()->canGoForward(), false);
 
-    QCOMPARE(webView()->page()->navigationController()->canStop(), false);
+    QCOMPARE(webView()->navigationController()->canStop(), false);
 
-    QCOMPARE(webView()->page()->navigationController()->canReload(), false);
+    QCOMPARE(webView()->navigationController()->canReload(), false);
 }
 
 

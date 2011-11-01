@@ -61,31 +61,11 @@ QTouchWebPage::~QTouchWebPage()
     delete d;
 }
 
-void QTouchWebPage::load(const QUrl& url)
-{
-    d->page->load(url);
-}
-
-QUrl QTouchWebPage::url() const
-{
-    return d->page->url();
-}
-
-QString QTouchWebPage::title() const
-{
-    return d->page->title();
-}
-
-int QTouchWebPage::loadProgress() const
-{
-    return d->page->loadProgress();
-}
-
 /*! \reimp
 */
 bool QTouchWebPage::event(QEvent* ev)
 {
-    if (d->page->handleEvent(ev))
+    if (d->pageProxy->handleEvent(ev))
         return true;
     return QQuickItem::event(ev);
 }
@@ -124,35 +104,23 @@ void QTouchWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& old
 {
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
-        d->page->setDrawingAreaSize(newGeometry.size().toSize());
-}
-
-QWebNavigationController* QTouchWebPage::navigationController() const
-{
-    if (!d->navigationController)
-        d->navigationController = new QWebNavigationController(d->page);
-    return d->navigationController;
-}
-
-QWebPreferences* QTouchWebPage::preferences() const
-{
-    return d->page->preferences();
+        d->pageProxy->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
 QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
-    , page(0)
+    , pageProxy(0)
     , navigationController(0)
     , sgUpdateQueue(view)
     , paintingIsInitialized(false)
 {
 }
 
-void QTouchWebPagePrivate::setPage(QtTouchWebPageProxy* page)
+void QTouchWebPagePrivate::setPageProxy(QtWebPageProxy* pageProxy)
 {
-    ASSERT(!this->page);
-    ASSERT(page);
-    this->page = page;
+    ASSERT(!this->pageProxy);
+    ASSERT(pageProxy);
+    this->pageProxy = pageProxy;
 
 }
 
@@ -185,7 +153,7 @@ void QTouchWebPagePrivate::paintToCurrentGLContext()
 
     glScissor(left, bottom, width, height);
 
-    page->renderToCurrentGLContext(transform, opacity);
+    touchPageProxy()->renderToCurrentGLContext(transform, opacity);
     glDisable(GL_SCISSOR_TEST);
 }
 

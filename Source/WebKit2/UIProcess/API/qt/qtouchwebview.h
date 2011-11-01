@@ -21,8 +21,8 @@
 #ifndef qtouchwebview_h
 #define qtouchwebview_h
 
+#include "qbasewebview.h"
 #include "qwebkitglobal.h"
-
 #include <QtDeclarative/qquickitem.h>
 
 class QTouchEvent;
@@ -33,7 +33,7 @@ namespace WebKit {
 class QtTouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebView : public QQuickItem
+class QWEBKIT_EXPORT QTouchWebView : public QBaseWebView
 {
     Q_OBJECT
     Q_PROPERTY(QTouchWebPage* page READ page CONSTANT FINAL)
@@ -52,11 +52,11 @@ protected:
     virtual void touchEvent(QTouchEvent* event);
 
 private:
-    Q_PRIVATE_SLOT(d, void _q_viewportUpdated());
-    Q_PRIVATE_SLOT(d, void _q_viewportTrajectoryVectorChanged(const QPointF&));
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportUpdated());
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportTrajectoryVectorChanged(const QPointF&));
 
     friend class WebKit::QtTouchViewInterface;
-    QTouchWebViewPrivate *d;
+    Q_DECLARE_PRIVATE(QTouchWebView)
 };
 
 QML_DECLARE_TYPE(QTouchWebView)

@@ -21,16 +21,13 @@
 #include "config.h"
 #include "qdesktopwebview.h"
 
+#include "QtDesktopWebPageProxy.h"
 #include "QtWebError.h"
 #include "UtilsQt.h"
 #include "qdesktopwebview_p.h"
 #include <QFileDialog>
-#include <QGraphicsSceneEvent>
-#include <QGraphicsSceneResizeEvent>
-#include <QStyleOptionGraphicsItem>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qquickcanvas.h>
-#include <QtDeclarative/qquickitem.h>
 #include <QtDeclarative/qquickview.h>
 #include <QtGui/QCursor>
 #include <QtGui/QDrag>
@@ -45,33 +42,39 @@
 #include <QtWidgets/QMessageBox>
 #include <WKOpenPanelResultListener.h>
 
-QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : q(q)
-    , page(this, contextRef, pageGroupRef)
-    , isCrashed(false)
-    , navigationController(0)
+QDesktopWebViewPrivate::QDesktopWebViewPrivate()
+    : isCrashed(false)
 {
 }
 
 void QDesktopWebViewPrivate::enableMouseEvents()
 {
+    Q_Q(QDesktopWebView);
     q->setAcceptedMouseButtons(Qt::MouseButtonMask);
     q->setAcceptHoverEvents(true);
 }
 
 void QDesktopWebViewPrivate::disableMouseEvents()
 {
+    Q_Q(QDesktopWebView);
     q->setAcceptedMouseButtons(Qt::NoButton);
     q->setAcceptHoverEvents(false);
 }
 
+QDesktopWebView* QDesktopWebViewPrivate::webView()
+{
+    return q_func();
+}
+
 void QDesktopWebViewPrivate::setViewNeedsDisplay(const QRect& invalidatedArea)
 {
+    Q_Q(QDesktopWebView);
     q->update(invalidatedArea);
 }
 
 QSize QDesktopWebViewPrivate::drawingAreaSize()
 {
+    Q_Q(QDesktopWebView);
     return QSize(q->width(), q->height());
 }
 
@@ -87,16 +90,19 @@ bool QDesktopWebViewPrivate::isActive()
 
 bool QDesktopWebViewPrivate::hasFocus()
 {
+    Q_Q(QDesktopWebView);
     return q->hasFocus();
 }
 
 bool QDesktopWebViewPrivate::isVisible()
 {
+    Q_Q(QDesktopWebView);
     return q->isVisible();
 }
 
 void QDesktopWebViewPrivate::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
 {
+    Q_Q(QDesktopWebView);
     QWindow* window = q->canvas();
     if (!window)
         return;
@@ -121,11 +127,13 @@ void QDesktopWebViewPrivate::didFindZoomableArea(const QPoint&, const QRect&)
 
 void QDesktopWebViewPrivate::didChangeUrl(const QUrl& url)
 {
+    Q_Q(QDesktopWebView);
     emit q->urlChanged(url);
 }
 
 void QDesktopWebViewPrivate::didChangeTitle(const QString& newTitle)
 {
+    Q_Q(QDesktopWebView);
     emit q->titleChanged(newTitle);
 }
 
@@ -136,6 +144,7 @@ void QDesktopWebViewPrivate::didChangeToolTip(const QString& newToolTip)
 
 void QDesktopWebViewPrivate::didChangeStatusText(const QString& newMessage)
 {
+    Q_Q(QDesktopWebView);
     emit q->statusBarMessageChanged(newMessage);
 }
 
@@ -147,6 +156,7 @@ void QDesktopWebViewPrivate::didChangeCursor(const QCursor& newCursor)
 
 void QDesktopWebViewPrivate::loadDidBegin()
 {
+    Q_Q(QDesktopWebView);
     emit q->loadStarted();
 }
 
@@ -157,21 +167,25 @@ void QDesktopWebViewPrivate::loadDidCommit()
 
 void QDesktopWebViewPrivate::loadDidSucceed()
 {
+    Q_Q(QDesktopWebView);
     emit q->loadSucceeded();
 }
 
 void QDesktopWebViewPrivate::loadDidFail(const QtWebError& error)
 {
+    Q_Q(QDesktopWebView);
     emit q->loadFailed(static_cast<QDesktopWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
 void QDesktopWebViewPrivate::didChangeLoadProgress(int percentageLoaded)
 {
+    Q_Q(QDesktopWebView);
     emit q->loadProgressChanged(percentageLoaded);
 }
 
 void QDesktopWebViewPrivate::showContextMenu(QSharedPointer<QMenu> menu)
 {
+    Q_Q(QDesktopWebView);
     // Remove the active menu in case this function is called twice.
     if (activeMenu)
         activeMenu->hide();
@@ -205,7 +219,8 @@ void QDesktopWebViewPrivate::hideContextMenu()
 void QDesktopWebViewPrivate::runJavaScriptAlert(const QString& alertText)
 {
 #ifndef QT_NO_MESSAGEBOX
-    const QString title = tr("JavaScript Alert - %1").arg(q->url().host());
+    Q_Q(QDesktopWebView);
+    const QString title = QObject::tr("JavaScript Alert - %1").arg(q->url().host());
     disableMouseEvents();
     QMessageBox::information(0, title, escapeHtml(alertText), QMessageBox::Ok);
     enableMouseEvents();
@@ -218,7 +233,8 @@ bool QDesktopWebViewPrivate::runJavaScriptConfirm(const QString& message)
 {
     bool result = true;
 #ifndef QT_NO_MESSAGEBOX
-    const QString title = tr("JavaScript Confirm - %1").arg(q->url().host());
+    Q_Q(QDesktopWebView);
+    const QString title = QObject::tr("JavaScript Confirm - %1").arg(q->url().host());
     disableMouseEvents();
     result = QMessageBox::Yes == QMessageBox::information(0, title, escapeHtml(message), QMessageBox::Yes, QMessageBox::No);
     enableMouseEvents();
@@ -231,7 +247,8 @@ bool QDesktopWebViewPrivate::runJavaScriptConfirm(const QString& message)
 QString QDesktopWebViewPrivate::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
 {
 #ifndef QT_NO_INPUTDIALOG
-    const QString title = tr("JavaScript Prompt - %1").arg(q->url().host());
+    Q_Q(QDesktopWebView);
+    const QString title = QObject::tr("JavaScript Prompt - %1").arg(q->url().host());
     disableMouseEvents();
     QString result = QInputDialog::getText(0, title, escapeHtml(message), QLineEdit::Normal, defaultValue, &ok);
     enableMouseEvents();
@@ -243,59 +260,27 @@ QString QDesktopWebViewPrivate::runJavaScriptPrompt(const QString& message, cons
 }
 
 QDesktopWebView::QDesktopWebView(QQuickItem* parent)
-    : QQuickPaintedItem(parent)
-    , d(new QDesktopWebViewPrivate(this))
+    : QBaseWebView(*(new QDesktopWebViewPrivate), parent)
 {
-    init();
+    Q_D(QDesktopWebView);
+    d->init();
 }
 
 QDesktopWebView::QDesktopWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
-    : QQuickPaintedItem(parent)
-    , d(new QDesktopWebViewPrivate(this, contextRef, pageGroupRef))
+    : QBaseWebView(*(new QDesktopWebViewPrivate), parent)
 {
-    init();
+    Q_D(QDesktopWebView);
+    d->init(contextRef, pageGroupRef);
 }
 
-void QDesktopWebView::init()
+void QDesktopWebViewPrivate::init(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    d->enableMouseEvents();
+    setPageProxy(new QtDesktopWebPageProxy(this, contextRef, pageGroupRef));
+    enableMouseEvents();
 }
 
 QDesktopWebView::~QDesktopWebView()
 {
-    delete d;
-}
-
-void QDesktopWebView::load(const QUrl& url)
-{
-    d->page.load(url);
-}
-
-QUrl QDesktopWebView::url() const
-{
-    return d->page.url();
-}
-
-int QDesktopWebView::loadProgress() const
-{
-    return d->page.loadProgress();
-}
-
-QString QDesktopWebView::title() const
-{
-    return d->page.title();
-}
-
-QWebNavigationController* QDesktopWebView::navigationController() const
-{
-    if (!d->navigationController)
-        d->navigationController = new QWebNavigationController(&d->page);
-    return d->navigationController;
-}
-
-QWebPreferences* QDesktopWebView::preferences() const
-{
-    return d->page.preferences();
 }
 
 static void paintCrashedPage(QPainter* painter, const QRectF& rect)
@@ -397,25 +382,28 @@ void QDesktopWebView::dropEvent(QDropEvent* event)
 
 void QDesktopWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
+    Q_D(QDesktopWebView);
     QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
-        d->page.setDrawingAreaSize(newGeometry.size().toSize());
+        d->pageProxy->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
 void QDesktopWebView::paint(QPainter* painter)
 {
+    Q_D(QDesktopWebView);
     const QRectF rect = boundingRect();
     if (d->isCrashed) {
         paintCrashedPage(painter, rect);
         return;
     }
 
-    d->page.paint(painter, rect.toAlignedRect());
+    d->pageProxy->paint(painter, rect.toAlignedRect());
 }
 
 bool QDesktopWebView::event(QEvent* ev)
 {
-    if (d->page.handleEvent(ev))
+    Q_D(QDesktopWebView);
+    if (d->pageProxy->handleEvent(ev))
         return true;
     if (ev->type() == QEvent::InputMethod)
         return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
@@ -424,23 +412,27 @@ bool QDesktopWebView::event(QEvent* ev)
 
 WKPageRef QDesktopWebView::pageRef() const
 {
-    return d->page.pageRef();
+    Q_D(const QDesktopWebView);
+    return d->pageProxy->pageRef();
 }
 
 void QDesktopWebViewPrivate::processDidCrash()
 {
+    Q_Q(QDesktopWebView);
     isCrashed = true;
     q->update();
 }
 
 void QDesktopWebViewPrivate::didRelaunchProcess()
 {
+    Q_Q(QDesktopWebView);
     isCrashed = false;
     q->update();
 }
 
 QJSEngine* QDesktopWebViewPrivate::engine()
 {
+    Q_Q(QDesktopWebView);
     QQuickView* view = qobject_cast<QQuickView*>(q->canvas());
     if (view)
         return view->engine();
@@ -450,6 +442,7 @@ QJSEngine* QDesktopWebViewPrivate::engine()
 void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
+    Q_Q(QDesktopWebView);
     openPanelResultListener = listenerRef;
 
     // Qt does not support multiple files suggestion, so we get just the first suggestion.
@@ -468,13 +461,13 @@ void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRe
     Q_ASSERT(fileDialog->window()->windowHandle());
     fileDialog->window()->windowHandle()->setTransientParent(window);
 
-    fileDialog->open(this, SLOT(onOpenPanelFilesSelected()));
+    fileDialog->open(q_func(), SLOT(_q_onOpenPanelFilesSelected()));
 
-    connect(fileDialog, SIGNAL(finished(int)), this, SLOT(onOpenPanelFinished(int)));
+    q_func()->connect(fileDialog, SIGNAL(finished(int)), SLOT(_q_onOpenPanelFinished(int)));
 #endif
 }
 
-void QDesktopWebViewPrivate::onOpenPanelFilesSelected()
+void QDesktopWebViewPrivate::_q_onOpenPanelFilesSelected()
 {
     const QStringList fileList = fileDialog->selectedFiles();
     Vector<RefPtr<APIObject> > wkFiles(fileList.size());
@@ -485,7 +478,7 @@ void QDesktopWebViewPrivate::onOpenPanelFilesSelected()
     WKOpenPanelResultListenerChooseFiles(openPanelResultListener, toAPI(ImmutableArray::adopt(wkFiles).leakRef()));
 }
 
-void QDesktopWebViewPrivate::onOpenPanelFinished(int result)
+void QDesktopWebViewPrivate::_q_onOpenPanelFinished(int result)
 {
     if (result == QDialog::Rejected)
         WKOpenPanelResultListenerCancel(openPanelResultListener);
@@ -498,6 +491,7 @@ void QDesktopWebViewPrivate::didMouseMoveOverElement(const QUrl& linkURL, const 
 {
     if (linkURL == lastHoveredURL && linkTitle == lastHoveredTitle)
         return;
+    Q_Q(QDesktopWebView);
     lastHoveredURL = linkURL;
     lastHoveredTitle = linkTitle;
     emit q->linkHovered(lastHoveredURL, lastHoveredTitle);
@@ -533,6 +527,7 @@ static bool hasMetaMethod(QObject* object, const char* methodName)
 */
 QtPolicyInterface::PolicyAction QDesktopWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
+    Q_Q(QDesktopWebView);
     // We need to check this first because invokeMethod() warns if the method doesn't exist for the object.
     if (!hasMetaMethod(q, "navigationPolicyForUrl(QVariant,QVariant,QVariant)"))
         return QtPolicyInterface::Use;
@@ -544,4 +539,3 @@ QtPolicyInterface::PolicyAction QDesktopWebViewPrivate::navigationPolicyForURL(c
 }
 
 #include "moc_qdesktopwebview.cpp"
-#include "moc_qdesktopwebview_p.cpp"

@@ -24,28 +24,29 @@
 #include "QtTouchViewInterface.h"
 #include "QtTouchWebPageProxy.h"
 #include "QtViewportInteractionEngine.h"
+#include "qbasewebview_p.h"
 #include <QScopedPointer>
 
 class QTouchWebPage;
 class QTouchWebView;
 
-class QTouchWebViewPrivate
+class QTouchWebViewPrivate : QBaseWebViewPrivate
 {
+    Q_DECLARE_PUBLIC(QTouchWebView)
 public:
-    QTouchWebViewPrivate(QTouchWebView* q);
+    void init(QTouchWebView* viewport);
 
     void loadDidCommit();
     void _q_viewportUpdated();
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void updateViewportConstraints();
+    QtTouchWebPageProxy* touchPageProxy() { return static_cast<QtTouchWebPageProxy*>(QBaseWebViewPrivate::pageProxy.data()); }
 
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
 
-    QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;
-    WebKit::QtTouchViewInterface viewInterface;
-    QtViewportInteractionEngine interactionEngine;
-    QtTouchWebPageProxy page;
+    QScopedPointer<WebKit::QtTouchViewInterface> viewInterface;
+    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
 
     WebCore::ViewportArguments viewportArguments;
 };

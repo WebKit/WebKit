@@ -37,41 +37,12 @@ class QtTouchViewInterface;
 
 class QWEBKIT_EXPORT QTouchWebPage : public QQuickItem {
     Q_OBJECT
-    Q_PROPERTY(QString title READ title NOTIFY titleChanged)
-    Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
-    Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
-    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
-    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
-    Q_ENUMS(ErrorType)
 public:
-    enum ErrorType {
-        EngineError,
-        NetworkError,
-        HttpError
-    };
-
     QTouchWebPage(QQuickItem* parent = 0);
 
     virtual ~QTouchWebPage();
 
-    Q_INVOKABLE void load(const QUrl&);
-    Q_INVOKABLE QUrl url() const;
-
-    Q_INVOKABLE QString title() const;
-    int loadProgress() const;
-
-    QWebNavigationController* navigationController() const;
-    QWebPreferences* preferences() const;
-
     virtual bool event(QEvent*);
-
-Q_SIGNALS:
-    void urlChanged(const QUrl& url);
-    void titleChanged(const QString& title);
-    void loadStarted();
-    void loadSucceeded();
-    void loadFailed(QTouchWebPage::ErrorType errorType, int errorCode, const QUrl& url);
-    void loadProgressChanged(int progress);
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);

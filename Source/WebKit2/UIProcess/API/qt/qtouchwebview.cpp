@@ -28,45 +28,46 @@
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
-QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
-    : q(q)
-    , pageView(new QTouchWebPage(q))
-    , viewInterface(q, pageView.data())
-    , interactionEngine(q, pageView.data())
-    , page(&viewInterface, &interactionEngine)
+void QTouchWebViewPrivate::init(QTouchWebView* viewport)
 {
+    pageView.reset(new QTouchWebPage(viewport));
+    viewInterface.reset(new WebKit::QtTouchViewInterface(viewport, pageView.data()));
+    interactionEngine.reset(new QtViewportInteractionEngine(viewport, pageView.data()));
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    pageViewPrivate->setPage(&page);
+    setPageProxy(new QtTouchWebPageProxy(viewInterface.data(), interactionEngine.data()));
+    pageViewPrivate->setPageProxy(touchPageProxy());
 
-    QObject::connect(&interactionEngine, SIGNAL(viewportUpdateRequested()), q, SLOT(_q_viewportUpdated()));
-    QObject::connect(&interactionEngine, SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), q, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
+    QObject::connect(interactionEngine.data(), SIGNAL(viewportUpdateRequested()), viewport, SLOT(_q_viewportUpdated()));
+    QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
 }
 
 void QTouchWebViewPrivate::loadDidCommit()
 {
-    interactionEngine.reset();
+    interactionEngine->reset();
 }
 
 void QTouchWebViewPrivate::_q_viewportUpdated()
 {
+    Q_Q(QTouchWebView);
     const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->scale();
-    page.setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
+    touchPageProxy()->setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
 }
 
 void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
 {
-    page.setVisibleContentRectTrajectoryVector(trajectoryVector);
+    touchPageProxy()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 void QTouchWebViewPrivate::updateViewportConstraints()
 {
+    Q_Q(QTouchWebView);
     QSize availableSize = q->boundingRect().size().toSize();
 
     if (availableSize.isEmpty())
         return;
 
-    WebPageProxy* wkPage = toImpl(page.pageRef());
+    WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
     WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
 
     // FIXME: Remove later; Hardcode some values for now to make sure the DPI adjustment is being tested.
@@ -82,7 +83,7 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     newConstraints.maximumScale = attr.maximumScale;
     newConstraints.devicePixelRatio = attr.devicePixelRatio;
     newConstraints.isUserScalable = !!attr.userScalable;
-    interactionEngine.setConstraints(newConstraints);
+    interactionEngine->setConstraints(newConstraints);
 
     // Overwrite minimum scale value with fit-to-view value, unless the the content author
     // explicitly says no. NB: We can only do this when we know we have a valid size, ie.
@@ -99,25 +100,27 @@ void QTouchWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAr
 }
 
 QTouchWebView::QTouchWebView(QQuickItem* parent)
-    : QQuickItem(parent)
-    , d(new QTouchWebViewPrivate(this))
+    : QBaseWebView(*(new QTouchWebViewPrivate), parent)
 {
+    Q_D(QTouchWebView);
+    d->init(this);
     setFlags(QQuickItem::ItemClipsChildrenToShape);
     connect(this, SIGNAL(visibleChanged()), SLOT(onVisibleChanged()));
 }
 
 QTouchWebView::~QTouchWebView()
 {
-    delete d;
 }
 
 QTouchWebPage* QTouchWebView::page()
 {
+    Q_D(QTouchWebView);
     return d->pageView.data();
 }
 
 void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
+    Q_D(QTouchWebView);
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
         d->updateViewportConstraints();
@@ -133,9 +136,10 @@ void QTouchWebView::touchEvent(QTouchEvent* event)
 
 void QTouchWebView::onVisibleChanged()
 {
-    WebPageProxy* pageProxy = toImpl(d->page.pageRef());
+    Q_D(QTouchWebView);
+    WebPageProxy* wkPage = toImpl(d->pageProxy->pageRef());
 
-    pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    wkPage->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 #include "moc_qtouchwebview.cpp"

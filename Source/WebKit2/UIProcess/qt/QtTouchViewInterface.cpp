@@ -89,17 +89,17 @@ void QtTouchViewInterface::startDrag(Qt::DropActions supportedDropActions, const
 
 void QtTouchViewInterface::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    m_viewportView->d->didChangeViewportProperties(args);
+    m_viewportView->d_func()->didChangeViewportProperties(args);
 }
 
 void QtTouchViewInterface::didChangeUrl(const QUrl& url)
 {
-    emit m_pageView->urlChanged(url);
+    emit m_viewportView->urlChanged(url);
 }
 
 void QtTouchViewInterface::didChangeTitle(const QString& newTitle)
 {
-    emit m_pageView->titleChanged(newTitle);
+    emit m_viewportView->titleChanged(newTitle);
 }
 
 void QtTouchViewInterface::didChangeToolTip(const QString&)
@@ -119,27 +119,27 @@ void QtTouchViewInterface::didChangeCursor(const QCursor&)
 
 void QtTouchViewInterface::loadDidBegin()
 {
-    emit m_pageView->loadStarted();
+    emit m_viewportView->loadStarted();
 }
 
 void QtTouchViewInterface::loadDidCommit()
 {
-    m_viewportView->d->loadDidCommit();
+    m_viewportView->d_func()->loadDidCommit();
 }
 
 void QtTouchViewInterface::loadDidSucceed()
 {
-    emit m_pageView->loadSucceeded();
+    emit m_viewportView->loadSucceeded();
 }
 
 void QtTouchViewInterface::loadDidFail(const QtWebError& error)
 {
-    emit m_pageView->loadFailed(static_cast<QTouchWebPage::ErrorType>(error.type()), error.errorCode(), error.url());
+    emit m_viewportView->loadFailed(static_cast<QBaseWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
 void QtTouchViewInterface::didChangeLoadProgress(int percentageLoaded)
 {
-    emit m_pageView->loadProgressChanged(percentageLoaded);
+    emit m_viewportView->loadProgressChanged(percentageLoaded);
 }
 
 void QtTouchViewInterface::showContextMenu(QSharedPointer<QMenu>)

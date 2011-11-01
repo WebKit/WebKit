@@ -48,6 +48,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKStringQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qbasewebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
@@ -128,6 +129,8 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKStringQt.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qbasewebview.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qbasewebview_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences.h \

@@ -21,35 +21,29 @@
 #ifndef qdesktopwebview_p_h
 #define qdesktopwebview_p_h
 
-#include "QtDesktopWebPageProxy.h"
+#include "QtPolicyInterface.h"
 #include "QtViewInterface.h"
-#include "qwebnavigationcontroller.h"
+#include "qbasewebview_p.h"
+#include "qdesktopwebview.h"
 
-#include <QtCore/QObject>
-
-class QDesktopWebView;
 class QFileDialog;
 
-class QDesktopWebViewPrivate : public QObject, public WebKit::QtViewInterface, public WebKit::QtPolicyInterface
+class QDesktopWebViewPrivate : public QBaseWebViewPrivate, public WebKit::QtViewInterface, public WebKit::QtPolicyInterface
 {
-    Q_OBJECT
+    Q_DECLARE_PUBLIC(QDesktopWebView)
 public:
-    QDesktopWebViewPrivate(QDesktopWebView*, WKContextRef = 0, WKPageGroupRef = 0);
+    QDesktopWebViewPrivate();
+    void init(WKContextRef = 0, WKPageGroupRef = 0);
 
     static QDesktopWebView* createViewWithPageGroup(WKPageGroupRef);
 
+    QDesktopWebView* webView();
+    void _q_onOpenPanelFilesSelected();
+    void _q_onOpenPanelFinished(int result);
     void enableMouseEvents();
     void disableMouseEvents();
 
-    QDesktopWebView* q;
-    QtDesktopWebPageProxy page;
-
     bool isCrashed;
-    QWebNavigationController* navigationController;
-
-private Q_SLOTS:
-    void onOpenPanelFilesSelected();
-    void onOpenPanelFinished(int result);
 
 private:
     // Implementation of QtViewInterface.

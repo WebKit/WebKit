@@ -1,3 +1,123 @@
+2011-11-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Merge common desktop and touch view APIs under a base class.
+        https://bugs.webkit.org/show_bug.cgi?id=71280
+
+        Reviewed by Andreas Kling.
+
+        - Make QDesktopWebView and QTouchWebView inherit from QBaseWebView.
+        - Move methods from QTouchWebPage to QTouchWebView (through the base class).
+
+        We use the same convenience macros as Qt internally by hiding QObject::d_ptr
+        with QBaseWebView::d_ptr instead of inheriting QBaseWebViewPrivate from
+        QQuickItemPrivate.
+        Also, QBaseWebView currently inherits from QQuickPaintedItem since QDesktopWebView
+        needs it, but should be changed as soon as this is not required anymore.
+
+        * UIProcess/API/qt/qbasewebview.cpp: Added.
+        (QBaseWebViewPrivate::QBaseWebViewPrivate):
+        (QBaseWebViewPrivate::setPageProxy):
+        (QBaseWebView::QBaseWebView):
+        (QBaseWebView::~QBaseWebView):
+        (QBaseWebView::load):
+        (QBaseWebView::url):
+        (QBaseWebView::loadProgress):
+        (QBaseWebView::title):
+        (QBaseWebView::navigationController):
+        (QBaseWebView::preferences):
+        * UIProcess/API/qt/qbasewebview.h: Copied from Source/WebKit2/UIProcess/API/qt/qtouchwebpage.h.
+        * UIProcess/API/qt/qbasewebview_p.h: Copied from Source/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h.
+        (QBaseWebViewPrivate::~QBaseWebViewPrivate):
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::QDesktopWebViewPrivate):
+        (QDesktopWebViewPrivate::enableMouseEvents):
+        (QDesktopWebViewPrivate::disableMouseEvents):
+        (QDesktopWebViewPrivate::webView):
+        (QDesktopWebViewPrivate::setViewNeedsDisplay):
+        (QDesktopWebViewPrivate::drawingAreaSize):
+        (QDesktopWebViewPrivate::hasFocus):
+        (QDesktopWebViewPrivate::isVisible):
+        (QDesktopWebViewPrivate::startDrag):
+        (QDesktopWebViewPrivate::didChangeUrl):
+        (QDesktopWebViewPrivate::didChangeTitle):
+        (QDesktopWebViewPrivate::didChangeStatusText):
+        (QDesktopWebViewPrivate::loadDidBegin):
+        (QDesktopWebViewPrivate::loadDidSucceed):
+        (QDesktopWebViewPrivate::loadDidFail):
+        (QDesktopWebViewPrivate::didChangeLoadProgress):
+        (QDesktopWebViewPrivate::showContextMenu):
+        (QDesktopWebViewPrivate::runJavaScriptAlert):
+        (QDesktopWebViewPrivate::runJavaScriptConfirm):
+        (QDesktopWebViewPrivate::runJavaScriptPrompt):
+        (QDesktopWebView::QDesktopWebView):
+        (QDesktopWebViewPrivate::init):
+        (QDesktopWebView::~QDesktopWebView):
+        (QDesktopWebView::geometryChanged):
+        (QDesktopWebView::paint):
+        (QDesktopWebView::event):
+        (QDesktopWebView::pageRef):
+        (QDesktopWebViewPrivate::processDidCrash):
+        (QDesktopWebViewPrivate::didRelaunchProcess):
+        (QDesktopWebViewPrivate::engine):
+        (QDesktopWebViewPrivate::chooseFiles):
+        (QDesktopWebViewPrivate::_q_onOpenPanelFilesSelected):
+        (QDesktopWebViewPrivate::_q_onOpenPanelFinished):
+        (QDesktopWebViewPrivate::didMouseMoveOverElement):
+        (QDesktopWebViewPrivate::navigationPolicyForURL):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::event):
+        (QTouchWebPage::geometryChanged):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        (QTouchWebPagePrivate::setPageProxy):
+        (QTouchWebPagePrivate::paintToCurrentGLContext):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        (QTouchWebPagePrivate::touchPageProxy):
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::init):
+        (QTouchWebViewPrivate::loadDidCommit):
+        (QTouchWebViewPrivate::_q_viewportUpdated):
+        (QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged):
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        (QTouchWebView::QTouchWebView):
+        (QTouchWebView::~QTouchWebView):
+        (QTouchWebView::page):
+        (QTouchWebView::geometryChanged):
+        (QTouchWebView::onVisibleChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        (QTouchWebViewPrivate::touchPageProxy):
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::loadNonexistentFileUrl):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::load):
+        (WebViewAbstraction::url):
+        (WebViewAbstraction::loadProgress):
+        (WebViewAbstraction::goBack):
+        (WebViewAbstraction::goForward):
+        (WebViewAbstraction::stop):
+        (WebViewAbstraction::reload):
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp:
+        (tst_QTouchWebView::navigationStatusAtStartup):
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::createPopupMenuProxy):
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::didChangeViewportProperties):
+        (WebKit::QtTouchViewInterface::didChangeUrl):
+        (WebKit::QtTouchViewInterface::didChangeTitle):
+        (WebKit::QtTouchViewInterface::loadDidBegin):
+        (WebKit::QtTouchViewInterface::loadDidCommit):
+        (WebKit::QtTouchViewInterface::loadDidSucceed):
+        (WebKit::QtTouchViewInterface::loadDidFail):
+        (WebKit::QtTouchViewInterface::didChangeLoadProgress):
+        * WebKit2API.pri:
+
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
         PluginProxy shouldn't use window-relative coordinates

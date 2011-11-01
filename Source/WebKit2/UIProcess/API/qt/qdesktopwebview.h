@@ -21,14 +21,11 @@
 #ifndef qdesktopwebview_h
 #define qdesktopwebview_h
 
+#include "qbasewebview.h"
 #include "qwebkitglobal.h"
-#include <QUrl>
-#include <QtDeclarative/qquickpainteditem.h>
 #include <WebKit2/WKBase.h>
 
 class QDesktopWebViewPrivate;
-class QWebNavigationController;
-class QWebPreferences;
 
 QT_BEGIN_NAMESPACE
 class QFocusEvent;
@@ -50,49 +47,13 @@ namespace WTR {
     class PlatformWebView;
 }
 
-class QWEBKIT_EXPORT QDesktopWebView : public QQuickPaintedItem {
+class QWEBKIT_EXPORT QDesktopWebView : public QBaseWebView {
     Q_OBJECT
-    Q_PROPERTY(QString title READ title NOTIFY titleChanged)
-    Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
-    Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
-    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
-    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
-    Q_ENUMS(NavigationPolicy)
-    Q_ENUMS(ErrorType)
 public:
-    enum NavigationPolicy {
-        UsePolicy,
-        DownloadPolicy,
-        IgnorePolicy
-    };
-
-    enum ErrorType {
-        EngineError,
-        NetworkError,
-        HttpError
-    };
-
     QDesktopWebView(QQuickItem* parent = 0);
     virtual ~QDesktopWebView();
 
-    QUrl url() const;
-    QString title() const;
-    int loadProgress() const;
-
-    QWebNavigationController* navigationController() const;
-    QWebPreferences* preferences() const;
-
-public Q_SLOTS:
-     void load(const QUrl&);
-
 Q_SIGNALS:
-    void titleChanged(const QString& title);
-    void statusBarMessageChanged(const QString& message);
-    void loadStarted();
-    void loadSucceeded();
-    void loadFailed(QDesktopWebView::ErrorType errorType, int errorCode, const QUrl& url);
-    void loadProgressChanged(int progress);
-    void urlChanged(const QUrl& url);
     void linkHovered(const QUrl& url, const QString& title);
 
 protected:
@@ -122,12 +83,11 @@ protected:
 private:
     QDesktopWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
     WKPageRef pageRef() const;
-
-    void init();
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
 
     friend class WTR::PlatformWebView;
-    friend class QDesktopWebViewPrivate;
-    QDesktopWebViewPrivate *d;
+    Q_DECLARE_PRIVATE(QDesktopWebView)
 };
 
 QML_DECLARE_TYPE(QDesktopWebView)
