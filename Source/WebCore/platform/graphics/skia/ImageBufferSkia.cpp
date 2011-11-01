@@ -191,7 +191,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
+PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkCanvas* canvas,
                                    const IntSize& size)
 {
     float area = 4.0f * rect.width() * rect.height();
@@ -199,14 +199,6 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
         return 0;
 
     RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
-
-    SkBitmap::Config srcConfig = srcDevice.accessBitmap(false).config();
-
-    if (srcConfig == SkBitmap::kNo_Config) {
-        // This is an empty SkBitmap that could not be configured.
-        ASSERT(!size.width() || !size.height());
-        return result.release();
-    }
 
     unsigned char* data = result->data();
 
@@ -244,13 +236,11 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
     if (numRows <= 0)
         return result.release();
 
-    ASSERT(srcConfig == SkBitmap::kARGB_8888_Config);
+    SkBitmap srcBitmap;
+    if (!canvas->readPixels(SkIRect::MakeXYWH(originX, originY, numColumns, numRows), &srcBitmap))
+        return result.release();
 
     unsigned destBytesPerRow = 4 * rect.width();
-
-    SkBitmap srcBitmap;
-    srcDevice.readPixels(SkIRect::MakeXYWH(originX, originY, numColumns, numRows), &srcBitmap);
-
     unsigned char* destRow = data + destY * destBytesPerRow + destX * 4;
 
     // Do conversion of byte order and alpha divide (if necessary)
@@ -282,12 +272,12 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
 
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    return getImageData<Unmultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
+    return getImageData<Unmultiplied>(rect, context()->platformContext()->canvas(), m_size);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    return getImageData<Premultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
+    return getImageData<Premultiplied>(rect, context()->platformContext()->canvas(), m_size);
 }
 
 template <Multiply multiplied>

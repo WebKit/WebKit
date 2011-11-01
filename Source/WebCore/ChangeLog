@@ -1,3 +1,17 @@
+2011-11-01  Mike Reed  <reed@google.com>
+
+        [skia] call readPixels on canvas instead of device (will be private on device soon) and check for error
+        https://bugs.webkit.org/show_bug.cgi?id=71284
+
+        Reviewed by Stephen White.
+
+        No new tests. This is preparing for an API change to Skia.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+
 2011-11-01  Andreas Kling  <kling@webkit.org>
 
         CSSStyleSheet: Operate directly on the rule vector internally.
