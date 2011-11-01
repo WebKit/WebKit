@@ -1,3 +1,9 @@
+2011-10-31  John Gregg  <johnnyg@google.com>
+
+        Unreviewed gardening; bind-script-to-resource.html times out on chromium mac.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-10-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed holiday gardening after r98852.
