@@ -3932,7 +3932,7 @@ BUGWK71139 SNOWLEOPARD : fast/parser/close-while-stopping.html = CRASH PASS
 BUGWK71139 SNOWLEOPARD : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
-BUGWK71209 GPU : compositing/visibility/visibility-image-layers.html = IMAGE
+BUGWK71209 LINUX MAC GPU GPU-CG : compositing/visibility/visibility-image-layers.html = IMAGE
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
