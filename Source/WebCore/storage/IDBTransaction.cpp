@@ -28,9 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "Document.h"
-#include "DocumentEventQueue.h"
 #include "EventException.h"
+#include "EventQueue.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"
@@ -191,8 +190,7 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
     if (!scriptExecutionContext())
         return;
 
-    ASSERT(scriptExecutionContext()->isDocument());
-    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
     eventQueue->enqueueEvent(event);
 }

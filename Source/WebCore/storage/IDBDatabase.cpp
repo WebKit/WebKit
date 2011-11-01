@@ -26,8 +26,7 @@
 #include "config.h"
 #include "IDBDatabase.h"
 
-#include "Document.h"
-#include "DocumentEventQueue.h"
+#include "EventQueue.h"
 #include "ExceptionCode.h"
 #include "EventQueue.h"
 #include "IDBAny.h"
@@ -167,8 +166,7 @@ void IDBDatabase::close()
     if (m_noNewTransactions)
         return;
 
-    ASSERT(scriptExecutionContext()->isDocument());
-    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     // Remove any pending versionchange events scheduled to fire on this
     // connection. They would have been scheduled by the backend when another
     // connection called setVersion, but the frontend connection is being
@@ -204,8 +202,7 @@ void IDBDatabase::open()
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 {
-    ASSERT(scriptExecutionContext()->isDocument());
-    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
     eventQueue->enqueueEvent(event.get());
     m_enqueuedEvents.append(event);

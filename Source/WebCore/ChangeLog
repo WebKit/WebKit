@@ -1,3 +1,25 @@
+2011-11-01  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: get EventQueue from ScriptExecutionContext instead of Document
+        https://bugs.webkit.org/show_bug.cgi?id=71147
+
+        When IDB is used from a worker thread ScriptExecutionContext will
+        be a WorkerContext, not a Document.  This was the impetus behind
+        moving EventQueue into ScriptExecutionContext in r98656.
+
+        Reviewed by Nate Chapin.
+
+        No new tests. No new functionality yet.
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::enqueueEvent):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::enqueueEvent):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::enqueueEvent):
+
 2011-11-01  Andreas Kling  <kling@webkit.org>
 
         CSS: Remove unused virtual parseString() in style and keyframe rules.

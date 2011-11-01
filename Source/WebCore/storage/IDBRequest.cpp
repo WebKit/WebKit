@@ -31,11 +31,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "Document.h"
-#include "DocumentEventQueue.h"
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
@@ -149,12 +148,10 @@ void IDBRequest::abort()
         ASSERT(m_readyState == DONE);
         return;
     }
-    // FIXME: Remove isDocument check when
-    // https://bugs.webkit.org/show_bug.cgi?id=57789 is resolved.
-    if (!scriptExecutionContext() || !scriptExecutionContext()->isDocument())
+    if (!scriptExecutionContext())
         return;
 
-    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
         bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
         ASSERT_UNUSED(removed, removed);
@@ -327,8 +324,7 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
     if (!scriptExecutionContext())
         return;
 
-    ASSERT(scriptExecutionContext()->isDocument());
-    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
     eventQueue->enqueueEvent(event.get());
     m_enqueuedEvents.append(event);
