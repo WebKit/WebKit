@@ -1131,7 +1131,6 @@ BUGWK70748 CPU : media/video-empty-source.html = IMAGE
 BUGWK70748 CPU : media/video-no-audio.html = IMAGE
 BUGWK70748 CPU : media/video-playing-and-pause.html = IMAGE
 BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
-BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
 BUGWK70748 GPU : media/audio-controls-rendering.html = IMAGE
 BUGWK70748 GPU : media/controls-after-reload.html = IMAGE
 BUGWK70748 GPU : media/controls-strict.html = IMAGE
