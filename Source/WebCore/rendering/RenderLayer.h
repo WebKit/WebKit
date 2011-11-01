@@ -279,8 +279,8 @@ public:
 
     LayoutSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
-    LayoutUnit scrollXOffset() const { return m_scrollOffset.width() + m_scrollOrigin.x(); }
-    LayoutUnit scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
+    LayoutUnit scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
+    LayoutUnit scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
     LayoutSize scrollOffset() const { return LayoutSize(scrollXOffset(), scrollYOffset()); }
 
     void scrollToOffset(LayoutUnit, LayoutUnit, ScrollOffsetClamping = ScrollOffsetUnclamped);

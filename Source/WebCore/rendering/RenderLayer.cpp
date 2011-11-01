@@ -1385,7 +1385,7 @@ void RenderLayer::scrollTo(LayoutUnit x, LayoutUnit y)
     // complicated (since it will involve testing whether our layer
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
-    LayoutSize newScrollOffset = LayoutSize(x - m_scrollOrigin.x(), y - m_scrollOrigin.y());
+    LayoutSize newScrollOffset = LayoutSize(x - scrollOrigin().x(), y - scrollOrigin().y());
     if (m_scrollOffset == newScrollOffset)
         return;
     m_scrollOffset = newScrollOffset;
@@ -1709,18 +1709,18 @@ LayoutUnit RenderLayer::scrollPosition(Scrollbar* scrollbar) const
 
 LayoutPoint RenderLayer::scrollPosition() const
 {
-    return m_scrollOrigin + m_scrollOffset;
+    return scrollOrigin() + m_scrollOffset;
 }
 
 LayoutPoint RenderLayer::minimumScrollPosition() const
 {
-    return m_scrollOrigin;
+    return scrollOrigin();
 }
 
 LayoutPoint RenderLayer::maximumScrollPosition() const
 {
     // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
-    return m_scrollOrigin + m_scrollSize - visibleContentRect(true).size();
+    return scrollOrigin() + m_scrollSize - visibleContentRect(true).size();
 }
 
 IntRect RenderLayer::visibleContentRect(bool includeScrollbars) const
@@ -2207,7 +2207,7 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     m_scrollSize.setWidth(overflowRight() - overflowLeft());
     m_scrollSize.setHeight(overflowBottom() - overflowTop());
     
-    m_scrollOrigin = LayoutPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height());
+    setScrollOrigin(LayoutPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height()));
 
     if (needHBar)
         *needHBar = m_scrollSize.width() > box->clientWidth();

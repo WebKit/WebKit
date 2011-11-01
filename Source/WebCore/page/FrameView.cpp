@@ -1367,7 +1367,7 @@ LayoutUnit FrameView::scrollXForFixedPosition() const
 
     LayoutUnit x = scrollX();
 
-    if (!ScrollView::scrollOrigin().x()) {
+    if (!scrollOrigin().x()) {
         if (x < 0)
             x = 0;
         else if (x > maxX)
@@ -1402,7 +1402,7 @@ LayoutUnit FrameView::scrollYForFixedPosition() const
 
     LayoutUnit y = scrollY();
 
-    if (!ScrollView::scrollOrigin().y()) {
+    if (!scrollOrigin().y()) {
         if (y < 0)
             y = 0;
         else if (y > maxY)

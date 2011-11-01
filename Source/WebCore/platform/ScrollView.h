@@ -319,7 +319,6 @@ protected:
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
 
     void setScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously);
-    IntPoint scrollOrigin() const { return m_scrollOrigin; }
 
     // Subclassed by FrameView to check the writing-mode of the document.
     virtual bool isVerticalDocument() const { return true; }

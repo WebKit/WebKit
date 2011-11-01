@@ -166,6 +166,10 @@ public:
     void setScrollOffsetFromInternals(const IntPoint&);
 
 protected:
+    void setScrollOrigin(const IntPoint& origin) { m_scrollOrigin = origin; } 
+    void setScrollOriginX(int x) { m_scrollOrigin.setX(x); }
+    void setScrollOriginY(int y) { m_scrollOrigin.setY(y); }
+
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 
@@ -181,19 +185,6 @@ protected:
     bool hasLayerForVerticalScrollbar() const;
     bool hasLayerForScrollCorner() const;
 
-    // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
-    // if there is any reversed direction or writing-mode. The combinations are:
-    // writing-mode / direction     scrollOrigin.x() set    scrollOrigin.y() set
-    // horizontal-tb / ltr          NO                      NO
-    // horizontal-tb / rtl          YES                     NO
-    // horizontal-bt / ltr          NO                      YES
-    // horizontal-bt / rtl          YES                     YES
-    // vertical-lr / ltr            NO                      NO
-    // vertical-lr / rtl            NO                      YES
-    // vertical-rl / ltr            YES                     NO
-    // vertical-rl / rtl            YES                     YES
-    IntPoint m_scrollOrigin;
-
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
@@ -208,6 +199,19 @@ private:
     unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity
 
     unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
+
+    // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
+    // if there is any reversed direction or writing-mode. The combinations are:
+    // writing-mode / direction     scrollOrigin.x() set    scrollOrigin.y() set
+    // horizontal-tb / ltr          NO                      NO
+    // horizontal-tb / rtl          YES                     NO
+    // horizontal-bt / ltr          NO                      YES
+    // horizontal-bt / rtl          YES                     YES
+    // vertical-lr / ltr            NO                      NO
+    // vertical-lr / rtl            NO                      YES
+    // vertical-rl / ltr            YES                     NO
+    // vertical-rl / rtl            YES                     YES
+    IntPoint m_scrollOrigin;
 };
 
 } // namespace WebCore

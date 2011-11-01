@@ -296,14 +296,14 @@ void ScrollView::setContentsSize(const IntSize& newSize)
 
 IntPoint ScrollView::maximumScrollPosition() const
 {
-    IntPoint maximumOffset(contentsWidth() - visibleWidth() - m_scrollOrigin.x(), contentsHeight() - visibleHeight() - m_scrollOrigin.y());
+    IntPoint maximumOffset(contentsWidth() - visibleWidth() - scrollOrigin().x(), contentsHeight() - visibleHeight() - scrollOrigin().y());
     maximumOffset.clampNegativeToZero();
     return maximumOffset;
 }
 
 IntPoint ScrollView::minimumScrollPosition() const
 {
-    return IntPoint(-m_scrollOrigin.x(), -m_scrollOrigin.y());
+    return IntPoint(-scrollOrigin().x(), -scrollOrigin().y());
 }
 
 IntPoint ScrollView::adjustScrollPositionWithinRange(const IntPoint& scrollPoint) const
@@ -337,8 +337,8 @@ void ScrollView::setScrollOffset(const IntPoint& offset)
     }
 
     IntSize newOffset = m_scrollOffset;
-    newOffset.setWidth(horizontalOffset - m_scrollOrigin.x());
-    newOffset.setHeight(verticalOffset - m_scrollOrigin.y());
+    newOffset.setWidth(horizontalOffset - scrollOrigin().x());
+    newOffset.setHeight(verticalOffset - scrollOrigin().y());
 
     scrollTo(newOffset);
 }
@@ -360,9 +360,9 @@ void ScrollView::scrollTo(const IntSize& newOffset)
 int ScrollView::scrollPosition(Scrollbar* scrollbar) const
 {
     if (scrollbar->orientation() == HorizontalScrollbar)
-        return scrollPosition().x() + m_scrollOrigin.x();
+        return scrollPosition().x() + scrollOrigin().x();
     if (scrollbar->orientation() == VerticalScrollbar)
-        return scrollPosition().y() + m_scrollOrigin.y();
+        return scrollPosition().y() + scrollOrigin().y();
     return 0;
 }
 
@@ -408,13 +408,13 @@ IntSize ScrollView::overhangAmount() const
 {
     IntSize stretch;
 
-    int physicalScrollY = scrollPosition().y() + m_scrollOrigin.y();
+    int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
     if (physicalScrollY < 0)
         stretch.setHeight(physicalScrollY);
     else if (contentsHeight() && physicalScrollY > contentsHeight() - visibleHeight())
         stretch.setHeight(physicalScrollY - (contentsHeight() - visibleHeight()));
 
-    int physicalScrollX = scrollPosition().x() + m_scrollOrigin.x();
+    int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
     if (physicalScrollX < 0)
         stretch.setWidth(physicalScrollX);
     else if (contentsWidth() && physicalScrollX > contentsWidth() - visibleWidth())
@@ -493,8 +493,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             newHasHorizontalScrollbar = false;
 
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
-            if (m_scrollOrigin.y() && !newHasHorizontalScrollbar)
-                m_scrollOrigin.setY(m_scrollOrigin.y() - m_horizontalScrollbar->height());
+            if (scrollOrigin().y() && !newHasHorizontalScrollbar)
+                setScrollOriginY(scrollOrigin().y() - m_horizontalScrollbar->height());
             if (m_horizontalScrollbar)
                 m_horizontalScrollbar->invalidate();
             setHasHorizontalScrollbar(newHasHorizontalScrollbar);
@@ -502,8 +502,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         }
 
         if (hasVerticalScrollbar != newHasVerticalScrollbar && (hasVerticalScrollbar || !avoidScrollbarCreation())) {
-            if (m_scrollOrigin.x() && !newHasVerticalScrollbar)
-                m_scrollOrigin.setX(m_scrollOrigin.x() - m_verticalScrollbar->width());
+            if (scrollOrigin().x() && !newHasVerticalScrollbar)
+                setScrollOriginX(scrollOrigin().x() - m_verticalScrollbar->width());
             if (m_verticalScrollbar)
                 m_verticalScrollbar->invalidate();
             setHasVerticalScrollbar(newHasVerticalScrollbar);
@@ -583,7 +583,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             invalidateScrollCornerRect(oldScrollCornerRect);
     }
 
-    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset)) + IntSize(m_scrollOrigin.x(), m_scrollOrigin.y());
+    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset)) + IntSize(scrollOrigin().x(), scrollOrigin().y());
     if (scrollPoint != scrollPosition())
         ScrollableArea::scrollToOffsetWithoutAnimation(scrollPoint);
 
@@ -1076,7 +1076,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     int horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar())
         ? horizontalScrollbar()->height() : 0;
 
-    int physicalScrollY = scrollPosition().y() + m_scrollOrigin.y();
+    int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
     if (physicalScrollY < 0) {
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setHeight(-physicalScrollY);
@@ -1087,7 +1087,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
         horizontalOverhangRect.setHeight(height);
     }
 
-    int physicalScrollX = scrollPosition().x() + m_scrollOrigin.x();
+    int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
     if (physicalScrollX < 0) {
         verticalOverhangRect.setWidth(-physicalScrollX);
         verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
@@ -1260,10 +1260,10 @@ void ScrollView::removePanScrollIcon()
 
 void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
-    if (m_scrollOrigin == origin)
+    if (scrollOrigin() == origin)
         return;
 
-    m_scrollOrigin = origin;
+    ScrollableArea::setScrollOrigin(origin);
 
     if (platformWidget()) {
         platformSetScrollOrigin(origin, updatePositionAtAll, updatePositionSynchronously);

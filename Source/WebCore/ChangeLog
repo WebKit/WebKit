@@ -1,3 +1,38 @@
+2011-11-01  Xiaomei Ji  <xji@chromium.org>
+
+        Refactor: change Scrollable::m_scrollOrigin from protected to private.
+        https://bugs.webkit.org/show_bug.cgi?id=71236
+
+        Reviewed by Darin Adler.
+
+        Only refactor, no new tests needed.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollXForFixedPosition):
+        (WebCore::FrameView::scrollYForFixedPosition):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::maximumScrollPosition):
+        (WebCore::ScrollView::minimumScrollPosition):
+        (WebCore::ScrollView::setScrollOffset):
+        (WebCore::ScrollView::scrollPosition):
+        (WebCore::ScrollView::overhangAmount):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::setScrollOrigin):
+        (WebCore::ScrollableArea::setScrollOriginX):
+        (WebCore::ScrollableArea::setScrollOriginY):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::minimumScrollPosition):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::scrollXOffset):
+        (WebCore::RenderLayer::scrollYOffset):
+
 2011-11-01  Dominic Cooney  <dominicc@chromium.org>
 
         display: table-cell and box-sizing: border-box calculates content-box height
