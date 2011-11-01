@@ -2236,7 +2236,9 @@ bool FrameView::isOnActivePage() const
 {
     if (m_frame->view() != this)
         return false;
-    return !m_frame->document()->inPageCache();
+    if (Document* document = m_frame->document())
+        return !document->inPageCache();
+    return false;
 }
 
 bool FrameView::shouldSuspendScrollAnimations() const
