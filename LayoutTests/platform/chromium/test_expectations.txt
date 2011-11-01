@@ -3944,5 +3944,3 @@ BUGWK71226 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+T
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
 
-BUGWK71233 : inspector/debugger/bind-script-to-resource.html = TEXT TIMEOUT
-

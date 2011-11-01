@@ -211,7 +211,7 @@ WebInspector.RawSourceCode.prototype = {
 
         var originalContentProvider = this._createContentProvider();
         if (!this._formatted) {
-            var uiSourceCode = new WebInspector.UISourceCode(this.url, this.url, this.isContentScript, this, originalContentProvider);
+            var uiSourceCode = new WebInspector.UISourceCode(this.id, this.url, this.isContentScript, this, originalContentProvider);
             var sourceMapping = new WebInspector.RawSourceCode.PlainSourceMapping(this, uiSourceCode);
             callback(sourceMapping);
             return;
@@ -232,7 +232,7 @@ WebInspector.RawSourceCode.prototype = {
             function didFormatContent(formattedContent, mapping)
             {
                 var contentProvider = new WebInspector.StaticContentProvider(mimeType, formattedContent)
-                var uiSourceCode = new WebInspector.UISourceCode("deobfuscated:" + this.url, this.url, this.isContentScript, this, contentProvider);
+                var uiSourceCode = new WebInspector.UISourceCode("deobfuscated:" + this.id, this.url, this.isContentScript, this, contentProvider);
                 var sourceMapping = new WebInspector.RawSourceCode.FormattedSourceMapping(this, uiSourceCode, mapping);
                 callback(sourceMapping);
             }
