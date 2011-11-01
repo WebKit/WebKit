@@ -1,3 +1,11 @@
+2011-11-01  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed Qt documentation fix.
+
+        This signal is Qt 4.8 material.
+
+        * Api/qwebpage.cpp:
+
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineGetter

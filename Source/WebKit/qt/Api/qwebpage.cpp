@@ -3924,7 +3924,7 @@ quint64 QWebPage::bytesReceived() const
 }
 
 /*!
-    \since 4.7
+    \since 4.8
     \fn void QWebPage::viewportChangeRequested()
 
     Page authors can provide the supplied values by using the viewport meta tag. More information
