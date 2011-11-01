@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,20) size 800x580
+layer at (0,20) size 170x200
+  RenderBlock {DIV} at (0,0) size 170x200 [border: (20px solid #C0C0C0)]
+    RenderText {#text} at (20,0) size 105x195
+      text run at (20,0) width 195: "Lorem ipsum dolor sit amet,"
+      text run at (41,0) width 86: "consectetur "
+      text run at (41,86) width 102: "adipiscing elit."
+      text run at (62,0) width 144: "Curabitur neque elit,"
+      text run at (83,0) width 169: "pulvinar eget lobortis at,"
+      text run at (104,0) width 134: "convallis ut lectus. "
+    RenderText {#text} at (125,0) size 150x199
+      text run at (125,0) width 181: "vulputate tincidunt leo, eu"
+      text run at (146,0) width 47: "varius "
+      text run at (146,47) width 152: "nunc ullamcorper vel."
+      text run at (170,0) width 184: "Integer nec dolor sed ante"
+      text run at (191,0) width 118: "pharetra lacinia. "
+      text run at (191,118) width 49: "Integer"
+      text run at (212,0) width 174: "dignissim iaculis nulla et"
+      text run at (233,0) width 174: "rutrum. Praesent pretium"
+      text run at (254,0) width 65: "euismod "
+      text run at (254,65) width 113: "est eget laoreet."
+    RenderText {#text} at (275,49) size 300x200
+      text run at (275,49) width 116: " suscipit suscipit"
+      text run at (296,0) width 120: "elementum. Duis"
+      text run at (320,0) width 86: "consectetur "
+      text run at (320,86) width 114: "pulvinar tempor."
+      text run at (341,0) width 173: "In mi sapien, malesuada"
+      text run at (362,0) width 194: "vitae posuere ut, adipiscing"
+      text run at (383,0) width 155: "id odio. Integer est mi,"
+      text run at (404,0) width 195: "luctus sed cursus in, cursus"
+      text run at (425,0) width 116: "vitae urna. Nam "
+      text run at (425,116) width 82: "consectetur"
+      text run at (446,0) width 186: "orci tempor nibh iaculis eu"
+      text run at (470,0) width 160: "dignissim odio laoreet."
+      text run at (491,0) width 60: "Aenean "
+      text run at (491,60) width 132: "congue fermentum"
+      text run at (512,0) width 148: "nibh sed malesuada."
+      text run at (533,0) width 192: "Curabitur enim leo, porttitor"
+      text run at (554,0) width 17: "ut "
+      text run at (554,17) width 87: "interdum et, "
+    RenderText {#text} at (554,161) size 42x178
+      text run at (554,161) width 17: " ut"
+      text run at (575,0) width 44: "lorem."
+layer at (0,20) size 21x62
+  RenderInline (relative positioned) {SPAN} at (0,0) size 21x62 [bgcolor=#FFFF00]
+    RenderText {#text} at (104,134) size 21x62
+      text run at (104,134) width 62: "Vivamus"
+layer at (0,20) size 21x49
+  RenderInline (relative positioned) {SPAN} at (0,0) size 21x49 [bgcolor=#FFFF00]
+    RenderText {#text} at (275,0) size 21x49
+      text run at (275,0) width 49: "Integer"
+layer at (0,20) size 21x57
+  RenderInline (relative positioned) {SPAN} at (0,0) size 21x57 [bgcolor=#FFFF00]
+    RenderText {#text} at (554,104) size 21x57
+      text run at (554,104) width 57: "pulvinar"
