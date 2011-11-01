@@ -1,3 +1,17 @@
+2011-10-31  Adam Roben  <aroben@apple.com>
+
+        Make Leaks Viewer less strict when parsing leaks-related output from NRWT/ORWT
+
+        Fixes <http://webkit.org/b/71258> REGRESSION (r98639): Leaks Viewer doesn't show recent
+        leaky builds
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        (RecentBuildsLoader.prototype.start): Relax a regex to gloss over differences in ORWT's vs.
+        NRWT's leaks-related output (i.e., "M total leaks found!" vs. "M total leaks found for a
+        total of N bytes!").
+
 2011-10-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Rename ewk_view_setting_scripts_window_open_{get,set} after r93833

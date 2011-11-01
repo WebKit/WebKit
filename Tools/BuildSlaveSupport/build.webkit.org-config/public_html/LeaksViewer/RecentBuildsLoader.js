@@ -50,7 +50,7 @@ RecentBuildsLoader.prototype = {
                             continue;
                         var strings = step.text;
                         for (var stringIndex = 0; stringIndex < strings.length; ++stringIndex) {
-                            var match = /^(\d+) total leaks found!$/.exec(strings[stringIndex]);
+                            var match = /^(\d+) total leaks found/.exec(strings[stringIndex]);
                             if (!match)
                                 continue;
                             buildInfo.leakCount = parseInt(match[1], 10);
