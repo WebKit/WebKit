@@ -1,3 +1,13 @@
+2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Fix valgrind error about uninitialized variable
+        https://bugs.webkit.org/show_bug.cgi?id=71273
+
+        Reviewed by Kenneth Christiansen.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify): Initialize isPrimary.
+
 2011-10-31  Adam Roben  <aroben@apple.com>
 
         Make Leaks Viewer less strict when parsing leaks-related output from NRWT/ORWT
