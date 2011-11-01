@@ -1,3 +1,17 @@
+2011-11-01  Jer Noble  <jer.noble@apple.com>
+
+        Four media tests failing on Lion due to incorrect cached times.
+        https://bugs.webkit.org/show_bug.cgi?id=69574
+
+        Reviewed by Eric Carlson.
+
+        Do not invalidate the cached time when receiving a mediaPlayerRateChanged notification
+        while paused. AVFoundation in particular can return different results for currentTime()
+        when asked after being paused, breaking layout tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+
 2011-11-01  Gavin Peters  <gavinp@chromium.org>
 
         properly end requests when a bad status code return happens

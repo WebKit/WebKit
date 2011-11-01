@@ -2294,12 +2294,11 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
 
     beginProcessingMediaPlayerCallback();
 
-    invalidateCachedTime();
-
     // Stash the rate in case the one we tried to set isn't what the engine is
     // using (eg. it can't handle the rate we set)
     m_playbackRate = m_player->rate();
-    invalidateCachedTime();
+    if (m_playing)
+        invalidateCachedTime();
     endProcessingMediaPlayerCallback();
 }
 

@@ -27,6 +27,7 @@
 
             function timeupdate()
             {
+                video.removeEventListener("timeupdate", timeupdate);
                 if (video.currentTime > 0) {
                     video.pause();
                     timeAfterPause = video.currentTime;
