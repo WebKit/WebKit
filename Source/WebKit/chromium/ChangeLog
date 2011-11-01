@@ -1,3 +1,18 @@
+2011-10-31  Yuzhu Shen  <yzshen@google.com>
+
+        [chromium] Calling methods of WebFontImpl causes assertions
+        https://bugs.webkit.org/show_bug.cgi?id=71232
+
+        Added FontCachePurgePreventer in several methods.
+
+        Reviewed by James Robinson.
+
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::calculateWidth):
+        (WebKit::WebFontImpl::offsetForPosition):
+        (WebKit::WebFontImpl::selectionRectForText):
+        (WebKit::WebFontImpl::estimateTextBounds):
+
 2011-10-28  Nat Duca  <nduca@chromium.org>
 
         [chromium] Connect CCThreadProxy to FrameRateController and SchedulerStateMachine via CCScheduler
