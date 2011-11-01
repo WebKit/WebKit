@@ -4,6 +4,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-11-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Style-based CSS properties are editable and toggleable

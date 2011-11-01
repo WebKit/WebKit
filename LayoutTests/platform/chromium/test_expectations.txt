@@ -1693,6 +1693,7 @@ BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
 // BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
 // BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
 BUGCR101797 CPU : svg/hixie/perf/007.xml = IMAGE
+BUGCR101797 CPU MAC DEBUG SLOW : svg/hixie/perf/007.xml = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
