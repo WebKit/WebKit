@@ -1,3 +1,18 @@
+2011-11-01  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add pixel baselines for fast/ tests.
+
+        * platform/efl/fast/doctypes: [...]
+        * platform/efl/fast/dom: [...]
+        * platform/efl/fast/dynamic: [...]
+        * platform/efl/fast/encoding: [...]
+        * platform/efl/fast/events: [...]
+        * platform/efl/fast/fast-mobile-scrolling: [...]
+        * platform/efl/fast/flexbox: [...]
+        * platform/efl/fast/forms: [...]
+        * platform/efl/fast/frames: [...]
+        * platform/efl/fast/gradients: [...]
+
 2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening (fixed platform qualifiers for visibility-image-layers.html)
