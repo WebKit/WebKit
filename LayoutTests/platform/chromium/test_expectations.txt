@@ -3764,7 +3764,6 @@ BUGABARTH WIN LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 
 BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
-BUGCR96861 WIN LINUX : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
