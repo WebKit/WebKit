@@ -27,6 +27,8 @@
 #include <QNetworkCookieJar>
 #include <QVariant>
 
+typedef const struct OpaqueJSContext* JSContextRef;
+
 namespace WebCore {
 class Text;
 class Node;
@@ -214,6 +216,7 @@ public:
     static QString layerTreeAsText(QWebFrame*);
 
     static void injectInternalsObject(QWebFrame*);
+    static void injectInternalsObject(JSContextRef);
     static void resetInternalsObject(QWebFrame*);
 
     static void setInteractiveFormValidationEnabled(QWebPage*, bool);

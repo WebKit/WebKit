@@ -1169,6 +1169,13 @@ void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
 #endif
 }
 
+void DumpRenderTreeSupportQt::injectInternalsObject(JSContextRef context)
+{
+#if USE(JSC)
+    WebCoreTestSupport::injectInternalsObject(context);
+#endif
+}
+
 void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);

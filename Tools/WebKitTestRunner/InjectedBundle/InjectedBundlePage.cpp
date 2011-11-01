@@ -43,6 +43,10 @@
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKURLRequest.h>
 
+#if PLATFORM(QT)
+#include "DumpRenderTreeSupportQt.h"
+#endif
+
 using namespace std;
 
 namespace WTR {
@@ -645,7 +649,11 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().eventSendingController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().textInputController()->makeWindowObject(context, window, &exception);
+#if PLATFORM(QT)
+    DumpRenderTreeSupportQt::injectInternalsObject(context);
+#else
     WebCoreTestSupport::injectInternalsObject(context);
+#endif
 }
 
 void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)

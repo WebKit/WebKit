@@ -66,6 +66,7 @@ INCLUDEPATH = \
     $$PWD/../../../../Source/WebCore/testing/js \
     $$PWD/../../../../Source/WebKit2 \
     $$PWD/../../../../Source/WebKit2/Shared \
+    $$PWD/../../../../Source/WebKit/qt/WebCoreSupport \
     $$OUTPUT_DIR/include/QtWebKit \
     $$OUTPUT_DIR/include \
     $$GENERATED_SOURCES_DIR \
