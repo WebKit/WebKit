@@ -7,6 +7,8 @@ include($$PWD/../WebKit.pri)
 include($$PWD/WebCore.pri)
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
+contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+
 TEMPLATE = lib
 TARGET = $$WEBCORE_TARGET
 CONFIG += staticlib

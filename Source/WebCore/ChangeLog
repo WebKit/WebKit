@@ -1,3 +1,14 @@
+2011-11-01  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt] bad codegen, pointer diff in JSC::JSCallbackConstructor::JSCallbackConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=60951
+
+        Adjust symbols visibility for WebCore.
+
+        Reviewed by Simon Hausmann.
+
+        * WebCore.pro:
+
 2011-11-01  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: add InspectorView.js entry into WebKit.qrc
