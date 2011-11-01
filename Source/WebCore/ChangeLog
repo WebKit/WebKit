@@ -1,3 +1,11 @@
+2011-10-31  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings on Windows
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude SpellingCorrectionCommand.cpp and
+        JSRequestAnimationFrameCallback.cpp from all configurations. They are already getting
+        compiled via *AllInOne.cpp files.
+
 2011-10-31  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         [GStreamer] Don't use GOwnPtr for ref-counted objects
