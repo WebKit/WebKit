@@ -1,5 +1,35 @@
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        De-virtualize JSObject::defaultValue
+        https://bugs.webkit.org/show_bug.cgi?id=71146
+
+        Reviewed by Sam Weinig.
+
+        Added defaultValue to the MethodTable.  Replaced all virtual versions of 
+        defaultValue with static versions.  Replaced all call sites with lookups in the 
+        MethodTable.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/ClassInfo.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::defaultValue):
+        (JSC::TerminatedExecutionError::defaultValue):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defaultValue):
+        * runtime/JSCell.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::defaultValue):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPrimitiveNumber):
+        (JSC::JSObject::defaultValue):
+        * runtime/JSObject.h:
+        (JSC::JSObject::toPrimitive):
+
+2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Interpreter build fix
 
         Unreviewed build fix

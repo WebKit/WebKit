@@ -133,7 +133,7 @@ EXPORTS
     ?dayInYear@WTF@@YAHNH@Z
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultAttributes@PropertyDescriptor@JSC@@0IA
-    ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
+    ?defaultValue@JSObject@JSC@@SA?AVJSValue@2@PBV12@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?defineOwnProperty@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@_N@Z
     ?defineGetter@JSGlobalObject@JSC@@SAXPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@0I@Z
     ?defineGetter@JSObject@JSC@@SAXPAV12@PAVExecState@2@ABVIdentifier@2@0I@Z

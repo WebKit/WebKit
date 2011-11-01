@@ -122,7 +122,7 @@ namespace JSC {
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
-        virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+        static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
         virtual bool hasInstance(ExecState*, JSValue, JSValue prototypeProperty);
 
@@ -774,7 +774,7 @@ inline void JSObject::transitionTo(JSGlobalData& globalData, Structure* newStruc
 
 inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
 {
-    return defaultValue(exec, preferredType);
+    return methodTable()->defaultValue(this, exec, preferredType);
 }
 
 inline JSValue JSValue::get(ExecState* exec, const Identifier& propertyName) const

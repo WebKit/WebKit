@@ -135,7 +135,8 @@ namespace JSC {
 
         // Dummy implementations of override-able static functions for classes to put in their MethodTable
         static NO_RETURN_DUE_TO_ASSERT void defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
-        
+        static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+
     private:
         WriteBarrier<Structure> m_structure;
     };

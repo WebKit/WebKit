@@ -238,12 +238,13 @@ bool RuntimeObject::deleteProperty(JSCell*, ExecState*, const Identifier&)
     return false;
 }
 
-JSValue RuntimeObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue RuntimeObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
-    if (!m_instance)
+    const RuntimeObject* thisObject = static_cast<const RuntimeObject*>(object);
+    if (!thisObject->m_instance)
         return throwInvalidAccessError(exec);
     
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
 
     instance->begin();
     JSValue result = instance->defaultValue(exec, hint);

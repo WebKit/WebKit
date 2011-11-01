@@ -128,7 +128,7 @@ private:
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static CallType getCallData(JSCell*, CallData&);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
     virtual bool toBoolean(ExecState*) const;
 

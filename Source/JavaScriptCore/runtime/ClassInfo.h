@@ -64,6 +64,9 @@ namespace JSC {
 
         typedef void (*DefineGetterFunctionPtr)(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
         DefineGetterFunctionPtr defineGetter;
+
+        typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
+        DefaultValueFunctionPtr defaultValue;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -97,6 +100,7 @@ struct MemberCheck##member { \
         &ClassName::getOwnPropertySlotByIndex, \
         &ClassName::toThisObject, \
         &ClassName::defineGetter, \
+        &ClassName::defaultValue, \
     }, \
     sizeof(ClassName)
 

@@ -163,4 +163,10 @@ void JSCell::defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, u
     ASSERT_NOT_REACHED();
 }
 
+JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType)
+{
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
+}
+
 } // namespace JSC

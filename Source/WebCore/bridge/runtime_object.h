@@ -49,7 +49,7 @@ public:
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
     static CallType getCallData(JSCell*, CallData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
 

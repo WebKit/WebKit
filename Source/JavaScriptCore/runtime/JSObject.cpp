@@ -308,27 +308,27 @@ static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSO
 
 bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
-    result = defaultValue(exec, PreferNumber);
+    result = methodTable()->defaultValue(this, exec, PreferNumber);
     number = result.toNumber(exec);
     return !result.isString();
 }
 
 // ECMA 8.6.2.6
-JSValue JSObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
     // Must call toString first for Date objects.
-    if ((hint == PreferString) || (hint != PreferNumber && prototype() == exec->lexicalGlobalObject()->datePrototype())) {
-        JSValue value = callDefaultValueFunction(exec, this, exec->propertyNames().toString);
+    if ((hint == PreferString) || (hint != PreferNumber && object->prototype() == exec->lexicalGlobalObject()->datePrototype())) {
+        JSValue value = callDefaultValueFunction(exec, object, exec->propertyNames().toString);
         if (value)
             return value;
-        value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf);
+        value = callDefaultValueFunction(exec, object, exec->propertyNames().valueOf);
         if (value)
             return value;
     } else {
-        JSValue value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf);
+        JSValue value = callDefaultValueFunction(exec, object, exec->propertyNames().valueOf);
         if (value)
             return value;
-        value = callDefaultValueFunction(exec, this, exec->propertyNames().toString);
+        value = callDefaultValueFunction(exec, object, exec->propertyNames().toString);
         if (value)
             return value;
     }

@@ -43,7 +43,7 @@ namespace JSC {
 
 const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InterruptedExecutionError) };
 
-JSValue InterruptedExecutionError::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue InterruptedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
 {
     if (hint == PreferString)
         return jsNontrivialString(exec, "JavaScript execution exceeded timeout.");
@@ -68,7 +68,7 @@ bool isInterruptedExecutionException(JSValue value)
 
 const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(TerminatedExecutionError) };
 
-JSValue TerminatedExecutionError::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
 {
     if (hint == PreferString)
         return jsNontrivialString(exec, "JavaScript execution terminated.");

@@ -62,7 +62,7 @@ private:
     {
     }
 
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
 public:
     typedef JSNonFinalObject Base;
@@ -89,7 +89,7 @@ private:
     {
     }
 
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
 public:
     typedef JSNonFinalObject Base;
