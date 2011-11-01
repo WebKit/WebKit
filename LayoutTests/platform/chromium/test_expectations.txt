@@ -607,12 +607,6 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // Inspector tests
 // -----------------------------------------------------------------
 
-// There is no message port harness to test extensions
-WONTFIX SKIP : inspector/extensions = FAIL
-WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
-WONTFIX SKIP : http/tests/inspector/extensions-network-redirect.html = FAIL
-WONTFIX SKIP : http/tests/inspector/extensions-useragent.html = FAIL
-
 // There is no enough plugins support in DRT
 WONTFIX SKIP : http/tests/inspector/network/network-embed.html = FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.html = FAIL
@@ -3949,3 +3943,7 @@ BUGWK71277 WIN GPU : media/video-src-change.html = CRASH PASS
 BUGWK71277 WIN GPU : media/video-transformed.html = CRASH PASS
 
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
+
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = PASS TIMEOUT
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = PASS TIMEOUT
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = PASS TIMEOUT

@@ -20,7 +20,7 @@ function extension_testAudits(nextTest)
         var nestedNode = node.addChild("... and a snippet");
         nestedNode.expanded = true;
         nestedNode.addChild(results.createSnippet("function rand()\n{\n    return 4;\n}"));
-        nestedNode.addChild(results.createResourceLink('file:///path/to/error.html', 10));
+        nestedNode.addChild(results.createResourceLink("file:///path/to/error.html", 10));
 
         results.addResult("Rule with details subtree (1)", "This rule has a lot of details", results.Severity.Warning, node);
         // Audit normally terminates when number of added rule results is equal to
@@ -35,7 +35,7 @@ function extension_testAudits(nextTest)
     }
     function onStartAuditDisabledCategory(results)
     {
-        output("FAIL: failedCategory.onAuditStarted fired");
+        output("FAIL: disabledCategory.onAuditStarted fired");
         results.done();
     }
 
@@ -49,7 +49,9 @@ function extension_testAudits(nextTest)
     var disabledCategory = webInspector.audits.addCategory("Disabled extension audits", 2);
     disabledCategory.onAuditStarted.addListener(onStartAuditDisabledCategory);
 
-    extension_runAudits(nextTest);
+    webInspector.inspectedWindow.eval("", function() {
+        extension_runAudits(nextTest);
+    });
 }
 
 </script>
