@@ -1,3 +1,13 @@
+2011-11-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Style-based CSS properties are editable and toggleable
+        https://bugs.webkit.org/show_bug.cgi?id=71275
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/styles/styles-source-lines-expected.txt:
+        * inspector/styles/styles-update-from-js-expected.txt:
+
 2011-10-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: make extension tests pass on chromium

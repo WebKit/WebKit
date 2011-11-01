@@ -1025,7 +1025,7 @@ WebInspector.StylePropertiesSection.prototype = {
                 shorthandNames[property.shorthand] = true;
         }
 
-        // Collect all shorthand names.
+        // Create property tree elements.
         for (var i = 0; i < this.uniqueProperties.length; ++i) {
             var property = this.uniqueProperties[i];
             var disabled = property.disabled;
@@ -1042,6 +1042,10 @@ WebInspector.StylePropertiesSection.prototype = {
                 if (!property)
                     property = new WebInspector.CSSProperty(style, style.allProperties.length, shorthand, style.getShorthandValue(shorthand), style.getShorthandPriority(shorthand), "style", true, true, "", undefined);
             }
+
+            // BUG71275: Never show purely style-based properties in editable rules.
+            if (!shorthand && this.editable && property.styleBased)
+                continue;
 
             var isShorthand = !!(property.isLive && (shorthand || shorthandNames[property.name]));
             var inherited = this.isPropertyInherited(property.name);

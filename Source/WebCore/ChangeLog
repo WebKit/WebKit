@@ -1,3 +1,13 @@
+2011-11-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Style-based CSS properties are editable and toggleable
+        https://bugs.webkit.org/show_bug.cgi?id=71275
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+
 2011-11-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not switch panels on Cmd + ->  while in console.
