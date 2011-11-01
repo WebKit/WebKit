@@ -1,3 +1,51 @@
+2011-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        The QtViewportInteractionEngine should consider DPI adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=71283
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+
+            Add some default values for now to make sure we are testing the
+            DPI adjustment / CSS-item space conversion.
+
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateGuard::ViewportUpdateGuard):
+        (WebKit::ViewportUpdateGuard::~ViewportUpdateGuard):
+
+            Clean up the guard to be more understandable.
+
+        (WebKit::QtViewportInteractionEngine::cssScaleFromItem):
+        (WebKit::QtViewportInteractionEngine::itemScaleFromCSS):
+
+            Add methods for converting between CSS and item space.
+
+        (WebKit::QtViewportInteractionEngine::innerBoundedCSSScale):
+        (WebKit::QtViewportInteractionEngine::outerBoundedCSSScale):
+
+            Make it clean which methods uses which coord space.
+
+        (WebKit::QtViewportInteractionEngine::updateVisibleRect):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemScale):
+
+            Rename calculateBoundariesForScale and change its implementation to
+            be correct. The new name reflects the space in which the computation
+            takes place and reflects similar Qt API.
+
+        (WebKit::QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+
+            Make sure to consider the right coord space.
+
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit::QtViewportInteractionEngine::Constraints::Constraints):
+
+            Add the devicePixelRatio.
+
 2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Prospective clang build fix.

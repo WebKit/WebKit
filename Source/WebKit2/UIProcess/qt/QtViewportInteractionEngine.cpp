@@ -33,59 +33,64 @@ namespace WebKit {
 
 static const int kScaleAnimationDurationMillis = 400;
 
-static inline QRectF contentRectInViewportCoordinates(const QQuickItem* content, const QQuickItem* viewport)
-{
-    return viewport->mapRectFromItem(content, content->boundingRect());
-}
-
-static inline qreal bindToScaleLimits(qreal scale)
-{
-    // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
-    return qBound(qreal(0.1), scale, qreal(10.0));
-}
-
 // Updating content properties cause the notify signals to be sent by the content item itself.
-// Since we manage those differently, we do not want to respond
-// to them when we are the one changing the content.
+// We manage these differently, as we do not want to act on them when we are the ones changing the content.
 //
-// The guard makes sure that the signal viewportUpdateRequested() is sent if necessary.
-// When multiple guards are alive, their lifetime must be perfectly imbricated (e.g. if used ouside stack frames).
-// We rely on the first one to trigger the update at the end.
+// This guard makes sure that the signal viewportUpdateRequested() is sent only when necessary.
 //
-// The public methods should create the guard if they might update content.
+// When multiple guards are alive, their lifetime must be perfectly imbricated (e.g. if used ouside stack
+// frames). We rely on the first one to trigger the update at the end.
+//
+// Our public QtViewportInteractionEngine methods should use the guard if they update content in any situation.
+
 class ViewportUpdateGuard {
 public:
-    ViewportUpdateGuard(QtViewportInteractionEngine* viewportInteractionEngine)
-        : viewportInteractionEngine(viewportInteractionEngine)
-        , previousPosition(viewportInteractionEngine->m_content->pos())
-        , previousSize(viewportInteractionEngine->m_content->width(), viewportInteractionEngine->m_content->height())
-        , previousScale(viewportInteractionEngine->m_content->scale())
+    ViewportUpdateGuard(QtViewportInteractionEngine* engine)
+        : engine(engine)
+        , startPosition(engine->m_content->pos())
+        , startScale(engine->m_content->scale())
+        , startWidth(engine->m_content->width())
+        , startHeight(engine->m_content->height())
 
     {
-        ++(viewportInteractionEngine->m_pendingUpdates);
+        ++(engine->m_pendingUpdates);
     }
 
     ~ViewportUpdateGuard()
     {
-        --(viewportInteractionEngine->m_pendingUpdates);
-        if (!viewportInteractionEngine->m_pendingUpdates) {
-            // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested.
-            emit viewportInteractionEngine->viewportTrajectoryVectorChanged(QPointF());
-            if (previousPosition != viewportInteractionEngine->m_content->pos()
-                    || previousSize.width() != viewportInteractionEngine->m_content->width()
-                    || previousSize.height() != viewportInteractionEngine->m_content->height()
-                    || previousScale != viewportInteractionEngine->m_content->scale())
-                // We must notify the change so the client can rely on us for all changes of geometry.
-                emit viewportInteractionEngine->viewportUpdateRequested();
-        }
+        if (--(engine->m_pendingUpdates))
+            return;
+
+        // Make sure that tiles all around the viewport will be requested.
+        emit engine->viewportTrajectoryVectorChanged(QPointF());
+
+        QQuickItem* item = engine->m_content;
+        bool needsRepaint = startPosition != item->pos() || startScale != item->scale()
+            || startWidth != item->width() || startHeight != item->height();
+
+        // We must notify the change so the client can rely on us for all changes of geometry.
+        if (needsRepaint)
+            emit engine->viewportUpdateRequested();
     }
 
 private:
-    QtViewportInteractionEngine* const viewportInteractionEngine;
-    const QPointF previousPosition;
-    const QSizeF previousSize;
-    const qreal previousScale;
+    QtViewportInteractionEngine* const engine;
+
+    const QPointF startPosition;
+    const qreal startScale;
+    const qreal startWidth;
+    const qreal startHeight;
 };
+
+inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale)
+{
+    return itemScale / m_constraints.devicePixelRatio;
+}
+
+inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale)
+{
+    return cssScale * m_constraints.devicePixelRatio;
+}
 
 QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewport, QQuickItem* content)
     : m_viewport(viewport)
@@ -109,19 +114,20 @@ QtViewportInteractionEngine::~QtViewportInteractionEngine()
 {
 }
 
-qreal QtViewportInteractionEngine::innerBoundedScale(qreal scale)
+qreal QtViewportInteractionEngine::innerBoundedCSSScale(qreal cssScale)
 {
-    return qBound(m_constraints.minimumScale, scale, m_constraints.maximumScale);
+    return qBound(m_constraints.minimumScale, cssScale, m_constraints.maximumScale);
 }
 
-qreal QtViewportInteractionEngine::outerBoundedScale(qreal scale)
+qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
 {
     if (m_constraints.isUserScalable) {
-        qreal hardMin = qreal(0.5) * m_constraints.minimumScale;
-        qreal hardMax = qreal(2.0) * m_constraints.maximumScale;
-        return bindToScaleLimits(qBound(hardMin, scale, hardMax));
+        // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
+        qreal hardMin = qMax<qreal>(0.1, qreal(0.5) * m_constraints.minimumScale);
+        qreal hardMax = qMin<qreal>(10, qreal(2.0) * m_constraints.maximumScale);
+        return qBound(hardMin, cssScale, hardMax);
     }
-    return innerBoundedScale(scale);
+    return innerBoundedCSSScale(cssScale);
 }
 
 void QtViewportInteractionEngine::updateVisibleRect(QVariant rect)
@@ -129,13 +135,13 @@ void QtViewportInteractionEngine::updateVisibleRect(QVariant rect)
     ViewportUpdateGuard guard(this);
 
     QRectF visibleRect = rect.toRectF();
-    qreal currentScale = m_viewport->width() / visibleRect.width();
+    qreal itemScale = m_viewport->width() / visibleRect.width();
 
-    m_content->setScale(currentScale);
+    m_content->setScale(itemScale);
 
     // We need to animate the content but the position represents the viewport hence we need to invert the position here.
     // To animate the position together with the scale we multiply the position with the current scale;
-    m_content->setPos(-visibleRect.topLeft() * currentScale);
+    m_content->setPos(-visibleRect.topLeft() * itemScale);
 }
 
 void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
@@ -158,9 +164,9 @@ bool QtViewportInteractionEngine::event(QEvent* event)
     case QEvent::ScrollPrepare: {
         QScrollPrepareEvent* prepareEvent = static_cast<QScrollPrepareEvent*>(event);
         const QRectF viewportRect = m_viewport->boundingRect();
-        const QRectF contentRect = contentRectInViewportCoordinates(m_content, m_viewport);
-        const QRectF contentPositionRange = calculateBoundariesForScale(contentRect.size(), viewportRect.size(), 1);
-        prepareEvent->setContentPosRange(contentPositionRange);
+        const QRectF contentRect = m_viewport->mapRectFromItem(m_content, m_content->boundingRect());
+        const QRectF posRange = computePosRangeForItemScale(m_content->scale());
+        prepareEvent->setContentPosRange(posRange);
         prepareEvent->setViewportSize(viewportRect.size());
 
         // As we want to push the contents and not actually scroll it, we need to invert the positions here.
@@ -200,57 +206,56 @@ void QtViewportInteractionEngine::stopAnimations()
     m_userInteractionFlags &= ~UserHasStoppedAnimations;
 }
 
-const QRectF QtViewportInteractionEngine::calculateBoundariesForScale(const QSizeF contentSize, const QSizeF viewportSize, qreal scale)
+QRectF QtViewportInteractionEngine::computePosRangeForItemScale(qreal itemScale) const
 {
-    const QSizeF scaledViewportSize = viewportSize / scale;
+    const QSizeF contentItemSize = m_content->boundingRect().size() * itemScale;
+    const QSizeF viewportItemSize = m_viewport->boundingRect().size();
 
-    const qreal horizontalOffset = contentSize.width() - scaledViewportSize.width();
-    const qreal verticalOffset = contentSize.height() - scaledViewportSize.height();
+    const qreal horizontalRange = contentItemSize.width() - viewportItemSize.width();
+    const qreal verticalRange = contentItemSize.height() - viewportItemSize.height();
 
-    const QPointF contentPositionRangeTopLeft(qMin<qreal>(0, horizontalOffset / 2), 0);
-    const qreal contentPositionRangeWidth = qMax<qreal>(0, horizontalOffset);
-    const qreal contentPositionRangeHeight = qMax<qreal>(0, verticalOffset);
-
-    return QRectF(contentPositionRangeTopLeft, QSizeF(contentPositionRangeWidth, contentPositionRangeHeight));
+    return QRectF(QPointF(0, 0), QSizeF(horizontalRange, verticalRange));
 }
 
 void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
 {
     m_scaleAnimation->stop();
 
-    qreal currentScale = m_content->scale();
+    qreal currentCSSScale = cssScaleFromItem(m_content->scale());
     bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
     bool userHasStoppedAnimations = m_userInteractionFlags & UserHasStoppedAnimations;
 
     if (!userHasScaledContent)
-        currentScale = m_constraints.initialScale;
+        currentCSSScale = m_constraints.initialScale;
 
-    qreal boundedScale = innerBoundedScale(currentScale);
+    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale));
 
-    QRectF viewportRect = m_viewport->boundingRect();
-    QPointF viewportHotspot = viewportRect.center();
-    QPointF position = m_content->mapFromItem(m_viewport, viewportHotspot) - viewportHotspot / boundedScale;
-    QRectF positionBoundaries = calculateBoundariesForScale(m_content->boundingRect().size(), viewportRect.size(), boundedScale);
-    QPointF minOffset = positionBoundaries.topLeft();
-    QPointF maxOffset = positionBoundaries.bottomRight();
-    QPointF boundedPosition;
-    boundedPosition.setX(qBound(minOffset.x(), position.x(), maxOffset.x()));
-    boundedPosition.setY(qBound(minOffset.y(), position.y(), maxOffset.y()));
+    const QRectF viewportRect = m_viewport->boundingRect();
+    const QPointF viewportHotspot = viewportRect.center();
 
-    QRectF scaledRect(boundedPosition, viewportRect.size() / boundedScale);
-    QRectF currentRect = m_viewport->mapRectToItem(m_content, viewportRect);
+    QPointF endPosition = m_content->mapFromItem(m_viewport, viewportHotspot) - viewportHotspot / endItemScale;
 
-    if (scaledRect == currentRect)
+    QRectF endPosRange = computePosRangeForItemScale(endItemScale);
+    QPointF minValue = endPosRange.topLeft();
+    QPointF maxValue = endPosRange.bottomRight();
+
+    endPosition.setX(qBound(minValue.x(), endPosition.x(), maxValue.x()));
+    endPosition.setY(qBound(minValue.y(), endPosition.y(), maxValue.y()));
+
+    QRectF startVisibleContentRect(m_viewport->mapRectToItem(m_content, viewportRect));
+    QRectF endVisibleContentRect(endPosition, viewportRect.size() / endItemScale);
+
+    if (endVisibleContentRect == startVisibleContentRect)
         return;
 
     if (userHasScaledContent && !userHasStoppedAnimations) {
         m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
         m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
-        m_scaleAnimation->setStartValue(currentRect);
-        m_scaleAnimation->setEndValue(scaledRect);
+        m_scaleAnimation->setStartValue(startVisibleContentRect);
+        m_scaleAnimation->setEndValue(endVisibleContentRect);
         m_scaleAnimation->start();
     } else
-        updateVisibleRect(scaledRect);
+        updateVisibleRect(endVisibleContentRect);
 }
 
 void QtViewportInteractionEngine::reset()
@@ -337,14 +342,14 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
 
     //  Changes of the center position should move the page even if the zoom factor
     //  does not change.
-    const qreal scale = m_pinchStartScale * totalScaleFactor;
+    const qreal cssScale = cssScaleFromItem(m_pinchStartScale * totalScaleFactor);
 
     // Allow zooming out beyond mimimum scale on pages that do not explicitly disallow it.
-    const qreal boundedScale = outerBoundedScale(scale);
+    const qreal targetCSSScale = outerBoundedCSSScale(cssScale);
 
     QPointF pinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
 
-    scaleContent(pinchCenterInContentCoordinates, boundedScale);
+    scaleContent(pinchCenterInContentCoordinates, targetCSSScale);
 
     const QPointF positionDiff = pinchCenterInViewportCoordinates - m_lastPinchCenterInViewportCoordinates;
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
@@ -371,10 +376,10 @@ void QtViewportInteractionEngine::contentViewportChanged()
     animateContentIntoBoundariesIfNeeded();
 }
 
-void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinates, qreal scale)
+void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinates, qreal cssScale)
 {
     QPointF oldPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinates);
-    m_content->setScale(scale);
+    m_content->setScale(itemScaleFromCSS(cssScale));
     QPointF newPinchCenterOnParent = m_content->mapToItem(m_content->parentItem(), centerInContentCoordinates);
     m_content->setPos(m_content->pos() - (newPinchCenterOnParent - oldPinchCenterOnParent));
 }

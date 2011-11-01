@@ -42,21 +42,22 @@ class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
-    QtViewportInteractionEngine(const QQuickItem *, QQuickItem *);
+    QtViewportInteractionEngine(const QQuickItem*, QQuickItem*);
     ~QtViewportInteractionEngine();
-
 
     struct Constraints {
         Constraints()
             : initialScale(1.0)
             , minimumScale(0.25)
             , maximumScale(1.8)
+            , devicePixelRatio(1.0)
             , isUserScalable(true)
         { }
 
         qreal initialScale;
         qreal minimumScale;
         qreal maximumScale;
+        qreal devicePixelRatio;
         bool isUserScalable;
     };
 
@@ -86,9 +87,12 @@ private Q_SLOTS:
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
 
 private:
-    qreal innerBoundedScale(qreal scale);
-    qreal outerBoundedScale(qreal scale);
-    const QRectF calculateBoundariesForScale(const QSizeF contentSize, const QSizeF viewportSize, qreal scale);
+    qreal cssScaleFromItem(qreal);
+    qreal itemScaleFromCSS(qreal);
+    qreal innerBoundedCSSScale(qreal);
+    qreal outerBoundedCSSScale(qreal);
+
+    QRectF computePosRangeForItemScale(qreal itemScale) const;
     void animateContentIntoBoundariesIfNeeded();
 
     void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);

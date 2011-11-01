@@ -69,12 +69,18 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     WebPageProxy* wkPage = toImpl(page.pageRef());
     WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
 
+    // FIXME: Remove later; Hardcode some values for now to make sure the DPI adjustment is being tested.
+    wkPrefs->setDeviceDPI(240);
+    wkPrefs->setDeviceWidth(480);
+    wkPrefs->setDeviceHeight(720);
+
     WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
 
     QtViewportInteractionEngine::Constraints newConstraints;
     newConstraints.initialScale = attr.initialScale;
     newConstraints.minimumScale = attr.minimumScale;
     newConstraints.maximumScale = attr.maximumScale;
+    newConstraints.devicePixelRatio = attr.devicePixelRatio;
     newConstraints.isUserScalable = !!attr.userScalable;
     interactionEngine.setConstraints(newConstraints);
 
