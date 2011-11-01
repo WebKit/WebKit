@@ -1,3 +1,13 @@
+2011-10-31  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Build fix after r98853.
+
+        Rubber-stamped by Andreas Kling.
+
+        * xml/XSLImportRule.cpp:
+        * xml/XSLImportRule.h:
+        (WebCore::XSLImportRule::parentStyleSheet):
+
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defaultValue

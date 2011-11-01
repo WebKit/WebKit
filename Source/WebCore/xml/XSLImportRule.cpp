@@ -48,11 +48,6 @@ XSLImportRule::~XSLImportRule()
         m_cachedSheet->removeClient(this);
 }
 
-XSLStyleSheet* XSLImportRule::parentStyleSheet() const
-{
-    return m_parentStyleSheet;
-}
-
 void XSLImportRule::setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet)
 {
     if (m_styleSheet)

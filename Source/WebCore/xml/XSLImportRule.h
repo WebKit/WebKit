@@ -47,7 +47,7 @@ public:
     const String& href() const { return m_strHref; }
     XSLStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
-    XSLStyleSheet* parentStyleSheet() const;
+    XSLStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
     void setParentStyleSheet(XSLStyleSheet* styleSheet) { m_parentStyleSheet = styleSheet; }
 
     bool isLoading();
