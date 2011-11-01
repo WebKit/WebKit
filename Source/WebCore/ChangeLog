@@ -1,3 +1,24 @@
+2011-11-01  Gavin Peters  <gavinp@chromium.org>
+
+        properly end requests when a bad status code return happens
+        https://bugs.webkit.org/show_bug.cgi?id=71122
+
+        Calling error without ending the request set up the CachedResourceRequest so that it could
+        actually send out two notifyFinished() events.  This probably was the root cause of
+        lots of crashing instability; I know from crbug.com/75604 that this bug was causing lots
+        of crashes in ScriptRunner/ScriptElement for instance.
+
+        The fix is easy: just properly end the request instead of just calling error, and we won't
+        re-notify.
+
+        Reviewed by Nate Chapin.
+
+        No new tests, as the problem wasn't very amenable to layout tests.
+        There is a chromium test going through code review at http://codereview.chromium.org/8404001/
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::didReceiveData):
+
 2011-11-01  Erik Arvidsson  <arv@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from CanvasRenderingContext2d
