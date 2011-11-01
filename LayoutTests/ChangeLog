@@ -1,3 +1,14 @@
+2011-11-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rebaseline test started failing because syntax errors in inline handlers
+        are now reported to console.
+
+        window.onerror doesn't work with inline (attribute) scripts
+        https://bugs.webkit.org/show_bug.cgi?id=70991
+
+
+        * fast/js/invalid-syntax-for-function-expected.txt:
+
 2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
 
        Unreviewed gardening.
