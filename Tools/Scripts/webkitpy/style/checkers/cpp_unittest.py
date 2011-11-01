@@ -4421,9 +4421,11 @@ class WebKitStyleTest(CppStyleTestBase):
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
 
-        # The Qt API uses names that begin with "qt_".
+        # The Qt API uses names that begin with "qt_" or "_q_".
         self.assert_lint('void QTFrame::qt_drt_is_awesome(int var1, int var2)', '')
+        self.assert_lint('void QTFrame::_q_drt_is_awesome(int var1, int var2)', '')
         self.assert_lint('void qt_drt_is_awesome(int var1, int var2);', '')
+        self.assert_lint('void _q_drt_is_awesome(int var1, int var2);', '')
 
         # Cairo forward-declarations should not be a failure.
         self.assert_lint('typedef struct _cairo cairo_t;', '')
