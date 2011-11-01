@@ -386,8 +386,9 @@ public:
     Vector<RenderLayer*>* normalFlowList() const { return m_normalFlowList; }
 
     // FIXME: We should ASSERT(!m_visibleContentStatusDirty) here, but see https://bugs.webkit.org/show_bug.cgi?id=71044
+    // ditto for hasVisibleDescendant(), see https://bugs.webkit.org/show_bug.cgi?id=71277
     bool hasVisibleContent() const { return m_hasVisibleContent; }
-    bool hasVisibleDescendant() const { ASSERT(!m_visibleDescendantStatusDirty); return m_hasVisibleDescendant; }
+    bool hasVisibleDescendant() const { return m_hasVisibleDescendant; }
     void setHasVisibleContent(bool);
     void dirtyVisibleContentStatus();
 

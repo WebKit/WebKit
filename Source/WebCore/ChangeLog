@@ -1,3 +1,15 @@
+2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        [Chromium] Some media/video-*.html layout tests occasionally crash on WIN GPU
+        https://bugs.webkit.org/show_bug.cgi?id=71277
+
+        Reviewed by Simon Fraser.
+
+        Disabled assert() in hasVisibleDescendant() until callers are fixed.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasVisibleDescendant):
+
 2011-11-01  Mike Reed  <reed@google.com>
 
         [skia] call readPixels on canvas instead of device (will be private on device soon) and check for error

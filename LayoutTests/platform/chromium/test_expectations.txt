@@ -6,7 +6,7 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/css/large-list-of-rules-crash.html = PASS
+BUGCR24182 SLOW MAC DEBUG : fast/css/large-list-of-rules-crash.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
 BUGCR24182 SLOW MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
@@ -1131,6 +1131,7 @@ BUGWK70748 CPU : media/video-empty-source.html = IMAGE
 BUGWK70748 CPU : media/video-no-audio.html = IMAGE
 BUGWK70748 CPU : media/video-playing-and-pause.html = IMAGE
 BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
+BUGWK70748 CPU : media/video-volume-slider.html = IMAGE
 BUGWK70748 GPU : media/audio-controls-rendering.html = IMAGE
 BUGWK70748 GPU : media/controls-after-reload.html = IMAGE
 BUGWK70748 GPU : media/controls-strict.html = IMAGE
@@ -1141,6 +1142,7 @@ BUGWK70748 GPU : media/video-display-toggle.html = IMAGE
 BUGWK70748 GPU : media/video-empty-source.html = IMAGE
 BUGWK70748 GPU : media/video-no-audio.html = IMAGE
 BUGWK70748 GPU : media/video-playing-and-pause.html = IMAGE
+BUGWK70748 GPU : media/video-volume-slider.html = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-clipped-evenodd-twice.svg = IMAGE
@@ -3676,6 +3678,7 @@ BUGWK68437 LEOPARD GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-1.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-2.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-3.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-4.html = IMAGE
@@ -3935,10 +3938,6 @@ BUGWK71226 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+T
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
 
-BUGWK71277 WIN GPU : media/video-source.html = CRASH PASS
-BUGWK71277 WIN GPU : media/video-src-change.html = CRASH PASS
-BUGWK71277 WIN GPU : media/video-transformed.html = CRASH PASS
-
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
 
 BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
@@ -3946,6 +3945,3 @@ BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
 BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
-
-BUGCASEQ GPU : media/video-volume-slider.html = IMAGE CRASH
-BUGCASEQ DEBUG GPU : fast/canvas/shadow-offset-1.html = IMAGE PASS CRASH
