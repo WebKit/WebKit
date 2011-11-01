@@ -1,3 +1,17 @@
+2011-11-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: some popup buttons not announced by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=67743
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/aria-popup-buttons-on-native-elements.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+
 2011-11-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Style-based CSS properties are editable and toggleable

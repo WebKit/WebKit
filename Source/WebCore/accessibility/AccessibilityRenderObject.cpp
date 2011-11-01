@@ -1163,9 +1163,6 @@ String AccessibilityRenderObject::stringValue() const
     if (m_renderer->isListMarker())
         return toRenderListMarker(m_renderer)->text();
     
-    if (cssBox && cssBox->isRenderButton())
-        return toRenderButton(m_renderer)->text();
-
     if (isWebArea()) {
         // FIXME: Why would a renderer exist when the Document isn't attached to a frame?
         if (m_renderer->frame())
@@ -1300,7 +1297,7 @@ HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
 
 String AccessibilityRenderObject::title() const
 {
-    AccessibilityRole ariaRole = ariaRoleAttribute();
+    AccessibilityRole role = roleValue();
     
     if (!m_renderer)
         return String();
@@ -1320,22 +1317,27 @@ String AccessibilityRenderObject::title() const
             return input->value();
     }
     
-    if (isInputTag || AccessibilityObject::isARIAInput(ariaRole) || isControl()) {
+    if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl()) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label && !titleUIElement())
             return label->innerText();
     }
     
-    if (roleValue() == ButtonRole
-        || ariaRole == ListBoxOptionRole
-        || ariaRole == MenuItemRole
-        || ariaRole == MenuButtonRole
-        || ariaRole == RadioButtonRole
-        || ariaRole == CheckBoxRole
-        || ariaRole == TabRole
-        || ariaRole == PopUpButtonRole
-        || isHeading()
-        || isLink())
+    switch (role) {
+    case ButtonRole:
+    case ListBoxOptionRole:
+    case MenuItemRole:
+    case MenuButtonRole:
+    case RadioButtonRole:
+    case CheckBoxRole:
+    case TabRole:
+    case PopUpButtonRole:
+        return textUnderElement();
+    default:
+        break;
+    }
+    
+    if (isHeading() || isLink())
         return textUnderElement();
     
     return String();
@@ -3113,12 +3115,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isListMarker())
         return ListMarkerRole;
     if (node && node->hasTagName(buttonTag))
-        return ButtonRole;
+        return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
     if (m_renderer->isText())
         return StaticTextRole;
     if (cssBox && cssBox->isImage()) {
         if (node && node->hasTagName(inputTag))
-            return ButtonRole;
+            return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
         return ImageRole;
     }
     if (node && node->hasTagName(canvasTag))
@@ -3140,11 +3142,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         if (input->isRadioButton())
             return RadioButtonRole;
         if (input->isTextButton())
-            return ButtonRole;
+            return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
     }
-
-    if (node && node->hasTagName(buttonTag))
-        return ButtonRole;
 
     if (isFileUploadButton())
         return ButtonRole;

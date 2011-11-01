@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a id="button1" tabindex="0" class="button" href="#" aria-haspopup="true" role="button">Options</a>
+<span id="button2" class="button" tabindex="0" role="button" aria-haspopup="true">Options</span>
+
+<button id="button3" type="button" aria-haspopup="true">Options</button>
+<input id="button4" type="button" aria-haspopup="true" value="Options">
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that native style buttons with aria-haspopup appear as popup buttons.");
+    
+    if (window.accessibilityController) {
+
+        for (var k = 1; k < 5; k++) {
+
+           document.getElementById("button" + k).focus();
+           var button = accessibilityController.focusedElement;
+           shouldBe("button.role", "'AXRole: AXPopUpButton'");        
+           shouldBe("button.title", "'AXTitle: Options'");        
+
+           // Verify that the title is not duplicated as the AXValue
+           shouldBe("button.stringValue", "'AXValue: '");        
+        }
+    }
+    
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
