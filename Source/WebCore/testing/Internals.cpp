@@ -258,6 +258,16 @@ void Internals::setEnableCompositingForFixedPosition(Document* document, bool en
     document->settings()->setAcceleratedCompositingForFixedPositionEnabled(enabled);
 }
 
+void Internals::setAcceleratedDrawingEnabled(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setAcceleratedDrawingEnabled(enabled);
+}
+
 void Internals::setEnableScrollAnimator(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {

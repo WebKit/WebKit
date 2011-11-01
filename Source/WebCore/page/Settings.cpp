@@ -718,11 +718,6 @@ void Settings::setCanvasUsesAcceleratedDrawing(bool enabled)
     m_canvasUsesAcceleratedDrawing = enabled;
 }
 
-void Settings::setAcceleratedDrawingEnabled(bool enabled)
-{
-    m_acceleratedDrawingEnabled = enabled;
-}
-
 void Settings::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)
 {
     m_acceleratedCompositingFor3DTransformsEnabled = enabled;

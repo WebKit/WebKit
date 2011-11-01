@@ -298,9 +298,9 @@ namespace WebCore {
         void setCanvasUsesAcceleratedDrawing(bool);
         bool canvasUsesAcceleratedDrawing() const { return m_canvasUsesAcceleratedDrawing; }
 
-        void setAcceleratedDrawingEnabled(bool);
+        void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
         bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
-        
+
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
