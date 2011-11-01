@@ -2,6 +2,22 @@
 
         [EFL] Unreviewed. Add some pixel baselines for tests in fast/.
 
+        * platform/efl/fast/media: [...]
+        * platform/efl/fast/multicol: [...]
+        * platform/efl/fast/overflow: [...]
+        * platform/efl/fast/parser: [...]
+        * platform/efl/fast/reflections: [...]
+        * platform/efl/fast/regions: [...]
+        * platform/efl/fast/repaint: [...]
+        * platform/efl/fast/replaced: [...]
+        * platform/efl/fast/ruby: [...]
+        * platform/efl/fast/runin: [...]
+        * platform/efl/fast/selectors: [...]
+
+2011-11-01  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add some pixel baselines for tests in fast/.
+
         * platform/efl/fast/html: [...]
         * platform/efl/fast/images: [...]
         * platform/efl/fast/inline-block: [...]
