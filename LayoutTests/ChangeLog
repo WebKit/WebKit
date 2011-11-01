@@ -1,3 +1,18 @@
+2011-11-01  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Add some pixel baselines for tests in fast/.
+
+        * platform/efl/fast/html: [...]
+        * platform/efl/fast/images: [...]
+        * platform/efl/fast/inline-block: [...]
+        * platform/efl/fast/inline: [...]
+        * platform/efl/fast/innerHTML: [...]
+        * platform/efl/fast/inspector-support: [...]
+        * platform/efl/fast/invalid: [...]
+        * platform/efl/fast/layers: [...]
+        * platform/efl/fast/lists: [...]
+        * platform/efl/fast/loader: [...]
+
 2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Fixed conflicting entries in test expectations.
