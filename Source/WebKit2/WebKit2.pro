@@ -400,6 +400,7 @@ SOURCES += \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
+    Shared/WebGestureEvent.cpp \
     Shared/WebGeolocationPosition.cpp \
     Shared/WebGraphicsContext.cpp \
     Shared/WebHitTestResult.cpp \

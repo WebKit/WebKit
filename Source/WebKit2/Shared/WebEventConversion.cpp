@@ -182,6 +182,9 @@ public:
         case WebEvent::GestureScrollEnd:
             m_type = PlatformGestureEvent::ScrollEndType;
             break;
+        case WebEvent::GestureSingleTap:
+            m_type = PlatformGestureEvent::TapType;
+            break;
         default:
             ASSERT_NOT_REACHED();
         }

@@ -1,3 +1,18 @@
+2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] Add WebGestureEvents to the Qt build and enable PlatformGestureEvent::TapType
+        https://bugs.webkit.org/show_bug.cgi?id=71274
+
+        Reviewed by Kenneth Christiansen.
+
+        * Shared/WebEvent.h: Add GestureSingleTap as gesture type.
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent): Support converting
+        WebEven::GestureSingleTap to PlatformGestureEvent::TapType.
+        * Shared/WebGestureEvent.cpp:
+        (WebKit::WebGestureEvent::isGestureEventType): GestureSingleTap is a valid gesture event type.
+        * WebKit2.pro: Add WebGestureEvent.cpp to the build.
+
 2011-10-31  Anders Carlsson  <andersca@apple.com>
 
         PluginProxy::Update should pass the painted rect in plug-in coordinates

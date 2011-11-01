@@ -63,6 +63,7 @@ public:
         // WebGestureEvent
         GestureScrollBegin,
         GestureScrollEnd,
+        GestureSingleTap,
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
