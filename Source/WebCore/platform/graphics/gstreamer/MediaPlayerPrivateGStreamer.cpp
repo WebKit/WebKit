@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GOwnPtrGStreamer.h"
+#include "GRefPtrGStreamer.h"
 #include "GStreamerGWorld.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
@@ -1009,9 +1009,12 @@ void MediaPlayerPrivateGStreamer::updateAudioSink()
     if (!m_playBin)
         return;
 
-    GOwnPtr<GstElement> element;
+    GRefPtr<GstElement> element;
+    GstElement* sinkPtr = 0;
 
-    g_object_get(m_playBin, "audio-sink", &element.outPtr(), NULL);
+    g_object_get(m_playBin, "audio-sink", &sinkPtr, NULL);
+    element = adoptGRef(sinkPtr);
+
     gst_object_replace(reinterpret_cast<GstObject**>(&m_webkitAudioSink),
                        reinterpret_cast<GstObject*>(element.get()));
 }
@@ -1019,9 +1022,12 @@ void MediaPlayerPrivateGStreamer::updateAudioSink()
 
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
-    GOwnPtr<GstElement> element;
+    GRefPtr<GstElement> element;
+    GstElement* srcPtr = 0;
 
-    g_object_get(m_playBin, "source", &element.outPtr(), NULL);
+    g_object_get(m_playBin, "source", &srcPtr, NULL);
+    element = adoptGRef(srcPtr);
+
     gst_object_replace(reinterpret_cast<GstObject**>(&m_source),
                        reinterpret_cast<GstObject*>(element.get()));
 

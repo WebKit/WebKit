@@ -4022,8 +4022,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
-	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.cpp \

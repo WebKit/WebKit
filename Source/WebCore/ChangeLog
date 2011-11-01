@@ -1,3 +1,23 @@
+2011-10-31  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        [GStreamer] Don't use GOwnPtr for ref-counted objects
+        https://bugs.webkit.org/show_bug.cgi?id=71042
+
+        Reviewed by Martin Robinson.
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.cpp: Removed.
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.h: Removed.
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        (WebCore::GStreamerGWorld::exitFullscreen):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+
 2011-10-28  Nat Duca  <nduca@chromium.org>
 
         [chromium] Connect CCThreadProxy to FrameRateController and SchedulerStateMachine via CCScheduler

@@ -21,7 +21,7 @@
 #include "GStreamerGWorld.h"
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GOwnPtrGStreamer.h"
+#include "GRefPtrGStreamer.h"
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 #include <gst/pbutils/pbutils.h>
@@ -86,8 +86,12 @@ bool GStreamerGWorld::enterFullscreen()
     GstElement* videoScale = gst_element_factory_make("videoscale", "videoScale");
 
     // Get video sink bin and the tee inside.
-    GOwnPtr<GstElement> videoSink;
-    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
+    GRefPtr<GstElement> videoSink;
+    GstElement* sinkPtr = 0;
+
+    g_object_get(m_pipeline, "video-sink", &sinkPtr, NULL);
+    videoSink = adoptGRef(sinkPtr);
+
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
 
     // Add and link a queue, ffmpegcolorspace, videoscale and sink in the bin.
@@ -154,8 +158,12 @@ void GStreamerGWorld::exitFullscreen()
         return;
 
     // Get video sink bin and the elements to remove.
-    GOwnPtr<GstElement> videoSink;
-    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
+    GRefPtr<GstElement> videoSink;
+    GstElement* sinkPtr = 0;
+
+    g_object_get(m_pipeline, "video-sink", &sinkPtr, NULL);
+    videoSink = adoptGRef(sinkPtr);
+
     GstElement* tee = gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee");
     GstElement* platformVideoSink = gst_bin_get_by_name(GST_BIN(videoSink.get()), "platformVideoSink");
     GstElement* queue = gst_bin_get_by_name(GST_BIN(videoSink.get()), "queue");

@@ -192,7 +192,6 @@ IF (ENABLE_VIDEO)
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
   )
   LIST(APPEND WebCore_SOURCES
-    platform/graphics/gstreamer/GOwnPtrGStreamer.cpp
     platform/graphics/gstreamer/GRefPtrGStreamer.cpp
     platform/graphics/gstreamer/GStreamerGWorld.cpp
     platform/graphics/gstreamer/ImageGStreamerCairo.cpp

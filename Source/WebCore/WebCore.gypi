@@ -3662,8 +3662,6 @@
             'platform/graphics/gpu/TilingData.h',
             'platform/graphics/gpu/mac/DrawingBufferMac.mm',
             'platform/graphics/gpu/qt/DrawingBufferQt.cpp',
-            'platform/graphics/gstreamer/GOwnPtrGStreamer.cpp',
-            'platform/graphics/gstreamer/GOwnPtrGStreamer.h',
             'platform/graphics/gstreamer/GRefPtrGStreamer.cpp',
             'platform/graphics/gstreamer/GRefPtrGStreamer.h',
             'platform/graphics/gstreamer/GStreamerGWorld.cpp',
