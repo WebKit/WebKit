@@ -44,13 +44,13 @@ RenderApplet::~RenderApplet()
 {
 }
 
-IntSize RenderApplet::intrinsicSize() const
+LayoutSize RenderApplet::intrinsicSize() const
 {
     // FIXME: This doesn't make sense. We can't just start returning
     // a different size once we've created the widget and expect
     // layout and sizing to be correct. We should remove this and
     // pass the appropriate intrinsic size in the constructor.
-    return widget() ? IntSize(50, 50) : IntSize(150, 150);
+    return widget() ? LayoutSize(50, 50) : LayoutSize(150, 150);
 }
 
 void RenderApplet::createWidgetIfNecessary()
@@ -63,9 +63,9 @@ void RenderApplet::createWidgetIfNecessary()
     // In order to work around this problem and have a correct size from the start, we will
     // use fixed widths/heights from the style system when we can, since the widget might
     // not have an accurate m_width/m_height.
-    int contentWidth = style()->width().isFixed() ? style()->width().value() : 
+    LayoutUnit contentWidth = style()->width().isFixed() ? LayoutUnit(style()->width().value()) : 
         width() - borderAndPaddingWidth();
-    int contentHeight = style()->height().isFixed() ? style()->height().value() :
+    LayoutUnit contentHeight = style()->height().isFixed() ? LayoutUnit(style()->height().value()) :
         height() - borderAndPaddingHeight();
     for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(paramTag)) {
@@ -77,7 +77,7 @@ void RenderApplet::createWidgetIfNecessary()
 
     Frame* frame = this->frame();
     ASSERT(frame);
-    setWidget(frame->loader()->subframeLoader()->createJavaAppletWidget(IntSize(contentWidth, contentHeight), element, m_args));
+    setWidget(frame->loader()->subframeLoader()->createJavaAppletWidget(LayoutSize(contentWidth, contentHeight), element, m_args));
 }
 
 void RenderApplet::layout()

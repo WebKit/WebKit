@@ -1,3 +1,29 @@
+2011-10-31  Levi Weintraub  <leviw@chromium.org>
+
+        Amend missing uses of LayoutUnits in RenderApplet, Button, and DeprecatedFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=71243
+
+        Reviewed by Eric Seidel.
+
+        Replacing remaining integer uses with LayoutUnits in the aforementioned classes.
+
+        No new tests -- no change in behavior.
+
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::intrinsicSize):
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/RenderApplet.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::controlClipRect):
+        * rendering/RenderButton.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::marginWidthForChild):
+        (WebCore::RenderDeprecatedFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+
 2011-10-31  Tommy Widenflycht  <tommyw@google.com>
 
         [Chromium] Media Stream API: add the Chromium WebKit interfaces
