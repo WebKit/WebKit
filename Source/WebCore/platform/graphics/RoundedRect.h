@@ -27,7 +27,7 @@
 #ifndef RoundedRect_h
 #define RoundedRect_h
 
-#include "LayoutTypes.h"
+#include "IntRect.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ public:
     class Radii {
     public:
         Radii() {}
-        Radii(const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight)
+        Radii(const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight)
             : m_topLeft(topLeft)
             , m_topRight(topRight)
             , m_bottomLeft(bottomLeft)
@@ -45,14 +45,14 @@ public:
         {
         }
 
-        void setTopLeft(const LayoutSize& size) { m_topLeft = size; }
-        void setTopRight(const LayoutSize& size) { m_topRight = size; }
-        void setBottomLeft(const LayoutSize& size) { m_bottomLeft = size; }
-        void setBottomRight(const LayoutSize& size) { m_bottomRight = size; }
-        const LayoutSize& topLeft() const { return m_topLeft; }
-        const LayoutSize& topRight() const { return m_topRight; }
-        const LayoutSize& bottomLeft() const { return m_bottomLeft; }
-        const LayoutSize& bottomRight() const { return m_bottomRight; }
+        void setTopLeft(const IntSize& size) { m_topLeft = size; }
+        void setTopRight(const IntSize& size) { m_topRight = size; }
+        void setBottomLeft(const IntSize& size) { m_bottomLeft = size; }
+        void setBottomRight(const IntSize& size) { m_bottomRight = size; }
+        const IntSize& topLeft() const { return m_topLeft; }
+        const IntSize& topRight() const { return m_topRight; }
+        const IntSize& bottomLeft() const { return m_bottomLeft; }
+        const IntSize& bottomRight() const { return m_bottomRight; }
 
         bool isZero() const;
 
@@ -60,35 +60,35 @@ public:
         void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 
         void scale(float factor);
-        void expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
-        void expand(LayoutUnit size) { expand(size, size, size, size); }
-        void shrink(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
-        void shrink(LayoutUnit size) { shrink(size, size, size, size); }
+        void expand(int topWidth, int bottomWidth, int leftWidth, int rightWidth);
+        void expand(int size) { expand(size, size, size, size); }
+        void shrink(int topWidth, int bottomWidth, int leftWidth, int rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
+        void shrink(int size) { shrink(size, size, size, size); }
 
     private:
-        LayoutSize m_topLeft;
-        LayoutSize m_topRight;
-        LayoutSize m_bottomLeft;
-        LayoutSize m_bottomRight;
+        IntSize m_topLeft;
+        IntSize m_topRight;
+        IntSize m_bottomLeft;
+        IntSize m_bottomRight;
     };
 
-    explicit RoundedRect(const LayoutRect&, const Radii& = Radii());
-    RoundedRect(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height);
-    RoundedRect(const LayoutRect&, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight);
+    explicit RoundedRect(const IntRect&, const Radii& = Radii());
+    RoundedRect(int x, int y, int width, int height);
+    RoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
-    const LayoutRect& rect() const { return m_rect; }
+    const IntRect& rect() const { return m_rect; }
     const Radii& radii() const { return m_radii; }
     bool isRounded() const { return !m_radii.isZero(); }
     bool isEmpty() const { return m_rect.isEmpty(); }
 
-    void setRect(const LayoutRect& rect) { m_rect = rect; }
+    void setRect(const IntRect& rect) { m_rect = rect; }
     void setRadii(const Radii& radii) { m_radii = radii; }
 
-    void move(const LayoutSize& size) { m_rect.move(size); }
-    void inflate(LayoutUnit size) { m_rect.inflate(size);  }
-    void inflateWithRadii(LayoutUnit size);
-    void expandRadii(LayoutUnit size) { m_radii.expand(size); }
-    void shrinkRadii(LayoutUnit size) { m_radii.shrink(size); }
+    void move(const IntSize& size) { m_rect.move(size); }
+    void inflate(int size) { m_rect.inflate(size);  }
+    void inflateWithRadii(int size);
+    void expandRadii(int size) { m_radii.expand(size); }
+    void shrinkRadii(int size) { m_radii.shrink(size); }
 
     void includeLogicalEdges(const Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
@@ -96,7 +96,7 @@ public:
     bool isRenderable() const;
 
 private:
-    LayoutRect m_rect;
+    IntRect m_rect;
     Radii m_radii;
 };
 

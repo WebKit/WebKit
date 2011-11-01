@@ -1,3 +1,41 @@
+2011-10-31  Levi Weintraub  <leviw@chromium.org>
+
+        Switch RoundedRect back to integers
+        https://bugs.webkit.org/show_bug.cgi?id=71238
+
+        Reviewed by Darin Adler.
+
+        Changing RoundedRect back to ints from LayoutUnits. As further testing has shown, this graphics-
+        focused class should maintain values aligned to pixel boundaries, and therefor kept as integers.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::Radii::scale):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::inflateWithRadii):
+        (WebCore::RoundedRect::Radii::excludeLogicalEdges):
+        (WebCore::RoundedRect::RoundedRect):
+        * platform/graphics/RoundedRect.h:
+        (WebCore::RoundedRect::Radii::Radii):
+        (WebCore::RoundedRect::Radii::setTopLeft):
+        (WebCore::RoundedRect::Radii::setTopRight):
+        (WebCore::RoundedRect::Radii::setBottomLeft):
+        (WebCore::RoundedRect::Radii::setBottomRight):
+        (WebCore::RoundedRect::Radii::topLeft):
+        (WebCore::RoundedRect::Radii::topRight):
+        (WebCore::RoundedRect::Radii::bottomLeft):
+        (WebCore::RoundedRect::Radii::bottomRight):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::Radii::shrink):
+        (WebCore::RoundedRect::rect):
+        (WebCore::RoundedRect::setRect):
+        (WebCore::RoundedRect::move):
+        (WebCore::RoundedRect::inflate):
+        (WebCore::RoundedRect::expandRadii):
+        (WebCore::RoundedRect::shrinkRadii):
+        * rendering/svg/SVGRenderSupport.h: Adding missing LayoutTypes.h include
+
 2011-10-31  Peter Kasting  <pkasting@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=70666
