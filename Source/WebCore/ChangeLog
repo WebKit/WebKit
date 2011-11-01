@@ -1,5 +1,11 @@
 2011-11-01  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: add InspectorView.js entry into WebKit.qrc
+
+        * inspector/front-end/WebKit.qrc:
+
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
 
         Web Inspector: introduce PanelContainer class, start moving panel management from inspector.js to the new class.
         https://bugs.webkit.org/show_bug.cgi?id=71272

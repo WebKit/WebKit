@@ -68,6 +68,7 @@
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
     <file>InspectorFrontendHostStub.js</file>
+    <file>InspectorView.js</file>
     <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSourceFrame.js</file>
@@ -81,7 +82,6 @@
     <file>ObjectPopoverHelper.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
-    <file>PanelContainer.js</file>
     <file>PanelEnablerView.js</file>
     <file>PartialQuickSort.js</file>
     <file>Placard.js</file>
