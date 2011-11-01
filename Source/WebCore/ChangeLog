@@ -1,3 +1,22 @@
+2011-10-31  Andy Estes  <aestes@apple.com>
+
+        Document pointer not null-checked in FrameView::isOnActivePage()
+        https://bugs.webkit.org/show_bug.cgi?id=71265
+        <rdar://problem/10374427>
+
+        Reviewed by Dan Bernstein.
+
+        Return false in FrameView::isOnActivePage() if m_frame->document() is
+        null. Other calls to m_frame->document() in FrameView also have a null
+        check. The frame can have a null document if the FrameLoader is loading
+        the initial empty document.
+
+        No test possible without triggering assertions in debug builds. This is
+        tracked by <http://webkit.org/b/71264>.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isOnActivePage):
+
 2011-10-31  Jeremy Apthorp  <jeremya@google.com>
 
         Fix a crash relating to anonymous block merging in
