@@ -1,3 +1,12 @@
+2011-11-01  Elliot Poger  <epoger@google.com>
+
+        chromium-gpu port should default to chromium-gpu-mac, not chromium-gpu-cg-mac
+        https://bugs.webkit.org/show_bug.cgi?id=71286
+
+        Reviewed by Stephen White.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Fix build of WebKitTestRunner with ELF symbol visibility
