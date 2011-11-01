@@ -65,6 +65,7 @@ template<typename T> class ThreadSpecific {
     WTF_MAKE_NONCOPYABLE(ThreadSpecific);
 public:
     ThreadSpecific();
+    bool isSet(); // Useful as a fast check to see if this thread has set this value.
     T* operator->();
     operator T*();
     T& operator*();
@@ -272,6 +273,12 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 #if !PLATFORM(QT)
     delete data;
 #endif
+}
+
+template<typename T>
+inline bool ThreadSpecific<T>::isSet()
+{
+    return !!get();
 }
 
 template<typename T>

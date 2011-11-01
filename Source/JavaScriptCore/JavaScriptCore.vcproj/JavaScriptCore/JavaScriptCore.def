@@ -162,7 +162,7 @@ EXPORTS
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
     ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVScopeChainNode@1@ABVSourceCode@1@V21@PAV21@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
-    ?expand@MarkStackArray@JSC@@QAEXXZ
+    ?expand@MarkStackArray@JSC@@AAEXXZ
     ?fastCalloc@WTF@@YAPAXII@Z
     ?fastFree@WTF@@YAXPAX@Z
     ?fastMalloc@WTF@@YAPAXI@Z

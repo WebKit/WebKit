@@ -174,7 +174,11 @@ namespace JSC {
 
         size_t m_atomsPerCell;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
-        WTF::Bitmap<atomsPerBlock> m_marks;
+#if ENABLE(PARALLEL_GC)
+        WTF::Bitmap<atomsPerBlock, WTF::BitmapAtomic> m_marks;
+#else
+        WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
+#endif
         BlockState m_state;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
@@ -264,7 +268,7 @@ namespace JSC {
 
     inline bool MarkedBlock::testAndSetMarked(const void* p)
     {
-        return m_marks.testAndSet(atomNumber(p));
+        return m_marks.concurrentTestAndSet(atomNumber(p));
     }
 
     inline void MarkedBlock::setMarked(const void* p)

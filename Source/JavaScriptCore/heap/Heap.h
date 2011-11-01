@@ -130,6 +130,7 @@ namespace JSC {
     private:
         friend class MarkedBlock;
         friend class AllocationSpace;
+        friend class SlotVisitor;
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -167,7 +168,7 @@ namespace JSC {
         void waitForRelativeTime(double relative);
         void blockFreeingThreadMain();
         static void* blockFreeingThreadStartFunc(void* heap);
-
+        
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         size_t m_lastFullGCSize;
@@ -196,7 +197,10 @@ namespace JSC {
         OwnPtr<GCActivityCallback> m_activityCallback;
         
         MachineThreads m_machineThreads;
+        
+        MarkStackThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
+
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
         JettisonedCodeBlocks m_jettisonedCodeBlocks;

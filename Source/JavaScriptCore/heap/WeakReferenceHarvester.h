@@ -25,6 +25,7 @@
 namespace JSC {
 
 class MarkStack;
+class MarkStackSharedData;
 class SlotVisitor;
 
 class WeakReferenceHarvester {
@@ -41,6 +42,7 @@ protected:
 
 private:
     friend class MarkStack;
+    friend class MarkStackSharedData;
     friend class SlotVisitor;
     
     uintptr_t m_nextAndFlag;

@@ -64,6 +64,14 @@ extern unsigned maximumOptimizationDelay;
 extern double desiredProfileLivenessRate;
 extern double desiredProfileFullnessRate;
 
+extern unsigned minimumNumberOfScansBetweenRebalance;
+extern unsigned gcMarkStackSegmentSize;
+extern unsigned minimumNumberOfCellsToKeep;
+extern unsigned maximumNumberOfSharedSegments;
+extern unsigned sharedStackWakeupThreshold;
+extern unsigned numberOfGCMarkers;
+extern unsigned opaqueRootMergeThreshold;
+
 void initializeHeuristics();
 
 } } // namespace JSC::Heuristics

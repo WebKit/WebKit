@@ -1,3 +1,119 @@
+2011-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=70995
+
+        Reviewed by Geoff Garen.
+        
+        Added parallel tracing to the GC. This works by having local mark
+        stacks per thread, and a global shared one. Threads sometimes
+        donate cells from the mark stack to the global one if the heuristics
+        tell them that it's affordable to do so. Threads that have depleted
+        their local mark stacks try to steal some from the shared one.
+
+        Marking is now done using an atomic weak relaxed CAS (compare-and-swap).
+        
+        This is a 23% speed-up on V8-splay when I use 4 marking threads,
+        leading to a 3.5% speed-up on V8.
+        
+        It also appears that this reduces GC pause times on real websites by
+        more than half.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackSegmentAllocator::MarkStackSegmentAllocator):
+        (JSC::MarkStackSegmentAllocator::~MarkStackSegmentAllocator):
+        (JSC::MarkStackSegmentAllocator::allocate):
+        (JSC::MarkStackSegmentAllocator::release):
+        (JSC::MarkStackSegmentAllocator::shrinkReserve):
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStackArray::expand):
+        (JSC::MarkStackArray::refill):
+        (JSC::MarkStackArray::donateSomeCellsTo):
+        (JSC::MarkStackArray::stealSomeCellsFrom):
+        (JSC::MarkStackThreadSharedData::markingThreadMain):
+        (JSC::MarkStackThreadSharedData::markingThreadStartFunc):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::MarkStackThreadSharedData::~MarkStackThreadSharedData):
+        (JSC::MarkStackThreadSharedData::reset):
+        (JSC::MarkStack::reset):
+        (JSC::SlotVisitor::donateSlow):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::MarkStack::mergeOpaqueRoots):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        * heap/MarkStack.h:
+        (JSC::MarkStackSegment::data):
+        (JSC::MarkStackSegment::capacityFromSize):
+        (JSC::MarkStackSegment::sizeFromCapacity):
+        (JSC::MarkStackArray::postIncTop):
+        (JSC::MarkStackArray::preDecTop):
+        (JSC::MarkStackArray::setTopForFullSegment):
+        (JSC::MarkStackArray::setTopForEmptySegment):
+        (JSC::MarkStackArray::top):
+        (JSC::MarkStackArray::validatePrevious):
+        (JSC::MarkStack::addWeakReferenceHarvester):
+        (JSC::MarkStack::mergeOpaqueRootsIfNecessary):
+        (JSC::MarkStack::mergeOpaqueRootsIfProfitable):
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::addOpaqueRoot):
+        (JSC::MarkStack::containsOpaqueRoot):
+        (JSC::MarkStack::opaqueRootCount):
+        (JSC::MarkStackArray::append):
+        (JSC::MarkStackArray::canRemoveLast):
+        (JSC::MarkStackArray::removeLast):
+        (JSC::MarkStackArray::isEmpty):
+        (JSC::MarkStackArray::canDonateSomeCells):
+        (JSC::MarkStackArray::size):
+        (JSC::ParallelModeEnabler::ParallelModeEnabler):
+        (JSC::ParallelModeEnabler::~ParallelModeEnabler):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::testAndSetMarked):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::donate):
+        (JSC::SlotVisitor::donateAndDrain):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::SlotVisitor):
+        * heap/WeakReferenceHarvester.h:
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+        * wtf/Bitmap.h:
+        (WTF::::Bitmap):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::testAndSet):
+        (WTF::::testAndClear):
+        (WTF::::concurrentTestAndSet):
+        (WTF::::concurrentTestAndClear):
+        (WTF::::clear):
+        (WTF::::clearAll):
+        (WTF::::nextPossiblyUnset):
+        (WTF::::findRunOfZeros):
+        (WTF::::count):
+        (WTF::::isEmpty):
+        (WTF::::isFull):
+        * wtf/MainThread.h:
+        (WTF::isMainThreadOrGCThread):
+        * wtf/Platform.h:
+        * wtf/ThreadSpecific.h:
+        (WTF::::isSet):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeGCThreads):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::initializeMainThreadToProcessMainThreadPlatform):
+        (WTF::registerGCThread):
+        (WTF::isMainThreadOrGCThread):
+
 2011-10-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defaultValue

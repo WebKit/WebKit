@@ -30,17 +30,48 @@
 
 namespace JSC {
 
+class Heap;
+
 class SlotVisitor : public MarkStack {
     friend class HeapRootVisitor;
 public:
-    SlotVisitor(void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr);
+    SlotVisitor(MarkStackThreadSharedData&, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr);
 
+    void donate()
+    {
+        ASSERT(m_isInParallelMode);
+        if (Heuristics::numberOfGCMarkers == 1)
+            return;
+        
+        donateKnownParallel();
+    }
+    
     void drain();
+    
+    void donateAndDrain()
+    {
+        donate();
+        drain();
+    }
+    
+    enum SharedDrainMode { SlaveDrain, MasterDrain };
+    void drainFromShared(SharedDrainMode);
+
     void harvestWeakReferences();
+        
+private:
+    void donateSlow();
+    
+    void donateKnownParallel()
+    {
+        if (!m_stack.canDonateSomeCells())
+            return;
+        donateSlow();
+    }
 };
 
-inline SlotVisitor::SlotVisitor(void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr)
-    : MarkStack(jsArrayVPtr, jsFinalObjectVPtr, jsStringVPtr)
+inline SlotVisitor::SlotVisitor(MarkStackThreadSharedData& shared, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr)
+    : MarkStack(shared, jsArrayVPtr, jsFinalObjectVPtr, jsStringVPtr)
 {
 }
 

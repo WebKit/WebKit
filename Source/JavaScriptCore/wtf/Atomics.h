@@ -60,6 +60,7 @@
 #define Atomics_h
 
 #include "Platform.h"
+#include "UnusedParam.h"
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -115,6 +116,29 @@ inline int atomicIncrement(int volatile* addend) { return __gnu_cxx::__exchange_
 inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, -1) - 1; }
 
 #endif
+
+inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned newValue)
+{
+    // FIXME: Implement COMPARE_AND_SWAP on other architectures and compilers. Currently
+    // it only works on X86 or X86_64 with a GCC-style compiler.
+#if ENABLE(COMPARE_AND_SWAP)
+    bool result;
+    asm volatile(
+        "lock; cmpxchgl %3, %2\n\t"
+        "sete %1"
+        : "+a"(expected), "=r"(result), "+m"(*location)
+        : "r"(newValue)
+        : "memory"
+        );
+    return result;
+#else
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(expected);
+    UNUSED_PARAM(newValue);
+    CRASH();
+    return 0;
+#endif
+}
 
 } // namespace WTF
 

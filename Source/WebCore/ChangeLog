@@ -1,3 +1,18 @@
+2011-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=70995
+
+        Reviewed by Geoff Garen.
+        
+        Added parallel tracing to the GC. This required loosening some assertions,
+        since some code may now be called from outside the main thread.
+
+        No new tests, since no behavior was changed.
+
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::parent):
+
 2011-10-31  Andy Estes  <aestes@apple.com>
 
         Document pointer not null-checked in FrameView::isOnActivePage()

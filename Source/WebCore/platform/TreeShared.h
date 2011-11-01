@@ -100,7 +100,7 @@ public:
 
     T* parent() const
     {
-        ASSERT(isMainThread());
+        ASSERT(isMainThreadOrGCThread());
         return m_parent;
     }
 
