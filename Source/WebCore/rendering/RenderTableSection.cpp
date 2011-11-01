@@ -363,15 +363,19 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 cell->layoutIfNeeded();
             }
 
-            LayoutUnit adjustedPaddingBefore = cell->paddingBefore() - cell->intrinsicPaddingBefore();
-            LayoutUnit adjustedPaddingAfter = cell->paddingAfter() - cell->intrinsicPaddingAfter();
             LayoutUnit adjustedLogicalHeight = cell->logicalHeight() - (cell->intrinsicPaddingBefore() + cell->intrinsicPaddingAfter());
 
-            // Explicit heights use the border box in quirks mode.  In strict mode do the right
-            // thing and actually add in the border and padding.
-            ch = cell->style()->logicalHeight().calcValue(0) + 
-                (document()->inQuirksMode() ? 0 : (adjustedPaddingBefore + adjustedPaddingAfter +
-                                                   cell->borderBefore() + cell->borderAfter()));
+            ch = cell->style()->logicalHeight().calcValue(0);
+            if (document()->inQuirksMode() || cell->style()->boxSizing() == BORDER_BOX) {
+                // Explicit heights use the border box in quirks mode.
+                // Don't adjust height.
+            } else {
+                // In strict mode, box-sizing: content-box do the right
+                // thing and actually add in the border and padding.
+                LayoutUnit adjustedPaddingBefore = cell->paddingBefore() - cell->intrinsicPaddingBefore();
+                LayoutUnit adjustedPaddingAfter = cell->paddingAfter() - cell->intrinsicPaddingAfter();
+                ch += adjustedPaddingBefore + adjustedPaddingAfter + cell->borderBefore() + cell->borderAfter();
+            }
             ch = max(ch, adjustedLogicalHeight);
 
             pos = m_rowPos[indx] + ch + (m_grid[r].rowRenderer ? spacing : 0);

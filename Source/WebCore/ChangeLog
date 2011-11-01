@@ -1,3 +1,15 @@
+2011-11-01  Dominic Cooney  <dominicc@chromium.org>
+
+        display: table-cell and box-sizing: border-box calculates content-box height
+        https://bugs.webkit.org/show_bug.cgi?id=69425
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/box-sizing/table-cell.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2011-11-01  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Add testing for --enable-accelerated-drawing
