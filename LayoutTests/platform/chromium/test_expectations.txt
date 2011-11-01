@@ -3944,3 +3944,8 @@ BUGWK71226 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+T
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
 
+BUGWK71277 : media/video-source.html = CRASH PASS
+BUGWK71277 : media/video-src-change.html = CRASH PASS
+BUGWK71277 : media/video-transformed.html = CRASH PASS
+
+BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
