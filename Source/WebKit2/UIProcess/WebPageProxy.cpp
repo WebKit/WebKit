@@ -2787,6 +2787,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
+    case WebEvent::GestureSingleTap:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case WebEvent::TouchStart:
@@ -2812,6 +2813,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
+    case WebEvent::GestureSingleTap:
 #endif
         break;
     case WebEvent::MouseUp:
