@@ -3912,7 +3912,6 @@ BUGWK71080 : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE+
 BUGWK71080 : printing/setPrinting.html = IMAGE+TEXT IMAGE PASS
 
 BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = FAIL CRASH
-BUGWK71084 WIN : http/tests/inspector/extensions-ignore-cache.html = FAIL CRASH
 
 BUGWK71127 : fast/js/array-functions-non-arrays.html = TEXT
 BUGWK71127 : fast/js/toString-overrides.html = TEXT
@@ -3945,9 +3944,11 @@ BUGWK71277 WIN GPU : media/video-transformed.html = CRASH PASS
 
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
 
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = PASS TIMEOUT
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = PASS TIMEOUT
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = PASS TIMEOUT
+BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
+BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
+BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
 
 BUGCASEQ DEBUG GPU : media/video-volume-slider.html = IMAGE CRASH
 BUGCASEQ DEBUG GPU : fast/canvas/shadow-offset-1.html = PASS CRASH

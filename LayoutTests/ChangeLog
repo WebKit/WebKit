@@ -1,3 +1,9 @@
+2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Marked inspector extensions tests as crash on win debug.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-11-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: some popup buttons not announced by VoiceOver
