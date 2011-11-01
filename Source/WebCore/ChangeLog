@@ -1,3 +1,14 @@
+2011-11-01  Erik Arvidsson  <arv@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from CanvasRenderingContext2d
+        https://bugs.webkit.org/show_bug.cgi?id=64628
+
+        Reviewed by Adam Barth.
+
+        Covered by existing tests.
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(98738): RenderTableSection::recalcCells does not properly shrink the RowStruct grid
