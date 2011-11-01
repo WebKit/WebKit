@@ -5093,7 +5093,7 @@ bool CSSParser::parseFlex(int propId, bool important)
 #if ENABLE(CSS3_FLEXBOX)
     CSSParserValue* value = m_valueList->current();
     CSSParserValueList* args = value->function->args.get();
-    if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || !args || args->size() > 3 || m_valueList->next())
+    if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || !args || !args->size() || args->size() > 3 || m_valueList->next())
         return false;
 
     static const double unsetValue = -1;
