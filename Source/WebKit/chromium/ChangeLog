@@ -1,3 +1,10 @@
+2011-11-01  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fix chromium interactive tests.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.showPanel):
+
 2011-10-31  Tommy Widenflycht  <tommyw@google.com>
 
         [Chromium] Media Stream API: add the Chromium WebKit interfaces

@@ -177,7 +177,7 @@ TestSuite.prototype.showPanel = function(panelName)
     var toolbar = document.getElementById("toolbar");
     var button = toolbar.getElementsByClassName(panelName)[0];
     button.click();
-    this.assertEquals(WebInspector.panels[panelName], WebInspector.currentPanel());
+    this.assertEquals(WebInspector.panels[panelName], WebInspector.inspectorView.currentPanel());
 };
 
 
@@ -252,7 +252,7 @@ TestSuite.prototype.testShowScriptsTab = function()
 TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh = function()
 {
     var test = this;
-    this.assertEquals(WebInspector.panels.elements, WebInspector.currentPanel(), "Elements panel should be current one.");
+    this.assertEquals(WebInspector.panels.elements, WebInspector.inspectorView.currentPanel(), "Elements panel should be current one.");
 
     this.addSniffer(WebInspector.panels.scripts, "reset", waitUntilScriptIsParsed);
 
@@ -596,7 +596,7 @@ TestSuite.prototype.showMainPageScriptSource_ = function(scriptName, callback)
         scriptResource = options[pageScriptIndex].representedObject;
 
         // Current panel is "Scripts".
-        WebInspector.currentPanel()._showScriptOrResource(scriptResource);
+        WebInspector.inspectorView.currentPanel()._showScriptOrResource(scriptResource);
         test.assertEquals(pageScriptIndex, scriptSelect.selectedIndex, "Unexpected selected option index.");
     }
 
