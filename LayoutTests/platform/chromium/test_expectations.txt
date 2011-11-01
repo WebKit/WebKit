@@ -3939,3 +3939,5 @@ BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
 BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
+
+BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
