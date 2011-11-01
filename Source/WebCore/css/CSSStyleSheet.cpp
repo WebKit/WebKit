@@ -80,9 +80,9 @@ CSSStyleSheet::~CSSStyleSheet()
     // For style rules outside the document, .parentStyleSheet can become null even if the style rule
     // is still observable from JavaScript. This matches the behavior of .parentNode for nodes, but
     // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
-    for (unsigned i = 0; i < length(); ++i) {
-        ASSERT(item(i)->parentStyleSheet() == this);
-        item(i)->setParentStyleSheet(0);
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        ASSERT(m_children.at(i)->parentStyleSheet() == this);
+        m_children.at(i)->setParentStyleSheet(0);
     }
 }
 
@@ -107,7 +107,7 @@ CSSRule *CSSStyleSheet::ownerRule() const
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
     ec = 0;
-    if (index > length()) {
+    if (index > m_children.size()) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -125,7 +125,7 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         if (r->isImportRule()) {
             // Check all the rules that come before this one to make sure they are only @charset and @import rules.
             for (unsigned i = 0; i < index; ++i) {
-                if (!item(i)->isCharsetRule() && !item(i)->isImportRule()) {
+                if (!m_children.at(i)->isCharsetRule() && !m_children.at(i)->isImportRule()) {
                     ec = HIERARCHY_REQUEST_ERR;
                     return 0;
                 }
@@ -157,7 +157,7 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, int inde
 
 int CSSStyleSheet::addRule(const String& selector, const String& style, ExceptionCode& ec)
 {
-    return addRule(selector, style, length(), ec);
+    return addRule(selector, style, m_children.size(), ec);
 }
 
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
@@ -170,13 +170,13 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
 
 void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
 {
-    if (index >= length()) {
+    if (index >= m_children.size()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
     ec = 0;
-    item(index)->setParentStyleSheet(0);
+    m_children.at(index)->setParentStyleSheet(0);
     m_children.remove(index);
     styleSheetChanged();
 }
@@ -222,9 +222,8 @@ bool CSSStyleSheet::parseStringAtLine(const String& string, bool strict, int sta
 
 bool CSSStyleSheet::isLoading()
 {
-    unsigned len = length();
-    for (unsigned i = 0; i < len; ++i) {
-        CSSRule* rule = item(i);
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        CSSRule* rule = m_children.at(i).get();
         if (rule->isImportRule() && static_cast<CSSImportRule*>(rule)->isLoading())
             return true;
     }
@@ -293,8 +292,8 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
     while (!styleSheetQueue.isEmpty()) {
         CSSStyleSheet* styleSheet = styleSheetQueue.takeFirst();
 
-        for (unsigned i = 0; i < styleSheet->length(); ++i) {
-            CSSRule* rule = styleSheet->item(i);
+        for (unsigned i = 0; i < styleSheet->m_children.size(); ++i) {
+            CSSRule* rule = styleSheet->m_children.at(i).get();
             if (rule->isImportRule()) {
                 if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
                     styleSheetQueue.append(ruleStyleSheet);

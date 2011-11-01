@@ -1,5 +1,22 @@
 2011-11-01  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleSheet: Operate directly on the rule vector internally.
+
+        Rubber-stamped by Antti Koivisto.
+
+        There's no need to go through the public, range-checking item() method
+        working on m_children. Also changed length() -> m_children.size().
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::~CSSStyleSheet):
+        (WebCore::CSSStyleSheet::insertRule):
+        (WebCore::CSSStyleSheet::addRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::isLoading):
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs):
+
+2011-11-01  Andreas Kling  <kling@webkit.org>
+
         CSSRule: Devirtualize addSubresourceStyleURLs()
         https://bugs.webkit.org/show_bug.cgi?id=71285
 
