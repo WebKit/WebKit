@@ -1,3 +1,11 @@
+2011-11-01  Alok Priyadarshi  <alokp@chromium.org>
+
+        Roll chromium DEPS.
+
+        Unreviewed.
+
+        * DEPS:
+
 2011-11-01  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fix chromium interactive tests.
