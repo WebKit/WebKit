@@ -37,8 +37,6 @@ namespace WTF {
 
 using namespace Unicode;
 
-static const unsigned minLengthToShare = 20;
-
 COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
 
 StringImpl::~StringImpl()
@@ -113,9 +111,33 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     return adoptRef(new (string) StringImpl(length));
 }
 
+PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data)
+{
+    ASSERT(originalString->is8Bit());
+    ASSERT(originalString->hasOneRef());
+    ASSERT(originalString->bufferOwnership() == BufferInternal);
+
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Same as createUninitialized() except here we use fastRealloc.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(LChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(LChar);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
+
+    data = reinterpret_cast<LChar*>(string + 1);
+    return adoptRef(new (string) StringImpl(length));
+}
+
 PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
 {
-    ASSERT(originalString->hasOneRef() && originalString->bufferOwnership() == BufferInternal);
+    ASSERT(!originalString->is8Bit());
+    ASSERT(originalString->hasOneRef());
+    ASSERT(originalString->bufferOwnership() == BufferInternal);
 
     if (!length) {
         data = 0;
@@ -1074,7 +1096,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
         ++srcSegmentStart;
     }
     
-    // If we have 0 matches then we don't have to do any more work to do.
+    // If we have 0 matches then we don't have to do any more work.
     if (!matchCount)
         return this;
     
