@@ -148,10 +148,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         m_pluginBackingStoreContainsValidData = true;
     }
 
-    IntRect dirtyRectInPluginCoordinates = dirtyRect;
-    dirtyRectInPluginCoordinates.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
-
-    m_backingStore->paint(*graphicsContext, contentsScaleFactor(), dirtyRect.location(), dirtyRectInPluginCoordinates);
+    m_backingStore->paint(*graphicsContext, contentsScaleFactor(), dirtyRect.location(), dirtyRect);
 
     if (m_waitingForPaintInResponseToUpdate) {
         m_waitingForPaintInResponseToUpdate = false;
@@ -209,10 +206,9 @@ void PluginProxy::geometryDidChange()
     m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_pluginSize, m_clipRect, m_pluginToRootViewTransform, frameRectInWindowCoordinates, contentsScaleFactor(), pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void PluginProxy::deprecatedGeometryDidChange(const IntRect& frameRectInWindowCoordinates, const IntRect& clipRectInWindowCoordinates)
+void PluginProxy::deprecatedGeometryDidChange(const IntRect&, const IntRect&)
 {
-    m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
-    m_clipRectInWindowCoordinates = clipRectInWindowCoordinates;
+    ASSERT_NOT_REACHED();
 }
 
 void PluginProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
@@ -416,7 +412,7 @@ bool PluginProxy::handleScroll(ScrollDirection, ScrollGranularity)
 
 bool PluginProxy::wantsWindowRelativeCoordinates()
 {
-    return true;
+    return false;
 }
 
 Scrollbar* PluginProxy::horizontalScrollbar()

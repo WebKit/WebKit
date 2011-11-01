@@ -149,14 +149,6 @@ private:
     // A transform that can be used to convert from root view coordinates to plug-in coordinates.
     WebCore::AffineTransform m_pluginToRootViewTransform;
 
-    // FIXME: Get rid of the window coordinate based rects.
-
-    // The plug-in rect in window coordinates.
-    WebCore::IntRect m_frameRectInWindowCoordinates;
-
-    // The plug-in clip rect in window coordinates.
-    WebCore::IntRect m_clipRectInWindowCoordinates;
-
     // This is the backing store that we paint when we're told to paint.
     RefPtr<ShareableBitmap> m_backingStore;
 

@@ -1,3 +1,25 @@
+2011-10-31  Anders Carlsson  <andersca@apple.com>
+
+        PluginProxy shouldn't use window-relative coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71261
+
+        Reviewed by Adam Roben.
+
+        Change PluginProxy::wantsWindowRelativeCoordinates to return false and remove
+        m_frameRectInWindowCoordinates and m_clipRectInWindowCoordinates. This is yet another step
+        towards eliminating window-relative coordinates wherever possible.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        Since the dirty rect passed to paint is now in plug-in coordinates, there's no need to convert it
+        from window coordinates to plug-in coordinates before passing it to BackingStore::paint.
+
+        (WebKit::PluginProxy::deprecatedGeometryDidChange):
+        Assert that we're not calling this anymore.
+
+        (WebKit::PluginProxy::wantsWindowRelativeCoordinates):
+        Return false.
+
 2011-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         The QtViewportInteractionEngine should consider DPI adjustment
