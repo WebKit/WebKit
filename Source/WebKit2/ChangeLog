@@ -1,3 +1,44 @@
+2011-11-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Create infrastructure for Qt's builtin bundle in web process.
+        https://bugs.webkit.org/show_bug.cgi?id=71279
+
+        Reviewed by Simon Hausmann.
+
+        Create a builtin bundle for Qt port: an InjectedBundle which the code is together
+        with the Qt's web process instead of being in a different library. This gives us
+        access to many hooks at web process (using WKBundle* functions of C API) without
+        adding any maintenance burden to cross-port code.
+
+        Since we also use a InjectedBundle in the WebKitTestRunner, we only install our
+        builtin bundle if there's no other installed. This is fine because WTR won't use
+        the extra runtime features that we plan to provide with the builtin bundle.
+
+        * WebKit2.pro:
+        * WebProcess/qt/QtBuiltinBundle.cpp: Added.
+        (WebKit::QtBuiltinBundle::~QtBuiltinBundle):
+        (WebKit::QtBuiltinBundle::shared):
+        (WebKit::QtBuiltinBundle::initialize):
+        (WebKit::QtBuiltinBundle::didCreatePage):
+        (WebKit::QtBuiltinBundle::willDestroyPage):
+        (WebKit::QtBuiltinBundle::bundlePageForPageRef):
+        * WebProcess/qt/QtBuiltinBundle.h: Added.
+        (WebKit::QtBuiltinBundle::toRef):
+        Object that holds a WKBundleRef and keeps track of the pages in the current context.
+
+        * WebProcess/qt/QtBuiltinBundlePage.cpp: Added.
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+        (WebKit::QtBuiltinBundlePage::~QtBuiltinBundlePage):
+        * WebProcess/qt/QtBuiltinBundlePage.h: Added.
+        (WebKit::QtBuiltinBundlePage::page):
+        Our representation for pages from the bundle perspective. This will be the right
+        place to registering page related clients.
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        If there's no bundle to be loaded, initialize Qt builtin bundle, which will register the
+        bundle client for this context.
+
 2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2] Add WebGestureEvents to the Qt build and enable PlatformGestureEvent::TapType

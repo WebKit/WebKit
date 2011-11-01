@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "InjectedBundle.h"
+#include "QtBuiltinBundle.h"
+#include "WKBundleAPICast.h"
 #include "WebProcessCreationParameters.h"
 
 #include <QCoreApplication>
@@ -83,6 +86,14 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 #if ENABLE(SPEECH_INPUT)
     WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled(false);
 #endif
+
+    // We'll only install the Qt builtin bundle if we don't have one given by the UI process.
+    // Currently only WTR provides its own bundle.
+    if (parameters.injectedBundlePath.isEmpty()) {
+        m_injectedBundle = InjectedBundle::create(String());
+        m_injectedBundle->setSandboxExtension(SandboxExtension::create(parameters.injectedBundlePathExtensionHandle));
+        QtBuiltinBundle::shared().initialize(toAPI(m_injectedBundle.get()));
+    }
 }
 
 void WebProcess::platformTerminate()

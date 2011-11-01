@@ -340,6 +340,8 @@ HEADERS += \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebProcess.h \
+    WebProcess/qt/QtBuiltinBundle.h \
+    WebProcess/qt/QtBuiltinBundlePage.h \
     $$WEBKIT2_GENERATED_HEADERS \
     $$WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2
 
@@ -607,6 +609,8 @@ SOURCES += \
     WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
     WebProcess/WebProcess.cpp \
+    WebProcess/qt/QtBuiltinBundle.cpp \
+    WebProcess/qt/QtBuiltinBundlePage.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES \
