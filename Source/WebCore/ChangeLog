@@ -1,3 +1,27 @@
+2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(98738): RenderTableSection::recalcCells does not properly shrink the RowStruct grid
+        https://bugs.webkit.org/show_bug.cgi?id=71246
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/table/crash-empty-section-calcBorder.html
+               fast/table/crash-empty-section-fixed-layout-calcArray.html
+
+        The refactoring in r98738 changed the way we handle the size to avoid throwing off
+        the memory. The new logic would end up never shrinking the grid's size (prior to that
+        we would grow to the appropriate size and throw the excess capacity with shrinkToFit).
+        Not shrinking would mean that we would potentially read RowStruct with the default values
+        (for instance no |rowRenderer|).
+
+        addCell will properly grow the grid as needed to accomodate the rows and the protruding
+        cells with a rowspan so we introduce a variable to keep track of the size needed. At the
+        end, we just shrink it to this size.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::recalcCells):
+        Introduce a variable to keep the grid size and shrink to that size to match the old code.
+
 2011-11-01  Andrey Kosyakov  <caseq@chromium.org>
 
         [Chromium] Some media/video-*.html layout tests occasionally crash on WIN GPU

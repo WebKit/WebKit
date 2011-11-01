@@ -1122,6 +1122,9 @@ void RenderTableSection::recalcCells()
     m_cRow = 0;
     fillRowsWithDefaultStartingAtPosition(0);
 
+    // The grid size is at least as big as the number of rows in the markup but can grow bigger
+    // if we have a cell protruding because it uses a rowspan spannig out of the table.
+    unsigned gridSize = 0;
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         if (row->isTableRow()) {
             unsigned insertionRow = m_cRow;
@@ -1135,13 +1138,18 @@ void RenderTableSection::recalcCells()
             setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
-                if (cell->isTableCell())
-                    addCell(toRenderTableCell(cell), tableRow);
+                if (!cell->isTableCell())
+                    continue;
+
+                RenderTableCell* tableCell = toRenderTableCell(cell);
+                gridSize = max(gridSize, insertionRow + tableCell->rowSpan());
+                addCell(tableCell, tableRow);
             }
         }
     }
 
-    m_grid.shrinkToFit();
+    gridSize = max(gridSize, m_cRow);
+    m_grid.shrink(gridSize);
     m_needsCellRecalc = false;
     setNeedsLayout(true);
 }
