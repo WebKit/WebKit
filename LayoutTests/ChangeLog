@@ -1,3 +1,10 @@
+2011-10-31  Andrey Kosyakov  <caseq@chromium.org>
+
+       Unreviewed gardening.
+
+        * platform/chromium-cg-mac-leopard/fast/overflow/003-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-10-31  Jeremy Apthorp  <jeremya@google.com>
 
         Test case for a crash relating to merging of anonymous blocks in
