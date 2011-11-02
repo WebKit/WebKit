@@ -346,6 +346,7 @@ public:
 #endif
 #if USE(TILED_BACKING_STORE)
     void setFixedVisibleContentRect(const WebCore::IntRect&);
+    void setViewportSize(const WebCore::IntSize&);
 #endif
 
     void handleMouseEvent(const NativeWebMouseEvent&);
@@ -508,10 +509,6 @@ public:
     void resetDragOperation() { m_currentDragOperation = WebCore::DragOperationNone; }
 
     void preferencesDidChange();
-
-#if USE(TILED_BACKING_STORE)
-    void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
-#endif
 
     // Called by the WebContextMenuProxy.
     void contextMenuItemSelected(const WebContextMenuItemData&);

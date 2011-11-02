@@ -39,6 +39,7 @@ public:
     void loadDidCommit();
     void _q_viewportUpdated();
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
+    void updateViewportSize();
     void updateViewportConstraints();
     QtTouchWebPageProxy* touchPageProxy() { return static_cast<QtTouchWebPageProxy*>(QBaseWebViewPrivate::pageProxy.data()); }
 

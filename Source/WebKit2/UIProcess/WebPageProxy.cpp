@@ -802,6 +802,14 @@ void WebPageProxy::setFixedVisibleContentRect(const IntRect& rect)
 
     process()->send(Messages::WebPage::SetFixedVisibleContentRect(rect), m_pageID);
 }
+
+void WebPageProxy::setViewportSize(const IntSize& size)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::SetViewportSize(size), m_pageID);
+}
 #endif
 
 void WebPageProxy::dragEntered(DragData* dragData, const String& dragStorageName)
@@ -1437,13 +1445,6 @@ void WebPageProxy::preferencesDidChange()
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
     process()->send(Messages::WebPage::PreferencesDidChange(pageGroup()->preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
-
-#if USE(TILED_BACKING_STORE)
-void WebPageProxy::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
-{
-    process()->send(Messages::WebPage::SetResizesToContentsUsingLayoutSize(targetLayoutSize), m_pageID);
-}
-#endif
 
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {

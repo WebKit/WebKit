@@ -102,11 +102,6 @@ void QtTouchWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& t
     m_webPageProxy->drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
-void QtTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
-{
-    m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);
-}
-
 void QtTouchWebPageProxy::touchEvent(QTouchEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS)

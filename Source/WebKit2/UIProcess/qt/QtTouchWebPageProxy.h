@@ -43,7 +43,6 @@ public:
 
     void setVisibleContentRectAndScale(const QRectF&, float);
     void setVisibleContentRectTrajectoryVector(const QPointF&);
-    void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
     void renderNextFrame();
     void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);

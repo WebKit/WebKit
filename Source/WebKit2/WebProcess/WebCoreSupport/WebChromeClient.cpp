@@ -58,6 +58,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -743,6 +744,18 @@ void WebChromeClient::setRootFullScreenLayer(GraphicsLayer* layer)
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& args) const
 {
     m_page->send(Messages::WebPageProxy::DidChangeViewportProperties(args));
+
+#if USE(TILED_BACKING_STORE)
+    // When viewport properties change, recalculate and set the new recommended layout size in case of fixed layout rendering.
+    if (m_page->mainFrameView() && m_page->mainFrameView()->useFixedLayout()) {
+        Page* page = m_page->corePage();
+        Settings* settings = page->settings();
+
+        IntSize targetLayoutSize = computeViewportAttributes(page->viewportArguments(), settings->layoutFallbackWidth(), settings->deviceWidth(), settings->deviceHeight(),
+            settings->deviceDPI(), m_page->viewportSize()).layoutSize;
+        m_page->setResizesToContentsUsingLayoutSize(targetLayoutSize);
+    }
+#endif
 }
 
 void WebChromeClient::didStartRubberBandForFrame(Frame*, const IntSize&) const

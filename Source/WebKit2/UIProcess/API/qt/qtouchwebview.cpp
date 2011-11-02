@@ -59,6 +59,17 @@ void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& tra
     touchPageProxy()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
+void QTouchWebViewPrivate::updateViewportSize()
+{
+    Q_Q(QTouchWebView);
+    WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
+    // Let the WebProcess know about the new viewport size, so that
+    // it can resize the content accordingly.
+    wkPage->setViewportSize(q->boundingRect().size().toSize());
+    updateViewportConstraints();
+    _q_viewportUpdated();
+}
+
 void QTouchWebViewPrivate::updateViewportConstraints()
 {
     Q_Q(QTouchWebView);
@@ -88,9 +99,6 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     // Overwrite minimum scale value with fit-to-view value, unless the the content author
     // explicitly says no. NB: We can only do this when we know we have a valid size, ie.
     // after initial layout has completed.
-
-    // FIXME: Do this on the web process side.
-    wkPage->setResizesToContentsUsingLayoutSize(attr.layoutSize);
 }
 
 void QTouchWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
@@ -122,10 +130,8 @@ void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
 {
     Q_D(QTouchWebView);
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
-    if (newGeometry.size() != oldGeometry.size()) {
-        d->updateViewportConstraints();
-        d->_q_viewportUpdated();
-    }
+    if (newGeometry.size() != oldGeometry.size())
+        d->updateViewportSize();
 }
 
 void QTouchWebView::touchEvent(QTouchEvent* event)

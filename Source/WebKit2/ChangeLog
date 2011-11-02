@@ -1,3 +1,28 @@
+2011-11-02  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Move content to resize (setResizesToContentsUsingLayoutSize) from UI process to Web process
+        https://bugs.webkit.org/show_bug.cgi?id=71107
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reduce the number of IPC calls to WebProcess by moving the content to resize
+        calls from UI process to Web process.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportSize):
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        (QTouchWebView::geometryChanged):
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setViewportSize):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtTouchWebPageProxy.cpp:
+        * UIProcess/qt/QtTouchWebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-10-18  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2]: Shouldn't send unhandled TouchCancel event to gesture recognizers
