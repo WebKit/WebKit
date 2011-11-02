@@ -1,3 +1,14 @@
+2011-11-01  Sam Weinig  <sam@webkit.org>
+
+        resolve-ChangeLogs --help should be faster.
+
+        Reviewed by Adam Roben.
+
+        * Scripts/resolve-ChangeLogs:
+        (usageAndExit):
+        Add a call to usageAndExit() before doing work to find unmerged changelogs
+        if --help or something illegal is provided on the command line.
+
 2011-11-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] _drt_descriptionSuitableForTestResult generate an exception for absolute paths above the main frame

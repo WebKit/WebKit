@@ -68,6 +68,21 @@ my $mergeDriver = 0;
 my $printWarnings = 1;
 my $showHelp;
 
+sub usageAndExit()
+{
+    print STDERR <<__END__;
+Usage: @{[ basename($0) ]} [options] [path/to/ChangeLog] [path/to/another/ChangeLog ...]
+  -c|--[no-]continue               run "git rebase --continue" after fixing ChangeLog
+                                   entries (default: --no-continue)
+  -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
+                                   is specified, run git filter-branch on the range
+  -m|--merge-driver %O %A %B       act as a git merge-driver on files %O %A %B
+  -h|--help                        show this help message
+  -w|--[no-]warnings               show or suppress warnings (default: show warnings)
+__END__
+    exit 1;
+}
+
 my $getOptionsResult = GetOptions(
     'c|continue!'     => \$gitRebaseContinue,
     'f|fix-merged:s'  => \&parseFixMerged,
@@ -75,6 +90,10 @@ my $getOptionsResult = GetOptions(
     'h|help'          => \$showHelp,
     'w|warnings!'     => \$printWarnings,
 );
+
+if (!$getOptionsResult || $showHelp) {
+    usageAndExit();
+}
 
 my $relativePath = isInGitFilterBranch() ? '.' : chdirReturningRelativePath(determineVCSRoot());
 
@@ -104,22 +123,7 @@ if (!$mergeDriver && scalar(@ARGV) > 0) {
     undef $getOptionsResult;
 }
 
-sub usageAndExit()
-{
-    print STDERR <<__END__;
-Usage: @{[ basename($0) ]} [options] [path/to/ChangeLog] [path/to/another/ChangeLog ...]
-  -c|--[no-]continue               run "git rebase --continue" after fixing ChangeLog
-                                   entries (default: --no-continue)
-  -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
-                                   is specified, run git filter-branch on the range
-  -m|--merge-driver %O %A %B       act as a git merge-driver on files %O %A %B
-  -h|--help                        show this help message
-  -w|--[no-]warnings               show or suppress warnings (default: show warnings)
-__END__
-    exit 1;
-}
-
-if (!$getOptionsResult || $showHelp) {
+if (!$getOptionsResult) {
     usageAndExit();
 }
 
