@@ -1,5 +1,17 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix build and WebKit2 ABI.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        Add page loader client sizes.
+
+        * UIProcess/API/C/WKPage.h:
+        Move the newly added callback functions in the loader client last and bump the
+        WKPageLoaderClient version.
+        
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebProcess/Plugins/PluginView.h:

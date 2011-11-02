@@ -86,9 +86,6 @@ struct WKPageLoaderClient {
     WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
     WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;
     WKPageDidRemoveFrameFromHierarchyCallback                           didRemoveFrameFromHierarchy;
-    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
-    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
-    WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
     WKPageCanAuthenticateAgainstProtectionSpaceInFrameCallback          canAuthenticateAgainstProtectionSpaceInFrame;
     WKPageDidReceiveAuthenticationChallengeInFrameCallback              didReceiveAuthenticationChallengeInFrame;
 
@@ -104,10 +101,15 @@ struct WKPageLoaderClient {
     WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback                             didFailToInitializePlugin;
+
+    // Version 1
+    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
+    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
+    WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
-enum { kWKPageLoaderClientCurrentVersion = 0 };
+enum { kWKPageLoaderClientCurrentVersion = 1 };
 
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);

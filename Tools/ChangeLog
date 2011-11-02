@@ -1,3 +1,14 @@
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        Add new functions to the page loader client.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2011-11-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10336700> Add API to get rendered text image without having to select it
