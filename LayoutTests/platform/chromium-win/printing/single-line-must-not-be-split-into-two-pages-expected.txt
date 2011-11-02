@@ -1,17 +1,16 @@
-CONSOLE MESSAGE: line 28: Uncaught TypeError: Object [object Object] has no method 'setPrinting'
-layer at (0,0) size 4718x16160
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 785x16160
-  RenderBlock {HTML} at (0,0) size 785x16160
-    RenderBody {BODY} at (8,8) size 769x16144
-      RenderBlock {P} at (0,0) size 769x40
-        RenderText {#text} at (0,0) size 766x39
-          text run at (0,0) width 766: "A single line must not be split into two pages. This test checks if a single line is not split into two pages. To run this test manually,"
-          text run at (0,20) width 392: "print this page. If no lines are split into two pages, the test passes."
-      RenderBlock {P} at (0,56) size 769x20
+layer at (0,0) size 1256x16160
+  RenderView at (0,0) size 1256x16160
+layer at (0,0) size 981x16160
+  RenderBlock {HTML} at (0,0) size 981x16160
+    RenderBody {BODY} at (8,8) size 965x16144
+      RenderBlock {P} at (0,0) size 965x40
+        RenderText {#text} at (0,0) size 943x39
+          text run at (0,0) width 943: "A single line must not be split into two pages. This test checks if a single line is not split into two pages. To run this test manually, print this page. If no lines are"
+          text run at (0,20) width 215: "split into two pages, the test passes."
+      RenderBlock {P} at (0,56) size 965x20
         RenderText {#text} at (0,0) size 134x19
           text run at (0,0) width 134: "Non-overflowed lines:"
-      RenderBlock {DIV} at (0,92) size 769x8000
+      RenderBlock {DIV} at (0,92) size 965x8000
         RenderText {#text} at (0,0) size 90x19
           text run at (0,0) width 90: "WWWWWW"
         RenderBR {BR} at (90,15) size 0x0
@@ -1212,10 +1211,10 @@ layer at (0,0) size 785x16160
         RenderText {#text} at (0,7980) size 90x19
           text run at (0,7980) width 90: "WWWWWW"
         RenderBR {BR} at (90,7995) size 0x0
-      RenderBlock {P} at (0,8108) size 769x20
+      RenderBlock {P} at (0,8108) size 965x20
         RenderText {#text} at (0,0) size 105x19
           text run at (0,0) width 105: "Overflowed lines:"
-      RenderBlock {DIV} at (0,8144) size 769x8000
+      RenderBlock {DIV} at (0,8144) size 965x8000
         RenderText {#text} at (0,0) size 4710x19
           text run at (0,0) width 4710: "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
         RenderBR {BR} at (0,0) size 0x0
