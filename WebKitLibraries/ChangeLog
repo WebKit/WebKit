@@ -1,3 +1,13 @@
+2011-11-02  Dean Jackson  <dino@apple.com>
+
+        Add ENABLE_CSS_SHADERS flag
+        https://bugs.webkit.org/show_bug.cgi?id=71394
+
+        Reviewed by Sam Weinig.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2011-10-24  Michael Saboff  <msaboff@apple.com>
 
         WebKit doesn't build with recent changes to libdispatch

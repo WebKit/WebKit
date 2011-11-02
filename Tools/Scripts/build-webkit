@@ -74,6 +74,7 @@ my (
     $clientBasedGeolocationSupport,
     $coverageSupport,
     $cssFiltersSupport,
+    $cssShadersSupport,
     $css3FlexboxSupport,
     $sqlDatabaseSupport,
     $datalistSupport,
@@ -158,6 +159,9 @@ my @features = (
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
+
+    { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
+      define => "ENABLE_CSS_SHADERS", default => isAppleWebKit(), value => \$cssShadersSupport },
 
     { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
       define => "ENABLE_CSS3_FLEXBOX", default => 0, value => \$css3FlexboxSupport },
