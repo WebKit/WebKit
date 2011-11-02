@@ -1059,6 +1059,17 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     m_mutableStyle->merge(fromComputedStyle.get());
 }
 
+static void removePropertiesInStyle(CSSMutableStyleDeclaration* styleToRemovePropertiesFrom, CSSMutableStyleDeclaration* style)
+{
+    Vector<int> propertiesToRemove(style->length());
+    size_t i = 0;
+    CSSMutableStyleDeclaration::const_iterator end = style->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it, ++i)
+        propertiesToRemove[i] = it->id();
+
+    styleToRemovePropertiesFrom->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
+}
+
 void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* context)
 {
     ASSERT(element);
@@ -1073,7 +1084,10 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
     // 2. Remove style present in context and not overriden by matched rules.
     RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingPropertiesInEffect);
     if (computedStyle->m_mutableStyle) {
-        computedStyle->removePropertiesInElementDefaultStyle(element);
+        if (!computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
+            computedStyle->m_mutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
+
+        removePropertiesInStyle(computedStyle->m_mutableStyle.get(), styleFromMatchedRules.get());
         m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), computedStyle->m_mutableStyle.get());
     }
 
@@ -1094,13 +1108,7 @@ void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
 
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = styleFromMatchedRulesForElement(element, CSSStyleSelector::UAAndUserCSSRules);
 
-    Vector<int> propertiesToRemove(defaultStyle->length());
-    size_t i = 0;
-    CSSMutableStyleDeclaration::const_iterator end = defaultStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = defaultStyle->begin(); it != end; ++it, ++i)
-        propertiesToRemove[i] = it->id();
-
-    m_mutableStyle->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
+    removePropertiesInStyle(m_mutableStyle.get(), defaultStyle.get());
 }
 
 void EditingStyle::forceInline()

@@ -1,3 +1,22 @@
+2011-11-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r96870): WebKit generates background: transparent on blogger.com
+        https://bugs.webkit.org/show_bug.cgi?id=71203
+
+        Reviewed by Ojan Vafai.
+
+        Remove the transparent background color from inline style declarations in the pasted content.
+        Also fixed a bug in removeStyleFromRulesAndContext that it removes properties in inline style
+        declarations even if those properties were overridden.
+
+        Tests: editing/deleting/merge-paragraphs-with-transparent-background.html
+               editing/deleting/paste-with-transparent-background-color.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::removePropertiesInStyle):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle):
+
 2011-11-02  Andreas Kling  <kling@webkit.org>
 
         CSSStyleRule: Devirtualize selectorText()
