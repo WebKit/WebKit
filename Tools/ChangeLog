@@ -1,3 +1,20 @@
+2011-10-31  Eric Seidel  <eric@webkit.org>
+
+        BaselineOptimizer tests should use mocks instead of real Executive/FileSystem objects
+        https://bugs.webkit.org/show_bug.cgi?id=71237
+
+        Reviewed by Adam Barth.
+
+        Calling the static version of factory.get() with proper mocking
+        requires passsing an explict filesystem, executive, etc.
+        So instead, we use a PortFactory instance and pass it a Host pointer.
+        I had to add a MockHost since we'd not needed a non-host tool before now.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
         Update for the WebKit2 API fixage.

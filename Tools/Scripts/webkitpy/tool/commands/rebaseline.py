@@ -116,7 +116,7 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
         return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
 
     def execute(self, options, args, tool):
-        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
         for test_name in map(self._to_test_name, test_files.find(self._port, args)):
@@ -146,7 +146,7 @@ class AnalyzeBaselines(AbstractDeclarativeCommand):
         return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
 
     def execute(self, options, args, tool):
-        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
         for test_name in map(self._to_test_name, test_files.find(self._port, args)):

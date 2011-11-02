@@ -26,12 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.layout_tests.port import factory as port_factory
-
 
 # Yes, it's a hypergraph.
 # FIXME: Should this function live with the ports somewhere?
-def _baseline_search_hypergraph(fs):
+# Perhaps this should move onto PortFactory?
+def _baseline_search_hypergraph(host):
     hypergraph = {}
 
     # These edges in the hypergraph aren't visible on build.webkit.org,
@@ -42,14 +41,13 @@ def _baseline_search_hypergraph(fs):
     # FIXME: Should we get this constant from somewhere?
     fallback_path = ['LayoutTests']
 
+    port_factory = host.port_factory
     for port_name in port_factory.all_port_names():
-        # FIXME: This should pass User and Executive as well to allow for easy mocking.
-        # Alternatively, we should get a pre-mocked PortFactory from tool.
-        port = port_factory.get(port_name, filesystem=fs)
+        port = port_factory.get(port_name)
         webkit_base = port.webkit_base()
         search_path = port.baseline_search_path()
         if search_path:
-            hypergraph[port_name] = [fs.relpath(path, webkit_base) for path in search_path] + fallback_path
+            hypergraph[port_name] = [host.filesystem.relpath(path, webkit_base) for path in search_path] + fallback_path
     return hypergraph
 
 
@@ -65,10 +63,11 @@ def _invert_dictionary(dictionary):
 
 
 class BaselineOptimizer(object):
-    def __init__(self, scm, filesystem):
-        self._scm = scm
-        self._filesystem = filesystem
-        self._hypergraph = _baseline_search_hypergraph(self._filesystem)
+    def __init__(self, host):
+        self._host = host
+        self._filesystem = self._host.filesystem
+        self._scm = self._host.scm()
+        self._hypergraph = _baseline_search_hypergraph(host)
         self._directories = reduce(set.union, map(set, self._hypergraph.values()))
 
     def _read_results_by_directory(self, baseline_name):

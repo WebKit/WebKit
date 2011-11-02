@@ -839,7 +839,7 @@ class MockWeb(object):
         return "MOCK Web result, convert 404 to None=%s" % convert_404_to_None
 
 
-class MockTool(object):
+class MockHost(object):
     def __init__(self, log_executive=False, executive_throws_when_run=None):
         self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
@@ -868,6 +868,9 @@ class MockTool(object):
     def checkout(self):
         return self._checkout
 
+    def port(self):
+        return self._port
+
     def chromium_buildbot(self):
         return self._chromium_buildbot
 
@@ -881,11 +884,10 @@ class MockTool(object):
     def irc(self):
         return self._irc
 
+
+class MockTool(MockHost):
     def path(self):
         return "echo"
-
-    def port(self):
-        return self._port
 
 
 class MockBrowser(object):
