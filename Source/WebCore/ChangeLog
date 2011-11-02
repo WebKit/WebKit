@@ -1,3 +1,17 @@
+2011-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertion in FontCache::getCachedFontData() when painting into composited layer
+        https://bugs.webkit.org/show_bug.cgi?id=71377
+
+        Reviewed by Anders Carlsson.
+
+        Add one of the mysterious FontCachePurgePreventers on the stack when painting
+        compositing layers, just as FrameView::paintContents does, to fix an assertion
+        seen on the bots with some layout tests.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2011-11-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStreamRegistry should hold references to MediaStreamDescriptor rather than MediaStream

@@ -34,6 +34,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
+#include "FontCache.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -1091,6 +1092,8 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         ASSERT_NOT_REACHED();
         return;
     }
+
+    FontCachePurgePreventer fontCachePurgePreventer;
     
     m_owningLayer->updateLayerListsIfNeeded();
     
