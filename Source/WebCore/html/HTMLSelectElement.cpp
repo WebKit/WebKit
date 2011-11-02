@@ -171,7 +171,7 @@ bool HTMLSelectElement::valueMissing() const
 void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
 {
     if (!multiple())
-        setSelectedIndexByUser(listToOptionIndex(listIndex), true, fireOnChangeNow);
+        optionSelectedByUser(listToOptionIndex(listIndex), fireOnChangeNow, false);
     else {
         updateSelectedState(listIndex, allowMultiplySelections, shift);
         setNeedsValidityCheck();
