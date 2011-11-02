@@ -64,7 +64,7 @@ inline bool hasLongWebVTTIdentifier(String line)
         return false;
 
     // or the seventh character is neither a space nor a tab character, then abort.
-    if (line[fileIdentiferLength] != ' ' && line[fileIdentiferLength] != '\t')
+    if (line.length() > fileIdentiferLength && line[fileIdentiferLength] != ' ' && line[fileIdentiferLength] != '\t')
         return false;
 
     return true;
@@ -190,7 +190,10 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
     m_currentStartTime = collectTimeStamp(line, &position);
     if (m_currentStartTime == malformedTime)
         return BadCue;
-    if (line[position++] != ' ' && line[position++] != '\t')
+    if (position >= line.length())
+        return BadCue;
+    char nextChar = line[position++];
+    if (nextChar != ' ' && nextChar != '\t')
         return BadCue;
     skipWhiteSpace(line, &position);
 
@@ -198,7 +201,10 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
     if (line.find("-->", position) == notFound)
         return BadCue;
     position += 3;
-    if (line[position++] != ' ' && line[position++] != '\t')
+    if (position >= line.length())
+        return BadCue;
+    nextChar = line[position++];
+    if (nextChar != ' ' && nextChar != '\t')
         return BadCue;
     skipWhiteSpace(line, &position);
 

@@ -1,3 +1,18 @@
+2011-11-01  Anna Cavender  <annacc@chromium.org>
+
+        Small fixes for WebVTTParser.
+        https://bugs.webkit.org/show_bug.cgi?id=71334
+
+        Reviewed by Darin Adler.
+
+        No new tests.  This is needed to enable other tests, coming soon.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::hasLongWebVTTIdentifier): changed to return true when header is
+            exactly "WEBVTT"
+        (WebCore::WebVTTParser::collectTimingsAndSettings): fix typos, position should
+            only progress once when checking the character after a timestamp.
+
 2011-11-01  Darin Adler  <darin@apple.com>
 
         Change HTMLSelectElement::setSelectedIndex to use enums instead of bools
