@@ -1,3 +1,24 @@
+2011-11-02  Tony Chang  <tony@chromium.org>
+
+        force inline flexitems to be wrapped in anonymous blocks
+        https://bugs.webkit.org/show_bug.cgi?id=71314
+
+        Reviewed by Ojan Vafai.
+
+        If there is a mix of inline and block items, all the inline items were already getting wrapped
+        (see RenderBlock::addChildIgnoringAnonymousColumnBlocks).  However, if there are only inline items,
+        we need to force them into an anonymous block.
+
+        There are still lots of bugs because we're trying to read style values from the anonymous block,
+        but this at least causes layout to be called on all the render objects.
+
+        Tests: css3/flexbox/anonymous-block.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::TreeOrderIterator::next):
+        (WebCore::RenderFlexibleBox::FlexOrderIterator::next):
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox): force children into blocks
+
 2011-11-02  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_SHADERS flag

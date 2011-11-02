@@ -66,15 +66,11 @@ public:
 
     RenderBox* next()
     {
-        RenderObject* child = m_currentChild ? m_currentChild->nextSibling() : m_flexibleBox->firstChild();
-        // FIXME: Inline nodes (like <img> or <input>) should also be treated as boxes.
-        while (child && !child->isBox())
-            child = child->nextSibling();
+        m_currentChild = m_currentChild ? m_currentChild->nextSiblingBox() : m_flexibleBox->firstChildBox();
 
-        if (child)
-            m_flexOrderValues.add(child->style()->flexOrder());
+        if (m_currentChild)
+            m_flexOrderValues.add(m_currentChild->style()->flexOrder());
 
-        m_currentChild = toRenderBox(child);
         return m_currentChild;
     }
 
@@ -113,9 +109,8 @@ public:
 
     RenderBox* next()
     {
-        RenderObject* child = m_currentChild;
         do {
-            if (!child) {
+            if (!m_currentChild) {
                 if (m_orderValuesIterator == m_orderValues.end())
                     return 0;
                 if (m_orderValuesIterator) {
@@ -125,12 +120,11 @@ public:
                 } else
                     m_orderValuesIterator = m_orderValues.begin();
 
-                child = m_flexibleBox->firstChild();
+                m_currentChild = m_flexibleBox->firstChildBox();
             } else
-                child = child->nextSibling();
-        } while (!child || !child->isBox() || child->style()->flexOrder() != *m_orderValuesIterator);
+                m_currentChild = m_currentChild->nextSiblingBox();
+        } while (!m_currentChild || m_currentChild->style()->flexOrder() != *m_orderValuesIterator);
 
-        m_currentChild = toRenderBox(child);
         return m_currentChild;
     }
 
@@ -151,6 +145,7 @@ private:
 RenderFlexibleBox::RenderFlexibleBox(Node* node)
     : RenderBlock(node)
 {
+    setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderFlexibleBox::~RenderFlexibleBox()
