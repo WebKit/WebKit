@@ -26,7 +26,7 @@
 #ifndef PlatformMouseEvent_h
 #define PlatformMouseEvent_h
 
-#include "LayoutTypes.h"
+#include "IntPoint.h"
 
 #if PLATFORM(GTK)
 typedef struct _GdkEventButton GdkEventButton;
@@ -83,7 +83,7 @@ namespace WebCore {
         {
         }
 
-        PlatformMouseEvent(const LayoutPoint& position, const LayoutPoint& globalPosition, MouseButton button, MouseEventType eventType,
+        PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, MouseEventType eventType,
                            int clickCount, bool shift, bool ctrl, bool alt, bool meta, double timestamp)
             : m_position(position)
             , m_globalPosition(globalPosition)
@@ -104,11 +104,11 @@ namespace WebCore {
         {
         }
 
-        const LayoutPoint& pos() const { return m_position; }
-        LayoutUnit x() const { return m_position.x(); }
-        LayoutUnit y() const { return m_position.y(); }
-        LayoutUnit globalX() const { return m_globalPosition.x(); }
-        LayoutUnit globalY() const { return m_globalPosition.y(); }
+        const IntPoint& pos() const { return m_position; }
+        int x() const { return m_position.x(); }
+        int y() const { return m_position.y(); }
+        int globalX() const { return m_globalPosition.x(); }
+        int globalY() const { return m_globalPosition.y(); }
         MouseButton button() const { return m_button; }
         MouseEventType eventType() const { return m_eventType; }
         int clickCount() const { return m_clickCount; }
@@ -160,8 +160,8 @@ namespace WebCore {
 #endif
 
     protected:
-        LayoutPoint m_position;
-        LayoutPoint m_globalPosition;
+        IntPoint m_position;
+        IntPoint m_globalPosition;
         MouseButton m_button;
         MouseEventType m_eventType;
         int m_clickCount;
@@ -180,9 +180,9 @@ namespace WebCore {
     };
 
 #if PLATFORM(MAC) && defined(__OBJC__)
-    LayoutPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
-    LayoutPoint pointForEvent(NSEvent *, NSView *windowView);
-    LayoutPoint globalPointForEvent(NSEvent *);
+    IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
+    IntPoint pointForEvent(NSEvent *, NSView *windowView);
+    IntPoint globalPointForEvent(NSEvent *);
 #endif
 
 } // namespace WebCore

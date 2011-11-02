@@ -53,7 +53,7 @@ static LayoutSize contentsScrollOffset(AbstractView* abstractView)
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
-                                     int detail, const LayoutPoint& screenLocation, const LayoutPoint& windowLocation,
+                                     int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, abstractView, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenLocation(screenLocation)
@@ -80,7 +80,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
         }
     }
 
-    m_clientLocation = adjustedPageLocation - toSize(scrollPosition);
+    m_clientLocation = adjustedPageLocation - toLayoutSize(scrollPosition);
     m_pageLocation = adjustedPageLocation;
 
     initCoordinates();
@@ -181,7 +181,7 @@ void MouseRelatedEvent::computeRelativePosition()
     if (n && (layer = n->renderer()->enclosingLayer())) {
         layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
-            m_layerLocation -= toSize(layer->location());
+            m_layerLocation -= toLayoutSize(layer->location());
         }
     }
 

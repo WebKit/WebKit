@@ -257,7 +257,7 @@ void EventHandler::clear()
     m_dragTarget = 0;
     m_shouldOnlyFireDragOverEvent = false;
 #endif
-    m_currentMousePosition = LayoutPoint();
+    m_currentMousePosition = IntPoint();
     m_mousePressNode = 0;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -1126,7 +1126,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->ownerElement());
 }
 
-LayoutPoint EventHandler::currentMousePosition() const
+IntPoint EventHandler::currentMousePosition() const
 {
     return m_currentMousePosition;
 }
@@ -1334,7 +1334,7 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     return pointerCursor();
 }
     
-static LayoutPoint documentPointForWindowPoint(Frame* frame, const LayoutPoint& windowPoint)
+static LayoutPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
 {
     FrameView* view = frame->view();
     // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
@@ -2406,7 +2406,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    LayoutPoint globalPoint = view->contentsToScreen(LayoutRect(view->windowToContents(m_currentMousePosition), LayoutSize())).location();
+    IntPoint globalPoint = view->contentsToScreen(IntRect(view->windowToContents(m_currentMousePosition), IntSize())).location();
     PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }

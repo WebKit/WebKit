@@ -136,7 +136,7 @@ public:
 
     void resizeLayerDestroyed();
 
-    LayoutPoint currentMousePosition() const;
+    IntPoint currentMousePosition() const;
 
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
@@ -400,7 +400,7 @@ private:
 
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
-    LayoutPoint m_currentMousePosition;
+    IntPoint m_currentMousePosition;
     LayoutPoint m_mouseDownPos; // In our view's coords.
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;

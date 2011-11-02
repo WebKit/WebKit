@@ -1,3 +1,49 @@
+2011-11-01  Emil A Eklund  <eae@chromium.org>
+
+        Use IntPoint for screen coordinates in MouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=71327
+
+        Reviewed by Darin Adler.
+
+        Change mouse events to use int/IntPoint for screen/window coordinates and
+        LayoutUnit/LayoutPoint for coordinates adjusted for zooming.
+
+        No new tests.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::screenLocation):
+        Revert screenLocation and windowLocation back to int.
+
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        Change elementUnderMouse to use a LayoutPoint for hit testing.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::currentMousePosition):
+        (WebCore::documentPointForWindowPoint):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/EventHandler.h:
+        Revert m_currentMousePosition to IntPoint as it represents a
+        screen coordinate.
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::PlatformMouseEvent::pos):
+        (WebCore::PlatformMouseEvent::x):
+        (WebCore::PlatformMouseEvent::y):
+        (WebCore::PlatformMouseEvent::globalX):
+        (WebCore::PlatformMouseEvent::globalY):
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::globalPoint):
+        (WebCore::pointForEvent):
+        (WebCore::globalPointForEvent):
+        Revert PlatformMouseEvent to int/IntPoint as it represents a screen
+        coordinate.
+
 2011-11-01  Tony Chang  <tony@chromium.org>
 
         REGRESSION: -webkit-flex() should be an invalid value
