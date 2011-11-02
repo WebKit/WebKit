@@ -670,22 +670,6 @@ bool NetscapePlugin::isTransparent()
     return m_isTransparent;
 }
 
-void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRectInWindowCoordinates, const IntRect& clipRectInWindowCoordinates)
-{
-    ASSERT(m_isStarted);
-
-    if (m_frameRectInWindowCoordinates == frameRectInWindowCoordinates && m_clipRectInWindowCoordinates == clipRectInWindowCoordinates) {
-        // Nothing to do.
-        return;
-    }
-
-    m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
-    m_clipRectInWindowCoordinates = clipRectInWindowCoordinates;
-
-    platformGeometryDidChange();
-    callSetWindow();
-}
-
 void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
     ASSERT(m_isStarted);

@@ -716,12 +716,6 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    if (m_plugin->wantsWindowRelativeCoordinates()) {
-        // Get the frame rect in window coordinates.
-        IntRect rect = parent()->contentsToWindow(frameRect());
-        m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
-    }
-
     // FIXME: Just passing a translation matrix isn't good enough.
     IntPoint locationInWindowCoordinates = parent()->contentsToRootView(frameRect().location());
     AffineTransform transform = AffineTransform::translation(locationInWindowCoordinates.x(), locationInWindowCoordinates.y());

@@ -1,5 +1,25 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of Plugin::deprecatedGeometryDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=71411
+
+        Reviewed by Sam Weinig.
+
+        Now that all Plugin subclasses implement geometryDidChange and do all the work there
+        we can get rid of deprecatedGeometryDidChange.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewGeometryDidChange):
+
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Move back functions that were not added.
 
         * UIProcess/API/C/WKPage.h:

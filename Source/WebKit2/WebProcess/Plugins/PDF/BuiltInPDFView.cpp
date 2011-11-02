@@ -366,11 +366,6 @@ bool BuiltInPDFView::isTransparent()
     return false;
 }
 
-void BuiltInPDFView::deprecatedGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
-{
-    ASSERT_NOT_REACHED();
-}
-
 void BuiltInPDFView::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
     if (m_pluginSize == pluginSize) {
