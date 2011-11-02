@@ -681,6 +681,12 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
         return;
     }
 
+    bool shouldCallWindow = true;
+
+    // If the plug-in doesn't want window relative coordinates, we don't need to call setWindow unless its size or clip rect changes.
+    if (!wantsWindowRelativeCoordinates() && m_pluginSize == pluginSize && m_clipRect == clipRect)
+        shouldCallWindow = false;
+
     m_pluginSize = pluginSize;
     m_clipRect = clipRect;
     m_pluginToRootViewTransform = pluginToRootViewTransform;
@@ -692,6 +698,10 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
     m_clipRectInWindowCoordinates = IntRect(clipRectLocationInWindowCoordinates, m_clipRect.size());
 
     platformGeometryDidChange();
+
+    if (!shouldCallWindow)
+        return;
+
     callSetWindow();
 }
 

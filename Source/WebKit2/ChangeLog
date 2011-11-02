@@ -1,3 +1,15 @@
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Don't call NPP_SetWindow if the plug-in size or clip rect hasn't changed if the plug-in isn't using window relative coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71418
+
+        Reviewed by Adam Roben.
+
+        This avoids calling into the plug-in when only the plug-in position relative to the window changes.
+    
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::geometryDidChange):
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         Fix syntax error.
