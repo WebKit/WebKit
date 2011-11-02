@@ -760,7 +760,7 @@ static void _ewk_tiled_backing_store_smart_del(Evas_Object* ewkTile)
 #ifdef DEBUG_MEM_LEAKS
     _ewk_tiled_backing_store_mem_dbg(priv);
     if (priv->sig_usr)
-        priv->sig_usr = ecore_event_handler_del(priv->sig_usr);
+        ecore_event_handler_del(priv->sig_usr);
 #endif
 
     ewk_tile_matrix_free(priv->model.matrix);

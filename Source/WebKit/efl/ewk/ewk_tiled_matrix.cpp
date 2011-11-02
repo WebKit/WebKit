@@ -18,6 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "ewk_tiled_matrix.h"
 
@@ -215,7 +216,7 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
             "bytes[+%" PRIu64 ",-%" PRIu64 "], but some other leaked "
             "%" PRIu64 " tiles (%" PRIu64 " bytes)",
             tileMatrix->stats.tiles.allocated, tileMatrix->stats.tiles.freed,
-            tileMatrix->stats.bytes.allocated, tileMatrixm->stats.bytes.freed,
+            tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed,
             tiles_leaked, bytes_leaked);
     else
         INF("tiled matrix had no leaks: tiles[+%" PRIu64 ",-%" PRIu64 "] "
@@ -566,10 +567,10 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
 #ifdef DEBUG_MEM_LEAKS
     printf("Ewk_Tile Matrix: tiles[+%" PRIu64 ",-%" PRIu64 ":%" PRIu64 "] "
            "bytes[+%" PRIu64 ",-%" PRIu64 ":%" PRIu64 "]\n",
-           tm->stats.tiles.allocated, tm->stats.tiles.freed,
-           tm->stats.tiles.allocated - tm->stats.tiles.freed,
-           tm->stats.bytes.allocated, tm->stats.bytes.freed,
-           tm->stats.bytes.allocated - tm->stats.bytes.freed);
+           tileMatrix->stats.tiles.allocated, tileMatrix->stats.tiles.freed,
+           tileMatrix->stats.tiles.allocated - tileMatrix->stats.tiles.freed,
+           tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed,
+           tileMatrix->stats.bytes.allocated - tileMatrix->stats.bytes.freed);
 #else
     printf("Ewk_Tile Matrix:\n");
 #endif

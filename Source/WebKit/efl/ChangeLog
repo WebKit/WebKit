@@ -1,3 +1,18 @@
+2011-11-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Fix build break when DEBUG_MEM_LEAKS is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=71349
+
+        Unreviewed build fix.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_smart_del): remove wrong assignment
+        * ewk/ewk_tiled_matrix.cpp: define __STDC_FORMAT_MACROS to use PRIu64
+        (ewk_tile_matrix_free): s/tileMatrixm/tileMatrix
+        (ewk_tile_matrix_dbg): s/tm/tileMatrix
+        * ewk/ewk_tiled_model.cpp: define __STDC_FORMAT_MACROS to use PRIu64
+        (_ewk_tile_account_get): remove REALLOC_OR_OOM_RET
+
 2011-11-02  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Dirty area is not updated with requestAnimationFrame.

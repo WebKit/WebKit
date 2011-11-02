@@ -18,6 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "ewk_tiled_model.h"
 
@@ -58,15 +59,13 @@ static struct tile_account* accounting = 0;
 static inline struct tile_account* _ewk_tile_account_get(const Ewk_Tile* tile)
 {
     struct tile_account* acc;
-    size_t i;
 
-    for (i = 0; i < accounting_len; i++) {
+    for (size_t i = 0; i < accounting_len; i++) {
         if (accounting[i].size == tile->width)
             return accounting + i;
     }
 
-    i = (accounting_len + 1) * sizeof(struct tile_account);
-    REALLOC_OR_OOM_RET(accounting, i, 0);
+    accounting = static_cast<struct tile_account*>(realloc(accounting, sizeof(struct tile_account) * (accounting_len + 1)));
 
     acc = accounting + accounting_len;
     acc->size = tile->width;
