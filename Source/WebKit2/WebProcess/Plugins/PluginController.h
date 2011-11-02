@@ -120,10 +120,10 @@ public:
 
     // Returns the mach port of the compositing render server.
     virtual mach_port_t compositingRenderServerPort() = 0;
+#endif
 
     // Returns the contents scale factor.
     virtual float contentsScaleFactor() = 0;
-#endif
 
     // Returns the proxies for the given URL or null on failure.
     virtual String proxiesForURL(const String&) = 0;

@@ -97,12 +97,10 @@ bool PluginProxy::initialize(const Parameters& parameters)
     creationParameters.windowNPObjectID = windowNPObjectID();
     creationParameters.parameters = parameters;
     creationParameters.userAgent = controller()->userAgent();
+    creationParameters.contentsScaleFactor = contentsScaleFactor();
     creationParameters.isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
 #if USE(ACCELERATED_COMPOSITING)
     creationParameters.isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
-#endif
-#if PLATFORM(MAC)
-    creationParameters.contentsScaleFactor = contentsScaleFactor();
 #endif
 
     bool result = false;
@@ -375,11 +373,6 @@ void PluginProxy::windowVisibilityChanged(bool isVisible)
     m_connection->connection()->send(Messages::PluginControllerProxy::WindowVisibilityChanged(isVisible), m_pluginInstanceID);
 }
 
-void PluginProxy::contentsScaleFactorChanged(float scaleFactor)
-{
-    geometryDidChange();
-}
-
 uint64_t PluginProxy::pluginComplexTextInputIdentifier() const
 {
     return m_pluginInstanceID;
@@ -390,6 +383,11 @@ void PluginProxy::sendComplexTextInput(const String& textInput)
     m_connection->connection()->send(Messages::PluginControllerProxy::SendComplexTextInput(textInput), m_pluginInstanceID);
 }
 #endif
+
+void PluginProxy::contentsScaleFactorChanged(float scaleFactor)
+{
+    geometryDidChange();
+}
 
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
@@ -452,11 +450,7 @@ void PluginProxy::getAuthenticationInfo(const ProtectionSpace& protectionSpace, 
 
 float PluginProxy::contentsScaleFactor()
 {
-#if PLATFORM(MAC)
     return controller()->contentsScaleFactor();
-#else
-    return 1;
-#endif
 }
 
 bool PluginProxy::updateBackingStore()

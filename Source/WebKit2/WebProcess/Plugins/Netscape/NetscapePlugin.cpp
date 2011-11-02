@@ -390,6 +390,11 @@ void NetscapePlugin::unscheduleTimer(unsigned timerID)
     timer->stop();
 }
 
+double NetscapePlugin::contentsScaleFactor()
+{
+    return controller()->contentsScaleFactor();
+}
+
 String NetscapePlugin::proxiesForURL(const String& urlString)
 {
     return controller()->proxiesForURL(urlString);
@@ -408,7 +413,7 @@ void NetscapePlugin::setCookiesForURL(const String& urlString, const String& coo
 bool NetscapePlugin::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
     return controller()->getAuthenticationInfo(protectionSpace, username, password);
-}
+}    
 
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
 {
@@ -645,18 +650,14 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
     ASSERT(m_isStarted);
 
     IntSize backingStoreSize = m_pluginSize;
-#if PLATFORM(MAC)
     backingStoreSize.scale(contentsScaleFactor());
-#endif
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
-#if PLATFORM(MAC)
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.
     context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
-#endif
 
     context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     platformPaint(context.get(), m_frameRectInWindowCoordinates, true);
@@ -888,6 +889,16 @@ NPObject* NetscapePlugin::pluginScriptableNPObject()
 #endif    
 
     return scriptableNPObject;
+}
+
+void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
+{
+    ASSERT(m_isStarted);
+
+#if PLUGIN_ARCHITECTURE(MAC)
+    double contentsScaleFactor = scaleFactor;
+    NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor);
+#endif
 }
 
 void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)

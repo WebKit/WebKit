@@ -70,8 +70,8 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
     , m_isComplexTextInputEnabled(false)
-    , m_contentsScaleFactor(creationParameters.contentsScaleFactor)
 #endif
+    , m_contentsScaleFactor(creationParameters.contentsScaleFactor)
     , m_windowNPObject(0)
     , m_pluginElementNPObject(0)
 {
@@ -370,6 +370,11 @@ void PluginControllerProxy::willSendEventToPlugin()
     ASSERT_NOT_REACHED();
 }
 
+float PluginControllerProxy::contentsScaleFactor()
+{
+    return m_contentsScaleFactor;
+}
+
 String PluginControllerProxy::proxiesForURL(const String& urlString)
 {
     String proxyString;
@@ -438,14 +443,10 @@ void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const I
     m_pluginSize = pluginSize;
     m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
 
-#if PLATFORM(MAC)
     if (contentsScaleFactor != m_contentsScaleFactor) {
         m_contentsScaleFactor = contentsScaleFactor;
         m_plugin->contentsScaleFactorChanged(m_contentsScaleFactor);
     }
-#else
-    UNUSED_PARAM(contentsScaleFactor);
-#endif
 
     platformGeometryDidChange();
 

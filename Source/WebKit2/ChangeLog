@@ -1,5 +1,37 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix non-Mac builds and remove #if PLATFORM(MAC) around all contents scale factor functions.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::contentsScaleFactor):
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::contentsScaleFactor):
+        (WebKit::NetscapePlugin::getAuthenticationInfo):
+        (WebKit::NetscapePlugin::snapshot):
+        (WebKit::NetscapePlugin::contentsScaleFactorChanged):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::contentsScaleFactorChanged):
+        (WebKit::PluginProxy::contentsScaleFactor):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::contentsScaleFactor):
+
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Use m_pluginSize instead of m_frameRectInWindowCoordinates.size() in NetscapePlugin.
         https://bugs.webkit.org/show_bug.cgi?id=71390
 

@@ -53,11 +53,6 @@ mach_port_t PluginControllerProxy::compositingRenderServerPort()
     return PluginProcess::shared().compositingRenderServerPort();
 }
 
-float PluginControllerProxy::contentsScaleFactor()
-{
-    return m_contentsScaleFactor;
-}
-
 void PluginControllerProxy::platformInitialize()
 {
     CALayer * platformLayer = m_plugin->pluginLayer();

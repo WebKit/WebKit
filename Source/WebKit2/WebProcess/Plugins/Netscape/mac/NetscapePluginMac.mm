@@ -179,11 +179,6 @@ mach_port_t NetscapePlugin::compositingRenderServerPort()
     return controller()->compositingRenderServerPort();
 }
 
-double NetscapePlugin::contentsScaleFactor()
-{
-    return controller()->contentsScaleFactor();
-}
-
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
@@ -923,12 +918,6 @@ void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScre
 void NetscapePlugin::windowVisibilityChanged(bool)
 {
     // FIXME: Implement.
-}
-
-void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
-{
-    double contentsScaleFactor = scaleFactor;
-    NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor);
 }
 
 uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
