@@ -1,3 +1,19 @@
+2011-11-02  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Match allowed CSS string characters to Firefox and Opera browsers
+        https://bugs.webkit.org/show_bug.cgi?id=71000
+
+        Reviewed by Darin Adler.
+
+        Firefox and Opera accepts any character inside a string except
+        newline and starting quote character. This behaviour matches to
+        the CSS 2.1 grammar: http://www.w3.org/TR/CSS2/grammar.html
+        WebKit should follow them.
+
+        Test: fast/css/parsing-css-allowed-string-characters.html
+
+        * css/tokenizer.flex:
+
 2011-11-02  Devdatta Deshpande  <pwjd73@motorola.com>
 
         Assert in MoveSelectionCommand::doApply

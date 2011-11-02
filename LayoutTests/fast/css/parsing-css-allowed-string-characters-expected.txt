@@ -1,0 +1,39 @@
+Test parsing of CSS escapes.
+
+SUCCESS
+
+Rules from the stylesheet:
+
+#a::after { content: '65:A 9:\9'; }
+#b::after { content: '128: 159:'; }
+#c::after { content: '1:\1'; }
+#d::after { content: '8:\8'; }
+#e::after { content: '9:\9'; }
+#f::after { }
+#g::after { content: '11:\b'; }
+#h::after { }
+#i::after { }
+#j::after { content: '14:\e'; }
+#k::after { content: '20:\14'; }
+#l::after { content: '30:\1e'; }
+#m::after { content: '31:\1f'; }
+#n::after { content: '127:\7f'; }
+#o::after { content: '384:ƀ'; }
+Expected result:
+
+#a::after { content: '65:A 9:\9'; }
+#b::after { content: '128: 159:'; }
+#c::after { content: '1:\1'; }
+#d::after { content: '8:\8'; }
+#e::after { content: '9:\9'; }
+#f::after { }
+#g::after { content: '11:\b'; }
+#h::after { }
+#i::after { }
+#j::after { content: '14:\e'; }
+#k::after { content: '20:\14'; }
+#l::after { content: '30:\1e'; }
+#m::after { content: '31:\1f'; }
+#n::after { content: '127:\7f'; }
+#o::after { content: '384:ƀ'; }
+

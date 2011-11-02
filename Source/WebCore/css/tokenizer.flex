@@ -12,8 +12,8 @@ unicode         \\{h}{1,6}[ \t\r\n\f]?
 escape          {unicode}|\\[ -~\200-\377]
 nmstart         [_a-zA-Z]|{nonascii}|{escape}
 nmchar          [_a-zA-Z0-9-]|{nonascii}|{escape}
-string1         \"([\t !#$%&(-~]|\\{nl}|\'|{nonascii}|{escape})*\"
-string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
+string1         \"([^\n\r\f\\"]|\\{nl}|{escape})*\"
+string2         \'([^\n\r\f\\']|\\{nl}|{escape})*\'
 
 ident           -?{nmstart}{nmchar}*
 num             [0-9]+|[0-9]*"."[0-9]+
