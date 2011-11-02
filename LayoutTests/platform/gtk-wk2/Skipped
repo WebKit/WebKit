@@ -486,26 +486,9 @@ fast/frames/frame-set-rotation-hit.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/isolatedWorld/userGestureEvents.html
 http/tests/security/isolatedWorld/events.html
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/drag-over-remote-content-iframe.html
-http/tests/security/drag-drop-different-origin.html
-http/tests/security/listener/xss-window-onclick-shortcut.html
-http/tests/security/listener/xss-window-onclick-addEventListener.html
 http/tests/security/resources/drag-drop-allowed.html
-http/tests/misc/drag-over-iframe-invalid-source-crash.html
-http/tests/misc/drag-not-loaded-image.html
 http/tests/misc/bubble-drag-events.html
-http/tests/navigation/no-referrer-subframe.html
-http/tests/navigation/ping-same-origin.html
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/document-location-click-timeout.html
-http/tests/navigation/ping-cross-origin.html
-http/tests/navigation/document-location-click.html
-http/tests/navigation/ping-cookie.html
-http/tests/navigation/redirect-preserves-referrer.html
-http/tests/navigation/no-referrer-same-window.html
-http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/resources/javascriptlink.html
 scrollbars/scrollbar-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
@@ -707,6 +690,7 @@ fast/forms/plaintext-mode-1.html
 fast/viewport
 
 # Implement eventSender.beginDragWithFiles support
+# https://bugs.webkit.org/show_bug.cgi?id=64285
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone-frames.html
@@ -718,7 +702,14 @@ fast/files/apply-blob-url-to-img.html
 fast/files/file-reader-abort.html
 fast/forms/get-file-upload.html
 fast/forms/input-file-re-render.html
+http/tests/local/fileapi/file-last-modified.html
+http/tests/local/fileapi/send-dragged-file.html
+http/tests/local/formdata/form-data-with-unknown-file-extension.html
+http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-constructed-from-form.html
+http/tests/local/formdata/send-form-data-with-sliced.html
+http/tests/local/formdata/upload-events.html
+http/tests/security/clipboard/clipboard-file-access.html
 fast/forms/input-file-re-render.html
 fast/files/workers/worker-read-blob-async.html
 fast/files/workers/worker-read-blob-sync.html
@@ -786,6 +777,21 @@ fast/media/media-query-list-05.html
 fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
 fast/media/view-mode-media-feature.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.setAlwaysAcceptCookies
+# https://bugs.webkit.org/show_bug.cgi?id=42778
+http/tests/security/cookies/third-party-cookie-blocking.html
+http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.dumpProgressFinishedCallback
+http/tests/loading/progress-finished-callback.html
+
+# WebKitTestRunner needs an implementation of layoutTestController.overridePreference
+# https://bugs.webkit.org/show_bug.cgi?id=42197
+http/tests/navigation/ping-same-origin.html
+http/tests/navigation/ping-cross-origin.html
+http/tests/navigation/ping-cookie.html
 
 ###############################################################################
 # TESTS FAILING
@@ -882,18 +888,11 @@ http/tests/appcache/video.html
 http/tests/appcache/whitelist-wildcard.html
 http/tests/appcache/xhr-foreign-resource.html
 http/tests/loading/empty-urls.html
-http/tests/loading/progress-finished-callback.html
-http/tests/local/formdata/form-data-with-unknown-file-extension.html
-http/tests/local/formdata/send-form-data.html
-http/tests/local/formdata/upload-events.html
 http/tests/media/video-cookie.html
 http/tests/media/video-referer.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
-http/tests/security/clipboard/clipboard-file-access.html
-http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
-http/tests/security/cookies/third-party-cookie-blocking.html
 http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
 http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html
