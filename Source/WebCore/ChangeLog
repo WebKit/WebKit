@@ -1,3 +1,15 @@
+2011-11-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Clicking in a CSS property/value being edited commits the editor
+        https://bugs.webkit.org/show_bug.cgi?id=71360
+
+        Reviewed by Pavel Feldman.
+
+        Selecting a selected TreeElement should be an idempotent operation.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.select):
+
 2011-11-02  Ben Wells  <benwells@chromium.org>
 
         Canvas filling paths or rects need to be invalidate larger rects for some compositing modes.
