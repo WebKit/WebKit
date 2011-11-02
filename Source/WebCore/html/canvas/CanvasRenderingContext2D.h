@@ -280,6 +280,7 @@ private:
     void applyShadow();
 
     void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
+    void didDrawEntireCanvas();
 
     GraphicsContext* drawingContext() const;
 

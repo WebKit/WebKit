@@ -3623,6 +3623,9 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
+// New test, needs baselines after patch lands.
+BUGWK70379 MAC WIN : fast/canvas/canvas-composite-fill-repaint.html = MISSING
+
 // Failing after r94912.
 BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT IMAGE
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE

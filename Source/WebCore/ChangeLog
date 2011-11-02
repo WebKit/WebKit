@@ -1,3 +1,19 @@
+2011-11-02  Ben Wells  <benwells@chromium.org>
+
+        Canvas filling paths or rects need to be invalidate larger rects for some compositing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=70379
+
+        Reviewed by James Robinson.
+
+        Test: fast/canvas/canvas-composite-fill-repaint.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::didDrawEntireCanvas):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-11-01  Levi Weintraub  <leviw@chromium.org>
 
         Fix uses of LayoutUnit in Frame-, Scroll-, and RenderView

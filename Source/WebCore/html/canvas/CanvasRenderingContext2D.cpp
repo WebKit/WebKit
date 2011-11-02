@@ -946,14 +946,17 @@ void CanvasRenderingContext2D::fill()
         return;
 
     if (!m_path.isEmpty()) {
-        if (isFullCanvasCompositeMode(state().m_globalComposite))
+        if (isFullCanvasCompositeMode(state().m_globalComposite)) {
             fullCanvasCompositedFill(m_path);
-        else if (state().m_globalComposite == CompositeCopy) {
+            didDrawEntireCanvas();
+        } else if (state().m_globalComposite == CompositeCopy) {
             clearCanvas();
             c->fillPath(m_path);
-        } else
+            didDrawEntireCanvas();
+        } else {
             c->fillPath(m_path);
-        didDraw(m_path.boundingRect());
+            didDraw(m_path.boundingRect());
+        }
     }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1052,14 +1055,17 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 
     FloatRect rect(x, y, width, height);
 
-    if (isFullCanvasCompositeMode(state().m_globalComposite))
+    if (isFullCanvasCompositeMode(state().m_globalComposite)) {
         fullCanvasCompositedFill(rect);
-    else if (state().m_globalComposite == CompositeCopy) {
+        didDrawEntireCanvas();
+    } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
         c->fillRect(rect);
-    } else
+        didDrawEntireCanvas();
+    } else {
         c->fillRect(rect);
-    didDraw(rect);
+        didDraw(rect);
+    }
 }
 
 void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height)
@@ -1332,11 +1338,11 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
-        didDraw(FloatRect(FloatPoint::zero(), canvas()->size()), CanvasDidDrawApplyClip);
+        didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
         c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
-        didDraw(FloatRect(FloatPoint::zero(), canvas()->size()), CanvasDidDrawApplyClip);
+        didDrawEntireCanvas();
     } else {
         c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
         didDraw(normalizedDstRect);
@@ -1720,6 +1726,11 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     if (ec)
         return 0;
     return CanvasPattern::create(canvas->copiedImage(), repeatX, repeatY, canvas->originClean());
+}
+
+void CanvasRenderingContext2D::didDrawEntireCanvas()
+{
+    didDraw(FloatRect(FloatPoint::zero(), canvas()->size()), CanvasDidDrawApplyClip);
 }
 
 void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
