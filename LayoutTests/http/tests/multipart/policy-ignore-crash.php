@@ -12,6 +12,9 @@ if (window.layoutTestController)
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
+
+ob_flush();
+flush();
 ?>
 --asdf
 Content-type: text/random
