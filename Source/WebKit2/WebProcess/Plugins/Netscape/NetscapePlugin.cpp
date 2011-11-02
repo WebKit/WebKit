@@ -118,10 +118,9 @@ void NetscapePlugin::invalidate(const NPRect* invalidRect)
     IntRect rect;
     
     if (!invalidRect)
-        rect = IntRect(0, 0, m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height());
+        rect = IntRect(0, 0, m_pluginSize.width(), m_pluginSize.height());
     else
-        rect = IntRect(invalidRect->left, invalidRect->top,
-                       invalidRect->right - invalidRect->left, invalidRect->bottom - invalidRect->top);
+        rect = IntRect(invalidRect->left, invalidRect->top, invalidRect->right - invalidRect->left, invalidRect->bottom - invalidRect->top);
     
     if (platformInvalidate(rect))
         return;
@@ -640,7 +639,7 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 
 PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 {
-    if (!supportsSnapshotting() || m_frameRectInWindowCoordinates.isEmpty())
+    if (!supportsSnapshotting() || m_pluginSize.isEmpty())
         return 0;
 
     ASSERT(m_isStarted);
