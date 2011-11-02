@@ -34,18 +34,38 @@
 #include "WebSettings.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 class WebView;
 }
 
 struct WebPreferences {
-    WebKit::WebString cursiveFontFamily;
-    WebKit::WebString fantasyFontFamily;
-    WebKit::WebString serifFontFamily;
     WebKit::WebString standardFontFamily;
     WebKit::WebString fixedFontFamily;
+    WebKit::WebString serifFontFamily;
     WebKit::WebString sansSerifFontFamily;
+    WebKit::WebString cursiveFontFamily;
+    WebKit::WebString fantasyFontFamily;
+
+    // UScriptCode uses -1 and 0 for UScriptInvalidCode and UScriptCommon.
+    // We need to use -2 and -3 for empty value and deleted value.
+    // (See WebCore::ScriptFontFamilyMap)
+    struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
+        static const bool emptyValueIsZero = false;
+        static int emptyValue() { return -2; }
+        static void constructDeletedValue(int& slot) { slot = -3; }
+        static bool isDeletedValue(int value) { return value == -3; }
+    };
+
+    // Map of UScriptCode to font such as USCRIPT_ARABIC to "My Arabic Font".
+    typedef HashMap<int, WebKit::WebString, DefaultHash<int>::Hash, UScriptCodeHashTraits> ScriptFontFamilyMap;
+    ScriptFontFamilyMap standardFontMap;
+    ScriptFontFamilyMap fixedFontMap;
+    ScriptFontFamilyMap serifFontMap;
+    ScriptFontFamilyMap sansSerifFontMap;
+    ScriptFontFamilyMap cursiveFontMap;
+    ScriptFontFamilyMap fantasyFontMap;
 
     int defaultFontSize;
     int defaultFixedFontSize;

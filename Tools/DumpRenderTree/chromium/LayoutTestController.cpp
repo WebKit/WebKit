@@ -1386,6 +1386,36 @@ WebString LayoutTestController::cppVariantToWebString(const CppVariant& value)
     return WebString::fromUTF8(value.toString());
 }
 
+Vector<WebString> LayoutTestController::cppVariantToWebStringArray(const CppVariant& value)
+{
+    if (!value.isObject()) {
+        logErrorToConsole("Invalid value for preference. Expected object value.");
+        return Vector<WebString>();
+    }
+    Vector<WebString> resultVector;
+    Vector<string> stringVector = value.toStringVector();
+    for (size_t i = 0; i < stringVector.size(); ++i)
+        resultVector.append(WebString::fromUTF8(stringVector[i].c_str()));
+    return resultVector;
+}
+
+// Sets map based on scriptFontPairs, a collapsed vector of pairs of ISO 15924
+// four-letter script code and font such as:
+// { "Arab", "My Arabic Font", "Grek", "My Greek Font" }
+static void setFontMap(WebPreferences::ScriptFontFamilyMap& map, const Vector<WebString>& scriptFontPairs)
+{
+    map.clear();
+    size_t i = 0;
+    while (i + 1 < scriptFontPairs.size()) {
+        const WebString& script = scriptFontPairs[i++];
+        const WebString& font = scriptFontPairs[i++];
+
+        int32_t code = u_getPropertyValueEnum(UCHAR_SCRIPT, script.utf8().data());
+        if (code >= 0 && code < USCRIPT_CODE_LIMIT)
+            map.set(static_cast<int>(code), font);
+    }
+}
+
 void LayoutTestController::overridePreference(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1407,6 +1437,18 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->cursiveFontFamily = cppVariantToWebString(value);
     else if (key == "WebKitFantasyFont")
         prefs->fantasyFontFamily = cppVariantToWebString(value);
+    else if (key == "WebKitStandardFontMap")
+        setFontMap(prefs->standardFontMap, cppVariantToWebStringArray(value));
+    else if (key == "WebKitFixedFontMap")
+        setFontMap(prefs->fixedFontMap, cppVariantToWebStringArray(value));
+    else if (key == "WebKitSerifFontMap")
+        setFontMap(prefs->serifFontMap, cppVariantToWebStringArray(value));
+    else if (key == "WebKitSansSerifFontMap")
+        setFontMap(prefs->sansSerifFontMap, cppVariantToWebStringArray(value));
+    else if (key == "WebKitCursiveFontMap")
+        setFontMap(prefs->cursiveFontMap, cppVariantToWebStringArray(value));
+    else if (key == "WebKitFantasyFontMap")
+        setFontMap(prefs->fantasyFontMap, cppVariantToWebStringArray(value));
     else if (key == "WebKitDefaultFontSize")
         prefs->defaultFontSize = cppVariantToInt32(value);
     else if (key == "WebKitDefaultFixedFontSize")

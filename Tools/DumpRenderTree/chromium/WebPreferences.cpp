@@ -117,15 +117,63 @@ void WebPreferences::reset()
     hixie76WebSocketProtocolEnabled = true;
 }
 
+static void setStandardFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setStandardFontFamily(font, script);
+}
+
+static void setFixedFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setFixedFontFamily(font, script);
+}
+
+static void setSerifFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setSerifFontFamily(font, script);
+}
+
+static void setSansSerifFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setSansSerifFontFamily(font, script);
+}
+
+static void setCursiveFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setCursiveFontFamily(font, script);
+}
+
+static void setFantasyFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
+{
+    settings->setFantasyFontFamily(font, script);
+}
+
+typedef void (*SetFontFamilyWrapper)(WebSettings*, const WebString&, UScriptCode);
+
+static void applyFontMap(WebSettings* settings, const WebPreferences::ScriptFontFamilyMap& map, SetFontFamilyWrapper setter)
+{
+    for (WebPreferences::ScriptFontFamilyMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
+        const WebString& font = iter->second;
+        if (!font.isNull() && !font.isEmpty())
+            (*setter)(settings, font, static_cast<UScriptCode>(iter->first));
+    }
+}
+
 void WebPreferences::applyTo(WebView* webView)
 {
     WebSettings* settings = webView->settings();
-    settings->setCursiveFontFamily(cursiveFontFamily);
-    settings->setFantasyFontFamily(fantasyFontFamily);
-    settings->setSerifFontFamily(serifFontFamily);
     settings->setStandardFontFamily(standardFontFamily);
     settings->setFixedFontFamily(fixedFontFamily);
+    settings->setSerifFontFamily(serifFontFamily);
     settings->setSansSerifFontFamily(sansSerifFontFamily);
+    settings->setCursiveFontFamily(cursiveFontFamily);
+    settings->setFantasyFontFamily(fantasyFontFamily);
+
+    applyFontMap(settings, standardFontMap, setStandardFontFamilyWrapper);
+    applyFontMap(settings, fixedFontMap, setFixedFontFamilyWrapper);
+    applyFontMap(settings, serifFontMap, setSerifFontFamilyWrapper);
+    applyFontMap(settings, sansSerifFontMap, setSansSerifFontFamilyWrapper);
+    applyFontMap(settings, cursiveFontMap, setCursiveFontFamilyWrapper);
+    applyFontMap(settings, fantasyFontMap, setFantasyFontFamilyWrapper);
 
     settings->setDefaultFontSize(defaultFontSize);
     settings->setDefaultFixedFontSize(defaultFixedFontSize);
@@ -187,4 +235,3 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setFullScreenEnabled(true);
     settings->setValidationMessageTimerMagnification(-1);
 }
-
