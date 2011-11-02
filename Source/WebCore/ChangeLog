@@ -1,3 +1,27 @@
+2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Pack RenderTableCell bits
+        https://bugs.webkit.org/show_bug.cgi?id=71135
+
+        Reviewed by Darin Adler.
+
+        Tested by RenderTableCellTest unit test.
+        (unfortunately Chromium specific...)
+
+        This saves another 8 bytes on RenderTableCell on x86-64.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        Changed the field order to use more strict packing.
+
+        (WebCore::RenderTableCell::setCol):
+        (WebCore::RenderTableCell::setRow):
+        Added overflow checks to the 2 previous methods. We
+        CRASH even in release to avoid potential badness
+        (the limit is currently above 2 billions rows or columns
+        which is high enough to prevent it being hit by accident)
+
 2011-11-01  Emil A Eklund  <eae@chromium.org>
 
         Switch background/border image back to Int

@@ -80,6 +80,7 @@
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
+            'tests/RenderTableCellTest.cpp',
             'tests/TilingDataTest.cpp',
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',

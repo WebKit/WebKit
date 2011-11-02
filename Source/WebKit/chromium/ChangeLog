@@ -1,3 +1,15 @@
+2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Pack RenderTableCell bits
+        https://bugs.webkit.org/show_bug.cgi?id=71135
+
+        Reviewed by Darin Adler.
+
+        * WebKit.gypi:
+        * tests/RenderTableCellTest.cpp: Added.
+        Added some tests for the column/row index limit
+        that was implemented in RenderTableCell.
+
 2011-11-01  Nate Chapin  <japhet@chromium.org>
 
         Add 2 new TargetTypes (to match ResourceRequest::TargetType)

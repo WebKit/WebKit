@@ -44,11 +44,11 @@ using namespace HTMLNames;
 RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
     , m_row(unsetRowIndex)
+    , m_cellWidthChanged(false)
     , m_column(unsetColumnIndex)
+    , m_hasAssociatedTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
-    , m_cellWidthChanged(false)
-    , m_hasAssociatedTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
 {
 }
 

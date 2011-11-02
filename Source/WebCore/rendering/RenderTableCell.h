@@ -29,10 +29,11 @@
 
 namespace WebCore {
 
-// FIXME: It is possible for these indexes to be reached for a table big enough.
-// We would need to enforce a maximal index on both rows and columns.
-static const unsigned unsetColumnIndex = 0xFFFFFFFF;
-static const unsigned unsetRowIndex = 0xFFFFFFFF;
+static const unsigned unsetColumnIndex = 0x7FFFFFFF;
+static const unsigned maxColumnIndex = 0x7FFFFFFE; // 2,147,483,646
+
+static const unsigned unsetRowIndex = 0x7FFFFFFF;
+static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 class RenderTableCell : public RenderBlock {
 public:
@@ -48,14 +49,28 @@ public:
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();
 
-    void setCol(unsigned column) { m_column = column; }
+    void setCol(unsigned column)
+    {
+        if (UNLIKELY(column > maxColumnIndex))
+            CRASH();
+
+        m_column = column;
+    }
+
     unsigned col() const
     {
         ASSERT(m_column != unsetColumnIndex);
         return m_column;
     }
 
-    void setRow(unsigned row) { m_row = row; }
+    void setRow(unsigned row)
+    {
+        if (UNLIKELY(row > maxRowIndex))
+            CRASH();
+
+        m_row = row;
+    }
+
     unsigned row() const
     {
         ASSERT(m_row != unsetRowIndex);
@@ -159,14 +174,12 @@ private:
 
     void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 
-    unsigned m_row;
-    unsigned m_column;
+    unsigned m_row : 31;
+    bool m_cellWidthChanged : 1;
+    unsigned m_column : 31;
+    bool m_hasAssociatedTableCellElement : 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
-
-    // FIXME: It would be nice to pack these 2 bits into some of the previous fields.
-    bool m_cellWidthChanged : 1;
-    bool m_hasAssociatedTableCellElement : 1;
 };
 
 inline RenderTableCell* toRenderTableCell(RenderObject* object)
