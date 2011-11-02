@@ -602,6 +602,11 @@ void FrameLoaderClientWx::didRunInsecureContent(WebCore::SecurityOrigin*, const 
     notImplemented();
 }
 
+void FrameLoaderClientWx::didDetectXSS(const KURL&, bool)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientWx::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
 {
     notImplemented();

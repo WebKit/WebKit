@@ -724,6 +724,11 @@ void FrameLoaderClient::didRunInsecureContent(SecurityOrigin*, const KURL&)
     notImplemented();
 }
 
+void FrameLoaderClient::didDetectXSS(const KURL&, bool)
+{
+    notImplemented();
+}
+
 void FrameLoaderClient::makeRepresentation(WebCore::DocumentLoader*)
 {
     m_hasRepresentation = true;

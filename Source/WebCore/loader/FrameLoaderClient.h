@@ -208,6 +208,7 @@ namespace WebCore {
         // script) from an insecure source.  Note that the insecure content can
         // spread to other frames in the same origin.
         virtual void didRunInsecureContent(SecurityOrigin*, const KURL&) = 0;
+        virtual void didDetectXSS(const KURL&, bool didBlockEntirePage) = 0;
 
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
         virtual ResourceError blockedError(const ResourceRequest&) = 0;

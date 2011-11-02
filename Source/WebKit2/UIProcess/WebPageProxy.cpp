@@ -1840,6 +1840,19 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Argu
     m_loaderClient.didRunInsecureContentForFrame(this, frame, userData.get());
 }
 
+void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
+{
+    RefPtr<APIObject> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
+    if (!arguments->decode(messageDecoder))
+        return;
+
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    m_loaderClient.didDetectXSSForFrame(this, frame, userData.get());
+}
+
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);

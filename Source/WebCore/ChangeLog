@@ -1,3 +1,20 @@
+2011-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor is silent
+        https://bugs.webkit.org/show_bug.cgi?id=70973
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/xssAuditor/script-tag-with-callbacks.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::XSSAuditor):
+        (WebCore::XSSAuditor::filterToken):
+        * html/parser/XSSAuditor.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didDetectXSS):
+        * loader/FrameLoaderClient.h:
+
 2011-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Assertion in FontCache::getCachedFontData() when painting into composited layer

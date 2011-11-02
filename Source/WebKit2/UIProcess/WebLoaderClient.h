@@ -63,6 +63,7 @@ public:
     void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     
     bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);
     void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*);

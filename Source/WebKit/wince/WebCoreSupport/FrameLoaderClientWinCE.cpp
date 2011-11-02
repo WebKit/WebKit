@@ -274,6 +274,11 @@ void FrameLoaderClientWinCE::didRunInsecureContent(SecurityOrigin*, const KURL&)
     notImplemented();
 }
 
+void FrameLoaderClientWinCE::didDetectXSS(const KURL&, bool)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientWinCE::makeRepresentation(DocumentLoader*)
 {
     notImplemented();

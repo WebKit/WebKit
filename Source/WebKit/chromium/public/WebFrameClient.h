@@ -286,6 +286,9 @@ public:
     // spread to other frames in the same origin.
     virtual void didRunInsecureContent(WebFrame*, const WebSecurityOrigin&, const WebURL& insecureURL) { }
 
+    // A reflected XSS was encountered in the page and suppressed.
+    virtual void didDetectXSS(WebFrame*, const WebURL&, bool didBlockEntirePage) { }
+
     // This frame adopted the resource that is being loaded. This happens when
     // an iframe, that is loading a subresource, is transferred between windows.
     virtual void didAdoptURLLoader(WebURLLoader*) { }

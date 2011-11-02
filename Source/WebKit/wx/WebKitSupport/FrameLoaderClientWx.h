@@ -170,6 +170,7 @@ namespace WebCore {
         
         virtual void didDisplayInsecureContent();
         virtual void didRunInsecureContent(SecurityOrigin*, const KURL&);
+        virtual void didDetectXSS(const KURL&, bool didBlockEntirePage);
 
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
         virtual void committedLoad(DocumentLoader*, const char*, int);

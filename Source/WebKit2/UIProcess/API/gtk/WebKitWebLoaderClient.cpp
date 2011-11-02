@@ -162,6 +162,7 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // didRemoveFrameFromHierarchy
         0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
+        0, // didDetectXSSForFrame
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
         didChangeProgress, // didStartProgress

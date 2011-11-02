@@ -1,3 +1,19 @@
+2011-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor is silent
+        https://bugs.webkit.org/show_bug.cgi?id=70973
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didRunInsecureContent):
+        (WebFrameLoaderClient::didDetectXSS):
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebFrameLoadDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+
 2011-11-01  Darin Adler  <darin@apple.com>
 
         Crash in PDF code when script has illegal UTF-8 or UTF-16 sequences

@@ -140,6 +140,7 @@ public:
 
     virtual void didDisplayInsecureContent();
     virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&);
+    virtual void didDetectXSS(const WebCore::KURL&, bool didBlockEntirePage);
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);

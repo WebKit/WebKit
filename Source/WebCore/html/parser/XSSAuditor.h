@@ -88,6 +88,7 @@ private:
 
     State m_state;
     String m_cachedSnippet;
+    bool m_notifiedClient;
 };
 
 }

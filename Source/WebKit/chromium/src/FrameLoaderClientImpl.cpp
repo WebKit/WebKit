@@ -1204,6 +1204,12 @@ void FrameLoaderClientImpl::didRunInsecureContent(SecurityOrigin* origin, const 
         m_webFrame->client()->didRunInsecureContent(m_webFrame, WebSecurityOrigin(origin), insecureURL);
 }
 
+void FrameLoaderClientImpl::didDetectXSS(const KURL& insecureURL, bool didBlockEntirePage)
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didDetectXSS(m_webFrame, insecureURL, didBlockEntirePage);
+}
+
 ResourceError FrameLoaderClientImpl::blockedError(const ResourceRequest&)
 {
     // FIXME

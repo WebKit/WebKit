@@ -1552,6 +1552,7 @@ static inline IMP getMethod(id o, SEL s)
     cache->windowScriptObjectAvailableFunc = getMethod(delegate, @selector(webView:windowScriptObjectAvailable:));
     cache->didDisplayInsecureContentFunc = getMethod(delegate, @selector(webViewDidDisplayInsecureContent:));
     cache->didRunInsecureContentFunc = getMethod(delegate, @selector(webView:didRunInsecureContent:));
+    cache->didDetectXSSFunc = getMethod(delegate, @selector(webView:didDetectXSS:));
 }
 
 - (void)_cacheScriptDebugDelegateImplementations

@@ -156,6 +156,16 @@ void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page
     userData = adoptRef(toImpl(userDataToPass));
 }
 
+void InjectedBundlePageLoaderClient::didDetectXSSForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didRunInsecureContentForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didDetectXSSForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
 void InjectedBundlePageLoaderClient::didFirstLayoutForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didFirstLayoutForFrame)

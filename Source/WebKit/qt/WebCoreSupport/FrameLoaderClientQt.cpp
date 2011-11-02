@@ -873,6 +873,14 @@ void FrameLoaderClientQt::didRunInsecureContent(WebCore::SecurityOrigin*, const 
     notImplemented();
 }
 
+void FrameLoaderClientQt::didDetectXSS(const KURL&, bool)
+{
+    if (dumpFrameLoaderCallbacks)
+        printf("didDetectXSS\n");
+
+    notImplemented();
+}
+
 void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem* item)
 {
     QWebHistoryItem historyItem(new QWebHistoryItemPrivate(item));

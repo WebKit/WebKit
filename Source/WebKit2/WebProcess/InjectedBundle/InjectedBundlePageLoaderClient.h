@@ -59,6 +59,7 @@ public:
     void didRemoveFrameFromHierarchy(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didDisplayInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didRunInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
+    void didDetectXSSForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
 
     void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);

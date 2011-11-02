@@ -163,6 +163,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
     virtual void didDisplayInsecureContent();
     virtual void didRunInsecureContent(SecurityOrigin*, const KURL&);
+    virtual void didDetectXSS(const KURL&, bool didBlockEntirePage);
 
     virtual ResourceError cancelledError(const ResourceRequest&);
     virtual ResourceError blockedError(const ResourceRequest&);

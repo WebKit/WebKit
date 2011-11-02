@@ -531,6 +531,11 @@ void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
     notImplemented();
 }
 
+void FrameLoaderClientEfl::didDetectXSS(const KURL&, bool)
+{
+    notImplemented();
+}
+
 void FrameLoaderClientEfl::makeRepresentation(DocumentLoader*)
 {
     m_hasRepresentation = true;

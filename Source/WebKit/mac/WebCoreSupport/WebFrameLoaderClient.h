@@ -156,6 +156,7 @@ private:
 
     virtual void didDisplayInsecureContent() OVERRIDE;
     virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&) OVERRIDE;
+    virtual void didDetectXSS(const WebCore::KURL&, bool didBlockEntirePage) OVERRIDE;
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) OVERRIDE;

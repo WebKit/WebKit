@@ -370,6 +370,7 @@ public:
     virtual bool canCachePage() const { return false; }
     virtual void didDisplayInsecureContent() { }
     virtual void didRunInsecureContent(SecurityOrigin*, const KURL&) { }
+    virtual void didDetectXSS(const KURL&, bool) { }
     virtual PassRefPtr<Frame> createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) { return 0; }
     virtual void didTransferChildFrameToNewDocument(Page*) { }
     virtual void transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*) { }

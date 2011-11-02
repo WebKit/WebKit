@@ -325,6 +325,11 @@ static void didRunInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTy
     LOG(@"didRunInsecureContentForFrame");
 }
 
+static void didDetectXSSForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    LOG(@"didDetectXSSForFrame");
+}
+
 static void didStartProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProgress];
@@ -593,6 +598,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didRemoveFrameFromHierarchy,
         didDisplayInsecureContentForFrame,
         didRunInsecureContentForFrame,
+        didDetectXSSForFrame,
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
         didStartProgress,

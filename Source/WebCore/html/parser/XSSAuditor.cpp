@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
@@ -186,6 +187,7 @@ XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
     , m_isEnabled(false)
     , m_xssProtection(XSSProtectionEnabled)
     , m_state(Uninitialized)
+    , m_notifiedClient(false)
 {
     ASSERT(m_parser);
     if (Frame* frame = parser->document()->frame()) {
@@ -285,10 +287,17 @@ void XSSAuditor::filterToken(HTMLToken& token)
         // FIXME: We should add the real line number to the console.
         m_parser->document()->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
 
-        if (m_xssProtection == XSSProtectionBlockEnabled) {
-            m_parser->document()->frame()->loader()->stopAllLoaders();
-            m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), String());
+        bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
+        if (didBlockEntirePage)
+             m_parser->document()->frame()->loader()->stopAllLoaders();
+
+        if (!m_notifiedClient) {
+            m_parser->document()->frame()->loader()->client()->didDetectXSS(m_parser->document()->url(), didBlockEntirePage);
+            m_notifiedClient = true;
         }
+
+        if (didBlockEntirePage)
+            m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), String());
     }
 }
 

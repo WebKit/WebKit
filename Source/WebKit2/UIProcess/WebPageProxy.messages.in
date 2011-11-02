@@ -108,6 +108,7 @@ messages -> WebPageProxy {
     DidReceiveTitleForFrame(uint64_t frameID, WTF::String title, WebKit::InjectedBundleUserMessageEncoder userData)
     DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
     DidRunInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidDetectXSSForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
     DidSameDocumentNavigationForFrame(uint64_t frameID, uint32_t type, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData)
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)

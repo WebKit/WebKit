@@ -405,4 +405,10 @@
         printf ("didRunInsecureContent\n");
 }
 
+- (void)webView:(WebView *)sender didDetectXSS:(NSURL *)insecureURL
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
+        printf ("didDetectXSS\n");
+}
+
 @end

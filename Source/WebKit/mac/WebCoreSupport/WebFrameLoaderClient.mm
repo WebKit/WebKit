@@ -989,12 +989,23 @@ void WebFrameLoaderClient::didDisplayInsecureContent()
 
 void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin* origin, const KURL& insecureURL)
 {
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
-
     WebView *webView = getWebView(m_webFrame.get());   
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didRunInsecureContentFunc)
+    if (implementations->didRunInsecureContentFunc) {
+        RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
         CallFrameLoadDelegate(implementations->didRunInsecureContentFunc, webView, @selector(webView:didRunInsecureContent:), webSecurityOrigin.get());
+    }
+}
+
+void WebFrameLoaderClient::didDetectXSS(const KURL& insecureURL, bool didBlockEntirePage)
+{
+    WebView *webView = getWebView(m_webFrame.get());   
+    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations->didDetectXSSFunc) {
+        // FIXME: must pass didBlockEntirePage if we want to do more on mac than just pass tests.
+        NSURL* insecureNSURL = insecureURL;
+        CallFrameLoadDelegate(implementations->didDetectXSSFunc, webView, @selector(webView:didDetectXSS:), insecureNSURL);
+    }
 }
 
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)

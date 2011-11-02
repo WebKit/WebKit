@@ -1,3 +1,14 @@
+2011-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor is silent
+        https://bugs.webkit.org/show_bug.cgi?id=70973
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::didDetectXSS):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         <input=file multiple> default text uses singular instead of plural

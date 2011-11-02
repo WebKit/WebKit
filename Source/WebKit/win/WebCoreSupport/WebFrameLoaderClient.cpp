@@ -656,6 +656,11 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin* origin, const K
     frameLoadDelegatePriv2->didRunInsecureContent(webView, webSecurityOrigin.get());
 }
 
+void WebFrameLoaderClient::didDetectXSS(const KURL&, bool)
+{
+    // FIXME: propogate call into the private delegate.
+}
+
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
     RefPtr<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);

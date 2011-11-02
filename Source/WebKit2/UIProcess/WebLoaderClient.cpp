@@ -147,6 +147,14 @@ void WebLoaderClient::didRunInsecureContentForFrame(WebPageProxy* page, WebFrame
     m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
 }
 
+void WebLoaderClient::didDetectXSSForFrame(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
+{
+    if (!m_client.didDetectXSSForFrame)
+        return;
+
+    m_client.didDetectXSSForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
+}
+
 bool WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy* page, WebFrameProxy* frame, WebProtectionSpace* protectionSpace)
 {
     if (!m_client.canAuthenticateAgainstProtectionSpaceInFrame)

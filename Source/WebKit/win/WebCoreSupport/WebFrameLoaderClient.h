@@ -98,6 +98,7 @@ public:
 
     virtual void didDisplayInsecureContent();
     virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&);
+    virtual void didDetectXSS(const WebCore::KURL&, bool didBlockEntirePage);
 
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::KURL&);
