@@ -68,7 +68,7 @@ public:
     void deleteRule(const String& key);
     WebKitCSSKeyframeRule* findRule(const String& key);
 
-    virtual String cssText() const;
+    String cssText() const;
 
     /* not part of the DOM */
     unsigned length() const;

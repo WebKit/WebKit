@@ -46,7 +46,7 @@ public:
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
 
-    virtual String cssText() const;
+    String cssText() const;
 
     // Not part of the CSSOM
     unsigned append(CSSRule*);

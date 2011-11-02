@@ -51,7 +51,7 @@ public:
 
     virtual ~CSSRegionStyleRule();
 
-    virtual String cssText() const;
+    String cssText() const;
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     CSSRuleList* cssRules() const { return m_ruleList.get(); }
 

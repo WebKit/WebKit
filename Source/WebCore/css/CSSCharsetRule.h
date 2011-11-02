@@ -39,7 +39,7 @@ public:
     const String& encoding() const { return m_encoding; }
     void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }
 
-    virtual String cssText() const;
+    String cssText() const;
 
 private:
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);

@@ -47,7 +47,7 @@ public:
     MediaList* media() const { return m_lstMedia.get(); }
     CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
-    virtual String cssText() const;
+    String cssText() const;
 
     // Not part of the CSSOM
     bool isLoading() const;

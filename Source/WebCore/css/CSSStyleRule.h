@@ -45,7 +45,7 @@ public:
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
-    virtual String cssText() const;
+    String cssText() const;
 
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);

@@ -56,7 +56,7 @@ public:
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
-    virtual String cssText() const;
+    String cssText() const;
 
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 

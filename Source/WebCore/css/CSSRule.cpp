@@ -22,6 +22,15 @@
 #include "config.h"
 #include "CSSRule.h"
 
+#include "CSSCharsetRule.h"
+#include "CSSFontFaceRule.h"
+#include "CSSImportRule.h"
+#include "CSSMediaRule.h"
+#include "CSSPageRule.h"
+#include "CSSRegionStyleRule.h"
+#include "CSSStyleRule.h"
+#include "WebKitCSSKeyframeRule.h"
+#include "WebKitCSSKeyframesRule.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -29,6 +38,33 @@ namespace WebCore {
 void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
 {
     notImplemented();
+}
+
+String CSSRule::cssText() const
+{
+    switch (type()) {
+    case UNKNOWN_RULE:
+        return String();
+    case STYLE_RULE:
+    case PAGE_RULE:
+        return static_cast<const CSSStyleRule*>(this)->cssText();
+    case CHARSET_RULE:
+        return static_cast<const CSSCharsetRule*>(this)->cssText();
+    case IMPORT_RULE:
+        return static_cast<const CSSImportRule*>(this)->cssText();
+    case MEDIA_RULE:
+        return static_cast<const CSSMediaRule*>(this)->cssText();
+    case FONT_FACE_RULE:
+        return static_cast<const CSSFontFaceRule*>(this)->cssText();
+    case WEBKIT_KEYFRAMES_RULE:
+        return static_cast<const WebKitCSSKeyframesRule*>(this)->cssText();
+    case WEBKIT_KEYFRAME_RULE:
+        return static_cast<const WebKitCSSKeyframeRule*>(this)->cssText();
+    case WEBKIT_REGION_STYLE_RULE:
+        return static_cast<const CSSRegionStyleRule*>(this)->cssText();
+    }
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 } // namespace WebCore
