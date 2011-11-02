@@ -1,3 +1,14 @@
+2011-11-01  Darin Adler  <darin@apple.com>
+
+        Change HTMLSelectElement::setSelectedIndex to use enums instead of bools
+        https://bugs.webkit.org/show_bug.cgi?id=70184
+
+        Reviewed by Kent Tamura.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::valueChanged): Replaced setSelectedIndexByUser
+        call with a call to the renamed optionSelectedByUser, also removed one argument.
+
 2011-11-01  Nat Duca  <nduca@chromium.org>
 
         [chromium] Move resource-releasing logic into CCProxy and cleanup setNeedsCommit

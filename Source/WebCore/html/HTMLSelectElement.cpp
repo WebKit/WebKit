@@ -83,7 +83,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc
     , m_activeSelectionAnchorIndex(-1)
     , m_activeSelectionEndIndex(-1)
     , m_repeatingChar(0)
-    , m_userDrivenChange(false)
+    , m_isProcessingUserDrivenChange(false)
     , m_multiple(false)
     , m_activeSelectionState(false)
     , m_shouldRecalcListItems(false)
@@ -110,10 +110,10 @@ void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow, bool allowMultipleSelection)
+void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeNow, bool allowMultipleSelection)
 {
-    // List box selects can fire onchange events through user interaction, such as
-    // mousedown events. This allows that same behavior programmatically.
+    // User interaction such as mousedown events can cause list box select elements to send change events.
+    // This produces that same behavior for changes triggered by other code running on behalf of the user.
     if (!usesMenuList()) {
         updateSelectedState(optionIndex, allowMultipleSelection, false);
         setNeedsValidityCheck();
@@ -123,20 +123,20 @@ void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, b
     }
 
     // Bail out if this index is already the selected one, to avoid running unnecessary JavaScript that can mess up
-    // autofill, when there is no actual change (see https://bugs.webkit.org/show_bug.cgi?id=35256 and rdar://7467917 ).
-    // Perhaps this logic could be moved into SelectElement, but some callers of SelectElement::setSelectedIndex()
-    // seem to expect it to fire its change event even when the index was already selected.
+    // autofill when there is no actual change (see https://bugs.webkit.org/show_bug.cgi?id=35256 and <rdar://7467917>).
+    // The selectOption function does not behave this way, possibly because other callers need a change event even
+    // in cases where the selected option is not change.
     if (optionIndex == selectedIndex())
         return;
-    
-    setSelectedIndex(optionIndex, deselect, fireOnChangeNow, true);
+
+    selectOption(optionIndex, DeselectOtherOptions | (fireOnChangeNow ? DispatchChangeEvent : 0) | UserDriven);
 }
 
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
 {
     // The select element has no placeholder label option if it has an attribute "multiple" specified or a display size of non-1.
     // 
-    // The condition "size() > 1" is actually not compliant with the HTML5 spec as of Dec 3, 2010. "size() != 1" is correct.
+    // The condition "size() > 1" is not compliant with the HTML5 spec as of Dec 3, 2010. "size() != 1" is correct.
     // Using "size() > 1" here because size() may be 0 in WebKit.
     // See the discussion at https://bugs.webkit.org/show_bug.cgi?id=43887
     //
@@ -385,7 +385,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     ec = 0;
     if (index > maxSelectItems - 1)
         index = maxSelectItems - 1;
-    int diff = index  - length();
+    int diff = index - length();
     HTMLElement* before = 0;
     // Out of array bounds? First insert empty dummies.
     if (diff > 0) {
@@ -399,7 +399,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     if (!ec) {
         add(option, before, ec);
         if (diff >= 0 && option->selected())
-            setSelectedIndex(index, !m_multiple);
+            optionSelectionStateChanged(option, true);
     }
 }
 
@@ -618,14 +618,14 @@ void HTMLSelectElement::listBoxOnChange()
         dispatchFormControlChangeEvent();
 }
 
-void HTMLSelectElement::menuListOnChange()
+void HTMLSelectElement::dispatchChangeEventForMenuList()
 {
     ASSERT(usesMenuList());
 
     int selected = selectedIndex();
-    if (m_lastOnChangeIndex != selected && m_userDrivenChange) {
+    if (m_lastOnChangeIndex != selected && m_isProcessingUserDrivenChange) {
         m_lastOnChangeIndex = selected;
-        m_userDrivenChange = false;
+        m_isProcessingUserDrivenChange = false;
         dispatchFormControlChangeEvent();
     }
 }
@@ -746,12 +746,23 @@ int HTMLSelectElement::selectedIndex() const
     return -1;
 }
 
-void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange)
+void HTMLSelectElement::setSelectedIndex(int index)
 {
-    if (optionIndex == -1 && !deselect && !m_multiple)
-        optionIndex = nextSelectableListIndex(-1);
-    if (!m_multiple)
-        deselect = true;
+    selectOption(index, DeselectOtherOptions);
+}
+
+void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement* option, bool optionIsSelected)
+{
+    ASSERT(option->ownerSelectElement() == this);
+    if (optionIsSelected)
+        selectOption(option->index());
+    else
+        selectOption(m_multiple ? -1 : nextSelectableListIndex(-1));
+}
+
+void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
+{
+    bool shouldDeselect = !m_multiple || (flags & DeselectOtherOptions);
 
     const Vector<HTMLElement*>& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
@@ -760,15 +771,15 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     if (listIndex >= 0) {
         element = items[listIndex];
         if (element->hasTagName(optionTag)) {
-            if (m_activeSelectionAnchorIndex < 0 || deselect)
+            if (m_activeSelectionAnchorIndex < 0 || shouldDeselect)
                 setActiveSelectionAnchorIndex(listIndex);
-            if (m_activeSelectionEndIndex < 0 || deselect)
+            if (m_activeSelectionEndIndex < 0 || shouldDeselect)
                 setActiveSelectionEndIndex(listIndex);
             toHTMLOptionElement(element)->setSelectedState(true);
         }
     }
 
-    if (deselect)
+    if (shouldDeselect)
         deselectItemsWithoutValidation(element);
 
     // For the menu list case, this is what makes the selected element appear.
@@ -777,13 +788,13 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
 
     scrollToSelection();
 
-    // This only gets called with fireOnChangeNow for menu lists. 
-    if (usesMenuList()) {
-        m_userDrivenChange = userDrivenChange;
-        if (fireOnChangeNow)
-            menuListOnChange();
-        RenderObject* renderer = this->renderer();
-        if (renderer) {
+    if (!usesMenuList())
+        ASSERT(!(flags & DispatchChangeEvent));
+    else {
+        m_isProcessingUserDrivenChange = flags & UserDriven;
+        if (flags & DispatchChangeEvent)
+            dispatchChangeEventForMenuList();
+        if (RenderObject* renderer = this->renderer()) {
             if (usesMenuList())
                 toRenderMenuList(renderer)->didSetSelectedIndex(listIndex);
             else if (renderer->isListBox())
@@ -846,7 +857,7 @@ void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
     // change events for list boxes whenever the selection change is actually made.
     // This matches other browsers' behavior.
     if (usesMenuList())
-        menuListOnChange();
+        dispatchChangeEventForMenuList();
     HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
@@ -969,7 +980,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
                 return true;
 
             // Save the selection so it can be compared to the new selection
-            // when dispatching change events during setSelectedIndex, which
+            // when dispatching change events during selectOption, which
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
@@ -1022,7 +1033,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
             handled = false;
 
         if (handled && static_cast<size_t>(listIndex) < listItems.size())
-            setSelectedIndex(listToOptionIndex(listIndex), true, false, true);
+            selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | UserDriven);
 
         if (handled)
             event->setDefaultHandled();
@@ -1054,7 +1065,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 return;
 
             // Save the selection so it can be compared to the new selection
-            // when dispatching change events during setSelectedIndex, which
+            // when dispatching change events during selectOption, which
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
@@ -1072,7 +1083,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 return;
 
             // Save the selection so it can be compared to the new selection
-            // when dispatching change events during setSelectedIndex, which
+            // when dispatching change events during selectOption, which
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
@@ -1082,14 +1093,14 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         } else if (keyCode == '\r') {
             if (form())
                 form()->submitImplicitly(event, false);
-            menuListOnChange();
+            dispatchChangeEventForMenuList();
             handled = true;
         }
 #else
         int listIndex = optionToListIndex(selectedIndex());
         if (keyCode == '\r') {
             // listIndex should already be selected, but this will fire the onchange handler.
-            setSelectedIndex(listToOptionIndex(listIndex), true, true, true);
+            selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
             handled = true;
         }
 #endif
@@ -1105,7 +1116,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                     menuList->hidePopup();
                 else {
                     // Save the selection so it can be compared to the new
-                    // selection when we call onChange during setSelectedIndex,
+                    // selection when we call onChange during selectOption,
                     // which gets called from RenderMenuList::valueChanged,
                     // which gets called after the user makes a selection from
                     // the menu.
@@ -1398,7 +1409,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         // Fold the option string and check if its prefix is equal to the folded prefix.
         String text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
         if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded)) {
-            setSelectedIndex(listToOptionIndex(index), true, false, true);
+            selectOption(listToOptionIndex(index), DeselectOtherOptions | UserDriven);
             if (!usesMenuList())
                 listBoxOnChange();
 
@@ -1433,12 +1444,12 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
             if (toHTMLOptionElement(element)->selected())
                 toHTMLOptionElement(element)->setSelectedState(false);
             else
-                setSelectedIndex(index, false, true, true);
+                selectOption(index, DispatchChangeEvent | UserDriven);
         }
     }
 
     if (usesMenuList())
-        menuListOnChange();
+        dispatchChangeEventForMenuList();
     else
         listBoxOnChange();
 

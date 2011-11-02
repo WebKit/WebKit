@@ -1,3 +1,67 @@
+2011-11-01  Darin Adler  <darin@apple.com>
+
+        Change HTMLSelectElement::setSelectedIndex to use enums instead of bools
+        https://bugs.webkit.org/show_bug.cgi?id=70184
+
+        Reviewed by Kent Tamura.
+
+        Refactoring that does not require new tests.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLSelectElement _activateItemAtIndex:]): Replaced setSelectedIndexByUser
+        call with a call to the renamed optionSelectedByUser, also removed one argument.
+        (-[DOMHTMLSelectElement _activateItemAtIndex:allowMultipleSelection:]): Ditto.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelected): Replaced setSelectedIndex call with a
+        call to the new optionSelectionStateChanged function.
+        (WebCore::HTMLOptionElement::insertedIntoTree): Ditto.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Updated since m_userDrivenChange
+        was renamed to m_isProcessingUserDrivenChange.
+        (WebCore::HTMLSelectElement::optionSelectedByUser): Removed deselect argument,
+        which was always true for all callers. Updated comment.
+        (WebCore::HTMLSelectElement::hasPlaceholderLabelOption): Updated comment.
+        (WebCore::HTMLSelectElement::setOption): Call the new optionSelectionStateChanged
+        function. The code used to explicitly ask the function it calls to deselect base
+        on the value of m_multiple, but that is no longer needed because the selectOption
+        function itself takes care of that check.
+        (WebCore::HTMLSelectElement::dispatchChangeEventForMenuList): Renamed this function.
+        Also updated for name change to m_isProcessingUserDrivenChange.
+        (WebCore::HTMLSelectElement::setSelectedIndex): Moved the formerly-inlined function
+        here from the header and changed it to call the renamed selectOption function.
+        (WebCore::HTMLSelectElement::optionSelectionStateChanged): Added this function.
+        It is used by callers that were previously using setSelectedIndex and passing
+        "false" for the deselect argument. It's better now that setSelectedIndex is now a
+        pure DOM setter function without the multiple purposes it had before. This function
+        now has the logic that handles the special handling when deselecting an option,
+        which used to be at the top of the next function.
+        (WebCore::HTMLSelectElement::selectOption): Renamed this from setSelectedIndex.
+        Replaced boolean arguments with flags. Removed code to handle the special case
+        when we deselect an option; that's now handled in the optionSelectionStateChanged
+        function. Added an assertion to replace a comment and updated for other renaming.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): Updated for name change.
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent): Ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Changed to call the
+        new selectOption function and also updated for other name changes.
+        (WebCore::HTMLSelectElement::typeAheadFind): Ditto.
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex): Ditto.
+
+        * html/HTMLSelectElement.h: Changed the setSelectedIndex to be a pure setter
+        function for the selectedIndex DOM property. Added a optionSelectedByUser function
+        for the other use of setSelectedIndex, but removed the always true "deselect"
+        argument from it. Added a optionSelectionStateChanged function for use in the
+        HTMLOptionElement implementation. Renamed menuListOnChange to
+        dispatchChangeEventForMenuList for clarity. Added a SelectOptionFlag and
+        SelectOptionFlags type for the arguments to the selectOption function, formerly
+        implemented as an overload of setSelectedIndex (and called setSelectedIndexInternal
+        before that). Renamed m_userDrivenChange to m_isProcessingUserDrivenChange.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::valueChanged): Replaced setSelectedIndexByUser
+        call with a call to the renamed optionSelectedByUser, also removed one argument.
+
 2011-11-01  Sam Weinig  <sam@webkit.org>
 
         Implement __lookupGetter__/__lookupSetter__ in terms of getPropertyDescriptor

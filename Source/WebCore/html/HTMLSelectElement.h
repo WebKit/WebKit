@@ -41,8 +41,9 @@ public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
     int selectedIndex() const;
-    void setSelectedIndex(int index, bool deselect = true);
-    void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false, bool allowMultipleSelection = false);
+    void setSelectedIndex(int);
+
+    void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
 
     // For ValidityState
     bool valueMissing() const;
@@ -102,6 +103,9 @@ public:
     void setActiveSelectionEndIndex(int);
     void updateListBoxSelection(bool deselectOtherOptions);
     
+    // For use in the implementation of HTMLOptionElement.
+    void optionSelectionStateChanged(HTMLOptionElement*, bool optionIsSelected);
+    
 protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -130,7 +134,7 @@ private:
 
     virtual void defaultEventHandler(Event*);
 
-    void menuListOnChange();
+    void dispatchChangeEventForMenuList();
     
     void recalcListItems(bool updateSelectedStates = true) const;
 
@@ -145,8 +149,14 @@ private:
 
     bool hasPlaceholderLabelOption() const;
 
-    void setSelectedIndex(int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange);
-    void deselectItemsWithoutValidation(HTMLElement* excludeElement = 0);
+    enum SelectOptionFlag {
+        DeselectOtherOptions = 1 << 0,
+        DispatchChangeEvent = 1 << 1,
+        UserDriven = 1 << 2,
+    };
+    typedef unsigned SelectOptionFlags;
+    void selectOption(int optionIndex, SelectOptionFlags = 0);
+    void deselectItemsWithoutValidation(HTMLElement* elementToExclude = 0);
     void parseMultipleAttribute(const Attribute*);
     int lastSelectedListIndex() const;
     void updateSelectedState(int listIndex, bool multi, bool shift);
@@ -180,16 +190,11 @@ private:
     int m_activeSelectionAnchorIndex;
     int m_activeSelectionEndIndex;
     UChar m_repeatingChar;
-    bool m_userDrivenChange;
+    bool m_isProcessingUserDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;
     mutable bool m_shouldRecalcListItems;
 };
-
-inline void HTMLSelectElement::setSelectedIndex(int index, bool deselect)
-{
-    setSelectedIndex(index, deselect, false, false);
-}
 
 inline bool HTMLSelectElement::usesMenuList() const
 {

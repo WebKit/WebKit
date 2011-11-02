@@ -325,7 +325,7 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
         return;
     
     HTMLSelectElement* select = toHTMLSelectElement(node());
-    select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireOnChange);
+    select->optionSelectedByUser(select->listToOptionIndex(listIndex), fireOnChange);
 }
 
 #if ENABLE(NO_LISTBOX_RENDERING)

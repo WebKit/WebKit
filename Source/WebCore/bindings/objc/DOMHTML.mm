@@ -146,7 +146,7 @@
 {
     // Use the setSelectedIndexByUser function so a change event will be fired. <rdar://problem/6760590>
     if (WebCore::HTMLSelectElement* select = core(self))
-        select->setSelectedIndexByUser(index, true, true);
+        select->optionSelectedByUser(index, true);
 }
 
 - (void)_activateItemAtIndex:(int)index allowMultipleSelection:(BOOL)allowMultipleSelection
@@ -155,7 +155,7 @@
     // If this is a <select multiple> the allowMultipleSelection flag will allow setting multiple
     // selections without clearing the other selections.
     if (WebCore::HTMLSelectElement* select = core(self))
-        select->setSelectedIndexByUser(index, true, true, allowMultipleSelection);
+        select->optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 @end

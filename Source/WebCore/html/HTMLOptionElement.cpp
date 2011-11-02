@@ -229,7 +229,7 @@ void HTMLOptionElement::setSelected(bool selected)
     setSelectedState(selected);
 
     if (HTMLSelectElement* select = ownerSelectElement())
-        select->setSelectedIndex(selected ? index() : -1, false);
+        select->optionSelectionStateChanged(this, selected);
 }
 
 void HTMLOptionElement::setSelectedState(bool selected)
@@ -276,9 +276,10 @@ void HTMLOptionElement::setLabel(const String& label)
 void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
 {
     m_style = newStyle;
-    if (HTMLSelectElement* select = ownerSelectElement())
+    if (HTMLSelectElement* select = ownerSelectElement()) {
         if (RenderObject* renderer = select->renderer())
             renderer->repaint();
+    }
 }
 
 RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
@@ -305,8 +306,10 @@ void HTMLOptionElement::insertedIntoTree(bool deep)
         select->setRecalcListItems();
         // Do not call selected() since calling updateListItemSelectedStates()
         // at this time won't do the right thing. (Why, exactly?)
+        // FIXME: Might be better to call this unconditionally, always passing m_isSelected,
+        // rather than only calling it if we are selected.
         if (m_isSelected)
-            select->setSelectedIndex(index(), false);
+            select->optionSelectionStateChanged(this, true);
         select->scrollToSelection();
     }
 
