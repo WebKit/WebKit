@@ -836,6 +836,11 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
     }
 }
 
+bool NetscapePlugin::wantsWindowRelativeNPWindowCoordinates()
+{
+    return true;
+}
+
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
 {
     m_windowHasFocus = hasFocus;

@@ -1,3 +1,24 @@
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Allow the various plug-in ports to decide whether NPWindow coordinates should be window-relative
+        https://bugs.webkit.org/show_bug.cgi?id=71415
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindow):
+        Remove the PLUGIN_ARCHITECTURE(X11) ifdef and set the NPWindow members
+        based on the return value of wantsWindowRelativeNPWindowCoordinates.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::wantsWindowRelativeNPWindowCoordinates):
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::wantsWindowRelativeNPWindowCoordinates):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::wantsWindowRelativeNPWindowCoordinates):
+        Add platform specific implementations.
+
 2011-11-02  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK] Debug build broken after r99065

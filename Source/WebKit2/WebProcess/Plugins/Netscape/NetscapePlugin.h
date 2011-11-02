@@ -160,6 +160,8 @@ private:
     bool platformHandleKeyboardEvent(const WebKeyboardEvent&);
     void platformSetFocus(bool);
 
+    static bool wantsWindowRelativeNPWindowCoordinates();
+
     // Plugin
     virtual bool initialize(const Parameters&);
     virtual void destroy();

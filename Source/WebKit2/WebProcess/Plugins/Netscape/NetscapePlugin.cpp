@@ -483,20 +483,22 @@ NPError NetscapePlugin::NPP_SetValue(NPNVariable variable, void *value)
 
 void NetscapePlugin::callSetWindow()
 {
-#if PLUGIN_ARCHITECTURE(X11)
-    // We use a backing store as the painting area for the plugin.
-    m_npWindow.x = 0;
-    m_npWindow.y = 0;
-#else
-    m_npWindow.x = m_frameRectInWindowCoordinates.x();
-    m_npWindow.y = m_frameRectInWindowCoordinates.y();
-#endif
-    m_npWindow.width = m_frameRectInWindowCoordinates.width();
-    m_npWindow.height = m_frameRectInWindowCoordinates.height();
-    m_npWindow.clipRect.top = m_clipRectInWindowCoordinates.y();
-    m_npWindow.clipRect.left = m_clipRectInWindowCoordinates.x();
-    m_npWindow.clipRect.bottom = m_clipRectInWindowCoordinates.maxY();
-    m_npWindow.clipRect.right = m_clipRectInWindowCoordinates.maxX();
+    if (wantsWindowRelativeNPWindowCoordinates()) {
+        m_npWindow.x = m_frameRectInWindowCoordinates.x();
+        m_npWindow.y = m_frameRectInWindowCoordinates.y();
+        m_npWindow.clipRect.top = m_clipRectInWindowCoordinates.y();
+        m_npWindow.clipRect.left = m_clipRectInWindowCoordinates.x();
+    } else {
+        m_npWindow.x = 0;
+        m_npWindow.y = 0;
+        m_npWindow.clipRect.top = m_clipRect.y();
+        m_npWindow.clipRect.left = m_clipRect.x();
+    }
+
+    m_npWindow.width = m_pluginSize.width();
+    m_npWindow.height = m_pluginSize.height();
+    m_npWindow.clipRect.right = m_npWindow.clipRect.left + m_clipRect.width();
+    m_npWindow.clipRect.bottom = m_npWindow.clipRect.top + m_clipRect.height();
 
     NPP_SetWindow(&m_npWindow);
 }
