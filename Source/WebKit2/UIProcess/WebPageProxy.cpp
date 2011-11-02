@@ -960,7 +960,12 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (m_needTouchEvents) {
         m_touchEventQueue.append(event);
         process()->responsivenessTimer()->start();
-        process()->send(Messages::WebPage::TouchEvent(event), m_pageID);
+        if (m_shouldSendEventsSynchronously) {
+            bool handled = false;
+            process()->sendSync(Messages::WebPage::TouchEventSyncForTesting(event), Messages::WebPage::TouchEventSyncForTesting::Reply(handled), m_pageID);
+            didReceiveEvent(event.type(), handled);
+        } else
+            process()->send(Messages::WebPage::TouchEvent(event), m_pageID);
     } else {
         if (m_touchEventQueue.isEmpty()) {
             bool isEventHandled = false;

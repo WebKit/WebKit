@@ -61,6 +61,7 @@ private:
     bool handleDragLeaveEvent(QDragLeaveEvent*);
     bool handleDragMoveEvent(QDragMoveEvent*);
     bool handleDropEvent(QDropEvent*);
+    bool handleTouchEvent(QTouchEvent*);
 
     QPoint m_tripleClick;
     QBasicTimer m_tripleClickTimer;

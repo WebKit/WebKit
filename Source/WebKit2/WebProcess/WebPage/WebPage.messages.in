@@ -43,6 +43,7 @@ messages -> WebPage {
 #endif
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
+    TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
 #endif
 
     ContextMenuHidden()

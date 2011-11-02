@@ -8,6 +8,8 @@ GENERATED_SOURCES_DIR = ../generated
 
 include(../../../Source/WebKit.pri)
 
+include(../../../../Source/WebCore/features.pri) # For ENABLE_TOUCH_EVENTS
+
 DEFINES += USE_SYSTEM_MALLOC=1
 DEFINES -= QT_ASCII_CAST_WARNINGS
 

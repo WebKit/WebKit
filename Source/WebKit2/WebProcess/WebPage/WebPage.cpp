@@ -1323,6 +1323,12 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
 }
+
+void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& handled)
+{
+    CurrentEvent currentEvent(touchEvent);
+    handled = handleTouchEvent(touchEvent, m_page.get());
+}
 #endif
 
 void WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

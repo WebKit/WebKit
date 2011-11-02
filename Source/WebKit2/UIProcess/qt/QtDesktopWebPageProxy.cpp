@@ -116,6 +116,13 @@ bool QtDesktopWebPageProxy::handleEvent(QEvent* ev)
         return handleDragMoveEvent(reinterpret_cast<QDragMoveEvent*>(ev));
     case QEvent::Drop:
         return handleDropEvent(reinterpret_cast<QDropEvent*>(ev));
+    // Touch events only for WebKitTestRunner
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+        return handleTouchEvent(static_cast<QTouchEvent*>(ev));
+    default:
+        break;
     }
     return QtWebPageProxy::handleEvent(ev);
 }
@@ -236,6 +243,13 @@ bool QtDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
 
     ev->setAccepted(accepted);
     return accepted;
+}
+
+bool QtDesktopWebPageProxy::handleTouchEvent(QTouchEvent* event)
+{
+    m_webPageProxy->handleTouchEvent(NativeWebTouchEvent(event));
+    event->accept();
+    return true;
 }
 
 void QtDesktopWebPageProxy::timerEvent(QTimerEvent* ev)

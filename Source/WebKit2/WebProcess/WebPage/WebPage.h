@@ -509,6 +509,7 @@ private:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
+    void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
 #endif
     void contextMenuHidden() { m_isShowingContextMenu = false; }
 

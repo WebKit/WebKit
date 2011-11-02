@@ -62,6 +62,18 @@ public:
     void zoomPageOut();
     void scalePageBy(double scale, double x, double y);
 
+#if ENABLE(TOUCH_EVENTS)
+    // Touch events.
+    void addTouchPoint(int x, int y);
+    void updateTouchPoint(int index, int x, int y);
+    void setTouchModifier(const JSStringRef &modifier, bool enable);
+    void touchStart();
+    void touchMove();
+    void touchEnd();
+    void clearTouchPoints();
+    void releaseTouchPoint(int index);
+#endif
+
 private:
     EventSendingController();
 

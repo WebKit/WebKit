@@ -1,3 +1,45 @@
+2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Add support for touch event testing to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=71310
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKitTestRunner/DerivedSources.pro: Build system foo to ensure the ENABLE_TOUCH_EVENTS
+        define works in EventSendingController.idl
+        * WebKitTestRunner/EventSenderProxy.h: Add declarations for Qt implementations of touch
+        handlers.
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl: Add touch functions
+        required by tests.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp: Forward touch messages to the
+        ui process.
+        (WTR::EventSendingController::addTouchPoint):
+        (WTR::EventSendingController::updateTouchPoint):
+        (WTR::EventSendingController::setTouchModifier):
+        (WTR::EventSendingController::touchStart):
+        (WTR::EventSendingController::touchMove):
+        (WTR::EventSendingController::touchEnd):
+        (WTR::EventSendingController::clearTouchPoints):
+        (WTR::EventSendingController::releaseTouchPoint):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro: Include features.pri for feature
+        defines.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle): Forward incoming
+        touch messages to the EventSenderProxy.
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp: Implement touch test harness functions.
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchModifier):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::sendTouchEvent):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro: Include features.pri for feature defines.
+
 2011-11-01  Sam Weinig  <sam@webkit.org>
 
         resolve-ChangeLogs --help should be faster.

@@ -37,6 +37,8 @@ defineTest(addExtraCompiler) {
 
 SRC_ROOT_DIR = $$replace(PWD, /Tools/WebKitTestRunner, "")
 
+include($$SRC_ROOT_DIR/Source/WebCore/features.pri) # for ENABLE_TOUCH_EVENTS
+
 # Make sure forwarded headers needed by this project are present
 fwheader_generator.commands = perl $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Tools/WebKitTestRunner $${OUTPUT_DIR}/include qt
 fwheader_generator.depends  = $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl
@@ -47,7 +49,7 @@ QMAKE_EXTRA_TARGETS         += fwheader_generator
 idl.output = $${GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
 idl.wkScript = $$PWD/../../Source/WebCore/bindings/scripts/generate-bindings.pl
-idl.commands = perl -I$$PWD/../../Source/WebCore/bindings/scripts -I$$PWD/InjectedBundle/Bindings $$idl.wkScript --defines \"\" --generator TestRunner --include $$PWD/InjectedBundle/Bindings --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.commands = perl -I$$PWD/../../Source/WebCore/bindings/scripts -I$$PWD/InjectedBundle/Bindings $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator TestRunner --include $$PWD/InjectedBundle/Bindings --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.depends = $$PWD/../../Source/WebCore/bindings/scripts/CodeGenerator.pm \
               $$PWD/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
               $$PWD/../../Source/WebCore/bindings/scripts/IDLParser.pm \

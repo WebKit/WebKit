@@ -41,6 +41,18 @@ module WTR {
         void zoomPageIn();
         void zoomPageOut();
         void scalePageBy(in double scale, in double x, in double y);
+
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        // Touch events.
+        void addTouchPoint(in long x, in long y);
+        void updateTouchPoint(in long index, in long x, in long y);
+        void setTouchModifier(in DOMString modifier, in boolean enable);
+        void touchStart();
+        void touchMove();
+        void touchEnd();
+        void clearTouchPoints();
+        void releaseTouchPoint(in long index);
+#endif
     };
 
 }

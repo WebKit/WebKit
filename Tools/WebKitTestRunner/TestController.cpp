@@ -619,6 +619,77 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 #endif
+
+#if ENABLE(TOUCH_EVENTS)
+        if (WKStringIsEqualToUTF8CString(subMessageName, "AddTouchPoint")) {
+            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
+            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
+
+            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
+            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
+
+            m_eventSenderProxy->addTouchPoint(x, y);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "UpdateTouchPoint")) {
+            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
+            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
+
+            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
+            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
+
+            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
+            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
+
+            m_eventSenderProxy->updateTouchPoint(index, x, y);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "SetTouchModifier")) {
+            WKRetainPtr<WKStringRef> modifierKey = adoptWK(WKStringCreateWithUTF8CString("Modifier"));
+            WKEventModifiers modifier = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifierKey.get()))));
+
+            WKRetainPtr<WKStringRef> enableKey = adoptWK(WKStringCreateWithUTF8CString("Enable"));
+            bool enable = static_cast<bool>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, enableKey.get()))));
+
+            m_eventSenderProxy->setTouchModifier(modifier, enable);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "TouchStart")) {
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
+            m_eventSenderProxy->touchStart();
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "TouchMove")) {
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
+            m_eventSenderProxy->touchMove();
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "TouchEnd")) {
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
+            m_eventSenderProxy->touchEnd();
+            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ClearTouchPoints")) {
+            m_eventSenderProxy->clearTouchPoints();
+            return 0;
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ReleaseTouchPoint")) {
+            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
+            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
+            m_eventSenderProxy->releaseTouchPoint(index);
+            return 0;
+        }
+#endif
         ASSERT_NOT_REACHED();
     }
 #endif

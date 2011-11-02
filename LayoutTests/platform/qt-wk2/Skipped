@@ -301,9 +301,6 @@ http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 # EventSender.mouseMoveTo is not yet supported
 svg/dynamic-updates
 
-# eventSender.clearTouchPoints is unimplemented
-fast/events/touch
-
 # layoutTestController.ignoreDesktopNotificationPermissionRequests is unimplemented
 fast/notifications
 

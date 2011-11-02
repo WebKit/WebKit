@@ -62,6 +62,9 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     , m_clickPosition()
     , m_clickButton(kWKEventMouseButtonNoButton)
     , m_mouseButtons(0)
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchActive(false)
+#endif
 {
     memset(eventQueue, 0, sizeof(eventQueue));
     endOfQueue = 0;
@@ -304,6 +307,94 @@ void EventSenderProxy::leapForward(int ms)
 {
     eventQueue[endOfQueue].m_delay = ms;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void EventSenderProxy::addTouchPoint(int x, int y)
+{
+    const int id = m_touchPoints.isEmpty() ? 0 : m_touchPoints.last().id() + 1;
+    const QPointF pos(x, y);
+    QTouchEvent::TouchPoint point(id);
+    point.setPos(pos);
+    point.setStartPos(pos);
+    point.setState(Qt::TouchPointPressed);
+    m_touchPoints.append(point);
+}
+
+void EventSenderProxy::updateTouchPoint(int index, int x, int y)
+{
+    ASSERT(index >= 0 && index < m_touchPoints.count());
+    QTouchEvent::TouchPoint &p = m_touchPoints[index];
+    p.setPos(QPointF(x, y));
+    p.setState(Qt::TouchPointMoved);
+}
+
+void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
+{
+    Qt::KeyboardModifiers mod = getModifiers(modifier);
+
+    if (enable)
+        m_touchModifiers |= mod;
+    else
+        m_touchModifiers &= ~mod;
+}
+
+void EventSenderProxy::touchStart()
+{
+    if (!m_touchActive) {
+        sendTouchEvent(QEvent::TouchBegin);
+        m_touchActive = true;
+    } else
+        sendTouchEvent(QEvent::TouchUpdate);
+}
+
+void EventSenderProxy::touchMove()
+{
+    sendTouchEvent(QEvent::TouchUpdate);
+}
+
+void EventSenderProxy::touchEnd()
+{
+    for (int i = 0; i < m_touchPoints.count(); ++i) {
+        if (m_touchPoints[i].state() != Qt::TouchPointReleased) {
+            sendTouchEvent(QEvent::TouchUpdate);
+            return;
+        }
+    }
+    sendTouchEvent(QEvent::TouchEnd);
+    m_touchActive = false;
+}
+
+void EventSenderProxy::clearTouchPoints()
+{
+    m_touchPoints.clear();
+    m_touchModifiers = Qt::KeyboardModifiers();
+    m_touchActive = false;
+}
+
+void EventSenderProxy::releaseTouchPoint(int index)
+{
+    if (index < 0 || index >= m_touchPoints.count())
+        return;
+
+    m_touchPoints[index].setState(Qt::TouchPointReleased);
+}
+
+void EventSenderProxy::sendTouchEvent(QEvent::Type type)
+{
+    QTouchEvent event(type, QTouchEvent::TouchScreen, m_touchModifiers);
+    event.setTouchPoints(m_touchPoints);
+    m_testController->mainWebView()->sendEvent(&event);
+    QList<QTouchEvent::TouchPoint>::Iterator it = m_touchPoints.begin();
+    while (it != m_touchPoints.end()) {
+        if (it->state() == Qt::TouchPointReleased)
+            it = m_touchPoints.erase(it);
+        else {
+            it->setState(Qt::TouchPointStationary);
+            ++it;
+        }
+    }
+}
+#endif
 
 void EventSenderProxy::sendOrQueueEvent(QEvent* event)
 {

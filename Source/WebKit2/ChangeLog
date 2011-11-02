@@ -1,5 +1,27 @@
 2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][WK2] Add support for touch event testing to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=71310
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent): Add support for m_shouldSendEventsSynchronously.
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::handleEvent): Handle plain touch events in the desktop page proxy by
+        forwarding them appropriately. We will receive them from WTR through ::event, but we won't
+        receive them from QQuickCanvas (i.e. the user) because that doesn't uses ::event but only
+        dedicated fooEvent() handlers, of which we don't re-implement the touch version.
+        (QtDesktopWebPageProxy::handleTouchEvent): Forward touch events to WebPageProxy.
+        * UIProcess/qt/QtDesktopWebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::touchEventSyncForTesting): Add support for synchronous touch event testing,
+        similar to the way it's done for mouse events.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
+2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [WK2] Remove unused/duplicated modifiers member from WebTouchEvent
         https://bugs.webkit.org/show_bug.cgi?id=71353
 

@@ -48,6 +48,18 @@ public:
 
     void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
 
+#if ENABLE(TOUCH_EVENTS)
+    // Touch events.
+    void addTouchPoint(int x, int y);
+    void updateTouchPoint(int index, int x, int y);
+    void setTouchModifier(WKEventModifiers, bool enable);
+    void touchStart();
+    void touchMove();
+    void touchEnd();
+    void clearTouchPoints();
+    void releaseTouchPoint(int index);
+#endif
+
 private:
     TestController* m_testController;
 
@@ -55,6 +67,9 @@ private:
     void updateClickCountForButton(int button);
 
 #if PLATFORM(QT)
+#if ENABLE(TOUCH_EVENTS)
+    void sendTouchEvent(QEvent::Type);
+#endif
     void sendOrQueueEvent(QEvent*);
     void replaySavedEvents();
 #endif
@@ -70,6 +85,12 @@ private:
     int eventNumber;
 #elif PLATFORM(QT)
     Qt::MouseButtons m_mouseButtons;
+
+#if ENABLE(TOUCH_EVENTS)
+    QList<QTouchEvent::TouchPoint> m_touchPoints;
+    Qt::KeyboardModifiers m_touchModifiers;
+    bool m_touchActive;
+#endif
 #endif
 };
 
