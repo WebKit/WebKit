@@ -1,3 +1,24 @@
+2011-10-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        div { display: none; } makes pasting into text fields impossible
+        https://bugs.webkit.org/show_bug.cgi?id=27683
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by insertFragmentForTestRendering's always inserting a node for test rendering
+        into document's body.
+
+        Fixed the bug by inserting the node for test rendering into the root editable element. In addition,
+        remove the node before dispatching beforeTextInserted event to avoid event listeners, in particular
+        TextFieldInputType::handleBeforeTextInsertedEvent, from seeing the test node.
+
+        Test: editing/pasteboard/input-with-display-none-div.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        (WebCore::ReplacementFragment::restoreAndRemoveTestRenderingNodesToFragment):
+
 2011-11-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r96870): WebKit generates background: transparent on blogger.com
