@@ -25,6 +25,8 @@
 #ifndef MediaStreamRegistry_h
 #define MediaStreamRegistry_h
 
+#if ENABLE(MEDIA_STREAM)
+
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -33,6 +35,7 @@ namespace WebCore {
 
 class KURL;
 class MediaStream;
+class MediaStreamDescriptor;
 
 class MediaStreamRegistry {
 public:
@@ -42,13 +45,15 @@ public:
     // Registers a blob URL referring to the specified stream data.
     void registerMediaStreamURL(const KURL&, PassRefPtr<MediaStream>);
     void unregisterMediaStreamURL(const KURL&);
-    MediaStream* mediaStream(const KURL&) const;
+
+    MediaStreamDescriptor* lookupMediaStreamDescriptor(const String& url);
 
 private:
-    typedef HashMap<String, RefPtr<MediaStream> > URLStreamMap;
-    URLStreamMap m_streams;
+    HashMap<String, RefPtr<MediaStreamDescriptor> > m_streamDescriptors;
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
 
 #endif // MediaStreamRegistry_h

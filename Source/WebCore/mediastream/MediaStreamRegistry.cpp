@@ -43,22 +43,19 @@ MediaStreamRegistry& MediaStreamRegistry::registry()
 void MediaStreamRegistry::registerMediaStreamURL(const KURL& url, PassRefPtr<MediaStream> stream)
 {
     ASSERT(isMainThread());
-    m_streams.add(url.string(), stream);
+    m_streamDescriptors.set(url.string(), stream->descriptor());
 }
 
 void MediaStreamRegistry::unregisterMediaStreamURL(const KURL& url)
 {
     ASSERT(isMainThread());
-    m_streams.remove(url.string());
+    m_streamDescriptors.remove(url.string());
 }
 
-MediaStream* MediaStreamRegistry::mediaStream(const KURL& url) const
+MediaStreamDescriptor* MediaStreamRegistry::lookupMediaStreamDescriptor(const String& url)
 {
     ASSERT(isMainThread());
-    URLStreamMap::const_iterator it = m_streams.find(url.string());
-    if (it != m_streams.end())
-        return it->second.get();
-    return 0;
+    return m_streamDescriptors.get(url).get();
 }
 
 } // namespace WebCore
