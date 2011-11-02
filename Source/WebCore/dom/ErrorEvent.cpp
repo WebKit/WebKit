@@ -66,18 +66,6 @@ ErrorEvent::~ErrorEvent()
 {
 }
 
-void ErrorEvent::initErrorEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& message, const String& fileName, unsigned lineNumber)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_message = message;
-    m_fileName = fileName;
-    m_lineNumber = lineNumber;
-}
-
 const AtomicString& ErrorEvent::interfaceName() const
 {
     return eventNames().interfaceForErrorEvent;

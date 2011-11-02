@@ -1,3 +1,14 @@
+2011-11-01  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove initErrorEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71338
+
+        Reviewed by Ojan Vafai.
+
+        * dom/ErrorEvent.cpp: Crush.
+        * dom/ErrorEvent.h: Kill.
+        * dom/ErrorEvent.idl: Destroy.
+
 2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Pack RenderTableCell bits
