@@ -7,7 +7,7 @@ TouchWebView {
 
     SignalSpy {
         id: spy
-        target: webView.page
+        target: webView
         signalName: "loadSucceeded"
     }
 
@@ -17,10 +17,10 @@ TouchWebView {
         function test_loadProgress() {
             compare(spy.count, 0)
             var testUrl = Qt.resolvedUrl("../common/test1.html")
-            webView.page.load(testUrl)
-            compare(webView.page.loadProgress, 0)
+            webView.load(testUrl)
+            compare(webView.loadProgress, 0)
             spy.wait()
-            compare(webView.page.loadProgress, 100)
+            compare(webView.loadProgress, 100)
         }
     }
 }

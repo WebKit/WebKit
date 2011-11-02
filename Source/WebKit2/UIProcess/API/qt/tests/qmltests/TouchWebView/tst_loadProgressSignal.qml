@@ -7,13 +7,13 @@ TouchWebView {
 
     SignalSpy {
         id: spy
-        target: webView.page
+        target: webView
         signalName: "loadSucceeded"
     }
 
     SignalSpy {
         id: spyProgress
-        target: webView.page
+        target: webView
         signalName: "loadProgressChanged"
     }
 
@@ -22,14 +22,14 @@ TouchWebView {
 
         function test_loadProgressSignal() {
             compare(spyProgress.count, 0)
-            compare(webView.page.loadProgress, 0)
-            webView.page.load(Qt.resolvedUrl("../common/test1.html"))
+            compare(webView.loadProgress, 0)
+            webView.load(Qt.resolvedUrl("../common/test1.html"))
             spyProgress.wait()
-            compare(true, webView.page.loadProgress > -1 && webView.page.loadProgress < 101)
-            if (webView.page.loadProgress > 0 && webView.page.loadProgress < 100) {
+            compare(true, webView.loadProgress > -1 && webView.loadProgress < 101)
+            if (webView.loadProgress > 0 && webView.loadProgress < 100) {
                 spy.wait()
                 spyProgress.wait()
-                compare(webView.page.loadProgress, 100)
+                compare(webView.loadProgress, 100)
             }
         }
     }

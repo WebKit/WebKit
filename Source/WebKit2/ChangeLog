@@ -1,3 +1,21 @@
+2011-11-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix qmltest API test failures related to r98973.
+        https://bugs.webkit.org/show_bug.cgi?id=71280
+
+        Reviewed by Noam Rosenthal.
+
+        Most of the API was moved from TouchWebView.page to TouchWebView directly.
+        Fixed the qml tests to reflect this change.
+
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_load.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadNegativeSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadZeroSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml:
+
 2011-11-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Handle interruption of page interaction better

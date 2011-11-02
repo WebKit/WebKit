@@ -9,7 +9,7 @@ TouchWebView {
 
     SignalSpy {
         id: spy
-        target: webView.page
+        target: webView
         signalName: "loadFailed"
     }
 
@@ -21,17 +21,17 @@ TouchWebView {
             skip("Fails due to https://bugreports.qt.nokia.com/browse/QTBUG-21537")
             compare(spy.count, 0)
             testUrl = Qt.resolvedUrl("file_that_does_not_exist.html")
-            webView.page.load(testUrl)
+            webView.load(testUrl)
             spy.wait()
             compare(spy.count, 1)
         }
     }
     Connections {
-        target: webView.page
+        target: webView
         onLoadFailed: {
             test.compare(url, testUrl)
             test.compare(errorCode, NetworkReply.ContentNotFoundError)
-            test.compare(errorType, TouchWebPage.NetworkError)
+            test.compare(errorType, TouchWebView.NetworkError)
         }
     }
 }
