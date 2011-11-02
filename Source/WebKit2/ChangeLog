@@ -1,3 +1,11 @@
+2011-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip testWebKitSettingsNewWithSettings affected by bug
+        70127.
+
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettingsNewWithSettings):
+
 2011-11-01  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Make API tests less noisy

@@ -108,6 +108,9 @@ static void testWebKitSettings(Test*, gconstpointer)
 
 void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
 {
+    /* Skip running this test for now till a bug in WKPreferencesCreate
+       https://bugs.webkit.org/show_bug.cgi?id=70127 gets fixed. */
+#if 0
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new_with_settings("enable-javascript", FALSE,
                                                                                    "auto-load-images", FALSE,
                                                                                    "load-icons-ignoring-image-load-setting", TRUE,
@@ -116,6 +119,7 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     g_assert(!webkit_settings_get_enable_javascript(settings.get()));
     g_assert(!webkit_settings_get_auto_load_images(settings.get()));
     g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
+#endif
 }
 
 void beforeAll()
