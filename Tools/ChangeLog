@@ -1,3 +1,21 @@
+2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] REGRESSION: 5 editing tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=71117
+
+        Reviewed by Andreas Kling.
+
+        Make sure that the view is properly focused, in order to get the
+        didBeginEditing DRT calls.
+
+        This requires activating the window (the call will result in a FocusIn
+        event to the window as well as setting QGuiApplication::focusWindow())
+        as well as enabling the focus on the view item. The signature of
+        setFocus has changed to take a boolean.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+
 2011-11-02  Matt Falkenhagen  <falken@chromium.org>
 
         [chromium] Add per-script font preferences support in overridePreference

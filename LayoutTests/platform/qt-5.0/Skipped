@@ -6957,14 +6957,6 @@ fast/spatial-navigation/snav-iframe-no-scrollable-content.html
 fast/spatial-navigation/snav-media-elements.html
 fast/spatial-navigation/snav-offscreen-content.html
 
-# [Qt]REGRESSION: 5 editing tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=71117
-editing/deleting/merge-paragraph-from-p-with-style-2.html
-editing/deleting/merge-paragraph-from-p-with-style-3.html
-editing/deleting/merge-paragraph-into-h1-with-dir-2.html
-editing/deleting/merge-paragraph-into-h1-with-dir.html
-editing/deleting/merge-paragraph-from-h6-with-style-2.html
-
 # [Qt] fast/multicol/flipped-blocks-hit-test.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=71118
 fast/multicol/flipped-blocks-hit-test.html

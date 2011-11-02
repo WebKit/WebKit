@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QDeclarativeProperty>
 #include <QQuickView>
+#include <qwindowsysteminterface_qpa.h>
 
 namespace WTR {
 
@@ -57,9 +58,8 @@ private slots:
         m_view->setParentItem(rootObject());
         QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
-        QFocusEvent ev(QEvent::WindowActivate);
-        QApplication::sendEvent(m_view, &ev);
-        m_view->setFocus(Qt::OtherFocusReason);
+        QWindowSystemInterface::handleWindowActivated(this);
+        m_view->setFocus(true);
     }
 
 private:
