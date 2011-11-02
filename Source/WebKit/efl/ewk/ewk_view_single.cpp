@@ -429,6 +429,8 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
         goto error_tiler;
     }
 
+    ewk_view_layout_if_needed_recursive(smartData->_priv);
+
     pr = ewk_view_repaints_get(smartData->_priv, &count);
     pr_end = pr + count;
     for (; pr < pr_end; pr++)
@@ -440,8 +442,6 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
         ret = EINA_FALSE;
         goto error_iterator;
     }
-
-    ewk_view_layout_if_needed_recursive(smartData->_priv);
 
     int sx, sy;
     ewk_frame_scroll_pos_get(smartData->main_frame, &sx, &sy);
