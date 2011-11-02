@@ -86,6 +86,8 @@ struct WKPageLoaderClient {
     WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
     WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;
     WKPageDidRemoveFrameFromHierarchyCallback                           didRemoveFrameFromHierarchy;
+    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
+    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
     WKPageCanAuthenticateAgainstProtectionSpaceInFrameCallback          canAuthenticateAgainstProtectionSpaceInFrame;
     WKPageDidReceiveAuthenticationChallengeInFrameCallback              didReceiveAuthenticationChallengeInFrame;
 
@@ -103,8 +105,6 @@ struct WKPageLoaderClient {
     WKPageDidFailToInitializePluginCallback                             didFailToInitializePlugin;
 
     // Version 1
-    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
-    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;

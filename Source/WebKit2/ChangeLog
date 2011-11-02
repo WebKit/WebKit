@@ -1,5 +1,11 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Move back functions that were not added.
+
+        * UIProcess/API/C/WKPage.h:
+
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Fix build and WebKit2 ABI.
 
         * Shared/APIClientTraits.cpp:
