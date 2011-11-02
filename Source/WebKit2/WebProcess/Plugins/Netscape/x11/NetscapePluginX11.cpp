@@ -284,8 +284,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay,
                                                                                  m_drawable,
                                                                                  static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->visual,
-                                                                                 m_frameRectInWindowCoordinates.width(),
-                                                                                 m_frameRectInWindowCoordinates.height()));
+                                                                                 m_pluginSize.width(),
+                                                                                 m_pluginSize.height()));
     cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
 

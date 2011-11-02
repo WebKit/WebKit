@@ -158,18 +158,15 @@ void NetscapePlugin::platformVisibilityDidChange()
 
 void NetscapePlugin::scheduleWindowedGeometryUpdate()
 {
-    IntRect clipRectInPluginWindowCoordinates = m_clipRectInWindowCoordinates;
-    clipRectInPluginWindowCoordinates.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
-
     // We only update the size here and let the UI process update our position and clip rect so
     // that we can keep our position in sync when scrolling, etc. See <http://webkit.org/b/60210>.
-    ::SetWindowPos(m_window, 0, 0, 0, m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height(), SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+    ::SetWindowPos(m_window, 0, 0, 0, m_pluginSize.width(), m_pluginSize.height(), SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
     WindowGeometry geometry;
     geometry.window = m_window;
     geometry.visible = controller()->isPluginVisible();
     geometry.frame = m_frameRectInWindowCoordinates;
-    geometry.clipRect = clipRectInPluginWindowCoordinates;
+    geometry.clipRect = m_clipRect;
 
     controller()->scheduleWindowedPluginGeometryUpdate(geometry);
 }
@@ -196,8 +193,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
     windowpos.x = m_frameRectInWindowCoordinates.x();
     windowpos.y = m_frameRectInWindowCoordinates.y();
-    windowpos.cx = m_frameRectInWindowCoordinates.width();
-    windowpos.cy = m_frameRectInWindowCoordinates.height();
+    windowpos.cx = m_pluginSize.width();
+    windowpos.cy = m_pluginSize.height();
 
     NPEvent npEvent;
     npEvent.event = WM_WINDOWPOSCHANGED;
