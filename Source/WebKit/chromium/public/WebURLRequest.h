@@ -72,6 +72,8 @@ public:
         TargetIsPrerender = 12,
         TargetIsFavicon = 13,
         TargetIsXHR = 14,
+        TargetIsTextTrack = 15,
+        TargetIsUnspecified = 16,
     };
 
     class ExtraData {

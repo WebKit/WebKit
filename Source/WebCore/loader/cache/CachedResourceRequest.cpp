@@ -100,7 +100,8 @@ PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
 
     ResourceRequest resourceRequest = resource->resourceRequest();
 #if PLATFORM(CHROMIUM)
-    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
+    if (resourceRequest.targetType() == ResourceRequest::TargetIsUnspecified)
+        resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
 #endif
 
     if (!resource->accept().isEmpty())

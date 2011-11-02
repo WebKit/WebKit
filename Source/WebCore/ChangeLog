@@ -1,3 +1,22 @@
+2011-11-01  Nate Chapin  <japhet@chromium.org>
+
+        [chromium] As of r98380, ThreadableLoaderClients are having their
+        ResourceRequest::TargetType clobbered. They set their own
+        type, but CachedResourceRequest (through which they now flow)
+        sets a TargetType without bothering to see if one has already been set.
+        https://bugs.webkit.org/show_bug.cgi?id=70972
+
+        Reviewed by Darin Fisher.
+
+        No new tests, this is chromium-specific and only affects
+        behavior seen in full builds of chromium.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load):Don't setTargetType()
+            if the value is something other than the default already.
+        * platform/network/chromium/ResourceRequest.h: Change default
+            TargetType to TargetIsUnspecified.
+
 2011-11-01  Emil A Eklund  <eae@chromium.org>
 
         Use IntPoint for screen coordinates in MouseEvent

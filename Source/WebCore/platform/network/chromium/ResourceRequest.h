@@ -57,6 +57,7 @@ namespace WebCore {
             TargetIsFavicon,
             TargetIsXHR,
             TargetIsTextTrack,
+            TargetIsUnspecified,
         };
 
         class ExtraData : public RefCounted<ExtraData> {
@@ -71,7 +72,7 @@ namespace WebCore {
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
             , m_downloadToFile(false)
-            , m_targetType(TargetIsSubresource)
+            , m_targetType(TargetIsUnspecified)
         {
         }
 
@@ -82,7 +83,7 @@ namespace WebCore {
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
             , m_downloadToFile(false)
-            , m_targetType(TargetIsSubresource)
+            , m_targetType(TargetIsUnspecified)
         {
         }
 
@@ -93,7 +94,7 @@ namespace WebCore {
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
             , m_downloadToFile(false)
-            , m_targetType(TargetIsSubresource)
+            , m_targetType(TargetIsUnspecified)
         {
             setHTTPReferrer(referrer);
         }
@@ -105,7 +106,7 @@ namespace WebCore {
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
             , m_downloadToFile(false)
-            , m_targetType(TargetIsSubresource)
+            , m_targetType(TargetIsUnspecified)
         {
         }
 
