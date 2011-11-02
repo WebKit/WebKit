@@ -2784,7 +2784,6 @@ BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
 BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
-BUGWK67760 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE TEXT
 
 BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
