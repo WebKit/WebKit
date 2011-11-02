@@ -137,29 +137,29 @@ protected:
 
     class BackgroundImageGeometry {
     public:
-        LayoutPoint destOrigin() const { return m_destOrigin; }
-        void setDestOrigin(const LayoutPoint& destOrigin)
+        IntPoint destOrigin() const { return m_destOrigin; }
+        void setDestOrigin(const IntPoint& destOrigin)
         {
             m_destOrigin = destOrigin;
         }
         
-        LayoutRect destRect() const { return m_destRect; }
-        void setDestRect(const LayoutRect& destRect)
+        IntRect destRect() const { return m_destRect; }
+        void setDestRect(const IntRect& destRect)
         {
             m_destRect = destRect;
         }
 
         // Returns the phase relative to the destination rectangle.
-        LayoutPoint relativePhase() const;
+        IntPoint relativePhase() const;
         
-        LayoutPoint phase() const { return m_phase; }   
-        void setPhase(const LayoutPoint& phase)
+        IntPoint phase() const { return m_phase; }   
+        void setPhase(const IntPoint& phase)
         {
             m_phase = phase;
         }
 
-        LayoutSize tileSize() const { return m_tileSize; }    
-        void setTileSize(const LayoutSize& tileSize)
+        IntSize tileSize() const { return m_tileSize; }    
+        void setTileSize(const IntSize& tileSize)
         {
             m_tileSize = tileSize;
         }
@@ -170,14 +170,14 @@ protected:
         void setNoRepeatX(int xOffset);
         void setNoRepeatY(int yOffset);
         
-        void useFixedAttachment(const LayoutPoint& attachmentPoint);
+        void useFixedAttachment(const IntPoint& attachmentPoint);
         
-        void clip(const LayoutRect&);
+        void clip(const IntRect&);
     private:
-        LayoutRect m_destRect;
-        LayoutPoint m_destOrigin;
-        LayoutPoint m_phase;
-        LayoutSize m_tileSize;
+        IntRect m_destRect;
+        IntPoint m_destOrigin;
+        IntPoint m_phase;
+        IntSize m_tileSize;
     };
 
     void calculateBackgroundImageGeometry(const FillLayer*, const LayoutRect& paintRect, BackgroundImageGeometry&);
@@ -195,8 +195,8 @@ protected:
 private:
     virtual bool isBoxModelObject() const { return true; }
 
-    LayoutSize calculateFillTileSize(const FillLayer*, const LayoutSize& scaledPositioningAreaSize) const;
-    LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize) const;
+    IntSize calculateFillTileSize(const FillLayer*, const IntSize& scaledPositioningAreaSize) const;
+    IntSize calculateImageIntrinsicDimensions(StyleImage*, const IntSize& scaledPositioningAreaSize) const;
 
     RoundedRect getBackgroundRoundedRect(const LayoutRect&, InlineFlowBox*, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
         bool includeLogicalLeftEdge, bool includeLogicalRightEdge);

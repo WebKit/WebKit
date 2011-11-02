@@ -1,3 +1,34 @@
+2011-11-01  Emil A Eklund  <eae@chromium.org>
+
+        Switch background/border image back to Int
+        https://bugs.webkit.org/show_bug.cgi?id=71240
+
+        Reviewed by Darin Adler.
+
+        Switch background- and border-image rendering back to int to align with
+        device pixels.
+
+        No new tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::clip):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::relativePhase):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::calculateAdjustedInnerBorder):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::phase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::tileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setTileSize):
+
 2011-11-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineSetter
