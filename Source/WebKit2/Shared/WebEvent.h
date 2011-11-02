@@ -314,7 +314,7 @@ public:
     WebTouchEvent() { }
  
     // FIXME: It would be nice not to have to copy the Vector here.
-    WebTouchEvent(Type, Vector<WebPlatformTouchPoint>, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, Modifiers, double timestamp);
+    WebTouchEvent(Type, Vector<WebPlatformTouchPoint>, Modifiers, double timestamp);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
@@ -325,10 +325,6 @@ private:
     static bool isTouchEventType(Type);
 
     Vector<WebPlatformTouchPoint> m_touchPoints;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_shiftKey;
-    bool m_metaKey;
 };
 
 #endif // ENABLE(TOUCH_EVENTS)

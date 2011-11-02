@@ -1,3 +1,20 @@
+2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] Remove unused/duplicated modifiers member from WebTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=71353
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebTouchEvent::m_[ctrl,alt,meta,shift]Key are redundant compared to
+        WebEvent::m_modifiers. The latter is fully populated and used, the former
+        can be safely removed.
+
+        * Shared/WebEvent.h:
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+
 2011-11-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip testWebKitSettingsNewWithSettings affected by bug

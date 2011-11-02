@@ -196,12 +196,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event)
         m_touchPoints.append(WebPlatformTouchPoint(id, state, points.at(i).screenPos().toPoint(), points.at(i).pos().toPoint()));
     }
 
-    bool m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
-    bool m_altKey = (event->modifiers() & Qt::AltModifier);
-    bool m_shiftKey = (event->modifiers() & Qt::ShiftModifier);
-    bool m_metaKey = (event->modifiers() & Qt::MetaModifier);
-
-    return WebTouchEvent(type, m_touchPoints, m_ctrlKey, m_altKey, m_shiftKey, m_metaKey, modifiers, timestamp);
+    return WebTouchEvent(type, m_touchPoints, modifiers, timestamp);
 }
 #endif
 
