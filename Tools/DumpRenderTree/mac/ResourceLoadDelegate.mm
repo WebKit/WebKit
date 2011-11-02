@@ -83,7 +83,11 @@ using namespace std;
 
     NSString *basePath = [[[[dataSource request] URL] path] stringByDeletingLastPathComponent];
 
-    return [[self path] substringFromIndex:[basePath length] + 1];
+    if ([[self path] hasPrefix:basePath]) {
+        ASSERT([[self path] length] >= ([basePath length] + 1));
+        return [[self path] substringFromIndex:[basePath length] + 1];
+    }
+    return [self absoluteString];
 }
 
 @end

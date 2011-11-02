@@ -1,3 +1,23 @@
+2011-11-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] _drt_descriptionSuitableForTestResult generate an exception for absolute paths above the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=71342
+
+        Reviewed by Darin Adler.
+
+        [NSURL _drt_descriptionSuitableForTestResult] was generating a NSRangeException due to the call to
+        [NSString substringFromIndex:] with an index out of the string range.
+
+        The source of this path is the test-loading-archive-subresource-null-mimetype.html which load a subresource
+        from the root of the disk.
+        The problem was hidden because the exception are catched when calling the delegate.
+
+        This patch changes _drt_descriptionSuitableForTestResult to return absolute string if the resource is not
+        in a subdirectory of the main frame.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSURL _drt_descriptionSuitableForTestResult]):
+
 2011-11-01  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] --enable-hardware-gpu flag is not recognized by run-webkit-tests
