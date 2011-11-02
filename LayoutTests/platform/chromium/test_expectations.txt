@@ -78,40 +78,6 @@ BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
 // CSS3 Selectors3 test suite
 BUGCR89468 : css3/selectors3 = PASS FAIL
 
-// Tests for <track>.  Feature is not yet functional.
-BUGWK43668 SKIP : media/track/track-mutable.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-text-track-cue-list.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-text-track.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc000-empty.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc001-utf8.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc002-bom.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc003-newlines.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc005-header-comment.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc006-cue-identifiers.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc007-cue-no-id.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc008-timings-no-hours.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc009-timings-hour.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc010-no-timings.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc011-blank-lines.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc012-out-of-order.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc013-settings.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc014-alignment.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc015-positioning.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc016-align-positioning.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc017-line-position.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc018-align-text-line-position.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc019-cue-size.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc020-cue-size-align.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc021-valign.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc022-entities.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc023-markup.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc024-timestamp.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc025-class-markup.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc026-voice.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc027-empty-cue.html = TIMEOUT
-BUGWK43668 SKIP : media/track/track-webvtt-tc028-unsupported-markup.html = TIMEOUT
-
 // Tests for MediaSource API. Feature is not yet functional.
 BUGWK64731 SKIP : http/tests/media/media-source/ = TIMEOUT
 
