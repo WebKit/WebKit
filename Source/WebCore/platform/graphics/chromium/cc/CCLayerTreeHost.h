@@ -111,6 +111,7 @@ public:
     void commitComplete();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
+    void didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl*);
     void didRecreateGraphicsContext(bool success);
     void didCommitAndDrawFrame(int frameNumber) { m_client->didCommitAndDrawFrame(frameNumber); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
@@ -145,7 +146,7 @@ public:
     void loseCompositorContext(int numTimes);
 
     void setNeedsAnimate();
-    void setNeedsCommitThenRedraw();
+    void setNeedsCommit();
     void setNeedsRedraw();
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
@@ -158,6 +159,7 @@ public:
     const IntSize& viewportSize() const { return m_viewportSize; }
     TextureManager* contentsTextureManager() const;
 
+    bool visible() const { return m_visible; }
     void setVisible(bool);
     void setHaveWheelEventHandlers(bool);
 

@@ -50,15 +50,15 @@ public:
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
-    virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();
+    virtual void setVisible(bool);
     virtual void start();
     virtual void stop();
 
     // CCLayerTreeHostImplClient implementation
     virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }
-    virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
-    virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommitThenRedraw(); }
+    virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
+    virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
 
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();

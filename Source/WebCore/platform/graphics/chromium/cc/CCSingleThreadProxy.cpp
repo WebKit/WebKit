@@ -146,12 +146,6 @@ void CCSingleThreadProxy::setNeedsAnimate()
     ASSERT_NOT_REACHED();
 }
 
-void CCSingleThreadProxy::setNeedsCommit()
-{
-    ASSERT(CCProxy::isMainThread());
-    doCommit();
-}
-
 void CCSingleThreadProxy::doCommit()
 {
     ASSERT(CCProxy::isMainThread());
@@ -164,6 +158,7 @@ void CCSingleThreadProxy::doCommit()
         CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), updater);
         while (updater.update(m_layerTreeHostImpl->context(), 1)) { }
+        m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 
         m_layerTreeHostImpl->commitComplete();
@@ -179,17 +174,28 @@ void CCSingleThreadProxy::doCommit()
     m_nextFrameIsNewlyCommittedFrame = true;
 }
 
-void CCSingleThreadProxy::setNeedsCommitThenRedraw()
+void CCSingleThreadProxy::setNeedsCommit()
 {
     ASSERT(CCProxy::isMainThread());
-    m_layerTreeHost->setNeedsCommitThenRedraw();
+    m_layerTreeHost->setNeedsCommit();
 }
 
 void CCSingleThreadProxy::setNeedsRedraw()
 {
     // FIXME: Once we move render_widget scheduling into this class, we can
     // treat redraw requests more efficiently than commitAndRedraw requests.
-    setNeedsCommitThenRedraw();
+    setNeedsCommit();
+}
+
+void CCSingleThreadProxy::setVisible(bool visible)
+{
+    if (!visible) {
+        DebugScopedSetImplThread impl;
+        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
+        m_layerTreeHostImpl->setVisible(false);
+        return;
+    }
+    setNeedsCommit();
 }
 
 void CCSingleThreadProxy::stop()
@@ -254,7 +260,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
     // in the context-lost machinery.
     m_numFailedRecreateAttempts++;
     if (m_numFailedRecreateAttempts < 5) {
-        setNeedsCommitThenRedraw();
+        setNeedsCommit();
         return false;
     }
 
@@ -291,7 +297,7 @@ bool CCSingleThreadProxy::doComposite()
         // and request a repaint yet again.
         m_graphicsContextLost = true;
         m_numFailedRecreateAttempts = 0;
-        setNeedsCommitThenRedraw();
+        setNeedsCommit();
         return false;
     }
 

@@ -69,7 +69,7 @@ bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
 void WebLayerTreeView::composite()
 {
     if (m_private->settings().enableCompositorThread)
-        m_private->setNeedsCommitThenRedraw();
+        m_private->setNeedsCommit();
     else
         m_private->composite();
 }

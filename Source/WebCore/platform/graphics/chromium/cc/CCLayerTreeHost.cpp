@@ -128,7 +128,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
     hostImpl->setSourceFrameNumber(frameNumber());
-    hostImpl->setVisible(m_visible);
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
@@ -194,7 +193,7 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
     m_zoomAnimatorTransform = zoom;
 
     if (zoomChanged)
-        setNeedsCommitThenRedraw();
+        setNeedsCommit();
 }
 
 void CCLayerTreeHost::setNeedsAnimate()
@@ -203,11 +202,11 @@ void CCLayerTreeHost::setNeedsAnimate()
     m_proxy->setNeedsAnimate();
 }
 
-void CCLayerTreeHost::setNeedsCommitThenRedraw()
+void CCLayerTreeHost::setNeedsCommit()
 {
     if (m_settings.enableCompositorThread) {
-        TRACE_EVENT("CCLayerTreeHost::setNeedsCommitThenRedraw", this, 0);
-        m_proxy->setNeedsCommitThenRedraw();
+        TRACE_EVENT("CCLayerTreeHost::setNeedsCommit", this, 0);
+        m_proxy->setNeedsCommit();
     } else
         m_client->scheduleComposite();
 }
@@ -223,19 +222,31 @@ void CCLayerTreeHost::setNeedsRedraw()
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
-    setNeedsCommitThenRedraw();
+    setNeedsCommit();
 }
 
 void CCLayerTreeHost::setVisible(bool visible)
 {
+    if (m_visible == visible)
+        return;
+
     m_visible = visible;
-    if (visible)
-        setNeedsCommitThenRedraw();
-    else {
+    if (!visible) {
         m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes());
         m_contentsTextureManager->unprotectAllTextures();
-        m_proxy->setNeedsCommit();
     }
+
+    // Tells the proxy that visibility state has changed. This will in turn call
+    // CCLayerTreeHost::didBecomeInvisibleOnImplThread on the appropriate thread, for
+    // the case where !visible.
+    m_proxy->setVisible(visible);
+}
+
+void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostImpl)
+{
+    ASSERT(CCProxy::isImplThread());
+    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
+    contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 }
 
 void CCLayerTreeHost::setHaveWheelEventHandlers(bool haveWheelEventHandlers)

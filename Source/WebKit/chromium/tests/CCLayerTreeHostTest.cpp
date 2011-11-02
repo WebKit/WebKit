@@ -198,9 +198,9 @@ public:
 
     void endTest();
 
-    void postSetNeedsCommitThenRedrawToMainThread()
+    void postSetNeedsCommitToMainThread()
     {
-        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommitThenRedraw, this);
+        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
     }
 
     void postSetNeedsRedrawToMainThread()
@@ -252,13 +252,13 @@ protected:
         test->m_layerTreeHost.clear();
     }
 
-    static void dispatchSetNeedsCommitThenRedraw(void* self)
+    static void dispatchSetNeedsCommit(void* self)
     {
       ASSERT(isMainThread());
       CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
       ASSERT(test);
       if (test->m_layerTreeHost)
-          test->m_layerTreeHost->setNeedsCommitThenRedraw();
+          test->m_layerTreeHost->setNeedsCommit();
     }
 
     static void dispatchSetNeedsRedraw(void* self)
@@ -406,7 +406,7 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
         endTest();
     }
 
@@ -446,7 +446,7 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
         endTest();
     }
 
@@ -460,7 +460,7 @@ public:
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*)
     {
         if (m_numDraws == 1)
-          postSetNeedsCommitThenRedrawToMainThread();
+          postSetNeedsCommitToMainThread();
         m_numDraws++;
         postSetNeedsRedrawToMainThread();
     }
@@ -488,8 +488,8 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitThenRedrawToMainThread();
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
@@ -532,13 +532,13 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
     {
         if (!impl->sourceFrameNumber())
-            postSetNeedsCommitThenRedrawToMainThread();
+            postSetNeedsCommitToMainThread();
         else if (impl->sourceFrameNumber() == 1)
             endTest();
     }
@@ -576,7 +576,7 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
@@ -625,7 +625,7 @@ public:
     {
         m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
         m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
@@ -651,7 +651,7 @@ public:
         if (impl->frameNumber() == 1) {
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
-            postSetNeedsCommitThenRedrawToMainThread();
+            postSetNeedsCommitToMainThread();
         } else if (impl->frameNumber() == 2) {
             EXPECT_EQ(root->scrollPosition(), m_secondScroll);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
@@ -695,7 +695,7 @@ public:
     {
         m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
         m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
-        postSetNeedsCommitThenRedrawToMainThread();
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
@@ -726,7 +726,7 @@ public:
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount + m_scrollAmount);
 
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
-            postSetNeedsCommitThenRedrawToMainThread();
+            postSetNeedsCommitToMainThread();
         } else if (impl->frameNumber() == 3) {
             EXPECT_EQ(root->scrollDelta(), IntSize());
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);

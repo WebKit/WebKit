@@ -60,8 +60,8 @@ public:
     virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
-    virtual void setNeedsCommitThenRedraw();
     virtual void setNeedsRedraw();
+    virtual void setVisible(bool);
     virtual void start();
     virtual void stop();
 
@@ -101,7 +101,7 @@ private:
     void initializeImplOnImplThread(CCCompletionEvent*);
     void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
     void setNeedsAnimateOnImplThread();
-    void setNeedsCommitThenRedrawOnImplThread();
+    void didBecomeInvisibleOnImplThread(CCCompletionEvent*);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
 
     // Accessed on main thread only.

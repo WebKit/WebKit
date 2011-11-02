@@ -2525,7 +2525,7 @@ void WebViewImpl::setRootLayerNeedsDisplay()
         m_layerTreeHost->setZoomAnimatorTransform(zoomMatrix);
     }
     if (m_layerTreeHost)
-        m_layerTreeHost->setNeedsCommitThenRedraw();
+        m_layerTreeHost->setNeedsCommit();
 }
 
 void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)

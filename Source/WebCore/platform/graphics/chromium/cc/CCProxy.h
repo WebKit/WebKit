@@ -66,8 +66,8 @@ public:
 
     virtual void setNeedsAnimate() = 0;
     virtual void setNeedsCommit() = 0;
-    virtual void setNeedsCommitThenRedraw() = 0;
     virtual void setNeedsRedraw() = 0;
+    virtual void setVisible(bool) = 0;
 
     virtual void start() = 0; // Must be called before using the proxy.
     virtual void stop() = 0; // Must be called before deleting the proxy.

@@ -1,3 +1,29 @@
+2011-11-01  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Move resource-releasing logic into CCProxy and cleanup setNeedsCommit
+        https://bugs.webkit.org/show_bug.cgi?id=71269
+
+        Reviewed by James Robinson.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::composite):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTest::postSetNeedsCommitToMainThread):
+        (CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (CCLayerTreeHostTestShortlived2::beginTest):
+        (CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (CCLayerTreeHostTestCommitingWithContinuousRedraw::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsCommit1::beginTest):
+        (CCLayerTreeHostTestSetNeedsCommit2::beginTest):
+        (CCLayerTreeHostTestSetNeedsCommit2::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsRedraw::beginTest):
+        (CCLayerTreeHostTestScrollSimple::beginTest):
+        (CCLayerTreeHostTestScrollSimple::drawLayersOnCCThread):
+        (CCLayerTreeHostTestScrollMultipleRedraw::beginTest):
+        (CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+
 2011-11-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Pack RenderTableCell bits
