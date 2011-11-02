@@ -644,12 +644,20 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
         return 0;
 
     ASSERT(m_isStarted);
-    
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRectInWindowCoordinates.size(), ShareableBitmap::SupportsAlpha);
+
+    IntSize backingStoreSize = m_pluginSize;
+    backingStoreSize.scale(contentsScaleFactor());
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
-    context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
+#if PLATFORM(MAC)
+    // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
+    // which we currently don't have initiated in the plug-in process.
+    context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
+#endif
 
+    context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     platformPaint(context.get(), m_frameRectInWindowCoordinates, true);
     
     return bitmap.release();

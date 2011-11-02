@@ -589,7 +589,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         return;
 
     if (m_snapshot) {
-        m_snapshot->paint(*context, frameRect().location(), m_snapshot->bounds());
+        m_snapshot->paint(*context, contentsScaleFactor(), frameRect().location(), m_snapshot->bounds());
         return;
     }
     
