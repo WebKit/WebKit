@@ -1,5 +1,12 @@
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
+        Fix syntax error.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
         Fix build error from r99108.
 
         * WebProcess/WebPage/WebPage.cpp:
