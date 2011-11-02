@@ -597,7 +597,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     if (inherited->color != other->inherited->color
         || inherited_flags._visibility != other->inherited_flags._visibility
         || inherited_flags._text_decorations != other->inherited_flags._text_decorations
-        || inherited_flags._force_backgrounds_to_white != other->inherited_flags._force_backgrounds_to_white
+        || inherited_flags.m_printColorAdjust != other->inherited_flags.m_printColorAdjust
         || inherited_flags._insideLink != other->inherited_flags._insideLink
         || surround->border != other->surround->border
         || *m_background.get() != *other->m_background.get()

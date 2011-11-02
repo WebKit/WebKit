@@ -320,6 +320,7 @@ z-index
 -webkit-perspective-origin
 -webkit-perspective-origin-x
 -webkit-perspective-origin-y
+-webkit-print-color-adjust
 -webkit-rtl-ordering
 -webkit-text-combine
 -epub-text-combine = -webkit-text-combine

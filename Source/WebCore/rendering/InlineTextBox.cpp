@@ -43,6 +43,7 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
+#include "Settings.h"
 #include "SVGTextRunRenderingContext.h"
 #include "Text.h"
 #include "break_lines.h"
@@ -575,20 +576,28 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     } else {
         textFillColor = styleToUse->visitedDependentColor(CSSPropertyWebkitTextFillColor);
         
+        bool forceBackgroundToWhite = false;
+        if (isPrinting) {
+            if (styleToUse->printColorAdjust() == PrintColorAdjustEconomy)
+                forceBackgroundToWhite = true;
+            if (textRenderer()->document()->settings() && textRenderer()->document()->settings()->shouldPrintBackgrounds())
+                forceBackgroundToWhite = false;
+        }
+
         // Make the text fill color legible against a white background
-        if (styleToUse->forceBackgroundsToWhite())
+        if (forceBackgroundToWhite)
             textFillColor = correctedTextColor(textFillColor, Color::white);
 
         textStrokeColor = styleToUse->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
         
         // Make the text stroke color legible against a white background
-        if (styleToUse->forceBackgroundsToWhite())
+        if (forceBackgroundToWhite)
             textStrokeColor = correctedTextColor(textStrokeColor, Color::white);
 
         emphasisMarkColor = styleToUse->visitedDependentColor(CSSPropertyWebkitTextEmphasisColor);
         
         // Make the text stroke color legible against a white background
-        if (styleToUse->forceBackgroundsToWhite())
+        if (forceBackgroundToWhite)
             emphasisMarkColor = correctedTextColor(emphasisMarkColor, Color::white);
     }
 

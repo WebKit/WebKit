@@ -177,6 +177,7 @@ zoom: 1;
 -webkit-nbsp-mode: normal;
 -webkit-perspective: none;
 -webkit-perspective-origin: 392px 288px;
+-webkit-print-color-adjust: economy;
 -webkit-rtl-ordering: logical;
 -webkit-text-combine: none;
 -webkit-text-decorations-in-effect: none;

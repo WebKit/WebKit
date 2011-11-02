@@ -155,6 +155,35 @@ template<> inline CSSPrimitiveValue::operator ColumnSpan() const
     return ColumnSpanOne;
 }
 
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(PrintColorAdjust value)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (value) {
+    case PrintColorAdjustExact:
+        m_value.ident = CSSValueExact;
+        break;
+    case PrintColorAdjustEconomy:
+        m_value.ident = CSSValueEconomy;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator PrintColorAdjust() const
+{
+    switch (m_value.ident) {
+    case CSSValueEconomy:
+        return PrintColorAdjustEconomy;
+    case CSSValueExact:
+        return PrintColorAdjustExact;
+    default:
+        ASSERT_NOT_REACHED();
+        return PrintColorAdjustEconomy;
+    }
+}
+
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

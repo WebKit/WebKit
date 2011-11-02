@@ -1699,6 +1699,10 @@ bool CSSParser::parseValue(int propId, bool important)
         if (value->id == CSSValueVisible || value->id == CSSValueHidden)
             validPrimitive = true;
         break;
+    case CSSPropertyWebkitPrintColorAdjust:
+        if (value->id == CSSValueExact || value->id == CSSValueEconomy)
+            validPrimitive = true;
+        break;
     case CSSPropertyWebkitPerspective:
         if (id == CSSValueNone)
             validPrimitive = true;

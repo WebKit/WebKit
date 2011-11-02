@@ -36,6 +36,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include <wtf/CurrentTime.h>
 
 using namespace std;
@@ -613,13 +614,22 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     StyleImage* bgImage = bgLayer->image();
     bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style()->effectiveZoom());
     
-    // When this style flag is set, change existing background colors and images to a solid white background.
+    bool forceBackgroundToWhite = false;
+    if (document()->printing()) {
+        if (style()->printColorAdjust() == PrintColorAdjustEconomy)
+            forceBackgroundToWhite = true;
+        if (document()->settings() && document()->settings()->shouldPrintBackgrounds())
+            forceBackgroundToWhite = false;
+    }
+
+    // When printing backgrounds is disabled or using economy mode,
+    // change existing background colors and images to a solid white background.
     // If there's no bg color or image, leave it untouched to avoid affecting transparency.
     // We don't try to avoid loading the background images, because this style flag is only set
     // when printing, and at that point we've already loaded the background images anyway. (To avoid
     // loading the background images we'd have to do this check when applying styles rather than
     // while rendering.)
-    if (style()->forceBackgroundsToWhite()) {
+    if (forceBackgroundToWhite) {
         // Note that we can't reuse this variable below because the bgColor might be changed
         bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0;
         if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {

@@ -184,7 +184,7 @@ protected:
                 && (_white_space == other._white_space)
                 && (_box_direction == other._box_direction)
                 && (m_rtlOrdering == other.m_rtlOrdering)
-                && (_force_backgrounds_to_white == other._force_backgrounds_to_white)
+                && (m_printColorAdjust == other.m_printColorAdjust)
                 && (_pointerEvents == other._pointerEvents)
                 && (_insideLink == other._insideLink)
                 && (m_writingMode == other.m_writingMode);
@@ -209,7 +209,7 @@ protected:
         
         // non CSS2 inherited
         unsigned char m_rtlOrdering : 1; // Order
-        bool _force_backgrounds_to_white : 1;
+        unsigned char m_printColorAdjust : PrintColorAdjustBits;
         unsigned char _pointerEvents : 4; // EPointerEvents
         unsigned char _insideLink : 2; // EInsideLink
         // 43 bits
@@ -290,7 +290,7 @@ protected:
         inherited_flags._white_space = initialWhiteSpace();
         inherited_flags.m_rtlOrdering = initialRTLOrdering();
         inherited_flags._box_direction = initialBoxDirection();
-        inherited_flags._force_backgrounds_to_white = false;
+        inherited_flags.m_printColorAdjust = initialPrintColorAdjust();
         inherited_flags._pointerEvents = initialPointerEvents();
         inherited_flags._insideLink = NotInsideLink;
         inherited_flags.m_writingMode = initialWritingMode();
@@ -1083,8 +1083,8 @@ public:
     void setInsideLink(EInsideLink insideLink) { inherited_flags._insideLink = insideLink; }
     void setIsLink(bool b) { noninherited_flags._isLink = b; }
 
-    bool forceBackgroundsToWhite() const { return inherited_flags._force_backgrounds_to_white; }
-    void setForceBackgroundsToWhite(bool b=true) { inherited_flags._force_backgrounds_to_white = b; }
+    PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(inherited_flags.m_printColorAdjust); }
+    void setPrintColorAdjust(PrintColorAdjust value) { inherited_flags.m_printColorAdjust = value; }
 
     bool hasAutoZIndex() const { return m_box->hasAutoZIndex(); }
     void setHasAutoZIndex() { SET_VAR(m_box, m_hasAutoZIndex, true); SET_VAR(m_box, m_zIndex, 0) }
@@ -1476,6 +1476,7 @@ public:
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
+    static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
 
     static const AtomicString& initialLineGrid() { return nullAtom; }
 

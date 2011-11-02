@@ -352,6 +352,8 @@ rect: style.getPropertyValue(-webkit-perspective) : none
 rect: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
 rect: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
+rect: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-combine) : none
@@ -836,6 +838,8 @@ g: style.getPropertyValue(-webkit-perspective) : none
 g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
 g: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-print-color-adjust) : economy
+g: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-combine) : none

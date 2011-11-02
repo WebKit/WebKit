@@ -251,6 +251,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitNbspMode,
     CSSPropertyWebkitPerspective,
     CSSPropertyWebkitPerspectiveOrigin,
+    CSSPropertyWebkitPrintColorAdjust,
     CSSPropertyWebkitRtlOrdering,
 #if ENABLE(TOUCH_EVENTS)
     CSSPropertyWebkitTapHighlightColor,
@@ -1336,6 +1337,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->clear());
         case CSSPropertyColor:
             return primitiveValueCache->createColorValue(m_allowVisitedStyle ? style->visitedDependentColor(CSSPropertyColor).rgb() : style->color().rgb());
+        case CSSPropertyWebkitPrintColorAdjust:
+            return primitiveValueCache->createValue(style->printColorAdjust());
         case CSSPropertyWebkitColumnAxis:
             return primitiveValueCache->createValue(style->columnAxis());
         case CSSPropertyWebkitColumnCount:

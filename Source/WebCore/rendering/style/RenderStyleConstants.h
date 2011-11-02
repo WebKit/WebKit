@@ -36,6 +36,11 @@ namespace WebCore {
  * in CSSValueKeywords.in, otherwise some optimizations in the parser will fail,
  * and produce invalid results.
  */
+static const size_t PrintColorAdjustBits = 1;
+enum PrintColorAdjust {
+    PrintColorAdjustEconomy,
+    PrintColorAdjustExact
+};
 
 // The difference between two styles.  The following values are used:
 // (1) StyleDifferenceEqual - The two styles are identical

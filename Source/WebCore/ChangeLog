@@ -1,3 +1,27 @@
+2011-11-01  Luke Macpherson   <macpherson@chromium.org>
+
+        WIP: Add CSS property to control printing of backgrounds for individual elements.
+        https://bugs.webkit.org/show_bug.cgi?id=64583
+
+        Reviewed by Eric Seidel.
+
+        Added test LayoutTests/fast/css/webkit-color-adjust.html,
+        Updated tests under LayoutTests/fast/css/getComputedStyle
+        Updated test under LayoutTests/svg/css
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::initialForceBackgroundsToWhite):
+
 2011-11-01  Dominic Cooney  <dominicc@chromium.org>
 
         Remove initErrorEvent method

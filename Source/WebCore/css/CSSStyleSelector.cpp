@@ -1167,8 +1167,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     fontDescription.setUsePrinterFont(document->printing());
     if (Settings* settings = document->settings()) {
         fontDescription.setRenderingMode(settings->fontRenderingMode());
-        if (document->printing() && !settings->shouldPrintBackgrounds())
-            documentStyle->setForceBackgroundsToWhite(true);
         const AtomicString& stdfont = settings->standardFontFamily();
         if (!stdfont.isEmpty()) {
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
@@ -3645,6 +3643,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSSPropertyWebkitTransformStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(transformStyle3D, TransformStyle3D)
+        return;
+    case CSSPropertyWebkitPrintColorAdjust:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(printColorAdjust, PrintColorAdjust);
         return;
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
