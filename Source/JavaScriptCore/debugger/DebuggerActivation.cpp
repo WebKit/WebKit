@@ -99,9 +99,10 @@ void DebuggerActivation::defineGetter(JSObject* object, ExecState* exec, const I
     thisObject->m_activation->methodTable()->defineGetter(thisObject->m_activation.get(), exec, propertyName, getterFunction, attributes);
 }
 
-void DebuggerActivation::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+void DebuggerActivation::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
-    m_activation->defineSetter(exec, propertyName, setterFunction, attributes);
+    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    thisObject->m_activation->methodTable()->defineSetter(thisObject->m_activation.get(), exec, propertyName, setterFunction, attributes);
 }
 
 JSValue DebuggerActivation::lookupGetter(ExecState* exec, const Identifier& propertyName)

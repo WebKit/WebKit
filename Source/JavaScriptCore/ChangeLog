@@ -1,3 +1,37 @@
+2011-11-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::defineSetter
+        https://bugs.webkit.org/show_bug.cgi?id=71303
+
+        Reviewed by Darin Adler.
+
+        Added defineSetter to the MethodTable, changed all the virtual 
+        implementations of defineSetter to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::defineSetter):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defineSetter):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineSetter):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineSetter):
+        (JSC::putDescriptor):
+        * runtime/JSObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineSetter):
+
 2011-11-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining breaks function.arguments

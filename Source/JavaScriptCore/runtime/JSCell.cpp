@@ -163,6 +163,11 @@ void JSCell::defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, u
     ASSERT_NOT_REACHED();
 }
 
+void JSCell::defineSetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
 JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType)
 {
     ASSERT_NOT_REACHED();

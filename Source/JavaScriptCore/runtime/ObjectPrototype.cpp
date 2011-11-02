@@ -160,7 +160,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     CallData callData;
     if (getCallData(exec->argument(1), callData) == CallTypeNone)
         return throwVMError(exec, createSyntaxError(exec, "invalid setter usage"));
-    thisObject->defineSetter(exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)));
+    thisObject->methodTable()->defineSetter(thisObject, exec, Identifier(exec, exec->argument(0).toString(exec)), asObject(exec->argument(1)), 0);
     return JSValue::encode(jsUndefined());
 }
 

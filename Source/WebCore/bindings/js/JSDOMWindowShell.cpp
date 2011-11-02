@@ -138,9 +138,10 @@ void JSDOMWindowShell::defineGetter(JSObject* object, ExecState* exec, const Ide
     thisObject->window()->methodTable()->defineGetter(thisObject->window(), exec, propertyName, getterFunction, attributes);
 }
 
-void JSDOMWindowShell::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+void JSDOMWindowShell::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
-    window()->defineSetter(exec, propertyName, setterFunction, attributes);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    thisObject->window()->methodTable()->defineSetter(thisObject->window(), exec, propertyName, setterFunction, attributes);
 }
 
 JSValue JSDOMWindowShell::lookupGetter(ExecState* exec, const Identifier& propertyName)

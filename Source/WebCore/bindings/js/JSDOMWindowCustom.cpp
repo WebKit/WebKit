@@ -398,12 +398,13 @@ void JSDOMWindow::defineGetter(JSObject* object, ExecState* exec, const Identifi
     Base::defineGetter(thisObject, exec, propertyName, getterFunction, attributes);
 }
 
-void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+void JSDOMWindow::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
     // Only allow defining setters by frames in the same origin.
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return;
-    Base::defineSetter(exec, propertyName, setterFunction, attributes);
+    Base::defineSetter(thisObject, exec, propertyName, setterFunction, attributes);
 }
 
 bool JSDOMWindow::defineOwnProperty(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)

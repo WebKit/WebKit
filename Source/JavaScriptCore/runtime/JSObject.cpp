@@ -402,33 +402,33 @@ void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier&
     structure()->setHasGetterSetterProperties(true);
 }
 
-void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
     if (propertyName == exec->propertyNames().underscoreProto) {
         // Defining a setter for __proto__ is silently ignored.
         return;
     }
 
-    JSValue object = getDirect(exec->globalData(), propertyName);
+    JSValue object = thisObject->getDirect(exec->globalData(), propertyName);
     if (object && object.isGetterSetter()) {
-        ASSERT(structure()->hasGetterSetterProperties());
+        ASSERT(thisObject->structure()->hasGetterSetterProperties());
         asGetterSetter(object)->setSetter(exec->globalData(), setterFunction);
         return;
     }
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot, 0);
+    thisObject->putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!structure()->isDictionary())
-            setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), structure()));
+        if (!thisObject->structure()->isDictionary())
+            thisObject->setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), thisObject->structure()));
     }
 
-    structure()->setHasGetterSetterProperties(true);
+    thisObject->structure()->setHasGetterSetterProperties(true);
     getterSetter->setSetter(exec->globalData(), setterFunction);
 }
 
@@ -736,7 +736,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
     if (exec->hadException())
         return false;
     if (descriptor.setter() && descriptor.setter().isObject())
-        target->defineSetter(exec, propertyName, asObject(descriptor.setter()), attributes);
+        target->methodTable()->defineSetter(target, exec, propertyName, asObject(descriptor.setter()), attributes);
     return !exec->hadException();
 }
 

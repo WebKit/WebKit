@@ -171,11 +171,12 @@ void JSGlobalObject::defineGetter(JSObject* object, ExecState* exec, const Ident
         JSVariableObject::defineGetter(thisObject, exec, propertyName, getterFunc, attributes);
 }
 
-void JSGlobalObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes)
+void JSGlobalObject::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes)
 {
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
     PropertySlot slot;
-    if (!symbolTableGet(propertyName, slot))
-        JSVariableObject::defineSetter(exec, propertyName, setterFunc, attributes);
+    if (!thisObject->symbolTableGet(propertyName, slot))
+        JSVariableObject::defineSetter(thisObject, exec, propertyName, setterFunc, attributes);
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
