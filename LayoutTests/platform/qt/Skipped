@@ -2051,6 +2051,7 @@ http/tests/inspector/console-websocket-error.html
 # https://bugs.webkit.org/show_bug.cgi?id=52810
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
+svg/as-image/img-preserveAspectRatio-support-1.html
 svg/batik/masking/maskRegions.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/stars-with-shadow.html
@@ -2069,6 +2070,7 @@ svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-on-symbol.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 svg/custom/resource-invalidate-on-target-update.svg
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/custom/stroked-pattern.svg
 svg/custom/text-rotated-gradient.svg
 svg/custom/use-css-events.svg
