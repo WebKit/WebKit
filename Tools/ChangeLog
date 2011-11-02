@@ -1,3 +1,16 @@
+2011-11-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make the main frame's base path more explicit in _drt_descriptionSuitableForTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=71351
+
+        Reviewed by Darin Adler.
+
+        Add the delimiter "/" at the end of the path instead of adding +1 when using
+        the path.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSURL _drt_descriptionSuitableForTestResult]):
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent
