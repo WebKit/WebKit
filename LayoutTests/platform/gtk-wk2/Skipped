@@ -51,11 +51,6 @@ fast/css/webkit-mask-crash-fieldset-legend.html
 # https://bugs.webkit.org/show_bug.cgi?id=69512
 plugins/destroy-during-npp-new.html
 
-# [WK2] [GTK] WebKitWebProcess asserts in ASSERT(m_state != CLOSED)
-# https://bugs.webkit.org/show_bug.cgi?id=69513
-http/tests/eventsource/eventsource-parse-event-stream.html
-http/tests/eventsource/eventsource-reconnect.html
-
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
