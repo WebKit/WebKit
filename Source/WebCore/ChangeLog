@@ -1,3 +1,10 @@
+2011-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(FILTERS) after r98989.
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+
 2011-11-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] Clicking in a CSS property/value being edited commits the editor
