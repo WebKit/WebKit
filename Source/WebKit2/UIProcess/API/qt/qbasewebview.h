@@ -68,6 +68,7 @@ public:
 
 public Q_SLOTS:
      void load(const QUrl&);
+     void postMessage(const QString&);
 
 Q_SIGNALS:
     void titleChanged(const QString& title);
@@ -77,6 +78,7 @@ Q_SIGNALS:
     void loadFailed(QBaseWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
+    void messageReceived(const QVariantMap& message);
 
 protected:
     QBaseWebView(QBaseWebViewPrivate &dd, QQuickItem *parent = 0);
@@ -84,6 +86,7 @@ protected:
     QScopedPointer<QBaseWebViewPrivate> d_ptr;
 private:
     Q_DECLARE_PRIVATE(QBaseWebView)
+    friend class QtWebPageProxy;
 };
 
 #endif /* qbasewebview_h */

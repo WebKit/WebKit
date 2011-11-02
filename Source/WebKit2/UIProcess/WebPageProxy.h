@@ -521,6 +521,7 @@ public:
 
 #if PLATFORM(QT)
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
+    void didReceiveMessageFromNavigatorQtObject(const String&);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;

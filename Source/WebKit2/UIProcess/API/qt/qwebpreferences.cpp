@@ -285,6 +285,19 @@ void QWebPreferences::setDnsPrefetchEnabled(bool enable)
     emit dnsPrefetchEnabledChanged();
 }
 
+bool QWebPreferences::navigatorQtObjectEnabled() const
+{
+    return d->qtWebPageProxy->navigatorQtObjectEnabled();
+}
+
+void QWebPreferences::setNavigatorQtObjectEnabled(bool enable)
+{
+    if (enable == navigatorQtObjectEnabled())
+        return;
+    d->qtWebPageProxy->setNavigatorQtObjectEnabled(enable);
+    emit navigatorQtObjectEnabledChanged();
+}
+
 QString QWebPreferences::standardFontFamily() const
 {
     return d->fontFamily(QWebPreferencesPrivate::StandardFont);

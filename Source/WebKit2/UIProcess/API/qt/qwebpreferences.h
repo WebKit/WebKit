@@ -39,6 +39,7 @@ public:
     Q_PROPERTY(bool xssAuditingEnabled READ xssAuditingEnabled WRITE setXssAuditingEnabled NOTIFY xssAuditingEnabledChanged FINAL)
     Q_PROPERTY(bool privateBrowsingEnabled READ privateBrowsingEnabled WRITE setPrivateBrowsingEnabled NOTIFY privateBrowsingEnabledChanged FINAL)
     Q_PROPERTY(bool dnsPrefetchEnabled READ dnsPrefetchEnabled WRITE setDnsPrefetchEnabled NOTIFY dnsPrefetchEnabledChanged FINAL)
+    Q_PROPERTY(bool navigatorQtObjectEnabled READ navigatorQtObjectEnabled WRITE setNavigatorQtObjectEnabled NOTIFY navigatorQtObjectEnabledChanged FINAL)
 
     Q_PROPERTY(QString standardFontFamily READ standardFontFamily WRITE setStandardFontFamily NOTIFY standardFontFamilyChanged FINAL)
     Q_PROPERTY(QString fixedFontFamily READ fixedFontFamily WRITE setFixedFontFamily NOTIFY fixedFontFamilyChanged FINAL)
@@ -74,6 +75,9 @@ public:
 
     bool dnsPrefetchEnabled() const;
     void setDnsPrefetchEnabled(bool enable);
+
+    bool navigatorQtObjectEnabled() const;
+    void setNavigatorQtObjectEnabled(bool);
 
     QString standardFontFamily() const;
     void setStandardFontFamily(const QString& family);
@@ -111,6 +115,7 @@ Q_SIGNALS:
     void xssAuditingEnabledChanged();
     void privateBrowsingEnabledChanged();
     void dnsPrefetchEnabledChanged();
+    void navigatorQtObjectEnabledChanged();
 
     void standardFontFamilyChanged();
     void fixedFontFamilyChanged();

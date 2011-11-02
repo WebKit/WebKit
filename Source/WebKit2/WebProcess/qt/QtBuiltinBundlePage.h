@@ -27,7 +27,9 @@
 #ifndef QtBuiltinBundlePage_h
 #define QtBuiltinBundlePage_h
 
+#include "JSObjectRef.h"
 #include "WKBundlePage.h"
+#include "WKBundleScriptWorld.h"
 
 namespace WebKit {
 
@@ -40,9 +42,26 @@ public:
 
     WKBundlePageRef page() const { return m_page; }
 
+    // Loader Client.
+    static void didClearWindowForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void*);
+
+    void didClearWindowForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
+
+    void postMessageFromNavigatorQtObject(WKStringRef message);
+    void didReceiveMessageToNavigatorQtObject(WKStringRef message);
+
+    bool navigatorQtObjectEnabled() const { return m_navigatorQtObjectEnabled; }
+    void setNavigatorQtObjectEnabled(bool);
+
 private:
+    void registerNavigatorQtObject(JSGlobalContextRef);
+
+    static JSClassRef navigatorQtObjectClass();
+
     QtBuiltinBundle* m_bundle;
     WKBundlePageRef m_page;
+    JSObjectRef m_navigatorQtObject;
+    bool m_navigatorQtObjectEnabled;
 };
 
 } // namespace WebKit

@@ -125,6 +125,7 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
 
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
+    virtual void didReceiveMessageFromNavigatorQtObject(const String&);
 
     void didChangeUrl(const QUrl&);
     void didChangeTitle(const QString&);
@@ -163,6 +164,11 @@ public:
     void setCustomUserAgent(const QString&);
     QString customUserAgent() const;
 
+    void setNavigatorQtObjectEnabled(bool);
+    bool navigatorQtObjectEnabled() const { return m_navigatorQtObjectEnabled; }
+
+    void postMessageToNavigatorQtObject(const QString&);
+
     qreal textZoomFactor() const;
     qreal pageZoomFactor() const;
     void setTextZoomFactor(qreal zoomFactor);
@@ -179,6 +185,7 @@ public:
     Q_SIGNAL void scrollRequested(int dx, int dy);
     Q_SIGNAL void zoomableAreaFound(const QRect&);
     Q_SIGNAL void updateNavigationState();
+    Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
     void init();
@@ -205,6 +212,8 @@ private:
 
     OwnPtr<QUndoStack> m_undoStack;
     int m_loadProgress;
+
+    bool m_navigatorQtObjectEnabled;
 };
 
 #endif /* QtWebPageProxy_h */

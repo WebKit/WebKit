@@ -2266,6 +2266,11 @@ void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
 
     process()->send(Messages::WebPage::FindZoomableAreaForPoint(point), m_pageID);
 }
+
+void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents)
+{
+    m_pageClient->didReceiveMessageFromNavigatorQtObject(contents);
+}
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

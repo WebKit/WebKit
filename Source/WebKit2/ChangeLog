@@ -1,3 +1,80 @@
+2011-11-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Implement message exchange between WebView and the web page
+        https://bugs.webkit.org/show_bug.cgi?id=70545
+
+        Reviewed by Noam Rosenthal.
+
+        Adds a mechanism for the WebView to send messages to the JavaScript environment
+        of the web page. In the WebView we have a method postMessage() and a signal
+        messageReceived(), while in the web page we expose a navigator.qt object with a
+        postMessage() method and a onmessage property. The messages are objects that
+        follow the same structure as MessageEvents.
+
+        The feature is disabled by default, and can be enabled by setting
+        QWebPreferences::navigatorQtObjectEnabled property to true. Changes take effect
+        after the next load(). QML tests are included.
+
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (setupContextInjectedBundleClient): Helper to register the injected bundle client.
+        (qt_wk_didReceiveMessageFromInjectedBundle): Decode and dispatch a message received
+        from the WebProcess to the WebPageProxy.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didReceiveMessageFromNavigatorQtObject):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessageFromNavigatorQtObject):
+        * UIProcess/WebPageProxy.h:
+        Handle messages received from the navigator.qt object via the injected bundle. Called
+        from the ClientImpl.
+
+        * UIProcess/API/qt/qbasewebview.cpp:
+        (QBaseWebView::postMessage):
+        (QBaseWebViewPrivate::setPageProxy):
+        * UIProcess/API/qt/qbasewebview.h:
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferences::navigatorQtObjectEnabled):
+        (QWebPreferences::setNavigatorQtObjectEnabled):
+        * UIProcess/API/qt/qwebpreferences.h:
+        The signal, slot and the setting to enable the feature.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::defaultWKContext): setup the injected bundle client for this the
+        default context so we can listen to messages from it.
+
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::didReceiveMessageFromNavigatorQtObject):
+        (QtWebPageProxy::setNavigatorQtObjectEnabled):
+        (QtWebPageProxy::postMessageToNavigatorQtObject):
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::navigatorQtObjectEnabled):
+        Enabling and sending messages to the navigator.qt object are done by sending messages to
+        the injected bundle, identifying the page that we want to act on.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_messaging.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/messaging.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * WebProcess/qt/QtBuiltinBundle.cpp:
+        (WebKit::QtBuiltinBundle::initialize):
+        (WebKit::QtBuiltinBundle::didReceiveMessage):
+        (WebKit::QtBuiltinBundle::handleMessageToNavigatorQtObject):
+        (WebKit::QtBuiltinBundle::handleSetNavigatorQtObjectEnabled):
+        * WebProcess/qt/QtBuiltinBundle.h:
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+        (WebKit::QtBuiltinBundlePage::~QtBuiltinBundlePage):
+        (WebKit::QtBuiltinBundlePage::didClearWindowForFrame):
+        (WebKit::qt_postMessageCallback):
+        (WebKit::QtBuiltinBundlePage::postMessageFromNavigatorQtObject):
+        (WebKit::createWrappedMessage):
+        (WebKit::QtBuiltinBundlePage::didReceiveMessageToNavigatorQtObject):
+        (WebKit::QtBuiltinBundlePage::setNavigatorQtObjectEnabled):
+        (WebKit::QtBuiltinBundlePage::registerNavigatorQtObject):
+        (WebKit::QtBuiltinBundlePage::navigatorQtObjectClass):
+        * WebProcess/qt/QtBuiltinBundlePage.h:
+        (WebKit::QtBuiltinBundlePage::navigatorQtObjectEnabled):
+
 2011-11-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix qmltest API test failures related to r98973.

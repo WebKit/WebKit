@@ -48,12 +48,17 @@ public:
     // Bundle Client.
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void*);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void*);
+    static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
 
     void didCreatePage(WKBundlePageRef);
     void willDestroyPage(WKBundlePageRef);
+    void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
 private:
     QtBuiltinBundlePage* bundlePageForPageRef(const WKBundlePageRef) const;
+
+    void handleMessageToNavigatorQtObject(WKTypeRef messageBody);
+    void handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody);
 
     // FIXME: Can we use HashMap of OwnPtrs? Or something equivalent?
     Vector<OwnPtr<QtBuiltinBundlePage> > m_pages;

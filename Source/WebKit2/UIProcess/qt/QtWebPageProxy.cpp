@@ -30,6 +30,7 @@
 #include "qwkhistory_p.h"
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
+#include "MutableArray.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
 #include "QtPolicyInterface.h"
@@ -61,15 +62,16 @@
 using namespace WebKit;
 using namespace WebCore;
 
-
 RefPtr<WebContext> QtWebPageProxy::s_defaultContext;
 
 unsigned QtWebPageProxy::s_defaultPageProxyCount = 0;
 
 PassRefPtr<WebContext> QtWebPageProxy::defaultWKContext()
 {
-    if (!s_defaultContext)
+    if (!s_defaultContext) {
         s_defaultContext = WebContext::create(String());
+        setupContextInjectedBundleClient(toAPI(s_defaultContext.get()));
+    }
     return s_defaultContext;
 }
 
@@ -107,6 +109,7 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtPolicyInterface
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_loadProgress(0)
+    , m_navigatorQtObjectEnabled(false)
 {
     ASSERT(viewInterface);
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
@@ -351,6 +354,14 @@ void QtWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& 
     m_viewInterface->didFindZoomableArea(QPoint(target), QRect(area));
 }
 
+void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& message)
+{
+    QVariantMap variantMap;
+    variantMap.insert(QLatin1String("data"), QString(message));
+    variantMap.insert(QLatin1String("origin"), url());
+    emit receivedMessageFromNavigatorQtObject(variantMap);
+}
+
 void QtWebPageProxy::didChangeUrl(const QUrl& url)
 {
     m_viewInterface->didChangeUrl(url);
@@ -473,6 +484,31 @@ void QtWebPageProxy::setCustomUserAgent(const QString& userAgent)
 QString QtWebPageProxy::customUserAgent() const
 {
     return WKStringCopyQString(WKPageCopyCustomUserAgent(pageRef()));
+}
+
+void QtWebPageProxy::setNavigatorQtObjectEnabled(bool enabled)
+{
+    static String messageName("SetNavigatorQtObjectEnabled");
+
+    ASSERT(enabled != m_navigatorQtObjectEnabled);
+    // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
+    m_navigatorQtObjectEnabled = enabled;
+    RefPtr<MutableArray> body = MutableArray::create();
+    body->append(m_webPageProxy.get());
+    RefPtr<WebBoolean> webEnabled = WebBoolean::create(enabled);
+    body->append(webEnabled.get());
+    m_context->postMessageToInjectedBundle(messageName, body.get());
+}
+
+void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
+{
+    static String messageName("MessageToNavigatorQtObject");
+
+    RefPtr<MutableArray> body = MutableArray::create();
+    body->append(m_webPageProxy.get());
+    RefPtr<WebString> contents = WebString::create(String(message));
+    body->append(contents.get());
+    m_context->postMessageToInjectedBundle(messageName, body.get());
 }
 
 void QtWebPageProxy::load(const QUrl& url)

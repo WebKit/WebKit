@@ -34,6 +34,8 @@
 #include <WKHitTestResult.h>
 #include <WKOpenPanelParameters.h>
 #include <WKOpenPanelResultListener.h>
+#include <WKPage.h>
+#include <WKString.h>
 #include <WKType.h>
 #include <WKURLRequest.h>
 
@@ -279,6 +281,25 @@ static void qt_wk_decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKUR
     WKFramePolicyListenerUse(listener);
 }
 
+void qt_wk_didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*)
+{
+    if (!WKStringIsEqualToUTF8CString(messageName, "MessageFromNavigatorQtObject"))
+        return;
+
+    ASSERT(messageBody);
+    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+
+    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
+    ASSERT(WKArrayGetSize(body) == 2);
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKPageGetTypeID());
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKStringGetTypeID());
+
+    WKPageRef page = static_cast<WKPageRef>(WKArrayGetItemAtIndex(body, 0));
+    WKStringRef str = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
+
+    toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
+}
+
 void setupPageLoaderClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProxy)
 {
     WKPageLoaderClient loadClient;
@@ -322,4 +343,13 @@ void setupPagePolicyClient(QtPolicyInterface* policyInterface, WebPageProxy* web
     policyClient.decidePolicyForNavigationAction = qt_wk_decidePolicyForNavigationAction;
     policyClient.decidePolicyForResponse = qt_wk_decidePolicyForResponse;
     WKPageSetPagePolicyClient(toAPI(webPageProxy), &policyClient);
+}
+
+void setupContextInjectedBundleClient(WKContextRef context)
+{
+    WKContextInjectedBundleClient injectedBundleClient;
+    memset(&injectedBundleClient, 0, sizeof(WKContextInjectedBundleClient));
+    injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
+    injectedBundleClient.didReceiveMessageFromInjectedBundle = qt_wk_didReceiveMessageFromInjectedBundle;
+    WKContextSetInjectedBundleClient(context, &injectedBundleClient);
 }

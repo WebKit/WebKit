@@ -34,6 +34,7 @@ QBaseWebViewPrivate::QBaseWebViewPrivate()
 void QBaseWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
 {
     this->pageProxy.reset(pageProxy);
+    QObject::connect(pageProxy, SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), q_ptr, SIGNAL(messageReceived(QVariantMap)));
 }
 
 QBaseWebView::QBaseWebView(QBaseWebViewPrivate &dd, QQuickItem *parent)
@@ -51,6 +52,12 @@ void QBaseWebView::load(const QUrl& url)
 {
     Q_D(QBaseWebView);
     d->pageProxy->load(url);
+}
+
+void QBaseWebView::postMessage(const QString& message)
+{
+    Q_D(QBaseWebView);
+    d->pageProxy->postMessageToNavigatorQtObject(message);
 }
 
 QUrl QBaseWebView::url() const

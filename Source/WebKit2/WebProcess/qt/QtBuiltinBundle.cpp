@@ -28,7 +28,11 @@
 #include "QtBuiltinBundle.h"
 
 #include "QtBuiltinBundlePage.h"
+#include "WKArray.h"
 #include "WKBundlePage.h"
+#include "WKRetainPtr.h"
+#include "WKString.h"
+#include "WKStringQt.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
@@ -53,7 +57,7 @@ void QtBuiltinBundle::initialize(WKBundleRef bundle)
         didCreatePage,
         willDestroyPage,
         0, // didInitializePageGroup
-        0, // didReceiveMessage
+        didReceiveMessage
     };
     WKBundleSetClient(m_bundle, &client);
 }
@@ -66,6 +70,11 @@ void QtBuiltinBundle::didCreatePage(WKBundleRef, WKBundlePageRef page, const voi
 void QtBuiltinBundle::willDestroyPage(WKBundleRef, WKBundlePageRef page, const void* clientInfo)
 {
     static_cast<QtBuiltinBundle*>(const_cast<void*>(clientInfo))->willDestroyPage(page);
+}
+
+void QtBuiltinBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+{
+    static_cast<QtBuiltinBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
 }
 
 void QtBuiltinBundle::didCreatePage(WKBundlePageRef page)
@@ -90,6 +99,52 @@ QtBuiltinBundlePage* QtBuiltinBundle::bundlePageForPageRef(const WKBundlePageRef
             return m_pages[i].get();
     }
     return 0;
+}
+
+void QtBuiltinBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
+{
+    if (WKStringIsEqualToUTF8CString(messageName, "MessageToNavigatorQtObject"))
+        handleMessageToNavigatorQtObject(messageBody);
+    else if (WKStringIsEqualToUTF8CString(messageName, "SetNavigatorQtObjectEnabled"))
+        handleSetNavigatorQtObjectEnabled(messageBody);
+}
+
+void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKTypeRef messageBody)
+{
+    ASSERT(messageBody);
+    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+
+    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
+    ASSERT(WKArrayGetSize(body) == 2);
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKBundlePageGetTypeID());
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKStringGetTypeID());
+
+    WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
+    WKStringRef contents = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
+
+    QtBuiltinBundlePage* bundlePage = bundlePageForPageRef(page);
+    if (!bundlePage)
+        return;
+    bundlePage->didReceiveMessageToNavigatorQtObject(contents);
+}
+
+void QtBuiltinBundle::handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody)
+{
+    ASSERT(messageBody);
+    ASSERT(WKGetTypeId(messageBody) == WKArrayGetTypeID());
+
+    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
+    ASSERT(WKArrayGetSize(body) == 2);
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKBundlePageGetTypeID());
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKBooleanGetTypeID());
+
+    WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
+    WKBooleanRef enabled = static_cast<WKBooleanRef>(WKArrayGetItemAtIndex(body, 1));
+
+    QtBuiltinBundlePage* bundlePage = bundlePageForPageRef(page);
+    if (!bundlePage)
+        return;
+    bundlePage->setNavigatorQtObjectEnabled(enabled);
 }
 
 } // namespace WebKit

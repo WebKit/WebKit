@@ -20,16 +20,19 @@
 #ifndef ClientImpl_h
 #define ClientImpl_h
 
-#include <WebKit2/WKPage.h>
+#include <WebKit2/WKContext.h>
 
 class QtWebPageProxy;
 namespace WebKit {
 class QtPolicyInterface;
 class WebPageProxy;
 }
+
 void setupPageLoaderClient(QtWebPageProxy*, WebKit::WebPageProxy*);
 void setupPageUiClient(QtWebPageProxy*, WebKit::WebPageProxy*);
 void setupPagePolicyClient(WebKit::QtPolicyInterface*, WebKit::WebPageProxy*);
+
+void setupContextInjectedBundleClient(WKContextRef);
 
 #endif /* ClientImpl_h */
 
