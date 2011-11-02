@@ -64,8 +64,8 @@ public:
 
     virtual HostWindow* hostWindow() const;
     
-    virtual void invalidateRect(const IntRect&);
-    virtual void setFrameRect(const IntRect&);
+    virtual void invalidateRect(const LayoutRect&);
+    virtual void setFrameRect(const LayoutRect&);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();
@@ -301,11 +301,11 @@ public:
     void setTracksRepaints(bool);
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
     void resetTrackedRepaints() { m_trackedRepaintRects.clear(); }
-    const Vector<IntRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
+    const Vector<LayoutRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
 
 protected:
-    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const LayoutRect& rectToScroll, const LayoutRect& clipRect);
-    virtual void scrollContentsSlowPath(const LayoutRect& updateRect);
+    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
+    virtual void scrollContentsSlowPath(const IntRect& updateRect);
 
     virtual bool isVerticalDocument() const;
     virtual bool isFlippedDocument() const;
@@ -350,7 +350,7 @@ private:
     virtual void invalidateScrollbarRect(Scrollbar*, const LayoutRect&);
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<LayoutRect>&) const;
-    virtual void scrollTo(const LayoutSize&);
+    virtual void scrollTo(const IntSize&);
     virtual void didStartRubberBand(const IntSize&) const;
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void didStartAnimatedScroll() const;
@@ -456,7 +456,7 @@ private:
     double m_lastPaintTime;
     
     bool m_isTrackingRepaints; // Used for testing.
-    Vector<IntRect> m_trackedRepaintRects;
+    Vector<LayoutRect> m_trackedRepaintRects;
 
     bool m_shouldUpdateWhileOffscreen;
 

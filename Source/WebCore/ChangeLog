@@ -1,3 +1,67 @@
+2011-11-01  Levi Weintraub  <leviw@chromium.org>
+
+        Fix uses of LayoutUnit in Frame-, Scroll-, and RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=71321
+
+        Reviewed by Darin Adler.
+
+        Updating the usage of LayoutUnits in the *View classes to mirror the proper use
+        as derived in the subpixellayout branch.
+
+        This entails scrolling only with integers (and rounding once we've made the switch)
+        and using integers for window coordinates, with LayoutUnits for content coordinates.
+
+        No new tests -- no change in behavior.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::zoomAnimatorTransformChanged):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::scrollElementToRect):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::updateScrollCorner):
+        * page/FrameView.h:
+        (WebCore::FrameView::trackedRepaintRects):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::layoutWidth):
+        (WebCore::ScrollView::layoutHeight):
+        (WebCore::ScrollView::fixedLayoutSize):
+        (WebCore::ScrollView::setFixedLayoutSize):
+        (WebCore::ScrollView::contentsSize):
+        (WebCore::ScrollView::setContentsSize):
+        (WebCore::ScrollView::overhangAmount):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::rectToCopyOnScroll):
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::screenToContents):
+        (WebCore::ScrollView::scrollbarAtPoint):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::adjustScrollPositionWithinRange):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::shouldRepaint):
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::repaintRectangleInViewAndCompositedLayers):
+        (WebCore::RenderView::computeRectForRepaint):
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::viewRect):
+        (WebCore::RenderView::unscaledDocumentRect):
+        (WebCore::RenderView::documentRect):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::printRect):
+        (WebCore::RenderView::setPrintRect):
+
 2011-11-01  Anna Cavender  <annacc@chromium.org>
 
         Small fixes for WebVTTParser.

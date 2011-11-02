@@ -376,7 +376,7 @@ bool FrameView::didFirstLayout() const
     return !m_firstLayout;
 }
 
-void FrameView::invalidateRect(const IntRect& rect)
+void FrameView::invalidateRect(const LayoutRect& rect)
 {
     if (!parent()) {
         if (hostWindow())
@@ -397,9 +397,9 @@ void FrameView::invalidateRect(const IntRect& rect)
     renderer->repaintRectangle(repaintRect);
 }
 
-void FrameView::setFrameRect(const IntRect& newRect)
+void FrameView::setFrameRect(const LayoutRect& newRect)
 {
-    IntRect oldRect = frameRect();
+    LayoutRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
 
@@ -1227,7 +1227,7 @@ void FrameView::zoomAnimatorTransformChanged(float scale, float x, float y, Zoom
 {
     if (state == ZoomAnimationFinishing) {
         m_page->setPageScaleFactor(m_page->pageScaleFactor() * scale,
-                                   LayoutPoint(scale * scrollX() - x, scale * scrollY() - y));
+                                   IntPoint(scale * scrollX() - x, scale * scrollY() - y));
         scrollAnimator()->resetZoom();
     }
 
@@ -1433,7 +1433,7 @@ LayoutPoint FrameView::currentMousePosition() const
     return m_frame ? m_frame->eventHandler()->currentMousePosition() : IntPoint();
 }
 
-bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const LayoutRect& rectToScroll, const LayoutRect& clipRect)
+bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     const size_t fixedObjectThreshold = 5;
 
@@ -1449,14 +1449,14 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const LayoutR
     const bool isCompositedContentLayer = contentsInCompositedLayer();
 
     // Get the rects of the fixed objects visible in the rectToScroll
-    Vector<LayoutRect, fixedObjectThreshold> subRectToUpdate;
+    Vector<IntRect, fixedObjectThreshold> subRectToUpdate;
     bool updateInvalidatedSubRect = true;
     RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
     for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* renderBox = *it;
         if (renderBox->style()->position() != FixedPosition)
             continue;
-        LayoutRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
+        IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
         updateRect = contentsToWindow(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
@@ -1477,8 +1477,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const LayoutR
         // 2) update the area of fixed objects that has been invalidated
         size_t fixObjectsCount = subRectToUpdate.size();
         for (size_t i = 0; i < fixObjectsCount; ++i) {
-            LayoutRect updateRect = subRectToUpdate[i];
-            LayoutRect scrolledRect = updateRect;
+            IntRect updateRect = subRectToUpdate[i];
+            IntRect scrolledRect = updateRect;
             scrolledRect.move(scrollDelta);
             updateRect.unite(scrolledRect);
 #if USE(ACCELERATED_COMPOSITING)
@@ -1501,7 +1501,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const LayoutR
     return false;
 }
 
-void FrameView::scrollContentsSlowPath(const LayoutRect& updateRect)
+void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (contentsInCompositedLayer()) {
@@ -1664,10 +1664,10 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
     LayoutRect bounds = element->getRect();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
-    setScrollPosition(LayoutPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
+    setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
-void FrameView::setScrollPosition(const LayoutPoint& scrollPoint)
+void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
@@ -1741,7 +1741,7 @@ void FrameView::repaintContentRectangle(const LayoutRect& r, bool immediate)
     ASSERT(!m_frame->ownerElement());
     
     if (m_isTrackingRepaints) {
-        IntRect repaintRect = r;
+        LayoutRect repaintRect = r;
         repaintRect.move(-scrollOffset());
         m_trackedRepaintRects.append(repaintRect);
     }
@@ -2355,7 +2355,7 @@ bool FrameView::isActive() const
     return page && page->focusController()->isActive();
 }
 
-void FrameView::scrollTo(const LayoutSize& newOffset)
+void FrameView::scrollTo(const IntSize& newOffset)
 {
     LayoutSize offset = scrollOffset();
     ScrollView::scrollTo(newOffset);
@@ -2511,7 +2511,7 @@ void FrameView::updateScrollCorner()
 {
     RenderObject* renderer = 0;
     RefPtr<RenderStyle> cornerStyle;
-    IntRect cornerRect = scrollCornerRect();
+    LayoutRect cornerRect = scrollCornerRect();
     
     if (!cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
