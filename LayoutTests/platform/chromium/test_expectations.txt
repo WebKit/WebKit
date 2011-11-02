@@ -3629,7 +3629,7 @@ BUGWK70379 MAC WIN : fast/canvas/canvas-composite-fill-repaint.html = MISSING
 // Failing after r94912.
 BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT IMAGE
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
-BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
+BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 BUGCR96220 WIN LINUX : fast/borders/block-mask-overlay-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/block-mask-overlay-image-outset.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/border-image-outset-in-shorthand.html = IMAGE+TEXT
