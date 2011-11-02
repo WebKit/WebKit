@@ -1,3 +1,17 @@
+2011-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Emedded PDFs cannot be opened from Web archives
+        https://bugs.webkit.org/show_bug.cgi?id=70954
+
+        Reviewed by Oliver Hunt.
+
+        BuiltInPDFPlugin doesn't have access to original ResourceResponse and has to re-create it
+        It doesn't seem to be possible to create an NSURLResponse with a non-null HTTP status code,
+        and NetscapePlugInStreamLoader becomes unhappy.
+
+        * loader/NetscapePlugInStreamLoader.cpp: (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        Allow 0 status code, it's not a real error to have one in response.
+
 2011-10-31  Nat Duca  <nduca@chromium.org>
 
         [chromium] Slow down commit and draw rate based on visibility and draw completion

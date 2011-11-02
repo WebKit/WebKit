@@ -87,8 +87,9 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
     
     if (m_client->wantsAllStreams())
         return;
-    
-    if (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400)
+
+    // Status code can be null when serving from a Web archive.
+    if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
         cancel(frameLoader()->client()->fileDoesNotExistError(response));
 }
 
