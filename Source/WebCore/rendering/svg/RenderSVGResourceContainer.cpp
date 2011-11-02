@@ -38,6 +38,7 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(SVGStyledElement* node)
     : RenderSVGHiddenContainer(node)
     , m_id(node->hasID() ? node->getIdAttribute() : nullAtom)
     , m_registered(false)
+    , m_isInvalidating(false)
 {
 }
 
@@ -87,9 +88,10 @@ void RenderSVGResourceContainer::idChanged()
 
 void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
-    if (m_clients.isEmpty())
+    if (m_clients.isEmpty() || m_isInvalidating)
         return;
 
+    m_isInvalidating = true;
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
 
@@ -118,6 +120,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
             current = current->parent();
         }
     }
+    m_isInvalidating = false;
 }
 
 void RenderSVGResourceContainer::markClientForInvalidation(RenderObject* client, InvalidationMode mode)

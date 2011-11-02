@@ -1,3 +1,20 @@
+2011-11-02  Levi Weintraub  <leviw@chromium.org>
+
+        Infinite recursion in RenderSVGResourceContainer::markAllClientsForInvalidation
+        https://bugs.webkit.org/show_bug.cgi?id=71384
+
+        Reviewed by Darin Adler.
+
+        Adding a reentrancy guard to RenderSVGResourceContainer to prevent infinite recursion when
+        resources reference one another and share ids.
+
+        Test: svg/custom/resource-invalidation-crash.svg
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        * rendering/svg/RenderSVGResourceContainer.h:
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         Expand DragController to provide more information about the dragging session

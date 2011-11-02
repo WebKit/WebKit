@@ -64,7 +64,8 @@ private:
     void registerResource();
 
     AtomicString m_id;
-    bool m_registered;
+    bool m_registered : 1;
+    bool m_isInvalidating : 1;
     HashSet<RenderObject*> m_clients;
 };
 
