@@ -1,3 +1,17 @@
+2011-11-02  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        [Qt] Failing test media/video-document-types.html
+        https://bugs.webkit.org/show_bug.cgi?id=62108
+
+        Reviewed by Simon Hausmann.
+
+        Match what Mac has been doing since r36001: cancel the main load,
+        and handle failures caused by 'will be handled by plugin' errors.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::shouldFallBack):
+
 2011-11-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Fix build of WebKitTestRunner with ELF symbol visibility

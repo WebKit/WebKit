@@ -899,7 +899,11 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
 {
     if (!m_pluginView)
         loader->commitData(data, length);
-    
+
+    // If we are sending data to MediaDocument, we should stop here and cancel the request.
+    if (m_frame->document()->isMediaDocument())
+        loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
+
     // We re-check here as the plugin can have been created.
     if (m_pluginView && m_pluginView->isPluginView()) {
         if (!m_hasSentResponseToPlugin) {
@@ -974,7 +978,7 @@ WebCore::ResourceError FrameLoaderClientQt::pluginWillHandleLoadError(const WebC
 
 bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError& error)
 {
-    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange));
+    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange) || (error.errorCode() == WebKitErrorPluginWillHandleLoad));
 }
 
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)
