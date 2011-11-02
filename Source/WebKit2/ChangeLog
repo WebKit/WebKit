@@ -1,3 +1,15 @@
+2011-10-18  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2]: Shouldn't send unhandled TouchCancel event to gesture recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=70333
+
+        Reviewed by Simon Hausmann.
+
+        Gesture recognizers should be reset for unhandled TouchCancel event.
+
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::doneWithTouchEvent):
+
 2011-11-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Add support for touch event testing to WebKitTestRunner
