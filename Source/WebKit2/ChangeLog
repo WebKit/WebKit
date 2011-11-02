@@ -1,5 +1,17 @@
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
+        Update dragging info on mac when user is dragging files into view
+        https://bugs.webkit.org/show_bug.cgi?id=71325
+        <rdar://problem/10379193>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView draggingUpdated:]): Based on the DragSession, we update NSDraggingInfo
+        to update the badge and dragging formation.
+
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
         Expand DragController to provide more information about the dragging session
         https://bugs.webkit.org/show_bug.cgi?id=71324
         <rdar://problem/10379175>

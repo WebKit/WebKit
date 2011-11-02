@@ -1589,6 +1589,17 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _data->_page->dragUpdated(&dragData, [[draggingInfo draggingPasteboard] name]);
     
     WebCore::DragSession dragSession = _data->_page->dragSession();
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSInteger numberOfValidItemsForDrop = dragSession.numberOfItemsToBeAccepted;
+    NSDraggingFormation draggingFormation = NSDraggingFormationNone;
+    if (dragSession.mouseIsOverFileInput && numberOfValidItemsForDrop > 0)
+        draggingFormation = NSDraggingFormationList;
+
+    if ([draggingInfo numberOfValidItemsForDrop] != numberOfValidItemsForDrop)
+        [draggingInfo setNumberOfValidItemsForDrop:numberOfValidItemsForDrop];
+    if ([draggingInfo draggingFormation] != draggingFormation)
+        [draggingInfo setDraggingFormation:draggingFormation];
+#endif
     return dragSession.operation;
 }
 
