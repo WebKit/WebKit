@@ -144,7 +144,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
 
 bool DragController::dragIsMove(FrameSelection* selection, DragData* dragData)
 {
-    return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && !isCopyKeyDown(dragData);
+    return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && selection->isRange() && !isCopyKeyDown(dragData);
 }
 
 // FIXME: This method is poorly named.  We're just clearing the selection from the document this drag is exiting.

@@ -1,3 +1,18 @@
+2011-11-02  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        Assert in MoveSelectionCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=70277
+
+        Reviewed by Ryosuke Niwa.
+
+        A MoveSelectionCommand should be fired only if the selection type is
+        RangeSelection, since nothing is selected in other cases.
+
+        Test: fast/events/drag-link.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragIsMove):
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         <input=file multiple> default text uses singular instead of plural
