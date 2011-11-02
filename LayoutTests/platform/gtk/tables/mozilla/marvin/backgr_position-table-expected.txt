@@ -36,7 +36,7 @@ layer at (0,0) size 784x1239
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "contents"
         RenderBlock {DD} at (40,75) size 728x15
-          RenderInline {A} at (0,0) size 136x15 [color=#999900]
+          RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 136x15
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0

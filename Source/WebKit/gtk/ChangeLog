@@ -1,3 +1,15 @@
+2011-11-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Visited links of a page group should be removed when clearing back/forward list
+        https://bugs.webkit.org/show_bug.cgi?id=71052
+
+        Reviewed by Martin Robinson.
+
+        When clearing back-forward list, also remove the visited links from page's page group.
+
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_clear):
+
 2011-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Install html and tmpl dirs in a $(DOC_MODULE) dir in tarball

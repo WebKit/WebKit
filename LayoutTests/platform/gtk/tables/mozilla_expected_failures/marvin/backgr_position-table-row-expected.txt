@@ -41,7 +41,7 @@ layer at (0,0) size 784x1398
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
         RenderBlock {DD} at (40,15) size 728x15
-          RenderInline {A} at (0,0) size 392x15 [color=#999900]
+          RenderInline {A} at (0,0) size 392x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 392x15
               text run at (0,0) width 392: "Background Position: Background on 'table-column'"
           RenderText {#text} at (0,0) size 0x0
@@ -49,7 +49,7 @@ layer at (0,0) size 784x1398
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "previous"
         RenderBlock {DD} at (40,45) size 728x15
-          RenderInline {A} at (0,0) size 440x15 [color=#999900]
+          RenderInline {A} at (0,0) size 440x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 440x15
               text run at (0,0) width 440: "Background Position: Background on 'table-column-group'"
           RenderText {#text} at (0,0) size 0x0

@@ -24,6 +24,7 @@
 #include "BackForwardListImpl.h"
 #include "HistoryItem.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebbackforwardlistprivate.h"
 #include "webkitwebhistoryitem.h"
@@ -447,6 +448,8 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
  *
  * Clears the @webBackForwardList by removing all its elements. Note that not even
  * the current page is kept in list when cleared so you would have to add it later.
+ * This method also clears the list of visited links which means that all links will
+ * appear unvisited.
  *
  * Since: 1.3.1
  **/
@@ -455,7 +458,14 @@ void webkit_web_back_forward_list_clear(WebKitWebBackForwardList* webBackForward
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
 
     WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
-    if (!backForwardList || !backForwardList->enabled() || !backForwardList->entries().size())
+    if (!backForwardList)
+        return;
+
+    WebCore::Page* page = backForwardList->page();
+    if (page && page->groupPtr())
+        page->groupPtr()->removeVisitedLinks();
+
+    if (!backForwardList->enabled() || !backForwardList->entries().size())
         return;
 
     // Clear the current list by setting capacity to 0
