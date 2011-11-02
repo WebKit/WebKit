@@ -1,5 +1,12 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix non-Mac builds.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Plug-in snapshots are blurry in HiDPI
         https://bugs.webkit.org/show_bug.cgi?id=71387
         <rdar://problem/10385393>
