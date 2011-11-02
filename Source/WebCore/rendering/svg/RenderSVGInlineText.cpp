@@ -104,7 +104,7 @@ InlineTextBox* RenderSVGInlineText::createTextBox()
     return box;
 }
 
-LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int*)
+LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit*)
 {
     if (!box->isInlineTextBox())
         return LayoutRect();

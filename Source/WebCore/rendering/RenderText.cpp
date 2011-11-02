@@ -328,7 +328,7 @@ static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigne
     return FloatRect();
 }
 
-void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
+void RenderText::absoluteRectsForRange(Vector<LayoutRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
@@ -1497,24 +1497,24 @@ LayoutRect RenderText::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderText::linesVisualOverflowBoundingBox() const
+LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
     if (!firstTextBox())
-        return IntRect();
+        return LayoutRect();
 
     // Return the width of the minimal left side and the maximal right side.
-    int logicalLeftSide = numeric_limits<int>::max();
-    int logicalRightSide = numeric_limits<int>::min();
+    LayoutUnit logicalLeftSide = numeric_limits<LayoutUnit>::max();
+    LayoutUnit logicalRightSide = numeric_limits<LayoutUnit>::min();
     for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
         logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisualOverflow());
         logicalRightSide = max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
     
-    int logicalTop = firstTextBox()->logicalTopVisualOverflow();
-    int logicalWidth = logicalRightSide - logicalLeftSide;
-    int logicalHeight = lastTextBox()->logicalBottomVisualOverflow() - logicalTop;
+    LayoutUnit logicalTop = firstTextBox()->logicalTopVisualOverflow();
+    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
+    LayoutUnit logicalHeight = lastTextBox()->logicalBottomVisualOverflow() - logicalTop;
     
-    IntRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
+    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
     if (!style()->isHorizontalWritingMode())
         rect = rect.transposedRect();
     return rect;

@@ -55,7 +55,7 @@ public:
     void dirtyLineBoxes(bool fullLayout);
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;
-    void absoluteRectsForRange(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
+    void absoluteRectsForRange(Vector<LayoutRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
 
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
     void absoluteQuadsForRange(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
@@ -83,7 +83,7 @@ public:
                            float& minW, float& maxW, bool& stripFrontSpaces);
 
     virtual LayoutRect linesBoundingBox() const;
-    IntRect linesVisualOverflowBoundingBox() const;
+    LayoutRect linesVisualOverflowBoundingBox() const;
 
     FloatPoint firstRunOrigin() const;
     float firstRunX() const;
@@ -150,7 +150,7 @@ private:
     // callers with a RenderObject* can continue to use length().
     virtual unsigned length() const { return textLength(); }
 
-    virtual void paint(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
+    virtual void paint(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
     virtual void layout() { ASSERT_NOT_REACHED(); }
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint&, const LayoutPoint&, HitTestAction) { ASSERT_NOT_REACHED(); return false; }
 

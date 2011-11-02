@@ -1,3 +1,28 @@
+2011-11-02  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderText to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=71389
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderText methods (and overriden methods in related classes) to
+        LayoutRect/LayoutUnit.
+
+        No new tests.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::linesBoundingBox):
+        (WebCore::RenderText::linesVisualOverflowBoundingBox):
+        * rendering/RenderText.h:
+        Change RenderText to expose its bounding box, selection and caret rects
+        as LayoutRects.
+        
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        * rendering/svg/RenderSVGInlineText.h:
+        Change localCaretRect to return a LayoutRect.
+
 2011-11-02  Levi Weintraub  <leviw@chromium.org>
 
         Infinite recursion in RenderSVGResourceContainer::markAllClientsForInvalidation
