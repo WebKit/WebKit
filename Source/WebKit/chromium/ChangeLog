@@ -1,3 +1,9 @@
+2011-11-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed fix for build failure on chromium shared linux caused by r99020.
+
+        * WebKit.gyp:
+
 2011-11-01  Darin Adler  <darin@apple.com>
 
         Change HTMLSelectElement::setSelectedIndex to use enums instead of bools

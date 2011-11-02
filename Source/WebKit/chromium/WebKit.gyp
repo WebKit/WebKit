@@ -700,6 +700,7 @@
                                 'tests/CCLayerTreeHostTest.cpp',
                                 'tests/FrameTestHelpers.cpp',
                                 'tests/PopupMenuTest.cpp',
+                                'tests/RenderTableCellTest.cpp',
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
