@@ -80,7 +80,7 @@ namespace JSC {
 #define THUMB_FUNC_PARAM(name)
 #endif
 
-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
+#if (OS(LINUX) || OS(FREEBSD)) && (CPU(X86_64) || CPU(X86))
 #define SYMBOL_STRING_RELOCATION(name) #name "@plt"
 #elif CPU(X86) && COMPILER(MINGW)
 #define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"

@@ -1,3 +1,16 @@
+2011-11-02  Alexey Shabalin  <a.shabalin@gmail.com>
+
+        TEXTREL in libjavascriptcoregtk-1.0.so.0.11.0 on x86 (or i586)
+        https://bugs.webkit.org/show_bug.cgi?id=70610
+
+        Reviewed by Martin Robinson.
+
+        Properly annotate ASM on BSD and Linux x86 systems.
+
+        * dfg/DFGOperations.cpp: Add annotation for X86.
+        * jit/JITStubs.cpp: Ditto.
+        * jit/ThunkGenerators.cpp: Ditto.
+
 2011-11-02  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Missing Force8BitConstructor in 8-bit version of StringImpl::reallocate()
