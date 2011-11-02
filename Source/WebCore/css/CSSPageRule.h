@@ -41,7 +41,7 @@ public:
 
     virtual ~CSSPageRule();
 
-    virtual String selectorText() const;
+    String pageSelectorText() const;
 
 private:
     CSSPageRule(CSSStyleSheet* parent, int sourceLine);

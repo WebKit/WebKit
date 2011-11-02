@@ -1,5 +1,22 @@
 2011-11-02  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleRule: Devirtualize selectorText()
+        https://bugs.webkit.org/show_bug.cgi?id=71364
+
+        Reviewed by Antti Koivisto.
+
+        Have CSSStyleRule::selectorText() redirect to CSSPageRule::pageSelectorText()
+        if type() is PAGE_RULE.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::pageSelectorText):
+        * css/CSSPageRule.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::selectorText):
+        * css/CSSStyleRule.h:
+
+2011-11-02  Andreas Kling  <kling@webkit.org>
+
         CSSRule: Devirtualize cssText()
         https://bugs.webkit.org/show_bug.cgi?id=71292
 

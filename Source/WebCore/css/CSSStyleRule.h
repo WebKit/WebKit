@@ -40,7 +40,7 @@ public:
     }
     virtual ~CSSStyleRule();
 
-    virtual String selectorText() const;
+    String selectorText() const;
     void setSelectorText(const String&);
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }

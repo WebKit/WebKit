@@ -23,6 +23,7 @@
 #include "CSSStyleRule.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSPageRule.h"
 #include "CSSParser.h"
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
@@ -45,6 +46,9 @@ CSSStyleRule::~CSSStyleRule()
 
 String CSSStyleRule::selectorText() const
 {
+    if (isPageRule())
+        return static_cast<const CSSPageRule*>(this)->pageSelectorText();
+
     String str;
     for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
         if (s != selectorList().first())

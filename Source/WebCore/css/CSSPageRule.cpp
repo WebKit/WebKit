@@ -36,7 +36,7 @@ CSSPageRule::~CSSPageRule()
 {
 }
 
-String CSSPageRule::selectorText() const
+String CSSPageRule::pageSelectorText() const
 {
     String text = "@page";
     CSSSelector* selector = selectorList().first();
