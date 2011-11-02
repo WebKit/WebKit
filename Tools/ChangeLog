@@ -1,3 +1,14 @@
+2011-11-02  Elliot Poger  <epoger@google.com>
+
+        until use_skia=1 by default on mac, default port should be chromium-cg-mac
+        https://bugs.webkit.org/show_bug.cgi?id=71312
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+
 2011-11-02  Stephen Chenney  <schenney@chromium.org>
 
         printing layout test failures after r98634

@@ -44,7 +44,7 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
         elif platform.startswith('linux'):
             port_name = 'chromium-gpu-linux'
         elif platform == 'darwin':
-            port_name = 'chromium-gpu-mac'
+            port_name = 'chromium-gpu-cg-mac'
         else:
             raise NotImplementedError('unsupported platform: %s' % platform)
 
