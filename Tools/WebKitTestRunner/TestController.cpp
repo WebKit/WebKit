@@ -374,6 +374,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy
+        0, // didFailToInitializePlugin
+        0, // didDisplayInsecureContentForFrame
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
         0, // didStartProgress
@@ -384,8 +386,6 @@ void TestController::initialize(int argc, const char* argv[])
         processDidCrash,
         0, // didChangeBackForwardList
         0, // shouldGoToBackForwardListItem
-        0, // didFailToInitializePlugin
-        0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
         0, // didDetectXSSForFrame
     };

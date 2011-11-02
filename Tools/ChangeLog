@@ -1,5 +1,14 @@
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Update for the WebKit2 API fixage.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
+2011-11-02  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         Add new functions to the page loader client.

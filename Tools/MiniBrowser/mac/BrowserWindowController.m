@@ -596,6 +596,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didFirstLayoutForFrame,
         didFirstVisuallyNonEmptyLayoutForFrame,
         didRemoveFrameFromHierarchy,
+        didDisplayInsecureContentForFrame,
+        didRunInsecureContentForFrame,
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
         didStartProgress,
@@ -607,8 +609,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didChangeBackForwardList,
         0, // shouldGoToBackForwardItem
         0,  // didFailToInitializePlugin
-        didDisplayInsecureContentForFrame,
-        didRunInsecureContentForFrame,
         didDetectXSSForFrame,
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
