@@ -130,7 +130,7 @@ PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalStr
     StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
 
     data = reinterpret_cast<LChar*>(string + 1);
-    return adoptRef(new (string) StringImpl(length));
+    return adoptRef(new (string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
