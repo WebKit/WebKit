@@ -700,12 +700,14 @@ static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, Stri
     return true;
 }
 
-String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
 {
     if (width <= 0)
         return String();
 
     String string = fileButtonNoFileSelectedLabel();
+    if (multipleFilesAllowed)
+        string = fileButtonNoFilesSelectedLabel();
 
     if (filenames.size() == 1) {
         CString systemFilename = fileSystemRepresentation(filenames[0]);

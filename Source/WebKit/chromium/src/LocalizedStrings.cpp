@@ -102,6 +102,11 @@ String fileButtonNoFileSelectedLabel()
     return query(WebLocalizedString::FileButtonNoFileSelectedLabel);
 }
 
+String fileButtonNoFilesSelectedLabel()
+{
+    return query(WebLocalizedString::FileButtonNoFileSelectedLabel);
+}
+
 String searchMenuNoRecentSearchesText()
 {
     return query(WebLocalizedString::SearchMenuNoRecentSearchesText);

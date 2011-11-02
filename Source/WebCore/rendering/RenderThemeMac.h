@@ -177,7 +177,7 @@ protected:
     virtual bool shouldShowPlaceholderWhenFocused() const;
 
 private:
-    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width);
+    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width, bool multipleFilesAllowed);
 
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 

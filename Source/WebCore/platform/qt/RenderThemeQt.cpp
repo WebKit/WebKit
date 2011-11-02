@@ -1570,14 +1570,18 @@ double RenderThemeQt::caretBlinkInterval() const
     return  QApplication::cursorFlashTime() / 1000.0 / 2.0;
 }
 
-String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
 {
     if (width <= 0)
         return String();
 
     String string;
-    if (filenames.isEmpty())
-        string = fileButtonNoFileSelectedLabel();
+    if (filenames.isEmpty()) {
+        if (multipleFilesAllowed)
+            string = fileButtonNoFilesSelectedLabel();
+        else
+            string = fileButtonNoFileSelectedLabel();
+    }
     else if (filenames.size() == 1) {
         String fname = filenames[0];
         QFontMetrics fm(font.font());

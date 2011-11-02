@@ -2085,14 +2085,18 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     return m_sliderThumbVertical.get();
 }
 
-String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
 {
     if (width <= 0)
         return String();
 
     String strToTruncate;
-    if (filenames.isEmpty())
-        strToTruncate = fileButtonNoFileSelectedLabel();
+    if (filenames.isEmpty()) {
+        if (multipleFilesAllowed)
+            strToTruncate = fileButtonNoFilesSelectedLabel();
+        else
+            strToTruncate = fileButtonNoFileSelectedLabel();
+    }
     else if (filenames.size() == 1)
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(filenames[0])];
     else

@@ -91,6 +91,11 @@ String fileButtonNoFileSelectedLabel()
     return String::fromUTF8(_("(None)"));
 }
 
+String fileButtonNoFilesSelectedLabel()
+{
+    return String::fromUTF8(_("(None)"));
+}
+
 String contextMenuItemTagOpenLinkInNewWindow()
 {
     return String::fromUTF8(_("Open Link in New _Window"));

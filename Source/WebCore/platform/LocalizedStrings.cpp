@@ -79,6 +79,11 @@ String fileButtonNoFileSelectedLabel()
     return localizationStrategy()->fileButtonNoFileSelectedLabel();
 }
 
+String fileButtonNoFilesSelectedLabel()
+{
+    return localizationStrategy()->fileButtonNoFilesSelectedLabel();
+}
+
 String defaultDetailsSummaryText()
 {
     return localizationStrategy()->defaultDetailsSummaryText();

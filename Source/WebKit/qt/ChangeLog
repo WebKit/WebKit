@@ -1,3 +1,15 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        <input=file multiple> default text uses singular instead of plural
+        https://bugs.webkit.org/show_bug.cgi?id=71319
+        <rdar://problem/10379021>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::fileButtonNoFilesSelectedLabel):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2011-11-02  Deepak Sherveghar  <bpwv64@motorola.com>
 
         [Qt] Failing test media/video-document-types.html

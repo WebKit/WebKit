@@ -173,7 +173,7 @@ private:
     void computeSizeBasedOnStyle(RenderStyle* renderStyle) const;
 
 private:
-    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width);
+    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width, bool multipleFilesAllowed);
 
     bool supportsFocus(ControlPart) const;
 

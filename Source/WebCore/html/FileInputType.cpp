@@ -373,8 +373,11 @@ String FileInputType::defaultToolTip() const
 {
     FileList* fileList = m_fileList.get();
     unsigned listSize = fileList->length();
-    if (!listSize)
+    if (!listSize) {
+        if (element()->multiple())
+            return fileButtonNoFilesSelectedLabel();
         return fileButtonNoFileSelectedLabel();
+    }
 
     StringBuilder names;
     for (size_t i = 0; i < listSize; ++i) {

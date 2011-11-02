@@ -59,6 +59,7 @@ private:
     virtual WTF::String fileButtonChooseFileLabel();
     virtual WTF::String fileButtonChooseMultipleFilesLabel();
     virtual WTF::String fileButtonNoFileSelectedLabel();
+    virtual WTF::String fileButtonNoFilesSelectedLabel();
     virtual WTF::String defaultDetailsSummaryText();
 #if ENABLE(CONTEXT_MENUS)
     virtual WTF::String contextMenuItemTagOpenLinkInNewWindow();

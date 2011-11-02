@@ -136,6 +136,11 @@ String DefaultLocalizationStrategy::fileButtonNoFileSelectedLabel()
     return WEB_UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
+String DefaultLocalizationStrategy::fileButtonNoFilesSelectedLabel()
+{
+    return WEB_UI_STRING("no files selected", "text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected");
+}
+
 String DefaultLocalizationStrategy::defaultDetailsSummaryText()
 {
     return WEB_UI_STRING("Details", "text to display in <details> tag when it has no <summary> child");

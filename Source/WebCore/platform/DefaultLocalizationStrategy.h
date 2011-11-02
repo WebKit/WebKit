@@ -46,6 +46,7 @@ public:
     virtual String fileButtonChooseFileLabel();
     virtual String fileButtonChooseMultipleFilesLabel();
     virtual String fileButtonNoFileSelectedLabel();
+    virtual String fileButtonNoFilesSelectedLabel();
     virtual String defaultDetailsSummaryText();
 #if PLATFORM(MAC)
     virtual String copyImageUnknownFileLabel();

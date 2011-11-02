@@ -1,3 +1,46 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        <input=file multiple> default text uses singular instead of plural
+        https://bugs.webkit.org/show_bug.cgi?id=71319
+        <rdar://problem/10379021>
+
+        Reviewed by Darin Adler.
+
+        Added a new method to return the label text for a file upload control that
+        allows multiple files. Needed to extend the RenderTheme function to pass down
+        a boolean representing whether multiple files are allowed in the file list.
+
+        * English.lproj/Localizable.strings:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::defaultToolTip):
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::fileButtonNoFilesSelectedLabel):
+        * platform/DefaultLocalizationStrategy.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::fileButtonNoFilesSelectedLabel):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::fileButtonNoFilesSelectedLabel):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::fileButtonNoFilesSelectedLabel):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::fileListNameForWidth):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::fileListNameForWidth):
+        * platform/qt/RenderThemeQt.h:
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::fileButtonNoFilesSelectedLabel):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::fileListNameForWidth):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth):
+
 2011-11-02  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Fix the build with NO_LISTBOX_RENDERING

@@ -40,6 +40,7 @@ namespace WebCore {
     String fileButtonChooseFileLabel();
     String fileButtonChooseMultipleFilesLabel();
     String fileButtonNoFileSelectedLabel();
+    String fileButtonNoFilesSelectedLabel();
     String defaultDetailsSummaryText();
 
 #if PLATFORM(MAC)

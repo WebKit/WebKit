@@ -44,6 +44,7 @@ public:
     virtual String fileButtonChooseFileLabel() = 0;
     virtual String fileButtonChooseMultipleFilesLabel() = 0;
     virtual String fileButtonNoFileSelectedLabel() = 0;
+    virtual String fileButtonNoFilesSelectedLabel() = 0;
     virtual String defaultDetailsSummaryText() = 0;
 
 #if PLATFORM(MAC)

@@ -77,6 +77,11 @@ String fileButtonNoFileSelectedLabel()
     return String("No file selected"); 
 }
 
+String fileButtonNoFilesSelectedLabel() 
+{ 
+    return String("No files selected"); 
+}
+
 String contextMenuItemTagOpenLinkInNewWindow() 
 { 
     return String("Open Link in New Window"); 

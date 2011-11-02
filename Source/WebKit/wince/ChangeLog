@@ -1,3 +1,15 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        <input=file multiple> default text uses singular instead of plural
+        https://bugs.webkit.org/show_bug.cgi?id=71319
+        <rdar://problem/10379021>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::fileButtonNoFilesSelectedLabel):
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
 2011-10-28  Jochen Eisinger  <jochen@chromium.org>
 
         Rename a number of methods mentioning JavaScript to just Script instead

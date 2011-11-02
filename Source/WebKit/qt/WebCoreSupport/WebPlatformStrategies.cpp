@@ -183,6 +183,11 @@ String WebPlatformStrategies::fileButtonNoFileSelectedLabel()
     return QCoreApplication::translate("QWebPage", "No file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
+String WebPlatformStrategies::fileButtonNoFilesSelectedLabel()
+{
+    return QCoreApplication::translate("QWebPage", "No files selected", "text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected");
+}
+
 String WebPlatformStrategies::defaultDetailsSummaryText()
 {
     return QCoreApplication::translate("QWebPage", "Details", "text to display in <details> tag when it has no <summary> child");

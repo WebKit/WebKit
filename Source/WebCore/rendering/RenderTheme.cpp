@@ -1101,14 +1101,18 @@ Color RenderTheme::focusRingColor()
     return customFocusRingColor().isValid() ? customFocusRingColor() : defaultTheme()->platformFocusRingColor();
 }
 
-String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
 {
     if (width <= 0)
         return String();
 
     String string;
-    if (filenames.isEmpty())
-        string = fileButtonNoFileSelectedLabel();
+    if (filenames.isEmpty()) {
+        if (multipleFilesAllowed)
+            string = fileButtonNoFilesSelectedLabel();
+        else
+            string = fileButtonNoFileSelectedLabel();
+    }
     else if (filenames.size() == 1)
         string = pathGetFileName(filenames[0]);
     else
