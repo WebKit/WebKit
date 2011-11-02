@@ -1241,7 +1241,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         // effectively clamped to our region range.
         LayoutUnit oldHeight =  logicalHeight();
         LayoutUnit oldLogicalTop = logicalTop();
-        setLogicalHeight(INT_MAX / 2); 
+        setLogicalHeight(numeric_limits<LayoutUnit>::max() / 2); 
         computeLogicalHeight();
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
         setLogicalHeight(oldHeight);
@@ -1724,7 +1724,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     return logicalTop;
 }
 
-LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, int oldTopPosMargin, int oldTopNegMargin, int yPos)
+LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos)
 {
     LayoutUnit heightIncrease = getClearDelta(child, yPos);
     if (!heightIncrease)
@@ -2135,8 +2135,6 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
             setLogicalHeight(newHeight);
     }
 
-    // FIXME: Change to use roughlyEquals when we move to float.
-    // See https://bugs.webkit.org/show_bug.cgi?id=66148
     ASSERT(oldLayoutDelta == view()->layoutDelta());
 }
 
@@ -2388,6 +2386,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
 
     ColumnInfo* colInfo = columnInfo();
     unsigned colCount = columnCount(colInfo);
+
     bool antialias = shouldAntialiasLines(paintInfo.context);
 
     if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
@@ -2501,10 +2500,13 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (document()->didLayoutWithPendingStylesheets() && !isRenderView())
         return;
 
+    // We don't want to hand off painting in the line box tree with the accumulated error of the render tree, as this will cause
+    // us to mess up painting aligned things (such as underlines in text) with both the render tree and line box tree's error.
+    LayoutPoint roundedPaintOffset = roundedIntPoint(paintOffset);
     if (childrenInline())
-        m_lineBoxes.paint(this, paintInfo, paintOffset);
+        m_lineBoxes.paint(this, paintInfo, roundedPaintOffset);
     else
-        paintChildren(paintInfo, paintOffset);
+        paintChildren(paintInfo, roundedPaintOffset);
 }
 
 void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -2894,7 +2896,7 @@ static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoi
     RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
     for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* r = *it;
-        paintInfo->context->clipOut(LayoutRect(offset.x() + r->x(), offset.y() + r->y(), r->width(), r->height()));
+        paintInfo->context->clipOut(IntRect(offset.x() + r->x(), offset.y() + r->y(), r->width(), r->height()));
     }
 }
 
@@ -3296,12 +3298,12 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
         if (it != floatingObjectSet.end()) {
             FloatingObject* r = *it;
             if (childrenInline()) {
-                int logicalTop = logicalTopForFloat(r);
-                int logicalBottom = logicalBottomForFloat(r);
+                LayoutUnit logicalTop = logicalTopForFloat(r);
+                LayoutUnit logicalBottom = logicalBottomForFloat(r);
 
                 // Fix for https://bugs.webkit.org/show_bug.cgi?id=54995.
-                if (logicalBottom < 0 || logicalBottom < logicalTop || logicalTop == numeric_limits<int>::max())
-                    logicalBottom = numeric_limits<int>::max();
+                if (logicalBottom < 0 || logicalBottom < logicalTop || logicalTop == numeric_limits<LayoutUnit>::max())
+                    logicalBottom = numeric_limits<LayoutUnit>::max();
                 else {
                     // Special-case zero- and less-than-zero-height floats: those don't touch
                     // the line that they're on, but it still needs to be dirtied. This is
@@ -3690,7 +3692,7 @@ LayoutUnit RenderBlock::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight) co
             bottom = min(floatBottom, bottom);
     }
 
-    return bottom == numeric_limits<LayoutUnit>::max() ? logicalHeight : bottom;
+    return bottom == numeric_limits<LayoutUnit>::max() ? 0 : bottom;
 }
 
 LayoutUnit RenderBlock::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
@@ -4312,7 +4314,7 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
     if (child->isRelPositioned())
         childLocation += child->relativePositionOffset();
     // FIXME: This is wrong if the child's writing-mode is different from the parent's.
-    LayoutPoint pointInChildCoordinates(pointInParentCoordinates - childLocation);
+    LayoutPoint pointInChildCoordinates(toLayoutPoint(pointInParentCoordinates - childLocation));
 
     // If this is an anonymous renderer, we just recur normally
     Node* childNode = child->node();
@@ -4476,8 +4478,9 @@ int RenderBlock::columnGap() const
 void RenderBlock::calcColumnWidth()
 {    
     // Calculate our column width and column count.
+    // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
     unsigned desiredColumnCount = 1;
-    int desiredColumnWidth = contentLogicalWidth();
+    LayoutUnit desiredColumnWidth = contentLogicalWidth();
     
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
     if (document()->paginated() || (style()->hasAutoColumnCount() && style()->hasAutoColumnWidth()) || !style()->hasInlineColumnAxis()) {
@@ -4485,19 +4488,19 @@ void RenderBlock::calcColumnWidth()
         return;
     }
         
-    int availWidth = desiredColumnWidth;
-    int colGap = columnGap();
-    int colWidth = max(1, static_cast<int>(style()->columnWidth()));
-    int colCount = max(1, static_cast<int>(style()->columnCount()));
+    LayoutUnit availWidth = desiredColumnWidth;
+    LayoutUnit colGap = columnGap();
+    LayoutUnit colWidth = max<LayoutUnit>(1, LayoutUnit(style()->columnWidth()));
+    int colCount = max<int>(1, style()->columnCount());
 
     if (style()->hasAutoColumnWidth() && !style()->hasAutoColumnCount()) {
         desiredColumnCount = colCount;
-        desiredColumnWidth = max<int>(0, (availWidth - ((desiredColumnCount - 1) * colGap)) / desiredColumnCount);
+        desiredColumnWidth = max<LayoutUnit>(0, (availWidth - ((desiredColumnCount - 1) * colGap)) / desiredColumnCount);
     } else if (!style()->hasAutoColumnWidth() && style()->hasAutoColumnCount()) {
-        desiredColumnCount = max<int>(1, (float)(availWidth + colGap) / (colWidth + colGap));
+        desiredColumnCount = max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     } else {
-        desiredColumnCount = max(min<int>(colCount, (float)(availWidth + colGap) / (colWidth + colGap)), 1);
+        desiredColumnCount = max<LayoutUnit>(min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     }
     setDesiredColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
@@ -4582,7 +4585,7 @@ LayoutRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
     return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
 }
 
-bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogicalHeight, LayoutStateMaintainer& statePusher)
+bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer& statePusher)
 {
     if (!hasColumns())
         return false;
@@ -4598,13 +4601,13 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogi
             // The forced page breaks are in control of the balancing.  Just set the column height to the
             // maximum page break distance.
             if (!pageLogicalHeight) {
-                LayoutUnit distanceBetweenBreaks = max(colInfo->maximumDistanceBetweenForcedBreaks(),
-                                                view()->layoutState()->pageLogicalOffset(borderBefore() + paddingBefore() + contentLogicalHeight()) - colInfo->forcedBreakOffset());
+                LayoutUnit distanceBetweenBreaks = max<LayoutUnit>(colInfo->maximumDistanceBetweenForcedBreaks(),
+                                                                   view()->layoutState()->pageLogicalOffset(borderBefore() + paddingBefore() + contentLogicalHeight()) - colInfo->forcedBreakOffset());
                 columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
             }
         } else if (contentLogicalHeight() > pageLogicalHeight * desiredColumnCount) {
             // Now that we know the intrinsic height of the columns, we have to rebalance them.
-            columnHeight = max(colInfo->minimumColumnHeight(), ceiledLayoutUnit((float)contentLogicalHeight() / desiredColumnCount));
+            columnHeight = max<LayoutUnit>(colInfo->minimumColumnHeight(), ceilf((float)contentLogicalHeight() / desiredColumnCount));
         }
         
         if (columnHeight && columnHeight != pageLogicalHeight) {
@@ -4723,7 +4726,8 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
 
     LayoutUnit startOffset = max(isHorizontal ? r.y() : r.x(), beforeBorderPadding);
     LayoutUnit endOffset = min<LayoutUnit>(isHorizontal ? r.maxY() : r.maxX(), beforeBorderPadding + colCount * colHeight);
-    
+
+    // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
     unsigned startColumn = (startOffset - beforeBorderPadding) / colHeight;
     unsigned endColumn = (endOffset - beforeBorderPadding) / colHeight;
 
@@ -4733,6 +4737,7 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
         LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent();
         LayoutRect colRect = columnRectAt(colInfo, startColumn);
         LayoutRect repaintRect = r;
+
         if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
             if (isHorizontal)
                 repaintRect.move(colRect.x() - logicalLeftOffset, - static_cast<int>(startColumn) * colHeight);
@@ -5437,7 +5442,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)
             : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || (isWritingModeRoot() && !isRubyRun());
         
-        int baselinePos = ignoreBaseline ? -1 : lastLineBoxBaseline();
+        int baselinePos = ignoreBaseline ? LayoutUnit(-1) : lastLineBoxBaseline();
         
         int bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
         if (baselinePos != -1 && baselinePos <= bottomOfContent)
@@ -5953,7 +5958,7 @@ void RenderBlock::setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg)
     m_rareData->m_margins.setNegativeMarginAfter(neg);
 }
 
-void RenderBlock::setPaginationStrut(int strut)
+void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
     if (!m_rareData) {
         if (!strut)
@@ -6284,7 +6289,7 @@ static bool inNormalFlow(RenderBox* child)
     return true;
 }
 
-int RenderBlock::applyBeforeBreak(RenderBox* child, int logicalOffset)
+LayoutUnit RenderBlock::applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset)
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();
@@ -6300,7 +6305,7 @@ int RenderBlock::applyBeforeBreak(RenderBox* child, int logicalOffset)
     return logicalOffset;
 }
 
-int RenderBlock::applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo& marginInfo)
+LayoutUnit RenderBlock::applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo& marginInfo)
 {
     // FIXME: Add page break checking here when we support printing.
     bool checkColumnBreaks = view()->layoutState()->isPaginatingColumns();

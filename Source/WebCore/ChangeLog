@@ -1,3 +1,55 @@
+2011-11-01  Levi Weintraub  <leviw@chromium.org>
+
+        Amend missing uses of LayoutUnit in RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=71254
+
+        Reviewed by Darin Adler.
+
+        Switching relevant uses of integers in RenderBlock to LayoutUnits.
+
+        No new tests -- no changes in behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        (WebCore::RenderBlock::calcColumnWidth):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlock::setPaginationStrut):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::paginationStrut):
+        (WebCore::RenderBlock::availableLogicalWidthForContent):
+        (WebCore::RenderBlock::FloatWithRect::FloatWithRect):
+        (WebCore::RenderBlock::MarginInfo::setPositiveMargin):
+        (WebCore::RenderBlock::MarginInfo::setNegativeMargin):
+        (WebCore::RenderBlock::MarginInfo::setPositiveMarginIfLarger):
+        (WebCore::RenderBlock::MarginInfo::setNegativeMarginIfLarger):
+        (WebCore::RenderBlock::MarginInfo::setMargin):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::FloatIntervalSearchAdapter):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::lowValue):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::highValue):
+        (WebCore::RenderBlock::RenderBlockRareData::positiveMarginBeforeDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::negativeMarginBeforeDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::positiveMarginAfterDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::negativeMarginAfterDefault):
+
 2011-11-01  Luke Macpherson   <macpherson@chromium.org>
 
         WIP: Add CSS property to control printing of backgrounds for individual elements.
