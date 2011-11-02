@@ -1604,6 +1604,8 @@ void WebViewHost::paintPagesWithBoundaries()
                                                  CGColorSpaceCreateDeviceRGB(),
                                                  kCGImageAlphaPremultipliedFirst |
                                                  kCGBitmapByteOrder32Host);
+    CGContextTranslateCTM(webCanvas, 0.0, totalHeight);
+    CGContextScaleCTM(webCanvas, 1.0, -1.0f);
 #endif
 
     webFrame->printPagesWithBoundaries(webCanvas, pageSizeInPixels);

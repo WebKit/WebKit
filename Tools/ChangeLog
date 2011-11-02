@@ -1,3 +1,14 @@
+2011-11-02  Stephen Chenney  <schenney@chromium.org>
+
+        printing layout test failures after r98634
+        https://bugs.webkit.org/show_bug.cgi?id=71080
+
+        Reviewed by Kent Tamura
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintPagesWithBoundaries): Added transforms invert the CG Bitmap so the coord system
+        matches that for Skia.
+
 2011-11-01  Sam Weinig  <sam@webkit.org>
 
         Can't complete ChangeLog when using resolve-Changelogs and webkit-tools-completion.sh
