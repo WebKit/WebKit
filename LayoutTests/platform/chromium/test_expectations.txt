@@ -3936,3 +3936,6 @@ BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PA
 BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
 
 BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
+
+BUGWK71080 WIN LEOPARD CPU : printing/single-line-must-not-be-split-into-two-pages.html = IMAGE
+BUGWK71080 LEOPARD : printing/setPrinting.html = IMAGE
