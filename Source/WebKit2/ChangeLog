@@ -1,3 +1,41 @@
+2011-11-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Handle interruption of page interaction better
+        https://bugs.webkit.org/show_bug.cgi?id=71366
+
+        Reviewed by Simon Hausmann.
+
+        Touching the screen when a kinetic scrolling animation is running or
+        it is bouncing back because it was out of bounds, the animation is
+        immediately stopped and the content is immediately put into valid
+        bounds.
+
+        Touching the screen when the contents is bouncing back from a pinch
+        zoom which was out of bounds, we do not stop the animation, but
+        instead ignored the touch events while the animation lasts.
+
+        In the future we want to queue the events instead.
+
+        This also fixes some issues which was present before: As the bounce
+        back animation from pinch zoom centers the content using the contents
+        point which was in the center of the viewport, this animation could
+        not be used when stopping a pan animation, as it wouldn't position the
+        content at the place it was when the pan animation was interrupted.
+
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::setConstraints):
+        (WebKit::QtViewportInteractionEngine::panAnimationActive):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::pinchAnimationActive):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-11-02  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Move content to resize (setResizesToContentsUsingLayoutSize) from UI process to Web process

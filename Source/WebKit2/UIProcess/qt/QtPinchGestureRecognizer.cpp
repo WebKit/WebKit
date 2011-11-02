@@ -65,6 +65,15 @@ bool QtPinchGestureRecognizer::recognize(const QTouchEvent* event)
         return false;
     }
 
+    // The pan gesture might still be animating kinetic scrolling/bounce back effect.
+    if (m_viewportInteractionEngine->panAnimationActive())
+        m_viewportInteractionEngine->panGestureCancelled();
+
+    // We do not stop bounce back effects for pinch zoom, but instead ignore the touch event.
+    // FIXME: We should queue the events instead and repost then when done with the animation.
+    if (m_viewportInteractionEngine->pinchAnimationActive())
+        return false;
+
     switch (event->type()) {
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:

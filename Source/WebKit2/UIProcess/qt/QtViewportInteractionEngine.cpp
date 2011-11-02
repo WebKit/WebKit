@@ -195,17 +195,6 @@ bool QtViewportInteractionEngine::event(QEvent* event)
     return QObject::event(event);
 }
 
-void QtViewportInteractionEngine::stopAnimations()
-{
-    m_scaleAnimation->stop();
-    scroller()->stop();
-
-    // If the animations were stopped we need to scale and reposition the content into valid boundaries immediately.
-    m_userInteractionFlags |= UserHasStoppedAnimations;
-    animateContentIntoBoundariesIfNeeded();
-    m_userInteractionFlags &= ~UserHasStoppedAnimations;
-}
-
 QRectF QtViewportInteractionEngine::computePosRangeForItemScale(qreal itemScale) const
 {
     const QSizeF contentItemSize = m_content->boundingRect().size() * itemScale;
@@ -219,11 +208,11 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemScale(qreal itemScale)
 
 void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
 {
-    m_scaleAnimation->stop();
+    if (panAnimationActive() || pinchAnimationActive())
+        return;
 
     qreal currentCSSScale = cssScaleFromItem(m_content->scale());
     bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
-    bool userHasStoppedAnimations = m_userInteractionFlags & UserHasStoppedAnimations;
 
     if (!userHasScaledContent)
         currentCSSScale = m_constraints.initialScale;
@@ -242,13 +231,13 @@ void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
     endPosition.setX(qBound(minValue.x(), endPosition.x(), maxValue.x()));
     endPosition.setY(qBound(minValue.y(), endPosition.y(), maxValue.y()));
 
-    QRectF startVisibleContentRect(m_viewport->mapRectToItem(m_content, viewportRect));
+    QRectF startVisibleContentRect = m_content->mapRectFromItem(m_viewport, viewportRect);
     QRectF endVisibleContentRect(endPosition, viewportRect.size() / endItemScale);
 
     if (endVisibleContentRect == startVisibleContentRect)
         return;
 
-    if (userHasScaledContent && !userHasStoppedAnimations) {
+    if (userHasScaledContent) {
         m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
         m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
         m_scaleAnimation->setStartValue(startVisibleContentRect);
@@ -263,7 +252,8 @@ void QtViewportInteractionEngine::reset()
     ViewportUpdateGuard guard(this);
     m_userInteractionFlags = UserHasNotInteractedWithContent;
 
-    stopAnimations();
+    scroller()->stop();
+    m_scaleAnimation->stop();
 
     QScrollerProperties properties = scroller()->scrollerProperties();
 
@@ -290,11 +280,21 @@ void QtViewportInteractionEngine::setConstraints(const Constraints& constraints)
 
     ViewportUpdateGuard guard(this);
     m_constraints = constraints;
+
     animateContentIntoBoundariesIfNeeded();
+}
+
+bool QtViewportInteractionEngine::panAnimationActive() const
+{
+    QScroller* scroller = const_cast<QtViewportInteractionEngine*>(this)->scroller();
+
+    return scroller->state() != QScroller::Inactive;
 }
 
 void QtViewportInteractionEngine::panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
+    Q_ASSERT(!panGestureActive);
+
     // FIXME: suspend the Web engine (stop animated GIF, etc).
     m_userInteractionFlags |= UserHasMovedContent;
     scroller()->handleInput(QScroller::InputPress, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
@@ -308,14 +308,20 @@ void QtViewportInteractionEngine::panGestureRequestUpdate(const QPointF& touchPo
 
 void QtViewportInteractionEngine::panGestureCancelled()
 {
-    ViewportUpdateGuard guard(this);
-    stopAnimations();
+    // Stopping the scroller immediately stops kinetic scrolling and if the view is out of bounds it
+    // is moved inside valid bounds immediately as well. This is the behavior that we want.
+    scroller()->stop();
 }
 
 void QtViewportInteractionEngine::panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
     ViewportUpdateGuard guard(this);
     scroller()->handleInput(QScroller::InputRelease, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
+}
+
+bool QtViewportInteractionEngine::pinchAnimationActive() const
+{
+    return m_scaleAnimation->state() == QAbstractAnimation::Running;
 }
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)

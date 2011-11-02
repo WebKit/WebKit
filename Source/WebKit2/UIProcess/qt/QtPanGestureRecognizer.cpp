@@ -39,7 +39,8 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtViewportInteractionEngine* inte
 
 bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
-    // Pan gesture always starts on TouchBegin unless the engine is suspended.
+    // Pan gesture always starts on TouchBegin unless the engine is suspended, or
+    // we ignored the event.
     if (m_state == NoGesture && event->type() != QEvent::TouchBegin)
         return false;
 
@@ -56,9 +57,17 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
     switch (event->type()) {
     case QEvent::TouchBegin:
         ASSERT(m_state == NoGesture);
+        // The pan gesture might still be animating kinetic scrolling/bounce back effect.
+        if (m_viewportInteractionEngine->panAnimationActive())
+            m_viewportInteractionEngine->panGestureCancelled();
+
+        // We do not stop bounce back effects for pinch zoom, but instead ignore the touch event.
+        // FIXME: We should queue the events instead and repost then when done with the animation.
+        if (m_viewportInteractionEngine->pinchAnimationActive())
+            return false;
+
         m_state = GestureRecognitionStarted;
         m_firstPosition = touchPoint.screenPos();
-        m_viewportInteractionEngine->stopAnimations();
         return false;
     case QEvent::TouchUpdate: {
         ASSERT(m_state != NoGesture);
