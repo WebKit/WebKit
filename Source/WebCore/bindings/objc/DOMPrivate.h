@@ -45,6 +45,7 @@
 
 @interface DOMRange (DOMRangeExtensions)
 - (NSRect)boundingBox;
+- (NSImage *)renderedImageForcingBlackText:(BOOL)forceBlackText;
 - (NSArray *)lineBoxRects; // Deprecated. Use textRects instead.
 - (NSArray *)textRects;
 @end

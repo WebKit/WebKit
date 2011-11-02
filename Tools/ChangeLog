@@ -1,3 +1,15 @@
+2011-11-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10336700> Add API to get rendered text image without having to select it
+        https://bugs.webkit.org/show_bug.cgi?id=71407
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/RenderedImageFromDOMRange.mm: Added.
+        (-[RenderedImageFromDOMRangeFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2011-11-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Make the main frame's base path more explicit in _drt_descriptionSuitableForTestResult

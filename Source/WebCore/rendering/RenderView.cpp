@@ -488,7 +488,8 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         o = o->nextInPreOrder();
     }
 
-    m_layer->clearBlockSelectionGapsBounds();
+    if (blockRepaintMode != RepaintNothing)
+        m_layer->clearBlockSelectionGapsBounds();
 
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
@@ -509,7 +510,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         o = o->nextInPreOrder();
     }
 
-    if (!m_frameView) {
+    if (!m_frameView || blockRepaintMode == RepaintNothing) {
         // We built the maps, but we aren't going to use them.
         // We need to delete the values, otherwise they'll all leak!
         deleteAllValues(oldSelectedObjects);
@@ -573,6 +574,14 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     }
 
     m_frameView->endDeferredRepaints();
+}
+
+void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const
+{
+    startRenderer = m_selectionStart;
+    startOffset = m_selectionStartPos;
+    endRenderer = m_selectionEnd;
+    endOffset = m_selectionEndPos;
 }
 
 void RenderView::clearSelection()

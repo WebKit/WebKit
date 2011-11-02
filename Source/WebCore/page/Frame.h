@@ -196,6 +196,7 @@ namespace WebCore {
         
 #if PLATFORM(MAC)
         NSImage* selectionImage(bool forceBlackText = false) const;
+        NSImage* rangeImage(Range*, bool forceBlackText = false) const;
         NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
         NSImage* imageFromRect(NSRect) const;
 #endif

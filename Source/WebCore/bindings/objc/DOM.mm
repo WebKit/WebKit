@@ -403,6 +403,16 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     return core(self)->boundingBox();
 }
 
+- (NSImage *)renderedImageForcingBlackText:(BOOL)forceBlackText
+{
+    WebCore::Range* range = core(self);
+    WebCore::Frame* frame = range->ownerDocument()->frame();
+    if (!frame)
+        return nil;
+
+    return frame->rangeImage(range, forceBlackText);
+}
+
 - (NSArray *)textRects
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.

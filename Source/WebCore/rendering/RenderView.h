@@ -76,8 +76,9 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
 
-    enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld };
+    enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld, RepaintNothing };
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
+    void getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const;
     void clearSelection();
     RenderObject* selectionStart() const { return m_selectionStart; }
     RenderObject* selectionEnd() const { return m_selectionEnd; }

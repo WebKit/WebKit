@@ -48,6 +48,7 @@
 #import "PlatformWheelEvent.h"
 #import "RegularExpression.h"
 #import "RenderTableCell.h"
+#import "RenderView.h"
 #import "Scrollbar.h"
 #import "SimpleFontData.h"
 #import "visible_units.h"
@@ -100,6 +101,48 @@ NSImage* Frame::selectionImage(bool forceBlackText) const
     m_view->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     m_doc->updateLayout();
     NSImage* result = imageFromRect(selection()->bounds());
+    m_view->setPaintBehavior(PaintBehaviorNormal);
+    return result;
+}
+
+NSImage *Frame::rangeImage(Range* range, bool forceBlackText) const
+{
+    m_view->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
+    m_doc->updateLayout();
+    RenderView* view = contentRenderer();
+    if (!view)
+        return nil;
+
+    VisibleSelection visibleSelection(range);
+
+    if (!visibleSelection.isRange())
+        return nil;
+
+    Position start = visibleSelection.start();
+    Position candidate = start.downstream();
+    if (candidate.isCandidate())
+        start = candidate;
+    Position end = visibleSelection.end();
+    candidate = end.upstream();
+    if (candidate.isCandidate())
+        end = candidate;
+
+    if (start.isNull() || end.isNull() || visibleSelection.visibleStart() == visibleSelection.visibleEnd())
+        return nil;
+
+    RenderObject* savedStartRenderer;
+    int savedStartOffset;
+    RenderObject* savedEndRenderer;
+    int savedEndOffset;
+    view->getSelection(savedStartRenderer, savedStartOffset, savedEndRenderer, savedEndOffset);
+
+    RenderObject* startRenderer = start.deprecatedNode()->renderer();
+    RenderObject* endRenderer = end.deprecatedNode()->renderer();
+
+    view->setSelection(startRenderer, start.deprecatedEditingOffset(), endRenderer, end.deprecatedEditingOffset(), RenderView::RepaintNothing);
+    NSImage* result = imageFromRect(view->selectionBounds());
+    view->setSelection(savedStartRenderer, savedStartOffset, savedEndRenderer, savedEndOffset, RenderView::RepaintNothing);
+
     m_view->setPaintBehavior(PaintBehaviorNormal);
     return result;
 }

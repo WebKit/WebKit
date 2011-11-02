@@ -1,3 +1,24 @@
+2011-11-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10336700> Add API to get rendered text image without having to select it
+        https://bugs.webkit.org/show_bug.cgi?id=71407
+
+        Reviewed by Simon Fraser.
+
+        Test: TestWebKitAPI/Tests/mac/RenderedImageFromDOMRange.mm
+
+        * bindings/objc/DOM.mm:
+        (-[DOMRange renderedImageForcingBlackText:]): Added.
+        * bindings/objc/DOMPrivate.h:
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::rangeImage): Added. Sets the selection in the RenderView (only) based on the
+        given range and gets a selection-only rendering of the view, then restores the selection.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Skip all invalidation if the repaint behavior is RepaintNothing.
+        (WebCore::RenderView::getSelection): Added this getter.
+        * rendering/RenderView.h:
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent
