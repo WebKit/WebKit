@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" onload="setup()">
+<svg xmlns="http://www.w3.org/2000/svg">
 <script>
 <![CDATA[
 if (window.layoutTestController) {
