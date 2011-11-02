@@ -37,6 +37,7 @@ namespace WebCore {
     class Document;
     class DragClient;
     class DragData;
+    struct DragSession;
     struct DragState;
     class Element;
     class Frame;
@@ -55,9 +56,9 @@ namespace WebCore {
         ~DragController();
         DragClient* client() const { return m_client; }
 
-        DragOperation dragEntered(DragData*);
+        DragSession dragEntered(DragData*);
         void dragExited(DragData*);
-        DragOperation dragUpdated(DragData*);
+        DragSession dragUpdated(DragData*);
         bool performDrag(DragData*);
         
         // FIXME: It should be possible to remove a number of these accessors once all
@@ -94,9 +95,9 @@ namespace WebCore {
         bool dispatchTextInputEventFor(Frame*, DragData*);
         bool canProcessDrag(DragData*);
         bool concludeEditDrag(DragData*);
-        DragOperation dragEnteredOrUpdated(DragData*);
+        DragSession dragEnteredOrUpdated(DragData*);
         DragOperation operationForLoad(DragData*);
-        bool tryDocumentDrag(DragData*, DragDestinationAction, DragOperation&);
+        bool tryDocumentDrag(DragData*, DragDestinationAction, DragSession&);
         bool tryDHTMLDrag(DragData*, DragOperation&);
         DragOperation dragOperation(DragData*);
         void cancelDrag();

@@ -1,3 +1,15 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView draggingEntered:]): DragOperation is now inside the DragSession struct.
+        (-[WebView draggingUpdated:]):
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent

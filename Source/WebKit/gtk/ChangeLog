@@ -1,3 +1,15 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_drag_motion): Minor refactoring.
+        (webkit_web_view_drag_data_received): Minor refactoring.
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent

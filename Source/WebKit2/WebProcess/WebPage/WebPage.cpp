@@ -79,6 +79,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/DragSession.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
@@ -1815,7 +1816,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap& dataMap, uint32_t flags)
 {
     if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragSession());
         return;
     }
 
@@ -1846,7 +1847,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
 void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dragData)
 {
     if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragSession()));
 #if PLATFORM(QT)
         QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
 #elif PLATFORM(GTK)
@@ -1890,7 +1891,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragSession()));
         return;
     }
 

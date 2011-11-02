@@ -1,3 +1,35 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        We now pass the DragSession struct from the Web to the UI process, instead of the
+        DragOperation enum.
+
+        * Scripts/webkit2/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView draggingUpdated:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): We now cache the last known DragSession state
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::dragSession):
+        (WebKit::WebPageProxy::resetDragOperation):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::keyStateToDragOperation):
+        (WebKit::WebView::DragEnter):
+        (WebKit::WebView::DragOver):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
         Get rid of Plugin::deprecatedGeometryDidChange

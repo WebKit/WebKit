@@ -116,6 +116,7 @@ public:
     bool canSmartReplace() const;
     bool containsColor() const;
     bool containsFiles() const;
+    unsigned numberOfFiles() const;
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard() { return m_pasteboard.get(); }
 #endif

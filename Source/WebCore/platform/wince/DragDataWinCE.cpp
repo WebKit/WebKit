@@ -47,6 +47,11 @@ bool DragData::containsFiles() const
     return false;
 }
 
+unsigned DragData::numberOfFiles() const
+{
+    return 0;
+}
+
 void DragData::asFilenames(Vector<String>&) const
 {
 }

@@ -110,6 +110,11 @@ bool DragData::containsFiles() const
     return (m_platformDragData) ? SUCCEEDED(m_platformDragData->QueryGetData(cfHDropFormat())) : m_dragDataMap.contains(cfHDropFormat()->cfFormat);
 }
 
+unsigned DragData::numberOfFiles() const
+{
+    return 0;
+}
+
 void DragData::asFilenames(Vector<String>& result) const
 {
     if (m_platformDragData) {

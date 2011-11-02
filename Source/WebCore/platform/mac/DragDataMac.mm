@@ -76,6 +76,13 @@ bool DragData::containsFiles() const
     return [[m_pasteboard.get() types] containsObject:NSFilenamesPboardType];
 }
 
+unsigned DragData::numberOfFiles() const
+{
+    if (![[m_pasteboard.get() types] containsObject:NSFilenamesPboardType])
+        return 0;
+    return [[m_pasteboard.get() propertyListForType:NSFilenamesPboardType] count];
+}
+
 void DragData::asFilenames(Vector<String>& result) const
 {
     NSArray *filenames = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];

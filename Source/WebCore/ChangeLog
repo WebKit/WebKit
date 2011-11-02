@@ -1,3 +1,43 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEntered):
+        (WebCore::DragController::dragUpdated):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag): In addition to determining the
+        drag operation, DragSession is updated with data regarding whether the mouse
+        is over a file input, and the number of items that would be accepted based on
+        the mouse's location.
+        * page/DragController.h:
+        * page/DragSession.h: Added.
+        (WebCore::DragSession::DragSession): Keep track of current operation, whether
+        the mouse is over a file input element, and how many files would be accepted if
+        dropped.
+        * platform/DragData.h: Added numberOfFiles()
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/efl/DragDataEfl.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::numberOfFiles):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/wince/DragDataWinCE.cpp:
+        (WebCore::DragData::numberOfFiles):
+        * platform/wx/DragDataWx.cpp:
+        (WebCore::DragData::numberOfFiles):
+
 2011-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Emedded PDFs cannot be opened from Web archives

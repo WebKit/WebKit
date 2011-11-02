@@ -47,6 +47,7 @@
 #include "DragClientGtk.h"
 #include "DragController.h"
 #include "DragData.h"
+#include "DragSession.h"
 #include "DumpRenderTreeSupportGtk.h"
 #include "Editor.h"
 #include "EditorClientGtk.h"
@@ -1441,7 +1442,7 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
     if (!dragData)
         return TRUE;
 
-    DragOperation operation = core(webView)->dragController()->dragUpdated(dragData.get());
+    DragOperation operation = core(webView)->dragController()->dragUpdated(dragData.get()).operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
     return TRUE;
 }
@@ -1453,7 +1454,7 @@ static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext
     if (!dragData)
         return;
 
-    DragOperation operation = core(webView)->dragController()->dragEntered(dragData.get());
+    DragOperation operation = core(webView)->dragController()->dragEntered(dragData.get()).operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
 

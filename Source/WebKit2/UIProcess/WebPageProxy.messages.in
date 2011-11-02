@@ -206,7 +206,7 @@ messages -> WebPageProxy {
     IgnoreWord(WTF::String word);
 
     # Drag and drop messages
-    DidPerformDragControllerAction(uint64_t resultOperation)
+    DidPerformDragControllerAction(WebCore::DragSession dragSession)
 #if PLATFORM(MAC)
     SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
 #endif

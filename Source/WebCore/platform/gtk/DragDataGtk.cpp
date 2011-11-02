@@ -41,6 +41,11 @@ bool DragData::containsFiles() const
     return m_platformDragData->hasFilenames();
 }
 
+unsigned DragData::numberOfFiles() const
+{
+    return m_platformDragData->filenames().size();
+}
+
 void DragData::asFilenames(Vector<String>& result) const
 {
     result = m_platformDragData->filenames();

@@ -47,6 +47,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     struct CompositionUnderline;
+    struct DragSession;
     struct FileChooserSettings;
     struct GrammarDetail;
     struct MimeClassInfo;
@@ -212,6 +213,11 @@ template<> struct ArgumentCoder<WebCore::GrammarDetail> {
 template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
     static void encode(ArgumentEncoder*, const WebCore::TextCheckingResult&);
     static bool decode(ArgumentDecoder*, WebCore::TextCheckingResult&);
+};
+    
+template<> struct ArgumentCoder<WebCore::DragSession> {
+    static void encode(ArgumentEncoder*, const WebCore::DragSession&);
+    static bool decode(ArgumentDecoder*, WebCore::DragSession&);
 };
 
 #if PLATFORM(QT)

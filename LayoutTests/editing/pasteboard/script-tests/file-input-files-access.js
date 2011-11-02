@@ -110,22 +110,12 @@ function runTest()
 
     debug("Dragging to a disabled file input control:");
     fileInput.disabled = true;
-    window.onbeforeunload = function() {
-        // Since the drop triggered a navigation, verify the properties of the file input here.
-        shouldBeEqualToString("fileInput.value", "");
-        filesShouldBe([]);
-        shouldBeTrue("successfullyParsed");
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
-
-        // Clean up after ourselves
-        fileInput.parentNode.removeChild(fileInput);
-
-        layoutTestController.notifyDone();
-
-        window.onbeforeunload = null;
-    };
     draggingPathsShouldResultInFiles(['DRTFakeFile'], []);
-    testFailed("The final test case should have resulted in navigation");
+
+    // Clean up after ourselves
+    fileInput.parentNode.removeChild(fileInput);
+
+    layoutTestController.notifyDone();
 }
 
 var successfullyParsed = true;

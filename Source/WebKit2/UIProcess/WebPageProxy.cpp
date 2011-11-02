@@ -71,7 +71,9 @@
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLRequest.h"
+#include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/DragSession.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -181,7 +183,6 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)
     , m_mainFrameHasCustomRepresentation(false)
-    , m_currentDragOperation(DragOperationNone)
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
     , m_mainFrameIsPinnedToLeftSide(false)
@@ -850,9 +851,9 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 #endif
 }
 
-void WebPageProxy::didPerformDragControllerAction(uint64_t resultOperation)
+void WebPageProxy::didPerformDragControllerAction(WebCore::DragSession dragSession)
 {
-    m_currentDragOperation = static_cast<DragOperation>(resultOperation);
+    m_currentDragSession = dragSession;
 }
 
 #if PLATFORM(QT) || PLATFORM(GTK)

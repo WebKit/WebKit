@@ -1,3 +1,16 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dragEnterEvent): Minor refactoring because operation is stored in
+        new DragSession struct.
+        (QWebPagePrivate::dragMoveEvent): Ditto.
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent

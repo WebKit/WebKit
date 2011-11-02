@@ -1,3 +1,15 @@
+2011-11-02  Jon Lee  <jonlee@apple.com>
+
+        Expand DragController to provide more information about the dragging session
+        https://bugs.webkit.org/show_bug.cgi?id=71324
+        <rdar://problem/10379175>
+
+        Reviewed by Darin Adler.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver): The drag operation is contained
+        within the new DragSession struct. Minor refactor.
+
 2011-10-31  Nat Duca  <nduca@chromium.org>
 
         [chromium] Slow down commit and draw rate based on visibility and draw completion

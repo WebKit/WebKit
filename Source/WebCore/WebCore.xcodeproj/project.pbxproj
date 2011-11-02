@@ -778,6 +778,7 @@
 		31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */; };
 		31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */; };
 		31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */; };
+		3169379C14609C6C00C01362 /* DragSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 3169379A14609C5B00C01362 /* DragSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp */; };
@@ -7855,6 +7856,7 @@
 		31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSTransformValue.mm; sourceTree = "<group>"; };
 		31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValueInternal.h; sourceTree = "<group>"; };
+		3169379A14609C5B00C01362 /* DragSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragSession.h; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -15437,6 +15439,7 @@
 				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
 				A7CA595B0B27BD9E00FA021D /* DragController.h */,
 				81F65FF513788FAA00FF6F2D /* DragState.h */,
+				3169379A14609C5B00C01362 /* DragSession.h */,
 				1AF326770D78B9440068F0C4 /* EditorClient.h */,
 				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
 				93C09A520B064DB3005ABD4D /* EventHandler.h */,
@@ -24541,6 +24544,7 @@
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
+				3169379C14609C6C00C01362 /* DragSession.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

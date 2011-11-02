@@ -61,6 +61,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
+#import <WebCore/DragSession.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
@@ -1586,7 +1587,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     _data->_page->dragUpdated(&dragData, [[draggingInfo draggingPasteboard] name]);
-    return _data->_page->dragOperation();
+    
+    WebCore::DragSession dragSession = _data->_page->dragSession();
+    return dragSession.operation;
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
