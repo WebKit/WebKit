@@ -1,3 +1,19 @@
+2011-11-01  Darin Adler  <darin@apple.com>
+
+        Cut down on malloc/free a bit in the parser arena
+        https://bugs.webkit.org/show_bug.cgi?id=71343
+
+        Reviewed by Oliver Hunt.
+
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::deallocateObjects): Call the destructors of
+        the deletable objects before freeing the pools. Don't call
+        fastFree on the deletable objects any more.
+
+        * parser/ParserArena.h:
+        (JSC::ParserArena::allocateDeletable): Use allocateFreeable
+        instead of fastMalloc here.
+
 2011-11-01  Sam Weinig  <sam@webkit.org>
 
         Implement __lookupGetter__/__lookupSetter__ in terms of getPropertyDescriptor

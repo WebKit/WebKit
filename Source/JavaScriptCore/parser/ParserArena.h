@@ -123,7 +123,7 @@ namespace JSC {
 
         void* allocateDeletable(size_t size)
         {
-            ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(fastMalloc(size));
+            ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(allocateFreeable(size));
             m_deletableObjects.append(deletable);
             return deletable;
         }
