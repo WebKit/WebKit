@@ -161,6 +161,7 @@ public:
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
+
     void setHaveWheelEventHandlers(bool);
 
     void updateLayers();

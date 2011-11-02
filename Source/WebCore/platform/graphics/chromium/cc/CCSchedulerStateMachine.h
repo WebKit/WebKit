@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-// The CCSchedulerStateMachine decides how to coordinates main thread activites
+// The CCSchedulerStateMachine decides how to coordinate main thread activites
 // like painting/running javascript with rendering and input activities on the
 // impl thread.
 //
@@ -48,6 +48,7 @@ public:
         COMMIT_STATE_FRAME_IN_PROGRESS,
         COMMIT_STATE_UPDATING_RESOURCES,
         COMMIT_STATE_READY_TO_COMMIT,
+        COMMIT_STATE_WAITING_FOR_FIRST_DRAW,
     };
 
     bool commitPending() const
@@ -64,12 +65,14 @@ public:
         ACTION_COMMIT,
         ACTION_DRAW,
     };
-    enum ImmediateState {
-        IMMEDIATE_STATE_NONE = 0,
-        IMMEDIATE_STATE_INSIDE_VSYNC = 1,
-    };
-    Action nextAction(ImmediateState) const;
+    Action nextAction() const;
     void updateState(Action);
+
+    // Indicates whether the system is inside a vsync callback.
+    void setInsideVSync(bool);
+
+    // Indicates whether the LayerTreeHostImpl is visible.
+    void setVisible(bool);
 
     // Indicates that a redraw is required, either due to the impl tree changing
     // or the screen being damaged and simply needing redisplay.
@@ -95,6 +98,8 @@ protected:
     bool m_needsRedraw;
     bool m_needsCommit;
     bool m_updateMoreResourcesPending;
+    bool m_insideVSync;
+    bool m_visible;
 };
 
 }

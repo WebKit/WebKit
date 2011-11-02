@@ -58,6 +58,8 @@ public:
 
     virtual ~CCScheduler();
 
+    void setVisible(bool);
+
     void setNeedsAnimate();
     void setNeedsCommit();
     void setNeedsRedraw();
@@ -76,7 +78,7 @@ public:
 private:
     CCScheduler(CCSchedulerClient*, PassOwnPtr<CCFrameRateController>);
 
-    void processScheduledActions(CCSchedulerStateMachine::ImmediateState);
+    void processScheduledActions();
 
     CCSchedulerClient* m_client;
     OwnPtr<CCFrameRateController> m_frameRateController;

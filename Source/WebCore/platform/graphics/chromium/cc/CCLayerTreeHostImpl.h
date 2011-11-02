@@ -86,6 +86,7 @@ public:
     CCLayerImpl* rootLayer() const { return m_rootLayerImpl.get(); }
     void setRootLayer(PassRefPtr<CCLayerImpl>);
 
+    bool visible() const { return m_visible; }
     void setVisible(bool);
     void setHaveWheelEventHandlers(bool haveWheelEventHandlers) { m_haveWheelEventHandlers = haveWheelEventHandlers; }
 

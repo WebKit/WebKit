@@ -32,26 +32,27 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     : m_commitState(COMMIT_STATE_IDLE)
     , m_needsRedraw(false)
     , m_needsCommit(false)
-    , m_updateMoreResourcesPending(false) { }
+    , m_updateMoreResourcesPending(false)
+    , m_insideVSync(false)
+    , m_visible(false) { }
 
-CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(ImmediateState immediateState) const
+CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
 {
-    bool insideVSyncTick = immediateState & IMMEDIATE_STATE_INSIDE_VSYNC;
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
-        if (m_needsRedraw && insideVSyncTick)
+        if (m_needsRedraw && m_insideVSync && m_visible)
             return ACTION_DRAW;
-        if (m_needsCommit)
+        if (m_needsCommit && m_visible)
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
 
     case COMMIT_STATE_FRAME_IN_PROGRESS:
-        if (m_needsRedraw && insideVSyncTick)
+        if (m_needsRedraw && m_insideVSync && m_visible)
             return ACTION_DRAW;
         return ACTION_NONE;
 
     case COMMIT_STATE_UPDATING_RESOURCES:
-        if (m_needsRedraw && insideVSyncTick)
+        if (m_needsRedraw && m_insideVSync && m_visible)
             return ACTION_DRAW;
         if (!m_updateMoreResourcesPending)
             return ACTION_BEGIN_UPDATE_MORE_RESOURCES;
@@ -59,6 +60,11 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction(ImmediateSta
 
     case COMMIT_STATE_READY_TO_COMMIT:
         return ACTION_COMMIT;
+
+    case COMMIT_STATE_WAITING_FOR_FIRST_DRAW:
+        if (m_needsRedraw && m_insideVSync && m_visible)
+            return ACTION_DRAW;
+        return ACTION_NONE;
     }
     ASSERT_NOT_REACHED();
     return ACTION_NONE;
@@ -71,6 +77,7 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_BEGIN_FRAME:
+        ASSERT(m_visible);
         m_commitState = COMMIT_STATE_FRAME_IN_PROGRESS;
         m_needsCommit = false;
         return;
@@ -81,14 +88,31 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_COMMIT:
-        m_commitState = COMMIT_STATE_IDLE;
+        if (m_needsCommit || !m_visible)
+            m_commitState = COMMIT_STATE_WAITING_FOR_FIRST_DRAW;
+        else
+            m_commitState = COMMIT_STATE_IDLE;
         m_needsRedraw = true;
         return;
 
     case ACTION_DRAW:
         m_needsRedraw = false;
+        if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW) {
+            ASSERT(m_needsCommit);
+            m_commitState = COMMIT_STATE_IDLE;
+        }
         return;
     }
+}
+
+void CCSchedulerStateMachine::setInsideVSync(bool insideVSync)
+{
+    m_insideVSync = insideVSync;
+}
+
+void CCSchedulerStateMachine::setVisible(bool visible)
+{
+    m_visible = visible;
 }
 
 void CCSchedulerStateMachine::setNeedsRedraw()

@@ -1,3 +1,18 @@
+2011-10-31  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Slow down commit and draw rate based on visibility and draw completion
+        https://bugs.webkit.org/show_bug.cgi?id=71267
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::FakeCCSchedulerClient::reset):
+        (WebKitTests::FakeCCSchedulerClient::setVisible):
+        (WebKitTests::FakeCCSchedulerClient::visible):
+        (WebKitTests::TEST):
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent

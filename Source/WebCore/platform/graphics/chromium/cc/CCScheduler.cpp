@@ -46,6 +46,10 @@ CCScheduler::~CCScheduler()
     m_frameRateController->setActive(false);
 }
 
+void CCScheduler::setVisible(bool visible)
+{
+    m_stateMachine.setVisible(visible);
+}
 void CCScheduler::setNeedsAnimate()
 {
     // Stub through to requestCommit for now.
@@ -55,20 +59,20 @@ void CCScheduler::setNeedsAnimate()
 void CCScheduler::setNeedsCommit()
 {
     m_stateMachine.setNeedsCommit();
-    processScheduledActions(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE);
+    processScheduledActions();
 }
 
 void CCScheduler::setNeedsRedraw()
 {
     m_stateMachine.setNeedsRedraw();
-    processScheduledActions(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE);
+    processScheduledActions();
 }
 
 void CCScheduler::beginFrameComplete()
 {
     TRACE_EVENT("CCScheduler::beginFrameComplete", this, 0);
     m_stateMachine.beginFrameComplete();
-    processScheduledActions(CCSchedulerStateMachine::IMMEDIATE_STATE_NONE);
+    processScheduledActions();
 }
 
 void CCScheduler::didSwapBuffersComplete()
@@ -89,19 +93,22 @@ void CCScheduler::beginFrame()
         m_updateMoreResourcesPending = false;
         m_stateMachine.beginUpdateMoreResourcesComplete(m_client->hasMoreResourceUpdates());
     }
-    processScheduledActions(CCSchedulerStateMachine::IMMEDIATE_STATE_INSIDE_VSYNC);
+    TRACE_EVENT("CCScheduler::beginFrame", this, 0);
+
+    m_stateMachine.setInsideVSync(true);
+    processScheduledActions();
+    m_stateMachine.setInsideVSync(false);
 }
 
-void CCScheduler::processScheduledActions(CCSchedulerStateMachine::ImmediateState immediateState)
+void CCScheduler::processScheduledActions()
 {
     // Early out so we don't spam TRACE_EVENTS with useless processScheduledActions.
-    if (m_stateMachine.nextAction(immediateState) == CCSchedulerStateMachine::ACTION_NONE)
+    if (m_stateMachine.nextAction() == CCSchedulerStateMachine::ACTION_NONE)
         return;
 
-    TRACE_EVENT("CCScheduler::processScheduledActions", this, 0);
     CCSchedulerStateMachine::Action action;
     do {
-        action = m_stateMachine.nextAction(immediateState);
+        action = m_stateMachine.nextAction();
         switch (action) {
         case CCSchedulerStateMachine::ACTION_NONE:
             return;
