@@ -293,8 +293,6 @@ bool QtViewportInteractionEngine::panAnimationActive() const
 
 void QtViewportInteractionEngine::panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
-    Q_ASSERT(!panGestureActive);
-
     // FIXME: suspend the Web engine (stop animated GIF, etc).
     m_userInteractionFlags |= UserHasMovedContent;
     scroller()->handleInput(QScroller::InputPress, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);

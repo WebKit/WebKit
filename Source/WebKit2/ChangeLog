@@ -1,3 +1,15 @@
+2011-11-02  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK] Debug build broken after r99065
+        https://bugs.webkit.org/show_bug.cgi?id=71397
+
+        Remove reference to panGestureActive becuase it is not defined anywhere.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         Update dragging info on mac when user is dragging files into view
