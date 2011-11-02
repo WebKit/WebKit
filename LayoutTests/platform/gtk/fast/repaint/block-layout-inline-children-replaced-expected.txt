@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
             text run at (220,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=40142"
       RenderBlock {DIV} at (0,35) size 800x152
         RenderBlock {DIV} at (0,0) size 402x152 [border: (1px solid #DDDDDD)]
-          RenderImage {IMG} at (155,1) size 92x100
+          RenderImage {IMG} at (155,1) size 93x100
