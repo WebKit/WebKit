@@ -63,10 +63,10 @@ public:
     String label() const;
     String language() const;
 
-    enum ReadyState { None = 0, Loading = 1, Loaded = 2, Error = 3 };
+    enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, HTML_ERROR = 3 };
     ReadyState readyState() const;
 
-    enum Mode { Disabled = 0, Hidden = 1, Showing = 2 };
+    enum Mode { DISABLED = 0, HIDDEN = 1, SHOWING = 2 };
     Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
 

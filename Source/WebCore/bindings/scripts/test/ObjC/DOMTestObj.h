@@ -49,7 +49,8 @@ enum {
     DOM_CONST_VALUE_11 = 0xffffffff,
     DOM_CONST_VALUE_12 = 0x01,
     DOM_CONST_VALUE_13 = 0X20,
-    DOM_CONST_VALUE_14 = 0x1abc
+    DOM_CONST_VALUE_14 = 0x1abc,
+    DOM_CONST_JAVASCRIPT = 15
 };
 
 @interface DOMTestObj : DOMObject

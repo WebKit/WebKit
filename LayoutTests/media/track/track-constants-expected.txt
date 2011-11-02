@@ -1,0 +1,12 @@
+Test TextTrack constants.
+
+EXPECTED (TextTrack.NONE == '0') OK
+EXPECTED (TextTrack.LOADING == '1') OK
+EXPECTED (TextTrack.LOADED == '2') OK
+EXPECTED (TextTrack.ERROR == '3') OK
+
+EXPECTED (TextTrack.DISABLED == '0') OK
+EXPECTED (TextTrack.HIDDEN == '1') OK
+EXPECTED (TextTrack.SHOWING == '2') OK
+END OF TEST
+

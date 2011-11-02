@@ -1387,6 +1387,7 @@ static const BatchedConstant TestObjConsts[] = {
     {"CONST_VALUE_12", static_cast<signed int>(0x01)},
     {"CONST_VALUE_13", static_cast<signed int>(0X20)},
     {"CONST_VALUE_14", static_cast<signed int>(0x1abc)},
+    {"CONST_JAVASCRIPT", static_cast<signed int>(15)},
 };
 
 
@@ -1401,6 +1402,7 @@ COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11I
 COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDontCheckEnums);
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {

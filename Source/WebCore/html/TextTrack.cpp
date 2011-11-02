@@ -42,8 +42,8 @@ TextTrack::TextTrack(TextTrackClient* client, const String& kind, const String& 
     : m_kind(kind)
     , m_label(label)
     , m_language(language)
-    , m_readyState(TextTrack::None)
-    , m_mode(TextTrack::Showing)
+    , m_readyState(TextTrack::NONE)
+    , m_mode(TextTrack::SHOWING)
     , m_client(client)
 {
 }
@@ -91,7 +91,7 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
 {
     // 4.8.10.12.5 On setting the mode, if the new value is not either 0, 1, or 2,
     // the user agent must throw an INVALID_ACCESS_ERR exception.
-    if (mode == TextTrack::Disabled || mode == TextTrack::Hidden || mode == TextTrack::Showing) {
+    if (mode == TextTrack::DISABLED || mode == TextTrack::HIDDEN || mode == TextTrack::SHOWING) {
         m_mode = static_cast<Mode>(mode);
         if (m_client)
             m_client->textTrackModeChanged(this);

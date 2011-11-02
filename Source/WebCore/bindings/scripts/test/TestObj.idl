@@ -190,5 +190,6 @@ module test {
         const unsigned short CONST_VALUE_12 = 0x01;
         const unsigned short CONST_VALUE_13 = 0X20;
         const unsigned short CONST_VALUE_14 = 0x1abc;
+        const [Reflect=CONST_IMPL] unsigned short CONST_JAVASCRIPT = 15;
     };
 }

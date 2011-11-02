@@ -255,6 +255,7 @@ JSC::JSValue jsTestObjCONST_VALUE_11(JSC::ExecState*, JSC::JSValue, const JSC::I
 JSC::JSValue jsTestObjCONST_VALUE_12(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjCONST_VALUE_13(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjCONST_VALUE_14(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestObjCONST_JAVASCRIPT(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore
 

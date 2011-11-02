@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+        function doTest () 
+        {
+            testExpected("TextTrack.NONE", 0);
+            testExpected("TextTrack.LOADING", 1);
+            testExpected("TextTrack.LOADED", 2);
+            testExpected("TextTrack.ERROR", 3);
+            consoleWrite("");
+
+            testExpected("TextTrack.DISABLED", 0);
+            testExpected("TextTrack.HIDDEN", 1);
+            testExpected("TextTrack.SHOWING", 2);
+        
+            endTest();
+        }
+    </script>
+</head>
+<body onload="doTest()">
+    <p>Test TextTrack constants.</p>
+</body>
+</html>

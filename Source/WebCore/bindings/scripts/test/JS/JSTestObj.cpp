@@ -158,6 +158,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "CONST_VALUE_12", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_12), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_13", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_14", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
@@ -175,6 +176,7 @@ COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11I
 COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
+COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDontCheckEnums);
 
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
@@ -225,6 +227,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "CONST_VALUE_12", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_12), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_13", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_14", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "voidMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "voidMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "intMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIntMethod), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
@@ -1927,6 +1930,12 @@ JSValue jsTestObjCONST_VALUE_14(ExecState* exec, JSValue, const Identifier&)
 {
     UNUSED_PARAM(exec);
     return jsNumber(static_cast<int>(0x1abc));
+}
+
+JSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, JSValue, const Identifier&)
+{
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(15));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* impl)

@@ -58,7 +58,8 @@ public:
         WEBDOM_CONST_VALUE_11 = 0xffffffff,
         WEBDOM_CONST_VALUE_12 = 0x01,
         WEBDOM_CONST_VALUE_13 = 0X20,
-        WEBDOM_CONST_VALUE_14 = 0x1abc
+        WEBDOM_CONST_VALUE_14 = 0x1abc,
+        WEBDOM_CONST_JAVASCRIPT = 15
     };
 
     int readOnlyIntAttr() const;

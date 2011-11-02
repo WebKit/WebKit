@@ -60,14 +60,14 @@ void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
     
-    setReadyState(TextTrack::Loading);
+    setReadyState(TextTrack::LOADING);
 }
 
 void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    loadingFailed ? setReadyState(TextTrack::Error) : setReadyState(TextTrack::Loaded);
+    loadingFailed ? setReadyState(TextTrack::HTML_ERROR) : setReadyState(TextTrack::LOADED);
 
     if (m_loadingClient)
         m_loadingClient->textTrackLoadingCompleted(this, loadingFailed);

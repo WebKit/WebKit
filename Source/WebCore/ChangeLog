@@ -1,3 +1,35 @@
+2011-11-01  Anna Cavender  <annacc@chromium.org>
+
+        Makes [Reflect] work for constants.
+        This is needed to avoid platform-specific define conflicts, specifically
+        TextTrack::ERROR conflicts with a windows define.
+        https://bugs.webkit.org/show_bug.cgi?id=70951
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-constants.html
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateCompileTimeCheckForEnumsIfNeeded):
+            Check for [Reflect] and assign name accordingly.
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:  Update test file.
+        * bindings/scripts/test/JS/JSTestObj.cpp:  Update test file.
+        (WebCore::jsTestObjCONST_JAVASCRIPT):
+        * bindings/scripts/test/JS/JSTestObj.h:  Update test file.
+        * bindings/scripts/test/ObjC/DOMTestObj.h:  Update test file.
+        * bindings/scripts/test/TestObj.idl:  Update test file.
+        * bindings/scripts/test/V8/V8TestObj.cpp:  Update test file.
+
+        * html/LoadableTextTrack.cpp: Use new DOM const name.
+        (WebCore::LoadableTextTrack::cueLoadingStarted):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        * html/TextTrack.cpp:  Use new DOM const name.
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::setMode):
+        * html/TextTrack.h:  Use new DOM const name.
+        * html/TextTrack.idl:  Use Reflect for ERROR, but leave other DOM const names.
+
 2011-11-01  Levi Weintraub  <leviw@chromium.org>
 
         Amend missing uses of LayoutUnit in RenderBlock
