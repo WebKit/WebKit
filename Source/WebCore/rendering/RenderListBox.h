@@ -51,7 +51,7 @@ public:
     bool scrollToRevealElementAtListIndex(int index);
     bool listIndexIsVisible(int index);
 
-    int scrollToward(const LayoutPoint&); // Returns the new index or -1 if no scroll occurred
+    int scrollToward(const IntPoint&); // Returns the new index or -1 if no scroll occurred
 
     int size() const;
 

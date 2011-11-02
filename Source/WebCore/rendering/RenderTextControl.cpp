@@ -187,7 +187,7 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
     HTMLElement* innerText = innerTextElement();
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
-    result.setLocalPoint(pointInContainer - toSize(adjustedLocation + innerText->renderBox()->location()));
+    result.setLocalPoint(pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()));
 }
 
 static const char* fontFamiliesWithInvalidCharWidth[] = {

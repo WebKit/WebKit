@@ -102,8 +102,8 @@ private:
     virtual PopupMenuStyle menuStyle() const;
     virtual int clientInsetLeft() const;
     virtual int clientInsetRight() const;
-    virtual int clientPaddingLeft() const;
-    virtual int clientPaddingRight() const;
+    virtual LayoutUnit clientPaddingLeft() const;
+    virtual LayoutUnit clientPaddingRight() const;
     virtual int listSize() const;
     virtual int selectedIndex() const;
     virtual void popupDidHide();

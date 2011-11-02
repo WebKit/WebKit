@@ -22,6 +22,7 @@
 #ifndef PopupMenuClient_h
 #define PopupMenuClient_h
 
+#include "LayoutTypes.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
@@ -51,8 +52,8 @@ public:
     virtual PopupMenuStyle menuStyle() const = 0;
     virtual int clientInsetLeft() const = 0;
     virtual int clientInsetRight() const = 0;
-    virtual int clientPaddingLeft() const = 0;
-    virtual int clientPaddingRight() const = 0;
+    virtual LayoutUnit clientPaddingLeft() const = 0;
+    virtual LayoutUnit clientPaddingRight() const = 0;
     virtual int listSize() const = 0;
     virtual int selectedIndex() const = 0;
     virtual void popupDidHide() = 0;

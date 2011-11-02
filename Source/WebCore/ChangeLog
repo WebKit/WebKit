@@ -1,3 +1,40 @@
+2011-11-01  Emil A Eklund  <eae@chromium.org>
+
+        Switch PopupMenuClient to layout abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=71308
+
+        Reviewed by Darin Adler.
+
+        Switch PopupMenuClient and rendering classes implementing it to layout
+        type abstraction.
+
+        No new tests.
+
+        * platform/PopupMenuClient.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::listIndexAtOffset):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::scrollToward):
+        (WebCore::RenderListBox::scrollSize):
+        (WebCore::RenderListBox::scrollPosition):
+        (WebCore::RenderListBox::setScrollOffset):
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        Revert scroll positions and scroll offsets to ints to align with device
+        pixels.
+        
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::clientPaddingLeft):
+        (WebCore::RenderMenuList::clientPaddingRight):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-11-01  Nate Chapin  <japhet@chromium.org>
 
         [chromium] As of r98380, ThreadableLoaderClients are having their
