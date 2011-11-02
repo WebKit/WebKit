@@ -144,16 +144,6 @@ void JSDOMWindowShell::defineSetter(JSObject* object, ExecState* exec, const Ide
     thisObject->window()->methodTable()->defineSetter(thisObject->window(), exec, propertyName, setterFunction, attributes);
 }
 
-JSValue JSDOMWindowShell::lookupGetter(ExecState* exec, const Identifier& propertyName)
-{
-    return window()->lookupGetter(exec, propertyName);
-}
-
-JSValue JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& propertyName)
-{
-    return window()->lookupSetter(exec, propertyName);
-}
-
 
 // ----
 // JSDOMWindow methods

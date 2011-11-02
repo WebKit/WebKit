@@ -187,8 +187,8 @@ namespace JSC {
 
         static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
         static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
-        virtual JSValue lookupGetter(ExecState*, const Identifier& propertyName);
-        virtual JSValue lookupSetter(ExecState*, const Identifier& propertyName);
+        JSValue lookupGetter(ExecState*, const Identifier& propertyName);
+        JSValue lookupSetter(ExecState*, const Identifier& propertyName);
         virtual bool defineOwnProperty(ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         bool isGlobalObject() const;

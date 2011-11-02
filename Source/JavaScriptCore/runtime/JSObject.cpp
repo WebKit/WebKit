@@ -434,40 +434,26 @@ void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identif
 
 JSValue JSObject::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
-    JSObject* object = this;
-    while (true) {
-        if (JSValue value = object->getDirect(exec->globalData(), propertyName)) {
-            if (!value.isGetterSetter())
-                return jsUndefined();
-            JSObject* functionObject = asGetterSetter(value)->getter();
-            if (!functionObject)
-                return jsUndefined();
-            return functionObject;
-        }
+    PropertyDescriptor descriptor;
+    if (!getPropertyDescriptor(exec, propertyName, descriptor))
+        return jsUndefined();
 
-        if (!object->prototype() || !object->prototype().isObject())
-            return jsUndefined();
-        object = asObject(object->prototype());
-    }
+    if (!descriptor.getterPresent())
+        return jsUndefined();
+
+    return descriptor.getter();
 }
 
 JSValue JSObject::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
-    JSObject* object = this;
-    while (true) {
-        if (JSValue value = object->getDirect(exec->globalData(), propertyName)) {
-            if (!value.isGetterSetter())
-                return jsUndefined();
-            JSObject* functionObject = asGetterSetter(value)->setter();
-            if (!functionObject)
-                return jsUndefined();
-            return functionObject;
-        }
+    PropertyDescriptor descriptor;
+    if (!getPropertyDescriptor(exec, propertyName, descriptor))
+        return jsUndefined();
 
-        if (!object->prototype() || !object->prototype().isObject())
-            return jsUndefined();
-        object = asObject(object->prototype());
-    }
+    if (!descriptor.setterPresent())
+        return jsUndefined();
+    
+    return descriptor.setter();
 }
 
 bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)

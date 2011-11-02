@@ -1,3 +1,18 @@
+2011-11-01  Sam Weinig  <sam@webkit.org>
+
+        Implement __lookupGetter__/__lookupSetter__ in terms of getPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=71336
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        * page/DOMWindow.idl:
+        Remove overrides of lookupGetter/lookupSetter, which are no longer needed
+        due to implementing getPropertyDescriptor.
+
+
 2011-11-01  Nat Duca  <nduca@chromium.org>
 
         [chromium] Move resource-releasing logic into CCProxy and cleanup setNeedsCommit

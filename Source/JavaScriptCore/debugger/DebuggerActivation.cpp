@@ -105,14 +105,4 @@ void DebuggerActivation::defineSetter(JSObject* object, ExecState* exec, const I
     thisObject->m_activation->methodTable()->defineSetter(thisObject->m_activation.get(), exec, propertyName, setterFunction, attributes);
 }
 
-JSValue DebuggerActivation::lookupGetter(ExecState* exec, const Identifier& propertyName)
-{
-    return m_activation->lookupGetter(exec, propertyName);
-}
-
-JSValue DebuggerActivation::lookupSetter(ExecState* exec, const Identifier& propertyName)
-{
-    return m_activation->lookupSetter(exec, propertyName);
-}
-
 } // namespace JSC

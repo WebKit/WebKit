@@ -12,11 +12,11 @@ PASS typeof window.__lookupGetter__('x') is 'undefined'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'x').get is 'undefined'
 
 PASS window.y is 'window.y __getter__'
-PASS typeof window.__lookupGetter__('y') is 'function'
+FAIL typeof window.__lookupGetter__('y') should be function. Was undefined.
 FAIL typeof Object.getOwnPropertyDescriptor(window, 'y').get should be function. Was undefined.
 
 PASS window.y is 'window.y __getter__'
-PASS typeof window.__lookupGetter__('y') is 'function'
+FAIL typeof window.__lookupGetter__('y') should be function. Was undefined.
 FAIL typeof Object.getOwnPropertyDescriptor(window, 'y').get should be function. Was undefined.
 
 PASS window.z is undefined.

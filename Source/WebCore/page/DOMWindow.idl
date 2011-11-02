@@ -33,8 +33,6 @@ module window {
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
         CustomGetPropertyNames,
-        CustomLookupGetter,
-        CustomLookupSetter,
         CustomMarkFunction,
         CustomNativeConverter,
         CustomPutFunction,

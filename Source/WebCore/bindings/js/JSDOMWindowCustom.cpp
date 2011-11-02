@@ -415,22 +415,6 @@ bool JSDOMWindow::defineOwnProperty(JSC::ExecState* exec, const JSC::Identifier&
     return Base::defineOwnProperty(exec, propertyName, descriptor, shouldThrow);
 }
 
-JSValue JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& propertyName)
-{
-    // Only allow looking-up getters by frames in the same origin.
-    if (!allowsAccessFrom(exec))
-        return jsUndefined();
-    return Base::lookupGetter(exec, propertyName);
-}
-
-JSValue JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyName)
-{
-    // Only allow looking-up setters by frames in the same origin.
-    if (!allowsAccessFrom(exec))
-        return jsUndefined();
-    return Base::lookupSetter(exec, propertyName);
-}
-
 // Custom Attributes
 
 JSValue JSDOMWindow::history(ExecState* exec) const
