@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x114
+  RenderBlock {HTML} at (0,0) size 800x114
+    RenderBody {BODY} at (3,3) size 794x108
+      RenderBlock {DIV} at (8,8) size 90x90 [border: (1px solid #000000)]
+      RenderText {#text} at (106,100) size 2x8
+        text run at (106,100) width 2: " "
+      RenderBlock {DIV} at (116,8) size 90x90 [border: (1px solid #000000)]
+      RenderText {#text} at (214,100) size 2x8
+        text run at (214,100) width 2: " "
+      RenderBlock {DIV} at (224,8) size 90x90 [border: (1px solid #000000)]
+      RenderText {#text} at (322,100) size 2x8
+        text run at (322,100) width 2: " "
+      RenderImage {IMG} at (332,8) size 90x90 [border: (1px solid #000000)]
+      RenderText {#text} at (430,100) size 2x8
+        text run at (430,100) width 2: " "
+      RenderImage {IMG} at (440,8) size 90x90 [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
