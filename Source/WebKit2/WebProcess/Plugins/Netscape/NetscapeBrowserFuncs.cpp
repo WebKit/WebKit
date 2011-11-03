@@ -36,10 +36,12 @@
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 
+#if PLUGIN_ARCHITECTURE(X11)
 #if PLATFORM(QT)
 #include <QX11Info>
 #elif PLATFORM(GTK)
 #include <gdk/gdkx.h>
+#endif
 #endif
 
 using namespace WebCore;

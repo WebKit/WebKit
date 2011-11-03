@@ -1,3 +1,14 @@
+2011-11-03  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        [Qt] Flagging usage of X11 headers under PLAT_ARCH(X11)
+        https://bugs.webkit.org/show_bug.cgi?id=71409
+
+        Reviewed by Simon Hausmann.
+
+        Build fix for building qtwebkit with latest qt5 which has removed Qt X11 headers.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+
 2011-11-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r99093...
