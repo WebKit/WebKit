@@ -50,6 +50,17 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
 
     ASSERT(availableWidth > 0 && availableHeight > 0);
 
+    float autoDPI;
+
+    switch (args.type) {
+    case ViewportArguments::Implicit:
+        autoDPI = deviceDPI;
+        break;
+    case ViewportArguments::ViewportMeta:
+        autoDPI = 160;
+        break;
+    }
+
     switch (int(args.targetDensityDpi)) {
     case ViewportArguments::ValueDeviceDPI:
         args.targetDensityDpi = deviceDPI;
@@ -58,6 +69,8 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
         args.targetDensityDpi = 120;
         break;
     case ViewportArguments::ValueAuto:
+        args.targetDensityDpi = autoDPI;
+        break;
     case ViewportArguments::ValueMediumDPI:
         args.targetDensityDpi = 160;
         break;

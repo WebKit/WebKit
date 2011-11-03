@@ -2670,7 +2670,7 @@ void Document::processViewport(const String& features)
 {
     ASSERT(!features.isNull());
 
-    m_viewportArguments = ViewportArguments();
+    m_viewportArguments = ViewportArguments(ViewportArguments::ViewportMeta);
     processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
 
     Frame* frame = this->frame();

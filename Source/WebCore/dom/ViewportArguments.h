@@ -56,6 +56,11 @@ struct ViewportAttributes {
 
 struct ViewportArguments {
 
+    enum Type {
+        Implicit,
+        ViewportMeta
+    } type;
+
     enum {
         ValueAuto = -1,
         ValueDesktopWidth = -2,
@@ -67,8 +72,9 @@ struct ViewportArguments {
         ValueHighDPI = -8
     };
 
-    ViewportArguments()
-        : initialScale(ValueAuto)
+    ViewportArguments(Type type = Implicit)
+        : type(type)
+        , initialScale(ValueAuto)
         , minimumScale(ValueAuto)
         , maximumScale(ValueAuto)
         , width(ValueAuto)
@@ -88,6 +94,8 @@ struct ViewportArguments {
 
     bool operator==(const ViewportArguments& other) const
     {
+        // Used for figuring out whether to reset the viewport or not,
+        // thus we are not taking type into account.
         return initialScale == other.initialScale
             && minimumScale == other.minimumScale
             && maximumScale == other.maximumScale

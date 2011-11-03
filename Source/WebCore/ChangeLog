@@ -1,3 +1,21 @@
+2011-11-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Differentiate implicit viewport from that of the meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=71453
+
+        Reviewed by Simon Hausmann.
+
+        This is needed because of DPI adjustment taking place with the meta
+        tag. This is to be avoided when no viewport meta tag is present.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+
 2011-11-03  Andreas Kling  <kling@webkit.org>
 
         Devirtualize CSSRule.
