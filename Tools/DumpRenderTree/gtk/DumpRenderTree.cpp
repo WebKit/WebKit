@@ -210,10 +210,6 @@ static void initializeFonts(const char* testURL = 0)
         "STIXGeneralItalic.otf"
     };
 
-    GOwnPtr<gchar> directoriesDescription;
-    for (size_t path = 0; path < G_N_ELEMENTS(fontDirectories); path++)
-        directoriesDescription.set(g_strjoin(":", directoriesDescription.release(), fontDirectories[path], NULL));
-
     // TODO: Some tests use Lucida. We should load these as well, once it becomes
     // clear how to install these fonts easily on Fedora.
     for (size_t font = 0; font < G_N_ELEMENTS(fontPaths); font++) {
@@ -229,10 +225,14 @@ static void initializeFonts(const char* testURL = 0)
             }
         }
 
-        if (!found)
+        if (!found) {
+            GOwnPtr<gchar> directoriesDescription;
+            for (size_t path = 0; path < G_N_ELEMENTS(fontDirectories); path++)
+                directoriesDescription.set(g_strjoin(":", directoriesDescription.release(), fontDirectories[path], NULL));
             g_error("Could not find font %s in %s. Either install this font or file a bug "
                     "at http://bugs.webkit.org if it is installed in another location.",
                     fontPaths[font], directoriesDescription.get());
+        }
     }
 
     // Ahem is used by many layout tests.
