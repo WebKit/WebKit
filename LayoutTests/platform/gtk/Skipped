@@ -983,6 +983,8 @@ svg/batik/filters/filterRegions.svg
 svg/batik/text/textOnPath3.svg
 svg/custom/empty-merge.svg
 svg/custom/feDisplacementMap-01.svg
+svg/as-image/img-preserveAspectRatio-support-1.html
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 # Unfortunately, these started showing rounding errors after r78704.
 # https://bugs.webkit.org/show_bug.cgi?id=54474
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
@@ -998,6 +1000,7 @@ svg/custom/resource-invalidate-on-target-update.svg
 svg/custom/text-rotated-gradient.svg
 svg/custom/use-css-events.svg
 svg/custom/use-detach.svg
+svg/filters/feColorMatrix-default-type.svg
 svg/filters/filterRes.svg
 svg/hixie/links/001.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
