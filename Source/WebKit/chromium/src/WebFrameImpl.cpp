@@ -2060,54 +2060,12 @@ void WebFrameImpl::createFrameView()
 {
     ASSERT(m_frame); // If m_frame doesn't exist, we probably didn't init properly.
 
-    Page* page = m_frame->page();
-    ASSERT(page);
-    ASSERT(page->mainFrame());
-
-    bool isMainFrame = m_frame == page->mainFrame();
-    bool useFixedLayout = false;
-    IntSize fixedLayoutSize;
-    if (isMainFrame && m_frame->view()) {
-        m_frame->view()->setParentVisible(false);
-        // Save the fixed layout information before destroying the
-        // existing FrameView of this frame.
-        useFixedLayout = m_frame->view()->useFixedLayout();
-        fixedLayoutSize = m_frame->view()->fixedLayoutSize();
-    }
-
-    m_frame->setView(0);
-
     WebViewImpl* webView = viewImpl();
-
-    RefPtr<FrameView> view;
-    if (isMainFrame)
-        view = FrameView::create(m_frame, webView->size());
-    else
-        view = FrameView::create(m_frame);
-
-    m_frame->setView(view);
-
-    if (webView->isTransparent())
-        view->setTransparent(true);
-
-    // FIXME: The Mac code has a comment about this possibly being unnecessary.
-    // See installInFrame in WebCoreFrameBridge.mm
-    if (m_frame->ownerRenderer())
-        m_frame->ownerRenderer()->setWidget(view.get());
-
-    if (HTMLFrameOwnerElement* owner = m_frame->ownerElement())
-        view->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
-
-    if (isMainFrame)
-        view->setParentVisible(true);
+    m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), webView->isFixedLayoutModeEnabled());
 
 #if ENABLE(GESTURE_RECOGNIZER)
     webView->resetGestureRecognizer();
 #endif
-
-    // Restore the saved fixed layout information.
-    view->setUseFixedLayout(useFixedLayout);
-    view->setFixedLayoutSize(fixedLayoutSize);
 }
 
 WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)

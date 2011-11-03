@@ -1,3 +1,22 @@
+2011-11-03  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Refactor WebFrameImpl::createFrameView() to use Frame:createView
+        https://bugs.webkit.org/show_bug.cgi?id=70507
+
+        Reviewed by Darin Fisher.
+
+        No change in functionality except for fixed layout mode. Fixed layout mode has
+        not been fully upstreamed yet, so no new tests yet:
+        https://bugs.webkit.org/show_bug.cgi?id=70562 will address this.
+
+        This patch also fixes https://bugs.webkit.org/show_bug.cgi?id=70555
+        It was decided that fixed layout mode might need to be disabled for some content,
+        and so this change enables the embedder to decide whether to enable fixed layout on
+        navigation.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+
 2011-10-28  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Recycle cursor objects when calling continue()
