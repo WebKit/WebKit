@@ -340,7 +340,7 @@ static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext*
 
     webViewBase->priv->pageProxy->resetDragOperation();
     webViewBase->priv->pageProxy->dragEntered(dragData.get());
-    DragOperation operation = webViewBase->priv->pageProxy->dragOperation();
+    DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
 
@@ -352,7 +352,7 @@ static gboolean webkitWebViewBaseDragMotion(GtkWidget* widget, GdkDragContext* c
         return TRUE;
 
     webViewBase->priv->pageProxy->dragUpdated(dragData.get());
-    DragOperation operation = webViewBase->priv->pageProxy->dragOperation();
+    DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
     return TRUE;
 }

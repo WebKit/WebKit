@@ -162,7 +162,6 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // didRemoveFrameFromHierarchy
         0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
-        0, // didDetectXSSForFrame
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
         didChangeProgress, // didStartProgress
@@ -173,7 +172,8 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // processDidCrash
         didChangeBackForwardList,
         0, // shouldGoToBackForwardListItem
-        0 // didFailToInitializePlugin
+        0, // didFailToInitializePlugin
+        0 // didDetectXSSForFrame
     };
     WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);
 }
