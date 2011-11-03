@@ -1,5 +1,11 @@
 2011-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: fixing win build. step2.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: fix windows build, step1
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
