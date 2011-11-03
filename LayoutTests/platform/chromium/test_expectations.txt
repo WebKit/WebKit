@@ -686,7 +686,6 @@ BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
 // New test in r93068
-BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
 BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
@@ -1016,7 +1015,7 @@ BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEX
 // Rebaseline once native aa-clipping has landed
 BUGWK70748 CPU : css2.1/t0805-c5517-brdr-s-00-c.html = IMAGE
 BUGWK70748 CPU : fast/backgrounds/border-radius-split-background-image.html = IMAGE
-BUGWK70748 CPU : fast/backgrounds/gradient-background-leakage.html = IMAGE
+BUGWK70748 CPU WIN : fast/backgrounds/gradient-background-leakage.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusArcs01.html = IMAGE
 BUGWK70748 CPU : fast/borders/border-radius-complex-inner.html = IMAGE
@@ -1124,13 +1123,12 @@ BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
-BUGWK70748 CPU : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGWK70748 CPU LEOPARD : svg/css/text-shadow-multiple.xhtml = IMAGE
 BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
-BUGWK70748 CPU : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
+BUGWK70748 CPU LEOPARD : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
 BUGWK70748 CPU : svg/W3C-SVG-1.1/painting-marker-02-f.svg = IMAGE
-BUGWK70748 CPU : fast/borders/only-one-border-with-width.html = IMAGE
-BUGWK70748 CPU : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
+BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
 // -----------------------------------------------------------------
 // Other failures
@@ -2008,7 +2006,6 @@ BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
@@ -3808,9 +3805,6 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 : svg/custom/js-late-gradient-creation.svg = IMAGE PASS
 BUGWK70298 : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
 
-// Needs rebaseline for WIN
-BUGWK70568 WIN : fast/css/child-style-can-override-visited-style.html = TEXT
-
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
@@ -3858,9 +3852,6 @@ BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html =
 
 BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = FAIL CRASH
 
-BUGWK71127 : fast/js/array-functions-non-arrays.html = TEXT
-BUGWK71127 : fast/js/toString-overrides.html = TEXT
-BUGWK71127 : fast/js/toString-recursion.html = TEXT
 BUGWK71127 : fast/js/kde/RegExp.html = TEXT
 BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
 BUGWK71127 : fast/js/array-prototype-properties.html = TEXT
@@ -3879,7 +3870,8 @@ BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 
 BUGWK71226 : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGWK71226 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK71226 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
+BUGWK71226 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
+BUGWK71226 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
 BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
 
@@ -3896,3 +3888,5 @@ BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 // These just need to be rebaselined, but the 10.5 bots are slow.
 BUGTONY LEOPARD : printing/single-line-must-not-be-split-into-two-pages.html = FAIL PASS
 BUGTONY LEOPARD : printing/setPrinting.html = FAIL PASS
+
+BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
