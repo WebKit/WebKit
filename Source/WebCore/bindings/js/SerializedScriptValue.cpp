@@ -126,6 +126,8 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    | IntTag <value:int32_t>
  *    | ZeroTag
  *    | OneTag
+ *    | FalseTag
+ *    | TrueTag
  *    | DoubleTag <value:double>
  *    | DateTag <value:double>
  *    | String
@@ -270,6 +272,18 @@ public:
         writeLittleEndian<uint8_t>(out, StringTag);
         writeLittleEndian(out, s.length());
         return writeLittleEndian(out, s.impl()->characters(), s.length());
+    }
+
+    static void serializeUndefined(Vector<uint8_t>& out)
+    {
+        writeLittleEndian(out, CurrentVersion);
+        writeLittleEndian<uint8_t>(out, UndefinedTag);
+    }
+
+    static void serializeBoolean(bool value, Vector<uint8_t>& out)
+    {
+        writeLittleEndian(out, CurrentVersion);
+        writeLittleEndian<uint8_t>(out, value ? TrueTag : FalseTag);
     }
 
 private:
@@ -1464,6 +1478,20 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
 {
     DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, emptyValue, (SerializedScriptValue::create()));
     return emptyValue.get();
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
+{
+    Vector<uint8_t> buffer;
+    CloneSerializer::serializeUndefined(buffer);
+    return adoptRef(new SerializedScriptValue(buffer));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value)
+{
+    Vector<uint8_t> buffer;
+    CloneSerializer::serializeBoolean(value, buffer);
+    return adoptRef(new SerializedScriptValue(buffer));
 }
 
 void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)

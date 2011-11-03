@@ -60,7 +60,8 @@ public:
     static PassRefPtr<SerializedScriptValue> create();
 
     static SerializedScriptValue* nullValue();
-    static SerializedScriptValue* undefinedValue();
+    static PassRefPtr<SerializedScriptValue> undefinedValue();
+    static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
 
     PassRefPtr<SerializedScriptValue> release();
 

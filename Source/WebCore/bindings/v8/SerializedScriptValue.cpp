@@ -1931,6 +1931,8 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
 
 SerializedScriptValue* SerializedScriptValue::nullValue()
 {
+    // FIXME: This is not thread-safe. Move caching to callers.
+    // https://bugs.webkit.org/show_bug.cgi?id=70833
     DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (0));
     if (!nullValue) {
         Writer writer;
@@ -1941,16 +1943,23 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
     return nullValue.get();
 }
 
-SerializedScriptValue* SerializedScriptValue::undefinedValue()
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, undefinedValue, (0));
-    if (!undefinedValue) {
-        Writer writer;
-        writer.writeUndefined();
-        String wireData = StringImpl::adopt(writer.data());
-        undefinedValue = adoptRef(new SerializedScriptValue(wireData));
-    }
-    return undefinedValue.get();
+    Writer writer;
+    writer.writeUndefined();
+    String wireData = StringImpl::adopt(writer.data());
+    return adoptRef(new SerializedScriptValue(wireData));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value)
+{
+    Writer writer;
+    if (value)
+        writer.writeTrue();
+    else
+        writer.writeFalse();
+    String wireData = StringImpl::adopt(writer.data());
+    return adoptRef(new SerializedScriptValue(wireData));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()

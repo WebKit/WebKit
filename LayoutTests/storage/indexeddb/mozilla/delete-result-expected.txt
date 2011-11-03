@@ -1,0 +1,22 @@
+Test IndexedDB: result property after deleting existing and non-existing record
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+indexedDB.open(name, description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });
+request = objectStore.add({});
+id = event.target.result;
+request = objectStore.delete(id);
+PASS event.target.result is true
+request = objectStore.delete(id);
+PASS event.target.result is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

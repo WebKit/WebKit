@@ -314,7 +314,7 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
 {
     RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->m_backingStore->createInvalidRecordIdentifier();
     if (!objectStore->m_backingStore->keyExistsInObjectStore(objectStore->m_databaseId, objectStore->id(), *key, recordIdentifier.get())) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the object store."));
+        callbacks->onSuccess(SerializedScriptValue::booleanValue(false));
         return;
     }
 
@@ -327,7 +327,7 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
     }
 
     objectStore->m_backingStore->deleteObjectStoreRecord(objectStore->m_databaseId, objectStore->id(), recordIdentifier.get());
-    callbacks->onSuccess(SerializedScriptValue::nullValue());
+    callbacks->onSuccess(SerializedScriptValue::booleanValue(true));
 }
 
 void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)

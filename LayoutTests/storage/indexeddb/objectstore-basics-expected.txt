@@ -90,7 +90,10 @@ getSuccessDateKey():
 PASS event.target.result.x is "foo"
 store.delete('key')
 removeSuccess():
-PASS event.target.result is null
+PASS event.target.result is true
+store.delete('key')
+removeSuccessButFalse():
+PASS event.target.result is false
 store = event.target.source
 Passing an invalid key into store.get().
 Expecting exception from store.get([])

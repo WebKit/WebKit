@@ -1,3 +1,31 @@
+2011-11-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB result of deleting a record should be true or false
+        https://bugs.webkit.org/show_bug.cgi?id=60197
+
+        Reviewed by David Levin.
+
+        IDBObjectStore.delete() was incorrectly firing an error if there
+        was no record to remove. Match the spec, and return true/false
+        as success values instead. Bring JSC binding implementation of
+        SerializedScriptValue more in line with V8 version for methods
+        called from IDB code.
+
+        Test: storage/indexeddb/mozilla/delete-result.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::undefinedValue):
+        (WebCore::SerializedScriptValue::booleanValue):
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::nullValue):
+        (WebCore::SerializedScriptValue::undefinedValue):
+        (WebCore::SerializedScriptValue::booleanValue):
+        * bindings/v8/SerializedScriptValue.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+
 2011-11-03  Adam Barth  <abarth@webkit.org>
 
         Implement allow-popups for iframe@sandbox

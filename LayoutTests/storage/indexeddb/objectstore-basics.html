@@ -236,7 +236,17 @@ function getSuccessDateKey()
 function removeSuccess()
 {
     debug("removeSuccess():");
-    shouldBeNull("event.target.result");
+    shouldBe("event.target.result", "true");
+
+    request = evalAndLog("store.delete('key')");
+    request.onsuccess = removeSuccessButFalse;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function removeSuccessButFalse()
+{
+    debug("removeSuccessButFalse():");
+    shouldBe("event.target.result", "false");
     var store = evalAndLog("store = event.target.source");
 
     debug("Passing an invalid key into store.get().");
