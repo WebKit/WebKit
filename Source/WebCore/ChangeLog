@@ -1,3 +1,50 @@
+2011-11-02  Jer Noble  <jer.noble@apple.com>
+
+        Add Clock class and platform-specific implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=71341
+
+        Reviewed by Sam Weinig.
+
+        No new tests; these classes will be used and tested by the MediaController feature.
+
+        Adds a abstract Clock class and two concrete, platform-specific subclasses.
+
+        Clock provides a basic interface for starting, stopping, and querying a generic timeline.
+        PlatformClockCA implements this interface using a CoreAudio CAClock object, which uses
+        the default audio device's hardware clock as a timing source. PlatformClockPOSIX 
+        implements this interface using gettimeofday() as its timing source.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Clock.cpp: Added.
+        (Clock::create): Creates a platform-specific clock.
+        * platform/Clock.h: Added.
+        (WebCore::Clock::~Clock):
+        (WebCore::Clock::Clock):
+        * platform/mac/PlatformClockCA.cpp: Added.
+        (PlatformClockCA::PlatformClockCA):
+        (PlatformClockCA::~PlatformClockCA):
+        (PlatformClockCA::setCurrentTime):
+        (PlatformClockCA::currentTime):
+        (PlatformClockCA::setPlayRate):
+        (PlatformClockCA::PlatformClockCA::playRate):
+        (PlatformClockCA::start):
+        (PlatformClockCA::stop):
+        * platform/mac/PlatformClockCA.h: Added.
+        (WebCore::PlatformClockCA::isRunning):
+        * platform/posix/PlatformClockPOSIX.cpp: Added.
+        (timevalToFloat):
+        (timevalDelta):
+        (PlatformClockPOSIX::PlatformClockPOSIX):
+        (PlatformClockPOSIX::setCurrentTime):
+        (PlatformClockPOSIX::currentTime):
+        (PlatformClockPOSIX::setPlayRate):
+        (PlatformClockPOSIX::PlatformClockPOSIX::playRate):
+        (PlatformClockPOSIX::start):
+        (PlatformClockPOSIX::stop):
+        (PlatformClockPOSIX::now):
+        * platform/posix/PlatformClockPOSIX.h: Added.
+        (WebCore::PlatformClockPOSIX::isRunning):
+
 2011-11-03  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Object stores not persisting between sessions

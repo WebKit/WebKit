@@ -1,3 +1,14 @@
+2011-11-02  Jer Noble  <jer.noble@apple.com>
+
+        Add Clock class and platform-specific implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=71341
+
+        Reviewed by Sam Weinig.
+
+        Add WTF_USE_COREAUDIO macro for use by PlatformClockCA.
+
+        * wtf/Platform.h:
+
 2011-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing win build. step2.

@@ -1104,4 +1104,8 @@
 #define HAVE_INVERTED_WHEEL_EVENTS 1
 #endif
 
+#if PLATFORM(MAC) || (PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO))
+#define WTF_USE_COREAUDIO 1
+#endif
+
 #endif /* WTF_Platform_h */
