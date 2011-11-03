@@ -1,3 +1,16 @@
+2011-11-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix an assertion under WebPage::setViewportSize.
+        https://bugs.webkit.org/show_bug.cgi?id=71473
+
+        Reviewed by Simon Hausmann.
+
+        The web view can have an empty size and it causes the assert in computeViewportAttributes.
+        Don't notify the web page of such a size change in this case.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportSize):
+
 2011-11-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2] State variable name refactor in WebPageProxy.cpp

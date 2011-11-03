@@ -62,10 +62,15 @@ void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& tra
 void QTouchWebViewPrivate::updateViewportSize()
 {
     Q_Q(QTouchWebView);
+    QSize viewportSize = q->boundingRect().size().toSize();
+
+    if (viewportSize.isEmpty())
+        return;
+
     WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
-    wkPage->setViewportSize(q->boundingRect().size().toSize());
+    wkPage->setViewportSize(viewportSize);
     updateViewportConstraints();
     _q_viewportUpdated();
 }
