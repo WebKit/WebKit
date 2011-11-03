@@ -1,5 +1,29 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        NetscapePlugin should use plug-in relative coordinates on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=71486
+
+        Reviewed by Adam Roben.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        Don't translate the graphics context when the plug-in doesn't want window relative coordinates.
+        This also fixed a bug I introduced in my previous commit where we'd always pass the dirty rect in
+        plug-in coordinates even if the plug-in wants window relative coordinates.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+        Don't do the whole translate dance if the plug-in doesn't want window relative coordinates.
+
+        (WebKit::NetscapePlugin::wantsWindowRelativeCoordinates):
+        Return false for PLATFORM_ARCHITECTURE(MAC).
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPaint):
+        Simplify code now that we know that the we're always given plug-in relative coordinates.
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         PluginControllerProxy's dirty rect should be in plug-in coordinates
         https://bugs.webkit.org/show_bug.cgi?id=71481
 

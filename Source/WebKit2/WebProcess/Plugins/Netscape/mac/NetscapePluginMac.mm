@@ -403,9 +403,6 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 {
     CGContextRef platformContext = context->platformContext();
 
-    // Translate the context so that the origin is at the top left corner of the plug-in view.
-    context->translate(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
-
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             // Don't send draw events when we're using the Core Animation drawing model.
@@ -415,8 +412,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
             NPCocoaEvent event = initializeEvent(NPCocoaEventDrawRect);
 
             event.data.draw.context = platformContext;
-            event.data.draw.x = dirtyRect.x() - m_frameRectInWindowCoordinates.x();
-            event.data.draw.y = dirtyRect.y() - m_frameRectInWindowCoordinates.y();
+            event.data.draw.x = dirtyRect.x();
+            event.data.draw.y = dirtyRect.y();
             event.data.draw.width = dirtyRect.width();
             event.data.draw.height = dirtyRect.height();
             
