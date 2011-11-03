@@ -56,7 +56,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
     if (attr->isNull())
         return 0;
 
-    int lineNumber = 1;
+    TextPosition position = TextPosition::minimumPosition();
     String sourceURL;
     
     // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
@@ -65,11 +65,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
         if (!scriptController->canExecuteScripts(AboutToExecuteScript))
             return 0;
 
-        lineNumber = scriptController->eventHandlerLineNumber();
+        position = scriptController->eventHandlerPosition();
         sourceURL = node->document()->url().string();
     }
 
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, lineNumber, 0, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, position, 0, mainThreadNormalWorld());
 }
 
 PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
@@ -81,17 +81,14 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (attr->isNull())
         return 0;
 
-    int lineNumber = 1;
-    String sourceURL;
-    
     ScriptController* scriptController = frame->script();
     if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
 
-    lineNumber = scriptController->eventHandlerLineNumber();
-    sourceURL = frame->document()->url().string();
+    TextPosition position = scriptController->eventHandlerPosition();
+    String sourceURL = frame->document()->url().string();
     JSObject* wrapper = toJSDOMWindow(frame, mainThreadNormalWorld());
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, position, wrapper, mainThreadNormalWorld());
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* eventListener)

@@ -4,7 +4,7 @@
 <script src="../../http/tests/inspector/debugger-test.js"></script>
 
 <script>
-var test = function()
+function test()
 {
     var scripts = [];
     InspectorTest.startDebuggerTest(step1);
@@ -21,7 +21,7 @@ var test = function()
         if (script.sourceURL !== WebInspector.mainResource.url)
             return;
         scripts.push(script);
-        if (scripts.length === 5)
+        if (scripts.length === 6)
             step3();
     }
 
@@ -40,9 +40,7 @@ var test = function()
 function f1()
 {
 }
-
-window.onload = runTest;</script>
-
+</script>
    <script> function f2() {}    </script>
    <script>function f3() {}
 </script>
@@ -51,10 +49,11 @@ window.onload = runTest;</script>
 </script>
 
 </head>
-
+<body onload="window.dummy = function() { }; runTest()">
 <p>
 Tests that valid parsed script notifications are received by front-end.
 <a href="https://bugs.webkit.org/show_bug.cgi?id=52721">Bug 52721</a>
 </p>
+</body>
 
 </html>

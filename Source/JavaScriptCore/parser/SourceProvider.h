@@ -40,8 +40,9 @@ namespace JSC {
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
-        SourceProvider(const UString& url, SourceProviderCache* cache = 0)
+        SourceProvider(const UString& url, const TextPosition& startPosition, SourceProviderCache* cache = 0)
             : m_url(url)
+            , m_startPosition(startPosition)
             , m_validated(false)
             , m_cache(cache ? cache : new SourceProviderCache)
             , m_cacheOwned(!cache)
@@ -59,7 +60,7 @@ namespace JSC {
         virtual int length() const = 0;
         
         const UString& url() { return m_url; }
-        virtual TextPosition startPosition() const { return TextPosition::minimumPosition(); }
+        TextPosition startPosition() const { return m_startPosition; }
         intptr_t asID() { return reinterpret_cast<intptr_t>(this); }
 
         bool isValid() const { return m_validated; }
@@ -72,6 +73,7 @@ namespace JSC {
         virtual void cacheSizeChanged(int delta) { UNUSED_PARAM(delta); }
 
         UString m_url;
+        TextPosition m_startPosition;
         bool m_validated;
         SourceProviderCache* m_cache;
         bool m_cacheOwned;
@@ -79,9 +81,9 @@ namespace JSC {
 
     class UStringSourceProvider : public SourceProvider {
     public:
-        static PassRefPtr<UStringSourceProvider> create(const UString& source, const UString& url)
+        static PassRefPtr<UStringSourceProvider> create(const UString& source, const UString& url, const TextPosition& startPosition = TextPosition::minimumPosition())
         {
-            return adoptRef(new UStringSourceProvider(source, url));
+            return adoptRef(new UStringSourceProvider(source, url, startPosition));
         }
 
         UString getRange(int start, int end) const
@@ -92,8 +94,8 @@ namespace JSC {
         int length() const { return m_source.length(); }
 
     private:
-        UStringSourceProvider(const UString& source, const UString& url)
-            : SourceProvider(url)
+        UStringSourceProvider(const UString& source, const UString& url, const TextPosition& startPosition)
+            : SourceProvider(url, startPosition)
             , m_source(source)
             , m_data(m_source.characters16())
         {

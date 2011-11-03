@@ -47,6 +47,7 @@
 #include <heap/StrongInlines.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/Threading.h>
 
 using namespace JSC;
@@ -225,13 +226,12 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
     return windowShell;
 }
 
-int ScriptController::eventHandlerLineNumber() const
+TextPosition ScriptController::eventHandlerPosition() const
 {
-    // JSC expects 1-based line numbers, so we must add one here to get it right.
     ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
     if (parser)
-        return parser->lineNumber().oneBasedInt();
-    return 0;
+        return parser->textPosition();
+    return TextPosition::belowRangePosition();
 }
 
 void ScriptController::disableEval()

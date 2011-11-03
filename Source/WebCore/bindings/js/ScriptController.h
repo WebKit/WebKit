@@ -29,6 +29,7 @@
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/TextPosition.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -104,7 +105,7 @@ public:
     ScriptValue evaluate(const ScriptSourceCode&);
     ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
 
-    int eventHandlerLineNumber() const;
+    WTF::TextPosition eventHandlerPosition() const;
 
     void disableEval();
 

@@ -1,3 +1,31 @@
+2011-11-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: preserve script location for inline handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=71367
+
+        Makes eventHandler report position, not line number;
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSLazyEventListener.h:
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerPosition):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/ScriptSourceProvider.h:
+        (WebCore::ScriptSourceProvider::ScriptSourceProvider):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::create):
+        (WebCore::StringSourceProvider::StringSourceProvider):
+        (WebCore::makeSource):
+
 2011-11-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Do not check isEditingAnyField in StylesSidebarPane._createNewRule

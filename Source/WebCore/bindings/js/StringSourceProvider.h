@@ -37,12 +37,11 @@ namespace WebCore {
 
     class StringSourceProvider : public ScriptSourceProvider {
     public:
-        static PassRefPtr<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition::minimumPosition())
+        static PassRefPtr<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition)
         {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        virtual TextPosition startPosition() const { return m_startPosition; }
         JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
         const UChar* data() const { return m_source.characters(); }
         int length() const { return m_source.length(); }
@@ -50,19 +49,17 @@ namespace WebCore {
 
     private:
         StringSourceProvider(const String& source, const String& url, const TextPosition& startPosition)
-            : ScriptSourceProvider(stringToUString(url))
-            , m_startPosition(startPosition)
+            : ScriptSourceProvider(stringToUString(url), startPosition)
             , m_source(source)
         {
         }
         
-        TextPosition m_startPosition;
         String m_source;
     };
 
-    inline JSC::SourceCode makeSource(const String& source, const String& url = String(), int firstLine = 1)
+    inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
     {
-        return JSC::SourceCode(StringSourceProvider::create(source, url), firstLine);
+        return JSC::SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
     }
 
 } // namespace WebCore

@@ -1,3 +1,30 @@
+2011-11-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: preserve script location for inline handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=71367
+
+        Makes SourceCode factories receive TextPosition instead of the line number;
+        Stores consistent position values in SourceCode and SourceProvider;
+
+        Reviewed by Yury Semikhatsky.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        (JSC::SourceProvider::startPosition):
+        (JSC::UStringSourceProvider::create):
+        (JSC::UStringSourceProvider::UStringSourceProvider):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+
 2011-11-03  Kentaro Hara  <haraken@chromium.org>
 
         Fixed wrong implementation of doubleValue % 2^{64}.
