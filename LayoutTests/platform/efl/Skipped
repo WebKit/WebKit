@@ -1923,6 +1923,3 @@ fast/dom/MicroData
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
-
-# Needs a rebaseline
-fast/repaint/table-extra-bottom-grow.html
