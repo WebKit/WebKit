@@ -1,3 +1,13 @@
+2011-11-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector [chromium]: fix debug front-end zip generation.
+        https://bugs.webkit.org/show_bug.cgi?id=71376
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebKit.gyp:
+        * scripts/generate_devtools_zip.py:
+
 2011-11-02  Jon Lee  <jonlee@apple.com>
 
         Expand DragController to provide more information about the dragging session

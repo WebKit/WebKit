@@ -963,11 +963,9 @@
                 'search_path': [
                     '../../WebCore/inspector/front-end',
                     'src/js',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
                 ],
-                'image_search_path': [
-                    '../../WebCore/inspector/front-end/Images',
-                    'src/js/Images',
+                'js_search_path': [
+                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/devtools_frontend.zip'],
                 'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
@@ -975,7 +973,7 @@
                                      '--workers-files', '<@(_workers_files)',
                                      '--extension-api-files', '<@(webinspector_extension_api_files)',
                                      '--search-path', '<@(_search_path)',
-                                     '--image-search-path', '<@(_image_search_path)',
+                                     '--js-search-path', '<@(_js_search_path)',
                                      '--output', '<@(_outputs)'],
             }],
         },

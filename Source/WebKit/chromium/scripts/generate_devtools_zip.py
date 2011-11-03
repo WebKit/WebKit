@@ -41,7 +41,6 @@ import StringIO
 import sys
 import zipfile
 
-import concatenate_css_files
 import concatenate_js_files
 import generate_devtools_html
 import generate_devtools_extension_api
@@ -49,13 +48,13 @@ import generate_devtools_extension_api
 
 class ParsedArgs:
     def __init__(self, inspector_html, devtools_files, workers_files, extension_api_files,
-                 search_dirs, image_search_dirs, output_filename):
+                 search_dirs, js_search_dirs, output_filename):
         self.inspector_html = inspector_html
         self.devtools_files = devtools_files
         self.workers_files = workers_files
         self.extension_api_files = extension_api_files
         self.search_dirs = search_dirs
-        self.image_search_dirs = image_search_dirs
+        self.js_search_dirs = js_search_dirs
         self.output_filename = output_filename
 
 
@@ -66,17 +65,17 @@ def parse_args(argv):
     workers_files_position = argv.index('--workers-files')
     extension_api_files_position = argv.index('--extension-api-files')
     search_path_position = argv.index('--search-path')
-    image_search_path_position = argv.index('--image-search-path')
+    js_search_path_position = argv.index('--js-search-path')
     output_position = argv.index('--output')
 
     devtools_files = argv[devtools_files_position + 1:workers_files_position]
     workers_files = argv[workers_files_position + 1:extension_api_files_position]
     extension_api_files = argv[extension_api_files_position + 1:search_path_position]
-    search_dirs = argv[search_path_position + 1:image_search_path_position]
-    image_search_dirs = argv[image_search_path_position + 1:output_position]
+    search_dirs = argv[search_path_position + 1:js_search_path_position]
+    js_search_dirs = argv[js_search_path_position + 1:output_position]
 
     return ParsedArgs(inspector_html, devtools_files, workers_files, extension_api_files,
-                      search_dirs, image_search_dirs, argv[output_position + 1])
+                      search_dirs, js_search_dirs, argv[output_position + 1])
 
 
 def main(argv):
@@ -95,13 +94,12 @@ def main(argv):
         devtools_extension_api, parsed_args.extension_api_files)
     zip.writestr("devtools_extension_api.js", devtools_extension_api.getvalue())
 
-    css_extractor = concatenate_css_files.OrderedCSSFilesExtractor(
-        devtools_html.getvalue())
     js_extractor = concatenate_js_files.OrderedJSFilesExtractor(
         devtools_html.getvalue())
 
-    expander = concatenate_css_files.PathExpander(parsed_args.search_dirs)
-    files = css_extractor.ordered_css_files + js_extractor.ordered_js_files
+    js_dirs = parsed_args.search_dirs + parsed_args.js_search_dirs
+    expander = concatenate_js_files.PathExpander(js_dirs)
+    files = js_extractor.ordered_js_files
     for input_file_name in set(files):
         full_path = expander.expand(input_file_name)
         if full_path is None:
@@ -123,12 +121,15 @@ def main(argv):
         else:
             raise Exception('Worker script %s is not from Inspector front-end dir' % (input_file_name))
 
-    for dirname in parsed_args.image_search_dirs:
+    for dirname in parsed_args.search_dirs:
         for filename in os.listdir(dirname):
-            if not filename.endswith('.png') and not filename.endswith('.gif'):
-                continue
-            zip.write(os.path.join(dirname, filename),
-                      os.path.join('Images', filename))
+            if filename.endswith('.css'):
+                zip.write(os.path.join(dirname, filename), filename)
+        dirname = os.path.join(dirname, 'Images')
+        for filename in os.listdir(dirname):
+            if filename.endswith('.png') or filename.endswith('.gif'):
+                zip.write(os.path.join(dirname, filename),
+                          os.path.join('Images', filename))
 
     # It would be nice to use the with statement to scope closing the archive,
     # but that wasn't added until python 2.7.
