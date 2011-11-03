@@ -30,7 +30,6 @@
 
 module storage {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=QUOTA,
         Callback
     ] StorageInfoQuotaCallback {

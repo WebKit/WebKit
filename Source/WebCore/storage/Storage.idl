@@ -26,7 +26,6 @@
 module storage {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasNameGetter,
         GenerateIsReachable=ImplFrame,
         CustomDeleteProperty,

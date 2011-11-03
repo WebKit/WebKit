@@ -63,9 +63,10 @@ BUGCR24189 SKIP : fast/dom/open-and-close-by-DOM.html = FAIL
 BUGCR36681 SKIP : java = TEXT
 
 // Quota API is not supported in DRT yet.
+BUGCR84572 SKIP : storage/storageinfo-missing-arguments.html = FAIL
+BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
 BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
 BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
-BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
 
 // Animation API is disabled.  Dean Jackson has promised (as of Aug. 25, 2011)
 // to re-enable these "in the next few weeks".

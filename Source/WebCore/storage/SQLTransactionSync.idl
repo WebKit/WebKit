@@ -31,7 +31,6 @@
 module storage {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SQL_DATABASE,
         OmitConstructor,
         NoStaticTables

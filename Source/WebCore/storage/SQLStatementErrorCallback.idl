@@ -28,7 +28,6 @@
 
 module storage {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SQL_DATABASE,
         Callback
     ] SQLStatementErrorCallback {

@@ -29,11 +29,13 @@
 module storage {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SQL_DATABASE,
         OmitConstructor,
         NoStaticTables
     ] SQLTransaction {
-        [Custom] void executeSql(in DOMString sqlStatement, in ObjectArray arguments, in SQLStatementCallback callback, in SQLStatementErrorCallback errorCallback);
+        [Custom] void executeSql(in DOMString sqlStatement,
+                                 in ObjectArray arguments,
+                                 in [Optional, Callback] SQLStatementCallback callback,
+                                 in [Optional, Callback] SQLStatementErrorCallback errorCallback);
     };
 }

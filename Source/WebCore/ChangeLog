@@ -1,3 +1,29 @@
+2011-11-02  Erik Arvidsson  <arv@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from storage IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65744
+
+        Reviewed by Adam Barth.
+
+        Test: storage/domstorage/localstorage/missing-arguments.html
+
+        * storage/DatabaseCallback.idl:
+        * storage/IDBRequest.idl:
+        * storage/IDBTransaction.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLStatementCallback.idl:
+        * storage/SQLStatementErrorCallback.idl:
+        * storage/SQLTransaction.idl:
+        * storage/SQLTransactionCallback.idl:
+        * storage/SQLTransactionErrorCallback.idl:
+        * storage/SQLTransactionSync.idl:
+        * storage/SQLTransactionSyncCallback.idl:
+        * storage/Storage.idl:
+        * storage/StorageInfo.idl:
+        * storage/StorageInfoErrorCallback.idl:
+        * storage/StorageInfoQuotaCallback.idl:
+        * storage/StorageInfoUsageCallback.idl:
+
 2011-11-02  Adam Klein  <adamk@chromium.org>
 
         Replace usage of StringImpl with String where possible in CharacterData and Text

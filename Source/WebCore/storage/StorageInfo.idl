@@ -25,7 +25,6 @@
 
 module storage {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=QUOTA,
         OmitConstructor,
         GenerateNativeConverter
