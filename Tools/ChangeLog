@@ -1,3 +1,12 @@
+2011-11-03  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] arguments passed to build-jsc are not taken into account
+        https://bugs.webkit.org/show_bug.cgi?id=58333
+
+        * Scripts/build-jsc:
+
 2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Show url of history items in a status bar in MiniBrowser
