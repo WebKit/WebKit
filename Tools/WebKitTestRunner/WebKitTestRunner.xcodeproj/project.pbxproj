@@ -29,7 +29,6 @@
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
-		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
 		6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */; };
 		6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */; };
@@ -101,7 +100,6 @@
 		5670B8261386FC13002EB355 /* EventSenderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSenderProxy.h; sourceTree = "<group>"; };
 		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
-		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
 		6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
 		6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher300.ttf; path = fonts/WebKitWeightWatcher300.ttf; sourceTree = "<group>"; };
@@ -294,7 +292,6 @@
 			children = (
 				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
 				6510A77711EC643800410867 /* AHEM____.TTF */,
-				6510A77811EC643800410867 /* ColorBits.ttf */,
 				6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */,
 				6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */,
 				6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */,
@@ -448,7 +445,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
-				6510A78311EC643800410867 /* ColorBits.ttf in Resources */,
 				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
 				6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */,
 				6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */,

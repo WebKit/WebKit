@@ -1,5 +1,13 @@
 2011-11-02  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the build and removed another copy to ColorBits.ttf.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/fonts/ColorBits.ttf: Removed.
+
+2011-11-02  Dan Bernstein  <mitz@apple.com>
+
         REGRESSION (r98759-r98773): platform/mac/fonts/color-bitmap.html failing on Lion Intel Debug (Tests)
         https://bugs.webkit.org/show_bug.cgi?id=71424
 
