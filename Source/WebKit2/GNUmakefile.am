@@ -1057,13 +1057,13 @@ stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
 			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
 			--fhead "#define WEBKIT_ENUM_TYPES_H\n\n" \
 			--fhead "#include <glib-object.h>\n\n" \
-			--fhead "#include <WebKit2/WKBase.h>\n\n" \
+			--fhead "#include <webkit2/WebKitDefines.h>\n\n" \
 			--fhead "G_BEGIN_DECLS\n\n" \
 			--ftail "G_END_DECLS\n\n" \
 			--ftail "#endif\n" \
 			--fprod "#include <webkit2/@basename@>\n\n" \
 			--eprod "#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n\n" \
-			--eprod "WK_EXPORT GType\n@enum_name@_get_type(void);\n\n" \
+			--eprod "WEBKIT_API GType\n@enum_name@_get_type(void);\n\n" \
 		$(webkit2gtk_headers) | \
 		sed 's,web_kit,webkit,' | \
 		sed 's,WEBKIT_TYPE_KIT,WEBKIT_TYPE,' \
