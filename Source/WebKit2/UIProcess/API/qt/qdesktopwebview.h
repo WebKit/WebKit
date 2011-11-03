@@ -67,7 +67,6 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *);
     virtual void mouseDoubleClickEvent(QMouseEvent *);
     virtual void wheelEvent(QWheelEvent*);
-    virtual void touchEvent(QTouchEvent*);
     virtual void hoverEnterEvent(QHoverEvent*);
     virtual void hoverMoveEvent(QHoverEvent*);
     virtual void hoverLeaveEvent(QHoverEvent*);

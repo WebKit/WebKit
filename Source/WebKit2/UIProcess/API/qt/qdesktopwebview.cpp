@@ -340,11 +340,6 @@ void QDesktopWebView::wheelEvent(QWheelEvent* event)
     this->event(event);
 }
 
-void QDesktopWebView::touchEvent(QTouchEvent* event)
-{
-    this->event(event);
-}
-
 void QDesktopWebView::hoverEnterEvent(QHoverEvent* event)
 {
     this->event(event);

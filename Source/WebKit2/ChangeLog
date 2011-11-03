@@ -1,5 +1,18 @@
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][WK2] Failing assertion with desktop webview when touch mocking in MinBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=71452
+
+        Reviewed by Andreas Kling.
+
+        Don't re-implement touchEvent(), we don't intend to support touch events as we
+        receive them from the QQuickCanvas at this point.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        * UIProcess/API/qt/qdesktopwebview.h:
+
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] [WK2] MiniBrowser assert in QtWebProccess on startup in debug build.
         https://bugs.webkit.org/show_bug.cgi?id=71196
 
