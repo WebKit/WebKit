@@ -1397,18 +1397,12 @@ sub GenerateArgumentsCountCheck
     }
 
     my $argumentsCountCheckString = "";
-    my $requiresAllArguments;
-    my $requiresAllArgumentsDefault = "";
-    if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
-        $requiresAllArgumentsDefault = "Raise";
-    }
-    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
-    if ($requiresAllArguments && $numMandatoryParams >= 1) {
+    if ($numMandatoryParams >= 1) {
         $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
-        if ($requiresAllArguments eq "Raise") {
-            $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
-        } else {
+        if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
             $argumentsCountCheckString .= "        return v8::Handle<v8::Value>();\n";
+        } else {
+            $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
         }
     }
     return $argumentsCountCheckString;

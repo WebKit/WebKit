@@ -2225,29 +2225,21 @@ sub GenerateArgumentsCountCheck
     my $function = shift;
     my $dataNode = shift;
 
-    my $requiresAllArguments;
-    my $requiresAllArgumentsDefault = "";
-    if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
-        $requiresAllArgumentsDefault = "Raise";
-    }
-    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
-    if ($requiresAllArguments) {
-        my $numMandatoryParams = @{$function->parameters};
-        foreach my $param (reverse(@{$function->parameters})) {
-            if ($param->extendedAttributes->{"Optional"}) {
-                $numMandatoryParams--;
-            } else {
-                last;
-            }
+    my $numMandatoryParams = @{$function->parameters};
+    foreach my $param (reverse(@{$function->parameters})) {
+        if ($param->extendedAttributes->{"Optional"}) {
+            $numMandatoryParams--;
+        } else {
+            last;
         }
-        if ($numMandatoryParams >= 1)
-        {
-            push(@$outputArray, "    if (exec->argumentCount() < $numMandatoryParams)\n");
-            if ($requiresAllArguments eq "Raise") {
-                push(@$outputArray, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
-            } else {
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-            }
+    }
+    if ($numMandatoryParams >= 1)
+    {
+        push(@$outputArray, "    if (exec->argumentCount() < $numMandatoryParams)\n");
+        if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+        } else {
+            push(@$outputArray, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
         }
     }
 }

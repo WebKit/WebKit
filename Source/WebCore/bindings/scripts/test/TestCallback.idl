@@ -31,7 +31,6 @@
 module test {
     interface [
         Conditional=SQL_DATABASE,
-        LegacyDefaultOptionalArguments,
         Callback
     ] TestCallback {
       boolean callbackWithNoParam();

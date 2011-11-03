@@ -1045,6 +1045,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 3)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1079,6 +1081,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(ExecSta
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 3)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1114,6 +1118,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 3)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1180,6 +1186,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     RefPtr<SerializedScriptValue> serializedArg(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1195,6 +1203,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     RefPtr<IDBKey> key(createIDBKeyFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1210,6 +1220,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     OptionsObject* oo(toOptionsObject(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1269,6 +1281,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(Ex
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 1));
     size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
@@ -1289,6 +1303,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
@@ -1304,6 +1320,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
@@ -1334,6 +1352,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndArg(Ex
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
@@ -1352,6 +1372,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOption
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
@@ -1380,6 +1402,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
@@ -1398,6 +1422,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     Frame* dynamicFrame = toDynamicFrame(exec);
     if (!dynamicFrame)
         return JSValue::encode(jsUndefined());
@@ -1521,6 +1547,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int nonOpt(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1546,6 +1574,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int nonOpt(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1579,6 +1609,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     if (exec->argumentCount() <= 0 || !exec->argument(0).isObject()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSValue::encode(jsUndefined());
@@ -1596,6 +1628,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int nonCallback(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1682,6 +1716,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1700,6 +1736,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1725,6 +1763,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1740,6 +1780,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1755,6 +1797,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     if (exec->argumentCount() <= 0 || !exec->argument(0).isObject()) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSValue::encode(jsUndefined());
@@ -1772,6 +1816,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     DOMStringList* listArg(toDOMStringList(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -1787,6 +1833,8 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     DOMStringList* arrayArg(toDOMStringList(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());

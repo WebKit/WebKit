@@ -691,6 +691,8 @@ static v8::Handle<v8::Value> voidMethodCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.voidMethodWithArgs");
+    if (args.Length() < 3)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
@@ -709,6 +711,8 @@ static v8::Handle<v8::Value> intMethodCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> intMethodWithArgsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.intMethodWithArgs");
+    if (args.Length() < 3)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
@@ -726,6 +730,8 @@ static v8::Handle<v8::Value> objMethodCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.objMethodWithArgs");
+    if (args.Length() < 3)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
@@ -767,6 +773,8 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
 static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.serializedValue");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     bool serializedArgDidThrow = false;
     RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(args[0], 0, serializedArgDidThrow);
@@ -779,6 +787,8 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.idbKey");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->idbKey(key);
@@ -788,6 +798,8 @@ static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.optionsObject");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(OptionsObject, oo, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
     if (args.Length() <= 1) {
@@ -818,6 +830,8 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
 static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.customArgsAndException");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
@@ -873,6 +887,8 @@ static v8::Handle<v8::Value> withDynamicFrameCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> withDynamicFrameAndArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndArg");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
@@ -885,6 +901,8 @@ static v8::Handle<v8::Value> withDynamicFrameAndArgCallback(const v8::Arguments&
 static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndOptionalArg");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
@@ -905,6 +923,8 @@ static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Ar
 static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndUserGesture");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
@@ -917,6 +937,8 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Ar
 static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndUserGestureASAD");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
@@ -1021,6 +1043,8 @@ static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& 
 static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithNonOptionalArgAndOptionalArg");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
@@ -1035,6 +1059,8 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(cons
 static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithNonOptionalArgAndTwoOptionalArgs");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
@@ -1054,6 +1080,8 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
 static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithCallbackArg");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0 || !args[0]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
@@ -1065,6 +1093,8 @@ static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& 
 static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithNonCallbackArgAndCallbackArg");
+    if (args.Length() < 2)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1 || !args[1]->IsObject())
@@ -1114,6 +1144,8 @@ static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& arg
 static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod1");
+    if (args.Length() < 2)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
@@ -1124,6 +1156,8 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod2");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     if (args.Length() <= 1) {
@@ -1138,6 +1172,8 @@ static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod3");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
     imp->overloadedMethod(strArg);
@@ -1147,6 +1183,8 @@ static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod4");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->overloadedMethod(intArg);
@@ -1156,6 +1194,8 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod5");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0 || !args[0]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
@@ -1167,6 +1207,8 @@ static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod6");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(RefPtr<DOMStringList>, listArg, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->overloadedMethod(listArg);
@@ -1176,6 +1218,8 @@ static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args
 static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod7");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(RefPtr<DOMStringList>, arrayArg, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->overloadedMethod(arrayArg);
@@ -1223,6 +1267,8 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
 static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod1");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     imp->enabledAtRuntimeMethod1(intArg);
@@ -1232,6 +1278,8 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments
 static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod2");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     imp->enabledAtRuntimeMethod2(intArg);

@@ -1,3 +1,78 @@
+2011-11-03  Erik Arvidsson  <arv@chromium.org>
+
+        Remove support for LegacyDefaultOptionalArguments
+        https://bugs.webkit.org/show_bug.cgi?id=71489
+
+        Reviewed by Darin Adler.
+
+        This removes support for LegacyDefaultOptionalArguments and [RequiresAllArguments=Raise].
+        [RequiresAllArguments=Raise] is now the standard behavior so it would be a no op.
+
+        No new tests. Covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateArgumentsCountCheck): Check the "RequiresAllArguments" extended attribute and generate code
+                                       that returns undefined if there are missing arguments.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateArgumentsCountCheck): Ditto.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod): Add generated argument count checks.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionIdbKey): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6): Ditto.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7): Ditto.
+        * bindings/scripts/test/TestCallback.idl: Remove LegacyDefaultOptionalArguments.
+        * bindings/scripts/test/TestMediaQueryListListener.idl: Ditto.
+        * bindings/scripts/test/TestObj.idl: Remove LegacyDefaultOptionalArguments and [RequiresAllArguments=Raise]
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp: Remove LegacyDefaultOptionalArguments.
+        (WebCore::TestMediaQueryListListenerInternal::methodCallback): Add generated argument count checks.
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback): Ditto.
+        (WebCore::TestObjInternal::intMethodWithArgsCallback): Ditto.
+        (WebCore::TestObjInternal::objMethodWithArgsCallback): Ditto.
+        (WebCore::TestObjInternal::serializedValueCallback): Ditto.
+        (WebCore::TestObjInternal::idbKeyCallback): Ditto.
+        (WebCore::TestObjInternal::optionsObjectCallback): Ditto.
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback): Ditto.
+        (WebCore::TestObjInternal::withDynamicFrameAndArgCallback): Ditto.
+        (WebCore::TestObjInternal::withDynamicFrameAndOptionalArgCallback): Ditto.
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback): Ditto.
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback): Ditto.
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback): Ditto.
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback): Ditto.
+        (WebCore::TestObjInternal::methodWithCallbackArgCallback): Ditto.
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod1Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod2Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod3Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod4Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod5Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod6Callback): Ditto.
+        (WebCore::TestObjInternal::overloadedMethod7Callback): Ditto.
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod1Callback): Ditto.
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod2Callback): Ditto.
+
 2011-11-03  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef
