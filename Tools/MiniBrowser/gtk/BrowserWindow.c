@@ -40,6 +40,7 @@ struct _BrowserWindow {
     GtkWidget *uriEntry;
     GtkWidget *backItem;
     GtkWidget *forwardItem;
+    GtkWidget *statusLabel;
     WebKitWebView *webView;
 
 };
@@ -51,6 +52,19 @@ struct _BrowserWindowClass {
 static gint windowCount = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
+
+static void browserWindowSetStatusText(BrowserWindow *window, const char *text)
+{
+#if GTK_CHECK_VERSION(3, 2, 0)
+    gtk_label_set_text(GTK_LABEL(window->statusLabel), text);
+    gtk_widget_set_visible(window->statusLabel, !!text);
+#endif
+}
+
+static void resetStatusText(GtkWidget *widget, BrowserWindow *window)
+{
+    browserWindowSetStatusText(window, NULL);
+}
 
 static void activateUriEntryCallback(BrowserWindow *window)
 {
@@ -86,6 +100,12 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
         g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
 }
 
+static void browserWindowHistoryItemSelected(BrowserWindow *window, GtkMenuItem *item)
+{
+    GtkAction *action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(item));
+    browserWindowSetStatusText(window, action ? gtk_action_get_name(action) : NULL);
+}
+
 static void browserWindowHistoryItemActivated(BrowserWindow *window, GtkAction *action)
 {
     WebKitBackForwardListItem *item = g_object_get_data(G_OBJECT(action), "back-forward-list-item");
@@ -112,11 +132,17 @@ static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, GLis
         g_signal_connect_swapped(action, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);
 
         GtkWidget *menuItem = gtk_action_create_menu_item(action);
+        g_signal_connect_swapped(menuItem, "select", G_CALLBACK(browserWindowHistoryItemSelected), window);
         g_object_unref(action);
 
         gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menuItem);
         gtk_widget_show(menuItem);
     }
+
+    /* FIXME: This shoulnd't be necessary when didMouseMoveOverElement
+     * is implemented in WebKit2 GTK+ API.
+     */
+    g_signal_connect(menu, "hide", G_CALLBACK(resetStatusText), window);
 
     return menu;
 }
@@ -234,7 +260,24 @@ static void browserWindowConstructed(GObject *gObject)
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+    GtkWidget *overlay = gtk_overlay_new();
+    gtk_box_pack_start(GTK_BOX(window->mainBox), overlay, TRUE, TRUE, 0);
+    gtk_widget_show(overlay);
+
+    window->statusLabel = gtk_label_new(NULL);
+    gtk_widget_set_halign(window->statusLabel, GTK_ALIGN_START);
+    gtk_widget_set_valign(window->statusLabel, GTK_ALIGN_END);
+    gtk_widget_set_margin_left(window->statusLabel, 1);
+    gtk_widget_set_margin_right(window->statusLabel, 1);
+    gtk_widget_set_margin_top(window->statusLabel, 1);
+    gtk_widget_set_margin_bottom(window->statusLabel, 1);
+    gtk_overlay_add_overlay(GTK_OVERLAY(overlay), window->statusLabel);
+
+    gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(window->webView));
+#else
     gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->webView), TRUE, TRUE, 0);
+#endif
     gtk_widget_show(GTK_WIDGET(window->webView));
 }
 
