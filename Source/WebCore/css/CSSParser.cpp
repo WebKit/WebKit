@@ -3733,8 +3733,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
         if (!validUnit(argument, FLength, m_strict))
             return 0;
 
-        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue,
-            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
         ASSERT(argumentNumber < 6);
         switch (argumentNumber) {
         case 0:
@@ -3787,8 +3786,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeCircle(CSSParserValueList* arg
         if (!validUnit(argument, FLength, m_strict))
             return 0;
 
-        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue,
-            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
         ASSERT(argumentNumber < 3);
         switch (argumentNumber) {
         case 0:
@@ -3831,8 +3829,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeEllipse(CSSParserValueList* ar
         if (!validUnit(argument, FLength, m_strict))
             return 0;
 
-        RefPtr<CSSPrimitiveValue> length = primitiveValueCache()->createValue(argument->fValue,
-            (CSSPrimitiveValue::UnitTypes) argument->unit);
+        RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
         ASSERT(argumentNumber < 4);
         switch (argumentNumber) {
         case 0:
@@ -3902,10 +3899,8 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapePolygon(CSSParserValueList* ar
         if (!argumentY || !validUnit(argumentY, FLength, m_strict))
             return 0;
 
-        RefPtr<CSSPrimitiveValue> xLength = primitiveValueCache()->createValue(argumentX->fValue,
-            (CSSPrimitiveValue::UnitTypes) argumentX->unit);
-        RefPtr<CSSPrimitiveValue> yLength = primitiveValueCache()->createValue(argumentY->fValue,
-            (CSSPrimitiveValue::UnitTypes) argumentY->unit);
+        RefPtr<CSSPrimitiveValue> xLength = createPrimitiveNumericValue(argumentX);
+        RefPtr<CSSPrimitiveValue> yLength = createPrimitiveNumericValue(argumentY);
 
         shape->appendPoint(xLength.release(), yLength.release());
 
