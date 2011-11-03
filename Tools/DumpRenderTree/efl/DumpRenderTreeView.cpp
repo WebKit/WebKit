@@ -34,6 +34,7 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 
@@ -80,11 +81,22 @@ static void onWindowClose(Ewk_View_Smart_Data* smartData)
     ecore_idler_add(onWindowCloseDelayed, view);
 }
 
-Evas_Object* drtViewTiledAdd(Evas* evas)
+static bool shouldUseSingleBackingStore()
 {
-    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View_Tiled");
+    const char* useSingleBackingStore = getenv("DRT_USE_SINGLE_BACKING_STORE");
+    return useSingleBackingStore && *useSingleBackingStore == '1';
+}
 
-    if (!ewk_view_tiled_smart_set(&api))
+static bool chooseAndInitializeAppropriateSmartClass(Ewk_View_Smart_Class* api)
+{
+    return shouldUseSingleBackingStore() ? ewk_view_single_smart_set(api) : ewk_view_tiled_smart_set(api);
+}
+
+Evas_Object* drtViewAdd(Evas* evas)
+{
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View");
+
+    if (!chooseAndInitializeAppropriateSmartClass(&api))
         return 0;
 
     if (EINA_UNLIKELY(!gParentSmartClass.sc.add))

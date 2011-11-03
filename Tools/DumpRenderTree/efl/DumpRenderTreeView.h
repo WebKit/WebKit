@@ -27,6 +27,6 @@
 
 #include <Evas.h>
 
-Evas_Object* drtViewTiledAdd(Evas*);
+Evas_Object* drtViewAdd(Evas*);
 
 #endif // DumpRenderTreeView_h

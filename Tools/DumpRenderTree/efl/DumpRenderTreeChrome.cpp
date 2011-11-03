@@ -80,7 +80,7 @@ Evas_Object* DumpRenderTreeChrome::createNewWindow()
 
 Evas_Object* DumpRenderTreeChrome::createView() const
 {
-    Evas_Object* view = drtViewTiledAdd(m_evas);
+    Evas_Object* view = drtViewAdd(m_evas);
     if (!view)
         return 0;
 

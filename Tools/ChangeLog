@@ -1,3 +1,22 @@
+2011-11-03  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] DRT: Allow choosing which backing store to use.
+        https://bugs.webkit.org/show_bug.cgi?id=70532
+
+        Reviewed by Antonio Gomes.
+
+        This change makes it possible to change the backing store used by DRT
+        from Tiled Backing Store (TBS) to Single Backing Store (SBS) by
+        setting the environment variable DRT_USE_SINGLE_BACKING_STORE to 1.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (shouldUseSingleBackingStore):
+        (chooseAndInitializeAppropriateSmartClass):
+        (drtViewAdd):
+        * DumpRenderTree/efl/DumpRenderTreeView.h:
+
 2011-11-02  Erik Arvidsson  <arv@chromium.org>
 
         JS Test Harness: Remove more link tags
