@@ -543,6 +543,41 @@ bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)
     return !URLIsSecureURL;
 }
 
+SandboxFlags SecurityOrigin::parseSandboxPolicy(const String& policy)
+{
+    // Parse the unordered set of unique space-separated tokens.
+    SandboxFlags flags = SandboxAll;
+    const UChar* characters = policy.characters();
+    unsigned length = policy.length();
+    unsigned start = 0;
+    while (true) {
+        while (start < length && isASCIISpace(characters[start]))
+            ++start;
+        if (start >= length)
+            break;
+        unsigned end = start + 1;
+        while (end < length && !isASCIISpace(characters[end]))
+            ++end;
+
+        // Turn off the corresponding sandbox flag if it's set as "allowed".
+        String sandboxToken = policy.substring(start, end - start);
+        if (equalIgnoringCase(sandboxToken, "allow-same-origin"))
+            flags &= ~SandboxOrigin;
+        else if (equalIgnoringCase(sandboxToken, "allow-forms"))
+            flags &= ~SandboxForms;
+        else if (equalIgnoringCase(sandboxToken, "allow-scripts"))
+            flags &= ~SandboxScripts;
+        else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
+            flags &= ~SandboxTopNavigation;
+        else if (equalIgnoringCase(sandboxToken, "allow-popups"))
+            flags &= ~SandboxPopups;
+
+        start = end + 1;
+    }
+
+    return flags;
+}
+
 void SecurityOrigin::setLocalLoadPolicy(LocalLoadPolicy policy)
 {
     localLoadPolicy = policy;

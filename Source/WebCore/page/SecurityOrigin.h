@@ -56,6 +56,7 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
+    // FIXME: This should move to SchemeRegistry.
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
     static bool isDomainRelaxationForbiddenForURLScheme(const String&);
 
@@ -114,6 +115,7 @@ public:
     void grantUniversalAccess();
 
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
+    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
     bool canAccessDatabase() const { return !isUnique(); }
     bool canAccessLocalStorage() const { return !isUnique(); }
@@ -177,6 +179,8 @@ public:
     // This method checks for equality, ignoring the value of document.domain
     // (and whether it was set) but considering the host. It is used for postMessage.
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
+
+    static SandboxFlags parseSandboxPolicy(const String& policy);
 
     static bool shouldHideReferrer(const KURL&, const String& referrer);
 
