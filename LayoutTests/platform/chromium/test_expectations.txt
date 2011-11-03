@@ -3880,8 +3880,6 @@ BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH
 BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 
 // These just need to be rebaselined, but the 10.5 bots are slow.
-BUGTONY LEOPARD : printing/single-line-must-not-be-split-into-two-pages.html = FAIL PASS
-BUGTONY LEOPARD : printing/setPrinting.html = FAIL PASS
 
 BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
