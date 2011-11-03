@@ -46,6 +46,7 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
     int visitCount;
     WTF::Vector<WTF::String> documentState;
     WebCore::IntPoint scrollPoint;
+    qreal pageScaleFactor;
     WTF::Vector<int> weeklyVisitCounts;
     WTF::Vector<int> dailyVisitCounts;
     // bool loadFormdata;
@@ -54,7 +55,7 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
 
     in >> url >> title >> altTitle >> lastVisitedTime >> orginalUrl >> referrer >> target >> parent;
     in >> lastVisitWasHTTPNonGet >> lastVisitWasFailure >> isTargetItem >> visitCount >> documentState;
-    in >> scrollPoint >> dailyVisitCounts >> weeklyVisitCounts;
+    in >> scrollPoint >> pageScaleFactor >> dailyVisitCounts >> weeklyVisitCounts;
     /*in >> loadFormdata;
     if (loadFormdata) {
         in >> formContentType >> formData;
@@ -65,6 +66,7 @@ bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
     // use setters
     adoptVisitCounts(dailyVisitCounts, weeklyVisitCounts);
     setScrollPoint(scrollPoint);
+    setPageScaleFactor(pageScaleFactor);
     setDocumentState(documentState);
     setVisitCount(visitCount);
     setIsTargetItem(isTargetItem);
@@ -100,7 +102,7 @@ QDataStream& WebCore::HistoryItem::saveState(QDataStream& out, int version) cons
     out << originalURLString() << referrer() << target() << parent();
     out << lastVisitWasHTTPNonGet() << lastVisitWasFailure() << isTargetItem();
     out << visitCount() << documentState() << scrollPoint();
-    out << dailyVisitCounts() << weeklyVisitCounts();
+    out << qreal(pageScaleFactor()) << dailyVisitCounts() << weeklyVisitCounts();
     /*if (m_formData) {
         out << true;
         out << formContentType();
