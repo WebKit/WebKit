@@ -523,6 +523,7 @@ public:
 #if PLATFORM(QT)
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
     void didReceiveMessageFromNavigatorQtObject(const String&);
+    void handleDownloadRequest(DownloadProxy*);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;

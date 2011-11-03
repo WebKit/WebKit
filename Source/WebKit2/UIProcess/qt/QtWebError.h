@@ -21,6 +21,7 @@
 #ifndef QtWebError_h
 #define QtWebError_h
 
+#include "qwebdownloaditem.h"
 #include "qwebkitglobal.h"
 #include <QtNetwork/QNetworkReply>
 #include <WKError.h>
@@ -42,9 +43,11 @@ public:
     Type type() const;
     QUrl url() const;
     int errorCode() const;
+    QString description() const;
 
     int errorCodeAsHttpStatusCode() const { return errorCode(); }
     QNetworkReply::NetworkError errorCodeAsNetworkError() const { return static_cast<QNetworkReply::NetworkError>(errorCode()); }
+    QWebDownloadItem::DownloadError errorCodeAsDownloadError() const { return static_cast<QWebDownloadItem::DownloadError>(errorCode()); }
 
     QtWebError(const QtWebError&);
 

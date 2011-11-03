@@ -23,6 +23,7 @@
 
 #include "LayerTreeContext.h"
 #include "PageClient.h"
+#include "QtDownloadManager.h"
 #include "QtPolicyInterface.h"
 #include "QtViewInterface.h"
 #include "ShareableBitmap.h"
@@ -178,8 +179,11 @@ public:
     QWKHistory* history() const;
     QtViewInterface* viewInterface() const { return m_viewInterface; }
 
+    void handleDownloadRequest(DownloadProxy*);
+
 public Q_SLOTS:
     void navigationStateChanged();
+    void didReceiveDownloadResponse(QWebDownloadItem*);
 
 public:
     Q_SIGNAL void scrollRequested(int dx, int dy);
@@ -203,6 +207,7 @@ private:
 
     static PassRefPtr<WebContext> defaultWKContext();
     static RefPtr<WebContext> s_defaultContext;
+    static RefPtr<QtDownloadManager> s_downloadManager;
     static unsigned s_defaultPageProxyCount;
 
     RefPtr<WebContext> m_context;

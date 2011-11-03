@@ -1016,7 +1016,12 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
         // Create a download proxy.
-        downloadID = m_process->context()->createDownloadProxy()->downloadID();
+        DownloadProxy* download = m_process->context()->createDownloadProxy();
+        downloadID = download->downloadID();
+#if PLATFORM(QT)
+        // Our design does not suppport downloads without a WebPage.
+        handleDownloadRequest(download);
+#endif
     }
 
     // If we received a policy decision while in decidePolicyForMIMEType the decision will 
@@ -2284,6 +2289,11 @@ void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
 void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents)
 {
     m_pageClient->didReceiveMessageFromNavigatorQtObject(contents);
+}
+
+void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
+{
+    m_pageClient->handleDownloadRequest(download);
 }
 #endif
 

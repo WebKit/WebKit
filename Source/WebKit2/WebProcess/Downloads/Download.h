@@ -93,6 +93,10 @@ public:
     void didCancel(const CoreIPC::DataReference& resumeData);
     void didDecideDestination(const String&, bool allowOverwrite);
 
+#if PLATFORM(QT)
+    void startTransfer(const String& destination);
+#endif
+
 #if USE(CFNETWORK)
     const String& destination() const { return m_destination; }
     DownloadAuthenticationClient* authenticationClient();

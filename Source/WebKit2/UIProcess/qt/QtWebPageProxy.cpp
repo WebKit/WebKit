@@ -22,10 +22,13 @@
 #include "QtWebPageProxy.h"
 
 #include "QtWebError.h"
+#include "qwebdownloaditem.h"
+#include "qwebdownloaditem_p.h"
 #include "qwebpreferences.h"
 #include "qwebpreferences_p.h"
 
 #include "ClientImpl.h"
+#include "DownloadProxy.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "FindIndicator.h"
@@ -63,6 +66,7 @@ using namespace WebKit;
 using namespace WebCore;
 
 RefPtr<WebContext> QtWebPageProxy::s_defaultContext;
+RefPtr<QtDownloadManager> QtWebPageProxy::s_downloadManager;
 
 unsigned QtWebPageProxy::s_defaultPageProxyCount = 0;
 
@@ -71,6 +75,7 @@ PassRefPtr<WebContext> QtWebPageProxy::defaultWKContext()
     if (!s_defaultContext) {
         s_defaultContext = WebContext::create(String());
         setupContextInjectedBundleClient(toAPI(s_defaultContext.get()));
+        s_downloadManager = QtDownloadManager::create(s_defaultContext.get());
     }
     return s_defaultContext;
 }
@@ -136,8 +141,10 @@ QtWebPageProxy::~QtWebPageProxy()
     if (m_context == s_defaultContext) {
         ASSERT(s_defaultPageProxyCount > 0);
         s_defaultPageProxyCount--;
-        if (!s_defaultPageProxyCount)
+        if (!s_defaultPageProxyCount) {
             s_defaultContext.clear();
+            s_downloadManager.clear();
+        }
     }
     delete m_history;
 }
@@ -593,6 +600,25 @@ void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
 void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
     m_viewInterface->didChangeViewportProperties(args);
+}
+
+void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)
+{
+    // This function is responsible for hooking up a DownloadProxy to our API layer
+    // by creating a QWebDownloadItem. It will then wait for the QWebDownloadItem to be
+    // ready (filled with the ResourceResponse information) so we can pass it through to
+    // our WebViews.
+    QWebDownloadItem* downloadItem = new QWebDownloadItem();
+    downloadItem->d->downloadProxy = download;
+
+    connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), this, SLOT(didReceiveDownloadResponse(QWebDownloadItem*)));
+    s_downloadManager->addDownload(download, downloadItem);
+}
+
+void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* download)
+{
+    // Now that our downloadItem has everything we need we can emit downloadRequested.
+    m_viewInterface->downloadRequested(download);
 }
 
 #include "moc_QtWebPageProxy.cpp"

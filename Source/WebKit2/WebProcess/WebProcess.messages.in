@@ -64,6 +64,9 @@ messages -> WebProcess {
     # two messages.
     DownloadRequest(uint64_t downloadID, uint64_t initiatingPageID, WebCore::ResourceRequest request)
     CancelDownload(uint64_t downloadID)
+#if PLATFORM(QT)
+    StartTransfer(uint64_t downloadID, WTF::String destination)
+#endif
 
     SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
 

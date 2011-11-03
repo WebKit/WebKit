@@ -44,16 +44,16 @@ class QtFileDownloader : public QObject {
 public:
     QtFileDownloader(Download*, PassOwnPtr<QNetworkReply>);
     virtual ~QtFileDownloader();
-    void decidedDestination(const QString& decidedFilePath, bool allowOverwrite);
     void cancel();
-    void start();
+    void init();
+    void startTransfer(const QString& destination);
 
     enum DownloadError {
         DownloadErrorAborted = 0,
         DownloadErrorCannotWriteToFile,
         DownloadErrorCannotOpenFile,
-        DownloadErrorFileAlreadyExists,
-        DownloadErrorCancelledByCaller,
+        DownloadErrorDestinationAlreadyExists,
+        DownloadErrorCancelled,
         DownloadErrorCannotDetermineFilename,
         DownloadErrorNetworkFailure
     };
@@ -65,7 +65,8 @@ private slots:
 
 private:
     void abortDownloadWritingAndEmitError(QtFileDownloader::DownloadError);
-    void determineFilename();
+    QString determineFilename();
+    void handleDownloadResponse();
 
     Download* m_download;
     OwnPtr<QNetworkReply> m_reply;

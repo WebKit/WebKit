@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,14 +17,37 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WKView_h
-#define WKView_h
 
-#include <WebKit2/qdesktopwebview.h>
-#include <WebKit2/qtouchwebview.h>
-#include <WebKit2/qtouchwebpage.h>
-#include <WebKit2/qwebdownloaditem.h>
-#include <WebKit2/qwebnavigationcontroller.h>
-#include <WebKit2/qwebpreferences.h>
+#ifndef qwebdownloaditem_p_h
+#define qwebdownloaditem_p_h
 
-#endif /* WKView_h */
+#include "qwebdownloaditem.h"
+#include <QUrl>
+
+namespace WebKit {
+class DownloadProxy;
+}
+
+class QWebDownloadItemPrivate : public QObject {
+    Q_OBJECT
+public:
+    QWebDownloadItemPrivate(QWebDownloadItem*);
+
+    void didReceiveResponse(QWebDownloadItem* download) { emit receivedResponse(download); }
+
+    QWebDownloadItem* q;
+
+    WebKit::DownloadProxy* downloadProxy;
+
+    QUrl sourceUrl;
+    QString suggestedFilename;
+    QString destinationPath;
+    QString mimeType;
+    quint64 expectedContentLength;
+    quint64 totalBytesReceived;
+
+Q_SIGNALS:
+    void receivedResponse(QWebDownloadItem*);
+};
+
+#endif /* qwebdownloaditem_p_h */

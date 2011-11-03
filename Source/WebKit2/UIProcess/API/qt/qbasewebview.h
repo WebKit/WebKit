@@ -25,6 +25,7 @@
 #include <QtDeclarative/qquickpainteditem.h>
 
 class QBaseWebViewPrivate;
+class QWebDownloadItem;
 class QWebNavigationController;
 class QWebPreferences;
 
@@ -52,7 +53,8 @@ public:
     enum ErrorType {
         EngineError,
         NetworkError,
-        HttpError
+        HttpError,
+        DownloadError
     };
     virtual ~QBaseWebView();
 
@@ -79,6 +81,7 @@ Q_SIGNALS:
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
     void messageReceived(const QVariantMap& message);
+    void downloadRequested(QWebDownloadItem* downloadItem);
 
 protected:
     QBaseWebView(QBaseWebViewPrivate &dd, QQuickItem *parent = 0);

@@ -61,6 +61,7 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const Res
     encoder->encode(resourceResponse.mimeType());
     encoder->encode(static_cast<int64_t>(resourceResponse.expectedContentLength()));
     encoder->encode(resourceResponse.textEncodingName());
+    encoder->encode(resourceResponse.suggestedFilename());
 }
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
@@ -86,6 +87,11 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceR
     if (!decoder->decode(textEncodingName))
         return false;
     response.setTextEncodingName(textEncodingName);
+
+    String suggestedFilename;
+    if (!decoder->decode(suggestedFilename))
+        return false;
+    response.setSuggestedFilename(suggestedFilename);
 
     resourceResponse = response;
     return true;

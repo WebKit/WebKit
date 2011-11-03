@@ -84,6 +84,7 @@ private:
     virtual QJSEngine* engine();
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType);
+    virtual void downloadRequested(QWebDownloadItem* downloadItem);
 
     virtual void didMouseMoveOverElement(const QUrl&, const QString&);
 

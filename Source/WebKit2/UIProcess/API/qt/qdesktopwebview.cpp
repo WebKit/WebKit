@@ -25,11 +25,13 @@
 #include "QtWebError.h"
 #include "UtilsQt.h"
 #include "qdesktopwebview_p.h"
+#include "qwebdownloaditem.h"
 #include <QFileDialog>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qquickcanvas.h>
 #include <QtDeclarative/qquickview.h>
 #include <QtGui/QCursor>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QDrag>
 #include <QtGui/QFocusEvent>
 #include <QtGui/QGuiApplication>
@@ -490,6 +492,17 @@ void QDesktopWebViewPrivate::didMouseMoveOverElement(const QUrl& linkURL, const 
     lastHoveredURL = linkURL;
     lastHoveredTitle = linkTitle;
     emit q->linkHovered(lastHoveredURL, lastHoveredTitle);
+}
+
+void QDesktopWebViewPrivate::downloadRequested(QWebDownloadItem* downloadItem)
+{
+    if (!downloadItem)
+        return;
+
+    Q_Q(QDesktopWebView);
+
+    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
+    emit q->downloadRequested(downloadItem);
 }
 
 static QtPolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)

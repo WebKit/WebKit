@@ -27,6 +27,7 @@
 #include <WebKit2/WKBase.h>
 
 class QtWebError;
+class QWebDownloadItem;
 
 QT_BEGIN_NAMESPACE
 class QCursor;
@@ -93,6 +94,8 @@ public:
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType) = 0;
 
     virtual void didMouseMoveOverElement(const QUrl&, const QString&) = 0;
+
+    virtual void downloadRequested(QWebDownloadItem*) = 0;
 };
 
 }

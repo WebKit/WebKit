@@ -53,45 +53,41 @@ QtFileDownloader::~QtFileDownloader()
     abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorAborted);
 }
 
-void QtFileDownloader::start()
+void QtFileDownloader::init()
 {
     connect(m_reply.get(), SIGNAL(readyRead()), SLOT(onReadyRead()));
     connect(m_reply.get(), SIGNAL(finished()), SLOT(onFinished()));
     connect(m_reply.get(), SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onError(QNetworkReply::NetworkError)));
-
-    // Call onReadyRead just in case some data is already waiting.
-    onReadyRead();
 }
 
-void QtFileDownloader::determineFilename()
+QString QtFileDownloader::determineFilename()
 {
     ASSERT(!m_destinationFile);
 
-    QString fileNameCandidate = filenameFromHTTPContentDisposition(QString::fromLatin1(m_reply->rawHeader("Content-Disposition")));
-    if (fileNameCandidate.isEmpty()) {
+    QString filenameCandidate = filenameFromHTTPContentDisposition(QString::fromLatin1(m_reply->rawHeader("Content-Disposition")));
+    if (filenameCandidate.isEmpty()) {
         KURL kurl = m_reply->url();
-        fileNameCandidate = decodeURLEscapeSequences(kurl.lastPathComponent());
+        filenameCandidate = decodeURLEscapeSequences(kurl.lastPathComponent());
     }
 
-    if (fileNameCandidate.isEmpty()) {
+    if (filenameCandidate.isEmpty()) {
         abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCannotDetermineFilename);
-        return;
+        return QString();
     }
 
     // Make sure that we remove possible "../.." parts in the given file name.
-    QFileInfo fileNameFilter(fileNameCandidate);
-    QString fileName = fileNameFilter.fileName();
+    QFileInfo filenameFilter(filenameCandidate);
+    QString filename = filenameFilter.fileName();
 
-    if (fileName.isEmpty()) {
+    if (filename.isEmpty()) {
         abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCannotDetermineFilename);
-        return;
+        return QString();
     }
 
-    bool allowOverwrite;
-    m_download->decideDestinationWithSuggestedFilename(fileName, allowOverwrite);
+    return filename;
 }
 
-void QtFileDownloader::decidedDestination(const QString& decidedFilePath, bool allowOverwrite)
+void QtFileDownloader::startTransfer(const QString& decidedFilePath)
 {
     ASSERT(!m_destinationFile);
 
@@ -102,16 +98,11 @@ void QtFileDownloader::decidedDestination(const QString& decidedFilePath, bool a
     }
 
     if (decidedFilePath.isEmpty()) {
-        abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCancelledByCaller);
+        abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCancelled);
         return;
     }
 
     OwnPtr<QFile> downloadFile = adoptPtr(new QFile(decidedFilePath));
-
-    if (!allowOverwrite && downloadFile->exists()) {
-        abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorFileAlreadyExists);
-        return;
-    }
 
     if (!downloadFile->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCannotOpenFile);
@@ -133,7 +124,6 @@ void QtFileDownloader::decidedDestination(const QString& decidedFilePath, bool a
     // function was called.
     if (m_reply->isFinished())
         onFinished();
-
 }
 
 void QtFileDownloader::abortDownloadWritingAndEmitError(QtFileDownloader::DownloadError errorCode)
@@ -157,10 +147,10 @@ void QtFileDownloader::abortDownloadWritingAndEmitError(QtFileDownloader::Downlo
     case QtFileDownloader::DownloadErrorCannotOpenFile:
         translatedErrorMessage = QCoreApplication::translate("QtFileDownloader", "Cannot open file for writing");
         break;
-    case QtFileDownloader::DownloadErrorFileAlreadyExists:
-        translatedErrorMessage = QCoreApplication::translate("QtFileDownloader", "File already exists");
+    case QtFileDownloader::DownloadErrorDestinationAlreadyExists:
+        translatedErrorMessage = QCoreApplication::translate("QtFileDownloader", "Destination already exists");
         break;
-    case QtFileDownloader::DownloadErrorCancelledByCaller:
+    case QtFileDownloader::DownloadErrorCancelled:
         translatedErrorMessage = QCoreApplication::translate("QtFileDownloader", "Download cancelled by caller");
         break;
     case QtFileDownloader::DownloadErrorCannotDetermineFilename:
@@ -173,6 +163,27 @@ void QtFileDownloader::abortDownloadWritingAndEmitError(QtFileDownloader::Downlo
     ResourceError downloadError("Download", errorCode, m_reply->url().toString(), translatedErrorMessage);
 
     m_download->didFail(downloadError, CoreIPC::DataReference(0, 0));
+}
+
+void QtFileDownloader::handleDownloadResponse()
+{
+    // By API contract, QNetworkReply::metaDataChanged cannot really be trusted.
+    // Thus we need to call this upon receiving first data.
+    String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    String encoding = extractCharsetFromMediaType(contentType);
+    String mimeType = extractMIMETypeFromMediaType(contentType);
+    String filename = determineFilename();
+
+    // If filename is empty it means determineFilename aborted and emitted an error.
+    if (filename.isEmpty())
+        return;
+
+    // Let's try to guess from the extension.
+    if (mimeType.isEmpty())
+        mimeType = MIMETypeRegistry::getMIMETypeForPath(m_reply->url().path());
+
+    ResourceResponse response(m_reply->url(), mimeType, m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(), encoding, filename);
+    m_download->didReceiveResponse(response);
 }
 
 void QtFileDownloader::onReadyRead()
@@ -195,27 +206,21 @@ void QtFileDownloader::onReadyRead()
 
         m_download->didReceiveData(bytesWritten);
     } else if (!m_headersRead) {
-        // By API contract, QNetworkReply::metaDataChanged cannot really be trusted.
-        // Thus we need to call this upon receiving first data.
-        String contentType = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
-        String encoding = extractCharsetFromMediaType(contentType);
-        String mimeType = extractMIMETypeFromMediaType(contentType);
-
-        // Let's try to guess from the extension.
-        if (mimeType.isEmpty())
-            mimeType = MIMETypeRegistry::getMIMETypeForPath(m_reply->url().path());
-
-        ResourceResponse response(m_reply->url(), mimeType, m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(), encoding, String());
-        m_download->didReceiveResponse(response);
-
-        determineFilename();
-
+        handleDownloadResponse();
         m_headersRead = true;
     }
 }
 
 void QtFileDownloader::onFinished()
 {
+    // If it's finished and we haven't even read the headers, it means we never got to onReadyRead and that we are
+    // probably dealing with the download of a local file or of a small file that was started with a handle.
+    if (!m_headersRead) {
+        handleDownloadResponse();
+        m_headersRead = true;
+        return;
+    }
+
     if (!m_destinationFile)
         return;
 
@@ -223,6 +228,8 @@ void QtFileDownloader::onFinished()
 
     if (m_error == QNetworkReply::NoError)
         m_download->didFinish();
+    else if  (m_error == QNetworkReply::OperationCanceledError)
+        abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorCancelled);
     else
         abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorNetworkFailure);
 }
@@ -235,6 +242,7 @@ void QtFileDownloader::onError(QNetworkReply::NetworkError code)
 void QtFileDownloader::cancel()
 {
     m_reply->abort();
+    // QtFileDownloader::onFinished() will be called and will raise a DownloadErrorCancelled.
 }
 
 } // namespace WebKit

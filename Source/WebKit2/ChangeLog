@@ -1,3 +1,148 @@
+2011-11-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Download support and API in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=68962
+
+        Reviewed by Simon Hausmann.
+
+        We implement our WkContextDownloadClient and the needed callbacks.
+        We also add APIs by exposing QWebDownloadItem. Objects from this type
+        have their ownership handled by QDesktopWebView and will be created or
+        destroyed as needed. Classes implementing ViewInterface (QDesktopWebViewPrivate
+        and TouchViewInterface) will receive a signal (downloadRequested) with a pointer
+        to the recently created QWebDownloadItem. With that they can connect the proper
+        signals and slots, set the download destination path and then call start().
+        Objects of this type will provide the progress of a download, a slot to cancel it,
+        and signals for getting finished or failure status.
+        QWebDownloadItem was also exposed in QML.
+        Qt needed an asynchronous way for UIProcess to return a destination path to WebProcess,
+        therefore the startTransfer API was added to WebKit2's Download handlers.
+
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Add encoding and decoding of suggestedFilename for ResourceResponse.
+
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qbasewebview.h: Add signal downloadRequested.
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::downloadRequested):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+
+        * UIProcess/API/qt/qwebdownloaditem.cpp: Added.
+        (QWebDownloadItemPrivate::QWebDownloadItemPrivate):
+        (QWebDownloadItem::QWebDownloadItem):
+        (QWebDownloadItem::~QWebDownloadItem):
+        (QWebDownloadItem::url):
+        (QWebDownloadItem::destinationPath):
+        (QWebDownloadItem::setDestinationPath):
+        (QWebDownloadItem::suggestedFilename):
+        (QWebDownloadItem::mimeType):
+        (QWebDownloadItem::expectedContentLength):
+        (QWebDownloadItem::totalBytesReceived):
+        (QWebDownloadItem::cancel):
+        (QWebDownloadItem::start):
+        * UIProcess/API/qt/qwebdownloaditem.h: Added.
+        * UIProcess/API/qt/qwebdownloaditem_p.h: Added.
+        (QWebDownloadItemPrivate::didReceiveResponse):
+
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_download.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/download.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/download.zip: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::startTransfer): Qt only function added.
+        * UIProcess/Downloads/DownloadProxy.h:
+
+        * UIProcess/PageClient.h: Added Qt specific function to call handleDownloadRequest from QtWebPageProxy.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download):
+        Using WebPageProxy::handleDownloadRequest to bootstrap a download through PageClient.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Using handleDownloadRequest() to bootstrap a download through PageClient.
+        (WebKit::WebPageProxy::handleDownloadRequest): Calls PageClient::handleDownloadRequest().
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/qt/QtDownloadManager.cpp: Added.
+        (WebKit::toQtDownloadManager):
+        (WebKit::qt_wk_didReceiveResponse):
+        (WebKit::qt_wk_didCreateDestination):
+        (WebKit::qt_wk_didFinishDownload):
+        (WebKit::qt_wk_didFailDownload):
+        (WebKit::qt_wk_didReceiveDataForDownload):
+        (QtDownloadManager::downloadReceivedResponse): Will reach QtWebPageProxy::didReceiveDownloadResponse.
+        (QtDownloadManager::downloadCreatedDestination):
+        (QtDownloadManager::downloadFinished):
+        (QtDownloadManager::downloadFailed):
+        (QtDownloadManager::downloadDataReceived):
+        * UIProcess/qt/QtDownloadManager.h: Added.
+        Bootstrap our WKContextDownloadClient and set its callbacks.
+        This entity will also handle all downloads and keep a map of them.
+        It will be kept alive together with the WebContext as a static member
+        of QtWebPageProxy, so we can keep it across several WebPages and, therefore,
+        WebViews.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::defaultWKContext):
+        (QtWebPageProxy::~QtWebPageProxy):
+        (QtWebPageProxy::handleDownloadRequest):
+        (QtWebPageProxy::didReceiveDownloadResponse):
+        * UIProcess/qt/QtWebPageProxy.h:
+        From now on it will keep a static QtDownloadManager to live together
+        with the default WebContext. It implements PageClient::handleDownloadRequest.
+        QtWebPageProxy::didReceiveDownloadResponse will emit the view's signal downloadRequested.
+
+       * UIProcess/qt/QtTouchViewInterface.h:
+        (WebKit::QtTouchViewInterface::downloadRequested):
+        * UIProcess/qt/QtViewInterface.h:
+
+        * UIProcess/qt/qweberror.cpp:
+        (QWebError::description):
+        * UIProcess/qt/qweberror.h:
+        (QWebError::errorCodeAsDownloadError):
+        Add Download error handling to QWebError and a new API
+        to retrieve the error description from the original ResourceError.
+        Also, it now has QWebDownloadItem::DownloadError errorCodeAsDownloadError()
+        that returns the error code as a DownloadError.
+
+        * WebKit2.pro:
+        * WebKit2API.pri:
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startTransfer):
+        * WebProcess/Downloads/DownloadManager.h:
+        Adding Qt specific startTransfer function.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::didDecideDestination):
+        (WebKit::Download::startTransfer):
+        * WebProcess/Downloads/qt/QtFileDownloader.cpp:
+        (WebKit::QtFileDownloader::init): start() was renamed to init().
+        (WebKit::QtFileDownloader::determineFilename):
+        Calling onReadyRead() here was unnecessary and it was triggering the overall
+        download process even before DownloadManager finished startDownload(). This
+        was leading to a DownloadManager with an empty list of downloads.
+        (WebKit::QtFileDownloader::startTransfer): decidedDestination() became startTransfer().
+        (WebKit::QtFileDownloader::abortDownloadWritingAndEmitError):
+        (WebKit::QtFileDownloader::handleDownloadResponse):
+        (WebKit::QtFileDownloader::onReadyRead):
+        (WebKit::QtFileDownloader::onFinished):
+        (WebKit::QtFileDownloader::cancel):
+        * WebProcess/Downloads/qt/QtFileDownloader.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startTransfer):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Adding Qt specific message StartTransfer and handling function.
+
 2011-11-03  Nayan Kumar K  <nayankk@motorola.com>
 
         Add webkit_web_view_load_html and webkit_web_view_load_plain_text APIs.

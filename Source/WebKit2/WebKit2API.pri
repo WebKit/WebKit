@@ -50,6 +50,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qbasewebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebdownloaditem.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebnavigationcontroller.cpp \
@@ -135,6 +136,8 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qdesktopwebview_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebpreferences_p.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebdownloaditem.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebdownloaditem_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.h \

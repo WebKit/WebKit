@@ -957,6 +957,13 @@ void WebProcess::cancelDownload(uint64_t downloadID)
     DownloadManager::shared().cancelDownload(downloadID);
 }
 
+#if PLATFORM(QT)
+void WebProcess::startTransfer(uint64_t downloadID, const String& destination)
+{
+    DownloadManager::shared().startTransfer(downloadID, destination);
+}
+#endif
+
 void WebProcess::setEnhancedAccessibility(bool flag)
 {
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);

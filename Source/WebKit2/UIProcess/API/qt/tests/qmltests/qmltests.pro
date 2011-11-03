@@ -16,6 +16,7 @@ OTHER_FILES += \
     DesktopWebView/tst_loadProgressSignal.qml \
     DesktopWebView/tst_linkHovered.qml \
     DesktopWebView/tst_messaging.qml \
+    DesktopWebView/tst_download.qml \
     TouchWebView/tst_properties.qml \
     TouchWebView/tst_load.qml \
     TouchWebView/tst_loadZeroSizeView.qml \

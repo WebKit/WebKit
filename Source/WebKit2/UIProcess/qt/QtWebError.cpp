@@ -60,3 +60,8 @@ QUrl QtWebError::url() const
     WKRetainPtr<WKURLRef> failingURL = adoptWK(WKErrorCopyFailingURL(error.get()));
     return WKURLCopyQUrl(failingURL.get());
 }
+
+QString QtWebError::description() const
+{
+    return WKStringCopyQString(WKErrorCopyLocalizedDescription(error.get()));
+}

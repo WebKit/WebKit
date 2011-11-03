@@ -175,6 +175,9 @@ private:
 
     void downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
+#if PLATFORM(QT)
+    void startTransfer(uint64_t downloadID, const String& destination);
+#endif
 
     void setTextCheckerState(const TextCheckerState&);
     

@@ -187,5 +187,16 @@ void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
     m_webContext->downloadFinished(this);
 }
 
+#if PLATFORM(QT)
+void DownloadProxy::startTransfer(const String& filename)
+{
+    if (!m_webContext)
+        return;
+
+    // FIXME (Multi-WebProcess): Downloads shouldn't be handled in the web process.
+    m_webContext->sendToAllProcesses(Messages::WebProcess::StartTransfer(m_downloadID, filename));
+}
+#endif
+
 } // namespace WebKit
 

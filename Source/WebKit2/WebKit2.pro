@@ -260,6 +260,7 @@ HEADERS += \
     UIProcess/qt/QtDesktopWebPageProxy.h \
     UIProcess/qt/QtTouchWebPageProxy.h \
     UIProcess/qt/QtWebError.h \
+    UIProcess/qt/QtDownloadManager.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/qwkhistory.h \
     UIProcess/qt/qwkhistory_p.h \
@@ -504,6 +505,7 @@ SOURCES += \
     UIProcess/qt/QtDesktopWebPageProxy.cpp \
     UIProcess/qt/QtTouchWebPageProxy.cpp \
     UIProcess/qt/QtWebError.cpp \
+    UIProcess/qt/QtDownloadManager.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/QtSGUpdateQueue.cpp \

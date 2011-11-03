@@ -46,13 +46,14 @@ void Download::start(WebPage* initiatingWebPage)
     ASSERT(!m_qtDownloader);
 
     m_qtDownloader = new QtFileDownloader(this, adoptPtr(manager->get(m_request.toNetworkRequest())));
-    m_qtDownloader->start();
+    m_qtDownloader->init();
 }
 
 void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& resp)
 {
     ASSERT(!m_qtDownloader);
     m_qtDownloader = new QtFileDownloader(this, adoptPtr(handle->getInternal()->m_job->release()));
+    m_qtDownloader->init();
 }
 
 void Download::cancel()
@@ -70,7 +71,12 @@ void Download::platformInvalidate()
 
 void Download::didDecideDestination(const String& destination, bool allowOverwrite)
 {
-    m_qtDownloader->decidedDestination(destination, allowOverwrite);
+    notImplemented();
+}
+
+void Download::startTransfer(const String& destination)
+{
+    m_qtDownloader->startTransfer(destination);
 }
 
 void Download::platformDidFinish()
