@@ -1,5 +1,19 @@
 2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Show load progress information in MiniBrowser using WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=71461
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (resetEntryProgress): Reset the entry progress after a while when
+        load has been completed.
+        (webViewLoadProgressChanged): Update location entry progress.
+        (browserWindowConstructed): Connect to WebView
+        notify::estimated-load-progress signal.
+
+2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove WebKit2 C API from MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=71459
 

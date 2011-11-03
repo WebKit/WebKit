@@ -72,6 +72,20 @@ static void webViewURIChanged(WebKitWebView *webView,  GParamSpec *pspec, Browse
     gtk_entry_set_text(GTK_ENTRY(window->uriEntry), webkit_web_view_get_uri(webView));
 }
 
+static gboolean resetEntryProgress(GtkEntry *entry)
+{
+    gtk_entry_set_progress_fraction(entry, 0);
+    return FALSE;
+}
+
+static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
+{
+    gdouble progress = webkit_web_view_get_estimated_load_progress(webView);
+    gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), progress);
+    if (progress == 1.0)
+        g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
@@ -159,6 +173,7 @@ static void browserWindowConstructed(GObject *gObject)
     BrowserWindow *window = BROWSER_WINDOW(gObject);
 
     g_signal_connect(window->webView, "notify::uri", G_CALLBACK(webViewURIChanged), window);
+    g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
 
     gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->webView), TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(window->webView));
