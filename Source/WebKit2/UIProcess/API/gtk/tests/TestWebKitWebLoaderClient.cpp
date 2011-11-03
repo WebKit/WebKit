@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009, 2010 Gustavo Noronha Silva
  * Copyright (C) 2009, 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,6 +61,20 @@ static void assertNormalLoadHappenedAndClearEvents(Vector<LoadTrackingTest::Load
     g_assert_cmpint(events[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFinished);
     events.clear();
+}
+
+static void testLoadHtml(LoadTrackingTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body>Hello WebKit-GTK+</body></html>", 0);
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+}
+
+static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
+{
+    test->loadPlainText("Hello WebKit-GTK+");
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
 
 static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
@@ -220,6 +235,8 @@ void beforeAll()
 
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-status", testLoadingStatus);
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
+    LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
+    LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
     LoadTrackingTest::add("WebKitWebLoaderClient", "load-alternate-content", testLoadAlternateContent);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);

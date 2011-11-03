@@ -3,6 +3,7 @@
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,6 +89,15 @@ webkit_web_view_set_loader_client            (WebKitWebView             *web_vie
 WEBKIT_API void
 webkit_web_view_load_uri                     (WebKitWebView             *web_view,
                                               const gchar               *uri);
+
+WEBKIT_API void
+webkit_web_view_load_html                    (WebKitWebView         *web_view,
+                                              const gchar           *content,
+                                              const gchar           *base_uri);
+
+WEBKIT_API void
+webkit_web_view_load_plain_text              (WebKitWebView         *web_view,
+                                              const gchar           *plain_text);
 
 WEBKIT_API void
 webkit_web_view_load_alternate_html          (WebKitWebView             *web_view,

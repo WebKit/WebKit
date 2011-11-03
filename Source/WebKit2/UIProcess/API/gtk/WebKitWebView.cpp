@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -309,6 +310,50 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURL(toAPI(page), url.get());
     webkitWebViewUpdateURI(webView);
+}
+
+/**
+ * webkit_web_view_load_html:
+ * @web_view: a #WebKitWebView
+ * @content: The HTML string to load
+ * @base_uri: (allow-none): The base URI for relative locations or %NULL
+ *
+ * Load the given @content string with the specified @base_uri. 
+ * Relative URLs in the @content will be resolved against @base_uri.
+ * When @base_uri is %NULL, it defaults to "about:blank". The mime type 
+ * of the document will be "text/html". You can monitor the status of 
+ * the load operation using the #WebKitWebLoaderClient of @web_view. 
+ * See webkit_web_view_get_loader_client().
+ */
+void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> contentRef(AdoptWK,  WKStringCreateWithUTF8CString(content));
+    WKRetainPtr<WKURLRef> baseURIRef = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
+    WKPageLoadHTMLString(toAPI(page), contentRef.get(), baseURIRef.get());
+}
+
+/**
+ * webkit_web_view_load_plain_text:
+ * @web_view: a #WebKitWebView
+ * @plain_text: The plain text to load
+ *
+ * Load the specified @plain_text string into @web_view. The mime type of
+ * document will be "text/plain". You can monitor  the status of the load 
+ * operation using the #WebKitWebLoaderClient of @web_view. 
+ * See webkit_web_view_get_loader_client().
+ */
+void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainText)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(plainText);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKRetainPtr<WKStringRef> plainTextRef(AdoptWK, WKStringCreateWithUTF8CString(plainText));
+    WKPageLoadPlainTextString(toAPI(page), plainTextRef.get());
 }
 
 /**

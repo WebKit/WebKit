@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +32,8 @@ public:
     virtual ~WebViewTest();
 
     void loadURI(const char* uri);
+    void loadHtml(const char* html, const char* baseURI);
+    void loadPlainText(const char* plainText);
     void loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI);
     void goBack();
     void goForward();

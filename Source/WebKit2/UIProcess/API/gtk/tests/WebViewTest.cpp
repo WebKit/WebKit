@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,6 +44,18 @@ void WebViewTest::loadURI(const char* uri)
 {
     m_activeURI = uri;
     webkit_web_view_load_uri(m_webView, uri);
+}
+
+void WebViewTest::loadHtml(const char* html, const char* baseURI)
+{
+    m_activeURI = "about:blank";
+    webkit_web_view_load_html(m_webView, html, baseURI);
+}
+
+void WebViewTest::loadPlainText(const char* plainText)
+{
+    m_activeURI = "about:blank";
+    webkit_web_view_load_plain_text(m_webView, plainText);
 }
 
 void WebViewTest::loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI)

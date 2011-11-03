@@ -1,3 +1,26 @@
+2011-11-03  Nayan Kumar K  <nayankk@motorola.com>
+
+        Add webkit_web_view_load_html and webkit_web_view_load_plain_text APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=69249
+
+        Reviewed by Philippe Normand.
+
+        This patch adds support for 2 more load APIs, namely
+        webkit_web_view_load_html and webkit_web_view_load_plain_text.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_html): New API to load html string.
+        (webkit_web_view_load_plain_text): New API to load plain text.
+        * UIProcess/API/gtk/WebKitWebView.h: Public API addition.
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (testLoadHtml): Test webkit_web_view_load_html API.
+        (testLoadPlainText): Test webkit_web_view_load_plain_text API.
+        (beforeAll): Add new tests.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::loadHtml): Test webkit_web_view_load_html API.
+        (WebViewTest::loadPlainText): Test webkit_web_view_load_plain_text API.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Failing assertion with desktop webview when touch mocking in MinBrowser
