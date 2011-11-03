@@ -1,6 +1,5 @@
 <html>
 <head>
-<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <style type="text/css" media="screen">
   @-webkit-keyframes test1 {
     from { left: 10px; }
@@ -20,8 +19,6 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 <script>
 
 description("This tests the WebKitCSSKeyframeRule and WebKitCSSKeyframesRule interfaces.");
@@ -48,7 +45,7 @@ else
 
 debug("");
 
-var keyframes1 = document.styleSheets.item(1).cssRules.item(0);
+var keyframes1 = document.styleSheets.item(0).cssRules.item(0);
 
 shouldBe("keyframes1.type", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
 shouldBe("keyframes1.name", "'test1'");
@@ -77,7 +74,7 @@ shouldBe("rules1.item(4).cssText", "'20% { left: 50px; }'");
 
 debug("");
 
-var keyframes2 = document.styleSheets.item(1).cssRules.item(1);
+var keyframes2 = document.styleSheets.item(0).cssRules.item(1);
 
 shouldBe("keyframes2.type", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
 shouldBe("keyframes2.name", "'test2'");
@@ -116,7 +113,7 @@ shouldBe("rule.cssText", "'50% { left: 30px; }'");
 debug("");
 debug("Find a rule using from and to");
 
-var keyframesFromTo = document.styleSheets.item(1).cssRules.item(2);
+var keyframesFromTo = document.styleSheets.item(0).cssRules.item(2);
 shouldBe("keyframesFromTo.type", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
 rule = keyframesFromTo.findRule("From");
 shouldBe("rule.type", "window.CSSRule.WEBKIT_KEYFRAME_RULE");

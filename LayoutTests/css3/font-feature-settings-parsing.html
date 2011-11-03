@@ -1,6 +1,5 @@
 <html>
 <head>
-<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <style>
 #valid_normal {
@@ -211,8 +210,8 @@ shouldBeEqualToString('parseResultOf("outer")', "'dlig' 1");
 shouldBeEqualToString('parseResultOf("inner")', "'dlig' 1");
 
 debug('- Tests @font-face.');
-var fontFaceRuleValid = document.styleSheets[2].cssRules[0].style['-webkit-font-feature-settings'];
-var fontFaceRuleInvalid = document.styleSheets[2].cssRules[1].style['-webkit-font-feature-settings'];
+var fontFaceRuleValid = document.styleSheets[1].cssRules[0].style['-webkit-font-feature-settings'];
+var fontFaceRuleInvalid = document.styleSheets[1].cssRules[1].style['-webkit-font-feature-settings'];
 shouldBeEqualToString('fontFaceRuleValid', "'liga' 1");
 shouldBeEqualToString('fontFaceRuleInvalid', "");
 

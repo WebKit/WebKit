@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M100,200 a3,4,5,2,1,6,7"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M100,200 a3,4,5,1,2,6,7"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M1,2"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="xM1,2"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M1,2"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M1,2x"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="M1,2 L40,0#90"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d=""
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="x"
-CONSOLE MESSAGE: line 10: Error: Problem parsing d="L1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M100,200 a3,4,5,2,1,6,7"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M100,200 a3,4,5,1,2,6,7"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="xM1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2x"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2 L40,0#90"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d=""
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="x"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="L1,2"
 This tests the SVG path parser by parsing and then re-serializing various paths.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

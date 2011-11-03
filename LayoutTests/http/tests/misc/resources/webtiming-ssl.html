@@ -3,7 +3,6 @@
 <head>
 <script>
 </script>
-<link rel="stylesheet" href="../../js-test-resources/js-test-style.css">
 <script src="../../js-test-resources/js-test-pre.js"></script>
 </head>
 <body>

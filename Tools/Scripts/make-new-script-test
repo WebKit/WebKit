@@ -92,7 +92,6 @@ sub writeTestFile
 <html>
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="$relativePathToSharedSources/js-test-style.css">
 <script src="$relativePathToSharedSources/js-test-pre.js"></script>
 </head>
 <body>
