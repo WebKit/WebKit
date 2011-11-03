@@ -1,3 +1,21 @@
+2011-11-03  Kentaro Hara  <haraken@chromium.org>
+
+        Fixed wrong implementation of doubleValue % 2^{64}.
+        https://bugs.webkit.org/show_bug.cgi?id=67980
+
+        Reviewed by Hajime Morita.
+
+        fast/events/constructors/progress-event-constructor.html was failing
+        because of the wrong implementation of conversion from an ECMAScript value
+        to an IDL unsigned long long value (Spec: http://www.w3.org/TR/WebIDL/#es-unsigned-long-long).
+        In particular, the calculation of doubleValue % 2^{64} was wrong.
+        This patch implemented it correctly in doubleToInteger() in wtf/MathExtras.h.
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Uses doubleToInteger().
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::getKeyValue): Ditto.
+
 2011-11-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Introduce SuggestBox for TextPrompt

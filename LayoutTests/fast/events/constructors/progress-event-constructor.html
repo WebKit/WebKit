@@ -38,7 +38,7 @@ shouldBe("new ProgressEvent('eventType', { lengthComputable: true }).lengthCompu
     // [2^53, 2^64 - 1]. A value that is in the unsigned long long range but cannot be represented as a double.
     // Spec: http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
     shouldBe("new ProgressEvent('eventType', { " + attr + ": 18446744073709551615 })." + attr, "0");
-    shouldBe("new ProgressEvent('eventType', { " + attr + ": 12345678901234567890 })." + attr, "12345678901234567168");
+    shouldBe("new ProgressEvent('eventType', { " + attr + ": 12345678901234567890 })." + attr, "12345678901234567890");
 
     // A negative number.
     shouldBe("new ProgressEvent('eventType', { " + attr + ": -1 })." + attr, "18446744073709551615");

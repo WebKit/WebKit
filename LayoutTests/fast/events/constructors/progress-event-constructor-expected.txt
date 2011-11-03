@@ -19,7 +19,7 @@ PASS new ProgressEvent('eventType', { loaded: 1 }).loaded is 1
 PASS new ProgressEvent('eventType', { loaded: 9007199254740990 }).loaded is 9007199254740990
 PASS new ProgressEvent('eventType', { loaded: 9007199254740991 }).loaded is 9007199254740991
 PASS new ProgressEvent('eventType', { loaded: 18446744073709551615 }).loaded is 0
-PASS new ProgressEvent('eventType', { loaded: 12345678901234567890 }).loaded is 12345678901234567168
+PASS new ProgressEvent('eventType', { loaded: 12345678901234567890 }).loaded is 12345678901234567890
 PASS new ProgressEvent('eventType', { loaded: -1 }).loaded is 18446744073709551615
 PASS new ProgressEvent('eventType', { loaded: NaN }).loaded is 0
 PASS new ProgressEvent('eventType', { loaded: 123.45 }).loaded is 123
@@ -40,7 +40,7 @@ PASS new ProgressEvent('eventType', { total: 1 }).total is 1
 PASS new ProgressEvent('eventType', { total: 9007199254740990 }).total is 9007199254740990
 PASS new ProgressEvent('eventType', { total: 9007199254740991 }).total is 9007199254740991
 PASS new ProgressEvent('eventType', { total: 18446744073709551615 }).total is 0
-PASS new ProgressEvent('eventType', { total: 12345678901234567890 }).total is 12345678901234567168
+PASS new ProgressEvent('eventType', { total: 12345678901234567890 }).total is 12345678901234567890
 PASS new ProgressEvent('eventType', { total: -1 }).total is 18446744073709551615
 PASS new ProgressEvent('eventType', { total: NaN }).total is 0
 PASS new ProgressEvent('eventType', { total: 123.45 }).total is 123

@@ -3590,7 +3590,6 @@ BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PA
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
-BUGWK67980 MAC CPU-CG : fast/events/constructors/progress-event-constructor.html = TEXT
 
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
@@ -3601,7 +3600,6 @@ BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TE
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
-BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
 BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT

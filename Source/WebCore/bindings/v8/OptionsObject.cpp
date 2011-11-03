@@ -30,7 +30,7 @@
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8MessagePortCustom.h"
-#include <limits>
+#include <wtf/MathExtras.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBKeyRange.h"
@@ -180,10 +180,7 @@ bool OptionsObject::get(const String& key, unsigned long long& value) const
     if (v8Number.IsEmpty())
         return false;
     double d = v8Number->Value();
-    if (isnan(d) || isinf(d))
-        value = 0;
-    else
-        value = static_cast<unsigned long long>(fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0));
+    doubleToInteger(d, value);
     return true;
 }
 

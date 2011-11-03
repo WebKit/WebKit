@@ -32,6 +32,7 @@
 #include "JSNode.h"
 #include "SerializedScriptValue.h"
 #include "ScriptValue.h"
+#include <wtf/MathExtras.h>
 
 using namespace JSC;
 
@@ -78,10 +79,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned short& 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long long& result)
 {
     double d = value.toNumber(exec);
-    if (isnan(d) || isinf(d))
-        result = 0;
-    else
-        result = static_cast<unsigned long long>(fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0));
+    doubleToInteger(d, result);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)

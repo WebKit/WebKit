@@ -293,4 +293,27 @@ inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64
         mantissa |= 0x10000000000000ull;
 }
 
+// Calculate d % 2^{64}.
+inline void doubleToInteger(double d, unsigned long long& value)
+{
+    if (isnan(d) || isinf(d))
+        value = 0;
+    else {
+        // -2^{64} < fmodValue < 2^{64}.
+        double fmodValue = fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0);
+        if (fmodValue >= 0) {
+            // 0 <= fmodValue < 2^{64}.
+            // 0 <= value < 2^{64}. This cast causes no loss.
+            value = static_cast<unsigned long long>(fmodValue);
+        } else {
+            // -2^{64} < fmodValue < 0.
+            // 0 < fmodValueInUnsignedLongLong < 2^{64}. This cast causes no loss.
+            unsigned long long fmodValueInUnsignedLongLong = static_cast<unsigned long long>(-fmodValue);
+            // -1 < (std::numeric_limits<unsigned long long>::max() - fmodValueInUnsignedLongLong) < 2^{64} - 1.
+            // 0 < value < 2^{64}.
+            value = std::numeric_limits<unsigned long long>::max() - fmodValueInUnsignedLongLong + 1;
+        }
+    }
+}
+
 #endif // #ifndef WTF_MathExtras_h
