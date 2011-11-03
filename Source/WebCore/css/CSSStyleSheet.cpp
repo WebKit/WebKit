@@ -99,11 +99,6 @@ void CSSStyleSheet::remove(unsigned index)
     m_children.remove(index);
 }
 
-CSSRule *CSSStyleSheet::ownerRule() const
-{
-    return parentRule();
-}
-
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
     ec = 0;

@@ -35,11 +35,6 @@ CSSFontFaceRule::~CSSFontFaceRule()
 {
 }
 
-void CSSFontFaceRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
-{
-    m_style = style;
-}
-
 String CSSFontFaceRule::cssText() const
 {
     String result("@font-face");

@@ -47,7 +47,7 @@ public:
 
     String cssText() const;
 
-    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
+    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style) { m_style = style; }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 

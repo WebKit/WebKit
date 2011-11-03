@@ -51,7 +51,7 @@ public:
 
     ~WebKitCSSKeyframesRule();
 
-    String name() const;
+    String name() const { return m_name; }
     void setName(const String&);
 
     // This version of setName does not call styleSheetChanged to avoid
@@ -70,11 +70,11 @@ public:
 
     String cssText() const;
 
-    /* not part of the DOM */
-    unsigned length() const;
-    WebKitCSSKeyframeRule*        item(unsigned index);
-    const WebKitCSSKeyframeRule*  item(unsigned index) const;
-    void append(WebKitCSSKeyframeRule* rule);
+    // Not part of the CSSOM.
+    unsigned length() const { return m_lstCSSRules->length(); }
+    WebKitCSSKeyframeRule* item(unsigned index);
+    const WebKitCSSKeyframeRule* item(unsigned index) const;
+    void append(WebKitCSSKeyframeRule*);
 
 private:
     WebKitCSSKeyframesRule(CSSStyleSheet* parent);

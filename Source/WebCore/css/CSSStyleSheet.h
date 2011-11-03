@@ -70,7 +70,7 @@ public:
         return static_cast<CSSStyleSheet*>(parentSheet);
     }
 
-    CSSRule* ownerRule() const;
+    CSSRule* ownerRule() const { return parentRule(); }
     PassRefPtr<CSSRuleList> cssRules(bool omitCharsetRules = false);
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);

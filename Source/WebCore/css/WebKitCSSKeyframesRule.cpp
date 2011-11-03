@@ -50,11 +50,6 @@ WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
     }
 }
 
-String WebKitCSSKeyframesRule::name() const
-{
-    return m_name;
-}
-
 void WebKitCSSKeyframesRule::setName(const String& name)
 {
     m_name = name;
@@ -63,11 +58,6 @@ void WebKitCSSKeyframesRule::setName(const String& name)
     // to recompute the style sheet to get the updated name.
     if (CSSStyleSheet* styleSheet = parentStyleSheet())
         styleSheet->styleSheetChanged();
-}
-
-unsigned WebKitCSSKeyframesRule::length() const
-{
-    return m_lstCSSRules->length();
 }
 
 WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index)

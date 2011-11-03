@@ -1,5 +1,29 @@
 2011-11-03  Andreas Kling  <kling@webkit.org>
 
+        CSSOM: Inline some trivial methods.
+        https://bugs.webkit.org/show_bug.cgi?id=71468
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSFontFaceRule.cpp:
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::setDeclaration):
+        * css/CSSStyleRule.cpp:
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::setDeclaration):
+        * css/CSSStyleSheet.cpp:
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::ownerRule):
+        * css/StyleSheet.cpp:
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::parentStyleSheet):
+        * css/WebKitCSSKeyframesRule.cpp:
+        * css/WebKitCSSKeyframesRule.h:
+        (WebCore::WebKitCSSKeyframesRule::name):
+        (WebCore::WebKitCSSKeyframesRule::length):
+
+2011-11-03  Andreas Kling  <kling@webkit.org>
+
         Devirtualize MediaList.
         https://bugs.webkit.org/show_bug.cgi?id=71464
 

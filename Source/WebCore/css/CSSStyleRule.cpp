@@ -96,11 +96,6 @@ String CSSStyleRule::cssText() const
     return result;
 }
 
-void CSSStyleRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
-{
-    m_style = style;
-}
-
 void CSSStyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
 {
     if (m_style)
