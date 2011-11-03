@@ -151,15 +151,15 @@ void WebViewAbstraction::desktopViewLoadSucceeded()
 
 void WebViewAbstraction::touchViewLoadFailed(QBaseWebView::ErrorType errorType, int errorCode, const QUrl& url)
 {
-    m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, const QUrl&))]++;
-    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, const QUrl&))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))])
+    m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))])
         emit loadFailed(static_cast<QBaseWebView::ErrorType>(errorType), errorCode, url);
 }
 
 void WebViewAbstraction::desktopViewLoadFailed(QBaseWebView::ErrorType errorType, int errorCode, const QUrl& url)
 {
-    m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, const QUrl&))]++;
-    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, const QUrl&))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))])
+    m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QBaseWebView::ErrorType, int, QUrl))])
         emit loadFailed(errorType, errorCode, url);
 }
 

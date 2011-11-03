@@ -1,3 +1,13 @@
+2011-11-03  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix the signal signature of the loadFailed API test.
+
+        Rubber-stamped by Simon Hausmann.
+
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+
 2011-11-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix an assertion under WebPage::setViewportSize.
