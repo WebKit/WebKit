@@ -1,5 +1,26 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        Add NetscapePlugin::convertToRootView
+        https://bugs.webkit.org/show_bug.cgi?id=71519
+
+        Reviewed by Darin Adler.
+
+        Yet another step towards eliminating uses of m_frameRectInWindowCoordinates.
+
+        Also, use the "root view" terminology, since that's really what we mean here.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindow):
+        Use convertToRootView to get the plug-in location and clip rect in root view coordinates.
+
+        (WebKit::NetscapePlugin::convertToRootView):
+        Apply the m_pluginToRootViewTransform.mapPoint transform.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add convertToRootView.
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         Move plug-in size and backing store checks to PluginProxy::updateBackingStore
         https://bugs.webkit.org/show_bug.cgi?id=71508
 

@@ -484,10 +484,13 @@ NPError NetscapePlugin::NPP_SetValue(NPNVariable variable, void *value)
 void NetscapePlugin::callSetWindow()
 {
     if (wantsWindowRelativeNPWindowCoordinates()) {
-        m_npWindow.x = m_frameRectInWindowCoordinates.x();
-        m_npWindow.y = m_frameRectInWindowCoordinates.y();
-        m_npWindow.clipRect.top = m_clipRectInWindowCoordinates.y();
-        m_npWindow.clipRect.left = m_clipRectInWindowCoordinates.x();
+        IntPoint pluginLocationInRootViewCoordinates = convertToRootView(IntPoint());
+        IntPoint clipRectInRootViewCoordinates = convertToRootView(m_clipRect.location());
+
+        m_npWindow.x = pluginLocationInRootViewCoordinates.x();
+        m_npWindow.y = pluginLocationInRootViewCoordinates.y();
+        m_npWindow.clipRect.top = clipRectInRootViewCoordinates.y();
+        m_npWindow.clipRect.left = clipRectInRootViewCoordinates.x();
     } else {
         m_npWindow.x = 0;
         m_npWindow.y = 0;
@@ -945,6 +948,11 @@ bool NetscapePlugin::supportsSnapshotting() const
     return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
 #endif
     return false;
+}
+
+IntPoint NetscapePlugin::convertToRootView(const IntPoint& pointInPluginCoordinates) const
+{
+    return m_pluginToRootViewTransform.mapPoint(pointInPluginCoordinates);
 }
 
 } // namespace WebKit
