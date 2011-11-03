@@ -175,12 +175,6 @@ void PluginProxy::geometryDidChange()
 {
     ASSERT(m_isStarted);
 
-    if (m_pluginSize.isEmpty() || !needsBackingStore()) {
-        ShareableBitmap::Handle pluginBackingStoreHandle;
-        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_pluginSize, m_clipRect, m_pluginToRootViewTransform, contentsScaleFactor(), pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
-        return;
-    }
-
     ShareableBitmap::Handle pluginBackingStoreHandle;
 
     if (updateBackingStore()) {
@@ -442,6 +436,9 @@ float PluginProxy::contentsScaleFactor()
 
 bool PluginProxy::updateBackingStore()
 {
+    if (m_pluginSize.isEmpty() || !needsBackingStore())
+        return false;
+
     IntSize backingStoreSize = m_pluginSize;
     backingStoreSize.scale(contentsScaleFactor());
     

@@ -1,5 +1,20 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        Move plug-in size and backing store checks to PluginProxy::updateBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=71508
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        Remove code to send back an empty backing store if the plug-in size is empty
+        or doesn't need a backing store. This check is now done...
+
+        (WebKit::PluginProxy::updateBackingStore):
+        ...here.
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         Get rid of PluginControllerProxy::m_frameRectInWindowCoordinates
         https://bugs.webkit.org/show_bug.cgi?id=71506
 
