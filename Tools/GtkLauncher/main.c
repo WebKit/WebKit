@@ -29,11 +29,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WEBKIT2
-#include <webkit2/webkit2.h>
-#else
 #include <webkit/webkit.h>
-#endif
 
 static gint windowCount = 0;
 
@@ -47,7 +43,6 @@ static void activateUriEntryCb(GtkWidget* entry, gpointer data)
     webkit_web_view_load_uri(webView, uri);
 }
 
-#ifndef WEBKIT2
 static void updateTitle(GtkWindow* window, WebKitWebView* webView)
 {
     GString *string = g_string_new(webkit_web_view_get_title(webView));
@@ -89,7 +84,6 @@ static void notifyProgressCb(WebKitWebView* webView, GParamSpec* pspec, GtkWidge
 {
     updateTitle(GTK_WINDOW(window), webView);
 }
-#endif
 
 static void destroyCb(GtkWidget* widget, GtkWidget* window)
 {
@@ -107,7 +101,6 @@ static void goForwardCb(GtkWidget* widget, WebKitWebView* webView)
     webkit_web_view_go_forward(webView);
 }
 
-#ifndef WEBKIT2
 static WebKitWebView*
 createWebViewCb(WebKitWebView* webView, WebKitWebFrame* web_frame, GtkWidget* window)
 {
@@ -129,7 +122,6 @@ static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window)
     gtk_widget_destroy(window);
     return TRUE;
 }
-#endif
 
 static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidget* statusbar, WebKitWebView* webView)
 {
@@ -138,7 +130,6 @@ static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidge
 
     gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
 
-#ifndef WEBKIT2
     g_signal_connect(webView, "notify::title", G_CALLBACK(notifyTitleCb), window);
     g_signal_connect(webView, "notify::load-status", G_CALLBACK(notifyLoadStatusCb), uriEntry);
     g_signal_connect(webView, "notify::progress", G_CALLBACK(notifyProgressCb), window);
@@ -146,7 +137,6 @@ static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidge
     g_signal_connect(webView, "create-web-view", G_CALLBACK(createWebViewCb), window);
     g_signal_connect(webView, "web-view-ready", G_CALLBACK(webViewReadyCb), window);
     g_signal_connect(webView, "close-web-view", G_CALLBACK(closeWebViewCb), window);
-#endif
 
     return scrolledWindow;
 }
@@ -249,7 +239,6 @@ static gchar* filenameToURL(const char* filename)
     return fileURL;
 }
 
-#ifndef WEBKIT2
 static gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gchar *value, WebKitWebSettings *webSettings, GError **error)
 {
     if (strlen(optionNameFull) <= 2) {
@@ -377,13 +366,10 @@ static gboolean addWebSettingsGroupToContext(GOptionContext *context, WebKitWebS
 
     return TRUE;
 }
-#endif
 
 int main(int argc, char* argv[])
 {
-#ifndef WEBKIT2
     WebKitWebSettings *webkitSettings = 0;
-#endif
     const gchar **uriArguments = 0;
     const GOptionEntry commandLineOptions[] =
     {
@@ -396,13 +382,12 @@ int main(int argc, char* argv[])
     GOptionContext *context = g_option_context_new(0);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
-#ifndef WEBKIT2
+
     webkitSettings = webkit_web_settings_new();
     if (!addWebSettingsGroupToContext(context, webkitSettings)) {
         g_object_unref(webkitSettings);
         webkitSettings = 0;
     }
-#endif
 
     GError *error = 0;
     if (!g_option_context_parse(context, &argc, &argv, &error)) {
@@ -414,7 +399,6 @@ int main(int argc, char* argv[])
     }
     g_option_context_free(context);
 
-#ifndef WEBKIT2
 #ifdef SOUP_TYPE_PROXY_RESOLVER_DEFAULT
     soup_session_add_feature_by_type(webkit_get_default_session(), SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
 #else
@@ -425,17 +409,14 @@ int main(int argc, char* argv[])
         soup_uri_free(proxyUri);
     }
 #endif
-#endif
 
     WebKitWebView *webView;
     GtkWidget *main_window = createWindow(&webView);
 
-#ifndef WEBKIT2
     if (webkitSettings) {
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
         g_object_unref(webkitSettings);
     }
-#endif
 
     const gchar *uri = (uriArguments ? uriArguments[0] : "http://www.google.com/");
     gchar *fileURL = filenameToURL(uri);

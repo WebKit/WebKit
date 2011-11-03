@@ -2,36 +2,7 @@ noinst_PROGRAMS += \
 	Programs/DumpRenderTree \
 	Programs/GtkLauncher
 
-if ENABLE_WEBKIT2
-noinst_PROGRAMS += \
-	Programs/GtkLauncher2
-
-# FIXME: should this dependency be automatically identified by
-# automake somehow?
-Tools/GtkLauncher/main.c: $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp
-endif
-
 # GtkLauncher
-gtklauncher_sources = \
-	Tools/GtkLauncher/main.c
-
-gtklauncher_cflags = \
-	-fno-strict-aliasing \
-	$(global_cflags) \
-	$(GTK_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
-
-gtklauncher_ldadd = \
-	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(GTK_LIBS) \
-	$(GLIB_LIBS) \
-	$(LIBSOUP_LIBS) \
-	$(WINMM_LIBS)
-
-gtklauncher_ldflags = \
-	-no-fast-install \
-	-no-install
-
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
@@ -41,48 +12,26 @@ Programs_GtkLauncher_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 Programs_GtkLauncher_SOURCES = \
-	$(gtklauncher_sources)
+	Tools/GtkLauncher/main.c
 
 Programs_GtkLauncher_CFLAGS = \
 	-ansi \
-	$(gtklauncher_cflags)
+	-fno-strict-aliasing \
+	$(global_cflags) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_GtkLauncher_LDADD = \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(gtklauncher_ldadd)
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(WINMM_LIBS)
 
 Programs_GtkLauncher_LDFLAGS = \
-	$(gtklauncher_ldflags)
-
-if ENABLE_WEBKIT2
-Programs_GtkLauncher2_CPPFLAGS = \
-	-I$(srcdir)/Source \
-	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
-	-I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
-	-I$(srcdir)/Source/WebKit/gtk \
-	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
-	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
-	-I$(top_builddir)/Source/WebKit/gtk \
-	-I$(top_builddir)/DerivedSources \
-	$(global_cppflags) \
-	$(javascriptcore_cppflags)
-
-Programs_GtkLauncher2_SOURCES = \
-	$(gtklauncher_sources)
-
-Programs_GtkLauncher2_CFLAGS = \
-	-DWEBKIT2=\"1\" \
-	$(gtklauncher_cflags)
-
-Programs_GtkLauncher2_LDADD = \
-	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(gtklauncher_ldadd)
-
-Programs_GtkLauncher2_LDFLAGS = \
-	$(gtklauncher_ldflags)
-
-endif
+	-no-fast-install \
+	-no-install
 
 # libWebCoreInternals
 # We must split off the window.internals implementation into a separate
@@ -218,11 +167,6 @@ Programs_DumpRenderTree_LDFLAGS = \
 CLEANFILES += \
 	Programs/DumpRenderTree \
 	Programs/GtkLauncher
-
-if ENABLE_WEBKIT2
-CLEANFILES += \
-	Programs/GtkLauncher2
-endif
 
 if TARGET_X11
 

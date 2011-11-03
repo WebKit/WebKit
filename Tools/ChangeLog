@@ -1,3 +1,24 @@
+2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove GtkLauncher2
+        https://bugs.webkit.org/show_bug.cgi?id=71449
+
+        Reviewed by Martin Robinson.
+
+        GtkLauncher2 is the GtkLauncher code compiled with webkit2. This
+        made sense when we wanted to implement the exactly same wk1 API
+        for wk2. Now the code would require an ifdef for most the api, so
+        it's better to remove GtkLauncher2 and port MiniBrowser to the new
+        GTK+ API.
+
+        * GNUmakefile.am:
+        * GtkLauncher/main.c:
+        (notifyProgressCb):
+        (closeWebViewCb):
+        (createBrowser):
+        (addWebSettingsGroupToContext):
+        (main):
+
 2011-11-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] [DRT] ttf-liberation fonts moved to a new location (in Debian)
