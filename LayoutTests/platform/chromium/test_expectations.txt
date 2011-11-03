@@ -2164,9 +2164,6 @@ BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
-// On XP, some glyphs show subpixel antialiasing when they shouldn't
-BUGWK65203 XP : fast/text/international/bidi-mirror-he-ar.html = IMAGE
-
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Needs V8 change.
@@ -2751,8 +2748,7 @@ BUGWK58587 : media/video-controls-rendering.html = IMAGE
 
 // Take new baselines from the bots when 68035 lands.
 BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
-BUGWK70046 LEOPARD : platform/chromium/compositing/zoom-animator-scale-test2.html = MISSING TIMEOUT
-BUGWK70046 SNOWLEOPARD : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS TIMEOUT
+BUGWK70046 SLOW MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3793,7 +3789,7 @@ BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
 
 // Flaky tests from ~r97647
 BUGWK70298 WIN LINUX : fast/forms/input-number-events.html = TEXT PASS
-BUGWK70298 WIN LINUX : fast/forms/input-number-large-padding.html = TEXT PASS
+BUGWK70298 : fast/forms/input-number-large-padding.html = TEXT PASS
 BUGWK70298 WIN LINUX : fast/forms/input-spinbutton-capturing.html = TEXT PASS
 BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
 BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
@@ -3889,4 +3885,5 @@ BUGTONY LEOPARD : printing/setPrinting.html = FAIL PASS
 BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
-
+BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
+ 
