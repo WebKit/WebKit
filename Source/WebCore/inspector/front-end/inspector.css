@@ -58,8 +58,8 @@ body.inactive #toolbar {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
 }
 
-body.detached.platform-mac-leopard:not(.remote) #toolbar,
-body.detached.platform-mac-snowleopard:not(.remote) #toolbar {
+body.detached.platform-mac-leopard #toolbar,
+body.detached.platform-mac-snowleopard #toolbar {
     background: transparent;
 }
 

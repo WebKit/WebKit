@@ -1,3 +1,13 @@
+2011-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Allow the toolbar background to be transparent on mac platforms when remote
+        https://bugs.webkit.org/show_bug.cgi?id=71437
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.css:
+        (body.detached.platform-mac-snowleopard #toolbar):
+
 2011-11-02  Adam Barth  <abarth@webkit.org>
 
         CSP should handle empty URLs as agreed at TPAC
