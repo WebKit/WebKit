@@ -213,12 +213,12 @@ void NetscapePlugin::platformGeometryDidChange()
     if (m_drawable)
         XFreePixmap(display, m_drawable);
 
-    if (m_frameRectInWindowCoordinates.isEmpty()) {
+    if (m_pluginSize.isEmpty()) {
         m_drawable = 0;
         return;
     }
 
-    m_drawable = XCreatePixmap(display, rootWindowID(), m_frameRectInWindowCoordinates.width(), m_frameRectInWindowCoordinates.height(), displayDepth());
+    m_drawable = XCreatePixmap(display, rootWindowID(), m_pluginSize.width(), m_pluginSize.height(), displayDepth());
 
     XSync(display, false); // Make sure that the server knows about the Drawable.
 }
@@ -244,8 +244,6 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
         return;
 
 #if PLATFORM(QT)
-    QPainter* painter = context->platformContext();
-    painter->translate(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 #elif !PLATFORM(GTK)
     notImplemented();
     return;
@@ -259,8 +257,6 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     exposeEvent.drawable = m_drawable;
 
     IntRect exposedRect(dirtyRect);
-    exposedRect.intersect(m_frameRectInWindowCoordinates);
-    exposedRect.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     exposeEvent.x = exposedRect.x();
     exposeEvent.y = exposedRect.y();
 
@@ -277,9 +273,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 #if PLATFORM(QT)
     QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
     ASSERT(qtDrawable.depth() == static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->depth);
+    QPainter* painter = context->platformContext();
     painter->drawPixmap(QPoint(exposedRect.x(), exposedRect.y()), qtDrawable, exposedRect);
-
-    painter->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
 #elif PLATFORM(GTK)
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay,
                                                                                  m_drawable,
@@ -289,9 +284,9 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
 
-    cairo_set_source_surface(cr, drawableSurface.get(), m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
+    cairo_set_source_surface(cr, drawableSurface.get(), 0, 0);
 
-    cairo_rectangle(cr, m_frameRectInWindowCoordinates.x() + exposedRect.x(), m_frameRectInWindowCoordinates.y() + exposedRect.y(), exposedRect.width(), exposedRect.height());
+    cairo_rectangle(cr, exposedRect.x(), exposedRect.y(), exposedRect.width(), exposedRect.height());
     cairo_clip(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);

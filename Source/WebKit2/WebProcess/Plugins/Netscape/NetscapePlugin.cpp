@@ -935,11 +935,7 @@ bool NetscapePlugin::handleScroll(ScrollDirection, ScrollGranularity)
 
 bool NetscapePlugin::wantsWindowRelativeCoordinates()
 {
-#if PLUGIN_ARCHITECTURE(MAC)
     return false;
-#else
-    return true;
-#endif
 }
 
 Scrollbar* NetscapePlugin::horizontalScrollbar()
