@@ -72,7 +72,6 @@ static NSSet *allowedFontFamilySet()
         @"Chalkduster",
         @"Charcoal CY",
         @"Cochin",
-        @"ColorBits",
         @"Comic Sans MS",
         @"Copperplate",
         @"Corsiva Hebrew",
@@ -225,7 +224,6 @@ void activateFonts()
 
     static const char* fontFileNames[] = {
         "AHEM____.TTF",
-        "ColorBits.ttf",
         "WebKitWeightWatcher100.ttf",
         "WebKitWeightWatcher200.ttf",
         "WebKitWeightWatcher300.ttf",

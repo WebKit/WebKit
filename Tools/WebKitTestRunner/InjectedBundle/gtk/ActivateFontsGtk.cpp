@@ -140,7 +140,6 @@ void inititializeFontConfigSetting()
         g_error("Could not load font at %s!", ahemFontFilename.get()); 
 
     static const char* fontFilenames[] = {
-        "ColorBits.ttf",
         "WebKitWeightWatcher100.ttf",
         "WebKitWeightWatcher200.ttf",
         "WebKitWeightWatcher300.ttf",
