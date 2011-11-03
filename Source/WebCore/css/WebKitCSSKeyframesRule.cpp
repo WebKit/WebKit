@@ -104,6 +104,7 @@ void WebKitCSSKeyframesRule::deleteRule(const String& s)
     if (CSSMutableStyleDeclaration* style = rule->style())
         style->setParentRule(0);
 
+    rule->setParentRule(0);
     m_lstCSSRules->deleteRule(i);
 }
 

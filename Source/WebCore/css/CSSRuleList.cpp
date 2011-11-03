@@ -71,8 +71,6 @@ void CSSRuleList::deleteRule(unsigned index)
     if (index >= m_lstCSSRules.size())
         return;
 
-    // FIXME: Orphaning should be the caller's responsibility.
-    m_lstCSSRules[index]->setParentRule(0);
     m_lstCSSRules.remove(index);
 }
 

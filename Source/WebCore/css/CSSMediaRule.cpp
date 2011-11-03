@@ -104,6 +104,7 @@ void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
         return;
     }
 
+    m_lstCSSRules->item(index)->setParentRule(0);
     m_lstCSSRules->deleteRule(index);
 
     if (CSSStyleSheet* styleSheet = parentStyleSheet())

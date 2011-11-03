@@ -1,3 +1,21 @@
+2011-11-03  Andreas Kling  <kling@webkit.org>
+
+        CSSRuleList: Move rule orphaning from deleteRule() out to callers.
+        https://bugs.webkit.org/show_bug.cgi?id=71470
+
+        Reviewed by Antti Koivisto.
+
+        Rule parenting is the responsibility of the owner rule (the rule containing
+        the rule list), so move parent clearing out of CSSRuleList::deleteRule() and
+        into the (two) call sites.
+
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::deleteRule):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::deleteRule):
+
 2011-11-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not map scripts generated with document.write to the document resources.
