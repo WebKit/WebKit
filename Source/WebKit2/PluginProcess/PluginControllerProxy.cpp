@@ -169,15 +169,15 @@ void PluginControllerProxy::paint()
     graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
 #endif
 
-    graphicsContext->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
-
     if (m_plugin->isTransparent())
         graphicsContext->clearRect(dirtyRect);
 
+    IntRect dirtyRectInWindowCoordinates = dirtyRect;
+    dirtyRectInWindowCoordinates.move(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
+    graphicsContext->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
+
     m_plugin->paint(graphicsContext.get(), dirtyRect);
 
-    // Convert the dirty rect back to plug-in coordinates.
-    dirtyRect.move(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }
 
@@ -211,13 +211,10 @@ bool PluginControllerProxy::isPluginVisible()
 
 void PluginControllerProxy::invalidate(const IntRect& rect)
 {
-    // Convert the dirty rect to window coordinates.
     IntRect dirtyRect = rect;
-    dirtyRect.move(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 
     // Make sure that the dirty rect is not greater than the plug-in itself.
-    dirtyRect.intersect(m_frameRectInWindowCoordinates);
-
+    dirtyRect.intersect(IntRect(IntPoint(), m_pluginSize));
     m_dirtyRect.unite(dirtyRect);
 
     startPaintTimer();
@@ -550,10 +547,10 @@ void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboard
 
 void PluginControllerProxy::paintEntirePlugin()
 {
-    if (m_frameRectInWindowCoordinates.isEmpty())
+    if (m_pluginSize.isEmpty())
         return;
 
-    m_dirtyRect = m_frameRectInWindowCoordinates;
+    m_dirtyRect = IntRect(IntPoint(), m_pluginSize);
     paint();
 }
 

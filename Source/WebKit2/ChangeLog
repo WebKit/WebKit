@@ -1,5 +1,22 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        PluginControllerProxy's dirty rect should be in plug-in coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71481
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        Convert the dirty rect to window coordinates before passing it to the plug-in.
+
+        (WebKit::PluginControllerProxy::invalidate):
+        No need to convert the dirty rect to window coordinates.
+
+        (WebKit::PluginControllerProxy::paintEntirePlugin):
+        Use m_pluginSize instead of m_frameRectInWindowCoordinates.isEmpty.
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         Use the right function to determine whether NPWindow coordinates should be window relative
         https://bugs.webkit.org/show_bug.cgi?id=71480
 
