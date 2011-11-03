@@ -1,9 +1,10 @@
-bin_PROGRAMS += \
+noinst_PROGRAMS += \
 	Programs/MiniBrowser
 
 Programs_MiniBrowser_CPPFLAGS = \
 	-I$(srcdir)/Source \
-	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \
 	$(GLIB_CFLAGS) \
@@ -13,15 +14,6 @@ Programs_MiniBrowser_SOURCES = \
 	Tools/MiniBrowser/gtk/BrowserWindow.h \
 	Tools/MiniBrowser/gtk/BrowserWindow.c \
 	Tools/MiniBrowser/gtk/main.c
-
-BUILT_SOURCES += \
-	generate-minibrowser-forward-headers
-
-MiniBrowser := $(srcdir)/Tools/MiniBrowser/gtk
-MiniBrowserFwdHeaders := $(GENSOURCES_WEBKIT2)/include
-generate-minibrowser-forward-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_MiniBrowser_SOURCES)
-	$(AM_V_GEN)$(PERL) $< $(MiniBrowser) $(MiniBrowserFwdHeaders) gtk
-	$(AM_V_GEN)$(PERL) $< $(MiniBrowser) $(MiniBrowserFwdHeaders) soup
 
 Programs_MiniBrowser_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
@@ -35,20 +27,3 @@ Programs_MiniBrowser_LDFLAGS = \
 CLEANFILES += \
 	$(top_builddir)/Programs/MiniBrowser
 
-# Injected bundle
-noinst_LTLIBRARIES += Libraries/libMiniBrowserWebBundle.la
-Libraries_libMiniBrowserWebBundle_la_SOURCES = \
-	Tools/MiniBrowser/gtk/WebBundle/WebBundleMain.c
-
-Libraries_libMiniBrowserWebBundle_la_LDFLAGS = \
-	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
-	$(no_undefined) \
-	-avoid-version \
-	-module
-
-Libraries_libMiniBrowserWebBundle_la_CPPFLAGS = \
-	-I$(top_builddir)/DerivedSources/InjectedBundle \
-	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	$(global_cppflags) \
-	$(javascriptcore_cppflags) \
-	$(GLIB_CFLAGS)

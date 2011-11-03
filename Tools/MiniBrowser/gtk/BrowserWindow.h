@@ -26,7 +26,7 @@
 #ifndef BrowserWindow_h
 #define BrowserWindow_h
 
-#include <WebKit2/WebKit2.h>
+#include <webkit2/webkit2.h>
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -43,8 +43,8 @@ typedef struct _BrowserWindowClass   BrowserWindowClass;
 
 GType browser_window_get_type(void);
 
-GtkWidget* browser_window_new(WKViewRef);
-WKViewRef browser_window_get_view(BrowserWindow*);
+GtkWidget* browser_window_new(WebKitWebView*);
+WebKitWebView* browser_window_get_view(BrowserWindow*);
 
 G_END_DECLS
 

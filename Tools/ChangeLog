@@ -1,3 +1,35 @@
+2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove WebKit2 C API from MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=71459
+
+        Reviewed by Martin Robinson.
+
+        Use the GTK+ API instead to add minimum functionality. The other
+        features will be ported to GTK+ API in following patches.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (activateUriEntryCallback): Use webkit_web_view_load_uri().
+        (goBackCallback): Use webkit_web_view_go_back().
+        (goForwardCallback): Use webkit_web_view_go_forward().
+        (webViewURIChanged): Update location entry with current uri using
+        webkit_web_view_get_uri().
+        (browserWindowFinalize):
+        (browserWindowGetProperty):
+        (browserWindowSetProperty):
+        (browser_window_init):
+        (browserWindowConstructed): Connect to notify::uri signal of
+        WebView to be notified when the URI changes.
+        (browser_window_class_init):
+        (browser_window_new): Use WebKitWebView.
+        (browser_window_get_view): Use WebKitWebView
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * MiniBrowser/gtk/WebBundle/WebBundleMain.c: Removed.
+        * MiniBrowser/gtk/main.c:
+        (loadURI): Use webkit_web_view_new().
+        (main):
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unable to start MiniBrowser after run-webkit-tests

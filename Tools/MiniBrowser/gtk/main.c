@@ -26,26 +26,10 @@
  */
 
 #include "BrowserWindow.h"
-#include <WebKit2/WebKit2.h>
+#include <webkit2/webkit2.h>
 #include <gtk/gtk.h>
 
 static const gchar **uriArguments = NULL;
-
-static WKContextRef createWKContextWithInjectedBundle()
-{
-    WKStringRef bundlePath = WKStringCreateWithUTF8CString("Libraries/.libs/libMiniBrowserWebBundle.so");
-    WKContextRef processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
-    WKContextInjectedBundleClient bundleClient = {
-        kWKContextInjectedBundleClientCurrentVersion,
-        0, /* clientInfo */
-        0, /* didRecieveMessageFromInjectedBundle,*/
-        0
-    };
-    WKContextSetInjectedBundleClient(processContext, &bundleClient);
-    WKRelease(bundlePath);
-
-    return processContext;
-}
 
 static gchar *argumentToURL(const char *filename)
 {
@@ -56,17 +40,15 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-static void loadURI(const gchar *uri, WKContextRef processContext)
+static void loadURI(const gchar *uri)
 {
-    WKViewRef webView = WKViewCreate(processContext, 0);
-    GtkWidget *mainWindow = browser_window_new(webView);
+    GtkWidget *webView = webkit_web_view_new();
+    GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView));
     gchar *url = argumentToURL(uri);
-    WKURLRef wkURL = WKURLCreateWithUTF8CString(url);
+    webkit_web_view_load_uri(WEBKIT_WEB_VIEW(webView), url);
     g_free(url);
-    WKPageLoadURL(WKViewGetPage(webView), wkURL);
-    WKRelease(wkURL);
 
-    gtk_widget_grab_focus(GTK_WIDGET(webView));
+    gtk_widget_grab_focus(webView);
     gtk_widget_show(mainWindow);
 }
 
@@ -97,15 +79,13 @@ int main(int argc, char *argv[])
     // Prefer the not installed web and plugin processes.
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
 
-    WKContextRef processContext = createWKContextWithInjectedBundle();
-
     if (uriArguments) {
         int i;
 
         for (i = 0; uriArguments[i]; i++)
-            loadURI(uriArguments[i], processContext);
+            loadURI(uriArguments[i]);
     } else
-        loadURI("http://www.webkitgtk.org/", processContext);
+        loadURI("http://www.webkitgtk.org/");
 
     gtk_main();
 
