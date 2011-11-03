@@ -710,7 +710,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
-                inObject->getOwnPropertyNames(m_exec, propertyStack.last());
+                inObject->methodTable()->getOwnPropertyNames(inObject, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
                 // fallthrough
             }
             objectStartVisitMember:

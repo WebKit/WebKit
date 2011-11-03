@@ -83,14 +83,15 @@ bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifie
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-void StringObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    int size = internalValue()->length();
+    StringObject* thisObject = static_cast<StringObject*>(object);
+    int size = thisObject->internalValue()->length();
     for (int i = 0; i < size; ++i)
         propertyNames.add(Identifier(exec, UString::number(i)));
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
-    return JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 } // namespace JSC

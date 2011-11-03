@@ -1,3 +1,18 @@
+2011-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getOwnPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=71307
+
+        Reviewed by Darin Adler.
+
+        Added getOwnPropertyNames to the MethodTable, changed all the virtual 
+        implementations of getOwnPropertyNames to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-11-02  Anders Carlsson  <andersca@apple.com>
 
         Don't call NPP_SetWindow if the plug-in size or clip rect hasn't changed if the plug-in isn't using window relative coordinates

@@ -51,7 +51,7 @@ public:
 
     static CallType getCallData(JSCell*, CallData&);
 
-    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
     virtual JSValue callAsFunction(ExecState *exec);
     static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);

@@ -497,7 +497,7 @@ bool JSObject::getPropertySpecificValue(ExecState* exec, const Identifier& prope
 
 void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    getOwnPropertyNames(exec, propertyNames, mode);
+    methodTable()->getOwnPropertyNames(this, exec, propertyNames, mode);
 
     if (prototype().isNull())
         return;
@@ -508,7 +508,7 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
             prototype->getPropertyNames(exec, propertyNames, mode);
             break;
         }
-        prototype->getOwnPropertyNames(exec, propertyNames, mode);
+        prototype->methodTable()->getOwnPropertyNames(prototype, exec, propertyNames, mode);
         JSValue nextProto = prototype->prototype();
         if (nextProto.isNull())
             break;
@@ -516,11 +516,11 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     }
 }
 
-void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    structure()->getPropertyNames(exec->globalData(), propertyNames, mode);
-    if (!staticFunctionsReified())
-        getClassPropertyNames(exec, classInfo(), propertyNames, mode);
+    object->structure()->getPropertyNames(exec->globalData(), propertyNames, mode);
+    if (!object->staticFunctionsReified())
+        getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
 }
 
 bool JSObject::toBoolean(ExecState*) const

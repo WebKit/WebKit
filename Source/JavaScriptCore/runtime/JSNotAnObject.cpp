@@ -86,7 +86,7 @@ bool JSNotAnObject::deletePropertyByIndex(JSCell*, ExecState* exec, unsigned)
     return false;
 }
 
-void JSNotAnObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray&, EnumerationMode)
+void JSNotAnObject::getOwnPropertyNames(JSObject*, ExecState* exec, PropertyNameArray&, EnumerationMode)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }

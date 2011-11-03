@@ -304,14 +304,15 @@ ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& const
     return ConstructTypeHost;
 }
 
-void RuntimeObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode)
+void RuntimeObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode)
 {
-    if (!m_instance) {
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(object);
+    if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return;
     }
 
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
     
     instance->begin();
     instance->getPropertyNames(exec, propertyNames);

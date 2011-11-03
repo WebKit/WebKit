@@ -178,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, "Requested property names of a value that is not an object."));
     PropertyNameArray properties(exec);
-    asObject(exec->argument(0))->getOwnPropertyNames(exec, properties, IncludeDontEnumProperties);
+    asObject(exec->argument(0))->methodTable()->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, IncludeDontEnumProperties);
     JSArray* names = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -192,7 +192,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, "Requested keys of a value that is not an object."));
     PropertyNameArray properties(exec);
-    asObject(exec->argument(0))->getOwnPropertyNames(exec, properties);
+    asObject(exec->argument(0))->methodTable()->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, ExcludeDontEnumProperties);
     JSArray* keys = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
@@ -306,7 +306,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
 static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
 {
     PropertyNameArray propertyNames(exec);
-    asObject(properties)->getOwnPropertyNames(exec, propertyNames);
+    asObject(properties)->methodTable()->getOwnPropertyNames(asObject(properties), exec, propertyNames, ExcludeDontEnumProperties);
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;

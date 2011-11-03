@@ -174,4 +174,9 @@ JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType
     return jsUndefined();
 }
 
+void JSCell::getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

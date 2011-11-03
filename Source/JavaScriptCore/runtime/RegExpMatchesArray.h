@@ -105,11 +105,12 @@ namespace JSC {
             return JSArray::deletePropertyByIndex(thisObject, exec, propertyName);
         }
 
-        virtual void getOwnPropertyNames(ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)
+        static void getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)
         {
-            if (subclassData())
-                fillArrayInstance(exec);
-            JSArray::getOwnPropertyNames(exec, arr, mode);
+            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(object);
+            if (thisObject->subclassData())
+                thisObject->fillArrayInstance(exec);
+            JSArray::getOwnPropertyNames(thisObject, exec, arr, mode);
         }
 
         void fillArrayInstance(ExecState*);

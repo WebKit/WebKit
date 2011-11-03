@@ -127,9 +127,10 @@ void JSDOMWindowShell::getPropertyNames(ExecState* exec, PropertyNameArray& prop
     window()->getPropertyNames(exec, propertyNames, mode);
 }
 
-void JSDOMWindowShell::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMWindowShell::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    window()->getOwnPropertyNames(exec, propertyNames, mode);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    thisObject->window()->methodTable()->getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 void JSDOMWindowShell::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)

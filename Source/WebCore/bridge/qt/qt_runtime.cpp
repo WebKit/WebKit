@@ -1537,7 +1537,7 @@ bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(ExecState* exec, const Identi
     return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void QtRuntimeMetaMethod::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (mode == IncludeDontEnumProperties) {
         propertyNames.add(Identifier(exec, "connect"));
@@ -1545,7 +1545,7 @@ void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray
         propertyNames.add(exec->propertyNames().length);
     }
 
-    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
+    QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
 JSValue QtRuntimeMetaMethod::lengthGetter(ExecState*, JSValue, const Identifier&)
@@ -1759,12 +1759,12 @@ bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(ExecState* exec, const 
     return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void QtRuntimeConnectionMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void QtRuntimeConnectionMethod::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
+    QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
 JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, const Identifier&)

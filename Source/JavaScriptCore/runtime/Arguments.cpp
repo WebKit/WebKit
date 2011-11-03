@@ -246,17 +246,18 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    for (unsigned i = 0; i < d->numArguments; ++i) {
-        if (!d->deletedArguments || !d->deletedArguments[i])
+    Arguments* thisObject = static_cast<Arguments*>(object);
+    for (unsigned i = 0; i < thisObject->d->numArguments; ++i) {
+        if (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])
             propertyNames.add(Identifier(exec, UString::number(i)));
     }
     if (mode == IncludeDontEnumProperties) {
         propertyNames.add(exec->propertyNames().callee);
         propertyNames.add(exec->propertyNames().length);
     }
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)

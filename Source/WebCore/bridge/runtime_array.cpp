@@ -66,16 +66,17 @@ JSValue RuntimeArray::indexGetter(ExecState* exec, JSValue slotBase, unsigned in
     return thisObj->getConcreteArray()->valueAt(exec, index);
 }
 
-void RuntimeArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    unsigned length = getLength();
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(object);
+    unsigned length = thisObject->getLength();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));
 
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

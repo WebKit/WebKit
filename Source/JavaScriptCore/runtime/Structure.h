@@ -50,11 +50,6 @@ namespace JSC {
     class StructureChain;
     class SlotVisitor;
 
-    enum EnumerationMode {
-        ExcludeDontEnumProperties,
-        IncludeDontEnumProperties
-    };
-
     class Structure : public JSCell {
     public:
         friend class StructureTransitionTable;

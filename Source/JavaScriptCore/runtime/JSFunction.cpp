@@ -298,18 +298,19 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
-void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    if (!isHostFunction() && (mode == IncludeDontEnumProperties)) {
+    JSFunction* thisObject = static_cast<JSFunction*>(object);
+    if (!thisObject->isHostFunction() && (mode == IncludeDontEnumProperties)) {
         // Make sure prototype has been reified.
         PropertySlot slot;
-        methodTable()->getOwnPropertySlot(this, exec, exec->propertyNames().prototype, slot);
+        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
         propertyNames.add(exec->propertyNames().caller);
         propertyNames.add(exec->propertyNames().length);
     }
-    Base::getOwnPropertyNames(exec, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

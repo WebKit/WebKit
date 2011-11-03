@@ -110,18 +110,19 @@ inline bool JSActivation::symbolTablePut(JSGlobalData& globalData, const Identif
     return true;
 }
 
-void JSActivation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    SymbolTable::const_iterator end = symbolTable().end();
-    for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
+    JSActivation* thisObject = static_cast<JSActivation*>(object);
+    SymbolTable::const_iterator end = thisObject->symbolTable().end();
+    for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
         if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
             continue;
-        if (it->second.getIndex() >= m_numCapturedVars)
+        if (it->second.getIndex() >= thisObject->m_numCapturedVars)
             continue;
         propertyNames.add(Identifier(exec, it->first.get()));
     }
     // Skip the JSVariableObject implementation of getOwnPropertyNames
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)

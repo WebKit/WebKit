@@ -104,12 +104,13 @@ void JSByteArray::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNam
     static_cast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
 }
 
-void JSByteArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSByteArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    unsigned length = m_storage->length();
+    JSByteArray* thisObject = static_cast<JSByteArray*>(object);
+    unsigned length = thisObject->m_storage->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 }

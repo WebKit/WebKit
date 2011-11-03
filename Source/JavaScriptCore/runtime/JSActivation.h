@@ -60,7 +60,7 @@ namespace JSC {
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
+        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 

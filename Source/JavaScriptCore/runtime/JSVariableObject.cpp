@@ -34,6 +34,10 @@
 
 namespace JSC {
 
+JSVariableObject::~JSVariableObject()
+{
+}
+
 bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     JSVariableObject* thisObject = static_cast<JSVariableObject*>(cell);
@@ -43,15 +47,16 @@ bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Ident
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-void JSVariableObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSVariableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    SymbolTable::const_iterator end = symbolTable().end();
-    for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
+    JSVariableObject* thisObject = static_cast<JSVariableObject*>(object);
+    SymbolTable::const_iterator end = thisObject->symbolTable().end();
+    for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
         if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
             propertyNames.add(Identifier(exec, it->first.get()));
     }
     
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDescriptor& descriptor)

@@ -1,3 +1,18 @@
+2011-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getOwnPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=71307
+
+        Reviewed by Darin Adler.
+
+        Added getOwnPropertyNames to the MethodTable, changed all the virtual 
+        implementations of getOwnPropertyNames to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::getOwnPropertyNames):
+        * UserObjectImp.h:
+
 2011-10-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getOwnPropertySlotVirtual

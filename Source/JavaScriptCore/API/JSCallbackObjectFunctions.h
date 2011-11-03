@@ -419,12 +419,13 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
+    JSObjectRef thisRef = toRef(thisObject);
     
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectGetPropertyNamesCallback getPropertyNames = jsClass->getPropertyNames) {
             APICallbackShim callbackShim(exec);
             getPropertyNames(execRef, thisRef, toRef(&propertyNames));
@@ -453,7 +454,7 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(ExecState* exec, PropertyName
         }
     }
     
-    Parent::getOwnPropertyNames(exec, propertyNames, mode);
+    Parent::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 template <class Parent>

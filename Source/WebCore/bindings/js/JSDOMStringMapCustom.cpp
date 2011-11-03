@@ -46,15 +46,16 @@ JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, const Iden
     return jsString(exec, thisObj->impl()->item(identifierToAtomicString(propertyName)));
 }
 
-void JSDOMStringMap::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    JSDOMStringMap* thisObject = static_cast<JSDOMStringMap*>(object);
     Vector<String> names;
-    m_impl->getNames(names);
+    thisObject->m_impl->getNames(names);
     size_t length = names.size();
     for (size_t i = 0; i < length; ++i)
         propertyNames.add(Identifier(exec, stringToUString(names[i])));
 
-    Base::getOwnPropertyNames(exec, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

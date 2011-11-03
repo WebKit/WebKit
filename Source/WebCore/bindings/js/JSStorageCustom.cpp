@@ -63,13 +63,14 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
     return true;
 }
 
-void JSStorage::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    unsigned length = m_impl->length();
+    JSStorage* thisObject = static_cast<JSStorage*>(object);
+    unsigned length = thisObject->m_impl->length();
     for (unsigned i = 0; i < length; ++i)
-        propertyNames.add(Identifier(exec, stringToUString(m_impl->key(i))));
+        propertyNames.add(Identifier(exec, stringToUString(thisObject->m_impl->key(i))));
         
-    Base::getOwnPropertyNames(exec, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool JSStorage::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)

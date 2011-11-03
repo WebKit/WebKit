@@ -149,7 +149,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         RefPtr<InspectorObject> inspectorObject = InspectorObject::create();
         JSObject* object = value.getObject();
         PropertyNameArray propertyNames(scriptState);
-        object->getOwnPropertyNames(scriptState, propertyNames);
+        object->methodTable()->getOwnPropertyNames(object, scriptState, propertyNames, ExcludeDontEnumProperties);
         for (size_t i = 0; i < propertyNames.size(); i++) {
             const Identifier& name =  propertyNames[i];
             JSValue propertyValue = object->get(scriptState, name);

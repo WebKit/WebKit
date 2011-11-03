@@ -539,15 +539,16 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     return false;
 }
 
-void JSArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    JSArray* thisObject = static_cast<JSArray*>(object);
     // FIXME: Filling PropertyNameArray with an identifier for every integer
     // is incredibly inefficient for large arrays. We need a different approach,
     // which almost certainly means a different structure for PropertyNameArray.
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
     
-    unsigned usedVectorLength = min(storage->m_length, m_vectorLength);
+    unsigned usedVectorLength = min(storage->m_length, thisObject->m_vectorLength);
     for (unsigned i = 0; i < usedVectorLength; ++i) {
         if (storage->m_vector[i])
             propertyNames.add(Identifier::from(exec, i));
@@ -562,7 +563,7 @@ void JSArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNa
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 ALWAYS_INLINE unsigned JSArray::getNewVectorLength(unsigned desiredLength)

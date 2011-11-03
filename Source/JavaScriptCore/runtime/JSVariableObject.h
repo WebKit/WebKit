@@ -48,10 +48,12 @@ namespace JSC {
 
         SymbolTable& symbolTable() const { return *m_symbolTable; }
 
+        virtual ~JSVariableObject();
+
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes) = 0;
 
         static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
-        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
 
