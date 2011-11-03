@@ -1,5 +1,14 @@
 2011-11-03  Andreas Kling  <kling@webkit.org>
 
+        Unreviewed build fix, out-of-line StyleSheet::parentStyleSheet()
+        again since there's a cycle in the includes between CSSRule/StyleSheet.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::parentStyleSheet):
+        * css/StyleSheet.h:
+
+2011-11-03  Andreas Kling  <kling@webkit.org>
+
         Unreviewed build fix after r99185, removing forward-declaration
         of CSSRule since CSSRule.h is already included.
 

@@ -52,6 +52,12 @@ StyleSheet::~StyleSheet()
         m_media->setParentStyleSheet(0);
 }
 
+StyleSheet* StyleSheet::parentStyleSheet() const
+{
+    ASSERT(isCSSStyleSheet());
+    return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
+}
+
 void StyleSheet::setMedia(PassRefPtr<MediaList> media)
 {
     ASSERT(isCSSStyleSheet());

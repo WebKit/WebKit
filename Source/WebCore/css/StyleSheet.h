@@ -21,7 +21,6 @@
 #ifndef StyleSheet_h
 #define StyleSheet_h
 
-#include "CSSRule.h"
 #include "KURLHash.h"
 #include "PlatformString.h"
 #include <wtf/ListHashSet.h>
@@ -30,6 +29,7 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class CSSRule;
 class MediaList;
 class Node;
 
@@ -43,11 +43,7 @@ public:
     Node* ownerNode() const { return m_parentNode; }
     void clearOwnerNode() { m_parentNode = 0; }
 
-    StyleSheet* parentStyleSheet() const
-    {
-        ASSERT(isCSSStyleSheet());
-        return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
-    }
+    StyleSheet* parentStyleSheet() const;
 
     CSSRule* parentRule() const { return m_parentRule; }
     void setParentRule(CSSRule* rule) { m_parentRule = rule; }
