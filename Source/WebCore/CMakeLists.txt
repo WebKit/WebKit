@@ -297,26 +297,9 @@ SET(WebCore_IDL_FILES
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl
     html/canvas/Int8Array.idl
-    html/canvas/OESStandardDerivatives.idl
-    html/canvas/OESTextureFloat.idl
-    html/canvas/OESVertexArrayObject.idl
     html/canvas/Uint16Array.idl
     html/canvas/Uint32Array.idl
     html/canvas/Uint8Array.idl
-    html/canvas/WebGLActiveInfo.idl
-    html/canvas/WebGLBuffer.idl
-    html/canvas/WebGLContextAttributes.idl
-    html/canvas/WebGLDebugRendererInfo.idl
-    html/canvas/WebGLDebugShaders.idl
-    html/canvas/WebGLFramebuffer.idl
-    html/canvas/WebGLProgram.idl
-    html/canvas/WebGLRenderbuffer.idl
-    html/canvas/WebGLRenderingContext.idl
-    html/canvas/WebGLShader.idl
-    html/canvas/WebGLTexture.idl
-    html/canvas/WebGLUniformLocation.idl
-    html/canvas/WebGLVertexArrayObjectOES.idl
-    html/canvas/WebKitLoseContext.idl
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
@@ -2161,6 +2144,25 @@ IF (ENABLE_WEBGL)
         platform/graphics/GraphicsContext3D.cpp
         
         platform/graphics/gpu/DrawingBuffer.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        html/canvas/OESStandardDerivatives.idl
+        html/canvas/OESTextureFloat.idl
+        html/canvas/OESVertexArrayObject.idl
+        html/canvas/WebGLActiveInfo.idl
+        html/canvas/WebGLBuffer.idl
+        html/canvas/WebGLContextAttributes.idl
+        html/canvas/WebGLDebugRendererInfo.idl
+        html/canvas/WebGLDebugShaders.idl
+        html/canvas/WebGLFramebuffer.idl
+        html/canvas/WebGLProgram.idl
+        html/canvas/WebGLRenderbuffer.idl
+        html/canvas/WebGLRenderingContext.idl
+        html/canvas/WebGLShader.idl
+        html/canvas/WebGLTexture.idl
+        html/canvas/WebGLUniformLocation.idl
+        html/canvas/WebGLVertexArrayObjectOES.idl
+        html/canvas/WebKitLoseContext.idl
     )
 ENDIF ()
 
