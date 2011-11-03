@@ -1,3 +1,10 @@
+2011-11-03  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: win build fix. Assign autoDPI at all cases (breakage introduced in r99173).
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+
 2011-11-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Differentiate implicit viewport from that of the meta tag

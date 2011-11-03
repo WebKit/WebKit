@@ -50,7 +50,7 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
 
     ASSERT(availableWidth > 0 && availableHeight > 0);
 
-    float autoDPI;
+    float autoDPI = deviceDPI;
 
     switch (args.type) {
     case ViewportArguments::Implicit:
