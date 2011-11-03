@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class CSSRule;
 class CachedCSSStyleSheet;
 class MediaList;
 class Node;
