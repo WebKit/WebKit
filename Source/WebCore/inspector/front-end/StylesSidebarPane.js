@@ -1942,7 +1942,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             event.stopPropagation();
+            return;
         }
+
+        if (!isEditingName)
+            this._applyFreeFlowStyleTextEdit(false);
     },
 
     _applyFreeFlowStyleTextEdit: function(now)
@@ -2235,13 +2239,13 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
 
         var reverse = event.keyIdentifier === "Up";
         if (this.autoCompleteElement)
-            this.complete(false, reverse); // Accept the current suggestion, if any.
+            this.complete(false, true, reverse); // Accept the current suggestion, if any.
         else {
             // Select the word suffix to affect it when computing the subsequent suggestion.
             this._selectCurrentWordSuffix();
         }
 
-        this.complete(false, reverse); // Actually increment/decrement the suggestion.
+        this.complete(false, true, reverse); // Actually increment/decrement the suggestion.
         return true;
     },
 
@@ -2328,24 +2332,14 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         selection.addRange(wordSuffixRange);
     },
 
-    _buildPropertyCompletions: function(wordRange, bestMatchOnly, completionsReadyCallback)
+    _buildPropertyCompletions: function(wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
-        if (!prefix && bestMatchOnly)
+        if (!prefix && !force)
             return;
 
-        var results;
-        if (bestMatchOnly) {
-            results = [];
-            var firstMatch = this._cssCompletions.firstStartsWith(prefix);
-            if (firstMatch)
-                results.push(firstMatch);
-            return completionsReadyCallback(results);
-        }
-
-        results = this._cssCompletions.startsWith(prefix);
-        if (results)
-            completionsReadyCallback(results);
+        var results = this._cssCompletions.startsWith(prefix);
+        completionsReadyCallback(results);
     }
 }
 

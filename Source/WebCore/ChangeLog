@@ -1,3 +1,122 @@
+2011-11-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Introduce SuggestBox for TextPrompt
+        https://bugs.webkit.org/show_bug.cgi?id=71288
+
+        Reviewed by Pavel Feldman.
+
+        Drive-by fix for a regression where clicking in the Database query view did not focus the prompt.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertyNames):
+        (WebInspector.ConsoleView.prototype._completions):
+        (WebInspector.ConsoleView.prototype._reportCompletions):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView):
+        (WebInspector.DatabaseQueryView.prototype.afterShow):
+        (WebInspector.DatabaseQueryView.prototype.completions):
+        (WebInspector.DatabaseQueryView.prototype._selectStart.moveBackIfOutside):
+        (WebInspector.DatabaseQueryView.prototype._selectStart):
+        (WebInspector.DatabaseQueryView.prototype._appendViewQueryResult):
+        (WebInspector.DatabaseQueryView.prototype._appendErrorQueryResult):
+        (WebInspector.DatabaseQueryView.prototype._appendQueryResult):
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        (WebInspector.TextPrompt.prototype.setSuggestForceable):
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.prototype._removeFromElement):
+        (WebInspector.TextPrompt.prototype.defaultKeyHandler):
+        (WebInspector.TextPrompt.prototype.onKeyDown):
+        (WebInspector.TextPrompt.prototype.acceptAutoComplete):
+        (WebInspector.TextPrompt.prototype.autoCompleteSoon):
+        (WebInspector.TextPrompt.prototype.complete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype.applySuggestion):
+        (WebInspector.TextPrompt.prototype.acceptSuggestion):
+        (WebInspector.TextPrompt.prototype.isSuggestBoxVisible):
+        (WebInspector.TextPrompt.prototype.moveCaretToEndOfPrompt):
+        (WebInspector.TextPrompt.prototype.tabKeyPressed):
+        (WebInspector.TextPrompt.prototype.enterKeyPressed):
+        (WebInspector.TextPrompt.prototype.upKeyPressed):
+        (WebInspector.TextPrompt.prototype.downKeyPressed):
+        (WebInspector.TextPrompt.SuggestBoxConfig):
+        (WebInspector.TextPromptWithHistory):
+        (WebInspector.TextPromptWithHistory.prototype.pushHistoryItem):
+        (WebInspector.TextPromptWithHistory.prototype.defaultKeyHandler):
+        (WebInspector.TextPrompt.SuggestBox):
+        (WebInspector.TextPrompt.SuggestBox.prototype.get visible):
+        (WebInspector.TextPrompt.SuggestBox.prototype.get hasSelection):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onscrollresize):
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateBoxPosition):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onboxmousedown):
+        (WebInspector.TextPrompt.SuggestBox.prototype.hide):
+        (WebInspector.TextPrompt.SuggestBox.prototype.removeFromElement):
+        (WebInspector.TextPrompt.SuggestBox.prototype._applySuggestion):
+        (WebInspector.TextPrompt.SuggestBox.prototype.acceptSuggestion):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onNextItem):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onPreviousItem):
+        (WebInspector.TextPrompt.SuggestBox.prototype.updateSuggestionsSoon):
+        (WebInspector.TextPrompt.SuggestBox.prototype.updateSuggestions):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onItemMouseDown):
+        (WebInspector.TextPrompt.SuggestBox.prototype._createItemElement):
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateItems):
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateSelection):
+        (WebInspector.TextPrompt.SuggestBox.prototype._completionsReady):
+        (WebInspector.TextPrompt.SuggestBox.prototype.upKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.downKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.enterKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.tabKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.spaceKeyPressed):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.search-view .search-panel):
+        (#search-results-pane-file-based .search-match .search-match-content):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar, .custom-popup-vertical-scroll ::-webkit-scrollbar):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-corner, .custom-popup-vertical-scroll ::-webkit-scrollbar-corner):
+        (.custom-popup-horizontal-scroll ::-webkit-resizer, .custom-popup-vertical-scroll ::-webkit-resizer):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-button, .custom-popup-vertical-scroll ::-webkit-scrollbar-button):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar:horizontal:corner-present):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal:hover):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal:active):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:start):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:end):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:end:corner-present):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:decrement):
+        (.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:increment):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar:vertical:corner-present):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical:hover):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical:active):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:start):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:end):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:end:corner-present):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:decrement):
+        (.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:increment):
+        * inspector/front-end/popover.css:
+        (.popover.right-bottom-arrow .arrow):
+        * inspector/front-end/textPrompt.css: Added.
+        (.suggest-box):
+        (.suggest-box.visible):
+        (.suggest-box .container):
+        (.suggest-box-content-item):
+        (.suggest-box-content-item .prefix):
+        (.suggest-box-content-item.selected):
+        (.suggest-box-content-item:hover:not(.selected)):
+        * inspector/front-end/utilities.js:
+        (setupPrototypeUtilities.Element.prototype.boxInWindow):
+
 2011-11-03  Devdatta Deshpande  <webkit.devdatta@gmail.com>
 
         REGRESSION (r94132): broke fast/loader/location-port.html on GTK

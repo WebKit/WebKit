@@ -35,7 +35,7 @@
 WebInspector.Popover = function(popoverHelper)
 {
     this.element = document.createElement("div");
-    this.element.className = "popover";
+    this.element.className = "popover custom-popup-vertical-scroll custom-popup-horizontal-scroll";
 
     this._popupArrowElement = document.createElement("div");
     this._popupArrowElement.className = "arrow";
@@ -113,17 +113,7 @@ WebInspector.Popover.prototype = {
         const totalWidth = window.innerWidth;
         const totalHeight = window.innerHeight;
 
-        var anchorBox = anchorElement.offsetRelativeToWindow(window);
-        anchorBox.width = anchorElement.offsetWidth;
-        anchorBox.height = anchorElement.offsetHeight;
-        while (anchorElement && anchorElement !== anchorElement.ownerDocument.body) {
-            if (anchorElement.scrollLeft)
-                anchorBox.x -= anchorElement.scrollLeft;
-            if (anchorElement.scrollTop)
-                anchorBox.y -= anchorElement.scrollTop;
-            anchorElement = anchorElement.parentElement;
-        }
-
+        var anchorBox = anchorElement.boxInWindow(window);
         var newElementPosition = { x: 0, y: 0, width: preferredWidth + scrollerWidth, height: preferredHeight };
 
         var verticalAlignment;
@@ -171,7 +161,7 @@ WebInspector.Popover.prototype = {
             this._popupArrowElement.style.left += anchorBox.width / 2;
         }
 
-        this.element.className = "popover " + verticalAlignment + "-" + horizontalAlignment + "-arrow";
+        this.element.className = "popover custom-popup-vertical-scroll custom-popup-horizontal-scroll " + verticalAlignment + "-" + horizontalAlignment + "-arrow";
         this.element.positionAt(newElementPosition.x - borderWidth, newElementPosition.y - borderWidth);
         this.element.style.width = newElementPosition.width + borderWidth * 2 + "px";
         this.element.style.height = newElementPosition.height + borderWidth * 2 + "px";

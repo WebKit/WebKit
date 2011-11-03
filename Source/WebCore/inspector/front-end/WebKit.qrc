@@ -169,6 +169,7 @@
     <file>resourceView.css</file>
     <file>resourcesPanel.css</file>
     <file>scriptsPanel.css</file>
+    <file>textPrompt.css</file>
     <file>textViewer.css</file>
     <file>timelinePanel.css</file>
     <file>Images/applicationCache.png</file>

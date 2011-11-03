@@ -100,6 +100,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
 
     this.filter(this.allElement, false);
     this._registerShortcuts();
+    this.registerRequiredCSS("textPrompt.css");
 
     this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
 
@@ -332,16 +333,16 @@ WebInspector.ConsoleView.prototype = {
         this._linkifier.reset();
     },
 
-    completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
+    completions: function(wordRange, force, completionsReadyCallback)
     {
         // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
         var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, ExpressionStopCharacters, this.promptElement, "backward");
         var expressionString = expressionRange.toString();
         var prefix = wordRange.toString();
-        this._completions(expressionString, prefix, bestMatchOnly, completionsReadyCallback);
+        this._completions(expressionString, prefix, force, completionsReadyCallback);
     },
 
-    _completions: function(expressionString, prefix, bestMatchOnly, completionsReadyCallback)
+    _completions: function(expressionString, prefix, force, completionsReadyCallback)
     {
         var lastIndex = expressionString.length - 1;
 
@@ -361,7 +362,7 @@ WebInspector.ConsoleView.prototype = {
             completionsReadyCallback([]);
             return;
         }
-        
+
         if (!expressionString && WebInspector.debuggerPresentationModel.paused)
             WebInspector.debuggerPresentationModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
@@ -425,11 +426,11 @@ WebInspector.ConsoleView.prototype = {
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
             }
-            this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
+            this._reportCompletions(completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
         }
     },
 
-    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, properties) {
+    _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, prefix, properties) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
                 var quoteUsed = "'";
@@ -454,12 +455,10 @@ WebInspector.ConsoleView.prototype = {
 
             if (property.length < prefix.length)
                 continue;
-            if (property.indexOf(prefix) !== 0)
+            if (prefix.length && property.indexOf(prefix) !== 0)
                 continue;
 
             results.push(property);
-            if (bestMatchOnly)
-                break;
         }
         completionsReadyCallback(results);
     },

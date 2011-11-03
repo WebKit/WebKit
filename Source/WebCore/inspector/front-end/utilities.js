@@ -301,6 +301,31 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
     return elementOffset;
 }
 
+Element.prototype.boxInWindow = function(targetWindow, relativeParent)
+{
+    targetWindow = targetWindow || this.ownerDocument.defaultView;
+    var bodyElement = this.ownerDocument.body;
+    relativeParent = relativeParent || bodyElement;
+
+    var anchorBox = this.offsetRelativeToWindow(window);
+    anchorBox.width = this.offsetWidth;
+    anchorBox.height = this.offsetHeight;
+
+    var anchorElement = this;
+    while (anchorElement && anchorElement !== relativeParent && anchorElement !== bodyElement) {
+        if (anchorElement.scrollLeft)
+            anchorBox.x -= anchorElement.scrollLeft;
+        if (anchorElement.scrollTop)
+            anchorBox.y -= anchorElement.scrollTop;
+        anchorElement = anchorElement.parentElement;
+    }
+
+    var parentOffset = relativeParent.offsetRelativeToWindow(window);
+    anchorBox.x -= parentOffset.x;
+    anchorBox.y -= parentOffset.y;
+    return anchorBox;
+}
+
 Element.prototype.setTextAndTitle = function(text)
 {
     this.textContent = text;

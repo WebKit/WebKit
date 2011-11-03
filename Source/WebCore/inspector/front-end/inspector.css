@@ -2332,7 +2332,7 @@ a.worker-item:hover {
     padding-left: 10px;
     background-color: #EBEBEB;
     border-bottom: 1px solid #BBB;
-    
+
     font-size: 11px;
 }
 
@@ -2487,7 +2487,7 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 #search-results-pane-file-based .search-match .search-match-content {
     color: #000;
-    white-space: pre;    
+    white-space: pre;
 }
 
 .record-profile-status-bar-item .glyph {
@@ -2515,4 +2515,113 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     font-weight: bold;
     padding: 10px;
     white-space: pre-wrap;
+}
+
+/* Custom popup scrollers */
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar, .custom-popup-vertical-scroll ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-corner, .custom-popup-vertical-scroll ::-webkit-scrollbar-corner {
+    display: none;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-resizer, .custom-popup-vertical-scroll ::-webkit-resizer {
+    display: none;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-button, .custom-popup-vertical-scroll ::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Custom Horizontal Scrollbar Styles */
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar:horizontal:corner-present {
+    border-right-width: 0;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal {
+    -webkit-border-image: url(Images/thumbHoriz.png) 0 11 0 11;
+    border-color: transparent;
+    border-width: 0 11px;
+    min-width: 20px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal:hover {
+    -webkit-border-image: url(Images/thumbHoverHoriz.png) 0 11 0 11;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-thumb:horizontal:active {
+    -webkit-border-image: url(Images/thumbActiveHoriz.png) 0 11 0 11;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:start {
+    margin-left: 5px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:end {
+    margin-right: 5px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:end:corner-present {
+    margin-right: 4px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:decrement {
+    -webkit-border-image: url(Images/trackHoriz.png) 0 11 0 11;
+    border-color: transparent;
+    border-width: 0 0 0 11px;
+}
+
+.custom-popup-horizontal-scroll ::-webkit-scrollbar-track-piece:horizontal:increment {
+    -webkit-border-image: url(Images/trackHoriz.png) 0 11 0 11;
+    border-color: transparent;
+    border-width: 0 11px 0 0;
+}
+
+/* Custom Vertical Scrollbar Styles */
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar:vertical:corner-present {
+    border-bottom-width: 0;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical {
+    -webkit-border-image: url(Images/thumbVert.png) 11 0 11 0;
+    border-color: transparent;
+    border-width: 11px 0;
+    min-height: 20px;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical:hover {
+    -webkit-border-image: url(Images/thumbHoverVert.png) 11 0 11 0;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-thumb:vertical:active {
+    -webkit-border-image: url(Images/thumbActiveVert.png) 11 0 11 0;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:start {
+    margin-top: 5px;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:end {
+    margin-bottom: 5px;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:end:corner-present {
+    margin-bottom: 4px;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:decrement {
+    -webkit-border-image: url(Images/trackVert.png) 11 0 11 0;
+    border-color: transparent;
+    border-width: 11px 0 0 0;
+}
+
+.custom-popup-vertical-scroll ::-webkit-scrollbar-track-piece:vertical:increment {
+    -webkit-border-image: url(Images/trackVert.png) 11 0 11 0;
+    border-color: transparent;
+    border-width: 0 0 11px 0;
 }

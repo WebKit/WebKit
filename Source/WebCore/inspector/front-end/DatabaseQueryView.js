@@ -37,15 +37,16 @@ WebInspector.DatabaseQueryView = function(database)
     this.element.addStyleClass("query");
     this.element.addStyleClass("monospace");
     this.element.tabIndex = 0;
+    this.element.addEventListener("selectstart", this._selectStart.bind(this), false);
 
-    this.promptElement = document.createElement("div");
-    this.promptElement.className = "database-query-prompt";
-    this.promptElement.appendChild(document.createElement("br"));
-    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
-    this.element.appendChild(this.promptElement);
+    this._promptElement = document.createElement("div");
+    this._promptElement.className = "database-query-prompt";
+    this._promptElement.appendChild(document.createElement("br"));
+    this._promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
+    this.element.appendChild(this._promptElement);
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), " ");
-    this.prompt.attach(this.promptElement);
+    this.prompt.attach(this._promptElement);
 }
 
 WebInspector.DatabaseQueryView.Events = {
@@ -64,18 +65,21 @@ WebInspector.DatabaseQueryView.prototype = {
         setTimeout(moveBackIfOutside.bind(this), 0);
     },
 
-    completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
+    afterShow: function()
+    {
+        WebInspector.setCurrentFocusElement(this._promptElement);
+    },
+
+    completions: function(wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
-        if (!prefix.length)
+        if (!prefix.length && !force)
             return;
 
         var results = [];
 
         function accumulateMatches(textArray)
         {
-            if (bestMatchOnly && results.length)
-                return;
             for (var i = 0; i < textArray.length; ++i) {
                 var text = textArray[i].toLowerCase();
                 if (text.length < prefix.length)
@@ -83,8 +87,6 @@ WebInspector.DatabaseQueryView.prototype = {
                 if (text.indexOf(prefix) !== 0)
                     continue;
                 results.push(textArray[i]);
-                if (bestMatchOnly)
-                    return;
             }
         }
 
@@ -96,6 +98,24 @@ WebInspector.DatabaseQueryView.prototype = {
             completionsReadyCallback(results);
         }
         this.database.getTableNames(tableNamesCallback);
+    },
+
+    _selectStart: function(event)
+    {
+        if (this._selectionTimeout)
+            clearTimeout(this._selectionTimeout);
+
+        this.prompt.clearAutoComplete();
+
+        function moveBackIfOutside()
+        {
+            delete this._selectionTimeout;
+            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+                this.prompt.moveCaretToEndOfPrompt();
+            this.prompt.autoCompleteSoon();
+        }
+
+        this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
     },
 
     _promptKeyDown: function(event)
@@ -159,7 +179,7 @@ WebInspector.DatabaseQueryView.prototype = {
         var resultElement = this._appendQueryResult(query);
         view.show(resultElement);
 
-        this.promptElement.scrollIntoView(false);
+        this._promptElement.scrollIntoView(false);
     },
 
     /**
@@ -172,14 +192,14 @@ WebInspector.DatabaseQueryView.prototype = {
         resultElement.addStyleClass("error")
         resultElement.textContent = errorText;
 
-        this.promptElement.scrollIntoView(false);
+        this._promptElement.scrollIntoView(false);
     },
 
     _appendQueryResult: function(query)
     {
         var element = document.createElement("div");
         element.className = "database-user-query";
-        this.element.insertBefore(element, this.promptElement);
+        this.element.insertBefore(element, this.prompt.proxyElement);
 
         var commandTextElement = document.createElement("span");
         commandTextElement.className = "database-query-text";

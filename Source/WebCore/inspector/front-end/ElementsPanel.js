@@ -36,6 +36,7 @@ WebInspector.ElementsPanel = function()
 {
     WebInspector.Panel.call(this, "elements");
     this.registerRequiredCSS("elementsPanel.css");
+    this.registerRequiredCSS("textPrompt.css");
     this.setHideOnDetach();
 
     this.contentElement = document.createElement("div");
