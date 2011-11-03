@@ -86,6 +86,62 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
         g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
 }
 
+static void browserWindowHistoryItemActivated(BrowserWindow *window, GtkAction *action)
+{
+    WebKitBackForwardListItem *item = g_object_get_data(G_OBJECT(action), "back-forward-list-item");
+    if (!item)
+        return;
+
+    webkit_web_view_go_to_back_forward_list_item(window->webView, item);
+}
+
+static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *list)
+{
+    if (!list)
+        return NULL;
+
+    GtkWidget *menu = gtk_menu_new();
+    GList *listItem;
+    for (listItem = list; listItem; listItem = g_list_next(listItem)) {
+        WebKitBackForwardListItem *item = (WebKitBackForwardListItem *)listItem->data;
+        const char *uri = webkit_back_forward_list_item_get_uri(item);
+        const char *title = webkit_back_forward_list_item_get_title(item);
+
+        GtkAction *action = gtk_action_new(uri, title, NULL, NULL);
+        g_object_set_data_full(G_OBJECT(action), "back-forward-list-item", g_object_ref(item), g_object_unref);
+        g_signal_connect_swapped(action, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);
+
+        GtkWidget *menuItem = gtk_action_create_menu_item(action);
+        g_object_unref(action);
+
+        gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menuItem);
+        gtk_widget_show(menuItem);
+    }
+
+    return menu;
+}
+
+static void browserWindowUpdateNavigationActions(BrowserWindow *window, WebKitBackForwardList *backForwadlist)
+{
+    gtk_widget_set_sensitive(window->backItem, webkit_web_view_can_go_back(window->webView));
+    gtk_widget_set_sensitive(window->forwardItem, webkit_web_view_can_go_forward(window->webView));
+
+    GList *list = webkit_back_forward_list_get_back_list_with_limit(backForwadlist, 10);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem),
+                                  browserWindowCreateBackForwardMenu(window, list));
+    g_list_free(list);
+
+    list = webkit_back_forward_list_get_forward_list_with_limit(backForwadlist, 10);
+    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->forwardItem),
+                                  browserWindowCreateBackForwardMenu(window, list));
+    g_list_free(list);
+}
+
+static void backForwadlistChanged(WebKitBackForwardList *backForwadlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)
+{
+    browserWindowUpdateNavigationActions(window, backForwadlist);
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
@@ -174,6 +230,9 @@ static void browserWindowConstructed(GObject *gObject)
 
     g_signal_connect(window->webView, "notify::uri", G_CALLBACK(webViewURIChanged), window);
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
+
+    WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
+    g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
 
     gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->webView), TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(window->webView));

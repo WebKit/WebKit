@@ -1,3 +1,22 @@
+2011-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add back/forward menus to MiniBrowser using WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=71466
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowHistoryItemActivated): Go to selected back formard
+        list item using webkit_web_view_go_to_back_forward_list_item()
+        (browserWindowCreateBackForwardMenu): Create a GtkMenu for the
+        given GList of WebKitBackForwardListItems.
+        (browserWindowUpdateNavigationActions): Enable/disable back and
+        forward buttons depending on whether it's possible to go
+        back/forward. Create a menu for back and forward toolbar buttons.
+        (backForwadlistChanged): Call browserWindowUpdateNavigationActions().
+        (browserWindowConstructed): Connect to WebKitBackForwardList
+        changed signal.
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Maemo specific code paths
