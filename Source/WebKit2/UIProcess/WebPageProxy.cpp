@@ -163,7 +163,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_isClosed(false)
     , m_isInPrintingMode(false)
     , m_isPerformingDOMPrintOperation(false)
-    , m_inDecidePolicyForMIMEType(false)
+    , m_inDecidePolicyForResponse(false)
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
     , m_syncMimeTypePolicyDownloadID(0)
@@ -1024,9 +1024,9 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
 #endif
     }
 
-    // If we received a policy decision while in decidePolicyForMIMEType the decision will 
-    // be sent back to the web process by decidePolicyForMIMEType. 
-    if (m_inDecidePolicyForMIMEType) {
+    // If we received a policy decision while in decidePolicyForResponse the decision will
+    // be sent back to the web process by decidePolicyForResponse.
+    if (m_inDecidePolicyForResponse) {
         m_syncMimeTypePolicyActionIsValid = true;
         m_syncMimeTypePolicyAction = action;
         m_syncMimeTypePolicyDownloadID = downloadID;
@@ -1942,15 +1942,15 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    ASSERT(!m_inDecidePolicyForMIMEType);
+    ASSERT(!m_inDecidePolicyForResponse);
 
-    m_inDecidePolicyForMIMEType = true;
+    m_inDecidePolicyForResponse = true;
     m_syncMimeTypePolicyActionIsValid = false;
 
     if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, listener.get(), userData.get()))
         listener->use();
 
-    m_inDecidePolicyForMIMEType = false;
+    m_inDecidePolicyForResponse = false;
 
     // Check if we received a policy decision already. If we did, we can just pass it back.
     receivedPolicyAction = m_syncMimeTypePolicyActionIsValid;

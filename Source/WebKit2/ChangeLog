@@ -1,3 +1,19 @@
+2011-11-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [WK2] State variable name refactor in WebPageProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71467
+
+        Reviewed by Andreas Kling.
+
+        Renaming m_inDecidePolicyForMIMEType to m_inDecidePolicyForResponse after
+        https://bugs.webkit.org/show_bug.cgi?id=55827 .
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/WebPageProxy.h:
+
 2011-11-03  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK][WEBKIT2] Add support for title property in WebKitWebView.

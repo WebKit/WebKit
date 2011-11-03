@@ -893,7 +893,7 @@ private:
     bool m_isInPrintingMode;
     bool m_isPerformingDOMPrintOperation;
 
-    bool m_inDecidePolicyForMIMEType;
+    bool m_inDecidePolicyForResponse;
     bool m_syncMimeTypePolicyActionIsValid;
     WebCore::PolicyAction m_syncMimeTypePolicyAction;
     uint64_t m_syncMimeTypePolicyDownloadID;
