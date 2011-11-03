@@ -1,3 +1,9 @@
+2011-11-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r99093...
+
+        * PluginProcess/PluginControllerProxy.h:
+
 2011-11-02  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK] Debug build broken
