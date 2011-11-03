@@ -225,6 +225,9 @@ void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
     QPointF endPosition = m_content->mapFromItem(m_viewport, viewportHotspot) - viewportHotspot / endItemScale;
 
     QRectF endPosRange = computePosRangeForItemScale(endItemScale);
+    // Map from valid bounds in viewport coords to end contents coords.
+    endPosRange.setSize(endPosRange.size() / endItemScale);
+
     QPointF minValue = endPosRange.topLeft();
     QPointF maxValue = endPosRange.bottomRight();
 

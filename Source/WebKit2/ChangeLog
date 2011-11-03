@@ -1,3 +1,16 @@
+2011-11-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Bounce back limits are wrong in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=71471
+
+        Reviewed by Simon Hausmann.
+
+        The valid position points were in viewport coordinates, but we were
+        requiring valid position points in content coordinates.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+
 2011-11-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport
