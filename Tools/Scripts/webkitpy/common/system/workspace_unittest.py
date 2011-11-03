@@ -31,7 +31,7 @@ import unittest
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.workspace import Workspace
-from webkitpy.tool.mocktool import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class WorkspaceTest(unittest.TestCase):

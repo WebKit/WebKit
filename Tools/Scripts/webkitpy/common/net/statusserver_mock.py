@@ -26,20 +26,43 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
-from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.gtk import GtkPort
-from webkitpy.layout_tests.port import port_testcase
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.deprecated_logging import log
 
 
-class GtkPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return GtkPort
+class MockStatusServer(object):
 
-    def test_show_results_html_file(self):
-        port = self.make_port()
-        port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--gtk', 'file://test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
+    def __init__(self, bot_id=None, work_items=None):
+        self.host = "example.com"
+        self.bot_id = bot_id
+        self._work_items = work_items or []
+
+    def patch_status(self, queue_name, patch_id):
+        return None
+
+    def svn_revision(self, svn_revision):
+        return None
+
+    def next_work_item(self, queue_name):
+        if not self._work_items:
+            return None
+        return self._work_items.pop(0)
+
+    def release_work_item(self, queue_name, patch):
+        log("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))
+
+    def update_work_items(self, queue_name, work_items):
+        self._work_items = work_items
+        log("MOCK: update_work_items: %s %s" % (queue_name, work_items))
+
+    def submit_to_ews(self, patch_id):
+        log("MOCK: submit_to_ews: %s" % (patch_id))
+
+    def update_status(self, queue_name, status, patch=None, results_file=None):
+        log("MOCK: update_status: %s %s" % (queue_name, status))
+        return 187
+
+    def update_svn_revision(self, svn_revision, broken_bot):
+        return 191
+
+    def results_url_for_status(self, status_id):
+        return "http://dummy_url"

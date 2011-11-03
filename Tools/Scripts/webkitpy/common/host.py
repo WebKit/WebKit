@@ -42,23 +42,32 @@ from webkitpy.layout_tests.port.factory import PortFactory
 
 class Host(object):
     def __init__(self):
-        self.bugs = bugzilla.Bugzilla()
-        self.buildbot = buildbot.BuildBot()
+        # These basic environment abstractions should be a separate lower-level object.
+        # Alternatively the rest of the objects in Host should just move up to a higher abstraction.
         self.executive = executive.Executive()
-        self.web = web.Web()
-        self._irc = None
         self.filesystem = filesystem.FileSystem()
-        self.workspace = workspace.Workspace(self.filesystem, self.executive)
-        self._port = None
         self.user = user.User()
+        self.platform = platforminfo.PlatformInfo()
+        self.workspace = workspace.Workspace(self.filesystem, self.executive)
+        self.web = web.Web()
+
+        # FIXME: Checkout should own the scm object.
         self._scm = None
         self._checkout = None
+
+        # Everything below this line is WebKit-specific and belongs on a higher-level object.
+        self.bugs = bugzilla.Bugzilla()
+        self.buildbot = buildbot.BuildBot()
+
+        self._irc = None
+        self._port = None
+
         self.status_server = statusserver.StatusServer()
+
         # FIXME: Unfortunately Port objects are currently the central-dispatch objects of the NRWT world.
         # In order to instantiate a port correctly, we have to pass it at least an executive, user, scm, and filesystem
         # so for now we just pass along the whole Host object.
         self.port_factory = PortFactory(self)
-        self.platform = platforminfo.PlatformInfo()
 
     def _initialize_scm(self, patch_directories=None):
         self._scm = default_scm(patch_directories)

@@ -37,10 +37,12 @@ import unittest
 from .checkout import Checkout
 from .changelog import ChangeLogEntry
 from .scm import detect_scm_system, CommitMessage
+from .scm.scm_mock import MockSCM
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.tool.mocktool import MockSCM, MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.thirdparty.mock import Mock
+
 
 
 # FIXME: Copied from scm_unittest.py

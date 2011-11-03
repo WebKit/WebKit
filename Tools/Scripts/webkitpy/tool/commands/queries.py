@@ -44,6 +44,7 @@ from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.layout_tests import port
 
+
 class SuggestReviewers(AbstractDeclarativeCommand):
     name = "suggest-reviewers"
     help_text = "Suggest reviewers for a patch based on recent changes to the modified files."
@@ -387,7 +388,8 @@ out what ports are skipping the test(s). Categories are taken in account too."""
 
     def execute(self, options, args, tool):
         results = dict([(test_name, []) for test_name in args])
-        for port_name, port_object in tool.port_factory.get_all().iteritems():
+        for port_name in tool.port_factory.all_port_names():
+            port_object = tool.port_factory.get(port_name)
             for test_name in args:
                 if port_object.skips_layout_test(test_name):
                     results[test_name].append(port_name)

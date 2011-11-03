@@ -62,7 +62,8 @@ SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win3
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import filesystem_mock
-from webkitpy.tool import mocktool
+from webkitpy.common.system.user_mock import MockUser
+
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_filesystem
@@ -101,7 +102,7 @@ def parse_args(extra_args=None, record_results=False, tests_included=False, new_
 def passing_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
     options, parsed_args = parse_args(extra_args, record_results, tests_included)
     if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options, user=mocktool.MockUser(), filesystem=filesystem)
+        port_obj = port.get(port_name=options.platform, options=options, user=MockUser(), filesystem=filesystem)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
@@ -113,7 +114,7 @@ def logging_run(extra_args=None, port_obj=None, record_results=False, tests_incl
                                       record_results=record_results,
                                       tests_included=tests_included,
                                       print_nothing=False, new_results=new_results)
-    user = mocktool.MockUser()
+    user = MockUser()
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options, user=user, filesystem=filesystem)
 
@@ -144,7 +145,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         extra_args = ['passes', 'failures'] + extra_args
     options, parsed_args = parse_args(extra_args, tests_included=True)
 
-    user = mocktool.MockUser()
+    user = MockUser()
 
     test_batches = []
 
@@ -290,7 +291,7 @@ class MainTest(unittest.TestCase):
 
     def test_lint_test_files__errors(self):
         options, parsed_args = parse_args(['--lint-test-files'])
-        user = mocktool.MockUser()
+        user = MockUser()
         port_obj = port.get(options.platform, options=options, user=user)
         port_obj.test_expectations = lambda: "# syntax error"
         res, out, err = run_and_capture(port_obj, options, parsed_args)
@@ -455,7 +456,7 @@ class MainTest(unittest.TestCase):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
         options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
-        test_port = CustomExitCodePort(options=options, user=mocktool.MockUser())
+        test_port = CustomExitCodePort(options=options, user=MockUser())
         res, out, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
@@ -627,7 +628,7 @@ class MainTest(unittest.TestCase):
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
-            test_port = ImageDiffTestPort(options=options, user=mocktool.MockUser())
+            test_port = ImageDiffTestPort(options=options, user=MockUser())
             res = passing_run(args, port_obj=test_port, tests_included=True)
             self.assertTrue(res)
             return test_port

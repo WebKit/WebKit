@@ -30,7 +30,9 @@ import sys
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.user_mock import MockUser
 
 import chromium_gpu
 import chromium_linux

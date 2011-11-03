@@ -37,7 +37,10 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.user_mock import MockUser
+
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 

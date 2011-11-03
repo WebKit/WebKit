@@ -36,7 +36,7 @@ import time
 from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.tool import mocktool
+from webkitpy.common.system.user_mock import MockUser
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -273,7 +273,8 @@ class TestPort(Port):
     def __init__(self, port_name=None, user=None, filesystem=None, **kwargs):
         if not port_name or port_name == 'test':
             port_name = 'test-mac-leopard'
-        user = user or mocktool.MockUser()
+        # FIXME: This should use a MockExecutive too.
+        user = user or MockUser()
         filesystem = filesystem or unit_test_filesystem()
         Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user, **kwargs)
         self._results_directory = None

@@ -31,7 +31,7 @@ import unittest
 from webkitpy.common.net.buildbot import Build
 from webkitpy.common.net.failuremap import *
 from webkitpy.common.net.regressionwindow import RegressionWindow
-from webkitpy.tool.mocktool import MockBuilder
+from webkitpy.common.net.buildbot.buildbot_mock import MockBuilder
 
 
 class FailureMapTest(unittest.TestCase):

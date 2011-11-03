@@ -29,7 +29,7 @@ import os  # Used for os.getpid()
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.tool.mocktool import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive
 
 
 # FIXME: These tests all touch the real disk, but could be written to a MockFileSystem instead.

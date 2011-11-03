@@ -32,7 +32,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
-from webkitpy.tool.mocktool import MockCheckout, MockOptions, MockTool
+from webkitpy.tool.mocktool import MockOptions, MockTool
+from webkitpy.common.checkout.checkout_mock import MockCheckout
 
 
 class AbstractRolloutPrepCommandTest(unittest.TestCase):

@@ -1,3 +1,67 @@
+2011-11-02  Eric Seidel  <eric@webkit.org>
+
+        Move Mocks into _mock files near their implementations
+        https://bugs.webkit.org/show_bug.cgi?id=71425
+
+        Reviewed by Adam Barth.
+
+        This entire change is splitting mocktool.py into separate _mock.py files
+        and placing them next to their real implementations.
+
+        I also deleted MockPortFactory (since it was wrong) and was just hiding
+        the fact that the "skipped-ports" command was broken (and has been for a long time).
+        So I made MockHost use a real PortFactory (passed a MockHost) and changed
+        the skipped-ports implementation to use modern PortFactory methods.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        * Scripts/webkitpy/common/checkout/checkout_mock.py: Added.
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/deps_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/__init__.py.
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py: Added.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/config/ports_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/gtk_unittest.py.
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py: Added.
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+        * Scripts/webkitpy/common/net/irc/irc_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/__init__.py.
+        * Scripts/webkitpy/common/net/statusserver_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/gtk_unittest.py.
+        * Scripts/webkitpy/common/net/statusserver_unittest.py:
+        * Scripts/webkitpy/common/net/web_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/gtk_unittest.py.
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        * Scripts/webkitpy/common/system/platforminfo_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/__init__.py.
+        * Scripts/webkitpy/common/system/user_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/gtk_unittest.py.
+        * Scripts/webkitpy/common/system/workspace_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/__init__.py.
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/common/watchlist/watchlist_mock.py: Copied from Tools/Scripts/webkitpy/layout_tests/port/__init__.py.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/efl_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        * Scripts/webkitpy/test/main.py:
+        * Scripts/webkitpy/tool/bot/botinfo_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+
 2011-11-02  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build and removed another copy to ColorBits.ttf.

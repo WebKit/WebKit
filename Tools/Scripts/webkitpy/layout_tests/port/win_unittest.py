@@ -31,12 +31,13 @@ import sys
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port.win import WinPort
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockOptions
 
 
 class WinPortTest(port_testcase.PortTestCase):

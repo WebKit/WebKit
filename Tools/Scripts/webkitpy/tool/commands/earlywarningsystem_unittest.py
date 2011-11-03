@@ -33,7 +33,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.mocktool import MockTool, MockOptions, MockPort
+from webkitpy.tool.mocktool import MockTool, MockOptions
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):

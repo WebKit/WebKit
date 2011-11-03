@@ -30,6 +30,7 @@ import os
 import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
+from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models import test_results
@@ -39,7 +40,8 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.stepsequence import StepSequence
-from webkitpy.tool.mocktool import MockTool, MockOptions, MockSCM, MockStatusServer
+from webkitpy.common.net.statusserver_mock import MockStatusServer
+from webkitpy.tool.mocktool import MockTool, MockOptions
 
 
 class TestCommitQueue(CommitQueue):

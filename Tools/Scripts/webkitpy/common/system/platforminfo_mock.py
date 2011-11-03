@@ -1,16 +1,16 @@
-# Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
 #
-#     * Redistributions of source code must retain the above copyright
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -26,18 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
 
-from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.common.system.outputcapture import OutputCaptureTestCaseBase
-from webkitpy.common.net.web_mock import MockBrowser
-
-
-class StatusServerTest(OutputCaptureTestCaseBase):
-    def test_url_for_issue(self):
-        mock_browser = MockBrowser()
-        status_server = StatusServer(browser=mock_browser, bot_id='123')
-        status_server.update_status('queue name', 'the status')
-        self.assertEqual('queue name', mock_browser.params['queue_name'])
-        self.assertEqual('the status', mock_browser.params['status'])
-        self.assertEqual('123', mock_browser.params['bot_id'])
+class MockPlatformInfo(object):
+    def display_name(self):
+        return "MockPlatform 1.0"

@@ -1,4 +1,4 @@
-# Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,18 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
-from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.common.system.outputcapture import OutputCaptureTestCaseBase
-from webkitpy.common.net.web_mock import MockBrowser
+from webkitpy.common.system.deprecated_logging import log
 
 
-class StatusServerTest(OutputCaptureTestCaseBase):
-    def test_url_for_issue(self):
-        mock_browser = MockBrowser()
-        status_server = StatusServer(browser=mock_browser, bot_id='123')
-        status_server.update_status('queue name', 'the status')
-        self.assertEqual('queue name', mock_browser.params['queue_name'])
-        self.assertEqual('the status', mock_browser.params['status'])
-        self.assertEqual('123', mock_browser.params['bot_id'])
+class MockIRC(object):
+    def post(self, message):
+        log("MOCK: irc.post: %s" % message)
+
+    def disconnect(self):
+        log("MOCK: irc.disconnect")

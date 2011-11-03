@@ -34,7 +34,10 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
 from webkitpy.layout_tests.port import port_testcase
 
-from webkitpy.tool.mocktool import MockExecutive, MockOptions, MockUser
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.user_mock import MockUser
+
 
 
 class TestWebKitPort(WebKitPort):

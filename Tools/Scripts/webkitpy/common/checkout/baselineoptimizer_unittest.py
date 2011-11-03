@@ -32,7 +32,7 @@ import unittest
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.port.factory import PortFactory
-from webkitpy.tool.mocktool import MockHost
+from webkitpy.common.host_mock import MockHost
 
 
 class TestBaselineOptimizer(BaselineOptimizer):

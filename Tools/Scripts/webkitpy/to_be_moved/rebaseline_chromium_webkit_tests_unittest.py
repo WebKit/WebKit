@@ -31,12 +31,15 @@
 
 import unittest
 
-from webkitpy.tool import mocktool
+from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system import urlfetcher_mock
 from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system import zipfileset_mock
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
+
+from webkitpy.common.checkout.scm.scm_mock import MockSCM
+from webkitpy.common.system.user_mock import MockUser
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.port.test import unit_test_filesystem
@@ -61,7 +64,7 @@ ARCHIVE_URL = 'http://localhost/layout_test_results'
 
 
 def test_options():
-    return mocktool.MockOptions(configuration=None,
+    return MockOptions(configuration=None,
                                 backup=False,
                                 html_directory='/tmp',
                                 archive_url=ARCHIVE_URL,
@@ -73,7 +76,7 @@ def test_options():
 
 def test_host_port_and_filesystem(options, expectations):
     filesystem = unit_test_filesystem()
-    host_port_obj = port.get('test', options, filesystem=filesystem, user=mocktool.MockUser())
+    host_port_obj = port.get('test', options, filesystem=filesystem, user=MockUser())
 
     expectations_path = host_port_obj.path_to_test_expectations_file()
     filesystem.write_text_file(expectations_path, expectations)
@@ -162,7 +165,7 @@ class TestGetHostPortObject(unittest.TestCase):
         # that Image diff is (or isn't) present in the two configs.
         port.get = get_mock_get({'Release': release_present,
                                  'Debug': debug_present})
-        options = mocktool.MockOptions(configuration=None,
+        options = MockOptions(configuration=None,
                                        html_directory='/tmp')
         port_obj = rebaseline_chromium_webkit_tests.get_host_port_object(options)
         if valid_port_obj:
@@ -218,7 +221,7 @@ class TestRebaseliner(unittest.TestCase):
 
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
-        mock_scm = mocktool.MockSCM(filesystem)
+        mock_scm = MockSCM(filesystem)
         filesystem.maybe_make_directory(mock_scm.checkout_root)
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
@@ -356,7 +359,7 @@ class TestRealMain(unittest.TestCase):
         host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
-        mock_scm = mocktool.MockSCM()
+        mock_scm = MockSCM()
         filesystem.maybe_make_directory(mock_scm.checkout_root)
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
@@ -383,7 +386,7 @@ class TestRealMain(unittest.TestCase):
 
 class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, files, tests):
-        options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
+        options = MockOptions(configuration=None, html_directory='/tmp')
         host_port = port.get('test', options, filesystem=unit_test_filesystem(files))
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
             target_port=None, options=options, platforms=['test-mac-leopard'], rebaselining_tests=tests)

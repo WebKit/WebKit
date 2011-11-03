@@ -35,7 +35,8 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
-from webkitpy.tool.mocktool import MockTool, MockStatusServer
+from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.net.statusserver_mock import MockStatusServer
 
 
 # Creating fake CommitInfos is a pain, so we use a mock one here.

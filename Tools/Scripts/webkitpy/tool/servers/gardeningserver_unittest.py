@@ -38,7 +38,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.thirdparty.mock import Mock
-from webkitpy.tool.mocktool import MockTool, MockExecutive
+from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.tool.servers.gardeningserver import *
 
 

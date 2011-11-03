@@ -34,7 +34,7 @@ from .bugzilla import Bugzilla, BugzillaQueries, EditUsersParser
 
 from webkitpy.common.checkout.changelog import parse_bug_id
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.tool.mocktool import MockBrowser
+from webkitpy.common.net.web_mock import MockBrowser
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 

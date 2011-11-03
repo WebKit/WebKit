@@ -46,7 +46,9 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.views import printing
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.user_mock import MockUser
 
 
 class ManagerWrapper(Manager):

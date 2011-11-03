@@ -39,7 +39,7 @@ from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
-from webkitpy.tool.mocktool import MockSCM
+from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.tool.servers import rebaselineserver
 
 

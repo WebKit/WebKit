@@ -44,7 +44,9 @@ except ImportError:
 from webkitpy.layout_tests.servers import http_server_base
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.tool.mocktool import MockOptions, MockUser, MockExecutive
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.user_mock import MockUser
 mock_options = MockOptions(configuration='Release')
 
 

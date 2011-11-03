@@ -30,7 +30,8 @@ import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
-from webkitpy.tool.mocktool import MockTool, MockExecutive
+from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class IRCCommandTest(unittest.TestCase):

@@ -52,7 +52,7 @@ from webkitpy.common.config.committers import Committer  # FIXME: This should no
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.tool.mocktool import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive
 
 from .detection import find_checkout_root, default_scm, detect_scm_system
 from .git import Git, AmbiguousCommitError

@@ -29,7 +29,8 @@
 import unittest
 
 from webkitpy.tool.bot.botinfo import BotInfo
-from webkitpy.tool.mocktool import MockTool, MockStatusServer
+from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.net.statusserver_mock import MockStatusServer
 
 
 class BotInfoTest(unittest.TestCase):

@@ -31,7 +31,8 @@ import unittest
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.rebaseline import *
-from webkitpy.tool.mocktool import MockTool, MockExecutive
+from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class TestRebaseline(unittest.TestCase):
