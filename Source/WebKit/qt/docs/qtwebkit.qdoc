@@ -29,6 +29,9 @@
     made fully editable to the user through the use of the \c{contenteditable}
     attribute on HTML elements.
 
+    QtWebKit has been enhanced to become more attractive on the mobile front as well.
+    For more information see \l{QtWebKit Goes Mobile}.
+
     QtWebKit is based on the Open Source WebKit engine. More information about
     WebKit itself can be found on the \l{WebKit Open Source Project} Web site.
 
