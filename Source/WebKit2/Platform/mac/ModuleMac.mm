@@ -42,7 +42,7 @@ bool Module::load()
     if (!CFBundleLoadExecutable(bundle.get()))
         return false;
 
-    m_bundle.adoptCF(bundle.releaseRef());
+    m_bundle.adoptCF(bundle.leakRef());
     return true;
 }
 

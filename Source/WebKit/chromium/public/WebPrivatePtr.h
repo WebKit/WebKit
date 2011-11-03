@@ -50,7 +50,7 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebPrivatePtr(const PassRefPtr<T>& prp)
-        : m_ptr(prp.releaseRef())
+        : m_ptr(prp.leakRef())
     {
     }
 
@@ -70,7 +70,7 @@ public:
 
     WebPrivatePtr<T>& operator=(const PassRefPtr<T>& prp)
     {
-        assign(prp.releaseRef());
+        assign(prp.leakRef());
         return *this;
     }
 

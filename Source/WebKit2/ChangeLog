@@ -1,3 +1,186 @@
+2011-11-03  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::load):
+        * Shared/API/c/WKArray.cpp:
+        (WKArrayCreate):
+        * Shared/API/c/WKData.cpp:
+        (WKDataCreate):
+        * Shared/API/c/WKDictionary.cpp:
+        (WKDictionaryCopyKeys):
+        * Shared/API/c/WKGeometry.cpp:
+        (WKPointCreate):
+        (WKSizeCreate):
+        (WKRectCreate):
+        * Shared/API/c/WKMutableArray.cpp:
+        (WKMutableArrayCreate):
+        * Shared/API/c/WKMutableDictionary.cpp:
+        (WKMutableDictionaryCreate):
+        * Shared/API/c/WKNumber.cpp:
+        (WKBooleanCreate):
+        (WKDoubleCreate):
+        (WKUInt64Create):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedAPI):
+        (WebKit::toCopiedURLAPI):
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        * Shared/API/c/cf/WKURLRequestCF.cpp:
+        (WKURLRequestCreateWithCFURLRequest):
+        * Shared/API/c/cf/WKURLResponseCF.cpp:
+        (WKURLResponseCreateWithCFURLResponse):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        (WKURLResponseCreateWithNSURLResponse):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        (WKBackForwardListCopyBackListWithLimit):
+        (WKBackForwardListCopyForwardListWithLimit):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreate):
+        (WKCredentialCreateWithCertificateInfo):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyChildFrames):
+        * UIProcess/API/C/WKGeolocationPosition.cpp:
+        (WKGeolocationPositionCreate):
+        * UIProcess/API/C/WKGrammarDetail.cpp:
+        (WKGrammarDetailCreate):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionHistoryURLValueType):
+        (WKPageCopySessionState):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/win/WebUndoClient.cpp:
+        (WebKit::WebUndoClient::registerEditCommand):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyChildFrames):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCreate):
+        (WKBundleNodeHandleCopyDocument):
+        (WKBundleNodeHandleCopyHTMLTableCellElementCellAbove):
+        (WKBundleNodeHandleCopyDocumentFrame):
+        (WKBundleNodeHandleCopyHTMLFrameElementContentFrame):
+        (WKBundleNodeHandleCopyHTMLIFrameElementContentFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyTrackedRepaintRects):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldCreateWorld):
+        Use leakRef.
+
+2011-11-02  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::load): Use leakRef.
+        (WebKit::Module::unload): Use leakRef, and cast to void
+        to avoid unused return value warning.
+
+        * Shared/API/c/WKArray.cpp:
+        (WKArrayCreate):
+        * Shared/API/c/WKData.cpp:
+        (WKDataCreate):
+        * Shared/API/c/WKDictionary.cpp:
+        (WKDictionaryCopyKeys):
+        * Shared/API/c/WKGeometry.cpp:
+        (WKPointCreate):
+        (WKSizeCreate):
+        (WKRectCreate):
+        * Shared/API/c/WKMutableArray.cpp:
+        (WKMutableArrayCreate):
+        * Shared/API/c/WKMutableDictionary.cpp:
+        (WKMutableDictionaryCreate):
+        * Shared/API/c/WKNumber.cpp:
+        (WKBooleanCreate):
+        (WKDoubleCreate):
+        (WKUInt64Create):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedAPI):
+        (WebKit::toCopiedURLAPI):
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        * Shared/API/c/cf/WKURLRequestCF.cpp:
+        (WKURLRequestCreateWithCFURLRequest):
+        * Shared/API/c/cf/WKURLResponseCF.cpp:
+        (WKURLResponseCreateWithCFURLResponse):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        (WKURLResponseCreateWithNSURLResponse):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        (WKBackForwardListCopyBackListWithLimit):
+        (WKBackForwardListCopyForwardListWithLimit):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreate):
+        (WKCredentialCreateWithCertificateInfo):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyChildFrames):
+        * UIProcess/API/C/WKGeolocationPosition.cpp:
+        (WKGeolocationPositionCreate):
+        * UIProcess/API/C/WKGrammarDetail.cpp:
+        (WKGrammarDetailCreate):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionHistoryURLValueType):
+        (WKPageCopySessionState):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/win/WebUndoClient.cpp:
+        (WebKit::WebUndoClient::registerEditCommand):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyChildFrames):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCreate):
+        (WKBundleNodeHandleCopyDocument):
+        (WKBundleNodeHandleCopyHTMLTableCellElementCellAbove):
+        (WKBundleNodeHandleCopyDocumentFrame):
+        (WKBundleNodeHandleCopyHTMLFrameElementContentFrame):
+        (WKBundleNodeHandleCopyHTMLIFrameElementContentFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyTrackedRepaintRects):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldCreateWorld):
+        Use leakRef.
+
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
         NetscapePlugin should use plug-in relative coordinates on Mac

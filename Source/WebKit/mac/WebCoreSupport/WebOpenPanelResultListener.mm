@@ -37,7 +37,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    _chooser = chooser.releaseRef();
+    _chooser = chooser.leakRef();
     return self;
 }
 

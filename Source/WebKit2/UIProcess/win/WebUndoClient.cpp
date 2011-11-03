@@ -38,7 +38,7 @@ void WebUndoClient::registerEditCommand(WebView* view, PassRefPtr<WebEditCommand
         return;
 
     RefPtr<WebEditCommandProxy> command = prpCommand;
-    m_client.registerEditCommand(toAPI(view), toAPI(command.release().releaseRef()), (undoOrRedo == WebPageProxy::Undo) ? kWKViewUndo : kWKViewRedo, m_client.clientInfo);
+    m_client.registerEditCommand(toAPI(view), toAPI(command.release().leakRef()), (undoOrRedo == WebPageProxy::Undo) ? kWKViewUndo : kWKViewRedo, m_client.clientInfo);
 }
 
 void WebUndoClient::clearAllEditCommands(WebView* view)

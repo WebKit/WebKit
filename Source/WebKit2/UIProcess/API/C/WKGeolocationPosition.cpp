@@ -39,5 +39,5 @@ WKTypeID WKGeolocationPositionGetTypeID()
 WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy)
 {
     RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy);
-    return toAPI(position.release().releaseRef());
+    return toAPI(position.release().leakRef());
 }

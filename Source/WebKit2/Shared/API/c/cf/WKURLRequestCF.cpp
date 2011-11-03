@@ -35,7 +35,7 @@ WKURLRequestRef WKURLRequestCreateWithCFURLRequest(CFURLRequestRef urlRequest)
 {
     CFURLRequestRef copiedURLRequest = CFURLRequestCreateCopy(kCFAllocatorDefault, urlRequest);
     RefPtr<WebURLRequest> request = WebURLRequest::create(copiedURLRequest);
-    return toAPI(request.release().releaseRef());
+    return toAPI(request.release().leakRef());
 }
 
 CFURLRequestRef WKURLRequestCopyCFURLRequest(CFAllocatorRef alloc, WKURLRequestRef urlRequest)

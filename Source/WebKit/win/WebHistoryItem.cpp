@@ -477,7 +477,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)
     }
 
     COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::createInstance(*urlVector));
-    *urls = enumVariant.releaseRef();
+    *urls = enumVariant.leakRef();
 
     return S_OK;
 }

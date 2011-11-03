@@ -42,49 +42,49 @@ WKTypeID WKDatabaseManagerGetTypeID()
 
 WKStringRef WKDatabaseManagerGetOriginKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetOriginQuotaKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originQuotaKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetOriginUsageKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originUsageKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
     return toAPI(key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 {
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).releaseRef();
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
     return toAPI(key);
 }
 

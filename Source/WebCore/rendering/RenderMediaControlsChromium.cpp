@@ -47,7 +47,7 @@ static Image* platformResource(const char* name)
         gMediaControlImageMap = new MediaControlImageMap();
     if (Image* image = gMediaControlImageMap->get(name))
         return image;
-    if (Image* image = Image::loadPlatformResource(name).releaseRef()) {
+    if (Image* image = Image::loadPlatformResource(name).leakRef()) {
         gMediaControlImageMap->set(name, image);
         return image;
     }

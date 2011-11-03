@@ -52,13 +52,13 @@ WKTypeID WKContextGetTypeID()
 WKContextRef WKContextCreate()
 {
     RefPtr<WebContext> context = WebContext::create(String());
-    return toAPI(context.release().releaseRef());
+    return toAPI(context.release().leakRef());
 }
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
     RefPtr<WebContext> context = WebContext::create(toImpl(pathRef)->string());
-    return toAPI(context.release().releaseRef());
+    return toAPI(context.release().leakRef());
 }
 
 WKContextRef WKContextGetSharedProcessContext()

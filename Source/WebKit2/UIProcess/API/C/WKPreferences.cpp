@@ -49,7 +49,7 @@ WKPreferencesRef WKPreferencesCreate()
 WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create(toWTFString(identifierRef));
-    return toAPI(preferences.release().releaseRef());
+    return toAPI(preferences.release().leakRef());
 }
 
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)

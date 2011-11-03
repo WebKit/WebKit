@@ -63,7 +63,7 @@ WebScriptWorld::~WebScriptWorld()
 
 WebScriptWorld* WebScriptWorld::standardWorld()
 {
-    static WebScriptWorld* standardWorld = createInstance(mainThreadNormalWorld()).releaseRef();
+    static WebScriptWorld* standardWorld = createInstance(mainThreadNormalWorld()).leakRef();
     return standardWorld;
 }
 

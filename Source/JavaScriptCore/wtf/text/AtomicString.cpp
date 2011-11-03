@@ -199,7 +199,7 @@ struct HashAndUTF8CharactersTranslator {
     static void translate(StringImpl*& location, const HashAndUTF8Characters& buffer, unsigned hash)
     {
         UChar* target;
-        location = StringImpl::createUninitialized(buffer.utf16Length, target).releaseRef();
+        location = StringImpl::createUninitialized(buffer.utf16Length, target).leakRef();
 
         const char* source = buffer.characters;
         if (convertUTF8ToUTF16(&source, source + buffer.length, &target, target + buffer.utf16Length) != conversionOK)

@@ -159,7 +159,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
 #endif // !defined(BUILDING_ON_LEOPARD)
 
-    FontCustomPlatformData* fontCustomPlatformData = new FontCustomPlatformData(containerRef, cgFontRef.releaseRef());
+    FontCustomPlatformData* fontCustomPlatformData = new FontCustomPlatformData(containerRef, cgFontRef.leakRef());
 #if USE(SKIA_ON_MAC_CHROMIUM)
     RemoteFontStream* stream = new RemoteFontStream(buffer);
     fontCustomPlatformData->m_typeface = SkTypeface::CreateFromStream(stream);

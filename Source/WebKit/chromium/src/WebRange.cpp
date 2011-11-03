@@ -100,13 +100,13 @@ WebRange WebRange::fromDocumentRange(WebFrame* frame, int start, int length)
 }
 
 WebRange::WebRange(const WTF::PassRefPtr<WebCore::Range>& range)
-    : m_private(static_cast<WebRangePrivate*>(range.releaseRef()))
+    : m_private(static_cast<WebRangePrivate*>(range.leakRef()))
 {
 }
 
 WebRange& WebRange::operator=(const WTF::PassRefPtr<WebCore::Range>& range)
 {
-    assign(static_cast<WebRangePrivate*>(range.releaseRef()));
+    assign(static_cast<WebRangePrivate*>(range.leakRef()));
     return *this;
 }
 

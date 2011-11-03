@@ -49,19 +49,19 @@ WKTypeID WKRectGetTypeID()
 WKPointRef WKPointCreate(WKPoint point)
 {
     RefPtr<WebPoint> webPoint = WebPoint::create(point);
-    return toAPI(webPoint.release().releaseRef());
+    return toAPI(webPoint.release().leakRef());
 }
 
 WKSizeRef WKSizeCreate(WKSize size)
 {
     RefPtr<WebSize> webSize = WebSize::create(size);
-    return toAPI(webSize.release().releaseRef());
+    return toAPI(webSize.release().leakRef());
 }
 
 WKRectRef WKRectCreate(WKRect rect)
 {
     RefPtr<WebRect> webRect = WebRect::create(rect);
-    return toAPI(webRect.release().releaseRef());
+    return toAPI(webRect.release().leakRef());
 }
 
 WKSize WKSizeGetValue(WKSizeRef size)

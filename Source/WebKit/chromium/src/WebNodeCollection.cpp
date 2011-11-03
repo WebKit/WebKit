@@ -55,7 +55,7 @@ void WebNodeCollection::assign(const WebNodeCollection& other)
 }
 
 WebNodeCollection::WebNodeCollection(const PassRefPtr<HTMLCollection>& col)
-    : m_private(static_cast<HTMLCollection*>(col.releaseRef()))
+    : m_private(static_cast<HTMLCollection*>(col.leakRef()))
 {
 }
 

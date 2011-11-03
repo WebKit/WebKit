@@ -59,7 +59,7 @@ void WebData::assign(const WebData& other)
 void WebData::assign(const char* data, size_t size)
 {
     assign(static_cast<WebDataPrivate*>(
-        SharedBuffer::create(data, size).releaseRef()));
+        SharedBuffer::create(data, size).leakRef()));
 }
 
 size_t WebData::size() const
@@ -77,13 +77,13 @@ const char* WebData::data() const
 }
 
 WebData::WebData(const PassRefPtr<SharedBuffer>& buffer)
-    : m_private(static_cast<WebDataPrivate*>(buffer.releaseRef()))
+    : m_private(static_cast<WebDataPrivate*>(buffer.leakRef()))
 {
 }
 
 WebData& WebData::operator=(const PassRefPtr<SharedBuffer>& buffer)
 {
-    assign(static_cast<WebDataPrivate*>(buffer.releaseRef()));
+    assign(static_cast<WebDataPrivate*>(buffer.leakRef()));
     return *this;
 }
 

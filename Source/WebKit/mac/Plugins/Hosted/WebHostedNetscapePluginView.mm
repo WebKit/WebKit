@@ -126,7 +126,7 @@ extern "C" {
 #ifndef BUILDING_ON_LEOPARD
             // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
             // in order to get the coordinate system right.
-            RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.releaseRef());
+            RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.leakRef());
             
             _pluginLayer.adoptNS([[CALayer alloc] init]);
             _pluginLayer.get().bounds = realPluginLayer.get().bounds;

@@ -434,7 +434,7 @@ WebKitWebDataSource* kitNew(PassRefPtr<WebKit::DocumentLoader> loader)
 {
     WebKitWebDataSource* webDataSource = WEBKIT_WEB_DATA_SOURCE(g_object_new(WEBKIT_TYPE_WEB_DATA_SOURCE, NULL));
     WebKitWebDataSourcePrivate* priv = webDataSource->priv;
-    priv->loader = loader.releaseRef();
+    priv->loader = loader.leakRef();
 
     return webDataSource;
 }

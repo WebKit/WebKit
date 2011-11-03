@@ -144,7 +144,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     WebHistoryItem *copy = (WebHistoryItem *)NSCopyObject(self, 0, zone);
     RefPtr<HistoryItem> item = core(_private)->copy();
     copy->_private = kitPrivate(item.get());
-    historyItemWrappers().set(item.release().releaseRef(), copy);
+    historyItemWrappers().set(item.release().leakRef(), copy);
     
     return copy;
 }
@@ -307,7 +307,7 @@ static WebWindowWatcher *_windowWatcher = nil;
     
     self = [super init];
     
-    _private = kitPrivate(item.releaseRef());
+    _private = kitPrivate(item.leakRef());
     ASSERT(!historyItemWrappers().get(core(_private)));
     historyItemWrappers().set(core(_private), self);
     return self;

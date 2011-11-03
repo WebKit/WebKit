@@ -81,7 +81,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!self)
         return nil;
     // Acquire the PassRefPtr<>'s ref as our own manual ref
-    coreResource = passedResource.releaseRef();
+    coreResource = passedResource.leakRef();
     return self;
 }
 

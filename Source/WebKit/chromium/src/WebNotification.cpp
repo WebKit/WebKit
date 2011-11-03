@@ -149,13 +149,13 @@ void WebNotification::dispatchEvent(const WTF::AtomicString& type)
 }
 
 WebNotification::WebNotification(const WTF::PassRefPtr<Notification>& notification)
-    : m_private(static_cast<WebNotificationPrivate*>(notification.releaseRef()))
+    : m_private(static_cast<WebNotificationPrivate*>(notification.leakRef()))
 {
 }
 
 WebNotification& WebNotification::operator=(const WTF::PassRefPtr<Notification>& notification)
 {
-    assign(static_cast<WebNotificationPrivate*>(notification.releaseRef()));
+    assign(static_cast<WebNotificationPrivate*>(notification.leakRef()));
     return *this;
 }
 

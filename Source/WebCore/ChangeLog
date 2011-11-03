@@ -1,3 +1,67 @@
+2011-11-03  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+        (-[WebScriptObject _setOriginRootObject:andRootObject:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_CreateScriptObject):
+        * dom/QualifiedName.cpp:
+        (WebCore::QNameComponentsTranslator::translate):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::add):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::releasePlatformDescription):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::platformResource):
+        Use leakRef.
+
+2011-11-02  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+        (-[WebScriptObject _setOriginRootObject:andRootObject:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_CreateScriptObject):
+        * dom/QualifiedName.cpp:
+        (WebCore::QNameComponentsTranslator::translate):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::add):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/mac/ContextMenuMac.mm:
+        (WebCore::ContextMenu::releasePlatformDescription):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::platformResource):
+        Use leakRef.
+
 2011-11-03  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Remove unused clipboard methods

@@ -148,7 +148,7 @@ NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject>
 
     JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(_NPN_CreateObject(npp, NPScriptObjectClass));
 
-    obj->rootObject = rootObject.releaseRef();
+    obj->rootObject = rootObject.leakRef();
 
     if (obj->rootObject) {
         obj->rootObject->gcProtect(imp);

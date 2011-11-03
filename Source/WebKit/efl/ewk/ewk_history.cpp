@@ -258,7 +258,7 @@ Ewk_History_Item* ewk_history_item_new(const char* uri, const char* title)
     WTF::String u = WTF::String::fromUTF8(uri);
     WTF::String t = WTF::String::fromUTF8(title);
     WTF::RefPtr<WebCore::HistoryItem> core = WebCore::HistoryItem::create(u, t, 0);
-    Ewk_History_Item* item = ewk_history_item_new_from_core(core.release().releaseRef());
+    Ewk_History_Item* item = ewk_history_item_new_from_core(core.release().leakRef());
     return item;
 }
 

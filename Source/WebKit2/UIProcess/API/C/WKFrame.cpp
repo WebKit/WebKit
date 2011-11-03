@@ -98,7 +98,7 @@ WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 
 WKArrayRef WKFrameCopyChildFrames(WKFrameRef frameRef)
 {
-    return toAPI(toImpl(frameRef)->childFrames().releaseRef());
+    return toAPI(toImpl(frameRef)->childFrames().leakRef());
 }
 
 WKFrameRef WKFrameGetParentFrame(WKFrameRef frameRef)

@@ -42,7 +42,7 @@ class WebHTTPBodyPrivate : public FormData {
 
 void WebHTTPBody::initialize()
 {
-    assign(static_cast<WebHTTPBodyPrivate*>(FormData::create().releaseRef()));
+    assign(static_cast<WebHTTPBodyPrivate*>(FormData::create().leakRef()));
 }
 
 void WebHTTPBody::reset()
@@ -151,13 +151,13 @@ void WebHTTPBody::setIdentifier(long long identifier)
 }
 
 WebHTTPBody::WebHTTPBody(const PassRefPtr<FormData>& data)
-    : m_private(static_cast<WebHTTPBodyPrivate*>(data.releaseRef()))
+    : m_private(static_cast<WebHTTPBodyPrivate*>(data.leakRef()))
 {
 }
 
 WebHTTPBody& WebHTTPBody::operator=(const PassRefPtr<FormData>& data)
 {
-    assign(static_cast<WebHTTPBodyPrivate*>(data.releaseRef()));
+    assign(static_cast<WebHTTPBodyPrivate*>(data.leakRef()));
     return *this;
 }
 
@@ -178,7 +178,7 @@ void WebHTTPBody::ensureMutable()
 {
     ASSERT(!isNull());
     if (!m_private->hasOneRef())
-        assign(static_cast<WebHTTPBodyPrivate*>(m_private->copy().releaseRef()));
+        assign(static_cast<WebHTTPBodyPrivate*>(m_private->copy().leakRef()));
 }
 
 } // namespace WebKit

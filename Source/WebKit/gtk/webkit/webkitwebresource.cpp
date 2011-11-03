@@ -223,7 +223,7 @@ WebKitWebResource* webkit_web_resource_new_with_core_resource(PassRefPtr<Archive
 {
     WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     WebKitWebResourcePrivate* priv = webResource->priv;
-    priv->resource = resource.releaseRef();
+    priv->resource = resource.leakRef();
 
     return webResource;
 }
@@ -237,7 +237,7 @@ void webkit_web_resource_init_with_core_resource(WebKitWebResource* webResource,
     if (priv->resource)
         priv->resource->deref();
 
-    priv->resource = resource.releaseRef();
+    priv->resource = resource.leakRef();
 }
 
 /**

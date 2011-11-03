@@ -41,7 +41,7 @@ WKTypeID WKGrammarDetailGetTypeID()
 WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef guesses, WKStringRef userDescription)
 {
     RefPtr<WebGrammarDetail> detail = WebGrammarDetail::create(location, length, toImpl(guesses), toWTFString(userDescription));
-    return toAPI(detail.release().releaseRef());
+    return toAPI(detail.release().leakRef());
 }
 
 int WKGrammarDetailGetLocation(WKGrammarDetailRef grammarDetailRef)

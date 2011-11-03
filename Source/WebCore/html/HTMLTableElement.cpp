@@ -454,7 +454,7 @@ void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDecla
     AtomicString borderValue = m_borderColorAttr ? "solid" : "outset";
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, tableborderAttr, borderValue);
     if (!decl) {
-        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
+        decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
@@ -512,7 +512,7 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
     const AtomicString& cellborderValue = *cellBorderNames[borders];
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, cellborderAttr, cellborderValue);
     if (!decl) {
-        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
+        decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
@@ -598,7 +598,7 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
     AtomicString rulesValue = rows ? "rowgroups" : "colgroups";
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, rulesAttr, rulesValue);
     if (!decl) {
-        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
+        decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.

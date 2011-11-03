@@ -128,7 +128,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     COMPtr<CFDictionaryPropertyBag> propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[0] = propBag.releaseRef();
+    s[0] = propBag.leakRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -150,7 +150,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[1] = propBag.releaseRef();
+    s[1] = propBag.leakRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -172,7 +172,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[2] = propBag.releaseRef();
+    s[2] = propBag.leakRef();
 
     dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
@@ -194,7 +194,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
-    s[3] = propBag.releaseRef();
+    s[3] = propBag.leakRef();
 
     return S_OK;
 }

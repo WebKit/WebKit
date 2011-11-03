@@ -62,7 +62,7 @@ const char* WebThreadSafeData::data() const
 }
 
 WebThreadSafeData::WebThreadSafeData(const PassRefPtr<RawData>& data)
-    : m_private(data.releaseRef())
+    : m_private(data.leakRef())
 {
 }
 

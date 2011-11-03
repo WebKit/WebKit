@@ -143,8 +143,8 @@ static void _didExecute(WebScriptObject *obj)
     ASSERT(imp);
 
     _private->imp = imp;
-    _private->rootObject = rootObject.releaseRef();
-    _private->originRootObject = originRootObject.releaseRef();
+    _private->rootObject = rootObject.leakRef();
+    _private->originRootObject = originRootObject.leakRef();
 
     WebCore::addJSWrapper(self, imp);
 
@@ -168,8 +168,8 @@ static void _didExecute(WebScriptObject *obj)
     if (_private->originRootObject)
         _private->originRootObject->deref();
 
-    _private->rootObject = rootObject.releaseRef();
-    _private->originRootObject = originRootObject.releaseRef();
+    _private->rootObject = rootObject.leakRef();
+    _private->originRootObject = originRootObject.leakRef();
 }
 
 - (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject

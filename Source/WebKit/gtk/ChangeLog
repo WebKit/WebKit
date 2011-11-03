@@ -1,3 +1,41 @@
+2011-11-03  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * webkit/webkitwebdatasource.cpp:
+        (WebKit::kitNew):
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_new):
+        (webkit_web_history_item_new_with_data):
+        (webkit_web_history_item_copy):
+        (WebKit::kit):
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_new_with_core_resource):
+        (webkit_web_resource_init_with_core_resource):
+        Use leakRef.
+
+2011-11-02  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        Reviewed by Darin Fisher.
+
+        * webkit/webkitwebdatasource.cpp:
+        (WebKit::kitNew):
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_new):
+        (webkit_web_history_item_new_with_data):
+        (webkit_web_history_item_copy):
+        (WebKit::kit):
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_new_with_core_resource):
+        (webkit_web_resource_init_with_core_resource):
+        Use leakRef.
+
 2011-11-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

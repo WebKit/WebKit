@@ -223,7 +223,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins(
     DatabaseTracker::tracker().origins(origins);
         COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin> > > > enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin> > >::adopt(origins));
 
-    *result = enumVariant.releaseRef();
+    *result = enumVariant.leakRef();
     return S_OK;
 }
     
@@ -248,7 +248,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
 
     COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
 
-    *result = enumVariant.releaseRef();
+    *result = enumVariant.leakRef();
     return S_OK;
 }
 

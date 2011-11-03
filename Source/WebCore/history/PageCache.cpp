@@ -346,7 +346,7 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page* page)
     ASSERT(page);
     ASSERT(canCache(page));
     
-    HistoryItem* item = prpItem.releaseRef(); // Balanced in remove().
+    HistoryItem* item = prpItem.leakRef(); // Balanced in remove().
 
     // Remove stale cache entry if necessary.
     if (item->m_cachedPage)

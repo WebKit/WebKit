@@ -278,15 +278,15 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index)
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
     if (!imageUTI || !CFEqual(imageUTI, xbmUTI))
-        return image.releaseRef();
+        return image.leakRef();
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
     const CGFloat maskingColors[6] = {255, 255,  255, 255, 255, 255};
     RetainPtr<CGImageRef> maskedImage(AdoptCF, CGImageCreateWithMaskingColors(image.get(), maskingColors));
     if (!maskedImage)
-        return image.releaseRef();
+        return image.leakRef();
 
-    return maskedImage.releaseRef();
+    return maskedImage.leakRef();
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

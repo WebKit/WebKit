@@ -39,7 +39,7 @@ WKTypeID WKDataGetTypeID()
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
     RefPtr<WebData> data = WebData::create(bytes, size);
-    return toAPI(data.release().releaseRef());
+    return toAPI(data.release().leakRef());
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)

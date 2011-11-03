@@ -293,7 +293,7 @@ void WKBundlePageResetTrackedRepaints(WKBundlePageRef pageRef)
 
 WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->trackedRepaintRects().releaseRef());
+    return toAPI(toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
 WKStringRef WKBundlePageViewportConfigurationAsText(WKBundlePageRef pageRef, int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)

@@ -65,7 +65,7 @@ void WebDOMEvent::assign(WebDOMEventPrivate* p)
 }
 
 WebDOMEvent::WebDOMEvent(const WTF::PassRefPtr<WebCore::Event>& event)
-    : m_private(static_cast<WebDOMEventPrivate*>(event.releaseRef()))
+    : m_private(static_cast<WebDOMEventPrivate*>(event.leakRef()))
 {
 }
 

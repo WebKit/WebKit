@@ -50,5 +50,5 @@ size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
 WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
     RefPtr<ImmutableArray> keys = toImpl(dictionaryRef)->keys();
-    return toAPI(keys.release().releaseRef());
+    return toAPI(keys.release().leakRef());
 }

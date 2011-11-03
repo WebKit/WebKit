@@ -55,7 +55,7 @@ void WebNodeList::assign(const WebNodeList& other)
 }
 
 WebNodeList::WebNodeList(const PassRefPtr<NodeList>& col)
-    : m_private(static_cast<NodeList*>(col.releaseRef()))
+    : m_private(static_cast<NodeList*>(col.leakRef()))
 {
 }
 

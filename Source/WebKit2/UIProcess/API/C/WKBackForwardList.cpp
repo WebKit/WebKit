@@ -68,10 +68,10 @@ unsigned WKBackForwardListGetForwardListCount(WKBackForwardListRef listRef)
 
 WKArrayRef WKBackForwardListCopyBackListWithLimit(WKBackForwardListRef listRef, unsigned limit)
 {
-    return toAPI(toImpl(listRef)->backListAsImmutableArrayWithLimit(limit).releaseRef());
+    return toAPI(toImpl(listRef)->backListAsImmutableArrayWithLimit(limit).leakRef());
 }
 
 WKArrayRef WKBackForwardListCopyForwardListWithLimit(WKBackForwardListRef listRef, unsigned limit)
 {
-    return toAPI(toImpl(listRef)->forwardListAsImmutableArrayWithLimit(limit).releaseRef());    
+    return toAPI(toImpl(listRef)->forwardListAsImmutableArrayWithLimit(limit).leakRef());    
 }

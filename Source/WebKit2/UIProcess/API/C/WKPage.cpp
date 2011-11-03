@@ -239,13 +239,13 @@ void WKPageTerminate(WKPageRef pageRef)
 
 WKStringRef WKPageGetSessionHistoryURLValueType()
 {
-    static WebString* sessionHistoryURLValueType = WebString::create("SessionHistoryURL").releaseRef();
+    static WebString* sessionHistoryURLValueType = WebString::create("SessionHistoryURL").leakRef();
     return toAPI(sessionHistoryURLValueType);
 }
 
 WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
 {
-    return toAPI(toImpl(pageRef)->sessionStateData(filter, context).releaseRef());
+    return toAPI(toImpl(pageRef)->sessionStateData(filter, context).leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)

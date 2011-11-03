@@ -38,7 +38,7 @@ WKURLResponseRef WKURLResponseCreateWithCFURLResponse(CFURLResponseRef urlRespon
 
     CFURLResponseRef copiedURLResponse = CFURLResponseCreateCopy(kCFAllocatorDefault, urlResponse);
     RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse);
-    return toAPI(response.release().releaseRef());
+    return toAPI(response.release().leakRef());
 }
 
 CFURLResponseRef WKURLResponseCopyCFURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)

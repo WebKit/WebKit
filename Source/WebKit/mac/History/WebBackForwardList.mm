@@ -91,7 +91,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList.releaseRef());
+    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList.leakRef());
     backForwardLists().set(core(self), self);
     return self;
 }

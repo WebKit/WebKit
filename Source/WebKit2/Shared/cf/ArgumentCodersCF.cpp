@@ -367,7 +367,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFDictionaryRef>& result)
         CFDictionarySetValue(dictionary.get(), key.get(), value.get());
     }
 
-    result.adoptCF(dictionary.releaseRef());
+    result.adoptCF(dictionary.leakRef());
     return true;
 }
 

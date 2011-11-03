@@ -1,3 +1,83 @@
+2011-11-03  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        * public/WebPrivatePtr.h:
+        (WebKit::WebPrivatePtr::WebPrivatePtr):
+        (WebKit::WebPrivatePtr::operator=):
+        * src/WebDOMEvent.cpp:
+        (WebKit::WebDOMEvent::WebDOMEvent):
+        * src/WebData.cpp:
+        (WebKit::WebData::assign):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::initialize):
+        (WebKit::WebDragData::WebDragData):
+        (WebKit::WebDragData::operator=):
+        * src/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::initialize):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::ensureMutable):
+        * src/WebNodeCollection.cpp:
+        (WebKit::WebNodeCollection::WebNodeCollection):
+        * src/WebNodeList.cpp:
+        (WebKit::WebNodeList::WebNodeList):
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::operator=):
+        * src/WebRange.cpp:
+        (WebKit::WebRange::WebRange):
+        (WebKit::WebRange::operator=):
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::operator=):
+        * src/WebThreadSafeData.cpp:
+        (WebKit::WebThreadSafeData::WebThreadSafeData):
+        Use leakRef.
+
+2011-11-02  Darin Adler  <darin@apple.com>
+
+        Change remaining callers of releaseRef to call leakRef
+        https://bugs.webkit.org/show_bug.cgi?id=71422
+
+        * public/WebPrivatePtr.h:
+        (WebKit::WebPrivatePtr::WebPrivatePtr):
+        (WebKit::WebPrivatePtr::operator=):
+        * src/WebDOMEvent.cpp:
+        (WebKit::WebDOMEvent::WebDOMEvent):
+        * src/WebData.cpp:
+        (WebKit::WebData::assign):
+        (WebKit::WebData::WebData):
+        (WebKit::WebData::operator=):
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::initialize):
+        (WebKit::WebDragData::WebDragData):
+        (WebKit::WebDragData::operator=):
+        * src/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::initialize):
+        (WebKit::WebHTTPBody::WebHTTPBody):
+        (WebKit::WebHTTPBody::operator=):
+        (WebKit::WebHTTPBody::ensureMutable):
+        * src/WebNodeCollection.cpp:
+        (WebKit::WebNodeCollection::WebNodeCollection):
+        * src/WebNodeList.cpp:
+        (WebKit::WebNodeList::WebNodeList):
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::operator=):
+        * src/WebRange.cpp:
+        (WebKit::WebRange::WebRange):
+        (WebKit::WebRange::operator=):
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::WebSecurityOrigin):
+        (WebKit::WebSecurityOrigin::operator=):
+        * src/WebThreadSafeData.cpp:
+        (WebKit::WebThreadSafeData::WebThreadSafeData):
+        Use leakRef.
+
 2011-11-03  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Remove unused clipboard methods

@@ -278,7 +278,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new()
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
     RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create();
-    priv->historyItem = item.release().releaseRef();
+    priv->historyItem = item.release().leakRef();
     webkit_history_item_add(webHistoryItem, priv->historyItem);
 
     return webHistoryItem;
@@ -301,7 +301,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
     WebCore::KURL historyUri(WebCore::KURL(), uri);
     WTF::String historyTitle = WTF::String::fromUTF8(title);
     RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
-    priv->historyItem = item.release().releaseRef();
+    priv->historyItem = item.release().leakRef();
     webkit_history_item_add(webHistoryItem, priv->historyItem);
 
     return webHistoryItem;
@@ -452,7 +452,7 @@ WebKitWebHistoryItem* webkit_web_history_item_copy(WebKitWebHistoryItem* self)
     priv->uri = selfPrivate->uri;
     priv->originalUri = selfPrivate->originalUri;
 
-    priv->historyItem = selfPrivate->historyItem->copy().releaseRef();
+    priv->historyItem = selfPrivate->historyItem->copy().leakRef();
 
     return item;
 }
@@ -521,7 +521,7 @@ WebKitWebHistoryItem* WebKit::kit(PassRefPtr<WebCore::HistoryItem> historyItem)
         webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(g_object_new(WEBKIT_TYPE_WEB_HISTORY_ITEM, NULL));
         WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
-        priv->historyItem = item.release().releaseRef();
+        priv->historyItem = item.release().leakRef();
         webkit_history_item_add(webHistoryItem, priv->historyItem);
     }
 

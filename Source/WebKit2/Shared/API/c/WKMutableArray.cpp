@@ -34,7 +34,7 @@ using namespace WebKit;
 WKMutableArrayRef WKMutableArrayCreate()
 {
     RefPtr<MutableArray> array = MutableArray::create();
-    return toAPI(array.release().releaseRef());
+    return toAPI(array.release().leakRef());
 }
 
 bool WKArrayIsMutable(WKArrayRef arrayRef)

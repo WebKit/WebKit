@@ -80,7 +80,7 @@ NSMutableArray* ContextMenu::platformDescription() const
 
 NSMutableArray* ContextMenu::releasePlatformDescription()
 {
-    return m_platformDescription.releaseRef();
+    return m_platformDescription.leakRef();
 }
 
 Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription menu)

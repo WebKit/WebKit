@@ -34,7 +34,7 @@ using namespace WebKit;
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
     RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
-    return toAPI(dictionary.release().releaseRef());
+    return toAPI(dictionary.release().leakRef());
 }
 
 bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)

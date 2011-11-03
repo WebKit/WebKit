@@ -82,7 +82,7 @@ WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 
 WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
-    return toAPI(toImpl(frameRef)->childFrames().releaseRef());    
+    return toAPI(toImpl(frameRef)->childFrames().leakRef());    
 }
 
 unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
