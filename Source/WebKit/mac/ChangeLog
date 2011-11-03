@@ -1,3 +1,19 @@
+2011-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move NSRange / DOMRange conversion functions to WebFramePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=71435
+
+        Reviewed by Sam Weinig.
+
+        Move conversion functions to WebFramePrivate,
+        and remove the no longer used versions.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertNSRangeToDOMRange:]):
+        (-[WebFrame _convertDOMRangeToNSRange:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+
 2011-11-02  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_SHADERS flag

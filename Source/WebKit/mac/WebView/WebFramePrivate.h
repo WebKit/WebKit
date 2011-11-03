@@ -83,6 +83,9 @@ typedef enum {
 - (NSRange)_selectedNSRange;
 - (void)_selectNSRange:(NSRange)range;
 
+- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)range;
+- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range;
+
 - (BOOL)_isDisplayingStandaloneImage;
 
 - (unsigned)_pendingFrameUnloadEventCount;

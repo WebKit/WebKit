@@ -688,28 +688,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return TextIterator::rangeFromLocationAndLength(_private->coreFrame->selection()->rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
 
-- (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
-{
-    // This method exists to maintain compatibility with Leopard's Dictionary.app. <rdar://problem/6002160>
-    return [self _convertNSRangeToDOMRange:nsrange];
-}
-
-- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
-{
-    return kit([self _convertToDOMRange:nsrange].get());
-}
-
-- (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
-{
-    // This method exists to maintain compatibility with Leopard's Dictionary.app. <rdar://problem/6002160>
-    return [self _convertDOMRangeToNSRange:range];
-}
-
-- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
-{
-    return [self _convertToNSRange:core(range)];
-}
-
 - (DOMRange *)_markDOMRange
 {
     return kit(_private->coreFrame->editor()->mark().toNormalizedRange().get());
@@ -923,6 +901,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RefPtr<Range> domRange = [self _convertToDOMRange:range];
     if (domRange)
         _private->coreFrame->selection()->setSelection(VisibleSelection(domRange.get(), SEL_DEFAULT_AFFINITY));
+}
+
+- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
+{
+    return kit([self _convertToDOMRange:nsrange].get());
+}
+
+- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
+{
+    return [self _convertToNSRange:core(range)];
 }
 
 - (BOOL)_isDisplayingStandaloneImage
