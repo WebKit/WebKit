@@ -1,3 +1,39 @@
+2011-11-02  Adam Barth  <abarth@webkit.org>
+
+        Implement allow-popups for iframe@sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=66505
+
+        Reviewed by Eric Seidel.
+
+        There's been some discussion in the HTML working group about adding an
+        allow-popups directive to the iframe sandbox.  Microsoft has added it
+        to IE10 platform preview and is fairly adamant about this feature
+        because it's needed by one or their products that's planning to use
+        iframe sandbox.  Hixie says he'll add it to the spec once we implement
+        it, so here's our implementation.  (See discussion in the W3C linked in
+        the bug for more details.)
+
+        Tests: http/tests/security/popup-allowed-by-sandbox-is-sandboxed-control.html
+               http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html
+               http/tests/security/popup-allowed-by-sandbox-when-allowed.html
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::createWindow):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::forceSandboxFlags):
+        * loader/FrameLoaderTypes.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::parseSandboxPolicy):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::sandboxFlags):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-11-02  Sam Weinig  <sam@webkit.org>
 
         Remove the ability to generate custom lookupGetter/lookupSetter functions,

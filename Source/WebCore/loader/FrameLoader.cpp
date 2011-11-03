@@ -945,7 +945,11 @@ void FrameLoader::setOpener(Frame* opener)
         m_opener->loader()->m_openedFrames.remove(m_frame);
     if (opener)
         opener->loader()->m_openedFrames.add(m_frame);
+
     m_opener = opener;
+
+    if (m_opener && !m_frame->tree()->parent())
+        forceSandboxFlags(m_opener->document()->securityOrigin()->sandboxFlags());
 
     if (m_frame->document()) {
         m_frame->document()->initSecurityContext();
@@ -3268,7 +3272,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     }
 
     // Sandboxed frames cannot open new auxiliary browsing contexts.
-    if (isDocumentSandboxed(openerFrame, SandboxNavigation))
+    if (isDocumentSandboxed(openerFrame, SandboxPopups))
         return 0;
 
     // FIXME: Setting the referrer should be the caller's responsibility.
