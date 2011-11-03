@@ -1,3 +1,46 @@
+2011-11-03  Andreas Kling  <kling@webkit.org>
+
+        Devirtualize CSSRule.
+        https://bugs.webkit.org/show_bug.cgi?id=71382
+
+        Reviewed by Antti Koivisto.
+
+        Remove the virtual destructor from CSSRule, and reimplement RefCounted's deref()
+        to invoke operator delete on the appropriate subclass type.
+
+        This removes the CSSRule vtable and shrinks each instance by one CPU word.
+
+        * css/CSSCharsetRule.h:
+        * css/CSSFontFaceRule.h:
+        * css/CSSMediaRule.h:
+        * css/CSSPageRule.h:
+        * css/CSSRegionStyleRule.h:
+        * css/CSSRule.cpp:
+        * css/CSSRule.h:
+        (WebCore::CSSRule::deref):
+        (WebCore::CSSRule::~CSSRule):
+        * css/CSSStyleRule.h:
+        * css/WebKitCSSKeyframeRule.h:
+
+            Devirtualize!
+
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::destroy):
+
+            Added, invokes operator delete on the right subclass type.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        (WebCore::CSSImportRule::~CSSImportRule):
+        (WebCore::CSSImportRule::requestStyleSheet):
+        * css/CSSImportRule.h:
+        (WebCore::CSSImportRule::ImportedStyleSheetClient::ImportedStyleSheetClient):
+        (WebCore::CSSImportRule::ImportedStyleSheetClient::~ImportedStyleSheetClient):
+        (WebCore::CSSImportRule::ImportedStyleSheetClient::setCSSStyleSheet):
+
+            Break out the inheritance from CachedStyleSheetClient into a member variable
+            that simply redirects the setCSSStyleSheet() callback to the CSSImportRule.
+
 2011-10-31  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Recycle cursor objects when calling continue()

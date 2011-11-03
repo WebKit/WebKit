@@ -41,7 +41,7 @@ public:
         return adoptRef(new CSSFontFaceRule(parent));
     }
 
-    virtual ~CSSFontFaceRule();
+    ~CSSFontFaceRule();
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 

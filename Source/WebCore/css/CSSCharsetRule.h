@@ -34,7 +34,7 @@ public:
         return adoptRef(new CSSCharsetRule(parent, encoding));
     }
 
-    virtual ~CSSCharsetRule();
+    ~CSSCharsetRule();
 
     const String& encoding() const { return m_encoding; }
     void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }

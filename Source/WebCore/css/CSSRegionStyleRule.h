@@ -49,7 +49,7 @@ public:
         return adoptRef(new CSSRegionStyleRule(parent, selectors, rules));
     }
 
-    virtual ~CSSRegionStyleRule();
+    ~CSSRegionStyleRule();
 
     String cssText() const;
     const CSSSelectorList& selectorList() const { return m_selectorList; }

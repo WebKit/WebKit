@@ -39,7 +39,7 @@ public:
         return adoptRef(new CSSPageRule(parent, sourceLine));
     }
 
-    virtual ~CSSPageRule();
+    ~CSSPageRule();
 
     String pageSelectorText() const;
 

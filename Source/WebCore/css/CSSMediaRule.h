@@ -38,7 +38,7 @@ public:
     {
         return adoptRef(new CSSMediaRule(parent, media, rules));
     }
-    virtual ~CSSMediaRule();
+    ~CSSMediaRule();
 
     MediaList* media() const { return m_lstMedia.get(); }
     CSSRuleList* cssRules() { return m_lstCSSRules.get(); }

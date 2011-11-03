@@ -47,7 +47,7 @@ public:
         return adoptRef(new WebKitCSSKeyframeRule(parent));
     }
 
-    virtual ~WebKitCSSKeyframeRule();
+    ~WebKitCSSKeyframeRule();
 
     String keyText() const              { return m_key; }
     void setKeyText(const String& s)    { m_key = s; }

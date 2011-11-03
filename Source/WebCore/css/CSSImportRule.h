@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 
-class CSSImportRule : public CSSRule, private CachedStyleSheetClient {
+class CSSImportRule : public CSSRule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
@@ -41,7 +41,7 @@ public:
         return adoptRef(new CSSImportRule(parent, href, media));
     }
 
-    virtual ~CSSImportRule();
+    ~CSSImportRule();
 
     String href() const { return m_strHref; }
     MediaList* media() const { return m_lstMedia.get(); }
@@ -57,11 +57,26 @@ public:
     void requestStyleSheet();
 
 private:
+    // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it
+    // to avoid adding a vptr to CSSImportRule.
+    class ImportedStyleSheetClient : public CachedStyleSheetClient {
+    public:
+        ImportedStyleSheetClient(CSSImportRule* ownerRule) : m_ownerRule(ownerRule) { }
+        virtual ~ImportedStyleSheetClient() { }
+        virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
+        {
+            m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
+        }
+    private:
+        CSSImportRule* m_ownerRule;
+    };
+
+    void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
+    friend class ImportedStyleSheetClient;
+
     CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
 
-    // from CachedResourceClient
-    virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
-
+    ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
     RefPtr<MediaList> m_lstMedia;
     RefPtr<CSSStyleSheet> m_styleSheet;

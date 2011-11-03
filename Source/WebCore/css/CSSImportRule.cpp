@@ -33,6 +33,7 @@ namespace WebCore {
 
 CSSImportRule::CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
     : CSSRule(parent, CSSRule::IMPORT_RULE)
+    , m_styleSheetClient(this)
     , m_strHref(href)
     , m_lstMedia(media)
     , m_cachedSheet(0)
@@ -51,7 +52,7 @@ CSSImportRule::~CSSImportRule()
     if (m_styleSheet)
         m_styleSheet->setParentRule(0);
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(this);
+        m_cachedSheet->removeClient(&m_styleSheetClient);
 }
 
 void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
@@ -146,7 +147,7 @@ void CSSImportRule::requestStyleSheet()
         if (parentSheet && parentSheet->loadCompleted() && rootSheet == parentSheet)
             parentSheet->startLoadingDynamicSheet();
         m_loading = true;
-        m_cachedSheet->addClient(this);
+        m_cachedSheet->addClient(&m_styleSheetClient);
     }
 }
 

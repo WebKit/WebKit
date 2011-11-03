@@ -33,7 +33,13 @@ typedef int ExceptionCode;
 
 class CSSRule : public RefCounted<CSSRule> {
 public:
-    virtual ~CSSRule() { }
+    // Override RefCounted's deref() to ensure operator delete is called on
+    // the appropriate subclass type.
+    void deref()
+    {
+        if (derefBase())
+            destroy();
+    }
 
     enum Type {
         UNKNOWN_RULE,
@@ -109,7 +115,14 @@ protected:
     {
     }
 
+    // NOTE: This class is non-virtual for memory and performance reasons.
+    // Don't go making it virtual again unless you know exactly what you're doing!
+
+    ~CSSRule() { }
+
 private:
+    void destroy();
+
     bool m_parentIsRule : 1;
     unsigned m_type : 31; // Plenty of space for additional flags here.
     union {

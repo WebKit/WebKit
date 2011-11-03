@@ -29,6 +29,7 @@
 #include "CSSPageRule.h"
 #include "CSSRegionStyleRule.h"
 #include "CSSStyleRule.h"
+#include "CSSUnknownRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "NotImplemented.h"
@@ -65,6 +66,43 @@ String CSSRule::cssText() const
     }
     ASSERT_NOT_REACHED();
     return String();
+}
+
+void CSSRule::destroy()
+{
+    switch (type()) {
+    case UNKNOWN_RULE:
+        delete static_cast<CSSUnknownRule*>(this);
+        return;
+    case STYLE_RULE:
+        delete static_cast<CSSStyleRule*>(this);
+        return;
+    case PAGE_RULE:
+        delete static_cast<CSSPageRule*>(this);
+        return;
+    case CHARSET_RULE:
+        delete static_cast<CSSCharsetRule*>(this);
+        return;
+    case IMPORT_RULE:
+        delete static_cast<CSSImportRule*>(this);
+        return;
+    case MEDIA_RULE:
+        delete static_cast<CSSMediaRule*>(this);
+        return;
+    case FONT_FACE_RULE:
+        delete static_cast<CSSFontFaceRule*>(this);
+        return;
+    case WEBKIT_KEYFRAMES_RULE:
+        delete static_cast<WebKitCSSKeyframesRule*>(this);
+        return;
+    case WEBKIT_KEYFRAME_RULE:
+        delete static_cast<WebKitCSSKeyframeRule*>(this);
+        return;
+    case WEBKIT_REGION_STYLE_RULE:
+        delete static_cast<CSSRegionStyleRule*>(this);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

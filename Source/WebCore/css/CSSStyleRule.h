@@ -38,7 +38,7 @@ public:
     {
         return adoptRef(new CSSStyleRule(parent, sourceLine));
     }
-    virtual ~CSSStyleRule();
+    ~CSSStyleRule();
 
     String selectorText() const;
     void setSelectorText(const String&);
