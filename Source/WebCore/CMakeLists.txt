@@ -2152,6 +2152,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl
         html/canvas/WebGLContextAttributes.idl
+        html/canvas/WebGLContextEvent.idl
         html/canvas/WebGLDebugRendererInfo.idl
         html/canvas/WebGLDebugShaders.idl
         html/canvas/WebGLFramebuffer.idl
