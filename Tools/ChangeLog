@@ -1,3 +1,59 @@
+2011-11-02  Adam Roben  <aroben@apple.com>
+
+        Add git-add-reviewer
+
+        I've been using this script for a while to add reviewers to git commits in my local
+        repository before pushing them to the Subversion repository. Basic usage is:
+
+        git-add-reviewer HEAD^ "Joe Schmoe"
+        or
+        git-add-reviewer -i trunk
+
+        Fixes <http://webkit.org/b/71419> Would like an easy way to add reviewer names to existing
+        git commits
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/git-add-reviewer: Added.
+        (top level): Parse options, check that the working tree is clean, then run in either
+        interactive or non-interactive mode as appropriate.
+        (interactive): Write out a temp file that contains each commit with "NOBODY" next to it and
+        open it in the user's editor. The user can replace "NOBODY" with reviewer names. When the
+        editor exits, we check out the commit just before the earliest one we're modifying. Then
+        for each commit, we check it out, update the reviewer, and amend the commit to contain the
+        new reviewer. Finally, we update the branch that was originally checked out to point to the
+        last amended commit.
+        (nonInteractive): Check out the commit to modify, write the current commit message to the
+        MERGE_MSG file so addReviewer will update it, add the reviewer to the ChangeLog(s), amend
+        the commit, and rebase the original branch on top of the amended commit. (usage): Print out
+        a usage message and exit.
+        (requireCleanWorkTree): Do the same steps git-rebase does to ensure that the working tree
+        and index are clean.
+        (fail): Print out the specified error message, if any, and return false. This function is
+        used as a return value in various error cases throughout the script.
+        (cherryPick): Cherry-pick the specified commit and return 1 if we succeeded.
+        (addReviewer): Add the specified reviewer to all the ChangeLogs modified in this commit, and
+        to .git/MERGE_MSG, which will be used as the commit message for the next commit.
+        (commit): Call git-commit and use .git/MERGE_MSG as the commit message.
+
+        (addReviewerToChangeLog):
+        (addReviewerToCommitMessage):
+        These just call through to addReviewerToFile.
+
+        (addReviewerToFile): Read in the file, replacing any "NOBODY" text with the reviewer name(s)
+        and replacing "Reviewed" with "Rubber-stamped" if specified. Write the resulting text to a
+        temp file, then move the temp file over the original file and stage it for the next commit.
+        (head): Returns the name of the currently-checked-out branch.
+        (isAncestor): Returns true if the first commit is an ancestor of the second.
+        (toCommit): Converts a commitish to a commit ID using git-rev-parse.
+        (changeLogsForCommit): Returns a list of all the ChangeLogs modified in the given commit.
+        (resetToCommit): Checks out the given commit, throwing away any local changes.
+        (writeCommitMessageToFile): Gets the commit message for the current commit and writes it to
+        the specified file.
+        (rebaseOntoHead): Rebases the specified branch onto HEAD.
+        (checkout): Checks out the given commit.
+        (getConfigValue): Reads the specified config variable from git-config.
+
 2011-11-02  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_SHADERS flag
