@@ -750,7 +750,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         }
 
         function profileCallback2() {
-            this.currentView.show(this.element);
+            this.currentView.show(this.viewsContainer);
         }
     },
 
@@ -1062,7 +1062,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         var view = this.views[this.views.current];
         this.currentView = view.view;
         this.dataGrid = view.grid;
-        this.currentView.show(this.element);
+        this.currentView.show(this.viewsContainer);
         this.refreshVisibleData();
         this.dataGrid.updateWidths();
 
@@ -1202,7 +1202,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     _startRetainersHeaderDragging: function(event)
     {
-        if (!this.visible || event.target === this.retainingPathsRoot)
+        if (!this.isShowing() || event.target === this.retainingPathsRoot)
             return;
 
         WebInspector.elementDragStart(this.retainmentViewHeader, this._retainersHeaderDragging.bind(this), this._endRetainersHeaderDragging.bind(this), event, "row-resize");

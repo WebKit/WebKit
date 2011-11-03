@@ -1,3 +1,16 @@
+2011-11-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: fix heap profiler rendering and resize.
+        https://bugs.webkit.org/show_bug.cgi?id=71484
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.wasShown.profileCallback2):
+        (WebInspector.DetailedHeapshotView.prototype.wasShown):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        (WebInspector.DetailedHeapshotView.prototype._startRetainersHeaderDragging):
+
 2011-11-03  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Stop abusing RenderTableSection::needsRecalcCells logic
