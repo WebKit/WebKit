@@ -32,7 +32,6 @@
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
 #include "RenderIFrame.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -69,6 +68,42 @@ bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
     return HTMLFrameElementBase::mapToEntry(attrName, result);
 }
 
+static SandboxFlags parseSandboxAttribute(Attribute* attribute)
+{
+    if (attribute->isNull())
+        return SandboxNone;
+
+    // Parse the unordered set of unique space-separated tokens.
+    SandboxFlags flags = SandboxAll;
+    const UChar* characters = attribute->value().characters();
+    unsigned length = attribute->value().length();
+    unsigned start = 0;
+    while (true) {
+        while (start < length && isASCIISpace(characters[start]))
+            ++start;
+        if (start >= length)
+            break;
+        unsigned end = start + 1;
+        while (end < length && !isASCIISpace(characters[end]))
+            ++end;
+
+        // Turn off the corresponding sandbox flag if it's set as "allowed".
+        String sandboxToken = String(characters + start, end - start);
+        if (equalIgnoringCase(sandboxToken, "allow-same-origin"))
+            flags &= ~SandboxOrigin;
+        else if (equalIgnoringCase(sandboxToken, "allow-forms"))
+            flags &= ~SandboxForms;
+        else if (equalIgnoringCase(sandboxToken, "allow-scripts"))
+            flags &= ~SandboxScripts;
+        else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
+            flags &= ~SandboxTopNavigation;
+
+        start = end + 1;
+    }
+
+    return flags;
+}
+
 void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == widthAttr)
@@ -92,7 +127,7 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
             // Add a rule that nulls out our border width.
             addCSSLength(attr, CSSPropertyBorderWidth, "0");
     } else if (attr->name() == sandboxAttr)
-        setSandboxFlags(attr->isNull() ? SandboxNone : SecurityOrigin::parseSandboxPolicy(attr->value()));
+        setSandboxFlags(parseSandboxAttribute(attr));
     else
         HTMLFrameElementBase::parseMappedAttribute(attr);
 }

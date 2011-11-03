@@ -1,3 +1,28 @@
+2011-11-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99138.
+        http://trac.webkit.org/changeset/99138
+        https://bugs.webkit.org/show_bug.cgi?id=71455
+
+        It made 200+ tests flakey on SL and on Qt (Requested by Ossy
+        on #webkit).
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::parseSandboxAttribute):
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::createWindow):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setForcedSandboxFlags):
+        * loader/FrameLoaderTypes.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2011-11-03  Kentaro Hara  <haraken@chromium.org>
 
         Fixed wrong implementation of doubleValue % 2^{64}.

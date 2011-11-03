@@ -100,7 +100,6 @@ namespace WebCore {
         SandboxForms = 1 << 3,
         SandboxScripts = 1 << 4,
         SandboxTopNavigation = 1 << 5,
-        SandboxPopups = 1 << 6,
         SandboxAll = -1 // Mask with all bits set to 1.
     };
 

@@ -313,7 +313,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         frame->setView(FrameView::create(frame.get()));
         frame->init();
         FrameLoader* loader = frame->loader();
-        loader->forceSandboxFlags(SandboxAll);
+        loader->setForcedSandboxFlags(SandboxAll);
 
         frame->view()->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
         frame->view()->setTransparent(true); // SVG Images are transparent.
