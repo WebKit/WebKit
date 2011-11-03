@@ -2558,6 +2558,8 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
     }
 
     WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi(), availableSize);
+    WebCore::restrictMinimumScaleFactorToViewportSize(conf, availableSize);
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(conf);
 
     result.m_isValid = true;
     result.m_size = conf.layoutSize;

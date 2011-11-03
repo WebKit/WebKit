@@ -2618,6 +2618,8 @@ String WebPage::viewportConfigurationAsText(int deviceDPI, int deviceWidth, int 
 {
     ViewportArguments arguments = mainFrame()->document()->viewportArguments();
     ViewportAttributes attrs = WebCore::computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
+    WebCore::restrictMinimumScaleFactorToViewportSize(attrs, IntSize(availableWidth, availableHeight));
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attrs);
     return String::format("viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", attrs.layoutSize.width(), attrs.layoutSize.height(), attrs.initialScale, attrs.minimumScale, attrs.maximumScale, attrs.userScalable);
 }
 

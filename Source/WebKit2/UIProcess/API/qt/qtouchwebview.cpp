@@ -92,6 +92,8 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     wkPrefs->setDeviceHeight(720);
 
     WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
+    WebCore::restrictMinimumScaleFactorToViewport(attr, availableSize);
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
 
     QtViewportInteractionEngine::Constraints newConstraints;
     newConstraints.initialScale = attr.initialScale;

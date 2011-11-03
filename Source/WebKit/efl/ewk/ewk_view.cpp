@@ -1088,6 +1088,8 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const E
     WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome()->client()->windowRect());
 
     WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewportArguments, desktopWidth, deviceRect.width(), deviceRect.height(), deviceDPI, availableRect.size());
+    WebCore::restrictMinimumScaleFactorToViewportSize(attributes, availableRect.size());
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
     return attributes;
 }

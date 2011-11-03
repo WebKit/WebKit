@@ -1,3 +1,24 @@
+2011-11-03  Fady Samuel  <fsamuel@chromium.org>
+
+        Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport
+        https://bugs.webkit.org/show_bug.cgi?id=70609
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Operations in computeViewportAttributes that are not a part of the spec: 
+
+        http://www.w3.org/TR/2011/WD-css-device-adapt-20110915/#constraining-viewport-property-values
+
+        were moved into the functions restrictMinimumScaleFactorToViewportSize and
+        restrictScaleFactorToInitialScaleIfNotUserScalable.
+
+        * WebCore.exp.in:
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        (WebCore::restrictMinimumScaleFactorToViewportSize):
+        (WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable):
+        * dom/ViewportArguments.h:
+
 2011-11-03  Andreas Kling  <kling@webkit.org>
 
         Unreviewed build fix, sigh.

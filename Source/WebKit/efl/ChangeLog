@@ -1,3 +1,13 @@
+2011-11-03  Fady Samuel  <fsamuel@chromium.org>
+
+        Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport
+        https://bugs.webkit.org/show_bug.cgi?id=70609
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
 2011-11-03  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Enable the Page Visibility API.
