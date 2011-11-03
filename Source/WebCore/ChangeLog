@@ -1,3 +1,33 @@
+2011-11-03  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Optimizing arithmetic composite filter to ARM-neon SIMD instruction set
+        https://bugs.webkit.org/show_bug.cgi?id=65522
+
+        Reviewed by Dirk Schulze.
+
+        This patch continues the work of Felician Marton.
+
+        The arithmetic operation of feComposite SVG filter can be greatly enhanced
+        by the ARM-NEON instruction set since we are able to calculate the pixel data
+        for all four RGBA channels at the same time.
+
+        It won't affect the general behavior and existing tests will cover the changes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::computeArithmeticPixels):
+        (WebCore::arithmeticSoftware):
+        (WebCore::FEComposite::platformArithmeticSoftware):
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/arm/FECompositeArithmeticNEON.cpp: Added.
+        * platform/graphics/filters/arm/FECompositeArithmeticNEON.h: Added.
+        (WebCore::FEComposite::platformArithmeticNeon):
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Add pageScaleFactor to the serialized history item

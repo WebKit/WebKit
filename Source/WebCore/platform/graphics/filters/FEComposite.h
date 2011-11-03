@@ -69,6 +69,9 @@ public:
 private:
     FEComposite(Filter*, const CompositeOperationType&, float, float, float, float);
 
+    inline void platformArithmeticSoftware(ByteArray* source, ByteArray* destination, float k1, float k2, float k3, float k4);
+    inline void platformArithmeticNeon(unsigned char* source, unsigned  char* destination, unsigned pixelArrayLength, float* kArray);
+
     CompositeOperationType m_type;
     float m_k1;
     float m_k2;

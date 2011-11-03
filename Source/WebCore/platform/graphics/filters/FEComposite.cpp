@@ -26,6 +26,7 @@
 #if ENABLE(FILTERS)
 #include "FEComposite.h"
 
+#include "FECompositeArithmeticNEON.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "RenderTreeAsText.h"
@@ -116,11 +117,11 @@ bool FEComposite::setK4(float k4)
 }
 
 template <int b1, int b2, int b3, int b4>
-inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength,
+static inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength,
                                     float k1, float k2, float k3, float k4)
 {
-    float scaledK4;
     float scaledK1;
+    float scaledK4;
     if (b1)
         scaledK1 = k1 / 255.f;
     if (b4)
@@ -150,14 +151,9 @@ inline void computeArithmeticPixels(unsigned char* source, unsigned char* destin
     }
 }
 
-inline void arithmetic(ByteArray* srcPixelArrayA, ByteArray* srcPixelArrayB,
+static inline void arithmeticSoftware(unsigned char* source, unsigned char* destination, int pixelArrayLength,
                        float k1, float k2, float k3, float k4)
 {
-    int pixelArrayLength = srcPixelArrayA->length();
-    ASSERT(pixelArrayLength == static_cast<int>(srcPixelArrayB->length()));
-    unsigned char* source = srcPixelArrayA->data();
-    unsigned char* destination = srcPixelArrayB->data();
-
     if (!k4) {
         if (!k1) {
             computeArithmeticPixels<0, 1, 1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
@@ -173,6 +169,21 @@ inline void arithmetic(ByteArray* srcPixelArrayA, ByteArray* srcPixelArrayB,
         return;
     }
     computeArithmeticPixels<1, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+}
+
+inline void FEComposite::platformArithmeticSoftware(ByteArray* source, ByteArray* destination,
+    float k1, float k2, float k3, float k4)
+{
+    int length = source->length();
+    ASSERT(length == static_cast<int>(destination->length()));
+    // The selection here eventually should happen dynamically.
+#if CPU(ARM_NEON) && COMPILER(GCC)
+    ASSERT(!(length & 0x3));
+    float coefficients[4]  = { k1, k2, k3, k4 };
+    platformArithmeticNeon(source->data(), destination->data(), length, coefficients);
+#else
+    arithmeticSoftware(source->data(), destination->data(), length, k1, k2, k3, k4);
+#endif
 }
 
 void FEComposite::determineAbsolutePaintRect()
@@ -212,7 +223,7 @@ void FEComposite::platformApplySoftware()
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
         in2->copyPremultipliedImage(dstPixelArray, effectBDrawingRect);
 
-        arithmetic(srcPixelArray.get(), dstPixelArray, m_k1, m_k2, m_k3, m_k4);
+        platformArithmeticSoftware(srcPixelArray.get(), dstPixelArray, m_k1, m_k2, m_k3, m_k4);
         return;
     }
 
