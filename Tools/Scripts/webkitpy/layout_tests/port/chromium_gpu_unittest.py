@@ -27,11 +27,12 @@
 import sys
 import unittest
 
-from webkitpy.tool import mocktool
 import chromium_gpu
 
-from webkitpy.layout_tests.port import factory
+from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.port import port_testcase
+
 
 class ChromiumGpuTest(unittest.TestCase):
     def integration_test_chromium_gpu_linux(self):
@@ -58,7 +59,7 @@ class ChromiumGpuTest(unittest.TestCase):
 
     def assert_port_works(self, port_name, input_name=None, platform=None):
         # test that we got the right port
-        mock_options = mocktool.MockOptions(accelerated_compositing=None,
+        mock_options = MockOptions(accelerated_compositing=None,
                                             accelerated_2d_canvas=None,
                                             builder_name='foo',
                                             child_processes=None)
@@ -102,35 +103,24 @@ class ChromiumGpuTest(unittest.TestCase):
             self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
             self.assertFalse(path in files)
 
-    def test_chromium_gpu__vista(self):
-        port = factory.get('chromium-gpu-win-vista')
-        self.assertEquals(port.name(), 'chromium-gpu-win-vista')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
+    def _assert_baseline_path(self, port_name, baseline_path):
+        host = MockHost()
+        port = host.port_factory.get(port_name)
+        self.assertEquals(port.name(), port_name)
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(baseline_path))
 
-    def test_chromium_gpu__xp(self):
-        port = factory.get('chromium-gpu-win-xp')
-        self.assertEquals(port.name(), 'chromium-gpu-win-xp')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
-
-    def test_chromium_gpu__win7(self):
-        port = factory.get('chromium-gpu-win-win7')
-        self.assertEquals(port.name(), 'chromium-gpu-win-win7')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
-
-    def test_chromium_gpu__leopard(self):
-        port = factory.get('chromium-gpu-cg-mac-leopard')
-        self.assertEquals(port.name(), 'chromium-gpu-cg-mac-leopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-cg-mac'))
-
-    def test_chromium_gpu__snowleopard(self):
-        port = factory.get('chromium-gpu-cg-mac-snowleopard')
-        self.assertEquals(port.name(), 'chromium-gpu-cg-mac-snowleopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-cg-mac'))
+    def test_baseline_paths(self):
+        self._assert_baseline_path('chromium-gpu-win-vista', 'chromium-gpu-win')
+        self._assert_baseline_path('chromium-gpu-win-xp', 'chromium-gpu-win')
+        self._assert_baseline_path('chromium-gpu-win-win7', 'chromium-gpu-win')
+        self._assert_baseline_path('chromium-gpu-cg-mac-leopard', 'chromium-gpu-cg-mac')
+        self._assert_baseline_path('chromium-gpu-cg-mac-snowleopard', 'chromium-gpu-cg-mac')
 
     def test_graphics_type(self):
-        port = factory.get('chromium-gpu-cg-mac')
+        host = MockHost()
+        port = host.port_factory.get('chromium-gpu-cg-mac')
         self.assertEquals('gpu-cg', port.graphics_type())
-        port = factory.get('chromium-gpu-mac')
+        port = host.port_factory.get('chromium-gpu-mac')
         self.assertEquals('gpu', port.graphics_type())
 
 

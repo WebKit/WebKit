@@ -35,9 +35,10 @@ import unittest
 from webkitpy.common import newstringio
 
 from webkitpy.layout_tests.port import mock_drt
-from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port import test
+
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.tool import mocktool
 mock_options = mocktool.MockOptions(configuration='Release')
@@ -136,15 +137,15 @@ class MockDRTTest(unittest.TestCase):
                     '#EOF\n',
                     '#EOF\n']
 
-    def assertTest(self, test_name, pixel_tests, expected_checksum=None,
-                   drt_output=None, filesystem=None):
-        platform = 'test'
+    def assertTest(self, test_name, pixel_tests, expected_checksum=None, drt_output=None, filesystem=None):
+        port_name = 'test'
+        host = MockHost()
         filesystem = filesystem or test.unit_test_filesystem()
-        port = factory.get(platform, filesystem=filesystem)
+        port = host.port_factory.get(port_name, filesystem=filesystem)
         drt_input, drt_output = self.make_input_output(port, test_name,
             pixel_tests, expected_checksum, drt_output)
 
-        args = ['--platform', 'test'] + self.extra_args(pixel_tests)
+        args = ['--platform', port_name] + self.extra_args(pixel_tests)
         stdin = newstringio.StringIO(drt_input)
         stdout = newstringio.StringIO()
         stderr = newstringio.StringIO()

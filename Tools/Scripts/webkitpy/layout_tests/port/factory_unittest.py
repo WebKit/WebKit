@@ -29,10 +29,8 @@
 import sys
 import unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 
 import chromium_gpu
 import chromium_linux
@@ -65,6 +63,11 @@ class FactoryTest(unittest.TestCase):
     def tearDown(self):
         sys.platform = self.real_sys_platform
 
+    def make_factory(self):
+        host = MockHost()
+        # The PortFactory on MockHost is a real PortFactory with a MockFileSystem, etc.
+        return host.port_factory
+
     def assert_port(self, port_name, expected_port, port_obj=None):
         """Helper assert for port_name.
 
@@ -73,8 +76,7 @@ class FactoryTest(unittest.TestCase):
           expected_port: class of expected port object.
           port_obj: optional port object
         """
-
-        port_obj = port_obj or factory.get(port_name=port_name, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        port_obj = port_obj or self.make_factory().get(port_name=port_name)
         self.assertTrue(isinstance(port_obj, expected_port))
 
     def assert_platform_port(self, platform, options, expected_port):
@@ -86,9 +88,10 @@ class FactoryTest(unittest.TestCase):
           expected_port: class of expected port object.
 
         """
+        # FIXME: Hacking sys.platform like this is WRONG.
         orig_platform = sys.platform
         sys.platform = platform
-        self.assertTrue(isinstance(factory.get(options=options, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive()), expected_port))
+        self.assertTrue(isinstance(self.make_factory().get(options=options), expected_port))
         sys.platform = orig_platform
 
     def test_mac(self):
@@ -149,14 +152,13 @@ class FactoryTest(unittest.TestCase):
 
     def test_unknown_specified(self):
         # Test what happens when you specify an unknown port.
-        orig_platform = sys.platform
-        self.assertRaises(NotImplementedError, factory.get, port_name='unknown')
+        self.assertRaises(NotImplementedError, self.make_factory().get, port_name='unknown')
 
     def test_unknown_default(self):
         # Test what happens when you're running on an unknown platform.
         orig_platform = sys.platform
         sys.platform = 'unknown'
-        self.assertRaises(NotImplementedError, factory.get)
+        self.assertRaises(NotImplementedError, self.make_factory().get)
         sys.platform = orig_platform
 
 

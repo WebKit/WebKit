@@ -28,6 +28,7 @@
 
 import logging
 import re
+import sys
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port.apple import ApplePort
@@ -52,10 +53,15 @@ class WinPort(ApplePort):
             return 'xp'
         return None
 
-    def _detect_version(self, os_version_string=None):
+    def _detect_version(self, os_version_string=None, run_on_non_windows_platforms=None):
         # FIXME: os_version_string is for unit testing, but may eventually be provided by factory.py instead.
         if os_version_string is not None:
             return os_version_string
+
+        # No sense in trying to detect our windows version on non-windows platforms, unless we're unittesting.
+        if sys.platform != 'cygwin' and not run_on_non_windows_platforms:
+            return None
+
         # Note, this intentionally returns None to mean that it can't detect what the current version is.
         # Callers can then decide what version they want to pretend to be.
         try:

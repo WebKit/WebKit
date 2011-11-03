@@ -36,7 +36,6 @@ import os.path
 from webkitpy.common import system
 from webkitpy.common.net.resultsjsonparser import for_each_test, JSONTestResult
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.port import factory
 from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
 from webkitpy.tool.servers.rebaselineserver import get_test_baselines, RebaselineHTTPServer, STATE_NEEDS_REBASELINE
 
@@ -84,7 +83,7 @@ class RebaselineServer(AbstractLocalServerCommand):
         results_json_path = filesystem.join(results_directory, 'full_results.json')
         results_json = json_results_generator.load_json(filesystem, results_json_path)
 
-        port = factory.get()
+        port = tool.port_factory.get()
         layout_tests_directory = port.layout_tests_dir()
         platforms = filesystem.listdir(filesystem.join(layout_tests_directory, 'platform'))
         self._test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, filesystem, scm)

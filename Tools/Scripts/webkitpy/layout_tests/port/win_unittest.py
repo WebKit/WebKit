@@ -58,14 +58,14 @@ class WinPortTest(port_testcase.PortTestCase):
             return "6.1.7600"
 
         port._executive = MockExecutive2(run_command_fn=mock_run_command)
-        self.assertEquals(port._detect_version(), '7sp0')
+        self.assertEquals(port._detect_version(run_on_non_windows_platforms=True), '7sp0')
 
         def mock_run_command(cmd):
             raise ScriptError('Failure')
 
         port._executive = MockExecutive2(run_command_fn=mock_run_command)
         # Failures log to the python error log, but we have no easy way to capture/test that.
-        self.assertEquals(port._detect_version(), None)
+        self.assertEquals(port._detect_version(run_on_non_windows_platforms=True), None)
 
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = WinPort(os_version_string=version,

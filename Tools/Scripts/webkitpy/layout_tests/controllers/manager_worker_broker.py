@@ -52,7 +52,7 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy import layout_tests
+from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
 
@@ -99,8 +99,7 @@ def get(port, options, client, worker_class):
         queue_class = multiprocessing.Queue
         manager_class = _MultiProcessManager
     else:
-        raise ValueError("unsupported value for --worker-model: %s" %
-                         worker_model)
+        raise ValueError("unsupported value for --worker-model: %s" % worker_model)
 
     broker = message_broker.Broker(options, queue_class)
     return manager_class(broker, port, options, client, worker_class)
@@ -253,7 +252,8 @@ if multiprocessing:
 
         def run(self):
             options = self._options
-            port_obj = layout_tests.port.get(self._platform_name, options)
+            # FIXME: This should get the PortFactory from the Host.
+            port_obj = PortFactory().get(self._platform_name, options)
 
             # The unix multiprocessing implementation clones the
             # log handler configuration into the child processes,
@@ -263,8 +263,7 @@ if multiprocessing:
             # FIXME: this won't work if the calling process is logging
             # somewhere other than sys.stderr and sys.stdout, but I'm not sure
             # if this will be an issue in practice.
-            printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout,
-                configure_logging)
+            printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout, configure_logging)
             self._client.run(port_obj)
             printer.cleanup()
 

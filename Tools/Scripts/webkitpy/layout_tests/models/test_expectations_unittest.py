@@ -29,8 +29,8 @@
 
 import unittest
 
-from webkitpy.layout_tests import port
-from webkitpy.layout_tests.port import base
+from webkitpy.common.host_mock import MockHost
+
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
@@ -92,7 +92,8 @@ class Base(unittest.TestCase):
     # being tested is Windows XP, Release build.
 
     def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
-        self._port = port.get('test-win-xp', None)
+        host = MockHost()
+        self._port = host.port_factory.get('test-win-xp', None)
         self._fs = self._port._filesystem
         self._exp = None
         unittest.TestCase.__init__(self, testFunc)
@@ -453,7 +454,8 @@ class TestExpectationParserTests(unittest.TestCase):
         self.assertEqual(len(expectation.errors), 0)
 
     def test_parse_empty_string(self):
-        test_port = port.get('test-win-xp', None)
+        host = MockHost()
+        test_port = host.port_factory.get('test-win-xp', None)
         test_port.test_exists = lambda test: True
         test_config = test_port.test_configuration()
         full_test_list = []
@@ -465,7 +467,8 @@ class TestExpectationParserTests(unittest.TestCase):
 
 class TestExpectationSerializerTests(unittest.TestCase):
     def __init__(self, testFunc):
-        test_port = port.get('test-win-xp', None)
+        host = MockHost()
+        test_port = host.port_factory.get('test-win-xp', None)
         self._converter = TestConfigurationConverter(test_port.all_test_configurations(), test_port.configuration_specifier_macros())
         self._serializer = TestExpectationSerializer(self._converter)
         unittest.TestCase.__init__(self, testFunc)

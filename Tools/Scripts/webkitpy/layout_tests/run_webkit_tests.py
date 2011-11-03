@@ -38,6 +38,8 @@ import os
 import signal
 import sys
 
+from webkitpy.common.host import Host
+
 from webkitpy import layout_tests
 
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
@@ -427,7 +429,8 @@ def parse_args(args=None):
 
 def main():
     options, args = parse_args()
-    port = layout_tests.port.get(options.platform, options)
+    host = Host()
+    port = host.port_factory.get(options.platform, options)
     return run(port, options, args)
 
 

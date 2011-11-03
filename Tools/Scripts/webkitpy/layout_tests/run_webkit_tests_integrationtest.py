@@ -61,8 +61,8 @@ SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win3
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
-from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
@@ -70,8 +70,6 @@ from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_file
 from webkitpy.layout_tests.port.test_files import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
-
-from webkitpy.thirdparty.mock import Mock
 
 
 def parse_args(extra_args=None, record_results=False, tests_included=False, new_results=False, print_nothing=True):
@@ -101,8 +99,10 @@ def parse_args(extra_args=None, record_results=False, tests_included=False, new_
 
 def passing_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
     options, parsed_args = parse_args(extra_args, record_results, tests_included)
+    filesystem = filesystem or unit_test_filesystem()
     if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options, user=MockUser(), filesystem=filesystem)
+        host = MockHost()
+        port_obj = host.port_factory.get(port_name=options.platform, options=options, filesystem=filesystem)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
@@ -114,12 +114,13 @@ def logging_run(extra_args=None, port_obj=None, record_results=False, tests_incl
                                       record_results=record_results,
                                       tests_included=tests_included,
                                       print_nothing=False, new_results=new_results)
-    user = MockUser()
+    host = MockHost()
+    filesystem = filesystem or unit_test_filesystem()
     if not port_obj:
-        port_obj = port.get(port_name=options.platform, options=options, user=user, filesystem=filesystem)
+        port_obj = host.port_factory.get(port_name=options.platform, options=options, filesystem=filesystem)
 
     res, buildbot_output, regular_output = run_and_capture(port_obj, options, parsed_args)
-    return (res, buildbot_output, regular_output, user)
+    return (res, buildbot_output, regular_output, host.user)
 
 
 def run_and_capture(port_obj, options, parsed_args):
@@ -291,8 +292,8 @@ class MainTest(unittest.TestCase):
 
     def test_lint_test_files__errors(self):
         options, parsed_args = parse_args(['--lint-test-files'])
-        user = MockUser()
-        port_obj = port.get(options.platform, options=options, user=user)
+        host = MockHost()
+        port_obj = host.port_factory.get(options.platform, options=options)
         port_obj.test_expectations = lambda: "# syntax error"
         res, out, err = run_and_capture(port_obj, options, parsed_args)
 
@@ -816,14 +817,11 @@ class DryrunTest(unittest.TestCase):
         if sys.platform != "darwin":
             return
 
-        self.assertTrue(passing_run(['--platform', 'dryrun', 'fast/html'],
-                        tests_included=True))
-        self.assertTrue(passing_run(['--platform', 'dryrun-mac', 'fast/html'],
-                        tests_included=True))
+        self.assertTrue(passing_run(['--platform', 'dryrun', 'fast/html'], tests_included=True))
+        self.assertTrue(passing_run(['--platform', 'dryrun-mac', 'fast/html'], tests_included=True))
 
     def test_test(self):
-        self.assertTrue(passing_run(['--platform', 'dryrun-test',
-                                           '--pixel-tests']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-test', '--pixel-tests']))
 
 
 if __name__ == '__main__':

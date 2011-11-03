@@ -1,3 +1,103 @@
+2011-11-03  Eric Seidel  <eric@webkit.org>
+
+        Remove deprecated free functions in port.factory
+        https://bugs.webkit.org/show_bug.cgi?id=71494
+
+        Reviewed by Adam Barth.
+
+        I removed port.factory.get, get_all, and all_port_names -- long-since deprecated
+        free functions in factory.py.  To remove these required fixing all callsites
+        to use MockHost, Host, or PortFactory where appropriate.  After this change
+        we're only left with a handfull of places where we inappropraitely use a
+        real Executive, FileSystem or User object during unittesting.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+         - These PortFactory overrides were from an earlier edition of my previous patch
+           in the end, I removed MockPortFactory so all tests ended up with this same
+           real PortFactory() with a MockHost.  This was simply redundent code.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+         - Use MockHost to get a mocked-out PortFactory.
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+         - This code has no access to a Host object, so we just use a default PortFactory
+           for now.  This will still incorrectly create real Executive/FileSystem objects
+           durring unittesting, which is wrong. :(
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+         - Use a MockHost to get a mocked PortFactory.
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py:
+         - Use a MockHost to get a mocked PortFactory.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+         - ditto.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+         - ditto.
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+         - factory.get no longer exists.  Yay!
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+         - Use a MockHost to get a mocked PortFactory.
+           To do this efficiently, I created a helper function
+           and combined all these (mostly redundant) tests into one test
+           with several calls to the helper function.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+         - Pass MockUser and MockExecutive in these port testing subclasses.
+         - I also removed a bunch of unecessary uses of mocktool. namespacing.
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         - Awesome windows hacks should only happen on win32.  Once we started
+           using MockExecutives these 'svn help' commands started printing in
+           other tests, which is how I found this bug.
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+         - DryRunPort has no Host, so just use a PortFactory() directly.
+           This will do the wrong thing if we're unittesting the DryRun port
+           but it's no worse than the existing code.
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+         - Remove the free functions.
+         - Fix argument overriding to be able to override None.
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+         - Use a mocked-out PortFactory during testing.
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+         - Pass MockExecutive and MockUser to these manual Port instantiations.
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+         - No access to a Host object here, so just using PortFactory directly.
+           This is wrong, but no more wrong than the existing code was.
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+         - Use a MockHost to get a mocked out PortFactory.
+        * Scripts/webkitpy/layout_tests/port/test.py:
+         - Use our fancy _set_default_overriding_none system to clean this code up and pass a MockExecutive.
+        * Scripts/webkitpy/layout_tests/port/win.py:
+         - Don't run cmd /c ver from WinPort.__init__ or it shows up in unittests which have logging MockExecutive
+           now that we're actually passing MockExecutive to most Port instantiations during testing.
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+         - Pass our new "unittesting" bool to _detect_version when actually unittesting.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+         - Host is the future.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+         - Use a MockHost to get a mocked out PortFactory.  Once we have a mocked PortFactory
+           we don't need to pass MockUser explicitly, it does that automatically for us.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+         - Use a MockHost to get a mocked out PortFactory.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+         - We don't have access to a Host object, so using PortFactory() directly.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+         - Remove unused variable.
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+         - Host isn't accessible here, so using PortFactory() directly, which
+           although unfortunate is no worse than before.
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+         - Testing is much easier when you don't need to hack global state...
+        * Scripts/webkitpy/tool/commands/expectations.py:
+         - Use the port_factory on the tool.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+         - ditto.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+         - This unittest was wrong.  It was trying to pass the tool object, but failing to pass
+           the arguments in the right order.  Fixing that made it use a MockFileSystem
+           (like it had been trying to), which then required us to actually populate
+           that MockFileSystem with fake expectation files (instead of using the ones on the real disk).
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+         - Get the port_factory from the tool.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+         - Ditto.
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+         - Use a MockHost to get a mocked out Port object.
+
 2011-11-03  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Allow choosing which backing store to use.

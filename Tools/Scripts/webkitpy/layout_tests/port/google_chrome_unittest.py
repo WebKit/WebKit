@@ -26,16 +26,18 @@
 
 import unittest
 
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.system.executive_mock import MockExecutive
 
-import factory
+
 import google_chrome
 
 
 class GetGoogleChromePortTest(unittest.TestCase):
     def test_get_google_chrome_port(self):
-        test_ports = ('google-chrome-linux32', 'google-chrome-linux64',
-            'google-chrome-mac', 'google-chrome-win')
+        test_ports = ('google-chrome-linux32', 'google-chrome-linux64', 'google-chrome-mac', 'google-chrome-win')
         for port in test_ports:
             self._verify_baseline_path(port, port)
             self._verify_expectations_overrides(port)
@@ -45,8 +47,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
 
     def _verify_baseline_path(self, expected_path, port_name):
-        port = google_chrome.GetGoogleChromePort(port_name=port_name,
-                                                 options=None)
+        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, filesystem=MockFileSystem(), executive=MockExecutive(), user=MockUser())
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, port._filesystem.basename(path))
 
@@ -55,18 +56,16 @@ class GetGoogleChromePortTest(unittest.TestCase):
         # we should be able to test for the files existing or not, and
         # be able to control the contents better.
 
-        chromium_port = factory.get("chromium-cg-mac")
+        host = MockHost()
+        chromium_port = host.port_factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
-        fs = filesystem_mock.MockFileSystem()
-        port = google_chrome.GetGoogleChromePort(port_name=port_name,
-                                                 options=None, filesystem=fs)
+        fs = MockFileSystem()
+        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, filesystem=fs, executive=MockExecutive(), user=MockUser())
 
         expected_chromium_overrides = '// chromium overrides\n'
         expected_chrome_overrides = '// chrome overrides\n'
-        chromium_path = fs.join(chromium_base, 'webkit', 'tools',
-                                'layout_tests', 'test_expectations.txt')
-        chrome_path = fs.join(chromium_base, 'webkit', 'tools',
-                              'layout_tests', 'test_expectations_chrome.txt')
+        chromium_path = fs.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations.txt')
+        chrome_path = fs.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations_chrome.txt')
 
         fs.files[chromium_path] = expected_chromium_overrides
         fs.files[chrome_path] = None
@@ -75,8 +74,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
 
         fs.files[chrome_path] = expected_chrome_overrides
         actual_chrome_overrides = port.test_expectations_overrides()
-        self.assertEqual(actual_chrome_overrides,
-                         expected_chromium_overrides + expected_chrome_overrides)
+        self.assertEqual(actual_chrome_overrides, expected_chromium_overrides + expected_chrome_overrides)
 
 
 if __name__ == '__main__':

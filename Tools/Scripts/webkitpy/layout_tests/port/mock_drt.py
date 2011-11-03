@@ -41,7 +41,7 @@ import sys
 from webkitpy.common.system import filesystem
 
 from webkitpy.layout_tests.port import base
-from webkitpy.layout_tests.port import factory
+from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.tool.mocktool import MockOptions
 
 
@@ -55,7 +55,8 @@ class MockDRTPort(object):
         prefix = 'mock-'
         if 'port_name' in kwargs:
             kwargs['port_name'] = kwargs['port_name'][len(prefix):]
-        self.__delegate = factory.get(**kwargs)
+        # FIXME: This should get the PortFactory from a Host object.
+        self.__delegate = PortFactory().get(**kwargs)
         self.__real_name = prefix + self.__delegate.name()
 
     def real_name(self):
@@ -184,7 +185,8 @@ class MockDRT(object):
         port_name = None
         if options.platform:
             port_name = options.platform
-        self._port = factory.get(port_name, options=options, filesystem=filesystem)
+        # FIXME: This should get the PortFactory from a Host object.
+        self._port = PortFactory().get(port_name, options=options, filesystem=filesystem)
 
     def run(self):
         while True:

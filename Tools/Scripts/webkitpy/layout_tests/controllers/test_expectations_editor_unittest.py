@@ -29,12 +29,12 @@
 
 import unittest
 
-from webkitpy.layout_tests import port
+from webkitpy.common.host_mock import MockHost
+
 from webkitpy.layout_tests.controllers.test_expectations_editor import *
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
-from webkitpy.layout_tests.port import base
 
 
 class MockBugManager(object):
@@ -70,7 +70,8 @@ class TestExpectationEditorTests(unittest.TestCase):
     ])
 
     def __init__(self, testFunc):
-        self.test_port = port.get('test-win-xp', None)
+        host = MockHost()
+        self.test_port = host.port_factory.get('test-win-xp', None)
         self.full_test_list = ['failures/expected/keyboard.html', 'failures/expected/audio.html']
         unittest.TestCase.__init__(self, testFunc)
 

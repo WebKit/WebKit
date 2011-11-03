@@ -35,18 +35,20 @@ except ImportError:
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.host_mock import MockHost
 from webkitpy.tool.servers.gardeningserver import *
 
 
 class TestPortFactory(object):
+    # FIXME: Why is this a class method?
     @classmethod
     def create(cls):
-        return factory.get("test-win-xp")
+        host = MockHost()
+        return host.port_factory.get("test-win-xp")
 
     @classmethod
     def path_to_test_expectations_file(cls):
@@ -87,7 +89,8 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
 class BuildCoverageExtrapolatorTest(unittest.TestCase):
     def test_extrapolate(self):
         # FIXME: Make this test not rely on actual (not mock) port objects.
-        port = factory.get('chromium-win-win7', None)
+        host = MockHost()
+        port = host.port_factory.get('chromium-win-win7', None)
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         extrapolator = BuildCoverageExtrapolator(converter)
         self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Win"), set([TestConfiguration(version='xp', architecture='x86', build_type='release', graphics_type='cpu')]))

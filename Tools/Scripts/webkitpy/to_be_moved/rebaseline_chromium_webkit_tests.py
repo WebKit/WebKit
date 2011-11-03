@@ -55,10 +55,12 @@ from webkitpy.common.system import zipfileset
 from webkitpy.common.system import path
 from webkitpy.common.system import urlfetcher
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.host import Host
 
-from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.models import test_expectations
+
 
 _log = logging.getLogger(__name__)
 
@@ -163,7 +165,9 @@ class Rebaseliner(object):
         self._filesystem = running_port._filesystem
         self._target_port = target_port
 
-        self._rebaseline_port = port.get(platform, options, filesystem=self._filesystem)
+        # FIXME: This should get its PortFactory from a Host object.
+        # Note: using running_port.executive, running_port.user since we can't get them from a host.
+        self._rebaseline_port = PortFactory().get(platform, options, filesystem=self._filesystem, executive=running_port.executive, user=running_port.user)
         self._rebaselining_tests = set()
         self._rebaselined_tests = []
         self._logged_before = logged_before
@@ -801,18 +805,18 @@ class HtmlGenerator(object):
             return 'Other'
 
 
-def get_host_port_object(options):
+def get_host_port_object(port_factory, options):
     """Return a port object for the platform we're running on."""
     # We want the ImageDiff logic to match that of the chromium bots, so we
     # force the use of a Chromium port.  We will look for either Debug or
     # Release versions.
     options.configuration = "Release"
     options.chromium = True
-    port_obj = port.get(None, options)
+    port_obj = port_factory.get(None, options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version of the image diff binary was found.')
         options.configuration = "Debug"
-        port_obj = port.get(None, options)
+        port_obj = port_factory.get(None, options)
         if not port_obj.check_image_diff(override_step=None, logging=False):
             _log.error('No version of image diff was found. Check your build.')
             return None
@@ -939,8 +943,9 @@ def main(args):
     logger.setLevel(log_level)
     logger.addHandler(log_handler)
 
-    target_port_obj = port.get(None, target_options)
-    host_port_obj = get_host_port_object(options)
+    host = Host()
+    target_port_obj = host.port_factory.get(None, target_options)
+    host_port_obj = get_host_port_object(host.port_factory, options)
     if not host_port_obj or not target_port_obj:
         return 1
 
@@ -953,8 +958,7 @@ def main(args):
     # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
     host_port_obj._filesystem.chdir(scm_obj.checkout_root)
 
-    ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher,
-                         zip_factory, scm_obj)
+    ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, scm_obj)
     if not ret_code and log_handler.num_failures:
         ret_code = 1
     print ''

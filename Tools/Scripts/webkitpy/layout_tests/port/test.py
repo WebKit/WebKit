@@ -33,10 +33,11 @@ from __future__ import with_statement
 import base64
 import time
 
-from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -257,7 +258,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
     # Add in a file should be ignored by test_files.find().
     #files[LAYOUT_TEST_DIR + '/userscripts/resources/iframe.html'] = 'iframe'
 
-    fs = filesystem_mock.MockFileSystem(files, dirs=set(['/mock-checkout']))  # Make sure at least the checkout_root exists as a directory.
+    fs = MockFileSystem(files, dirs=set(['/mock-checkout']))  # Make sure at least the checkout_root exists as a directory.
     fs._tests = test_list
     return fs
 
@@ -270,13 +271,21 @@ class TestPort(Port):
         'test-linux-x86_64',
     )
 
-    def __init__(self, port_name=None, user=None, filesystem=None, **kwargs):
+    def _set_default_overriding_none(self, dictionary, key, default):
+        # dict.setdefault almost works, but won't actually override None values, which we want.
+        if not dictionary.get(key):
+            dictionary[key] = default
+        return dictionary[key]
+
+    def __init__(self, port_name=None, **kwargs):
         if not port_name or port_name == 'test':
             port_name = 'test-mac-leopard'
-        # FIXME: This should use a MockExecutive too.
-        user = user or MockUser()
-        filesystem = filesystem or unit_test_filesystem()
-        Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user, **kwargs)
+
+        self._set_default_overriding_none(kwargs, 'user', MockUser())
+        self._set_default_overriding_none(kwargs, 'executive', MockExecutive())
+        filesystem = self._set_default_overriding_none(kwargs, 'filesystem', unit_test_filesystem())
+
+        Port.__init__(self, port_name=port_name, **kwargs)
         self._results_directory = None
 
         assert filesystem._tests

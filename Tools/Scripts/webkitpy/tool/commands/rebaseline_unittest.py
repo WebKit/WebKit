@@ -51,8 +51,15 @@ class TestRebaseline(unittest.TestCase):
     def test_rebaseline_expectations(self):
         command = RebaselineExpectations()
         tool = MockTool()
-        tool.executive = MockExecutive(should_log=True)
         command.bind_to_tool(tool)
+
+        for port_name in tool.port_factory.all_port_names():
+            port = tool.port_factory.get(port_name)
+            tool.filesystem.write_text_file(port.path_to_test_expectations_file(), '')
+
+        # Don't enable logging until after we create the mock expectation files as some Port.__init__'s run subcommands.
+        tool.executive = MockExecutive(should_log=True)
+
         expected_stdout = """Retrieving results for chromium-cg-mac-leopard from Webkit Mac10.5 (CG).
     userscripts/another-test.html
     userscripts/images.svg
@@ -110,4 +117,4 @@ MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'
 MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout
 """
         command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
-        OutputCapture().assert_outputs(self, command.execute, [MockTool(), None, None], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, command.execute, [None, [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)

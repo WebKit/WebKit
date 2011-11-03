@@ -35,6 +35,8 @@ import time
 import unittest
 
 from webkitpy.common import array_stream
+from webkitpy.common.host_mock import MockHost
+
 from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager
@@ -113,7 +115,8 @@ class  Testprinter(unittest.TestCase):
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
         options, args = option_parser.parse_args(args)
-        self._port = port.get('test', options)
+        host = MockHost()
+        self._port = host.port_factory.get('test', options)
         nproc = 2
 
         regular_output = array_stream.ArrayStream(tty=tty)

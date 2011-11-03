@@ -61,7 +61,6 @@ class TestExpectationsTestCase(unittest.TestCase):
 
     def setUp(self):
         self._error_collector = ErrorCollector()
-        port_obj = port.get('test')
         self._test_file = 'passes/text.html'
 
     def process_expectations(self, expectations, overrides=None):

@@ -38,11 +38,13 @@ except ImportError:
 
 
 from webkitpy.common.system import outputcapture
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
+
 
 # In order to reliably control when child workers are starting and stopping,
 # we use a pair of global variables to hold queues used for messaging. Ideally
@@ -59,7 +61,9 @@ def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
     starting_queue = start_queue
     stopping_queue = stop_queue
     options = get_options(worker_model)
-    return manager_worker_broker.get(port.get("test"), options, manager, _TestWorker)
+    host = MockHost()
+    test_port = host.port_factory.get("test")
+    return manager_worker_broker.get(test_port, options, manager, _TestWorker)
 
 
 class _TestWorker(manager_worker_broker.AbstractWorker):

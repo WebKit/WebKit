@@ -40,7 +40,7 @@ from webkitpy.common.system.user import User
 from webkitpy.layout_tests.layout_package.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
-from webkitpy.layout_tests.port import factory, builders
+from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.port import test_files
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
@@ -65,7 +65,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
         return builder.accumulated_results_url()
 
     def _baseline_directory(self, builder_name):
-        port = factory.get_from_builder_name(builder_name)
+        port = self._tool.port_factory.get_from_builder_name(builder_name)
         return port.baseline_path()
 
     def _save_baseline(self, data, target_baseline):
@@ -117,7 +117,7 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool)
-        self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
+        self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
         for test_name in map(self._to_test_name, test_files.find(self._port, args)):
             print "Optimizing %s." % test_name
@@ -147,7 +147,7 @@ class AnalyzeBaselines(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool)
-        self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
+        self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
         for test_name in map(self._to_test_name, test_files.find(self._port, args)):
             self._analyze_baseline(test_name)
@@ -173,7 +173,7 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
     def _update_expectations_file(self, port_name):
         if not self._is_supported_port(port_name):
             return
-        port = factory.get(port_name)
+        port = self._tool.port_factory.get(port_name)
         expectations = self._expectations(port)
         path = port.path_to_test_expectations_file()
         self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
@@ -188,16 +188,16 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         if not builder_name:
             return
         print "Retrieving results for %s from %s." % (port_name, builder_name)
-        for test_name in self._tests_to_rebaseline(factory.get(port_name)):
+        for test_name in self._tests_to_rebaseline(self._tool.port_factory.get(port_name)):
             self._touched_test_names.add(test_name)
             print "    %s" % test_name
             self._run_webkit_patch(['rebaseline-test', builder_name, test_name])
 
     def execute(self, options, args, tool):
         self._touched_test_names = set([])
-        for port_name in factory.all_port_names():
+        for port_name in tool.port_factory.all_port_names():
             self._rebaseline_port(port_name)
-        for port_name in factory.all_port_names():
+        for port_name in tool.port_factory.all_port_names():
             self._update_expectations_file(port_name)
         for test_name in self._touched_test_names:
             print "Optimizing baselines for %s." % test_name
@@ -236,7 +236,7 @@ class Rebaseline(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         builder, build_number = self._builder_to_pull_from()
         build = builder.build(build_number)
-        port = factory.get_from_builder_name(builder.name())
+        port = tool.port_factory.get_from_builder_name(builder.name())
 
         for test in self._tests_to_update(build):
             results_url = self._results_url_for_test(build, test)

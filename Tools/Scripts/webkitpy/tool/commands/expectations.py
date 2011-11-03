@@ -28,7 +28,6 @@
 
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectationSerializer
-from webkitpy.layout_tests.port import factory
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
@@ -37,7 +36,7 @@ class OptimizeExpectations(AbstractDeclarativeCommand):
     help_text = "Fixes simple style issues in test_expectations file.  (Currently works only for chromium port.)"
 
     def execute(self, options, args, tool):
-        port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
+        port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
         expectation_lines = TestExpectationParser.tokenize_list(port.test_expectations())
         parser = TestExpectationParser(port, [], allow_rebaseline_modifier=False)
         for expectation_line in expectation_lines:

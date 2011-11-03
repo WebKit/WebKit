@@ -64,7 +64,8 @@ class DryRunPort(object):
                 kwargs['port_name'] = kwargs['port_name'][len(pfx):]
             else:
                 kwargs['port_name'] = None
-        self.__delegate = factory.get(**kwargs)
+        # FIXME: This should get the PortFactory from a Host object.
+        self.__delegate = factory.PortFactory().get(**kwargs)
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

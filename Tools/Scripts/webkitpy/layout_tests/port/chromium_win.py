@@ -100,6 +100,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
         self._engage_awesome_windows_hacks()
 
     def _engage_awesome_windows_hacks(self):
+        if sys.platform != "win32":
+            return
         try:
             self._executive.run_command(['svn', 'help'])
         except OSError, e:

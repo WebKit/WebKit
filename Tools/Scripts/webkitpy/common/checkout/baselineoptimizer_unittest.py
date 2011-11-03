@@ -31,14 +31,12 @@ import unittest
 
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.common.host_mock import MockHost
 
 
 class TestBaselineOptimizer(BaselineOptimizer):
     def __init__(self, mock_results_by_directory):
         host = MockHost()
-        host.port_factory = PortFactory(host)  # We want a real PortFactory, but it should use mocks.
         BaselineOptimizer.__init__(self, host)
         self._mock_results_by_directory = mock_results_by_directory
 
@@ -56,7 +54,6 @@ class BaselineOptimizerTest(unittest.TestCase):
 
     def test_move_baselines(self):
         host = MockHost()
-        host.port_factory = PortFactory(host)  # We want a real PortFactory, but it should use mocks.
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-win/another/test-expected.txt', 'result A')
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-cg-mac/another/test-expected.txt', 'result A')
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt', 'result B')

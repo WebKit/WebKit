@@ -38,7 +38,6 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system import outputcapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy import layout_tests
-from webkitpy.layout_tests import port
 from webkitpy.layout_tests.port import port_testcase
 
 from webkitpy import layout_tests
@@ -49,6 +48,7 @@ from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 
 
 class ManagerWrapper(Manager):
@@ -71,7 +71,8 @@ class ShardingTests(unittest.TestCase):
 
     def get_shards(self, num_workers, fully_parallel, test_list=None):
         test_list = test_list or self.test_list
-        port = layout_tests.port.get(port_name='test')
+        host = MockHost()
+        port = host.port_factory.get(port_name='test')
         port._filesystem = MockFileSystem()
         # FIXME: This should use MockOptions() instead of Mock()
         self.manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
@@ -159,8 +160,8 @@ class ManagerTest(unittest.TestCase):
 
     def test_fallback_path_in_config(self):
         options = self.get_options()
-
-        port = layout_tests.port.get('test-mac-leopard', options=options)
+        host = MockHost()
+        port = host.port_factory.get('test-mac-leopard', options=options)
         printer = self.get_printer()
         manager = Manager(port, port.options, printer)
         manager.print_config()
@@ -186,8 +187,8 @@ class ManagerTest(unittest.TestCase):
                     self._finished_list_called = True
 
         options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
-        # Note we do not pass a filesystem as the "test port" magically suplies its own mock filesystem.
-        port = layout_tests.port.get(port_name=options.platform, options=options, user=MockUser(), executive=MockExecutive())
+        host = MockHost()
+        port = host.port_factory.get(port_name=options.platform, options=options, user=MockUser(), executive=MockExecutive())
         run_webkit_tests._set_up_derived_options(port, options)
         printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(), configure_logging=True)
         manager = LockCheckingManager(port, options, printer)
@@ -243,7 +244,8 @@ class ManagerTest(unittest.TestCase):
 
     def integration_test_needs_servers(self):
         def get_manager_with_tests(test_names):
-            port = layout_tests.port.get()
+            host = MockHost()
+            port = host.port_factory.get()
             manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
             manager.collect_tests(test_names)
             return manager
@@ -286,7 +288,8 @@ class NaturalCompareTest(unittest.TestCase):
 
 class KeyCompareTest(unittest.TestCase):
     def setUp(self):
-        self.port = layout_tests.port.get('test')
+        host = MockHost()
+        self.port = host.port_factory.get('test')
 
     def assert_cmp(self, x, y, result):
         self.assertEquals(cmp(test_key(self.port, x), test_key(self.port, y)), result)

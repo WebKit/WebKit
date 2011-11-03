@@ -30,7 +30,6 @@ from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 from webkitpy.layout_tests.controllers.test_expectations_editor import BugManager, TestExpectationsEditor
 from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectations, TestExpectationSerializer
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
-from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import builders
 
 
@@ -116,7 +115,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     def _expectations_updater(self):
         # FIXME: Should split failure_info_list into lists per port, then edit each expectations file separately.
         # For now, assume Chromium port.
-        port = factory.get("chromium-win-win7")
+        port = self.server.tool.get("chromium-win-win7")
         return GardeningExpectationsUpdater(self.server.tool, port)
 
     def rollout(self):
