@@ -64,7 +64,7 @@ public:
         return adoptRef(new MediaList(0, media, allowDescriptionSyntax));
     }
 
-    virtual ~MediaList();
+    ~MediaList();
 
     unsigned length() const { return m_queries.size(); }
     String item(unsigned index) const;

@@ -1,3 +1,12 @@
+2011-11-03  Andreas Kling  <kling@webkit.org>
+
+        Devirtualize MediaList.
+        https://bugs.webkit.org/show_bug.cgi?id=71464
+
+        Reviewed by Antti Koivisto.
+
+        * css/MediaList.h: Make the destructor non-virtual.
+
 2011-11-03  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Optimizing arithmetic composite filter to ARM-neon SIMD instruction set
