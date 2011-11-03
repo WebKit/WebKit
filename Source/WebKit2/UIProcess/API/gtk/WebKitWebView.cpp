@@ -44,12 +44,14 @@ enum {
     PROP_0,
 
     PROP_WEB_CONTEXT,
+    PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
     PROP_URI
 };
 
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
+    CString title;
     CString customTextEncoding;
     double estimatedLoadProgress;
     CString activeURI;
@@ -109,6 +111,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_WEB_CONTEXT:
         g_value_take_object(value, webView->priv->context);
         break;
+    case PROP_TITLE:
+        g_value_set_string(value, webView->priv->title.data());
+        break;
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
         break;
@@ -156,6 +161,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "The web context for the view",
                                                         WEBKIT_TYPE_WEB_CONTEXT,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebView:title:
+     * 
+     * The main frame document title of this #WebKitWebView. If 
+     * the title has not been received yet, it will be %NULL.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_TITLE,
+                                    g_param_spec_string("title",
+                                                        "Title",
+                                                        "Main frame document title",
+                                                        0,
+                                                        WEBKIT_PARAM_READABLE));
+    
     /**
      * WebKitWebView:estimated-load-progress:
      *
@@ -187,6 +207,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "The current active URI of the view",
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
+}
+
+void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->title == title)
+        return;
+    
+    priv->title = title;
+    g_object_notify(G_OBJECT(webView), "title");
 }
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
@@ -383,6 +413,23 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), unreachableURL.get());
     webkitWebViewUpdateURI(webView);
+}
+
+/**
+ * webkit_web_view_get_title:
+ * @web_view: a #WebKitWebView
+ * 
+ * Gets the value of #WebKitWebView:title.
+ * You can connect to #WebKitWebView::notify signal of @web_view to 
+ * be notified when the title has been received.
+ *
+ * Returns: The main frame document title of @web_view.
+ */
+const gchar* webkit_web_view_get_title(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->title.data();
 }
 
 /**

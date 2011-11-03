@@ -108,6 +108,9 @@ webkit_web_view_load_alternate_html          (WebKitWebView             *web_vie
 WEBKIT_API void
 webkit_web_view_stop_loading                 (WebKitWebView             *web_view);
 
+WEBKIT_API const gchar * 
+webkit_web_view_get_title                    (WebKitWebView             *web_view);
+
 WEBKIT_API void
 webkit_web_view_reload                       (WebKitWebView             *web_view);
 

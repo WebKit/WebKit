@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -131,6 +132,14 @@ static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, 
     webkitWebViewUpdateURI(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
 }
 
+static void didReceiveTitleForFrame(WKPageRef page, WKStringRef titleRef, WKFrameRef frameRef, WKTypeRef, const void*)
+{
+    if (!WKFrameIsMainFrame(frameRef))
+        return;
+
+    webkitWebViewSetTitle(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(titleRef)->string().utf8());
+}
+
 static void didChangeProgress(WKPageRef page, const void* clientInfo)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
@@ -156,7 +165,7 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         didFinishLoadForFrame,
         didFailLoadWithErrorForFrame,
         didSameDocumentNavigationForFrame,
-        0, // didReceiveTitleForFrame
+        didReceiveTitleForFrame,
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy

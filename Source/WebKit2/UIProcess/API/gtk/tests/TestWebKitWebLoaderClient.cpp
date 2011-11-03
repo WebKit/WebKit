@@ -116,6 +116,14 @@ static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFailed);
 }
 
+static void testWebViewTitle(LoadTrackingTest* test, gconstpointer)
+{
+    g_assert(!webkit_web_view_get_title(test->m_webView));
+    test->loadHtml("<html><head><title>Welcome to WebKit-GTK+!</title></head></html>", 0);
+    test->waitUntilLoadFinished();
+    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "Welcome to WebKit-GTK+!");
+}
+
 static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 {
     // Check that nothing happens when there's nothing to reload.
@@ -239,6 +247,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
     LoadTrackingTest::add("WebKitWebLoaderClient", "load-alternate-content", testLoadAlternateContent);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
+    LoadTrackingTest::add("WebKitWebView", "title", testWebViewTitle);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);
     LoadTrackingTest::add("WebKitWebView", "reload", testWebViewReload);
 

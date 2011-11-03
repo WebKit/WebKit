@@ -57,6 +57,7 @@ webkit_web_view_can_go_back
 webkit_web_view_go_back
 webkit_web_view_can_go_forward
 webkit_web_view_go_forward
+webkit_web_view_get_title
 webkit_web_view_reload
 webkit_web_view_reload_bypass_cache
 webkit_web_view_stop_loading
