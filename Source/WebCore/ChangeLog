@@ -1,5 +1,29 @@
 2011-11-02  Adam Barth  <abarth@webkit.org>
 
+        CSP should handle empty URLs as agreed at TPAC
+        https://bugs.webkit.org/show_bug.cgi?id=71426
+
+        Reviewed by Eric Seidel.
+
+        It was somewhat unclear how CSP should treat plugins that lacked a URL
+        because most of the CSP rules are URL-based.  At TPAC, we decided to
+        treat "empty" URLs as if there were the URL of the document.  That
+        means you can use plugins with no URL if you've included 'self' in
+        object-src, but you can also block them by using 'none' as your
+        object-src.
+
+        Tests: http/tests/security/contentSecurityPolicy/object-src-no-url-allowed.html
+               http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
+               http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
+               http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirective::CSPDirective):
+        (WebCore::CSPDirective::allows):
+        (WebCore::ContentSecurityPolicy::createCSPDirective):
+
+2011-11-02  Adam Barth  <abarth@webkit.org>
+
         Implement allow-popups for iframe@sandbox
         https://bugs.webkit.org/show_bug.cgi?id=66505
 

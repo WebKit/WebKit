@@ -458,16 +458,17 @@ void CSPSourceList::addSourceUnsafeEval()
 
 class CSPDirective {
 public:
-    CSPDirective(const String& name, const String& value, SecurityOrigin* origin)
-        : m_sourceList(origin)
+    CSPDirective(const String& name, const String& value, ScriptExecutionContext* context)
+        : m_sourceList(context->securityOrigin())
         , m_text(name + ' ' + value)
+        , m_selfURL(context->url())
     {
         m_sourceList.parse(value);
     }
 
     bool allows(const KURL& url)
     {
-        return m_sourceList.matches(url);
+        return m_sourceList.matches(url.isEmpty() ? m_selfURL : url);
     }
 
     bool allowInline() const { return m_sourceList.allowInline(); }
@@ -478,6 +479,7 @@ public:
 private:
     CSPSourceList m_sourceList;
     String m_text;
+    KURL m_selfURL;
 };
 
 ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext* scriptExecutionContext)
@@ -759,7 +761,7 @@ void ContentSecurityPolicy::parseReportURI(const String& value)
 
 PassOwnPtr<CSPDirective> ContentSecurityPolicy::createCSPDirective(const String& name, const String& value)
 {
-    return adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext->securityOrigin()));
+    return adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext));
 }
 
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
