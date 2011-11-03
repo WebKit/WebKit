@@ -1,3 +1,29 @@
+2011-10-31  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Recycle cursor objects when calling continue()
+        https://bugs.webkit.org/show_bug.cgi?id=71115
+
+        Reviewed by Darin Fisher.
+
+        The IndexedDB spec says that cursors should be recycled when calling
+        continue(). Let the IDBRequest keep track of which cursor to return
+        upon success, and have the cursor use a new callback:
+        onSuccessWithContinuation() to signal that the continue was successful.
+
+        When we start using the new callback, the
+        storage/indexeddb/cursor-inconsistency.html layout test will start
+        passing.
+
+        * storage/IDBCallbacks.h:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::setCursor):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessWithContinuation):
+        * storage/IDBRequest.h:
+
 2011-11-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: preserve script location for inline handlers.

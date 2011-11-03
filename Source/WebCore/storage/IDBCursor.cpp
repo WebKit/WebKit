@@ -105,9 +105,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 
     // FIXME: We're not using the context from when continue was called, which means the callback
     //        will be on the original context openCursor was called on. Is this right?
-    if (m_request->resetReadyState(m_transaction.get()))
+    if (m_request->resetReadyState(m_transaction.get())) {
         m_backend->continueFunction(key, m_request, ec);
-    else
+        m_request->setCursor(this);
+    } else
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 

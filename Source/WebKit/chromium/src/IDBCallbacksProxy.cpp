@@ -94,6 +94,11 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedSc
     m_callbacks->onSuccess(WebSerializedScriptValue(serializedScriptValue));
 }
 
+void IDBCallbacksProxy::onSuccessWithContinuation()
+{
+    m_callbacks->onSuccessWithContinuation();
+}
+
 void IDBCallbacksProxy::onBlocked()
 {
     m_callbacks->onBlocked();

@@ -35,6 +35,7 @@ namespace WebCore {
 class IDBCursorWithValue : public IDBCursor {
 public:
     static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static PassRefPtr<IDBCursorWithValue> fromCursor(PassRefPtr<IDBCursor>);
     virtual ~IDBCursorWithValue();
 
     // The value attribute defined in the IDL is simply implemented in IDBCursor (but not exposed via

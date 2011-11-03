@@ -90,6 +90,11 @@ void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedSc
     m_callbacks->onSuccess(serializedScriptValue);
 }
 
+void WebIDBCallbacksImpl::onSuccessWithContinuation()
+{
+    m_callbacks->onSuccessWithContinuation();
+}
+
 void WebIDBCallbacksImpl::onBlocked()
 {
     m_callbacks->onBlocked();

@@ -110,7 +110,7 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
         return;
     }
 
-    callbacks->onSuccess(cursor.get());
+    callbacks->onSuccess(cursor.get()); // FIXME: After Chromium side is ready, this should be callbacks->onSuccessWithContinuation();
 }
 
 void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)

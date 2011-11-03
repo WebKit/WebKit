@@ -38,6 +38,12 @@ PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBa
     return adoptRef(new IDBCursorWithValue(backend, request, source, transaction));
 }
 
+PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::fromCursor(PassRefPtr<IDBCursor> prpCursor)
+{
+    RefPtr<IDBCursorWithValue> cursorWithValue(static_cast<IDBCursorWithValue*>(prpCursor.get()));
+    return cursorWithValue.release();
+}
+
 IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
     : IDBCursor(backend, request, source, transaction)
 {

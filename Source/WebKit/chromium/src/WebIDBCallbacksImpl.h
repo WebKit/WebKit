@@ -48,6 +48,7 @@ public:
     virtual void onSuccess(const WebIDBKey&);
     virtual void onSuccess(WebIDBTransaction*);
     virtual void onSuccess(const WebSerializedScriptValue&);
+    virtual void onSuccessWithContinuation();
     virtual void onBlocked();
 
 private:

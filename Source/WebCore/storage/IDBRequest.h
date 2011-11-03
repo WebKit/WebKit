@@ -70,6 +70,7 @@ public:
     void markEarlyDeath();
     bool resetReadyState(IDBTransaction*);
     void setCursorType(IDBCursorBackendInterface::CursorType);
+    void setCursor(PassRefPtr<IDBCursor>);
     IDBAny* source();
     void abort();
 
@@ -81,6 +82,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>);
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
+    virtual void onSuccessWithContinuation();
     virtual void onBlocked();
 
     // ActiveDOMObject
@@ -110,6 +112,8 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
+    void setResultCursor(PassRefPtr<IDBCursor>, IDBCursorBackendInterface::CursorType);
+
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
 
@@ -119,6 +123,7 @@ private:
 
     // Only used if the result type will be a cursor.
     IDBCursorBackendInterface::CursorType m_cursorType;
+    RefPtr<IDBCursor> m_cursor;
 
     EventTargetData m_eventTargetData;
 };

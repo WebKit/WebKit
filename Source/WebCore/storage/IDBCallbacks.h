@@ -55,6 +55,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
+    virtual void onSuccessWithContinuation() = 0;
     virtual void onBlocked() = 0;
 };
 

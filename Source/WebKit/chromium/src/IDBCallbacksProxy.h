@@ -52,6 +52,7 @@ public:
     virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>);
+    virtual void onSuccessWithContinuation();
     virtual void onBlocked();
 
 private:

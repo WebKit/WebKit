@@ -1,3 +1,21 @@
+2011-10-28  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Recycle cursor objects when calling continue()
+        https://bugs.webkit.org/show_bug.cgi?id=71115
+
+        Reviewed by Darin Fisher.
+
+        Add the new onSuccessWithContinuation() callback to IDB wrappers.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onSuccessWithContinuation):
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onSuccessWithContinuation):
+        * src/IDBCallbacksProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onSuccessWithContinuation):
+        * src/WebIDBCallbacksImpl.h:
+
 2011-11-02  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector [chromium]: fix debug front-end zip generation.
