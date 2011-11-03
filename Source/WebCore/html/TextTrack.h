@@ -70,8 +70,8 @@ public:
     Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
 
-    PassRefPtr<TextTrackCueList> cues() const;
-    PassRefPtr<TextTrackCueList> activeCues() const;
+    TextTrackCueList* cues() const;
+    TextTrackCueList* activeCues() const;
 
     void readyStateChanged();
     void modeChanged();

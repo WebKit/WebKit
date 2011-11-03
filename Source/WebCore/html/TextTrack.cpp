@@ -99,13 +99,19 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
         ec = INVALID_ACCESS_ERR;
 }
 
-PassRefPtr<TextTrackCueList> TextTrack::cues() const
+TextTrackCueList* TextTrack::cues() const
 {
-    // FIXME(62885): Implement.
+    // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
+    // then the cues attribute must return a live TextTrackCueList object ...
+    // Otherwise, it must return null. When an object is returned, the
+    // same object must be returned each time.
+    // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-cues
+    if (m_mode != TextTrack::DISABLED)
+        return m_cues.get();
     return 0;
 }
 
-PassRefPtr<TextTrackCueList> TextTrack::activeCues() const
+TextTrackCueList* TextTrack::activeCues() const
 {
     // FIXME(62885): Implement.
     return 0;

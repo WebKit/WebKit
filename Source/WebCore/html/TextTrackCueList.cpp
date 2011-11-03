@@ -33,40 +33,72 @@ namespace WebCore {
 
 TextTrackCueList::TextTrackCueList()
 {
-    // FIXME(62883): Implement.
 }
 
 unsigned long TextTrackCueList::length() const
 {
-    // FIXME(62883): Implement.
+    return m_list.size();
+}
+
+TextTrackCue* TextTrackCueList::item(unsigned index) const
+{
+    if (index < m_list.size())
+        return m_list[index].get();
     return 0;
 }
 
-TextTrackCue* TextTrackCueList::item(unsigned) const
+TextTrackCue* TextTrackCueList::getCueById(const String& id) const
 {
-    // FIXME(62883): Implement.
+    for (size_t i = 0; i < m_list.size(); ++i) {
+        if (m_list[i]->id() == id)
+            return m_list[i].get();
+    }
     return 0;
 }
 
-TextTrackCue* TextTrackCueList::getCueById(const String&) const
+void TextTrackCueList::add(const Vector<RefPtr<TextTrackCue> >& newCues)
 {
-    // FIXME(62883): Implement.
-    return 0;
+    for (size_t i = 0; i < newCues.size(); ++i)
+        add(newCues[i]);
 }
 
-void TextTrackCueList::append(Vector<PassRefPtr<TextTrackCue> >&)
+void TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
 {
-    // FIXME(62883): Implement.
+    add(cue, 0, m_list.size());
 }
 
-void TextTrackCueList::append(const PassRefPtr<TextTrackCue>&)
+void TextTrackCueList::add(PassRefPtr<TextTrackCue> cue, size_t start, size_t end)
 {
-    // FIXME(62883): Implement.
+    ASSERT(start >= 0 && start <= m_list.size());
+    ASSERT(end >= 0 && end <= m_list.size());
+
+    // Maintain text track cue order:
+    // http://www.whatwg.org/specs/web-apps/current-work/#text-track-cue-order
+    RefPtr<TextTrackCue> newCue = cue;
+    if (start == end) {
+       m_list.insert(start, newCue);
+       return;
+    }
+
+    size_t index = (start + end) / 2;
+    if (newCue->startTime() < m_list[index]->startTime() || (newCue->startTime() == m_list[index]->startTime() && newCue->endTime() > m_list[index]->endTime()))
+        add(newCue.release(), start, index);
+    else
+        add(newCue.release(), index + 1, end);
 }
 
-void TextTrackCueList::remove(const PassRefPtr<TextTrackCue>&)
+void TextTrackCueList::remove(TextTrackCue* cue)
 {
-    // FIXME(62883): Implement.
+    size_t index = m_list.find(cue);
+    if (index == notFound)
+        return;
+    cue->setIsActive(false);
+    m_list.remove(index);
+}
+
+bool TextTrackCueList::contains(TextTrackCue* cue) const
+{
+    return m_list.contains(cue);
 }
 
 } // namespace WebCore

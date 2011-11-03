@@ -42,17 +42,23 @@ public:
         return adoptRef(new TextTrackCueList);
     }
 
+    ~TextTrackCueList() { }
+
     unsigned long length() const;
     TextTrackCue* item(unsigned index) const;
     TextTrackCue* getCueById(const String&) const;
-    PassRefPtr<TextTrackCueList> activeCues();
+    TextTrackCueList* activeCues();
 
-    void append(const PassRefPtr<TextTrackCue>&);
-    void append(Vector<PassRefPtr<TextTrackCue> >&);
-    void remove(const PassRefPtr<TextTrackCue>&);
+    void add(PassRefPtr<TextTrackCue>);
+    void add(const Vector<RefPtr<TextTrackCue> >&);
+    void remove(TextTrackCue*);
+    bool contains(TextTrackCue*) const;
 
 private:
     TextTrackCueList();
+    void add(PassRefPtr<TextTrackCue>, size_t, size_t);
+    
+    Vector<RefPtr<TextTrackCue> > m_list;
 };
 
 } // namespace WebCore

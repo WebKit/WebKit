@@ -29,6 +29,8 @@
 
 #include "LoadableTextTrack.h"
 
+#include "TextTrackCueList.h"
+
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
@@ -53,7 +55,18 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    // FIXME(62885): Implement.
+    Vector<RefPtr<TextTrackCue> > newCues;
+    m_loader->getNewCues(newCues);
+
+    for (size_t i = 0; i < newCues.size(); ++i)
+        newCues[i]->setTrack(this);
+
+    if (!m_cues)
+        m_cues = TextTrackCueList::create();    
+    m_cues->add(newCues);
+
+    if (client())
+        client()->textTrackAddCues(this, m_cues.get());
 }
 
 void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
