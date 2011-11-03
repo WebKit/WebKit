@@ -48,7 +48,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
-BUGWK67921 SLOW : perf/show-hide-table-rows.html = PASS
+BUGWK67921 DEBUG : perf/show-hide-table-rows.html = PASS TIMEOUT
+BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
