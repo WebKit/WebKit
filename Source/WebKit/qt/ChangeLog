@@ -1,3 +1,19 @@
+2011-11-03  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Fix tst_QDeclarativeWebView::basicProperties() and historyNav() autotests
+        https://bugs.webkit.org/show_bug.cgi?id=61042
+
+        Reviewed by Simon Hausmann.
+        
+        At some points we didn't have any guarantee that a favicon has been loaded, so now
+        it stops to wait for the IconChanged signal. It also had some file paths in wrong format,
+        making some files to not be resolved and comparing meaningless bitmaps.
+
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::initTestCase):
+        (tst_QDeclarativeWebView::basicProperties):
+        (tst_QDeclarativeWebView::historyNav):
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Maemo specific code paths

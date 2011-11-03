@@ -26,6 +26,7 @@ public:
     tst_QDeclarativeWebView();
 
 private slots:
+    void initTestCase();
     void cleanupTestCase();
 
     void basicProperties();
@@ -88,6 +89,12 @@ static void removeRecursive(const QString& dirname)
     QDir().rmdir(dirname);
 }
 
+void tst_QDeclarativeWebView::initTestCase()
+{
+    QWebSettings::setIconDatabasePath(tmpDir());
+    QWebSettings::enablePersistentStorage(tmpDir());
+}
+
 void tst_QDeclarativeWebView::cleanupTestCase()
 {
     removeRecursive(tmpDir());
@@ -102,11 +109,11 @@ void tst_QDeclarativeWebView::basicProperties()
 
     QObject* wv = component.create();
     QVERIFY(wv);
+    waitForSignal(wv, SIGNAL(iconChanged()));
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
     QCOMPARE(wv->property("title").toString(), QLatin1String("Basic"));
     QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 48);
-    QEXPECT_FAIL("", "'icon' property isn't working", Continue);
-    QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///resources/basic.png"));
+    QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap(":/resources/basic.png"));
     QCOMPARE(wv->property("statusText").toString(), QLatin1String("status here"));
     QCOMPARE(strippedHtml(fileContents(":/resources/basic.html")), strippedHtml(wv->property("html").toString()));
     QEXPECT_FAIL("", "TODO: get preferred width from QGraphicsWebView result", Continue);
@@ -168,6 +175,7 @@ void tst_QDeclarativeWebView::historyNav()
 
     QObject* wv = component.create();
     QVERIFY(wv);
+    waitForSignal(wv, SIGNAL(iconChanged()));
 
     QAction* reloadAction = wv->property("reload").value<QAction*>();
     QVERIFY(reloadAction);
@@ -182,8 +190,7 @@ void tst_QDeclarativeWebView::historyNav()
         QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
         QCOMPARE(wv->property("title").toString(), QLatin1String("Basic"));
         QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 48);
-        QEXPECT_FAIL("", "'icon' property isn't working", Continue);
-        QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///data/basic.png"));
+        QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap(":/resources/basic.png"));
         QCOMPARE(wv->property("statusText").toString(), QLatin1String("status here"));
         QCOMPARE(strippedHtml(fileContents(":/resources/basic.html")), strippedHtml(wv->property("html").toString()));
         QEXPECT_FAIL("", "TODO: get preferred width from QGraphicsWebView result", Continue);
@@ -195,14 +202,15 @@ void tst_QDeclarativeWebView::historyNav()
         QVERIFY(!forwardAction->isEnabled());
         QVERIFY(!stopAction->isEnabled());
         reloadAction->trigger();
+        waitForSignal(wv, SIGNAL(iconChanged()));
     }
 
     wv->setProperty("url", QUrl("qrc:///resources/forward.html"));
+    waitForSignal(wv, SIGNAL(iconChanged()));
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
     QCOMPARE(wv->property("title").toString(), QLatin1String("Forward"));
     QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 32);
-    QEXPECT_FAIL("", "'icon' property isn't working", Continue);
-    QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///resources/forward.png"));
+    QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap(":/resources/forward.png"));
     QCOMPARE(strippedHtml(fileContents(":/resources/forward.html")), strippedHtml(wv->property("html").toString()));
     QCOMPARE(wv->property("url").toUrl(), QUrl("qrc:///resources/forward.html"));
     QCOMPARE(wv->property("status").toInt(), int(QDeclarativeWebView::Ready));
@@ -216,6 +224,7 @@ void tst_QDeclarativeWebView::historyNav()
     QVERIFY(!stopAction->isEnabled());
 
     backAction->trigger();
+    waitForSignal(wv, SIGNAL(loadFinished()));
 
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
     QCOMPARE(wv->property("title").toString(), QLatin1String("Basic"));
