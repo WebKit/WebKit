@@ -456,7 +456,7 @@ JSValue JSObject::lookupSetter(ExecState* exec, const Identifier& propertyName)
     return descriptor.setter();
 }
 
-bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)
+bool JSObject::hasInstance(JSObject*, ExecState* exec, JSValue value, JSValue proto)
 {
     if (!value.isObject())
         return false;

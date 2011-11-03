@@ -77,6 +77,9 @@ namespace JSC {
 
         typedef UString (*ClassNameFunctionPtr)(const JSObject*);
         ClassNameFunctionPtr className;
+
+        typedef bool (*HasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue, JSValue);
+        HasInstanceFunctionPtr hasInstance;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -114,6 +117,7 @@ struct MemberCheck##member { \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::className, \
+        &ClassName::hasInstance, \
     }, \
     sizeof(ClassName)
 

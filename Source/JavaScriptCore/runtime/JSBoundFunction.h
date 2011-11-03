@@ -39,7 +39,7 @@ public:
 
     static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const Identifier&);
 
-    virtual bool hasInstance(ExecState*, JSValue value, JSValue proto);
+    static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
 
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }

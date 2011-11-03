@@ -1,3 +1,36 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=71430
+
+        Reviewed by Darin Adler.
+
+        Added hasInstance to the MethodTable, changed all the virtual 
+        implementations of hasInstance to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::hasInstance):
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ClassInfo.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::hasInstance):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::hasInstance):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        * runtime/JSObject.h:
+
 2011-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         JIT-specific code should be able to refer to register types even on JIT-disabled builds

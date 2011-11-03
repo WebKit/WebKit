@@ -355,12 +355,13 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::hasInstance(ExecState* exec, JSValue value, JSValue)
+bool JSCallbackObject<Parent>::hasInstance(JSObject* object, ExecState* exec, JSValue value, JSValue)
 {
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
+    JSObjectRef thisRef = toRef(thisObject);
     
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectHasInstanceCallback hasInstance = jsClass->hasInstance) {
             JSValueRef valueRef = toRef(exec, value);
             JSValueRef exception = 0;

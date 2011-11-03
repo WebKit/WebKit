@@ -185,4 +185,10 @@ UString JSCell::className(const JSObject*)
     return UString();
 }
 
+bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace JSC

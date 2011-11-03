@@ -124,7 +124,7 @@ namespace JSC {
 
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-        virtual bool hasInstance(ExecState*, JSValue, JSValue prototypeProperty);
+        static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
 
         virtual void getPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
