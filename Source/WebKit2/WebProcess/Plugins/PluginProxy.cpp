@@ -403,11 +403,6 @@ bool PluginProxy::handleScroll(ScrollDirection, ScrollGranularity)
     return false;
 }
 
-bool PluginProxy::wantsWindowRelativeCoordinates()
-{
-    return false;
-}
-
 Scrollbar* PluginProxy::horizontalScrollbar()
 {
     return 0;

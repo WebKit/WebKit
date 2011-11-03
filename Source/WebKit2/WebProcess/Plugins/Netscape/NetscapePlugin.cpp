@@ -661,11 +661,7 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
     // which we currently don't have initiated in the plug-in process.
     context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
 
-    if (wantsWindowRelativeCoordinates()) {
-        context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
-        platformPaint(context.get(), m_frameRectInWindowCoordinates, true);
-    } else
-        platformPaint(context.get(), IntRect(IntPoint(), m_pluginSize), true);
+    platformPaint(context.get(), IntRect(IntPoint(), m_pluginSize), true);
 
     return bitmap.release();
 }
@@ -929,11 +925,6 @@ bool NetscapePlugin::getFormValue(String& formValue)
 }
 
 bool NetscapePlugin::handleScroll(ScrollDirection, ScrollGranularity)
-{
-    return false;
-}
-
-bool NetscapePlugin::wantsWindowRelativeCoordinates()
 {
     return false;
 }

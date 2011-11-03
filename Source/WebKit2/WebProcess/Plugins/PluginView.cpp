@@ -576,14 +576,8 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         return;
     }
 
-    IntRect paintRect;
-    if (m_plugin->wantsWindowRelativeCoordinates()) {
-        IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
-        paintRect = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
-    } else {
-        // FIXME: We should try to intersect the dirty rect with the plug-in's clip rect here.
-        paintRect = IntRect(IntPoint(), frameRect().size());
-    }
+    // FIXME: We should try to intersect the dirty rect with the plug-in's clip rect here.
+    IntRect paintRect = IntRect(IntPoint(), frameRect().size());
 
     if (paintRect.isEmpty())
         return;
@@ -595,17 +589,8 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
     
     GraphicsContextStateSaver stateSaver(*context);
 
-    if (m_plugin->wantsWindowRelativeCoordinates()) {
-        // The plugin is given a frame rect which is parent()->contentsToWindow(frameRect()),
-        // and un-translates by the its origin when painting. The current CTM reflects
-        // this widget's frame is its parent (the document), so we have to offset the CTM by
-        // the document's window coordinates.
-        IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
-        context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
-    } else {
-        // Translate the coordinate system so that the origin is in the top-left corner of the plug-in.
-        context->translate(frameRect().location().x(), frameRect().location().y());
-    }
+    // Translate the coordinate system so that the origin is in the top-left corner of the plug-in.
+    context->translate(frameRect().location().x(), frameRect().location().y());
 
     m_plugin->paint(context, paintRect);
 }

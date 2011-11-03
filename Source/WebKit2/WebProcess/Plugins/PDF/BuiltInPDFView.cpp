@@ -557,11 +557,6 @@ bool BuiltInPDFView::handleScroll(ScrollDirection direction, ScrollGranularity g
     return scroll(direction, granularity);
 }
 
-bool BuiltInPDFView::wantsWindowRelativeCoordinates()
-{
-    return false;
-}
-
 Scrollbar* BuiltInPDFView::horizontalScrollbar()
 {
     return m_horizontalScrollbar.get();

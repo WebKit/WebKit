@@ -1,5 +1,28 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of Plugin::wantsWindowRelativeCoordinates()
+        https://bugs.webkit.org/show_bug.cgi?id=71504
+
+        Reviewed by Darin Adler.
+
+        Since all Plugin subclasses now return false for wantsWindowRelativeCoordinates,
+        we can go ahead and remove it.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         NetscapePlugin::wantsWindowRelativeCoordinates should return false for all ports
         https://bugs.webkit.org/show_bug.cgi?id=71501
 

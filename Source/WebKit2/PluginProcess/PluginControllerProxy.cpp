@@ -172,14 +172,7 @@ void PluginControllerProxy::paint()
     if (m_plugin->isTransparent())
         graphicsContext->clearRect(dirtyRect);
 
-    if (m_plugin->wantsWindowRelativeCoordinates()) {
-        IntRect dirtyRectInWindowCoordinates = dirtyRect;
-        dirtyRectInWindowCoordinates.move(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
-        graphicsContext->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
-
-        m_plugin->paint(graphicsContext.get(), dirtyRectInWindowCoordinates);
-    } else
-        m_plugin->paint(graphicsContext.get(), dirtyRect);
+    m_plugin->paint(graphicsContext.get(), dirtyRect);
 
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }
