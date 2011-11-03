@@ -1,5 +1,15 @@
 2011-11-02  Sam Weinig  <sam@webkit.org>
 
+        Remove the ability to generate custom lookupGetter/lookupSetter functions,
+        now that they can not be overridden 
+
+        Reviewed by Adam Roben.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
+2011-11-02  Sam Weinig  <sam@webkit.org>
+
         Fix crashing tests after r99126 (commit for https://bugs.webkit.org/show_bug.cgi?id=71307)
 
         Reviewed by Adam Roben.
