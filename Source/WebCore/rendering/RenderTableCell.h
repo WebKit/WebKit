@@ -153,7 +153,6 @@ public:
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
 protected:
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:

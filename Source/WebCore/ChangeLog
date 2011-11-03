@@ -1,3 +1,41 @@
+2011-11-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Stop abusing RenderTableSection::needsRecalcCells logic
+        https://bugs.webkit.org/show_bug.cgi?id=71420
+
+        Reviewed by Darin Adler.
+
+        Change covered by existing tests like fast/repaint/table-extra-bottom-grow.html
+        and fast/table/row-height-recalc* (among others).
+
+        Cell recalculation is very expensive and should only be called when the section's structure
+        changed in a way that requires a safe update to its structure (like removing a row as our
+        column split may not be appropriate anymore).
+
+        The current code would abuse cell recalculation to actually reset the logical height on the
+        RowStruct. This change makes it do the right thing.
+
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.h:
+        Removed styleWillChange override as it was unneeded.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        Move the code from styleWillChange to styleDidChange.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::rowLogicalHeightChanged):
+        This function just reset the height on the |RowStruct| which is the
+        only part of recalcCells that we would need.
+
+        (WebCore::RenderTableSection::rowIndexForRenderer):
+        Added this function to find out which index a column has (strangely
+        RenderTableRow does not have this information).
+
+        * rendering/RenderTableSection.h: Added the 2 previous functions.
+
 2011-11-03  Andreas Kling  <kling@webkit.org>
 
         CSSRuleList: Move rule orphaning from deleteRule() out to callers.

@@ -118,6 +118,10 @@ public:
 
     LayoutUnit getBaseline(int row) { return m_grid[row].baseline; }
 
+    void rowLogicalHeightChanged(unsigned rowIndex);
+
+    unsigned rowIndexForRenderer(const RenderTableRow*) const;
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

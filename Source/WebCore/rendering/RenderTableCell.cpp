@@ -310,20 +310,15 @@ int RenderTableCell::cellBaselinePosition() const
     return paddingBefore() + borderBefore() + contentLogicalHeight();
 }
 
-void RenderTableCell::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    if (parent() && section() && style() && style()->height() != newStyle->height())
-        section()->setNeedsCellRecalc();
-
-    ASSERT(newStyle->display() == TABLE_CELL);
-
-    RenderBlock::styleWillChange(diff, newStyle);
-}
-
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    ASSERT(style()->display() == TABLE_CELL);
+
     RenderBlock::styleDidChange(diff, oldStyle);
     setHasBoxDecorations(true);
+
+    if (parent() && section() && oldStyle && style()->height() != oldStyle->height())
+        section()->rowLogicalHeightChanged(row());
 
     // If border was changed, notify table.
     if (parent()) {

@@ -53,16 +53,6 @@ void RenderTableRow::willBeDestroyed()
         recalcSection->setNeedsCellRecalc();
 }
 
-void RenderTableRow::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    if (section() && style() && style()->logicalHeight() != newStyle->logicalHeight())
-        section()->setNeedsCellRecalc();
-
-    ASSERT(newStyle->display() == TABLE_ROW);
-
-    RenderBox::styleWillChange(diff, newStyle);
-}
-
 void RenderTableRow::updateBeforeAndAfterContent()
 {
     if (!isAnonymous() && document()->usesBeforeAfterRules()) {
@@ -73,11 +63,16 @@ void RenderTableRow::updateBeforeAndAfterContent()
 
 void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    ASSERT(style()->display() == TABLE_ROW);
+
     RenderBox::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren();
 
     if (parent())
         updateBeforeAndAfterContent();
+
+    if (section() && oldStyle && style()->logicalHeight() != oldStyle->logicalHeight())
+        section()->rowLogicalHeightChanged(section()->rowIndexForRenderer(this));
 
     // If border was changed, notify table.
     if (parent()) {

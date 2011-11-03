@@ -1158,6 +1158,11 @@ void RenderTableSection::recalcCells()
     setNeedsLayout(true);
 }
 
+void RenderTableSection::rowLogicalHeightChanged(unsigned rowIndex)
+{
+    setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[rowIndex]);
+}
+
 void RenderTableSection::setNeedsCellRecalc()
 {
     m_needsCellRecalc = true;
@@ -1298,6 +1303,16 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     }
     return false;
 
+}
+
+unsigned RenderTableSection::rowIndexForRenderer(const RenderTableRow* row) const
+{
+    for (size_t i = 0; i < m_grid.size(); ++i) {
+        if (m_grid[i].rowRenderer == row)
+            return i;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore

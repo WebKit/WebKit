@@ -467,3 +467,7 @@ fast/css/webkit-mask-crash-table.html
 # https://bugs.webkit.org/show_bug.cgi?id=70989
 fast/canvas/webgl/attrib-location-length-limits.html
 fast/canvas/webgl/uniform-location-length-limits.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=71420
+# It needs a rebaseline
+fast/repaint/table-extra-bottom-grow.html

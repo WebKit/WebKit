@@ -63,7 +63,6 @@ private:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     RenderObjectChildList m_children;
