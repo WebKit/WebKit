@@ -1,3 +1,13 @@
+2011-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT-specific code should be able to refer to register types even on JIT-disabled builds
+        https://bugs.webkit.org/show_bug.cgi?id=71498
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssembler.h:
+        (MacroAssembler::MacroAssembler):
+
 2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::className

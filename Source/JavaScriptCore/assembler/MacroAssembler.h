@@ -385,11 +385,26 @@ public:
     {
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
-#endif
+#endif // !CPU(X86_64)
 
 };
 
 } // namespace JSC
+
+#else // ENABLE(ASSEMBLER)
+
+// If there is no assembler for this platform, at least allow code to make references to
+// some of the things it would otherwise define, albeit without giving that code any way
+// of doing anything useful.
+class MacroAssembler {
+private:
+    MacroAssembler() { }
+    
+public:
+    
+    enum RegisterID { NoRegister };
+    enum FPRegisterID { NoFPRegister };
+};
 
 #endif // ENABLE(ASSEMBLER)
 
