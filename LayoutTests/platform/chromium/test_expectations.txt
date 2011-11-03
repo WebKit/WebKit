@@ -3722,7 +3722,7 @@ BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH IMAGE
 
-BUGWK68886 MAC GPU-CG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
+BUGWK68886 DEBUG MAC GPU-CG GPU : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
 
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
