@@ -1,3 +1,19 @@
+2011-11-03  Devdatta Deshpande  <webkit.devdatta@gmail.com>
+
+        REGRESSION (r94132): broke fast/loader/location-port.html on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=67277
+
+        Reviewed by Adam Barth.
+
+        If port is 0, SoupURI does not have an explicitly specified port. Due
+        to this port value is ignored in SoupURI. Hence, an extra check is
+        required to restore the port.
+
+        Test: LayoutTests/fast/loader/location-port.html
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
 2011-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Allow the toolbar background to be transparent on mac platforms when remote
