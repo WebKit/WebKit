@@ -30,6 +30,7 @@
 #include "QtBuiltinBundlePage.h"
 #include "WKArray.h"
 #include "WKBundlePage.h"
+#include "WKNumber.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKStringQt.h"
@@ -131,7 +132,7 @@ void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKTypeRef messageBody)
 void QtBuiltinBundle::handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody)
 {
     ASSERT(messageBody);
-    ASSERT(WKGetTypeId(messageBody) == WKArrayGetTypeID());
+    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
 
     WKArrayRef body = static_cast<WKArrayRef>(messageBody);
     ASSERT(WKArrayGetSize(body) == 2);

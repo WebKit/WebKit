@@ -67,6 +67,7 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // willPerformClientRedirectForFrame
         0, // didHandleOnloadEventsForFrame
         0, // didLayoutForFrame
+        0, // didDetectXSSForFrame
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 }
