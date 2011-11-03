@@ -362,9 +362,10 @@ http/tests/inspector/network/network-disable-cache-xhrs.html
 compositing/overflow/clip-content-under-overflow-controls.html
 
 # Quota API is not supported.
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
 storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
-storage/storageinfo-no-callbacks.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html

@@ -1834,9 +1834,10 @@ fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 compositing/scaling/tiled-layer-recursion.html
 
 # Quota API is not supported.
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
 storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
-storage/storageinfo-no-callbacks.html
 
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845

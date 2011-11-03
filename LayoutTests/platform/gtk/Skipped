@@ -416,9 +416,10 @@ http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 animations/animation-api-1.html
 
 # Quota API is not supported.
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
 storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
-storage/storageinfo-no-callbacks.html
 
 # This platform does not support the Page Visibility API.
 fast/events/page-visibility-iframe-delete-test.html

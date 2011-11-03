@@ -122,9 +122,10 @@ http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 
 # ENABLE(QUOTA) is disabled.
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
 storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
-storage/storageinfo-no-callbacks.html
 
 # ENABLE(WEBGL) is disabled.
 http/tests/canvas/webgl
