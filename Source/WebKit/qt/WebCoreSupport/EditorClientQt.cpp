@@ -627,11 +627,6 @@ void EditorClientQt::setInputMethodState(bool active)
             }
         }
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-        // disables auto-uppercase and predictive text for mobile devices
-        hints |= Qt::ImhNoAutoUppercase;
-        hints |= Qt::ImhNoPredictiveText;
-#endif // Q_WS_MAEMO_5 || Q_WS_MAEMO_6
         webPageClient->setInputMethodHints(hints);
         webPageClient->setInputMethodEnabled(active);
     }

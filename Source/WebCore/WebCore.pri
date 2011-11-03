@@ -163,12 +163,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                 CONFIG += x11
                 LIBS += -lXrender
             }
-            maemo5 {
-                DEFINES += MOZ_PLATFORM_MAEMO=5
-            }
-            contains(DEFINES, Q_WS_MAEMO_6) {
-                DEFINES += MOZ_PLATFORM_MAEMO=6
-            }
             DEFINES += XP_UNIX
             DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1
         }

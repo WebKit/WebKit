@@ -1,3 +1,22 @@
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Maemo specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=71476
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebCore.pri:
+        * features.pri:
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setValue):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::platformGetValueStatic):
+
 2011-11-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

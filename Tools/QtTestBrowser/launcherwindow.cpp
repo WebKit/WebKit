@@ -111,7 +111,6 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
 
 LauncherWindow::~LauncherWindow()
 {
-    grabZoomKeys(false);
     delete m_urlLoader;
 }
 
@@ -138,8 +137,6 @@ void LauncherWindow::init()
         m_zoomLevels << 100;
         m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
     }
-
-    grabZoomKeys(true);
 
     initializeView();
 }
@@ -535,42 +532,6 @@ bool LauncherWindow::isGraphicsBased() const
     return bool(qobject_cast<QGraphicsView*>(m_view));
 }
 
-void LauncherWindow::keyPressEvent(QKeyEvent* event)
-{
-#ifdef Q_WS_MAEMO_5
-    switch (event->key()) {
-    case Qt::Key_F7:
-        zoomIn();
-        event->accept();
-        break;
-    case Qt::Key_F8:
-        zoomOut();
-        event->accept();
-        break;
-    }
-#endif
-    MainWindow::keyPressEvent(event);
-}
-
-void LauncherWindow::grabZoomKeys(bool grab)
-{
-#ifdef Q_WS_MAEMO_5
-    if (!winId()) {
-        qWarning("Can't grab keys unless we have a window id");
-        return;
-    }
-
-    Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
-    if (!atom) {
-        qWarning("Unable to obtain _HILDON_ZOOM_KEY_ATOM");
-        return;
-    }
-
-    unsigned long val = (grab) ? 1 : 0;
-    XChangeProperty(QX11Info::display(), winId(), atom, XA_INTEGER, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&val), 1);
-#endif
-}
-
 void LauncherWindow::sendTouchEvent()
 {
     if (m_touchPoints.isEmpty())
@@ -693,9 +654,7 @@ void LauncherWindow::loadFinished()
 
 void LauncherWindow::showLinkHover(const QString &link, const QString &toolTip)
 {
-#ifndef Q_WS_MAEMO_5
     statusBar()->showMessage(link);
-#endif
 #ifndef QT_NO_TOOLTIP
     if (!toolTip.isEmpty())
         QToolTip::showText(QCursor::pos(), toolTip);
@@ -835,9 +794,7 @@ void LauncherWindow::selectElements()
         QWebElementCollection result =  page()->mainFrame()->findAllElements(str);
         foreach (QWebElement e, result)
             e.setStyleProperty("background-color", "yellow");
-#ifndef Q_WS_MAEMO_5
         statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);
-#endif
     }
 #endif
 }
@@ -988,13 +945,8 @@ void LauncherWindow::showFPS(bool enable)
     WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
     view->setFrameRateMeasurementEnabled(enable);
 
-    if (!enable) {
-#if defined(Q_WS_MAEMO_5)
-        setWindowTitle("");
-#else
+    if (!enable)
         statusBar()->clearMessage();
-#endif
-    }
 }
 
 void LauncherWindow::showUserAgentDialog()
@@ -1099,11 +1051,7 @@ void LauncherWindow::updateFPS(int fps)
 {
     QString fpsStatusText = QString("Current FPS: %1").arg(fps);
 
-#if defined(Q_WS_MAEMO_5)
-    setWindowTitle(fpsStatusText);
-#else
     statusBar()->showMessage(fpsStatusText);
-#endif
 }
 
 void LauncherWindow::toggleLocalStorage(bool toggle)

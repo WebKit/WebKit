@@ -121,12 +121,4 @@ void LocationEdit::paintEvent(QPaintEvent* ev)
         m_clearTimer.start(100);
 }
 
-void LocationEdit::focusInEvent(QFocusEvent* ev)
-{
-    QLineEdit::focusInEvent(ev);
-#ifdef Q_WS_MAEMO_5
-    QTimer::singleShot(0, this, SLOT(selectAll()));
-#endif
-}
-
 #endif

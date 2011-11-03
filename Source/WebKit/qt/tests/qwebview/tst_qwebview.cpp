@@ -246,12 +246,7 @@ void tst_QWebView::focusInputTypes()
     // 'text' type
     QWebElement inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=text]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
-#else
     QVERIFY(webView.inputMethodHints() == Qt::ImhNone);
-#endif
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'password' field
@@ -293,12 +288,7 @@ void tst_QWebView::focusInputTypes()
     // 'text' type
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=text]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
-    QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
-#else
     QVERIFY(webView.inputMethodHints() == Qt::ImhNone);
-#endif
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'password' field

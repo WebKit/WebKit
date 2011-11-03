@@ -675,12 +675,6 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     }
 #endif // defined(XP_MACOSX)
 
-#if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
-    case NPPVpluginWindowlessLocalBool:
-        m_renderToImage = true;
-        return NPERR_NO_ERROR;
-#endif
-
     default:
         notImplemented();
         return NPERR_GENERIC_ERROR;

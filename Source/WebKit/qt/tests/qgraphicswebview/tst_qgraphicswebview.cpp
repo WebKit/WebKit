@@ -314,12 +314,7 @@ void tst_QGraphicsWebView::focusInputTypes()
 
     // 'text' type
     webView->fireMouseClick(QPointF(20.0, 10.0));
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    QVERIFY(webView->inputMethodHints() & Qt::ImhNoAutoUppercase);
-    QVERIFY(webView->inputMethodHints() & Qt::ImhNoPredictiveText);
-#else
     QVERIFY(webView->inputMethodHints() == Qt::ImhNone);
-#endif
 
     // 'password' field
     webView->fireMouseClick(QPointF(20.0, 60.0));

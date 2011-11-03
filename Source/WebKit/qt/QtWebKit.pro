@@ -151,15 +151,6 @@ webkit2 {
     SOURCES += $$WEBKIT2_API_SOURCES
 }
 
-contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
-    unix {
-        maemo5 {
-            HEADERS += $$PWD/WebCoreSupport/QtMaemoWebPopup.h
-            SOURCES += $$PWD/WebCoreSupport/QtMaemoWebPopup.cpp
-        }
-    }
-}
-
 contains(DEFINES, ENABLE_VIDEO=1) {
     !contains(DEFINES, WTF_USE_QTKIT=1):!contains(DEFINES, WTF_USE_GSTREAMER=1):contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         HEADERS += $$PWD/WebCoreSupport/FullScreenVideoWidget.h

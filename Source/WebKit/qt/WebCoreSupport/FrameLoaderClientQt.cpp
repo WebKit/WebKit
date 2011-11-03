@@ -1629,17 +1629,6 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         if (mimeType == "application/x-shockwave-flash") {
             QWebPageClient* client = m_webFrame->page()->d->client.get();
             const bool isQWebView = client && qobject_cast<QWidget*>(client->pluginParent());
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
-            size_t wmodeIndex = params.find("wmode");
-            if (wmodeIndex == WTF::notFound) {
-                // Disable XEmbed mode and force it to opaque mode.
-                params.append("wmode");
-                values.append("opaque");
-            } else if (!isQWebView) {
-                // Disable transparency if client is not a QWebView.
-                values[wmodeIndex] = "opaque";
-            }
-#else
             if (!isQWebView) {
                 // Inject wmode=opaque when there is no client or the client is not a QWebView.
                 size_t wmodeIndex = params.find("wmode");
@@ -1649,7 +1638,6 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 } else if (equalIgnoringCase(values[wmodeIndex], "window"))
                     values[wmodeIndex] = "opaque";
             }
-#endif
         }
 
         RefPtr<PluginView> pluginView = PluginView::create(m_frame, pluginSize, element, url,

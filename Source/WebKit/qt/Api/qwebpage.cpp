@@ -3719,8 +3719,6 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 
     "Mozilla/5.0 (%Platform%%Security%%Subplatform%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
 
-    On mobile platforms such as Symbian S60 and Maemo, "Mobile Safari" is used instead of "Safari".
-
     In this string the following values are replaced at run-time:
     \list
     \o %Platform% expands to the windowing system followed by "; " if it is not Windows (e.g. "X11; ").
@@ -3747,10 +3745,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         "Macintosh; "
 #elif defined Q_WS_QWS
         "QtEmbedded; "
-#elif defined Q_WS_MAEMO_5
-        "Maemo"
-#elif defined Q_WS_MAEMO_6
-        "MeeGo"
 #elif defined Q_WS_WIN
         // Nothing
 #elif defined Q_WS_X11
@@ -3796,7 +3790,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 #elif defined Q_OS_IRIX
         firstPartTemp += QString::fromLatin1("SGI Irix");
 #elif defined Q_OS_LINUX
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
 
 #if defined(__x86_64__)
         firstPartTemp += QString::fromLatin1("Linux x86_64");
@@ -3804,7 +3797,6 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
         firstPartTemp += QString::fromLatin1("Linux i686");
 #else
         firstPartTemp += QString::fromLatin1("Linux");
-#endif
 #endif
 
 #elif defined Q_OS_LYNX
@@ -3869,11 +3861,7 @@ QString QWebPage::userAgentForUrl(const QUrl&) const
 
         QString thirdPartTemp;
         thirdPartTemp.reserve(150);
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-        thirdPartTemp += QLatin1String(" Mobile Safari/");
-#else
         thirdPartTemp += QLatin1String(" Safari/");
-#endif
         thirdPartTemp += qWebKitVersion();
         thirdPartTemp.squeeze();
         thirdPart = thirdPartTemp;

@@ -53,11 +53,7 @@
 #include "Page.h"
 #include "PageClientQt.h"
 #include "PopupMenuQt.h"
-#if defined(Q_WS_MAEMO_5)
-#include "QtMaemoWebPopup.h"
-#else
 #include "QtFallbackWebPopup.h"
-#endif
 #include "QWebPageClient.h"
 #include "ScrollbarTheme.h"
 #include "SearchPopupMenuQt.h"
@@ -702,9 +698,7 @@ PassOwnPtr<QWebSelectMethod> ChromeClientQt::createSelectPopup() const
     if (result)
         return result.release();
 
-#if defined(Q_WS_MAEMO_5)
-    return adoptPtr(new QtMaemoWebPopup);
-#elif !defined(QT_NO_COMBOBOX)
+#if !defined(QT_NO_COMBOBOX)
     return adoptPtr(new QtFallbackWebPopup(this));
 #else
     return nullptr;

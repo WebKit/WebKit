@@ -56,10 +56,6 @@
 #include <qwebinspector.h>
 #include <qwebsettings.h>
 
-#ifdef Q_WS_MAEMO_5
-#include <qx11info_x11.h>
-#endif
-
 #include "DumpRenderTreeSupportQt.h"
 #include "mainwindow.h"
 #include "urlloader.h"
@@ -67,12 +63,6 @@
 #include "webinspector.h"
 #include "webpage.h"
 #include "webview.h"
-
-#ifdef Q_WS_MAEMO_5
-#include <X11/Xatom.h>
-#include <X11/Xlib.h>
-#undef KeyPress
-#endif
 
 class QPropertyAnimation;
 
@@ -84,11 +74,7 @@ public:
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
-#if defined(Q_WS_MAEMO_5)
-        , useFrameFlattening(true)
-#else
         , useFrameFlattening(false)
-#endif
         , cacheWebView(false)
         , showFrameRate(false)
         , resizesToContents(false)
@@ -142,9 +128,6 @@ class LauncherWindow : public MainWindow {
 public:
     LauncherWindow(WindowOptions* data = 0, QGraphicsScene* sharedScene = 0);
     virtual ~LauncherWindow();
-
-    virtual void keyPressEvent(QKeyEvent* event);
-    void grabZoomKeys(bool grab);
 
     void sendTouchEvent();
 

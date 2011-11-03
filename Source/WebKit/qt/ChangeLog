@@ -1,3 +1,29 @@
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Maemo specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=71476
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        * QtWebKit.pro:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createSelectPopup):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * WebCoreSupport/QtMaemoWebPopup.cpp: Removed.
+        * WebCoreSupport/QtMaemoWebPopup.h: Removed.
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::focusInputTypes):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::focusInputTypes):
+
 2011-11-03  Jesus Sanchez-Palencia  <jesus@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

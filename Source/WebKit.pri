@@ -103,15 +103,8 @@ isEmpty($$(SBOX_DPKG_INST_ARCH)):exists(/usr/bin/ld.gold) {
 }
 
 
-##### Defaults for some mobile platforms
-maemo5|maemo6 {
-    CONFIG += disable_uitools
-    CONFIG += enable_fast_mobile_scrolling
-    CONFIG += use_qt_mobile_theme
-    maemo6: CONFIG += include_webinspector
-} else {
-    CONFIG += include_webinspector
-}
+##### Defaults
+CONFIG += include_webinspector
 
 *sh4* {
     CONFIG += disable_uitools

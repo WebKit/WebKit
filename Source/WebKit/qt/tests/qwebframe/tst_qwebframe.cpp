@@ -625,9 +625,7 @@ private slots:
     void setHtmlWithJSAlert();
     void ipv6HostEncoding();
     void metaData();
-#if !defined(Q_WS_MAEMO_5) && !defined(QT_NO_COMBOBOX)
-    // as maemo 5 does not use QComboBoxes to implement the popups
-    // this test does not make sense for it.
+#if !defined(QT_NO_COMBOBOX)
     void popupFocus();
 #endif
     void inputFieldFocus();
@@ -2674,7 +2672,7 @@ void tst_QWebFrame::metaData()
     QCOMPARE(metaData.value("nonexistant"), QString());
 }
 
-#if !defined(Q_WS_MAEMO_5) && !defined(QT_NO_COMBOBOX)
+#if !defined(QT_NO_COMBOBOX)
 void tst_QWebFrame::popupFocus()
 {
     QWebView view;

@@ -54,7 +54,6 @@ private slots:
 
 protected:
     virtual void paintEvent(QPaintEvent*);
-    virtual void focusInEvent(QFocusEvent*);
     virtual void resizeEvent(QResizeEvent*);
 
 private:

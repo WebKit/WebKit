@@ -134,15 +134,6 @@ contains(MOBILITY_CONFIG, sensors) {
    MOBILITY *= sensors
 }
 
-# systeminfo support if QtMobility systeminfo module exists, but only for maemo and meego
-maemo5|maemo6 {
-    !contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=.) {
-        contains(MOBILITY_CONFIG, systeminfo) {
-            DEFINES += WTF_USE_QT_MOBILITY_SYSTEMINFO=1
-        }
-    }
-}
-
 !contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1
 !contains(DEFINES, ENABLE_GESTURE_EVENTS=.): DEFINES += ENABLE_GESTURE_EVENTS=1
 
