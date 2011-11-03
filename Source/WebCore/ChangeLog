@@ -1,3 +1,30 @@
+2011-11-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not map scripts generated with document.write to the document resources.
+        https://bugs.webkit.org/show_bug.cgi?id=71114
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._bindScriptToRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCodes):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSource):
+        (WebInspector.DebuggerPresentationModel.prototype._consoleCleared):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScriptWithURL):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.reset):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent.didFormatContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.editSource):
+        (WebInspector.Script.prototype.isInlineScript):
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Maemo specific code paths
