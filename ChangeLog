@@ -1,3 +1,15 @@
+2011-11-03  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Enable the Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=69127
+
+        Reviewed by Adam Barth.
+
+        Build system changes to support ENABLE(PAGE_VISIBILITY_API) on EFL port.
+
+        * Source/cmake/OptionsEfl.cmake: Add enabled ENABLE_PAGE_VISIBILITY_API definition.
+        * Source/cmakeconfig.h.cmake: ditto.
+
 2011-10-28  Adam Barth  <abarth@webkit.org>
 
         Rename ExceptionCodeDescription.in to DOMExceptions.in

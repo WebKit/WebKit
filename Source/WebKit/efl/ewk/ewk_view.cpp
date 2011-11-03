@@ -3874,6 +3874,55 @@ void ewk_view_editor_client_contents_changed(Evas_Object* ewkView)
     evas_object_smart_callback_call(ewkView, "editorclient,contents,changed", 0);
 }
 
+Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibleState, Eina_Bool initialState)
+{
+#if ENABLE(PAGE_VISIBILITY_API)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
+
+    switch (pageVisibleState) {
+    case EWK_PAGE_VISIBILITY_STATE_VISIBLE:
+        priv->page->setVisibilityState(WebCore::PageVisibilityStateVisible, initialState);
+        break;
+    case EWK_PAGE_VISIBILITY_STATE_HIDDEN:
+        priv->page->setVisibilityState(WebCore::PageVisibilityStateHidden, initialState);
+        break;
+    case EWK_PAGE_VISIBILITY_STATE_PRERENDER:
+        priv->page->setVisibilityState(WebCore::PageVisibilityStatePrerender, initialState);
+        break;
+    default:
+        return EINA_FALSE;
+    }
+
+    return EINA_TRUE;
+#else
+    DBG("PAGE_VISIBILITY_API is disabled.");
+    return EINA_FALSE;
+#endif
+}
+
+Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object* ewkView)
+{
+#if ENABLE(PAGE_VISIBILITY_API)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
+
+    switch (priv->page->visibilityState()) {
+    case WebCore::PageVisibilityStateVisible:
+        return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
+    case WebCore::PageVisibilityStateHidden:
+        return EWK_PAGE_VISIBILITY_STATE_HIDDEN;
+    case WebCore::PageVisibilityStatePrerender:
+        return EWK_PAGE_VISIBILITY_STATE_PRERENDER;
+    default:
+        return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
+    }
+#else
+    DBG("PAGE_VISIBILITY_API is disabled.");
+    return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
+#endif
+}
+
 namespace EWKPrivate {
 
 WebCore::Page *corePage(const Evas_Object *ewkView)

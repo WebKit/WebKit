@@ -1080,12 +1080,6 @@ svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 webarchive
 
-# The EFL port has no support for the Page Visibility API
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
-
 # The EFL port has no support for webtiming
 fast/dom/Window/window-properties-performance.html
 fast/dom/navigation-type-back-forward.html

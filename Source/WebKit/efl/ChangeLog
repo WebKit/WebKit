@@ -1,3 +1,21 @@
+2011-11-03  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Enable the Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=69127
+
+        Reviewed by Adam Barth.
+
+        Implement methods to enable the Page Visibility API on EFL port.
+        (http://www.w3.org/TR/page-visibility)
+
+        When the visibility status of the page is changed, browser could
+        inform the status to WebKit using the APIs below.
+
+        * ewk/ewk_view.cpp: Add setter/getter functions to query/set page visibility state.
+        (ewk_view_visibility_state_set): Sets the page visibility status.
+        (ewk_view_visibility_state_get): Gets the page visibility status.
+        * ewk/ewk_view.h: Add public prototypes.
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent

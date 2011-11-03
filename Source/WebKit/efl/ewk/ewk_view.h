@@ -2218,6 +2218,51 @@ EAPI Eina_Bool ewk_view_protocol_handler_set(Evas_Object* o, const char** protoc
  */
 EAPI Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* o);
 
+/// Defines the page visibility status.
+enum _Ewk_Page_Visibility_State {
+    EWK_PAGE_VISIBILITY_STATE_VISIBLE,
+    EWK_PAGE_VISIBILITY_STATE_HIDDEN,
+    EWK_PAGE_VISIBILITY_STATE_PRERENDER
+};
+/// Creates a type name for @a _Ewk_Page_Visibility_State.
+typedef enum _Ewk_Page_Visibility_State Ewk_Page_Visibility_State;
+
+/**
+ * Sets the visibility state of the page.
+ *
+ * This function let WebKit knows the visibility status of the page.
+ * WebKit will save the current status, and fire a "visibilitychange"
+ * event which web application can listen. Web application could slow
+ * down or stop itself when it gets a "visibilitychange" event and its
+ * visibility state is hidden. If its visibility state is visible, then
+ * the web application could use more resources.
+ *
+ * This feature makes that web application could use the resources efficiently,
+ * such as power, CPU, and etc.
+ *
+ * If more detailed description is needed, please see the specification.
+ * (http://www.w3.org/TR/page-visibility)
+ *
+ * @param o view object to set the visibility state.
+ * @param page_visible_state the visible state of the page to set.
+ * @param initial_state @c EINA_TRUE if this function is called at page initialization time,
+ *                      @c EINA_FALSE otherwise.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure.
+ */
+EAPI Eina_Bool ewk_view_visibility_state_set(Evas_Object* o, Ewk_Page_Visibility_State page_visible_state, Eina_Bool initial_state);
+
+/**
+ * Gets the visibility state of the page.
+ *
+ * @param o view object
+ *
+ * @return enum value of @a Ewk_Page_Visibility_State that indicates current visibility status of the page.
+ *
+ * @see ewk_view_visibility_state_set()
+ */
+EAPI Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif
