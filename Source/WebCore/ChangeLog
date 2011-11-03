@@ -1,3 +1,37 @@
+2011-11-02  Adam Klein  <adamk@chromium.org>
+
+        Replace usage of StringImpl with String where possible in CharacterData and Text
+        https://bugs.webkit.org/show_bug.cgi?id=71383
+
+        Reviewed by Darin Adler.
+
+        Ryosuke Niwa, in http://webkit.org/b/70862, asked me to replace usages
+        of String with StringImpl. I've done more than what he asked in this
+        patch, the biggest change being that CharacterData now holds a String
+        instead of a RefPtr<StringImpl>.
+
+        No new tests, as this should have no effect on behavior.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData):
+        (WebCore::CharacterData::substringData):
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::appendData):
+        (WebCore::CharacterData::insertData):
+        (WebCore::CharacterData::deleteData):
+        (WebCore::CharacterData::replaceData):
+        (WebCore::CharacterData::containsOnlyWhitespace):
+        (WebCore::CharacterData::setDataAndUpdate):
+        (WebCore::CharacterData::updateRenderer):
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::length):
+        (WebCore::CharacterData::dataImpl):
+        (WebCore::CharacterData::CharacterData):
+        (WebCore::CharacterData::setDataWithoutUpdate):
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+
 2011-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getOwnPropertyNames

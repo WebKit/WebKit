@@ -55,11 +55,11 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
     }
 
-    RefPtr<StringImpl> oldStr = dataImpl();
-    RefPtr<Text> newText = virtualCreate(oldStr->substring(offset));
-    setDataImpl(oldStr->substring(0, offset));
+    String oldStr = data();
+    RefPtr<Text> newText = virtualCreate(oldStr.substring(offset));
+    setDataWithoutUpdate(oldStr.substring(0, offset));
 
-    dispatchModifiedEvent(oldStr.get());
+    dispatchModifiedEvent(oldStr);
 
     if (parentNode())
         parentNode()->insertBefore(newText.get(), nextSibling(), ec);
@@ -70,7 +70,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         document()->textNodeSplit(this);
 
     if (renderer())
-        toRenderText(renderer())->setTextWithOffset(dataImpl(), 0, oldStr->length());
+        toRenderText(renderer())->setTextWithOffset(dataImpl(), 0, oldStr.length());
 
     return newText.release();
 }

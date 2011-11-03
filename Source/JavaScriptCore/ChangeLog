@@ -1,3 +1,13 @@
+2011-11-02  Adam Klein  <adamk@chromium.org>
+
+        Replace usage of StringImpl with String where possible in CharacterData and Text
+        https://bugs.webkit.org/show_bug.cgi?id=71383
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::containsOnlyWhitespace): Added new method.
+
 2011-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getOwnPropertyNames

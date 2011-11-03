@@ -323,6 +323,7 @@ public:
 
     bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
     bool containsOnlyLatin1() const { return charactersAreAllLatin1(characters(), length()); }
+    bool containsOnlyWhitespace() const { return !m_impl || m_impl->containsOnlyWhitespace(); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
