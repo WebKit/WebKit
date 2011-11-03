@@ -1,3 +1,14 @@
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unable to start MiniBrowser after run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=71469
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-launcher: Pass @ARGV instead of @args, which is stripped
+        from things like -2. Neither Gtk or Qt MiniBrowser like unknown command
+        line arguments.
+
 2011-11-03  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] [WK2] ttf-liberation fonts moved to a new location (in Debian)

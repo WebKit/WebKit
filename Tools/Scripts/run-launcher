@@ -39,7 +39,6 @@ use webkitdirs;
 setConfiguration();
 my $productDir = productDir();
 my $launcherPath = productDir();
-my @args = @ARGV;
 
 # Check to see that all the frameworks are built.
 checkFrameworks();
@@ -67,9 +66,6 @@ if (isQt()) {
     if (isGtk()) {
         if (isWK2()) {
             $launcherPath = catdir($launcherPath, "Programs", "MiniBrowser");
-
-            # isWK2() removes the -2 option from @ARGV, but not @args. We do not want to pass -2 to MiniBrowser.
-            @args = @ARGV;
         } else {
             $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
         }
@@ -91,5 +87,5 @@ if (isQt()) {
     print "Starting webkit launcher.\n";
 }
 
-exec $launcherPath, @args or die;
+exec $launcherPath, @ARGV or die;
 
