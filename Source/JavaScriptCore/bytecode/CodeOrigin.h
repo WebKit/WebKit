@@ -26,6 +26,7 @@
 #ifndef CodeOrigin_h
 #define CodeOrigin_h
 
+#include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -75,11 +76,11 @@ struct CodeOrigin {
 };
 
 struct InlineCallFrame {
+    Vector<ValueRecovery> arguments;
     WriteBarrier<ExecutableBase> executable;
     WriteBarrier<JSFunction> callee;
     CodeOrigin caller;
-    unsigned stackOffset;
-    unsigned numArgumentsIncludingThis : 31;
+    unsigned stackOffset : 31;
     bool isCall : 1;
 };
 

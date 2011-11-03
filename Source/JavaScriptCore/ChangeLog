@@ -1,5 +1,51 @@
 2011-11-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG inlining breaks function.arguments[something] if the argument being
+        retrieved was subjected to DFG's unboxing optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=71436
+
+        Reviewed by Oliver Hunt.
+        
+        This makes inlined arguments retrieval use some of the same machinery as
+        OSR to determine where from, and how, to retrieve a value that the DFG
+        might have somehow squirreled away while the old JIT would put it in its
+        obvious location, using an obvious format.
+        
+        To that end, previously DFG-internal notions such as DataFormat,
+        VirtualRegister, and ValueRecovery are now in bytecode/ since they are
+        stored as part of InlineCallFrames.
+
+        * bytecode/CodeOrigin.h:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallerFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::inlineCallFrame):
+        * interpreter/Register.h:
+        (JSC::Register::asInlineCallFrame):
+        (JSC::Register::unboxedInt32):
+        (JSC::Register::unboxedBoolean):
+        (JSC::Register::unboxedCell):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreationAndCopyRegisters):
+
+2011-11-02  Filip Pizlo  <fpizlo@apple.com>
+
         ValueRecovery should be moved out of the DFG JIT
         https://bugs.webkit.org/show_bug.cgi?id=71439
 

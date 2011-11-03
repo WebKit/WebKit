@@ -607,8 +607,9 @@ private:
         case PutByOffset:
             break;
             
-        // This gets ignored because it doesn't do anything.
+        // These gets ignored because it doesn't do anything.
         case Phantom:
+        case InlineStart:
             break;
 #else
         default:

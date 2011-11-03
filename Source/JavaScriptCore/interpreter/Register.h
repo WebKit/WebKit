@@ -71,7 +71,10 @@ namespace JSC {
         JSPropertyNameIterator* propertyNameIterator() const;
         ScopeChainNode* scopeChain() const;
         Instruction* vPC() const;
-        InlineCallFrame* inlineCallFrame() const;
+        InlineCallFrame* asInlineCallFrame() const;
+        int32_t unboxedInt32() const;
+        bool unboxedBoolean() const;
+        JSCell* unboxedCell() const;
 
         static Register withInt(int32_t i)
         {
@@ -88,6 +91,7 @@ namespace JSC {
             CodeBlock* codeBlock;
             Instruction* vPC;
             InlineCallFrame* inlineCallFrame;
+            EncodedValueDescriptor encodedValue;
         } u;
     };
 
@@ -165,9 +169,28 @@ namespace JSC {
         return u.vPC;
     }
 
-    ALWAYS_INLINE InlineCallFrame* Register::inlineCallFrame() const
+    ALWAYS_INLINE InlineCallFrame* Register::asInlineCallFrame() const
     {
         return u.inlineCallFrame;
+    }
+        
+    ALWAYS_INLINE int32_t Register::unboxedInt32() const
+    {
+        return u.encodedValue.asBits.payload;
+    }
+
+    ALWAYS_INLINE bool Register::unboxedBoolean() const
+    {
+        return !!u.encodedValue.asBits.payload;
+    }
+
+    ALWAYS_INLINE JSCell* Register::unboxedCell() const
+    {
+#if USE(JSVALUE64)
+        return u.encodedValue.ptr;
+#else
+        return bitwise_cast<JSCell*>(u.encodedValue.asBits.payload);
+#endif
     }
 
 } // namespace JSC

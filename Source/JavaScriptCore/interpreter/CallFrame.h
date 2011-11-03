@@ -105,7 +105,16 @@ namespace JSC  {
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
 #endif
 #if ENABLE(DFG_JIT)
-        InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].inlineCallFrame(); }
+        InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].asInlineCallFrame(); }
+#else
+        // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
+        // isInlineCallFrame(). But to make it easier to write code without having a bunch of
+        // #if's, we make a dummy implementation available anyway.
+        InlineCallFrame* inlineCallFrame() const
+        {
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
 #endif
 #if ENABLE(INTERPRETER)
         Instruction* returnVPC() const { return this[RegisterFile::ReturnPC].vPC(); }

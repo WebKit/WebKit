@@ -263,8 +263,28 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_ENABLE(DEBUG_VERBOSE)
             fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
-            if (node.op == SetLocal)
+            switch (node.op) {
+            case SetLocal:
                 compileMovHint(node);
+                break;
+
+            case InlineStart: {
+                InlineCallFrame* inlineCallFrame = node.codeOrigin.inlineCallFrame;
+                unsigned argumentsStart = inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size();
+                for (unsigned i = 0; i < inlineCallFrame->arguments.size(); ++i) {
+                    ValueRecovery recovery = computeValueRecoveryFor(m_variables[argumentsStart + i]);
+                    // The recovery cannot point to registers, since the call frame reification isn't
+                    // as smart as OSR, so it can't handle that. The exception is the this argument,
+                    // which we don't really need to be able to recover.
+                    ASSERT(!i || !recovery.isInRegisters());
+                    inlineCallFrame->arguments[i] = recovery;
+                }
+                break;
+            }
+                
+            default:
+                break;
+            }
         } else {
             
 #if DFG_ENABLE(DEBUG_VERBOSE)

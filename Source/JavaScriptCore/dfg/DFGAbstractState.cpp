@@ -659,6 +659,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case Phantom:
+    case InlineStart:
         break;
     }
     

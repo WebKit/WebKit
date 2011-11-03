@@ -110,7 +110,7 @@ CallFrame* CallFrame::trueCallerFrame()
             inlinedCaller->setCallerFrame(machineCaller);
         
         inlinedCaller->setInlineCallFrame(inlineCallFrame);
-        inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->numArgumentsIncludingThis);
+        inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->arguments.size());
         inlinedCaller->setCallee(calleeAsFunction);
         
         inlineCallFrame = nextInlineCallFrame;

@@ -220,6 +220,11 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     /* Marker for arguments being set. */\
     macro(SetArgument, 0) \
     \
+    /* Hint that inlining begins here. No code is generated for this node. It's only */\
+    /* used for copying OSR data into inline frame data, to support reification of */\
+    /* call frames of inlined functions. */\
+    macro(InlineStart, 0) \
+    \
     /* Nodes for bitwise operations. */\
     macro(BitAnd, NodeResultInt32) \
     macro(BitOr, NodeResultInt32) \

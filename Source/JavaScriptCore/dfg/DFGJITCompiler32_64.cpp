@@ -528,7 +528,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         storePtr(callerFrameGPR, payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
         storePtr(TrustedImmPtr(jumpTarget), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
         store32(Imm32(JSValue::Int32Tag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
-        store32(Imm32(inlineCallFrame->numArgumentsIncludingThis), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
+        store32(Imm32(inlineCallFrame->arguments.size()), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
         store32(Imm32(JSValue::CellTag), tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
         storePtr(TrustedImmPtr(inlineCallFrame->callee.get()), payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
     }
