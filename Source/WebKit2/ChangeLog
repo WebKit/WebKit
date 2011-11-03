@@ -1,3 +1,16 @@
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
+        Use the right function to determine whether NPWindow coordinates should be window relative
+        https://bugs.webkit.org/show_bug.cgi?id=71480
+
+        Reviewed by Adam Roben.
+
+        We want to use wantsWindowRelativeNPWindowCoordinates here, and not wantsWindowRelativeCoordinates
+        which is a temporary function that will be removed (and that returns the wrong value!)
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::geometryDidChange):
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix after r99195.
