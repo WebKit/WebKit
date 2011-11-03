@@ -1,3 +1,24 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::className
+        https://bugs.webkit.org/show_bug.cgi?id=71428
+
+        Reviewed by Sam Weinig.
+
+        No new tests.
+
+        Added className to the MethodTable, changed all the virtual 
+        implementations of className to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::className):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::internalConstructorName):
+        * bridge/testqtbindings.cpp:
+        (Global::className):
+
 2011-11-02  Jer Noble  <jer.noble@apple.com>
 
         Add Clock class and platform-specific implementations.

@@ -449,9 +449,9 @@ static Ewk_JS_Object* ewk_js_npobject_to_object(NPObject* npObject)
     object->view = 0;
 
     jso = reinterpret_cast<JavaScriptObject*>(npObject);
-    if (!strcmp("Array", jso->imp->className().ascii().data()))
+    if (!strcmp("Array", jso->imp->methodTable()->className(jso->imp).ascii().data()))
         object->type = EWK_JS_OBJECT_ARRAY;
-    else if (!strcmp("Function", jso->imp->className().ascii().data()))
+    else if (!strcmp("Function", jso->imp->methodTable()->className(jso->imp).ascii().data()))
         object->type = EWK_JS_OBJECT_FUNCTION;
     else
         object->type = EWK_JS_OBJECT_OBJECT;

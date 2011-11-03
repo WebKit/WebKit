@@ -82,7 +82,7 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        virtual UString className() const;
+        static UString className(const JSObject*);
 
         static void finalize(JSCell*);
 

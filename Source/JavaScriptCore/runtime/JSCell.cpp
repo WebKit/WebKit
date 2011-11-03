@@ -179,4 +179,10 @@ void JSCell::getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, Enum
     ASSERT_NOT_REACHED();
 }
 
+UString JSCell::className(const JSObject*)
+{
+    ASSERT_NOT_REACHED();
+    return UString();
+}
+
 } // namespace JSC

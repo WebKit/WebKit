@@ -214,7 +214,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(jsNontrivialString(exec, thisValue.isUndefined() ? "[object Undefined]" : "[object Null]"));
-    return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisValue.toObject(exec)->className(), "]"));
+    JSObject* thisObject = thisValue.toObject(exec);
+    return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable()->className(thisObject), "]"));
 }
 
 } // namespace JSC

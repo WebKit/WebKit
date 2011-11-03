@@ -86,7 +86,7 @@ EXPORTS
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
     ?checkSyntax@JSC@@YA_NPAVExecState@1@ABVSourceCode@1@PAVJSValue@1@@Z
     ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@@2@@Z
-    ?className@JSObject@JSC@@UBE?AVUString@2@XZ
+    ?className@JSObject@JSC@@SA?AVUString@2@PBV12@@Z
     ?clear@SourceProviderCache@JSC@@QAEXXZ
     ?clearBuiltinStructures@JSGlobalData@JSC@@QAEXXZ
     ?clearRareData@JSGlobalObject@JSC@@CAXPAVJSCell@2@@Z

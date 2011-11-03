@@ -114,13 +114,14 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
 }
 
 template <class Parent>
-UString JSCallbackObject<Parent>::className() const
+UString JSCallbackObject<Parent>::className(const JSObject* object)
 {
-    UString thisClassName = classRef()->className();
+    const JSCallbackObject* thisObject = static_cast<const JSCallbackObject*>(object);
+    UString thisClassName = thisObject->classRef()->className();
     if (!thisClassName.isEmpty())
         return thisClassName;
     
-    return Parent::className();
+    return Parent::className(object);
 }
 
 template <class Parent>

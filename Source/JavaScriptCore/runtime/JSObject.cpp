@@ -98,9 +98,9 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 }
 
-UString JSObject::className() const
+UString JSObject::className(const JSObject* object)
 {
-    const ClassInfo* info = classInfo();
+    const ClassInfo* info = object->classInfo();
     ASSERT(info);
     return info->className;
 }

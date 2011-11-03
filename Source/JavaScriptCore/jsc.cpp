@@ -155,7 +155,13 @@ public:
         object->finishCreation(globalData, arguments);
         return object;
     }
-    virtual UString className() const { return "global"; }
+
+    static const ClassInfo s_info;
+
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    {
+        return Structure::create(globalData, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
+    }
 
 protected:
     void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
@@ -194,6 +200,8 @@ protected:
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
+
+const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
 
 GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure)
     : JSGlobalObject(globalData, structure)

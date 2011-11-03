@@ -74,6 +74,9 @@ namespace JSC {
 
         typedef void (*GetOwnPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
+
+        typedef UString (*ClassNameFunctionPtr)(const JSObject*);
+        ClassNameFunctionPtr className;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -110,6 +113,7 @@ struct MemberCheck##member { \
         &ClassName::defineSetter, \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
+        &ClassName::className, \
     }, \
     sizeof(ClassName)
 

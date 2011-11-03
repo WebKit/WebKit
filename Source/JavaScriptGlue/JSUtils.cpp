@@ -270,7 +270,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
 #if 0
                     if (object->inherits(&ArrayInstanceImp::s_info))
 #else
-                    if (object->className() == "Array")
+                    if (object->methodTable()->className(object) == "Array")
 #endif
                     {
                         isArray = true;

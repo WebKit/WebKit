@@ -84,9 +84,10 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-UString JSDOMWindowShell::className() const
+UString JSDOMWindowShell::className(const JSObject* object)
 {
-    return window()->className();
+    const JSDOMWindowShell* thisObject = static_cast<const JSDOMWindowShell*>(object);
+    return thisObject->window()->methodTable()->className(thisObject->window());
 }
 
 bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

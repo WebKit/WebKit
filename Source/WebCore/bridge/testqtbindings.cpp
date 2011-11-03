@@ -78,7 +78,7 @@ class Global : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    virtual UString className() const { return "global"; }
+    static UString className(const JSObject*) { return "global"; }
 };
 
 static char code[] =

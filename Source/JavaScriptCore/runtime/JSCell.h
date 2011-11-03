@@ -144,6 +144,7 @@ namespace JSC {
         static NO_RETURN_DUE_TO_ASSERT void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
         static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        static UString className(const JSObject*);
 
     private:
         WriteBarrier<Structure> m_structure;

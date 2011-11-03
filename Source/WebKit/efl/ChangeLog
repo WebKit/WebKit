@@ -1,3 +1,17 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::className
+        https://bugs.webkit.org/show_bug.cgi?id=71428
+
+        Reviewed by Sam Weinig.
+
+        Added className to the MethodTable, changed all the virtual 
+        implementations of className to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * ewk/ewk_js.cpp:
+        (ewk_js_npobject_to_object):
+
 2011-11-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

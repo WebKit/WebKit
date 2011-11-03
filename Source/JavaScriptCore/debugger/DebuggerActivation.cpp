@@ -55,9 +55,10 @@ void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_activation);
 }
 
-UString DebuggerActivation::className() const
+UString DebuggerActivation::className(const JSObject* object)
 {
-    return m_activation->className();
+    const DebuggerActivation* thisObject = static_cast<const DebuggerActivation*>(object);
+    return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());
 }
 
 bool DebuggerActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
