@@ -103,18 +103,19 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_transactionCoordinator(coordinator)
 {
     ASSERT(!m_name.isNull());
-
-    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_id);
-    ASSERT(success == (m_id != InvalidId));
-    if (!success)
-        openInternal();
+    openInternal();
 }
 
 void IDBDatabaseBackendImpl::openInternal()
 {
+    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_id);
+    ASSERT(success == (m_id != InvalidId));
+    if (success) {
+        loadObjectStores();
+        return;
+    }
     if (!m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_id))
         ASSERT_NOT_REACHED(); // FIXME: Need better error handling.
-    loadObjectStores();
 }
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()

@@ -1,3 +1,17 @@
+2011-11-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Object stores not persisting between sessions
+        https://bugs.webkit.org/show_bug.cgi?id=71313
+
+        Reviewed by Tony Chang.
+
+        Logic flaw introduced with r98806 skipped the loading of object stores
+        during subsequent sessions.
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::openInternal):
+
 2011-11-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: fix heap profiler rendering and resize.
