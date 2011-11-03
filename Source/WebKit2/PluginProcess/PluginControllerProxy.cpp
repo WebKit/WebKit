@@ -429,12 +429,11 @@ void PluginControllerProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
     m_plugin->frameDidFail(requestID, wasCancelled);
 }
 
-void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform, const IntRect& frameRectInWindowCoordinates, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle)
+void PluginControllerProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle)
 {
     ASSERT(m_plugin);
 
     m_pluginSize = pluginSize;
-    m_frameRectInWindowCoordinates = frameRectInWindowCoordinates;
 
     if (contentsScaleFactor != m_contentsScaleFactor) {
         m_contentsScaleFactor = contentsScaleFactor;

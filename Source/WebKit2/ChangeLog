@@ -1,5 +1,24 @@
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of PluginControllerProxy::m_frameRectInWindowCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71506
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        This no longer needs to take the frame rect in window coordinates.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Remove frameRectInWindowCoordinates from the GeometryDidChange message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        Don't pass frameRectInWindowCoordinates when sending GeometryDidChange.
+
+2011-11-03  Anders Carlsson  <andersca@apple.com>
+
         Get rid of Plugin::wantsWindowRelativeCoordinates()
         https://bugs.webkit.org/show_bug.cgi?id=71504
 
