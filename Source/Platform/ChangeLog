@@ -1,0 +1,9 @@
+2011-11-02  Adam Barth  <abarth@webkit.org>
+
+        Add stubs for WTF and Platform
+        https://bugs.webkit.org/show_bug.cgi?id=71492
+
+        Reviewed by Eric Seidel.
+
+        This patch creates the Platform directory, which begins the process of
+        moving Platform out of WebCore.
