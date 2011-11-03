@@ -1,3 +1,46 @@
+2011-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueRecovery should be moved out of the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=71439
+
+        Reviewed by Oliver Hunt.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/DataFormat.h: Added.
+        (JSC::dataFormatToString):
+        (JSC::needDataFormatConversion):
+        (JSC::isJSFormat):
+        (JSC::isJSInteger):
+        (JSC::isJSDouble):
+        (JSC::isJSCell):
+        (JSC::isJSBoolean):
+        * bytecode/ValueRecovery.h: Added.
+        (JSC::ValueRecovery::ValueRecovery):
+        (JSC::ValueRecovery::alreadyInRegisterFile):
+        (JSC::ValueRecovery::alreadyInRegisterFileAsUnboxedInt32):
+        (JSC::ValueRecovery::alreadyInRegisterFileAsUnboxedCell):
+        (JSC::ValueRecovery::alreadyInRegisterFileAsUnboxedBoolean):
+        (JSC::ValueRecovery::inGPR):
+        (JSC::ValueRecovery::inPair):
+        (JSC::ValueRecovery::inFPR):
+        (JSC::ValueRecovery::displacedInRegisterFile):
+        (JSC::ValueRecovery::constant):
+        (JSC::ValueRecovery::technique):
+        (JSC::ValueRecovery::isInRegisters):
+        (JSC::ValueRecovery::gpr):
+        (JSC::ValueRecovery::tagGPR):
+        (JSC::ValueRecovery::payloadGPR):
+        (JSC::ValueRecovery::fpr):
+        (JSC::ValueRecovery::virtualRegister):
+        (JSC::ValueRecovery::dump):
+        * bytecode/VirtualRegister.h: Added.
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::isJSFormat):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGVariableAccessData.h:
+
 2011-11-02  Sam Weinig  <sam@webkit.org>
 
         Object.getOwnPropertyDescriptor() does not retrieve the getter/setter from a property on the window that has been overridden with a getter/setter

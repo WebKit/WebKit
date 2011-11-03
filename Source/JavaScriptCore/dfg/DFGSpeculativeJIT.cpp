@@ -60,59 +60,6 @@ void ValueSource::dump(FILE* out) const
         break;
     }
 }
-
-void ValueRecovery::dump(FILE* out) const
-{
-    switch (technique()) {
-    case AlreadyInRegisterFile:
-        fprintf(out, "-");
-        break;
-    case AlreadyInRegisterFileAsUnboxedInt32:
-        fprintf(out, "(int32)");
-        break;
-    case AlreadyInRegisterFileAsUnboxedCell:
-        fprintf(out, "(cell)");
-        break;
-    case AlreadyInRegisterFileAsUnboxedBoolean:
-        fprintf(out, "(bool)");
-        break;
-    case InGPR:
-        fprintf(out, "%%%s", GPRInfo::debugName(gpr()));
-        break;
-    case UnboxedInt32InGPR:
-        fprintf(out, "int32(%%%s)", GPRInfo::debugName(gpr()));
-        break;
-    case UnboxedBooleanInGPR:
-        fprintf(out, "bool(%%%s)", GPRInfo::debugName(gpr()));
-        break;
-    case InFPR:
-        fprintf(out, "%%%s", FPRInfo::debugName(fpr()));
-        break;
-#if USE(JSVALUE32_64)
-    case InPair:
-        fprintf(out, "pair(%%%s, %%%s)", GPRInfo::debugName(tagGPR()), GPRInfo::debugName(payloadGPR()));
-        break;
-#endif
-    case DisplacedInRegisterFile:
-        fprintf(out, "*%d", virtualRegister());
-        break;
-    case Int32DisplacedInRegisterFile:
-        fprintf(out, "*int32(%d)", virtualRegister());
-        break;
-    case DoubleDisplacedInRegisterFile:
-        fprintf(out, "*double(%d)", virtualRegister());
-        break;
-    case Constant:
-        fprintf(out, "[%s]", constant().description());
-        break;
-    case DontKnow:
-        fprintf(out, "!");
-        break;
-    default:
-        fprintf(out, "?%d", technique());
-        break;
-    }
-}
 #endif
 
 OSRExit::OSRExit(JSValueSource jsValueSource, ValueProfile* valueProfile, MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)

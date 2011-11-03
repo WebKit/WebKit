@@ -23,61 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGVariableAccessData_h
-#define DFGVariableAccessData_h
+#ifndef VirtualRegister_h
+#define VirtualRegister_h
 
-#include "PredictedType.h"
-#include "VirtualRegister.h"
 #include <wtf/Platform.h>
-#include <wtf/UnionFind.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-class VariableAccessData: public UnionFind<VariableAccessData> {
-public:
-    VariableAccessData()
-        : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
-        , m_prediction(PredictNone)
-    {
-    }
-    
-    VariableAccessData(VirtualRegister local)
-        : m_local(local)
-        , m_prediction(PredictNone)
-    {
-    }
-    
-    VirtualRegister local()
-    {
-        ASSERT(m_local == find()->m_local);
-        return m_local;
-    }
-    
-    int operand()
-    {
-        return static_cast<int>(local());
-    }
-    
-    bool predict(PredictedType prediction)
-    {
-        return mergePrediction(find()->m_prediction, prediction);
-    }
-    
-    PredictedType prediction()
-    {
-        return find()->m_prediction;
-    }
-    
-private:
-    // This is slightly space-inefficient, since anything we're unified with
-    // will have the same operand and should have the same prediction. But
-    // putting them here simplifies the code, and we don't expect DFG space
-    // usage for variable access nodes do be significant.
+// Type for a virtual register number (spill location).
+// Using an enum to make this type-checked at compile time, to avert programmer errors.
+enum VirtualRegister { InvalidVirtualRegister = -1 };
+COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
 
-    VirtualRegister m_local;
-    PredictedType m_prediction;
-};
+} // namespace JSC
 
-} } // namespace JSC::DFG
-
-#endif // DFGVariableAccessData_h
+#endif // VirtualRegister_h
