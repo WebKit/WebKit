@@ -1,3 +1,13 @@
+2011-11-02  Dan Bernstein  <mitz@apple.com>
+
+        Fix an intermittent hang in RenderedImageFromDOMRange.
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::run): Made the call to -runMode:beforeDate: return
+        immediately if there are no sources by passing a date in the distant past.
+
 2011-11-02  Adam Roben  <aroben@apple.com>
 
         Add git-add-reviewer

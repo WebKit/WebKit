@@ -39,7 +39,7 @@ namespace Util {
 void run(bool* done)
 {
     while (!*done)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 }
 
 void sleep(double seconds)
