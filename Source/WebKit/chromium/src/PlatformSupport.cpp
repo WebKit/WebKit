@@ -150,6 +150,11 @@ void PlatformSupport::cacheMetadata(const KURL& url, double responseTime, const 
 
 // Clipboard ------------------------------------------------------------------
 
+uint64_t PlatformSupport::clipboardGetSequenceNumber()
+{
+    return webKitPlatformSupport()->clipboard()->getSequenceNumber();
+}
+
 bool PlatformSupport::clipboardIsFormatAvailable(
     PasteboardPrivate::ClipboardFormat format,
     PasteboardPrivate::ClipboardBuffer buffer)
@@ -157,6 +162,17 @@ bool PlatformSupport::clipboardIsFormatAvailable(
     return webKitPlatformSupport()->clipboard()->isFormatAvailable(
         static_cast<WebClipboard::Format>(format),
         static_cast<WebClipboard::Buffer>(buffer));
+}
+
+HashSet<String> PlatformSupport::clipboardReadAvailableTypes(
+    PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
+{
+    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readAvailableTypes(
+        static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
+    HashSet<String> types;
+    for (size_t i = 0; i < result.size(); ++i)
+        types.add(result[i]);
+    return types;
 }
 
 String PlatformSupport::clipboardReadPlainText(
@@ -180,11 +196,6 @@ PassRefPtr<SharedBuffer> PlatformSupport::clipboardReadImage(
     PasteboardPrivate::ClipboardBuffer buffer)
 {
     return webKitPlatformSupport()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
-}
-
-uint64_t PlatformSupport::clipboardGetSequenceNumber()
-{
-    return webKitPlatformSupport()->clipboard()->getSequenceNumber();
 }
 
 void PlatformSupport::clipboardWriteSelection(const String& htmlText,
@@ -216,48 +227,6 @@ void PlatformSupport::clipboardWriteImage(NativeImagePtr image,
     WebImage webImage(image);
 #endif
     webKitPlatformSupport()->clipboard()->writeImage(webImage, sourceURL, title);
-}
-
-void PlatformSupport::clipboardWriteData(const String& type,
-                                        const String& data,
-                                        const String& metadata)
-{
-    webKitPlatformSupport()->clipboard()->writeData(type, data, metadata);
-}
-
-HashSet<String> PlatformSupport::clipboardReadAvailableTypes(
-    PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
-{
-    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readAvailableTypes(
-        static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
-    HashSet<String> types;
-    for (size_t i = 0; i < result.size(); ++i)
-        types.add(result[i]);
-    return types;
-}
-
-bool PlatformSupport::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer,
-                                       const String& type, String& data, String& metadata)
-{
-    WebString resultData;
-    WebString resultMetadata;
-    bool succeeded = webKitPlatformSupport()->clipboard()->readData(
-        static_cast<WebClipboard::Buffer>(buffer), type, &resultData, &resultMetadata);
-    if (succeeded) {
-        data = resultData;
-        metadata = resultMetadata;
-    }
-    return succeeded;
-}
-
-Vector<String> PlatformSupport::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
-{
-    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readFilenames(
-        static_cast<WebClipboard::Buffer>(buffer));
-    Vector<String> convertedResult;
-    for (size_t i = 0; i < result.size(); ++i)
-        convertedResult.append(result[i]);
-    return convertedResult;
 }
 
 // Cookies --------------------------------------------------------------------

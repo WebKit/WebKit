@@ -95,12 +95,14 @@ public:
     static void cacheMetadata(const KURL&, double responseTime, const Vector<char>&);
 
     // Clipboard ----------------------------------------------------------
+    static uint64_t clipboardGetSequenceNumber();
+
     static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
+    static HashSet<String> clipboardReadAvailableTypes(PasteboardPrivate::ClipboardBuffer, bool* containsFilenames);
 
     static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
     static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*, unsigned* fragmentStart, unsigned* fragmentEnd);
     static PassRefPtr<SharedBuffer> clipboardReadImage(PasteboardPrivate::ClipboardBuffer);
-    static uint64_t clipboardGetSequenceNumber();
 
     // Only the clipboardRead functions take a buffer argument because
     // Chromium currently uses a different technique to write to alternate
@@ -109,12 +111,6 @@ public:
     static void clipboardWritePlainText(const String&);
     static void clipboardWriteURL(const KURL&, const String&);
     static void clipboardWriteImage(NativeImagePtr, const KURL&, const String&);
-    static void clipboardWriteData(const String& type, const String& data, const String& metadata);
-
-    // Interface for handling copy and paste, drag and drop, and selection copy.
-    static HashSet<String> clipboardReadAvailableTypes(PasteboardPrivate::ClipboardBuffer, bool* containsFilenames);
-    static bool clipboardReadData(PasteboardPrivate::ClipboardBuffer, const String& type, String& data, String& metadata);
-    static Vector<String> clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer);
 
     // Cookies ------------------------------------------------------------
     static void setCookies(const Document*, const KURL&, const String& value);

@@ -1,3 +1,18 @@
+2011-11-03  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Remove unused clipboard methods
+        https://bugs.webkit.org/show_bug.cgi?id=71512
+
+        Reviewed by Tony Chang.
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::getSequenceNumber):
+        (WebKit::WebClipboard::readAvailableTypes):
+        (WebKit::WebClipboard::writeImage):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::clipboardGetSequenceNumber):
+        (WebCore::PlatformSupport::clipboardReadAvailableTypes):
+
 2011-11-03  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Refactor WebFrameImpl::createFrameView() to use Frame:createView
