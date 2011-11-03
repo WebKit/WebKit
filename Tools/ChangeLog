@@ -1,3 +1,15 @@
+2011-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] [DRT] ttf-liberation fonts moved to a new location (in Debian)
+        https://bugs.webkit.org/show_bug.cgi?id=71359
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Add the new font path for Debian fonts and
+        refactored the font files loading code to avoid copy/pastes, ease
+        maintenance and future font directories additions.
+
 2011-11-02  Eric Seidel  <eric@webkit.org>
 
         Move Mocks into _mock files near their implementations
