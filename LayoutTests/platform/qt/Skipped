@@ -327,6 +327,7 @@ fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
+fast/events/drag-link.html
 fast/events/ondrop-text-html.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
@@ -2475,3 +2476,10 @@ svg/zoom/page/zoom-background-images.html
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 svg/zoom/page/zoom-svg-as-background-with-relative-size.html
 fast/backgrounds/size/contain-and-cover-zoomed.html
+
+# new bug revealed by r99071
+# https://bugs.webkit.org/show_bug.cgi?id=62108
+fast/overflow/overflow-height-float-not-removed-crash.html
+fast/overflow/overflow-height-float-not-removed-crash3.html
+fast/css/acid2-pixel.html
+fast/css/acid2.html
