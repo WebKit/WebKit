@@ -432,6 +432,14 @@ public:
         return m_graph.valueProfileFor(nodeIndex, baselineCodeBlockFor(m_graph[nodeIndex].codeOrigin));
     }
     
+    JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return codeBlock()->globalObject();
+        // FIXME: if we ever inline based on executable not function, this code will need to change.
+        return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
+    }
+    
 private:
     // Internal implementation to compile.
     void compileEntry();

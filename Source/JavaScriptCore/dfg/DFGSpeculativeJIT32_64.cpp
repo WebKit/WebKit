@@ -1900,7 +1900,7 @@ void SpeculativeJIT::compile(Node& node)
             // since this operation does not otherwise get the payload.
             speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::NullTag)));
             
-            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), scratchGPR);
+            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), scratchGPR);
             cellResult(scratchGPR, m_compileIndex);
             break;
         }
@@ -1993,7 +1993,7 @@ void SpeculativeJIT::compile(Node& node)
         
         MacroAssembler::JumpList slowPath;
         
-        emitAllocateJSFinalObject(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()->emptyObjectStructure()), resultGPR, scratchGPR, slowPath);
+        emitAllocateJSFinalObject(MacroAssembler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)->emptyObjectStructure()), resultGPR, scratchGPR, slowPath);
         
         MacroAssembler::Jump done = m_jit.jump();
         
@@ -2285,7 +2285,7 @@ void SpeculativeJIT::compile(Node& node)
         
         if (!m_state.forNode(node.child1()).m_structure.doesNotContainAnyOtherThan(methodCheckData.structure))
             speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(methodCheckData.structure)));
-        if (methodCheckData.prototype != m_jit.codeBlock()->globalObject()->methodCallDummy()) {
+        if (methodCheckData.prototype != m_jit.globalObjectFor(node.codeOrigin)->methodCallDummy()) {
             m_jit.move(JITCompiler::TrustedImmPtr(methodCheckData.prototype->structureAddress()), scratchGPR);
             speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(scratchGPR), JITCompiler::TrustedImmPtr(methodCheckData.prototypeStructure)));
         }
@@ -2337,7 +2337,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRTemporary scratch(this);
 
-        JSVariableObject* globalObject = m_jit.codeBlock()->globalObject();
+        JSVariableObject* globalObject = m_jit.globalObjectFor(node.codeOrigin);
         m_jit.loadPtr(const_cast<WriteBarrier<Unknown>**>(globalObject->addressOfRegisters()), result.gpr());
         m_jit.load32(JITCompiler::tagForGlobalVar(result.gpr(), node.varNumber()), scratch.gpr());
         m_jit.load32(JITCompiler::payloadForGlobalVar(result.gpr(), node.varNumber()), result.gpr());
@@ -2354,9 +2354,9 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg globalObjectReg = globalObject.gpr();
         GPRReg scratchReg = scratch.gpr();
 
-        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
+        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), globalObjectReg);
 
-        writeBarrier(m_jit.codeBlock()->globalObject(), value.tagGPR(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
+        writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.tagGPR(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
 
         m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
         m_jit.store32(value.tagGPR(), JITCompiler::tagForGlobalVar(scratchReg, node.varNumber()));
@@ -2474,7 +2474,7 @@ void SpeculativeJIT::compile(Node& node)
         GlobalResolveInfo* resolveInfoAddress = &(m_jit.codeBlock()->globalResolveInfo(data.resolveInfoIndex));
 
         // Check Structure of global object
-        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectGPR);
+        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), globalObjectGPR);
         m_jit.move(JITCompiler::TrustedImmPtr(resolveInfoAddress), resolveInfoGPR);
         m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), resultPayloadGPR);
 
