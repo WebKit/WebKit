@@ -25,6 +25,3 @@ BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
-
-// Needs a rebaseline
-BUGWK71420 : fast/repaint/table-extra-bottom-grow.html = IMAGE
