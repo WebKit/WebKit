@@ -1,3 +1,18 @@
+2011-11-02  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Remove some unnecessary loads/stores in DFG JIT 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=71090
+
+        Reviewed by Filip Pizlo.
+
+        In fillSpeculateCell and OSR exit, some unnecessary loads/stores can
+        be eliminated.
+
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+
 2011-11-02  Adam Klein  <adamk@chromium.org>
 
         Replace usage of StringImpl with String where possible in CharacterData and Text

@@ -295,9 +295,8 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
             return gpr;
         }
         ASSERT(info.spillFormat() & DataFormatJS);
-        m_jit.load32(JITCompiler::tagFor(virtualRegister), gpr);
         if (info.spillFormat() != DataFormatJSCell)
-            speculationCheck(JSValueSource(JITCompiler::addressFor(virtualRegister)), nodeIndex, m_jit.branch32(MacroAssembler::NotEqual, gpr, TrustedImm32(JSValue::CellTag)));
+            speculationCheck(JSValueSource(JITCompiler::addressFor(virtualRegister)), nodeIndex, m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::CellTag)));
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         info.fillCell(gpr);

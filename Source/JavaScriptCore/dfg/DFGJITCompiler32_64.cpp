@@ -237,32 +237,19 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         int operand = exit.operandForIndex(index);
         switch (recovery.technique()) {
         case InGPR:
-            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
-                store32(TrustedImm32(JSValue::CellTag), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-                store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-                scratchIndex++;
-            } else {
-                store32(TrustedImm32(JSValue::CellTag), tagFor((VirtualRegister)operand));
-                store32(recovery.gpr(), payloadFor((VirtualRegister)operand));
-            }
-            break;
         case UnboxedInt32InGPR:
-            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
-                store32(TrustedImm32(JSValue::Int32Tag), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-                store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-                scratchIndex++;
-            } else {
-                store32(TrustedImm32(JSValue::Int32Tag), tagFor((VirtualRegister)operand));
-                store32(recovery.gpr(), payloadFor((VirtualRegister)operand));
-            }
-            break;
         case UnboxedBooleanInGPR:
-            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
-                store32(TrustedImm32(JSValue::BooleanTag), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-                store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-                scratchIndex++;
-            } else {
-                store32(TrustedImm32(JSValue::BooleanTag), tagFor((VirtualRegister)operand));
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
+                store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+            else {
+                uint32_t tag = JSValue::EmptyValueTag;
+                if (recovery.technique() == InGPR)
+                    tag = JSValue::CellTag;
+                else if (recovery.technique() == UnboxedInt32InGPR)
+                    tag = JSValue::Int32Tag;
+                else
+                    tag = JSValue::BooleanTag;
+                store32(TrustedImm32(tag), tagFor((VirtualRegister)operand));
                 store32(recovery.gpr(), payloadFor((VirtualRegister)operand));
             }
             break;
@@ -386,7 +373,20 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             switch (recovery.technique()) {
             case InGPR:
             case UnboxedInt32InGPR:
-            case UnboxedBooleanInGPR:
+            case UnboxedBooleanInGPR: {
+                load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                store32(GPRInfo::regT0, payloadFor((VirtualRegister)virtualRegister));
+                uint32_t tag = JSValue::EmptyValueTag;
+                if (recovery.technique() == InGPR)
+                    tag = JSValue::CellTag;
+                else if (recovery.technique() == UnboxedInt32InGPR)
+                    tag = JSValue::Int32Tag;
+                else
+                    tag = JSValue::BooleanTag;
+                store32(TrustedImm32(tag), tagFor((VirtualRegister)virtualRegister));
+                break;
+            }
+
             case InFPR:
             case InPair:
                 load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
