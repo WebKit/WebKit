@@ -22,6 +22,7 @@
 #ifndef CSSStyleRule_h
 #define CSSStyleRule_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSSelectorList.h"
 #include <wtf/PassRefPtr.h>
@@ -29,7 +30,6 @@
 
 namespace WebCore {
 
-class CSSMutableStyleDeclaration;
 class CSSSelector;
 
 class CSSStyleRule : public CSSRule {

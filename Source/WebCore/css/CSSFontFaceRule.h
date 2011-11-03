@@ -22,13 +22,12 @@
 #ifndef CSSFontFaceRule_h
 #define CSSFontFaceRule_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class CSSMutableStyleDeclaration;
 
 class CSSFontFaceRule : public CSSRule {
 public:
