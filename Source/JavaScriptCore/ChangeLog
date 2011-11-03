@@ -1,3 +1,18 @@
+2011-11-02  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        FunctionPtr should accept FASTCALL functions on X86
+        https://bugs.webkit.org/show_bug.cgi?id=71434
+
+        Reviewed by Filip Pizlo.
+
+        On X86 we sometimes use FASTCALL convention functions, for example the
+        cti functions, and we may need the pointers to such functions, e.g.,
+        in current DFG register file check and arity check, though long term
+        we may avoid such usage of cti calls in DFG.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+
 2011-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         Inlined uses of the global object should use the right global object
