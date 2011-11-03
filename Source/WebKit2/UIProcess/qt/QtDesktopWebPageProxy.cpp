@@ -55,8 +55,8 @@ static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
 QtDesktopWebPageProxy::QtDesktopWebPageProxy(QDesktopWebViewPrivate* desktopWebView, WKContextRef context, WKPageGroupRef pageGroup)
     : QtWebPageProxy(desktopWebView, desktopWebView, context, pageGroup)
 {
-    init();
     QWebPreferencesPrivate::get(preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, false);
+    init();
 }
 
 PassOwnPtr<DrawingAreaProxy> QtDesktopWebPageProxy::createDrawingAreaProxy()

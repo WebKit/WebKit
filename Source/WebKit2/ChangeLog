@@ -1,3 +1,20 @@
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] [WK2] MiniBrowser assert in QtWebProccess on startup in debug build.
+        https://bugs.webkit.org/show_bug.cgi?id=71196
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ensure AC is turned off for the desktop view before we launch the process.
+        This avoids "accidential" enterAc/exitAc calls that cause failing assertions
+        because we don't really support AC in this setup.
+
+        The touch side works the same way, i.e. enable the preference before calling
+        init().
+
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::QtDesktopWebPageProxy):
+
 2011-11-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5
