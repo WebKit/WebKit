@@ -88,6 +88,11 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
     return false;
 }
 
+bool NetscapePlugin::wantsWindowRelativeNPWindowCoordinates()
+{
+    return false;
+}
+
 } // namespace WebKit
 
 #endif // PLUGIN_ARCHITECTURE(UNSUPPORTED)

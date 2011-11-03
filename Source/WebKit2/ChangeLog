@@ -1,3 +1,14 @@
+2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt build fix(es).
+
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp:
+        (QtDesktopWebPageProxy::handleDragMoveEvent): Adapt to dragSession API change.
+        (QtDesktopWebPageProxy::handleDropEvent): Ditto.
+        * WebProcess/Plugins/Netscape/NetscapePluginNone.cpp:
+        (WebKit::NetscapePlugin::wantsWindowRelativeNPWindowCoordinates): Implement here
+        also, for plugin-disabled builds.
+
 2011-11-03  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Fix build-break on r99143

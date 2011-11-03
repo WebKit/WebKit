@@ -222,8 +222,8 @@ bool QtDesktopWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
     // FIXME: Should not use QCursor::pos()
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     m_webPageProxy->dragUpdated(&dragData);
-    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragOperation()));
-    if (m_webPageProxy->dragOperation() != DragOperationNone)
+    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragSession().operation));
+    if (m_webPageProxy->dragSession().operation != DragOperationNone)
         ev->accept();
 
     ev->setAccepted(accepted);
@@ -238,7 +238,7 @@ bool QtDesktopWebPageProxy::handleDropEvent(QDropEvent* ev)
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     SandboxExtension::Handle handle;
     m_webPageProxy->performDrag(&dragData, String(), handle);
-    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragOperation()));
+    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragSession().operation));
     ev->accept();
 
     ev->setAccepted(accepted);
