@@ -48,8 +48,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
-// show-hide-table-rows.html on DEBUG takes more than 60s. (as of Sep 12, 2011)
-BUGWK67921 DEBUG : perf/show-hide-table-rows.html = TIMEOUT
+BUGWK67921 SLOW : perf/show-hide-table-rows.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -3888,3 +3887,6 @@ BUGTONY LEOPARD : printing/single-line-must-not-be-split-into-two-pages.html = F
 BUGTONY LEOPARD : printing/setPrinting.html = FAIL PASS
 
 BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
+BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
+BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
+
