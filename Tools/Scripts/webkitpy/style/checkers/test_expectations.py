@@ -66,10 +66,9 @@ class TestExpectationsChecker(object):
         try:
             port_name = self._file_path.split(os.sep)[-2]
             if port_name == "chromium":
-                options = ChromiumOptions()
-                self._port_obj = port_factory.get(port_name=None, options=options)
+                self._port_obj = port_factory.get(options=ChromiumOptions())
             else:
-                self._port_obj = port_factory.get(port_name=port_name)
+                self._port_obj = port_factory.get(port_name)
         except:
             # Using 'test' port when we couldn't determine the port for this
             # expectations.
@@ -79,8 +78,7 @@ class TestExpectationsChecker(object):
             self._port_obj = port_factory.get('test')
         # Suppress error messages of test_expectations module since they will be
         # reported later.
-        log = logging.getLogger("webkitpy.layout_tests.layout_package."
-                                "test_expectations")
+        log = logging.getLogger("webkitpy.layout_tests.layout_package.test_expectations")
         log.setLevel(logging.CRITICAL)
 
     def _handle_error_message(self, lineno, message, confidence):

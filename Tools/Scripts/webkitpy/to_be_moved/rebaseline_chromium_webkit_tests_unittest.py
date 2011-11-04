@@ -59,8 +59,8 @@ class MockPortFactory(object):
     def __init__(self, config_expectations):
         self.config_expectations = config_expectations
 
-    def get(port_name, options):
-        return MockPort(config_expectations[options.configuration])
+    def get(self, port_name=None, options=None):
+        return MockPort(self.config_expectations[options.configuration])
 
 
 ARCHIVE_URL = 'http://localhost/layout_test_results'

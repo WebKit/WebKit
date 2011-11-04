@@ -812,11 +812,11 @@ def get_host_port_object(port_factory, options):
     # Release versions.
     options.configuration = "Release"
     options.chromium = True
-    port_obj = port_factory.get(None, options)
+    port_obj = port_factory.get(options=options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version of the image diff binary was found.')
         options.configuration = "Debug"
-        port_obj = port_factory.get(None, options)
+        port_obj = port_factory.get(options=options)
         if not port_obj.check_image_diff(override_step=None, logging=False):
             _log.error('No version of image diff was found. Check your build.')
             return None
