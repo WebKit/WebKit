@@ -74,7 +74,7 @@ private:
         if (testConvert())
             executeScript("document.getElementById('result').innerHTML = 'SUCCESS!'");
 
-        notifyDone();
+        executeScript("setTimeout(function() { layoutTestController.notifyDone() }, 0)");
         return NPERR_NO_ERROR;
     }
 };
