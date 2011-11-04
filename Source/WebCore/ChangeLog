@@ -1,3 +1,12 @@
+2011-11-04  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fixing wrong path for PeerConnectionHandler.h in WebCore.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=71548
+
+        Reviewed by Tony Gentilcore.
+
+        * WebCore.gypi:
+
 2011-11-04  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed CMake build fix for !ENABLE(SQL_DATABASE).
