@@ -465,4 +465,9 @@ void WebSettingsImpl::setHixie76WebSocketProtocolEnabled(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setVisualWordMovementEnabled(bool enabled)
+{
+    m_settings->setVisualWordMovementEnabled(enabled);
+}
+
 } // namespace WebKit

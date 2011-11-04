@@ -1,3 +1,13 @@
+2011-11-02  Xiaomei Ji  <xji@chromium.org>
+
+        Enable ctrl-arrow move cursor by word in visual order in cr-win by command line flag.
+        https://bugs.webkit.org/show_bug.cgi?id=71163
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp: Set visualWordMovementEabled to false in DRT.
+        (WebPreferences::applyTo):
+
 2011-11-03  Eric Seidel  <eric@webkit.org>
 
         Remove deprecated free functions in port.factory

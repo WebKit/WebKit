@@ -1,3 +1,27 @@
+2011-11-02  Xiaomei Ji  <xji@chromium.org>
+
+        Enable ctrl-arrow move cursor by word in visual order in cr-win by command line flag.
+        https://bugs.webkit.org/show_bug.cgi?id=71163
+
+        Reviewed by Ryosuke Niwa.
+
+        Add m_visualWordMovementEnabled page setting, trigger visual word movement
+        function (instead of logical one) when it is set as true.
+
+        right|leftWordPosition() are tested in editing/selection/move-by-word-visually*
+        by using --webkit-visual-word flag.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::visualWordMovementEnabled):
+        * editing/FrameSelection.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setVisualWordMovementEnabled):
+        (WebCore::Settings::visualWordMovementEnabled):
+
 2011-11-03  Levi Weintraub  <leviw@chromium.org>
 
         Correct usage of LayoutUnits and integers in Table rendering classes

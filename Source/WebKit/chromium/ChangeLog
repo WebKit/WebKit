@@ -1,3 +1,26 @@
+2011-11-02  Xiaomei Ji  <xji@chromium.org>
+
+        Enable ctrl-arrow move cursor by word in visual order in cr-win by command line flag.
+        https://bugs.webkit.org/show_bug.cgi?id=71163
+
+        Reviewed by Ryosuke Niwa.
+
+        To minimize the risk to LTR users, we enable this feature first to chromium win
+        by command line flag. This and corresponding changset in chromium
+        (http://codereview.chromium.org/8400078/)
+        should be removed after this feature is enabled without command line flag. 
+
+        The work flow is:
+        1. (chromium) adds command line flag --enable-visual-word-movement,
+           pass it to WebCore::Settings through WebPreferences.
+        2. in FrameSelection::modifyMovingLeft|Right, when 'visualWordMovementEnabled' is true in page's Settings,
+           trigger visual word movement instead of logical one.
+ 
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setVisualWordMovementEnabled):
+        * src/WebSettingsImpl.h:
+
 2011-11-03  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef

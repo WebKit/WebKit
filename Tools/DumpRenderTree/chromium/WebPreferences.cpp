@@ -234,4 +234,5 @@ void WebPreferences::applyTo(WebView* webView)
     // Enable fullscreen so the fullscreen layout tests can run.
     settings->setFullScreenEnabled(true);
     settings->setValidationMessageTimerMagnification(-1);
+    settings->setVisualWordMovementEnabled(false);
 }

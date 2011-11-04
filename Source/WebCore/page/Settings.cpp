@@ -230,6 +230,7 @@ Settings::Settings(Page* page)
 #endif
     , m_suppressIncrementalRendering(false)
     , m_backspaceKeyNavigationEnabled(true)
+    , m_visualWordMovementEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

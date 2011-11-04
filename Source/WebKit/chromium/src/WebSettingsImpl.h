@@ -124,6 +124,7 @@ public:
     virtual void setShouldPrintBackgrounds(bool);
     virtual void setEnableScrollAnimator(bool);
     virtual void setHixie76WebSocketProtocolEnabled(bool);
+    virtual void setVisualWordMovementEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

@@ -485,6 +485,9 @@ namespace WebCore {
         static void setMockScrollbarsEnabled(bool flag);
         static bool mockScrollbarsEnabled();
 
+        void setVisualWordMovementEnabled(bool enabled) { m_visualWordMovementEnabled = enabled; }
+        bool visualWordMovementEnabled() const { return m_visualWordMovementEnabled; }
+
     private:
         Page* m_page;
 
@@ -611,6 +614,7 @@ namespace WebCore {
         bool m_passwordEchoEnabled : 1;
         bool m_suppressIncrementalRendering : 1;
         bool m_backspaceKeyNavigationEnabled : 1;
+        bool m_visualWordMovementEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
