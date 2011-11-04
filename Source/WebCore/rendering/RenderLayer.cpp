@@ -4172,7 +4172,7 @@ bool RenderLayer::isSelfPaintingLayer() const
         || renderer()->isRenderIFrame();
 }
 
-void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 {
     bool isNormalFlowOnly = shouldBeNormalFlowOnly();
     if (isNormalFlowOnly != m_isNormalFlowOnly) {
@@ -4235,11 +4235,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         if (stackingContext()->hasCompositingDescendant())
             compositor()->setCompositingLayersNeedRebuild();
     }
-    
-    if (m_backing && diff >= StyleDifferenceRepaint)
-        m_backing->setContentsNeedDisplay();
-#else
-    UNUSED_PARAM(diff);
 #endif
 }
 

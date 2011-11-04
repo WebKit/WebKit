@@ -1,3 +1,20 @@
+2011-11-04  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderLayer::styleChanged invalidates the GraphicsLayer needlessly
+        https://bugs.webkit.org/show_bug.cgi?id=71517
+
+        Reviewed by Simon Fraser.
+
+        Unused code removal covered by existing tests.
+
+        The current code is invalidating the whole RenderLayerBacking as part of
+        a style change. However this is redundant with the repainting logic which
+        would invalidate only the necessary bits.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        Remove the invalidation code as it duplicates and defeats the repaint logic.
+
 2011-11-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Correct parsing of incomplete @-webkit-region rules.
