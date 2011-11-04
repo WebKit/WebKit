@@ -1775,7 +1775,7 @@ sub buildQMakeProject($@)
 
         if ($needsCleanBuild) {
             print ", clean build needed!\n";
-            if (! -t STDOUT || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
+            if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
                 chdir $originalCwd;
                 File::Path::rmtree($dir);
                 File::Path::mkpath($dir);
