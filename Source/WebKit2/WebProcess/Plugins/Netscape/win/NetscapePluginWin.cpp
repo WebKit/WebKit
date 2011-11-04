@@ -165,7 +165,7 @@ void NetscapePlugin::scheduleWindowedGeometryUpdate()
     WindowGeometry geometry;
     geometry.window = m_window;
     geometry.visible = controller()->isPluginVisible();
-    geometry.frame = m_frameRectInWindowCoordinates;
+    geometry.frame = IntRect(convertToRootView(IntPoint()), m_pluginSize);
     geometry.clipRect = m_clipRect;
 
     controller()->scheduleWindowedPluginGeometryUpdate(geometry);
@@ -191,8 +191,10 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
     WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
-    windowpos.x = m_frameRectInWindowCoordinates.x();
-    windowpos.y = m_frameRectInWindowCoordinates.y();
+    IntPoint pluginLocationInRootViewCoordinates = convertToRootView(IntPoint());
+
+    windowpos.x = pluginLocationInRootViewCoordinates.x();
+    windowpos.y = pluginLocationInRootViewCoordinates.y();
     windowpos.cx = m_pluginSize.width();
     windowpos.cy = m_pluginSize.height();
 

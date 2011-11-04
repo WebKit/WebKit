@@ -409,10 +409,10 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     switch (event.type()) {
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
-        setXButtonEventFields(xEvent, event, m_frameRectInWindowCoordinates.location());
+        setXButtonEventFields(xEvent, event, convertToRootView(IntPoint()));
         break;
     case WebEvent::MouseMove:
-        setXMotionEventFields(xEvent, event, m_frameRectInWindowCoordinates.location());
+        setXMotionEventFields(xEvent, event, convertToRootView(IntPoint()));
         break;
     case WebEvent::NoType:
     case WebEvent::Wheel:
@@ -450,7 +450,7 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_frameRectInWindowCoordinates.location());
+    setXButtonEventFieldsByWebWheelEvent(xEvent, event, convertToRootView(IntPoint()));
 
     return !NPP_HandleEvent(&xEvent);
 }
@@ -482,7 +482,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, m_frameRectInWindowCoordinates.location(), EnterNotify);
+    setXCrossingEventFields(xEvent, event, convertToRootView(IntPoint()), EnterNotify);
 
     return !NPP_HandleEvent(&xEvent);
 }
@@ -494,7 +494,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, m_frameRectInWindowCoordinates.location(), LeaveNotify);
+    setXCrossingEventFields(xEvent, event, convertToRootView(IntPoint()), LeaveNotify);
 
     return !NPP_HandleEvent(&xEvent);
 }
