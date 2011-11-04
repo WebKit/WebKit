@@ -211,7 +211,6 @@ public:
 
     void ownerElementSandboxFlagsChanged() { updateSandboxFlags(); }
 
-    bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     // The following sandbox flags will be forced, regardless of changes to
     // the sandbox attribute of any parent frames.

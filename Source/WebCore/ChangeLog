@@ -1,5 +1,38 @@
 2011-11-04  Adam Barth  <abarth@webkit.org>
 
+        Delete FrameLoader::isSandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=71591
+
+        Reviewed by Eric Seidel.
+
+        We should always use document->securityOrigin()->isSandboxed because
+        that picks up the sandbox bits that are frozen on the document rather
+        than the ones that could change on the Frame.
+
+        This patch starts preparing us to implement the CSP sandbox directive,
+        which will cause use to have document sandbox bits without any attribute.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+            - This call site was the only functional site left where these two
+              could be different. This patch causes one progression and one
+              regression. The progression is that we now correctly freeze the
+              allow-scripts bit when a document is created, but the regression
+              is we now allow the execution of JavaScript URLs, as noted in 
+              fast/frames/sandboxed-iframe-scripting.html. That's even more of
+              an edge case, so I think it's a win overall.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+            - I don't think this part of the change is testable. There's no
+              time to execute script between when the bits get copied off the
+              Frame and when they're checked, so there's no time to change them.
+        * loader/FrameLoader.cpp:
+            - Update FIXME comment that is now fixed.
+        * loader/FrameLoader.h:
+            - Remove wrong API.
+
+2011-11-04  Adam Barth  <abarth@webkit.org>
+
         When CSP blocks mixed content, we shouldn't also warn about mixed content
         https://bugs.webkit.org/show_bug.cgi?id=71588
 

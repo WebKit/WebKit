@@ -37,8 +37,7 @@ namespace WebCore {
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
-    // FIXME: We should get this information from the document instead of the frame.
-    if (m_frame->loader()->isSandboxed(SandboxScripts))
+    if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxScripts))
         return false;
 
     if (m_frame->document() && m_frame->document()->isViewSource()) {

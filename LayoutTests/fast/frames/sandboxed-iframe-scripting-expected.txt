@@ -1,11 +1,12 @@
+ALERT: PASS: Executed script in data URL
 Verify that sandboxed frames with sandbox="allow-scripts" can execute scripts, but other sandboxed frames cannot. Also verify that removing the sandbox="allow-scripts" attribute at runtime prevents new scripts from launching, but existing ones keep running.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS disallowedExecuted is 0
-PASS allowedExecuted is 2
+FAIL disallowedExecuted should be 0. Was 1.
+PASS allowedExecuted is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE
-   
+      
