@@ -337,6 +337,19 @@ void ewk_tile_free(Ewk_Tile* tile)
 }
 
 /**
+ * @internal
+ * Returns memory size used by given tile
+ *
+ * @param t tile to size check
+ * @return Returns used memory or zero if object is NULL.
+ */
+size_t ewk_tile_memory_size_get(const Ewk_Tile* tile)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tile, 0);
+    return sizeof(Ewk_Tile) + tile->bytes;
+}
+
+/**
  * Make the tile visible, incrementing its counter.
  */
 void ewk_tile_show(Ewk_Tile* tile)
@@ -684,7 +697,7 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache* tileUnusedCache, size_
             && tile->zoom == tileUnusedCache->locked.zoom) {
             continue;
         }
-        done += sizeof(Ewk_Tile) + itr->tile->bytes;
+        done += ewk_tile_memory_size_get(itr->tile);
         itr->tile_free.callback(itr->tile_free.data, itr->tile);
         tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, list);
         free(itr);
@@ -769,7 +782,7 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
     }
 
     tileUnusedCache->entries.count--;
-    tileUnusedCache->memory.used -= sizeof(Ewk_Tile) + tile->bytes;
+    tileUnusedCache->memory.used -= ewk_tile_memory_size_get(tile);
     tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, foundEntry);
     free(item);
 
@@ -823,7 +836,7 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
     unusedCacheEntry->tile_free.data = (void*)data;
 
     tileUnusedCache->entries.count++;
-    tileUnusedCache->memory.used += sizeof(Ewk_Tile) + tile->bytes;
+    tileUnusedCache->memory.used += ewk_tile_memory_size_get(tile);
 
     return EINA_TRUE;
 }

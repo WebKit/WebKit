@@ -31,6 +31,7 @@ void ewk_tile_free(Ewk_Tile* t);
 void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache* tuc);
 void ewk_tile_show(Ewk_Tile* t);
 void ewk_tile_hide(Ewk_Tile* t);
+size_t ewk_tile_memory_size_get(const Ewk_Tile* t);
 Eina_Bool ewk_tile_visible_get(Ewk_Tile* t);
 void ewk_tile_update_full(Ewk_Tile* t);
 void ewk_tile_update_area(Ewk_Tile* t, const Eina_Rectangle* r);

@@ -1,3 +1,20 @@
+2011-11-03  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Added ewk_tile_memory_size_get function
+        https://bugs.webkit.org/show_bug.cgi?id=71213
+
+        Reviewed by Anders Carlsson.
+
+        Added the ewk_tile_memory_size_get function returns size of used memory by given tile. Simplify and cleanup
+        the code.
+
+        * ewk/ewk_tiled_model.cpp:
+        (ewk_tile_memory_size_get):
+        (ewk_tile_unused_cache_flush):
+        (ewk_tile_unused_cache_tile_get):
+        (ewk_tile_unused_cache_tile_put):
+        * ewk/ewk_tiled_model.h:
+
 2011-11-03  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef
