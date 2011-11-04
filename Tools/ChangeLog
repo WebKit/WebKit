@@ -1,3 +1,12 @@
+2011-11-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix run-launcher for Qt and Gtk.
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        * Scripts/webkitdirs.pm:
+        (isWK2): Re-add isWK2(), as it's used in run-launcher.
+
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Ignore '-2' if passed to build-webkit. WebKit2 is now built by default.
