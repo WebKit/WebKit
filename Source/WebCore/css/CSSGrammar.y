@@ -796,6 +796,8 @@ region:
     WEBKIT_REGION_STYLE_RULE_SYM WHITESPACE region_selector '{' maybe_space block_rule_list save_block {
         if ($3)
             $$ = static_cast<CSSParser*>(parser)->createRegionStylingRule($3, $6);
+        else
+            $$ = 0;
     }
 ;
 

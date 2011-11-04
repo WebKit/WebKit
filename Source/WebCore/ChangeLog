@@ -1,3 +1,15 @@
+2011-11-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Correct parsing of incomplete @-webkit-region rules.
+        https://bugs.webkit.org/show_bug.cgi?id=71514
+
+        Reviewed by Adam Barth.
+
+        Test: fast/regions/parse-incomplete-region-rule.html
+
+        Make sure to set the region rule to 0 on the fail branch.
+        * css/CSSGrammar.y:
+
 2011-11-04  Adam Klein  <adamk@chromium.org>
 
         Reduce refcount churn in ChildListMutationScope
