@@ -277,7 +277,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
                         JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(exec->dynamicGlobalObject());
                         if (globalObject && (globalObject->Flags() & kJSFlagConvertAssociativeArray)) {
                             PropertyNameArray propNames(exec);
-                            object->getPropertyNames(exec, propNames);
+                            object->methodTable()->getPropertyNames(object, exec, propNames, ExcludeDontEnumProperties);
                             PropertyNameArray::const_iterator iter = propNames.begin();
                             PropertyNameArray::const_iterator end = propNames.end();
                             while(iter != end && isArray)
@@ -316,7 +316,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
                     {
                         // Not an array, just treat it like a dictionary which contains (property name, property value) pairs
                         PropertyNameArray propNames(exec);
-                        object->getPropertyNames(exec, propNames);
+                        object->methodTable()->getPropertyNames(object, exec, propNames, ExcludeDontEnumProperties);
                         {
                             result = CFDictionaryCreateMutable(0,
                                                                0,

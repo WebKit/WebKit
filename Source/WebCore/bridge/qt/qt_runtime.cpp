@@ -189,7 +189,7 @@ static QVariantMap convertValueToQVariantMap(ExecState* exec, JSObject* object, 
     Q_ASSERT(!exec->hadException());
 
     PropertyNameArray properties(exec);
-    object->getPropertyNames(exec, properties);
+    object->methodTable()->getPropertyNames(object, exec, properties, ExcludeDontEnumProperties);
     PropertyNameArray::const_iterator it = properties.begin();
     QVariantMap result;
     int objdist = 0;

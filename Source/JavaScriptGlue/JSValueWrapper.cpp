@@ -77,7 +77,7 @@ CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
         ExecState* exec = getThreadGlobalExecState();
         JSObject* object = ptr->GetValue().toObject(exec);
         PropertyNameArray propNames(exec);
-        object->getPropertyNames(exec, propNames);
+        object->methodTable()->getPropertyNames(object, exec, propNames, ExcludeDontEnumProperties);
         PropertyNameArray::const_iterator iterator = propNames.begin();
 
         while (iterator != propNames.end()) {

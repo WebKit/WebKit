@@ -1,3 +1,36 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=71306
+
+        Reviewed by Darin Adler.
+
+        Added getPropertyNames to the MethodTable, changed all the virtual 
+        implementations of getPropertyNames to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertyNames):
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getPropertyNames):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+        * runtime/Structure.h:
+
 2011-11-03  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef

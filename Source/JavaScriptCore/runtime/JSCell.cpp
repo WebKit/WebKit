@@ -191,4 +191,9 @@ bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
     return false;
 }
 
+void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

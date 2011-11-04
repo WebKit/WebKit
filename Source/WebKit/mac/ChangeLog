@@ -1,3 +1,17 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=71306
+
+        Reviewed by Darin Adler.
+
+        Added getPropertyNames to the MethodTable, changed all the virtual 
+        implementations of getPropertyNames to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+
 2011-11-02  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef

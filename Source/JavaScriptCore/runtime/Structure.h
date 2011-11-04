@@ -156,7 +156,7 @@ namespace JSC {
 
         void setEnumerationCache(JSGlobalData&, JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
         JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
-        void getPropertyNames(JSGlobalData&, PropertyNameArray&, EnumerationMode mode);
+        void getPropertyNamesFromStructure(JSGlobalData&, PropertyNameArray&, EnumerationMode);
 
         bool staticFunctionsReified()
         {

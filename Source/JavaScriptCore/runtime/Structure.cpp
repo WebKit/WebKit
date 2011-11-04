@@ -720,7 +720,7 @@ void Structure::createPropertyMap(unsigned capacity)
     checkConsistency();
 }
 
-void Structure::getPropertyNames(JSGlobalData& globalData, PropertyNameArray& propertyNames, EnumerationMode mode)
+void Structure::getPropertyNamesFromStructure(JSGlobalData& globalData, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)

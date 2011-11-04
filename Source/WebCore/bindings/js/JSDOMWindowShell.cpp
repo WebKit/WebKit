@@ -123,9 +123,10 @@ bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, const Ident
     return thisObject->window()->methodTable()->deleteProperty(thisObject->window(), exec, propertyName);
 }
 
-void JSDOMWindowShell::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMWindowShell::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    window()->getPropertyNames(exec, propertyNames, mode);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    thisObject->window()->methodTable()->getPropertyNames(thisObject->window(), exec, propertyNames, mode);
 }
 
 void JSDOMWindowShell::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

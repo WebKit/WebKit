@@ -368,12 +368,13 @@ bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, const Identifier
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
-void JSDOMWindow::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
     // Only allow the window to enumerated by frames in the same origin.
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return;
-    Base::getPropertyNames(exec, propertyNames, mode);
+    Base::getPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

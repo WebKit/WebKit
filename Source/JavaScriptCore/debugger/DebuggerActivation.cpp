@@ -87,7 +87,7 @@ bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, const Ide
 void DebuggerActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
-    thisObject->m_activation->getPropertyNames(exec, propertyNames, mode);
+    thisObject->m_activation->methodTable()->getPropertyNames(thisObject->m_activation.get(), exec, propertyNames, mode);
 }
 
 bool DebuggerActivation::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

@@ -1,3 +1,28 @@
+2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=71306
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Added getPropertyNames to the MethodTable, changed all the virtual 
+        implementations of getPropertyNames to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getPropertyNames):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getPropertyNames):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Enumerate):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariantMap):
+
 2011-11-02  Xiaomei Ji  <xji@chromium.org>
 
         Enable ctrl-arrow move cursor by word in visual order in cr-win by command line flag.

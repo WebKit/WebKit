@@ -236,7 +236,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     JSLock lock(SilenceAssertionsOnly);
 
     PropertyNameArray propertyNames(exec);
-    m_jsObject->getPropertyNames(exec, propertyNames);
+    m_jsObject->methodTable()->getPropertyNames(m_jsObject.get(), exec, propertyNames, ExcludeDontEnumProperties);
 
     NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());
 

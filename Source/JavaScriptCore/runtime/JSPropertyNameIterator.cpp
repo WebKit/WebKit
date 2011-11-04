@@ -52,7 +52,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
             o->structure()->enumerationCache()->cachedPrototypeChain() != o->structure()->prototypeChain(exec));
 
     PropertyNameArray propertyNames(exec);
-    o->getPropertyNames(exec, propertyNames);
+    o->methodTable()->getPropertyNames(o, exec, propertyNames, ExcludeDontEnumProperties);
     size_t numCacheableSlots = 0;
     if (!o->structure()->hasNonEnumerableProperties() && !o->structure()->hasGetterSetterProperties()
         && !o->structure()->isUncacheableDictionary() && !o->structure()->typeInfo().overridesGetPropertyNames())
