@@ -1,3 +1,20 @@
+2011-11-04  Gaurav Shah  <gauravsh@chromium.org>
+
+        HTMLKeygenElement: Fix "keytype" handling in appendFormData.
+        https://bugs.webkit.org/show_bug.cgi?id=70617
+
+        This fixes a bug introduced by http://trac.webkit.org/changeset/97658
+        which causes all HTML Keygen elements with a keytype optional attribute
+        to be considered as unsupported.
+
+        A regression test is included.
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/misc/submit-post-keygen.html
+
+        * html/HTMLKeygenElement.cpp:
+
 2011-11-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Implement checkerboarding for missing layer tiles

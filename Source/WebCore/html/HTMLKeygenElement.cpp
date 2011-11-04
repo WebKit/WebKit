@@ -106,7 +106,7 @@ bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
 {
     // Only RSA is supported at this time.
     const AtomicString& keyType = fastGetAttribute(keytypeAttr);
-    if (!keyType.isNull() || !equalIgnoringCase(keyType, "rsa"))
+    if (!keyType.isNull() && !equalIgnoringCase(keyType, "rsa"))
         return false;
     String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), fastGetAttribute(challengeAttr), document()->baseURL());
     if (value.isNull())
