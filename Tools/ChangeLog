@@ -1,3 +1,12 @@
+2011-11-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix run-qtwebkit-tests execution on the build bot(s).
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: The path to the tests
+        changed slightly after the refactoring.
+
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't warn about disabling WebKit2 when qmake does recursive includes
