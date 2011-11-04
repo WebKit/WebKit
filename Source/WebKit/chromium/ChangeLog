@@ -1,3 +1,25 @@
+2011-11-04  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Expose deviceScaleFactor to WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=70614
+
+        Reviewed by Darin Fisher.
+
+        This exposes the device scale factor to the Chromium-WebKit API.
+        This scale factor is the ratio between the current device's DPI
+        and the target device's DPI. 
+
+        For details on how this can be accessed from CSS and javascript, please
+        see here:
+
+        http://developer.android.com/guide/webapps/targeting.html#DensityCSS
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::deviceScaleFactor):
+        (WebKit::WebViewImpl::setDeviceScaleFactor):
+        * src/WebViewImpl.h:
+
 2011-11-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix incorrect visibility/scissor rect for threaded compositing

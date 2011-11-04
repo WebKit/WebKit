@@ -216,6 +216,12 @@ public:
     // On the other hand, zooming affects layout of the page.
     virtual void scalePage(float scaleFactor, WebPoint origin) = 0;
 
+    // The ratio of the current device's screen DPI to the target device's screen DPI.
+    virtual float deviceScaleFactor() const = 0;
+
+    // Sets the ratio as computed by computeViewportAttributes.
+    virtual void setDeviceScaleFactor(float) = 0;
+
 
     // Fixed Layout --------------------------------------------------------
 

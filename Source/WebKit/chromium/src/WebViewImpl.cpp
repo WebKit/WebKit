@@ -1854,6 +1854,22 @@ void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
     page()->setPageScaleFactor(scaleFactor, origin);
 }
 
+float WebViewImpl::deviceScaleFactor() const
+{
+    if (!page())
+        return 1;
+
+    return page()->deviceScaleFactor();
+}
+
+void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
+{
+    if (!page())
+        return;
+
+    page()->setDeviceScaleFactor(scaleFactor);
+}
+
 bool WebViewImpl::isFixedLayoutModeEnabled() const
 {
     if (!page())
