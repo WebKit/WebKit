@@ -1120,9 +1120,15 @@ SOURCES += \
     platform/ScrollbarTheme.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \
-    platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/SharedBufferChunkReader.cpp \
+    platform/sql/SQLiteAuthorizer.cpp \
+    platform/sql/SQLiteDatabase.cpp \
+    platform/sql/SQLiteFileSystem.cpp \
+    platform/sql/SQLiteStatement.cpp \
+    platform/sql/SQLiteTransaction.cpp \
+    platform/sql/SQLValue.cpp \
+    platform/text/SegmentedString.cpp \
     platform/text/String.cpp \
     platform/text/TextBoundaries.cpp \
     platform/text/TextCodec.cpp \
@@ -1258,6 +1264,10 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
+    storage/AbstractDatabase.cpp \
+    storage/Database.cpp \
+    storage/DatabaseAuthorizer.cpp \
+    storage/DatabaseSync.cpp \
     storage/LocalStorageTask.cpp \
     storage/LocalStorageThread.cpp \
     storage/Storage.cpp \
@@ -2844,27 +2854,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         plugins/PluginViewNone.cpp
 }
 
-contains(DEFINES, ENABLE_SQLITE=1) {
-    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
-            # Build sqlite3 into WebCore from source
-            # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
-            SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
-    }
-
-    SOURCES += \
-        platform/sql/SQLiteAuthorizer.cpp \
-        platform/sql/SQLiteDatabase.cpp \
-        platform/sql/SQLiteFileSystem.cpp \
-        platform/sql/SQLiteStatement.cpp \
-        platform/sql/SQLiteTransaction.cpp \
-        platform/sql/SQLValue.cpp \
-        storage/AbstractDatabase.cpp \
-        storage/Database.cpp \
-        storage/DatabaseAuthorizer.cpp \
-        storage/DatabaseSync.cpp
-}
-
-
 contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
         storage/ChangeVersionWrapper.cpp \
@@ -3811,6 +3800,12 @@ contains(DEFINES, ENABLE_MHTML=1) {
         loader/archive/mhtml/MHTMLArchive.cpp \
         loader/archive/mhtml/MHTMLParser.cpp \
         page/PageSerializer.cpp
+}
+
+!system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
+    # Build sqlite3 into WebCore from source
+    # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
+    SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
 }
 
 win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{

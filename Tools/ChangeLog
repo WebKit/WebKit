@@ -1,3 +1,13 @@
+2011-11-04  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Remove ENABLE_SQLITE from qmake files
+        https://bugs.webkit.org/show_bug.cgi?id=71546
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/webcore.prf:
+
 2011-11-04  Adam Barth  <abarth@webkit.org>
 
         watchlist for WebIDL shouldn't trigger on Internals.idl

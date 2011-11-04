@@ -18,9 +18,6 @@ meegotouch {
     DEFINES += WTF_USE_MEEGOTOUCH=1
 }
 
-# SQLite is required to build WebKit
-DEFINES += ENABLE_SQLITE=1
-
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
 

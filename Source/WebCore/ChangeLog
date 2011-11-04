@@ -1,3 +1,14 @@
+2011-11-04  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Remove ENABLE_SQLITE from qmake files
+        https://bugs.webkit.org/show_bug.cgi?id=71546
+
+        Reviewed by Simon Hausmann.
+
+        ENABLE_SQLITE is required to build WebCore, so remove conditions.
+
+        * Target.pri:
+
 2011-11-04  Nate Chapin  <japhet@chromium.org>
 
         [V8] Null out V8NPObject::rootObject when the owning

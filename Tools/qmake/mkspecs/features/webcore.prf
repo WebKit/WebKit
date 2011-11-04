@@ -144,18 +144,6 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
     PKGCONFIG += libxml-2.0
 }
 
-contains(DEFINES, ENABLE_SQLITE=1) {
-    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
-            INCLUDEPATH += $${SQLITE3SRCDIR}
-            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
-            CONFIG(release, debug|release): DEFINES *= NDEBUG
-    } else {
-        INCLUDEPATH += $${SQLITE3SRCDIR}
-        LIBS += -lsqlite3
-    }
-    wince*:DEFINES += HAVE_LOCALTIME_S=0
-}
-
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     unix {
         mac {
@@ -231,6 +219,15 @@ contains(CONFIG, texmap) {
     }
 }
 
+!system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
+    INCLUDEPATH += $${SQLITE3SRCDIR}
+    DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
+    CONFIG(release, debug|release): DEFINES *= NDEBUG
+} else {
+    INCLUDEPATH += $${SQLITE3SRCDIR}
+    LIBS += -lsqlite3
+}
+
 win32-*|wince* {
     DLLDESTDIR = $${ROOT_BUILD_DIR}/bin
     isEmpty(QT_SOURCE_TREE):build_pass: TARGET = $$qtLibraryTarget($$TARGET)
@@ -265,6 +262,7 @@ win32-msvc2005|win32-msvc2008|win32-msvc2010|wince*:{
 }
 
 wince* {
+    DEFINES += HAVE_LOCALTIME_S=0
     LIBS += -lmmtimer
     LIBS += -lole32
 }
