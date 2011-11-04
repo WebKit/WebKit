@@ -1,3 +1,19 @@
+2011-11-03  Adam Barth  <abarth@webkit.org>
+
+        Add Stub.h and Stub.cpp to Source-level WTF project
+        https://bugs.webkit.org/show_bug.cgi?id=71497
+
+        Reviewed by Eric Seidel.
+
+        This patch adds some stub files and a skelton GYP build file as a
+        starting point for the new Source-level WTF project.  Other build
+        systems and actual code will arrive in future patches.
+
+        * Stub.cpp: Added.
+        * Stub.h: Added.
+        * WTF.gyp/WTF.gyp: Added.
+        * WTF.gypi: Added.
+
 2011-11-02  Adam Barth  <abarth@webkit.org>
 
         Add stubs for WTF and Platform
