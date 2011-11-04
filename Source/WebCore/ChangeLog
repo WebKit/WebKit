@@ -1,3 +1,28 @@
+2011-11-04  Adam Klein  <adamk@chromium.org>
+
+        Reduce refcount churn in ChildListMutationScope
+        https://bugs.webkit.org/show_bug.cgi?id=71527
+
+        Reviewed by Ryosuke Niwa.
+
+        Only the ChildListMutationAccumulator needs to hold a reference to the
+        target node, and the added/removed children only need be ref'd if a
+        ChildListMutationAccumulator exists (i.e., if there are interested
+        observers).
+
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::MutationAccumulationRouter::ChildListMutationAccumulator::enqueueMutationRecord):
+        (WebCore::MutationAccumulationRouter::MutationAccumulationRouter::childAdded):
+        (WebCore::MutationAccumulationRouter::MutationAccumulationRouter::willRemoveChild):
+        (WebCore::ChildListMutationScope::ChildListMutationScope):
+        (WebCore::ChildListMutationScope::~ChildListMutationScope):
+        (WebCore::ChildListMutationScope::childAdded):
+        (WebCore::ChildListMutationScope::willRemoveChild):
+        * dom/ChildListMutationScope.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+
 2011-11-04  Levi Weintraub  <leviw@chromium.org>
 
         Correct usage of LayoutUnits in RenderImage and SVGImage

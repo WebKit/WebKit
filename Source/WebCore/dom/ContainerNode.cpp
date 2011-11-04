@@ -1115,7 +1115,7 @@ static void dispatchChildInsertionEvents(Node* child)
 #if ENABLE(MUTATION_OBSERVERS)
     if (c->parentNode()) {
         ChildListMutationScope mutation(c->parentNode());
-        mutation.childAdded(c);
+        mutation.childAdded(c.get());
     }
 #endif
 
@@ -1143,7 +1143,7 @@ static void dispatchChildRemovalEvents(Node* child)
 #if ENABLE(MUTATION_OBSERVERS)
     if (c->parentNode()) {
         ChildListMutationScope mutation(c->parentNode());
-        mutation.willRemoveChild(c);
+        mutation.willRemoveChild(c.get());
         c->notifyMutationObserversNodeWillDetach();
     }
 #endif

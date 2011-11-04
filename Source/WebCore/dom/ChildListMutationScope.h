@@ -34,8 +34,6 @@
 #if ENABLE(MUTATION_OBSERVERS)
 
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -44,14 +42,14 @@ class Node;
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
-    ChildListMutationScope(PassRefPtr<Node> target);
+    ChildListMutationScope(Node* target);
     ~ChildListMutationScope();
 
-    void childAdded(PassRefPtr<Node>);
-    void willRemoveChild(PassRefPtr<Node>);
+    void childAdded(Node*);
+    void willRemoveChild(Node*);
 
 private:
-    RefPtr<Node> m_target;
+    Node* m_target;
 };
 
 } // namespace WebCore
