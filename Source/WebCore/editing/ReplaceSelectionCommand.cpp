@@ -163,7 +163,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     }
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
-    String text = plainText(range.get());
+    String text = plainText(range.get(), TextIteratorEmitsOriginalText);
 
     removeInterchangeNodes(holder.get());
     removeUnrenderedNodes(holder.get());

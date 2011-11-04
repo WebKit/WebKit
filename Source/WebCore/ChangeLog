@@ -1,3 +1,21 @@
+2011-11-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r99076): Pasting into password fields is broken
+        https://bugs.webkit.org/show_bug.cgi?id=71483
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by plainText serializing secured (instead of original) text.
+        Fixed the bug by adding new TextIterator behavior that serializes the original text
+        and using it in ReplacementFragment::ReplacementFragment.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::emitText):
+        * editing/TextIterator.h:
+
 2011-11-03  Eric Carlson  <eric.carlson@apple.com>
 
         Add TrackEvent
