@@ -44,6 +44,7 @@
 #include "Console.h"
 #include "ExceptionCode.h"
 #include "FloatConversion.h"
+#include "FloatQuad.h"
 #include "FontCache.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
@@ -1055,7 +1056,10 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 
     FloatRect rect(x, y, width, height);
 
-    if (isFullCanvasCompositeMode(state().m_globalComposite)) {
+    if (rectContainsCanvas(rect)) {
+        c->fillRect(rect);
+        didDrawEntireCanvas();
+    } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
         fullCanvasCompositedFill(rect);
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
@@ -1336,7 +1340,10 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     checkOrigin(image);
 
-    if (isFullCanvasCompositeMode(op)) {
+    if (rectContainsCanvas(normalizedDstRect)) {
+        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+        didDrawEntireCanvas();
+    } else if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
@@ -1547,6 +1554,13 @@ Path CanvasRenderingContext2D::transformAreaToDevice(const FloatRect& rect) cons
     Path path;
     path.addRect(rect);
     return transformAreaToDevice(path);
+}
+
+bool CanvasRenderingContext2D::rectContainsCanvas(const FloatRect& rect) const
+{
+    FloatQuad quad(rect);
+    FloatQuad canvasQuad(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+    return state().m_transform.mapQuad(quad).containsQuad(canvasQuad);
 }
 
 template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRect(const T& area, IntSize* croppedOffset)

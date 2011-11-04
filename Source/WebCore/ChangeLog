@@ -1,3 +1,24 @@
+2011-11-03  Ben Wells  <benwells@chromium.org>
+
+        Optimize canvas fills / drawImage when covering entire canvas
+        https://bugs.webkit.org/show_bug.cgi?id=70789
+
+        Reviewed by Stephen White.
+
+        If we're filling a rect or drawing an image, and it covers the entire canvas, we don't
+        need to worry about clearing outside the area updated by the operation if we're in
+        a composite mode that requires this (such as source-in, copy, etc.). In this case we
+        can take the simple path through the code and save a clear (for copy) or a temporary
+        image buffer (for the other modes).
+
+        No new tests - optimization, behaviour is unchanged and covered by existing tests.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::rectContainsCanvas):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getPropertyNames
