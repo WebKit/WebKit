@@ -66,6 +66,7 @@ function causeException()
 function transactionAborted1()
 {
     debug("");
+    shouldHaveHadError("this exception is expected");
     testPassed("The transaction was aborted.");
     trans = evalAndLog("trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = transactionAborted2");
@@ -79,6 +80,7 @@ function transactionAborted1()
 function transactionAborted2()
 {
     debug("");
+    shouldHaveHadError("this exception is expected");
     testPassed("The transaction was aborted.");
     trans = evalAndLog("trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = unexpectedAbortCallback");

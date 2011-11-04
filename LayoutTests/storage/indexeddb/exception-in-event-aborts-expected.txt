@@ -25,6 +25,7 @@ store.add({x: 'value2', y: 'zzz2'}, 'key2')
 event.preventDefault()
 Throwing
 
+PASS Got expected error: 'this exception is expected'
 PASS The transaction was aborted.
 trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted2
@@ -35,6 +36,7 @@ store.add({x: 'value', y: 'zzz'}, 'key')
 event.preventDefault()
 Throwing
 
+PASS Got expected error: 'this exception is expected'
 PASS The transaction was aborted.
 trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
