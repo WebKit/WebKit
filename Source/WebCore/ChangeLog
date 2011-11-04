@@ -1,3 +1,39 @@
+2011-11-04  Dmitry Lomov  <dslomov@google.com>
+
+        Add the ability to transfer ArrayBuffer and "neuter" it.
+        https://bugs.webkit.org/show_bug.cgi?id=71535
+
+        Reviewed by David Levin.
+
+        * html/canvas/ArrayBuffer.cpp:
+        (WebCore::ArrayBuffer::create):
+        (WebCore::ArrayBuffer::ArrayBuffer):
+        (WebCore::ArrayBuffer::data):
+        (WebCore::ArrayBuffer::byteLength):
+        (WebCore::ArrayBuffer::transfer):
+        (WebCore::ArrayBufferContents::~ArrayBufferContents):
+        (WebCore::ArrayBufferContents::tryAllocate):
+        (WebCore::ArrayBuffer::addView):
+        (WebCore::ArrayBuffer::removeView):
+        * html/canvas/ArrayBuffer.h:
+        (WebCore::ArrayBufferContents::ArrayBufferContents):
+        (WebCore::ArrayBufferContents::data):
+        (WebCore::ArrayBufferContents::sizeInBytes):
+        (WebCore::ArrayBufferContents::release):
+        (WebCore::ArrayBuffer::~ArrayBuffer):
+        * html/canvas/ArrayBufferView.cpp:
+        (WebCore::ArrayBufferView::ArrayBufferView):
+        (WebCore::ArrayBufferView::~ArrayBufferView):
+        (WebCore::ArrayBufferView::neuter):
+        * html/canvas/ArrayBufferView.h:
+        * html/canvas/DataView.cpp:
+        (WebCore::DataView::neuter):
+        (WebCore::DataView::neuterBinding):
+        * html/canvas/DataView.h:
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::neuter):
+        (WebCore::TypedArrayBase::neuterBinding):
+
 2011-11-04  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] Implement canvas.toDataURL("image/webp")

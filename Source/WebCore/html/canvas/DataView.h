@@ -72,6 +72,10 @@ public:
     void setFloat64(unsigned byteOffset, double value, ExceptionCode& ec) { setFloat64(byteOffset, value, false, ec); }
     void setFloat64(unsigned byteOffset, double value, bool littleEndian, ExceptionCode&);
 
+protected:
+    virtual void neuter(ScriptExecutionContext*);
+    virtual void neuterBinding(ScriptExecutionContext*);
+
 private:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
 

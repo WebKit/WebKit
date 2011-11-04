@@ -36,10 +36,14 @@ ArrayBufferView::ArrayBufferView(PassRefPtr<ArrayBuffer> buffer,
         , m_buffer(buffer)
 {
     m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
+    if (m_buffer) 
+        m_buffer->addView(this);
 }
 
 ArrayBufferView::~ArrayBufferView()
 {
+    if (m_buffer)
+        m_buffer->removeView(this);
 }
 
 void ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset, ExceptionCode& ec)
@@ -99,6 +103,12 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
         end = start;
     *offset = static_cast<unsigned>(start);
     *length = static_cast<unsigned>(end - start);
+}
+
+void ArrayBufferView::neuter(ScriptExecutionContext*)
+{
+    m_buffer = 0;
+    m_byteOffset = 0;
 }
 
 }

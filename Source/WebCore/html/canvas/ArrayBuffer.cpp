@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ArrayBuffer.h"
+#include "ArrayBufferView.h"
 
 #include <wtf/RefPtr.h>
 
@@ -42,10 +43,11 @@ static int clampValue(int x, int left, int right)
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned elementByteSize)
 {
-    void* data = tryAllocate(numElements, elementByteSize);
-    if (!data)
+    ArrayBufferContents contents;
+    ArrayBufferContents::tryAllocate(numElements, elementByteSize, contents);
+    if (!contents.m_data)
         return 0;
-    return adoptRef(new ArrayBuffer(data, numElements * elementByteSize));
+    return adoptRef(new ArrayBuffer(contents));
 }
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
@@ -55,33 +57,39 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(const void* source, unsigned byteLength)
 {
-    void* data = tryAllocate(byteLength, 1);
-    if (!data)
+    ArrayBufferContents contents;
+    ArrayBufferContents::tryAllocate(byteLength, 1, contents);
+    if (!contents.m_data)
         return 0;
-    RefPtr<ArrayBuffer> buffer = adoptRef(new ArrayBuffer(data, byteLength));
+    RefPtr<ArrayBuffer> buffer = adoptRef(new ArrayBuffer(contents));
     memcpy(buffer->data(), source, byteLength);
     return buffer.release();
 }
 
-ArrayBuffer::ArrayBuffer(void* data, unsigned sizeInBytes)
-    : m_sizeInBytes(sizeInBytes)
-    , m_data(data)
+PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents& contents)
 {
+    return adoptRef(new ArrayBuffer(contents));
+}
+
+ArrayBuffer::ArrayBuffer(ArrayBufferContents& contents)
+    : m_firstView(0)
+{
+    contents.transfer(m_contents);
 }
 
 void* ArrayBuffer::data()
 {
-    return m_data;
+    return m_contents.m_data;
 }
 
 const void* ArrayBuffer::data() const
 {
-    return m_data;
+    return m_contents.m_data;
 }
 
 unsigned ArrayBuffer::byteLength() const
 {
-    return m_sizeInBytes;
+    return m_contents.m_sizeInBytes;
 }
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::slice(int begin, int end) const
@@ -108,26 +116,70 @@ unsigned ArrayBuffer::clampIndex(int index) const
     return clampValue(index, 0, currentLength);
 }
 
-ArrayBuffer::~ArrayBuffer()
+void ArrayBuffer::transfer(ScriptExecutionContext* context, ArrayBufferContents& result, ExceptionCode& ec)
+{
+    RefPtr<ArrayBuffer> keepAlive(this);
+
+    if (!m_contents.m_data) {
+        ec = INVALID_STATE_ERR;
+        result.m_data = 0;
+        return;
+    }
+
+    m_contents.transfer(result);
+
+    while (m_firstView) {
+        ArrayBufferView* current = m_firstView;
+        removeView(current);
+        current->neuter(context);
+    }
+}
+
+ArrayBufferContents::~ArrayBufferContents()
 {
     WTF::fastFree(m_data);
 }
 
-void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
+void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents& result)
 {
-    void* result;
     // Do not allow 32-bit overflow of the total size.
     // FIXME: Why not? The tryFastCalloc function already checks its arguments,
     // and will fail if there is any overflow, so why should we include a
     // redudant unnecessarily restrictive check here?
     if (numElements) {
         unsigned totalSize = numElements * elementByteSize;
-        if (totalSize / numElements != elementByteSize)
-            return 0;
+        if (totalSize / numElements != elementByteSize) {
+            result.m_data = 0;
+            return;
+        }
     }
-    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result))
-        return result;
-    return 0;
+    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result.m_data)) {
+        result.m_sizeInBytes = numElements * elementByteSize;
+        return;
+    }
+    result.m_data = 0;
+}
+
+void ArrayBuffer::addView(ArrayBufferView* view)
+{
+    view->m_buffer = this;
+    view->m_prevView = 0;
+    view->m_nextView = m_firstView;
+    if (m_firstView)
+        m_firstView->m_prevView = view;
+    m_firstView = view;
+}
+
+void ArrayBuffer::removeView(ArrayBufferView* view)
+{
+    ASSERT(this == view->m_buffer);
+    if (view->m_nextView)
+        view->m_nextView->m_prevView = view->m_prevView;
+    if (view->m_prevView)
+        view->m_prevView->m_nextView = view->m_nextView;
+    if (m_firstView == view)
+        m_firstView = view->m_nextView;
+    view->m_prevView = view->m_nextView = 0;
 }
 
 }

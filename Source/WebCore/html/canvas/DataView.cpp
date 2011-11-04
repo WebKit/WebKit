@@ -235,4 +235,16 @@ void DataView::setFloat64(unsigned byteOffset, double value, bool littleEndian, 
     setData<double>(byteOffset, value, littleEndian, ec);
 }
 
+void DataView::neuter(ScriptExecutionContext* context)
+{
+    ArrayBufferView::neuter(context);
+    m_byteLength = 0;
+    neuterBinding(context);
+}
+
+void DataView::neuterBinding(ScriptExecutionContext*)
+{
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=71534 
+}
+
 }

@@ -112,6 +112,18 @@ protected:
         return create<Subclass>(buffer(), offset, length);
     }
 
+    virtual void neuter(ScriptExecutionContext* context)
+    {
+        ArrayBufferView::neuter(context);
+        m_length = 0;
+        neuterBinding(context);
+    }
+
+    virtual void neuterBinding(ScriptExecutionContext*)
+    {
+        // FIXME https://bugs.webkit.org/show_bug.cgi?id=71534
+    }
+
     // We do not want to have to access this via a virtual function in subclasses,
     // which is why it is protected rather than private.
     unsigned m_length;

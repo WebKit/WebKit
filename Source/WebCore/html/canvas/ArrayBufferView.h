@@ -119,13 +119,18 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
         *numElements = std::min(remainingElements, *numElements);
     }
 
+    virtual void neuter(ScriptExecutionContext*);
+
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;
 
     unsigned m_byteOffset;
 
   private:
+    friend class ArrayBuffer;
     RefPtr<ArrayBuffer> m_buffer;
+    ArrayBufferView* m_prevView;
+    ArrayBufferView* m_nextView;
 };
 
 } // namespace WebCore

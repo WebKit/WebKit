@@ -26,16 +26,57 @@
 #ifndef ArrayBuffer_h
 #define ArrayBuffer_h
 
+#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class ArrayBuffer;
+class ArrayBufferView;
+class ScriptExecutionContext;
+
+class ArrayBufferContents {
+    WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
+public:
+    ArrayBufferContents() 
+        : m_data(0)
+        , m_sizeInBytes(0)
+    { }
+
+    ~ArrayBufferContents();
+
+    void* data() { return m_data; }
+    unsigned sizeInBytes() { return m_sizeInBytes; }
+
+private:
+    ArrayBufferContents(void* data, unsigned sizeInBytes) 
+        : m_data(data)
+        , m_sizeInBytes(sizeInBytes)
+    { }
+
+    friend class ArrayBuffer;
+
+    static void tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents&);
+    void transfer(ArrayBufferContents& other) 
+    {
+        ASSERT(!other.m_data);
+        other.m_data = m_data;
+        other.m_sizeInBytes = m_sizeInBytes;
+        m_data = 0; 
+        m_sizeInBytes = 0; 
+    }
+
+    void* m_data;
+    unsigned m_sizeInBytes;
+};
+
 class ArrayBuffer : public RefCounted<ArrayBuffer> {
-  public:
+public:
     static PassRefPtr<ArrayBuffer> create(unsigned numElements, unsigned elementByteSize);
     static PassRefPtr<ArrayBuffer> create(ArrayBuffer*);
     static PassRefPtr<ArrayBuffer> create(const void* source, unsigned byteLength);
+    static PassRefPtr<ArrayBuffer> create(ArrayBufferContents&);
 
     void* data();
     const void* data() const;
@@ -44,17 +85,20 @@ class ArrayBuffer : public RefCounted<ArrayBuffer> {
     PassRefPtr<ArrayBuffer> slice(int begin, int end) const;
     PassRefPtr<ArrayBuffer> slice(int begin) const;
 
-    ~ArrayBuffer();
+    void addView(ArrayBufferView*);
+    void removeView(ArrayBufferView*);
 
-  private:
-    ArrayBuffer(void* data, unsigned sizeInBytes);
-    ArrayBuffer(unsigned numElements, unsigned elementByteSize);
-    static void* tryAllocate(unsigned numElements, unsigned elementByteSize);
+    void transfer(ScriptExecutionContext*, ArrayBufferContents&, ExceptionCode&);
+
+    ~ArrayBuffer() { }
+
+private:
+    ArrayBuffer(ArrayBufferContents&);
     PassRefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
     unsigned clampIndex(int index) const;
 
-    unsigned m_sizeInBytes;
-    void* m_data;
+    ArrayBufferContents m_contents;
+    ArrayBufferView* m_firstView;
 };
 
 } // namespace WebCore
