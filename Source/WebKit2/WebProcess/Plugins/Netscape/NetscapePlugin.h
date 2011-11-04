@@ -247,7 +247,6 @@ private:
 
     // FIXME: Get rid of these.
     WebCore::IntRect m_frameRectInWindowCoordinates;
-    WebCore::IntRect m_clipRectInWindowCoordinates;
 
     CString m_userAgent;
 

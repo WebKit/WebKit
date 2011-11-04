@@ -696,9 +696,6 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
     IntPoint frameRectLocationInWindowCoordinates = m_pluginToRootViewTransform.mapPoint(IntPoint());
     m_frameRectInWindowCoordinates = IntRect(frameRectLocationInWindowCoordinates, m_pluginSize);
 
-    IntPoint clipRectLocationInWindowCoordinates = m_pluginToRootViewTransform.mapPoint(clipRect.location());
-    m_clipRectInWindowCoordinates = IntRect(clipRectLocationInWindowCoordinates, m_clipRect.size());
-
     platformGeometryDidChange();
 
     if (!shouldCallWindow)
