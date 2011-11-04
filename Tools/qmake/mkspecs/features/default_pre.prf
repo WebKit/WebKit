@@ -8,6 +8,11 @@
 load(default_pre) # Load Qt's defaults
 load(functions)
 
+# FIXME: In this case we probably want to exit early so that we
+# don't load all of the custom build tweaks needlessly.
+pro_file = $$_PRO_FILE_ # Checking the variable directly does not work
+isEmpty(pro_file): CONFIG += recursive_include
+
 # We default to release builds
 CONFIG += release
 CONFIG -= debug
@@ -78,7 +83,7 @@ win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
 scratchbox: PYTHON = python2.6
 else: PYTHON = python
 
-!haveQt(4, 8): error("Building WebKit with Qt versions older than 4.8 is not supported.")
+!haveQt(4, 8):!recursive_include: error("Building WebKit with Qt versions older than 4.8 is not supported.")
 
 !haveQt(5):!no_webkit2 {
     root_project_file {
