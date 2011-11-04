@@ -4037,6 +4037,8 @@
             'platform/image-encoders/skia/JPEGImageEncoder.h',
             'platform/image-encoders/skia/PNGImageEncoder.cpp',
             'platform/image-encoders/skia/PNGImageEncoder.h',
+            'platform/image-encoders/skia/WEBPImageEncoder.cpp',
+            'platform/image-encoders/skia/WEBPImageEncoder.h',
             'platform/iphone/KeyEventCodesIPhone.h',
             'platform/iphone/KeyEventIPhone.mm',
             'platform/mac/AutodrainedPool.mm',

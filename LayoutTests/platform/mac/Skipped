@@ -318,6 +318,7 @@ plugins/iframe-shims.html
 plugins/plugin-initiate-popup-window.html
 
 # Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
 # Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation http://webkit.org/b/48929

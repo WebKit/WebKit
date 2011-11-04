@@ -99,7 +99,13 @@ bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)
 {
-    return mimeType == "image/jpeg" || mimeType == "image/png";
+    if (mimeType == "image/jpeg" || mimeType == "image/png")
+        return true;
+#if USE(WEBP) && USE(SKIA)
+    if (mimeType == "image/webp")
+        return true;
+#endif
+    return false;
 }
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)

@@ -1227,6 +1227,7 @@ fast/dom/nodesFromRect-inner-documents.html
 plugins/iframe-shims.html
 
 # Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50234

@@ -1798,6 +1798,7 @@ fast/parser/pre-html5-parser-quirks.html
 fast/media/color-does-not-include-alpha.html
 
 # Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
 # [Qt] svg/animations/animate-path-nested-transforms.html fails

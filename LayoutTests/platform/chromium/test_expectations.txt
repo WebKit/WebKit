@@ -483,6 +483,9 @@ WONTFIX CPU GPU : platform/chromium-gpu/compositing/rubberbanding = IMAGE
 // it isn't installed on XP by default.
 WONTFIX WIN : css3/font-feature-settings-rendering.html = PASS FAIL
 
+// No webp encoding support on MAC CoreGraphics (CG)
+WONTFIX MAC CPU-CG : fast/canvas/canvas-toDataURL-webp.html = FAIL
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------

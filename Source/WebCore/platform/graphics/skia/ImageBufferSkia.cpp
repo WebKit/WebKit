@@ -48,6 +48,7 @@
 #include "SkColorPriv.h"
 #include "SkGpuDevice.h"
 #include "SkiaUtils.h"
+#include "WEBPImageEncoder.h"
 
 #include <wtf/text/WTFString.h>
 
@@ -371,6 +372,14 @@ static String ImageToDataURL(T& source, const String& mimeType, const double* qu
             compressionQuality = static_cast<int>(*quality * 100 + 0.5);
         if (!JPEGImageEncoder::encode(source, compressionQuality, &encodedImage))
             return "data:,";
+#if USE(WEBP)
+    } else if (mimeType == "image/webp") {
+        int compressionQuality = WEBPImageEncoder::DefaultCompressionQuality;
+        if (quality && *quality >= 0.0 && *quality <= 1.0)
+            compressionQuality = static_cast<int>(*quality * 100 + 0.5);
+        if (!WEBPImageEncoder::encode(source, compressionQuality, &encodedImage))
+            return "data:,";
+#endif
     } else {
         if (!PNGImageEncoder::encode(source, &encodedImage))
             return "data:,";

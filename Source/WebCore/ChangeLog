@@ -1,3 +1,32 @@
+2011-11-04  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] Implement canvas.toDataURL("image/webp")
+        https://bugs.webkit.org/show_bug.cgi?id=70172
+
+        Reviewed by Adam Barth.
+
+        Add a webp image encoder for the chromium skia ports, add it to the canvas
+        element toDataURL() flow with support for an optional quality [0.0-1.0].
+        Use a webp compression method (3) that provides good speed and compression
+        performance for this image format, and works well for various input image
+        types: line-art, screen-shots, and photographic images.
+
+        Test: fast/canvas/canvas-toDataURL-webp.html
+
+        * WebCore.gypi:
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageToDataURL):
+        * platform/image-encoders/skia/WEBPImageEncoder.cpp: Added.
+        (WebCore::writeOutput):
+        (WebCore::importPicture):
+        (WebCore::importPictureBGRA):
+        (WebCore::importPictureRGBA):
+        (WebCore::encodePixels):
+        (WebCore::WEBPImageEncoder::encode):
+        * platform/image-encoders/skia/WEBPImageEncoder.h: Added.
+
 2011-11-04  Patrick Gansterer  <paroga@webkit.org>
 
         [Qt] Remove ENABLE_SQLITE from qmake files

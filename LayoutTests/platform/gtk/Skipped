@@ -394,6 +394,7 @@ http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
 
 # Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
 # Request ENABLE(REQUEST_ANIMATION_FRAME) support

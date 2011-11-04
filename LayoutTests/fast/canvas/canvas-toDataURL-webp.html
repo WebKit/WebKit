@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<pre id="log"></pre>
+<canvas id="canvas" width="100" height="60"></canvas>
+
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+
+function log(message)
+{
+    document.getElementById('log').textContent += message + '\n';
+}
+
+function canvasPixelShouldBe(canvas, x, y, p, tolerance)
+{
+    try {
+        var pixelData = canvas.getContext('2d').getImageData(x, y, 1, 1);
+    } catch (e) {
+        return log('FAIL: can\'t access pixel at (' + x + ',' + y + ')');
+    }
+
+    var delta = 0, pixel = Array.prototype.slice.call(pixelData.data);
+    pixel.forEach(function(component, i) {
+        delta = Math.max(Math.abs(pixel[i] - p[i]), delta);
+    });
+
+    pixel = 'pixel [' + pixel + '] at (' + x + ',' + y + ')';
+    if (tolerance = tolerance || 0, delta > tolerance)
+        log('FAIL: ' + pixel + ', expected [' + p + '] +/-' + tolerance);
+}
+
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+
+context.fillStyle = 'rgba(0, 128, 0, 0.0)';
+context.fillRect(0,  0, 100, 20);
+context.fillStyle = 'rgba(0, 128, 0, 0.5)';
+context.fillRect(0, 20, 100, 20);
+context.fillStyle = 'rgba(0, 128, 0, 1.0)';
+context.fillRect(0, 40, 100, 20);
+
+function checkPixels()
+{
+    canvas.width = 100; // Reset (clear) the canvas element.
+    context.drawImage(image, 0, 0);
+    canvasPixelShouldBe(canvas, 0, 10, [0,   0, 0, 255], 8);
+    canvasPixelShouldBe(canvas, 0, 30, [0,  64, 0, 255], 8);
+    canvasPixelShouldBe(canvas, 0, 50, [0, 128, 0, 255], 8);
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+
+var dataURL = canvas.toDataURL('image/webp');
+
+if (!dataURL.match(/^data:image\/webp[;,]/)) {
+    log("FAIL: canvas.toDataURL('image/webp') not supported");
+} else {
+    log("PASS: canvas.toDataURL('image/webp')");
+    if (window.layoutTestController)
+        window.layoutTestController.waitUntilDone();
+    (image = new Image()).onload = checkPixels;
+    image.src = dataURL;
+}
+</script>
