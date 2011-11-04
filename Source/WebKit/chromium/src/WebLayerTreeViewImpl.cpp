@@ -49,9 +49,10 @@ PassRefPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewCl
 }
 
 WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings) 
-    : CCLayerTreeHost(this, root, settings)
+    : CCLayerTreeHost(this, settings)
     , m_client(client)
 {
+    setRootLayer(root);
 }
 
 WebLayerTreeViewImpl::~WebLayerTreeViewImpl()

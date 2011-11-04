@@ -104,9 +104,6 @@ TransformationMatrix CCTiledLayerImpl::tilingTransform() const
 
     // Tiler draws with a different origin from other layers.
     transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
-
-    transform.translate(-scrollPosition().x(), -scrollPosition().y());
-
     return transform;
 }
 

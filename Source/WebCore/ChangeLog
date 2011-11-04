@@ -1,3 +1,54 @@
+2011-11-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix incorrect visibility/scissor rect for threaded compositing
+        https://bugs.webkit.org/show_bug.cgi?id=70962
+
+        Reviewed by James Robinson.
+
+        In order to properly scroll independent of layout on the compositor
+        thread, we have to apply the scroll to the right layer. Previously,
+        the NonCompositedContentHost was the root of the graphics layer tree
+        with all other layers underneath it. However, applying a scroll to
+        that layer would also scroll the clip layer for the main frame
+        underneath it, causing visibility issues.
+
+        This patch moves the NonCompositedHost to be a child of the
+        RenderLayerCompositor's scroll layer. This was exposed on
+        RenderLayerCompositor, because there's no other way to get to this
+        layer in a way that doesn't make assumptions about the structure of
+        the layers on a frame.
+
+        This also removes the hacks in calculateVisibleLayerRect and
+        tilingTransform for scroll position.
+
+        Partially tested by existing compositor tests. Manually tested
+        threaded compositing scrolling.
+
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::setScrollLayer):
+        (WebCore::NonCompositedContentHost::setViewport):
+        (WebCore::NonCompositedContentHost::scrollLayer):
+        * platform/graphics/chromium/NonCompositedContentHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::create):
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::applyScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (WebCore::CCLayerTreeHostCommon::calculateVisibleLayerRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::findScrollLayer):
+        (WebCore::CCLayerTreeHostImpl::setRootLayer):
+        (WebCore::CCLayerTreeHostImpl::scrollRootLayer):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::tilingTransform):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scrollLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Refactor and clean up the qmake build system

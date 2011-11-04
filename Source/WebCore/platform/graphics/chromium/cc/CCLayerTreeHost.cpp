@@ -40,20 +40,19 @@
 
 namespace WebCore {
 
-PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
+PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
 {
-    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, rootLayer, settings));
+    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, settings));
     if (!layerTreeHost->initialize())
         return 0;
     return layerTreeHost;
 }
 
-CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
+CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
     : m_compositorIdentifier(-1)
     , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
-    , m_rootLayer(rootLayer)
     , m_settings(settings)
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
@@ -440,16 +439,13 @@ void CCLayerTreeHost::clearPendingUpdate()
 
 void CCLayerTreeHost::applyScrollDeltas(const CCScrollUpdateSet& info)
 {
-    for (size_t i = 0; i < info.size(); ++i) {
-        int layerId = info[i].layerId;
-        IntSize scrollDelta = info[i].scrollDelta;
+    // FIXME: pushing scroll offsets to non-root layers not implemented
+    if (!info.size())
+        return;
 
-        // FIXME: pushing scroll offsets to non-root layers not implemented
-        if (rootLayer()->id() == layerId)
-            m_client->applyScrollDelta(scrollDelta);
-        else
-            ASSERT_NOT_REACHED();
-    }
+    ASSERT(info.size() == 1);
+    IntSize scrollDelta = info[0].scrollDelta;
+    m_client->applyScrollDelta(scrollDelta);
 }
 
 void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)

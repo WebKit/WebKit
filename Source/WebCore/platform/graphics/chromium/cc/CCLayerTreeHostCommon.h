@@ -77,8 +77,6 @@ IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(LayerType* layer)
     transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
 
     IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
-    visibleLayerRect.move(toSize(layer->scrollPosition()));
-
     return visibleLayerRect;
 }
 

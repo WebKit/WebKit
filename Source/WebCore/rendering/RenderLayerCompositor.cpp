@@ -1180,6 +1180,11 @@ GraphicsLayer* RenderLayerCompositor::rootGraphicsLayer() const
     return m_rootContentLayer.get();
 }
 
+GraphicsLayer* RenderLayerCompositor::scrollLayer() const
+{
+    return m_scrollLayer.get();
+}
+
 void RenderLayerCompositor::didMoveOnscreen()
 {
     if (!inCompositingMode() || m_rootLayerAttachment != RootLayerUnattached)

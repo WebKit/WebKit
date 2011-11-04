@@ -1,3 +1,18 @@
+2011-11-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix incorrect visibility/scissor rect for threaded compositing
+        https://bugs.webkit.org/show_bug.cgi?id=70962
+
+        Reviewed by James Robinson.
+
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+
 2011-11-02  Xiaomei Ji  <xji@chromium.org>
 
         Enable ctrl-arrow move cursor by word in visual order in cr-win by command line flag.

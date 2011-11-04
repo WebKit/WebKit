@@ -39,6 +39,7 @@ class GraphicsLayer;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
+class LayerChromium;
 class LayerPainterChromium;
 
 class NonCompositedContentHost : public GraphicsLayerClient {
@@ -51,10 +52,9 @@ public:
     virtual ~NonCompositedContentHost();
 
     void invalidateRect(const IntRect&);
-    void setRootLayer(GraphicsLayer*);
+    void setScrollLayer(GraphicsLayer*);
     void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
     void protectVisibleTileTextures();
-    GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
 private:
     explicit NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint);
@@ -66,6 +66,8 @@ private:
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
+    LayerChromium* scrollLayer();
+
     OwnPtr<GraphicsLayer> m_graphicsLayer;
     OwnPtr<LayerPainterChromium> m_contentPaint;
     IntSize m_viewportSize;
@@ -74,4 +76,3 @@ private:
 } // namespace WebCore
 
 #endif // NonCompositedContentHost_h
-

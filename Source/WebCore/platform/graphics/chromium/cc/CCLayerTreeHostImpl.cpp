@@ -123,9 +123,29 @@ void CCLayerTreeHostImpl::readback(void* pixels, const IntRect& rect)
     m_layerRenderer->getFramebufferPixels(pixels, rect);
 }
 
+static CCLayerImpl* findScrollLayer(CCLayerImpl* layer)
+{
+    if (!layer)
+        return 0;
+
+    if (!layer->maxScrollPosition().isZero())
+        return layer;
+
+    for (size_t i = 0; i < layer->children().size(); ++i) {
+        CCLayerImpl* found = findScrollLayer(layer->children()[i].get());
+        if (found)
+            return found;
+    }
+
+    return 0;
+}
+
 void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
 {
     m_rootLayerImpl = layer;
+
+    // FIXME: Currently, this only finds the first scrollable layer.
+    m_scrollLayerImpl = findScrollLayer(m_rootLayerImpl.get());
 }
 
 void CCLayerTreeHostImpl::setVisible(bool visible)
@@ -174,10 +194,10 @@ void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& z
 void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
 {
     TRACE_EVENT("CCLayerTreeHostImpl::scrollRootLayer", this, 0);
-    if (!m_rootLayerImpl || !m_rootLayerImpl->scrollable())
+    if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable())
         return;
 
-    m_rootLayerImpl->scrollBy(scrollDelta);
+    m_scrollLayerImpl->scrollBy(scrollDelta);
     m_client->setNeedsCommitOnImplThread();
     m_client->setNeedsRedrawOnImplThread();
 }
@@ -191,14 +211,15 @@ PassOwnPtr<CCScrollUpdateSet> CCLayerTreeHostImpl::processScrollDeltas()
 {
     OwnPtr<CCScrollUpdateSet> scrollInfo = adoptPtr(new CCScrollUpdateSet());
     // FIXME: track scrolls from layers other than the root
-    if (rootLayer() && !rootLayer()->scrollDelta().isZero()) {
+    if (m_scrollLayerImpl && !m_scrollLayerImpl->scrollDelta().isZero()) {
         CCLayerTreeHostCommon::ScrollUpdateInfo info;
-        info.layerId = rootLayer()->id();
-        info.scrollDelta = rootLayer()->scrollDelta();
+        info.layerId = m_scrollLayerImpl->id();
+        info.scrollDelta = m_scrollLayerImpl->scrollDelta();
         scrollInfo->append(info);
 
-        rootLayer()->setScrollPosition(rootLayer()->scrollPosition() + rootLayer()->scrollDelta());
-        rootLayer()->setScrollDelta(IntSize());
+        m_scrollLayerImpl->setScrollPosition(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+        m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
+        m_scrollLayerImpl->setScrollDelta(IntSize());
     }
     return scrollInfo.release();
 }

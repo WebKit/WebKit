@@ -111,9 +111,10 @@ public:
 
 private:
     MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
-        : CCLayerTreeHost(client, rootLayer, settings)
+        : CCLayerTreeHost(client, settings)
         , m_testHooks(testHooks)
     {
+        setRootLayer(rootLayer);
         bool success = initialize();
         ASSERT(success);
         UNUSED_PARAM(success);

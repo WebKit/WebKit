@@ -27,6 +27,7 @@
 
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
+#include "LayerChromium.h"
 #include "RateLimiter.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -46,7 +47,6 @@ namespace WebCore {
 class CCLayerTreeHostImpl;
 class CCTextureUpdater;
 class GraphicsContext3D;
-class LayerChromium;
 class LayerPainterChromium;
 class TextureAllocator;
 class TextureManager;
@@ -101,7 +101,7 @@ struct LayerRendererCapabilities {
 
 class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
 public:
-    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
+    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
     virtual ~CCLayerTreeHost();
 
     // CCLayerTreeHost interface to CCProxy.
@@ -151,6 +151,7 @@ public:
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
+    void setRootLayer(PassRefPtr<LayerChromium> rootLayer) { m_rootLayer = rootLayer; }
 
     const CCSettings& settings() const { return m_settings; }
 
@@ -172,7 +173,7 @@ public:
     void stopRateLimiter(GraphicsContext3D*);
 
 protected:
-    CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
+    CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
     bool initialize();
 
 private:

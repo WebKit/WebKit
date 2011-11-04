@@ -91,6 +91,7 @@
 #include "PopupContainer.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
+#include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "ScrollAnimator.h"
@@ -2510,8 +2511,18 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
     m_rootGraphicsLayer = layer;
 
     setIsAcceleratedCompositingActive(layer);
-    if (m_nonCompositedContentHost)
-        m_nonCompositedContentHost->setRootLayer(layer);
+    if (m_nonCompositedContentHost) {
+        GraphicsLayer* scrollLayer = 0;
+        if (layer) {
+            Document* document = page()->mainFrame()->document();
+            RenderView* renderView = document->renderView();
+            RenderLayerCompositor* compositor = renderView->compositor();
+            scrollLayer = compositor->scrollLayer();
+        }
+        m_nonCompositedContentHost->setScrollLayer(scrollLayer);
+    }
+    if (m_layerTreeHost)
+        m_layerTreeHost->setRootLayer(layer ? layer->platformLayer() : 0);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
     if (!m_isAcceleratedCompositingActive)
@@ -2625,7 +2636,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
-        m_layerTreeHost = CCLayerTreeHost::create(this, m_nonCompositedContentHost->topLevelRootLayer()->platformLayer(), ccSettings);
+        m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
             m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
             updateLayerTreeViewport();

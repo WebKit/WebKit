@@ -49,32 +49,49 @@ NonCompositedContentHost::~NonCompositedContentHost()
 {
 }
 
-void NonCompositedContentHost::setRootLayer(GraphicsLayer* layer)
+void NonCompositedContentHost::setScrollLayer(GraphicsLayer* layer)
 {
-    m_graphicsLayer->removeAllChildren();
     m_graphicsLayer->setNeedsDisplay();
-    if (layer)
-        m_graphicsLayer->addChild(layer);
-    else
+
+    if (!layer) {
+        m_graphicsLayer->removeFromParent();
         m_graphicsLayer->platformLayer()->setLayerTreeHost(0);
+        return;
+    }
+
+    if (layer->platformLayer() == scrollLayer())
+        return;
+
+    layer->addChildAtIndex(m_graphicsLayer.get(), 0);
+    ASSERT(scrollLayer());
 }
 
 void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)
 {
+    if (!scrollLayer())
+        return;
+
     bool visibleRectChanged = m_viewportSize != viewportSize;
 
     m_viewportSize = viewportSize;
-    m_graphicsLayer->platformLayer()->setScrollPosition(scrollPosition);
+    scrollLayer()->setScrollPosition(scrollPosition);
     IntSize maxScroll = contentsSize - viewportSize;
     // The viewport may be larger than the contents in some cases, such as
     // having a vertical scrollbar but no horizontal overflow.
     maxScroll.clampNegativeToZero();
 
-    m_graphicsLayer->platformLayer()->setMaxScrollPosition(maxScroll);
+    scrollLayer()->setMaxScrollPosition(maxScroll);
     m_graphicsLayer->setSize(contentsSize);
 
     if (visibleRectChanged)
         m_graphicsLayer->setNeedsDisplay();
+}
+
+LayerChromium* NonCompositedContentHost::scrollLayer()
+{
+    if (!m_graphicsLayer->parent())
+        return 0;
+    return m_graphicsLayer->parent()->platformLayer();
 }
 
 void NonCompositedContentHost::protectVisibleTileTextures()

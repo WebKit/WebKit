@@ -110,6 +110,7 @@ protected:
 private:
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;
+    RefPtr<CCLayerImpl> m_scrollLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;
