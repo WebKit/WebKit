@@ -2750,8 +2750,8 @@ BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html =
 BUGWK58587 : media/video-controls-rendering.html = IMAGE
 
 // Take new baselines from the bots when 68035 lands.
-BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
-BUGWK70046 SLOW MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS MISSING
+//BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
+//BUGWK70046 SLOW MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS MISSING
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3893,6 +3893,7 @@ BUGENNE GPU : compositing/geometry/horizontal-scroll-composited.html = FAIL
 BUGENNE GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
 BUGENNE GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
 BUGENNE GPU : compositing/scaling/tiled-layer-recursion.html = FAIL
+// Uncomment the above results for this when removing.
 BUGENNE GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = FAIL
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
