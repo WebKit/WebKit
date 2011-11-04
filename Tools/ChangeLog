@@ -1,3 +1,20 @@
+2011-11-04  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests autoinstalls python-irclib even though it doesn't need to
+        https://bugs.webkit.org/show_bug.cgi?id=71549
+
+        Reviewed by Adam Barth.
+
+        Several members of Host didn't really belong there
+        and were instead specific to WebKitPatch, so I've moved
+        them up onto that class.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2011-11-04  Tony Chang  <tony@chromium.org>
 
         garden-o-matic: bring back party time!

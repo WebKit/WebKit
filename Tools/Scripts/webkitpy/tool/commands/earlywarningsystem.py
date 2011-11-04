@@ -51,7 +51,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
     def begin_work_queue(self):
         # FIXME: This violates abstraction
-        self._tool._port = self.port
+        self._tool._deprecated_port = self.port
         AbstractReviewQueue.begin_work_queue(self)
         self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())

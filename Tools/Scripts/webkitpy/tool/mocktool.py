@@ -26,10 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import threading
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.net.statusserver_mock import MockStatusServer
+from webkitpy.common.net.irc.irc_mock import MockIRC
+
+# FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
+from webkitpy.common.config.ports_mock import MockPort
 
 
+# FIXME: This should be moved somewhere in common and renamed
+# something without Mock in the name.
 class MockOptions(object):
     """Mock implementation of optparse.Values."""
 
@@ -43,6 +51,27 @@ class MockOptions(object):
             self.__dict__[key] = value
 
 
+# FIXME: This should be renamed MockWebKitPatch.
 class MockTool(MockHost):
+    def __init__(self, *args, **kwargs):
+        MockHost.__init__(self, *args, **kwargs)
+
+        self._deprecated_port = MockPort()
+        self.status_server = MockStatusServer()
+
+        self._irc = None
+        self.irc_password = "MOCK irc password"
+        self.wakeup_event = threading.Event()
+
+    def port(self):
+        return self._deprecated_port
+
     def path(self):
         return "echo"
+
+    def ensure_irc_connected(self, delegate):
+        if not self._irc:
+            self._irc = MockIRC()
+
+    def irc(self):
+        return self._irc

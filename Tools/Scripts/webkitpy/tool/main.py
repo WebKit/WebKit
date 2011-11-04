@@ -35,6 +35,8 @@ import threading
 
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.host import Host
+from webkitpy.common.net.irc import ircproxy
+from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.tool import commands
 
@@ -53,12 +55,32 @@ class WebKitPatch(MultiCommandTool, Host):
     def __init__(self, path):
         MultiCommandTool.__init__(self)
         Host.__init__(self)
-
         self._path = path
+        self.status_server = StatusServer()
+
         self.wakeup_event = threading.Event()
+        self._irc = None
+        self._deprecated_port = None
+
+    def port(self):
+        return self._deprecated_port
 
     def path(self):
         return self._path
+
+    def ensure_irc_connected(self, irc_delegate):
+        if not self._irc:
+            self._irc = ircproxy.IRCProxy(irc_delegate)
+
+    def irc(self):
+        # We don't automatically construct IRCProxy here because constructing
+        # IRCProxy actually connects to IRC.  We want clients to explicitly
+        # connect to IRC.
+        return self._irc
+
+    def command_completed(self):
+        if self._irc:
+            self._irc.disconnect()
 
     def should_show_in_main_help(self, command):
         if not command.show_in_main_help:
@@ -80,7 +102,7 @@ class WebKitPatch(MultiCommandTool, Host):
         if options.irc_password:
             self.irc_password = options.irc_password
         # If options.port is None, we'll get the default port for this platform.
-        self._port = WebKitPort.port(options.port)
+        self._deprecated_port = WebKitPort.port(options.port)
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

@@ -30,11 +30,9 @@
 
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
-from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.memoized import memoized
-from webkitpy.common.net import bugzilla, buildbot, statusserver, web
+from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
-from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.common.watchlist.watchlistloader import WatchListLoader
 from webkitpy.layout_tests.port.factory import PortFactory
@@ -59,11 +57,6 @@ class Host(object):
         self.bugs = bugzilla.Bugzilla()
         self.buildbot = buildbot.BuildBot()
 
-        self._irc = None
-        self._port = None
-
-        self.status_server = statusserver.StatusServer()
-
         # FIXME: Unfortunately Port objects are currently the central-dispatch objects of the NRWT world.
         # In order to instantiate a port correctly, we have to pass it at least an executive, user, scm, and filesystem
         # so for now we just pass along the whole Host object.
@@ -79,9 +72,6 @@ class Host(object):
     def checkout(self):
         return self._checkout
 
-    def port(self):
-        return self._port
-
     @memoized
     def chromium_buildbot(self):
         return ChromiumBuildBot()
@@ -89,17 +79,3 @@ class Host(object):
     @memoized
     def watch_list(self):
         return WatchListLoader(self.filesystem).load()
-
-    def ensure_irc_connected(self, irc_delegate):
-        if not self._irc:
-            self._irc = ircproxy.IRCProxy(irc_delegate)
-
-    def irc(self):
-        # We don't automatically construct IRCProxy here because constructing
-        # IRCProxy actually connects to IRC.  We want clients to explicitly
-        # connect to IRC.
-        return self._irc
-
-    def command_completed(self):
-        if self._irc:
-            self._irc.disconnect()

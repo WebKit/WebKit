@@ -35,8 +35,8 @@ from webkitpy.tool.steps.runtests import RunTests
 class RunTestsTest(unittest.TestCase):
     def test_no_unit_tests(self):
         tool = MockTool()
-        tool._port.run_python_unittests_command = lambda: None
-        tool._port.run_perl_unittests_command = lambda: None
+        tool._deprecated_port.run_python_unittests_command = lambda: None
+        tool._deprecated_port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
         expected_stderr = """Running JavaScriptCore tests
 Running run-webkit-tests
