@@ -196,6 +196,10 @@ controllers.UnexpectedFailures = base.extends(FailureStreamController, {
         var failure = FailureStreamController.prototype.update.call(this, failureAnalysis);
         failure.updateBuilderResults(model.buildersInFlightForRevision(this._impliedFirstFailingRevision(failureAnalysis)));
     },
+    length: function()
+    {
+        return this._testFailures.length();
+    },
     onBlame: function(failure, commitData)
     {
         failure.pinToCommitData(commitData);

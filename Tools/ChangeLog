@@ -1,3 +1,17 @@
+2011-11-04  Tony Chang  <tony@chromium.org>
+
+        garden-o-matic: bring back party time!
+        https://bugs.webkit.org/show_bug.cgi?id=71582
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html: Allow images from file:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/partytime.gif: Renamed from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/partytime.gif.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js: Add length() for UpdateTracker.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js: Plumb through length().
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js: Toggle partytime.gif via css class.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css: Add css styling for partytime.
+
 2011-11-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Fix the order of the items in the dumped history list.

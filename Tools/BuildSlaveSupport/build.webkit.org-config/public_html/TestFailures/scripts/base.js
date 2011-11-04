@@ -329,6 +329,10 @@ base.UpdateTracker.prototype = {
     {
         return this._items[key];
     },
+    length: function()
+    {
+        return Object.keys(this._items).length;
+    },
     /*
         Callback parameters are:
         - item

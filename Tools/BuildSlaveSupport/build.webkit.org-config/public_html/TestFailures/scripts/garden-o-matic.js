@@ -51,6 +51,10 @@ function update()
             updating.update('Analyzing test failures ... ' + ++numberOfTestsAnalyzed + ' tests analyzed.');
             g_unexpectedFailuresController.update(failureAnalysis);
         }, function() {
+            if (!g_unexpectedFailuresController.length())
+                $('#onebar').addClass('partytime');
+            else
+                $('#onebar').removeClass('partytime');
             g_unexpectedFailuresController.purge();
             updating.dismiss();
         });
