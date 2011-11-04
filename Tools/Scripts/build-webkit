@@ -544,6 +544,11 @@ if (isGtk()) {
     push @options, "--install-libs=" . $installLibs if defined($installLibs);
     push @options, "--makeargs=" . $makeArgs if $makeArgs;
     push @options, "--qmakearg=CONFIG+=no_webkit2" if $noWebKit2;
+
+    if (checkForArgumentAndRemoveFromARGV("-2")) {
+        print "Note: WebKit2 is now built by default, you don't need to passs -2. Disable using --no-webkit2\n";
+    }
+
     @options = (@ARGV, @options);
 
     foreach (@features) {
