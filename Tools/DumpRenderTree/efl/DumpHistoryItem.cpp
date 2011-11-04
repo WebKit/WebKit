@@ -31,13 +31,21 @@
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
+#include <algorithm>
 #include <cstdio>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 Ewk_History_Item* prevTestBFItem = 0;
 const unsigned historyItemIndent = 8;
+
+static bool compareHistoryItemsByTarget(const Ewk_History_Item* item1, const Ewk_History_Item* item2)
+{
+    return WTF::codePointCompare(DumpRenderTreeSupportEfl::historyItemTarget(item1),
+                                 DumpRenderTreeSupportEfl::historyItemTarget(item2)) < 1;
+}
 
 static void dumpHistoryItem(const Ewk_History_Item* item, int indent, bool current)
 {
@@ -68,9 +76,14 @@ static void dumpHistoryItem(const Ewk_History_Item* item, int indent, bool curre
         printf("  **nav target**");
     putchar('\n');
 
-    const HistoryItemChildrenMap children = DumpRenderTreeSupportEfl::childHistoryItems(item);
-    for (HistoryItemChildrenMap::const_iterator it = children.begin(); it != children.end(); ++it)
-        dumpHistoryItem((*it).second, indent + 4, false);
+    HistoryItemChildrenVector children = DumpRenderTreeSupportEfl::childHistoryItems(item);
+
+    // Must sort to eliminate arbitrary result ordering which defeats reproducible testing.
+    std::stable_sort(children.begin(), children.end(), compareHistoryItemsByTarget);
+
+    const size_t size = children.size();
+    for (size_t i = 0; i < size; ++i)
+        dumpHistoryItem(children[i], indent + 4, false);
 }
 
 static void dumpBackForwardListForWebView(Evas_Object* view)

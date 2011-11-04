@@ -24,13 +24,13 @@
 #include <Eina.h>
 #include <FindOptions.h>
 #include <IntRect.h>
-#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _Evas_Object Evas_Object;
 typedef struct _Ewk_History_Item Ewk_History_Item;
 
-typedef HashMap<String, Ewk_History_Item*> HistoryItemChildrenMap;
+typedef Vector<Ewk_History_Item*> HistoryItemChildrenVector;
 
 namespace WebCore {
 class Frame;
@@ -69,7 +69,7 @@ public:
     static size_t javaScriptObjectsCount();
     static unsigned workerThreadCount();
 
-    static HistoryItemChildrenMap childHistoryItems(const Ewk_History_Item*);
+    static HistoryItemChildrenVector childHistoryItems(const Ewk_History_Item*);
     static String historyItemTarget(const Ewk_History_Item*);
     static bool isTargetItem(const Ewk_History_Item*);
 

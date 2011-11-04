@@ -343,10 +343,10 @@ unsigned DumpRenderTreeSupportEfl::workerThreadCount()
 #endif
 }
 
-HistoryItemChildrenMap DumpRenderTreeSupportEfl::childHistoryItems(const Ewk_History_Item* ewkHistoryItem)
+HistoryItemChildrenVector DumpRenderTreeSupportEfl::childHistoryItems(const Ewk_History_Item* ewkHistoryItem)
 {
     WebCore::HistoryItem* historyItem = EWKPrivate::coreHistoryItem(ewkHistoryItem);
-    HistoryItemChildrenMap kids;
+    HistoryItemChildrenVector kids;
 
     if (!historyItem)
         return kids;
@@ -356,7 +356,7 @@ HistoryItemChildrenMap DumpRenderTreeSupportEfl::childHistoryItems(const Ewk_His
 
     for (unsigned i = 0; i < size; ++i) {
         Ewk_History_Item* kid = ewk_history_item_new_from_core(children[i].get());
-        kids.set(DumpRenderTreeSupportEfl::historyItemTarget(kid), kid);
+        kids.append(kid);
     }
 
     return kids;
