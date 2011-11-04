@@ -658,12 +658,12 @@ public:
         mulDouble(fpTempRegister, dest);
     }
 
-    void sqrtDouble(FPRegisterID, FPRegisterID)
+    void sqrtDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
     {
         ASSERT_NOT_REACHED();
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void andnotDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
     {
         ASSERT_NOT_REACHED();
     }
