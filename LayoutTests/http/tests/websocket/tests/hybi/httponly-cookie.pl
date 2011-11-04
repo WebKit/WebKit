@@ -60,7 +60,6 @@ ws.onclose = function() {
     finishJSTest();
 };
 
-var successfullyParsed = true;
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
 </body>

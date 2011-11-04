@@ -5,7 +5,6 @@
        dt:first-letter{text-transform:uppercase;}
 </style>
 <script>
-    var successfullyParsed = false;
 
     function buildAccessibilityTree(accessibilityObject) {
         var count = accessibilityObject.childrenCount;
@@ -34,7 +33,6 @@
         buildAccessibilityTree(accessibilityController.focusedElement);
     }
 
-    successfullyParsed = true;
 </script>
 
 <script src="../fast/js/resources/js-test-post.js"></script>

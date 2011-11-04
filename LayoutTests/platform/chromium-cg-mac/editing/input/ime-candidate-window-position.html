@@ -10,7 +10,6 @@
 <script src="../../../../fast/js/resources/js-test-pre.js"></script>
 <script>
 window.jsTestIsAsync = true;
-var successfullyParsed = false;
 
 function doTest() {
     if (window.layoutTestController) {
@@ -24,7 +23,6 @@ function doTest() {
         shouldBe('rect[0]', 'frame.offsetLeft + input.offsetLeft + 1');
         shouldBe('rect[1]', 'frame.offsetTop + input.offsetTop');
     }
-    successfullyParsed = true;
     finishJSTest();
 }
 </script>

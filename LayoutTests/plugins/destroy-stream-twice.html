@@ -2,8 +2,6 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 <script>
 function main() 
 {
@@ -28,8 +26,7 @@ function runTest()
 
     debug("PASS: You didn't crash.\n");
 
-    shouldBeTrue("successfullyParsed");
-    debug('<br><span class="pass">TEST COMPLETE</span>');
+    isSuccessfullyParsed();
     layoutTestController.notifyDone();
 }
 </script>
@@ -44,5 +41,4 @@ function runTest()
 description("Test for http://bugs.webkit.org/show_bug.cgi?id=13203: REGRESSION: Repro crash in -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] navigating away from page with DivX movie plug-in");
 
 
-successfullyParsed = true;
 </script>

@@ -1,8 +1,5 @@
 <html>
 <head>
-<script>
-var successfullyParsed = false;
-</script>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <script>
@@ -26,7 +23,6 @@ var successfullyParsed = false;
             var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
             shouldBe("imgUIElement.description", "'AXDescription: alternate'");
         }
-        successfullyParsed = true;
     </script>
     
 <script src="../fast/js/resources/js-test-post.js"></script>

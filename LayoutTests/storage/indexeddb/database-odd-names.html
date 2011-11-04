@@ -43,7 +43,6 @@ function openNextDatabase()
     request.onsuccess = ++nextToOpen < testData.length ? openNextDatabase : done;
 }
 
-var successfullyParsed = true;
 
 test();
 

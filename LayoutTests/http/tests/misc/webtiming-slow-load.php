@@ -19,7 +19,6 @@ shouldBeNonZero("timing.requestStart");
 shouldBeNonZero("timing.responseStart");
 shouldBe("timing.responseEnd", "0");
 
-var successfullyParsed = true;
 </script>
 <script src="../../js-test-resources/js-test-post.js"></script>
 <?php

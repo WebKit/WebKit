@@ -2,8 +2,6 @@
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 <script>
 function main() 
 {
@@ -48,15 +46,12 @@ function testNPInvoke()
     objectArgument = arguments[6];
     shouldBe("typeof(objectArgument)", "'object'");
 
-    shouldBeTrue("successfullyParsed");
-    debug('<br><span class="pass">TEST COMPLETE</span>');
-    
+    isSuccessfullyParsed();    
     layoutTestController.notifyDone();
 }
 
 description("Tests that the NPRuntime implementation works as expected");
 
-successfullyParsed = true;
 </script>
 <embed id="plugin" 
        type="application/x-webkit-test-netscape"

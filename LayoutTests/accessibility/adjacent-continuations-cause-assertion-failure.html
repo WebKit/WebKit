@@ -2,7 +2,6 @@
 <html>
 <head>
 <script>
-    var successfullyParsed = false;
 
     function buildAccessibilityTree(accessibilityObject, indent) {
         var str = "";
@@ -46,7 +45,6 @@
         buildAccessibilityTree(accessibilityController.focusedElement, 0);
     }
 
-    successfullyParsed = true;
 </script>
 
 <script src="../fast/js/resources/js-test-post.js"></script>

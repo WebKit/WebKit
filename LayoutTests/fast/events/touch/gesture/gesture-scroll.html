@@ -78,7 +78,6 @@ function checkScrollOffset()
 
     if (scrollsOccurred == expectedScrollsTotal) {
         // If we've got here, we've passed.
-        successfullyParsed = true;
         isSuccessfullyParsed();
         if (window.layoutTestController)
             layoutTestController.notifyDone();
@@ -114,7 +113,6 @@ function secondGestureScrollSequence()
 function exitIfNecessary()
 {
     debug('Gesture events not implemented on this platform or broken');
-    successfullyParsed = true;
     isSuccessfullyParsed();
     if (window.layoutTestController)
         layoutTestController.notifyDone();

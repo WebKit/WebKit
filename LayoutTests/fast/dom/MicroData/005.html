@@ -23,7 +23,6 @@ runTest(document.getItems('http://example.com/foo'), [two], "NodeList must notic
 one.setAttribute('itemtype','http://example.com/foo');
 runTest(document.getItems('http://example.com/foo'), [one, two], "NodeList must notice on set attribute itemtype");
 
-var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

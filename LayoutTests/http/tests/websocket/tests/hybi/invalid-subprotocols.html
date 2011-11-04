@@ -20,7 +20,6 @@ shouldThrow("new WebSocket(url, '\\u3042')", "'Error: SYNTAX_ERR: DOM Exception 
 shouldThrow("new WebSocket(url, ['a', 'b', 'c d'])", "'Error: SYNTAX_ERR: DOM Exception 12'");
 shouldThrow("new WebSocket(url, ['a', 'b', 'c', 'a'])", "'Error: SYNTAX_ERR: DOM Exception 12'");
 
-var successfullyParsed = true;
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
 </body>

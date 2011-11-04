@@ -100,8 +100,7 @@ function onload()
 
         var scriptElement = document.createElement("script")
         scriptElement.appendChild(document.createTextNode(
-            req.responseText + "\n" + 
-            "successfullyParsed = true;\n"));
+            req.responseText + "\n"));
         document.body.appendChild(scriptElement);
     } catch (ex) {
         testFailed("Could not run test: " + ex);

@@ -48,7 +48,6 @@ function tryCall(func, thisObj)
 shouldBe('tryCall(document.javaTest.getSelf, plg.testObject)', '"TypeError: Attempt to invoke non-plug-in method on plug-in object."');
 shouldBe('tryCall(plg.testObject.throwException, document.javaTest)', '"TypeError: Attempt to invoke non-Java method on Java object."');
 
-successfullyParsed = true;
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

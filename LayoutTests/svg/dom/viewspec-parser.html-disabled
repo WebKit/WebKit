@@ -172,6 +172,5 @@
     
     buildTestsToRun();
     testFragment("");
-    successfullyParsed = true;
 </script>
 </html>

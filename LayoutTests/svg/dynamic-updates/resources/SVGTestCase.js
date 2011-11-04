@@ -51,6 +51,5 @@ function completeTest() {
     };
 
     script.src = "../../fast/js/resources/js-test-post.js";
-    successfullyParsed = true;
     document.body.appendChild(script);
 }
