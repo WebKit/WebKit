@@ -30,6 +30,7 @@
 #include "JSEventTarget.h"
 #include "JSMessagePortCustom.h"
 #include "JSNode.h"
+#include "JSTrackCustom.h"
 #include "SerializedScriptValue.h"
 #include "ScriptValue.h"
 #include <wtf/MathExtras.h>
@@ -121,5 +122,12 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray
 {
     fillMessagePortArray(exec, value, result);
 }
+
+#if ENABLE(VIDEO_TRACK)
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& result)
+{
+    result = toTrack(value);
+}
+#endif
 
 } // namespace WebCore

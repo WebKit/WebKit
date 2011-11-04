@@ -1,3 +1,75 @@
+2011-11-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Add TrackEvent
+        https://bugs.webkit.org/show_bug.cgi?id=71178
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/events/constructors/track-event-constructor.html
+
+        * CMakeLists.txt: Add new files for TrackEvent.
+        * CodeGenerators.pri: Ditto.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.am: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/generic/EventConstructors.h: Ditto.
+        * bindings/gobject/GNUmakefile.am: Ditto.
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Add method to convert to a Track.
+        * bindings/js/JSDictionary.h:
+
+        * bindings/js/JSEventConstructors.cpp:  Add new files for TrackEvent.
+
+        * bindings/js/JSTrackCustom.cpp: Added. 
+        (WebCore::toTrack): New, convert from a JSValue to a Track.
+        (WebCore::toJS): New, return a JS wrapper for a Track.
+        * bindings/js/JSTrackCustom.h: Added.
+
+        * bindings/js/JSTrackEventCustom.cpp: Added.
+        (WebCore::JSTrackEvent::track): New, returns a TextEvent's 'track' attribute.
+
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::get): Returns RefPtr<TrackBase>.
+
+        * bindings/v8/custom/V8EventConstructors.cpp: Add Track initializing constructor.
+
+        * bindings/v8/custom/V8TrackEventCustom.cpp: Added.
+        (WebCore::V8TrackEvent::trackAccessorGetter): New, returns a TextEvent's 'track' attribute.
+
+        * dom/EventFactory.in: Add TrackEvent.
+
+        * dom/EventNames.h: Add 'addtrack' event.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Call new base class constructor.
+        * html/TextTrack.h: Now derive from BaseTrack for the day we implement VideoTrack and AudioTrack.
+
+        * html/track/TrackBase.cpp: Added.
+        (WebCore::TrackBase::TrackBase):
+        (WebCore::TrackBase::~TrackBase):
+        * html/track/TrackBase.h: Added.
+        (WebCore::TrackBase::type): Return the track type.
+
+        * html/track/TrackEvent.cpp: Added.
+        (WebCore::TrackEventInit::TrackEventInit):
+        (WebCore::TrackEvent::TrackEvent):
+        (WebCore::TrackEvent::~TrackEvent):
+        (WebCore::TrackEvent::interfaceName):
+        * html/track/TrackEvent.h: Added.
+        (WebCore::TrackEvent::create):
+        (WebCore::TrackEvent::isTrackEvent):
+        (WebCore::TrackEvent::track):
+        * html/track/TrackEvent.idl: Added.
+
+        * page/DOMWindow.idl: Add TrackEvent.
+
 2011-11-03  Ben Wells  <benwells@chromium.org>
 
         Optimize canvas fills / drawImage when covering entire canvas

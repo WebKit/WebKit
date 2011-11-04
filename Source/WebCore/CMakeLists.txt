@@ -301,6 +301,8 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint32Array.idl
     html/canvas/Uint8Array.idl
 
+    html/track/TrackEvent.idl
+
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
@@ -2049,6 +2051,8 @@ IF (ENABLE_VIDEO_TRACK)
         html/TextTrackCue.cpp
         html/TextTrackCueIndex.cpp
         html/TextTrackCueList.cpp
+        html/track/TrackBase.cpp
+        html/track/TrackEvent.cpp
         html/track/WebVTTParser.cpp
         html/track/WebVTTTokenizer.cpp
         loader/TextTrackLoader.cpp

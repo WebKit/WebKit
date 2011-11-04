@@ -55,6 +55,11 @@
 #include "WebKitTransitionEvent.h"
 #include <runtime/Error.h>
 
+#if ENABLE(VIDEO_TRACK)
+#include "JSTrackEvent.h"
+#include "TrackEvent.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {

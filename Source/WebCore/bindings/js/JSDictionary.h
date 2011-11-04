@@ -37,6 +37,7 @@ class EventTarget;
 class Node;
 class ScriptValue;
 class SerializedScriptValue;
+class TrackBase;
 
 class JSDictionary {
 public:
@@ -73,6 +74,9 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
+#if ENABLE(VIDEO_TRACK)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
+#endif
 
     JSC::ExecState* m_exec;
     JSC::JSObject* m_initializerObject;

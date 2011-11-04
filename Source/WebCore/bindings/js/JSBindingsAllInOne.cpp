@@ -140,6 +140,8 @@
 #include "JSTextCustom.cpp"
 #include "JSTouchCustom.cpp"
 #include "JSTouchListCustom.cpp"
+#include "JSTrackCustom.cpp"
+#include "JSTrackEventCustom.cpp"
 #include "JSTreeWalkerCustom.cpp"
 #include "JSUint16ArrayCustom.cpp"
 #include "JSUint32ArrayCustom.cpp"

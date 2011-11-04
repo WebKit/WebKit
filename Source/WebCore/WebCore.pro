@@ -1868,6 +1868,8 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
+    html/track/TrackBase.h \
+    html/track/TrackEvent.h \
     html/track/WebVTTParser.h \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \
@@ -3537,6 +3539,19 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
             bindings/js/JSJavaScriptCallFrameCustom.cpp \
             bindings/js/ScriptProfiler.cpp \
             bindings/js/JavaScriptCallFrame.cpp
+    }
+}
+
+
+contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
+    v8 {
+        SOURCES += \
+            bindings/v8/custom/V8TrackEventCustom.cpp
+    } else {
+        SOURCES += \
+            bindings/js/JSTrackCustom.cpp \
+            bindings/js/JSTrackCustom.h \
+            bindings/js/JSTrackEventCustom.cpp
     }
 }
 

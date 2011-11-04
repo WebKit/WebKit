@@ -512,6 +512,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTouch.h \
 	DerivedSources/WebCore/JSTouchList.cpp \
 	DerivedSources/WebCore/JSTouchList.h \
+	DerivedSources/WebCore/JSTrackEvent.cpp \
+	DerivedSources/WebCore/JSTrackEvent.h \
 	DerivedSources/WebCore/JSTreeWalker.cpp \
 	DerivedSources/WebCore/JSTreeWalker.h \
 	DerivedSources/WebCore/JSUIEvent.cpp \
@@ -850,6 +852,9 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTextCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchListCustom.cpp \
+	Source/WebCore/bindings/js/JSTrackCustom.cpp \
+	Source/WebCore/bindings/js/JSTrackCustom.h \
+	Source/WebCore/bindings/js/JSTrackEventCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	Source/WebCore/bindings/js/JSUint16ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSUint32ArrayCustom.cpp \
@@ -1968,6 +1973,10 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/TrackBase.cpp \
+	Source/WebCore/html/track/TrackBase.h \
+	Source/WebCore/html/track/TrackEvent.cpp \
+	Source/WebCore/html/track/TrackEvent.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
 	Source/WebCore/html/track/WebVTTParser.h \
 	Source/WebCore/html/track/WebVTTToken.h \

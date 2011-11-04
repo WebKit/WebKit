@@ -729,6 +729,7 @@ IDL_PATH := \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
+    $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/mediastream \

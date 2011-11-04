@@ -37,6 +37,11 @@
 #include "V8IDBKeyRange.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+#include "TrackBase.h"
+#include "V8TextTrack.h"
+#endif
+
 namespace WebCore {
 
 OptionsObject::OptionsObject()
@@ -223,5 +228,27 @@ bool OptionsObject::getWithUndefinedOrNullCheck(const String& key, String& value
     value = WebCore::isUndefinedOrNull(v8Value) ? String() : v8ValueToWebCoreString(v8Value);
     return true;
 }
+
+#if ENABLE(VIDEO_TRACK)
+bool OptionsObject::get(const String& key, RefPtr<TrackBase>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    TrackBase* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+
+        // FIXME: this will need to be changed so it can also return an AudioTrack or a VideoTrack once
+        // we add them.
+        v8::Handle<v8::Object> track = V8DOMWrapper::lookupDOMWrapper(V8TextTrack::GetTemplate(), wrapper);
+        if (!track.IsEmpty())
+            source = V8TextTrack::toNative(track);
+    }
+    value = source;
+    return true;
+}
+#endif
 
 } // namespace WebCore

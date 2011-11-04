@@ -36,6 +36,7 @@ VPATH = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
+    $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/notifications \
@@ -513,6 +514,7 @@ DOM_CLASSES = \
     Touch \
     TouchEvent \
     TouchList \
+    TrackEvent \
     TreeWalker \
     UIEvent \
     Uint16Array \

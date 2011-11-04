@@ -577,6 +577,7 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
     html/TextTrack.idl \
     html/TextTrackCue.idl \
     html/TextTrackCueList.idl \
+    html/track/TrackEvent.idl \
 }
 
 v8: wrapperFactoryArg = --wrapperFactoryV8

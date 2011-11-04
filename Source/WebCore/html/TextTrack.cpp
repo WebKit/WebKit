@@ -35,11 +35,13 @@
 #include "TextTrack.h"
 
 #include "TextTrackCueList.h"
+#include "TrackBase.h"
 
 namespace WebCore {
 
 TextTrack::TextTrack(TextTrackClient* client, const String& kind, const String& label, const String& language)
-    : m_kind(kind)
+    : TrackBase(TrackBase::TextTrack)
+    , m_kind(kind)
     , m_label(label)
     , m_language(language)
     , m_readyState(TextTrack::NONE)
@@ -137,7 +139,6 @@ void TextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
 {
     // FIXME(62890): Implement.
 }
-
 
 } // namespace WebCore
 

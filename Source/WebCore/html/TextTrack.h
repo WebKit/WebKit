@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "ExceptionCode.h"
+#include "TrackBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -51,7 +52,7 @@ public:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
 };
 
-class TextTrack : public RefCounted<TextTrack> {
+class TextTrack : public TrackBase {
 public:
     static PassRefPtr<TextTrack> create(TextTrackClient* client, const String& kind, const String& label, const String& language)
     {

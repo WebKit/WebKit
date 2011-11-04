@@ -441,6 +441,7 @@
 #include "JSTextTrack.cpp"
 #include "JSTextTrackCue.cpp"
 #include "JSTextTrackCueList.cpp"
+#include "JSTrackEvent.cpp"
 #endif
 #include "JSTimeRanges.cpp"
 #include "JSTouch.cpp"
