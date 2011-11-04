@@ -63,7 +63,7 @@ const char* ewk_network_proxy_uri_get(void)
         return 0;
     }
 
-    WTF::String proxy = soup_uri_to_string(uri, EINA_FALSE);
+    WTF::String proxy = soup_uri_to_string(uri, false);
     return eina_stringshare_add(proxy.utf8().data());
 #elif USE(CURL)
     EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);

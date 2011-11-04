@@ -311,7 +311,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     // FIXME: do proper check and only reset forms when on PolicyIgnore
     char* url = strdup(resourceRequest.url().string().utf8().data());
     Ewk_Frame_Resource_Request request = { url, 0 };
-    Eina_Bool ret = ewk_view_navigation_policy_decision(m_view, &request);
+    bool ret = ewk_view_navigation_policy_decision(m_view, &request);
     free(url);
 
     PolicyAction policy;

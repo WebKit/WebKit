@@ -30,7 +30,7 @@ Eina_Bool ewk_custom_protocol_handler_set(const char** protocols)
     return ewk_custom_protocol_handler_soup_set(protocols);
 #else
     EINA_LOG_CRIT("Not implemented");
-    return EINA_FALSE;
+    return false;
 #endif
 }
 
@@ -40,6 +40,6 @@ Eina_Bool ewk_custom_protocol_handler_all_unset()
     return ewk_custom_protocol_handler_soup_all_unset();
 #else
     EINA_LOG_CRIT("Not implemented");
-    return EINA_FALSE;
+    return false;
 #endif
 }

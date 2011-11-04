@@ -83,12 +83,12 @@ void ewk_context_menu_unref(Ewk_Context_Menu* menu)
 Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu* menu)
 {
 #if ENABLE(CONTEXT_MENUS)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu->controller, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu->controller, false);
     menu->controller->clearContextMenu();
-    return EINA_TRUE;
+    return true;
 #else
-    return EINA_FALSE;
+    return false;
 #endif
 }
 
@@ -120,17 +120,17 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
 Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
 #if ENABLE(CONTEXT_MENUS)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     WebCore::ContextMenuAction action = static_cast<WebCore::ContextMenuAction>(item->action);
     WebCore::ContextMenuItemType type = static_cast<WebCore::ContextMenuItemType>(item->type);
 
     // Don't care about title and submenu as they're not used after this point.
     WebCore::ContextMenuItem core(type, action, WTF::String());
     menu->controller->contextMenuItemSelected(&core);
-    return EINA_TRUE;
+    return true;
 #else
-    return EINA_FALSE;
+    return false;
 #endif
 }
 
@@ -150,9 +150,9 @@ Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(const Ewk_Context_Menu
 
 Eina_Bool ewk_context_menu_item_type_set(Ewk_Context_Menu_Item* item, Ewk_Context_Menu_Item_Type type)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     item->type = type;
-    return EINA_TRUE;
+    return true;
 }
 
 Ewk_Context_Menu_Action ewk_context_menu_item_action_get(const Ewk_Context_Menu_Item* item)
@@ -163,9 +163,9 @@ Ewk_Context_Menu_Action ewk_context_menu_item_action_get(const Ewk_Context_Menu_
 
 Eina_Bool ewk_context_menu_item_action_set(Ewk_Context_Menu_Item* item, Ewk_Context_Menu_Action action)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     item->action = action;
-    return EINA_TRUE;
+    return true;
 }
 
 const char* ewk_context_menu_item_title_get(const Ewk_Context_Menu_Item* item)
@@ -183,28 +183,28 @@ const char* ewk_context_menu_item_title_set(Ewk_Context_Menu_Item* item, const c
 
 Eina_Bool ewk_context_menu_item_checked_get(const Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     return item->checked;
 }
 
 Eina_Bool ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item* item, Eina_Bool checked)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     item->checked = checked;
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_context_menu_item_enabled_get(const Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     return item->enabled;
 }
 
 Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* item, Eina_Bool enabled)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
     item->enabled = enabled;
-    return EINA_TRUE;
+    return true;
 }
 
 
@@ -249,19 +249,19 @@ Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuCo
  * Frees the context menu.
  *
  * @param menu the view object
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
+ * @return @c true on success, or @c false on failure
  *
  * @note emits a signal "contextmenu,free"
  *
  * @see ewk_context_menu_unref
  * @see ewk_context_menu_destroy
  */
-Eina_Bool ewk_context_menu_free(Ewk_Context_Menu* menu)
+bool ewk_context_menu_free(Ewk_Context_Menu* menu)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, false);
     evas_object_smart_callback_call(menu->view, "contextmenu,free", menu);
     ewk_context_menu_unref(menu);
-    return EINA_TRUE;
+    return true;
 }
 
 /**

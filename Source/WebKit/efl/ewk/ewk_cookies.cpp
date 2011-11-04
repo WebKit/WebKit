@@ -46,7 +46,7 @@ Eina_Bool ewk_cookies_file_set(const char* filename)
         cookieJar = soup_cookie_jar_new();
 
     if (!cookieJar)
-        return EINA_FALSE;
+        return false;
 
     soup_cookie_jar_set_accept_policy(cookieJar, SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
 
@@ -58,9 +58,9 @@ Eina_Bool ewk_cookies_file_set(const char* filename)
     WebCore::setDefaultCookieJar(cookieJar);
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(cookieJar));
 
-    return EINA_TRUE;
+    return true;
 #else
-    return EINA_FALSE;
+    return false;
 #endif
 }
 

@@ -99,7 +99,7 @@ Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t
         return 0;
     }
 
-    dst = evas_object_image_data_get(image, EINA_TRUE);
+    dst = evas_object_image_data_get(image, true);
     memcpy(dst, src, h * stride);
     evas_object_image_data_set(image, dst);
 

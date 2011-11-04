@@ -57,7 +57,7 @@ static void _ewk_view_single_smart_add(Evas_Object* ewkSingle)
 static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* smartData)
 {
     Evas_Object* bs = evas_object_image_add(smartData->base.evas);
-    evas_object_image_alpha_set(bs, EINA_FALSE);
+    evas_object_image_alpha_set(bs, false);
     evas_object_image_smooth_scale_set(bs, smartData->zoom_weak_smooth_scale);
 
     return bs;
@@ -354,7 +354,7 @@ static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* sma
 
     evas_object_image_data_set(smartData->backing_store, pixels);
 
-    return EINA_TRUE;
+    return true;
 }
 
 static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* smartData)
@@ -372,7 +372,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     cairo_format_t format;
     cairo_t* cairo;
     size_t count;
-    Eina_Bool ret = EINA_TRUE;
+    Eina_Bool ret = true;
 
     if (smartData->animated_zoom.zoom.current < 0.00001) {
         Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
@@ -403,7 +403,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create surface from data %dx%d: %s",
             ow, oh, cairo_status_to_string(status));
-        ret = EINA_FALSE;
+        ret = false;
         goto error_cairo_surface;
     }
     cairo = cairo_create(surface);
@@ -411,21 +411,21 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create cairo from surface %dx%d: %s",
             ow, oh, cairo_status_to_string(status));
-        ret = EINA_FALSE;
+        ret = false;
         goto error_cairo;
     }
 
     ctxt = ewk_view_paint_context_new(smartData->_priv, cairo);
     if (!ctxt) {
         ERR("could not create paint context");
-        ret = EINA_FALSE;
+        ret = false;
         goto error_paint_context;
     }
 
     tiler = eina_tiler_new(ow, oh);
     if (!tiler) {
         ERR("could not create tiler %dx%d", ow, oh);
-        ret = EINA_FALSE;
+        ret = false;
         goto error_tiler;
     }
 
@@ -439,7 +439,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     itr = eina_tiler_iterator_new(tiler);
     if (!itr) {
         ERR("could not get iterator for tiler");
-        ret = EINA_FALSE;
+        ret = false;
         goto error_iterator;
     }
 
@@ -514,7 +514,7 @@ static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data* smart
     if (ch < smartData->view.h)
         h = ch * scale;
     evas_object_resize(clip, w, h);
-    return EINA_TRUE;
+    return true;
 }
 
 static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* smartData, Eina_Bool smooth_scale)
@@ -530,7 +530,7 @@ static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* smartData, 
 Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
 {
     if (!ewk_view_base_smart_set(api))
-        return EINA_FALSE;
+        return false;
 
     if (EINA_UNLIKELY(!_parent_sc.sc.add))
         ewk_view_base_smart_set(&_parent_sc);
@@ -545,7 +545,7 @@ Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
     api->zoom_weak_smooth_scale_set = _ewk_view_single_smart_zoom_weak_smooth_scale_set;
     api->bg_color_set = _ewk_view_single_smart_bg_color_set;
 
-    return EINA_TRUE;
+    return true;
 }
 
 static inline Evas_Smart* _ewk_view_single_smart_class_new(void)

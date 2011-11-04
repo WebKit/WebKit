@@ -45,8 +45,8 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
 
 static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVariant* result)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(result, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(data, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(result, false);
     char* string_value;
 
     switch (data->type) {
@@ -67,7 +67,7 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
         if (string_value)
             STRINGZ_TO_NPVARIANT(string_value, *result);
         else
-            return EINA_FALSE;
+            return false;
         break;
     case EWK_JS_VARIANT_BOOL:
         BOOLEAN_TO_NPVARIANT(data->value.b, *result);
@@ -76,10 +76,10 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
         OBJECT_TO_NPVARIANT(reinterpret_cast<NPObject*>(data->value.o), *result);
         break;
     default:
-        return EINA_FALSE;
+        return false;
     }
 
-    return EINA_TRUE;
+    return true;
 }
 
 // These methods are used by NPAI, thats the reason to use bool instead of Eina_Bool.
@@ -482,8 +482,8 @@ error:
 static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVariant* result)
 {
     int sz;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(result, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(data, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(result, false);
     switch (result->type) {
     case NPVariantType_Void:
         data->type = EWK_JS_VARIANT_VOID;
@@ -505,7 +505,7 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
         sz = NPVARIANT_TO_STRING(*result).UTF8Length;
         data->value.s = static_cast<char*>(malloc(sizeof(char) * (sz + 1)));
         if (!data->value.s)
-            return EINA_FALSE;
+            return false;
         memcpy(data->value.s, NPVARIANT_TO_STRING(*result).UTF8Characters, sz);
         data->value.s[sz] = '\0';
         data->type = EWK_JS_VARIANT_STRING;
@@ -519,10 +519,10 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
         data->value.o = ewk_js_npobject_to_object(NPVARIANT_TO_OBJECT(*result));
         break;
     default:
-        return EINA_FALSE;
+        return false;
     }
 
-    return EINA_TRUE;
+    return true;
 }
 
 Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
@@ -629,18 +629,18 @@ Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, in
 {
     NPVariant* np_args;
     NPVariant np_result;
-    bool fail = EINA_FALSE;
+    bool fail = false;
 
-    EINA_MAGIC_CHECK_OR_RETURN(jsObject, EINA_FALSE);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, false);
     if (ewk_js_object_type_get(jsObject) != EWK_JS_OBJECT_FUNCTION)
-        return EINA_FALSE;
+        return false;
     if (argCount)
-        EINA_SAFETY_ON_NULL_RETURN_VAL(args, EINA_FALSE);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(args, false);
 
     np_args = static_cast<NPVariant*>(malloc(sizeof(NPVariant)  *argCount));
     if (!np_args) {
         ERR("Could not allocate memory to method arguments");
-        return EINA_FALSE;
+        return false;
     }
 
     for (int i = 0; i < argCount; i++)
@@ -726,7 +726,7 @@ void ewk_js_object_free(Ewk_JS_Object* jsObject)
 
 Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, int argCount, Ewk_JS_Variant* result)
 {
-    return EINA_FALSE;
+    return false;
 }
 
 Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)

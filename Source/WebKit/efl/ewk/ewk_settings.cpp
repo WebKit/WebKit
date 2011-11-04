@@ -116,25 +116,25 @@ Eina_Bool ewk_settings_icon_database_path_set(const char* directory)
     if (directory) {
         if (WebCore::iconDatabase().isEnabled()) {
             ERR("IconDatabase is already open: %s", _ewk_icon_database_path);
-            return EINA_FALSE;
+            return false;
         }
 
         struct stat st;
 
         if (stat(directory, &st)) {
             ERR("could not stat(%s): %s", directory, strerror(errno));
-            return EINA_FALSE;
+            return false;
         }
 
         if (!S_ISDIR(st.st_mode)) {
             ERR("not a directory: %s", directory);
-            return EINA_FALSE;
+            return false;
         }
 
         if (access(directory, R_OK | W_OK)) {
             ERR("could not access directory '%s' for read and write: %s",
                 directory, strerror(errno));
-            return EINA_FALSE;
+            return false;
         }
 
         WebCore::iconDatabase().setEnabled(true);
@@ -151,7 +151,7 @@ Eina_Bool ewk_settings_icon_database_path_set(const char* directory)
             _ewk_icon_database_path = 0;
         }
     }
-    return EINA_TRUE;
+    return true;
 }
 
 const char* ewk_settings_icon_database_path_get(void)
@@ -167,12 +167,12 @@ const char* ewk_settings_icon_database_path_get(void)
 Eina_Bool ewk_settings_icon_database_clear(void)
 {
     if (!WebCore::iconDatabase().isEnabled())
-        return EINA_FALSE;
+        return false;
     if (!WebCore::iconDatabase().isOpen())
-        return EINA_FALSE;
+        return false;
 
     WebCore::iconDatabase().removeAllIcons();
-    return EINA_TRUE;
+    return true;
 }
 
 cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char* url)
@@ -254,14 +254,14 @@ const char* ewk_settings_default_user_agent_get(void)
 Eina_Bool ewk_settings_cache_directory_path_set(const char* path)
 {
     if (!path)
-        return EINA_FALSE;
+        return false;
 
     WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
     if (!_ewk_cache_directory_path)
         _ewk_cache_directory_path = eina_stringshare_add(path);
     else
         eina_stringshare_replace(&_ewk_cache_directory_path, path);
-    return EINA_TRUE;
+    return true;
 }
 
 const char* ewk_settings_cache_directory_path_get()

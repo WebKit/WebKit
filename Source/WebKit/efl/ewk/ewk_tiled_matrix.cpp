@@ -295,16 +295,16 @@ end:
  * @param row the row number.
  * @param zoom the exact zoom to query.
  *
- * @return @c EINA_TRUE if found, @c EINA_FALSE otherwise.
+ * @return @c true if found, @c false otherwise.
  *
  * @see ewk_tile_matrix_tile_exact_get()
  */
 Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix* tileMatrix, unsigned long column, unsigned long row, float zoom)
 {
     if (!eina_matrixsparse_data_idx_get(tileMatrix->matrix, row, column))
-        return EINA_FALSE;
+        return false;
 
-    return EINA_TRUE;
+    return true;
 }
 
 /**
@@ -349,7 +349,7 @@ Ewk_Tile* ewk_tile_matrix_tile_new(Ewk_Tile_Matrix* tileMatrix, Evas* canvas, un
 
     cairo_translate(tile->cairo, -tile->x, -tile->y);
 
-    tile->stats.full_update = EINA_TRUE;
+    tile->stats.full_update = true;
     tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
 
 #ifdef DEBUG_MEM_LEAKS
@@ -375,15 +375,15 @@ Ewk_Tile* ewk_tile_matrix_tile_new(Ewk_Tile_Matrix* tileMatrix, Evas* canvas, un
  * @param t the tile instance to return, must @b not be @c 0.
  * @param last_used time in which tile.widthas last used.
  *
- * @return #EINA_TRUE on success or #EINA_FALSE on failure.
+ * @return #true on success or #false on failure.
  */
 Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile, double lastUsed)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tile, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tile, false);
 
     if (tile->visible)
-        return EINA_TRUE;
+        return true;
 
     tile->stats.last_used = lastUsed;
     return ewk_tile_unused_cache_tile_put(tileMatrix->tilieUnusedCache, tile, _ewk_tile_matrix_tile_free, tileMatrix);
@@ -392,14 +392,14 @@ Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile, 
 Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long col, unsigned long row, const Eina_Rectangle* update)
 {
     Eina_Rectangle newUpdate;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(update, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(update, false);
 
     memcpy(&newUpdate, update, sizeof(newUpdate));
-    // check update is valid, otherwise return EINA_FALSE
+    // check update is valid, otherwise return false
     if (update->x < 0 || update->y < 0 || update->w <= 0 || update->h <= 0) {
         ERR("invalid update region.");
-        return EINA_FALSE;
+        return false;
     }
 
     if (update->x + update->w - 1 >= tileMatrix->tile.width)
@@ -409,37 +409,37 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long
 
     Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tileMatrix->matrix, row, col));
     if (!tile)
-        return EINA_TRUE;
+        return true;
 
     if (!tile->updates && !tile->stats.full_update)
         tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
     ewk_tile_update_area(tile, &newUpdate);
 
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix* tileMatrix, unsigned long column, unsigned long row)
 {
     Eina_Matrixsparse_Cell* cell;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
 
     if (!eina_matrixsparse_cell_idx_get(tileMatrix->matrix, row, column, &cell))
-        return EINA_FALSE;
+        return false;
 
     if (!cell)
-        return EINA_TRUE;
+        return true;
 
     Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
     if (!tile) {
         CRITICAL("matrix cell with no tile!");
-        return EINA_TRUE;
+        return true;
     }
 
     if (!tile->updates && !tile->stats.full_update)
         tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
     ewk_tile_update_full(tile);
 
-    return EINA_TRUE;
+    return true;
 }
 
 void ewk_tile_matrix_tile_updates_clear(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile)
@@ -459,7 +459,7 @@ static Eina_Bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix* tileMatrix, cons
     if (area->w <= 0 || area->h <= 0) {
         WRN("invalid area region: %d,%d+%dx%d.",
             area->x, area->y, area->w, area->h);
-        return EINA_FALSE;
+        return false;
     }
 
     x = area->x;
@@ -494,19 +494,19 @@ Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix* tileMatrix, const Eina_Rectang
 {
     const Eina_Tile_Grid_Info* info;
     Eina_Tile_Grid_Slicer slicer;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(update, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(update, false);
 
     if (update->w < 1 || update->h < 1) {
         DBG("Why we get updates with empty areas? %d,%d+%dx%d at zoom %f",
             update->x, update->y, update->w, update->h, zoom);
-        return EINA_TRUE;
+        return true;
     }
 
     if (!_ewk_tile_matrix_slicer_setup(tileMatrix, update, zoom, &slicer)) {
         ERR("Could not setup slicer for update %d,%d+%dx%d at zoom %f",
             update->x, update->y, update->w, update->h, zoom);
-        return EINA_FALSE;
+        return false;
     }
 
     while (eina_tile_grid_slicer_next(&slicer, &info)) {
@@ -527,7 +527,7 @@ Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix* tileMatrix, const Eina_Rectang
     }
 
 
-    return EINA_TRUE;
+    return true;
 }
 
 void ewk_tile_matrix_updates_process(Ewk_Tile_Matrix* tileMatrix)
@@ -562,7 +562,7 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
 {
     Eina_Iterator* iterator = eina_matrixsparse_iterator_complete_new(tileMatrix->matrix);
     Eina_Matrixsparse_Cell* cell;
-    Eina_Bool last_empty = EINA_FALSE;
+    Eina_Bool last_empty = false;
 
 #ifdef DEBUG_MEM_LEAKS
     printf("Ewk_Tile Matrix: tiles[+%" PRIu64 ",-%" PRIu64 ":%" PRIu64 "] "
@@ -582,13 +582,13 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix* tileMatrix)
         Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
         if (!tile) {
             if (!last_empty) {
-                last_empty = EINA_TRUE;
+                last_empty = true;
                 printf("Empty:");
             }
             printf(" [%lu,%lu]", column, row);
         } else {
             if (last_empty) {
-                last_empty = EINA_FALSE;
+                last_empty = false;
                 printf("\n");
             }
             printf("%3lu,%3lu %10p:", column, row, tile);

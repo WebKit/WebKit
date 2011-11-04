@@ -88,7 +88,7 @@ Evas_Object* kitFrame(const WebCore::Frame* coreFrame);
 } // namespace EWKPrivate
 
 void ewk_view_ready(Evas_Object* o);
-void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active);
+void ewk_view_input_method_state_set(Evas_Object* o, bool active);
 void ewk_view_title_set(Evas_Object* o, const char* title);
 void ewk_view_uri_changed(Evas_Object* o);
 void ewk_view_load_document_finished(Evas_Object* o, Evas_Object* frame);
@@ -102,39 +102,39 @@ void ewk_view_load_error(Evas_Object* o, const Ewk_Frame_Load_Error* error);
 void ewk_view_load_progress_changed(Evas_Object* o);
 void ewk_view_load_show(Evas_Object* o);
 void ewk_view_restore_state(Evas_Object* o, Evas_Object* frame);
-Evas_Object* ewk_view_window_create(Evas_Object* o, Eina_Bool javascript, const WebCore::WindowFeatures* coreFeatures);
+Evas_Object* ewk_view_window_create(Evas_Object* o, bool javascript, const WebCore::WindowFeatures* coreFeatures);
 void ewk_view_window_close(Evas_Object* o);
 
 void ewk_view_mouse_link_hover_in(Evas_Object* o, void* data);
 void ewk_view_mouse_link_hover_out(Evas_Object* o);
 
-void ewk_view_toolbars_visible_set(Evas_Object* o, Eina_Bool visible);
-void ewk_view_toolbars_visible_get(Evas_Object* o, Eina_Bool* visible);
+void ewk_view_toolbars_visible_set(Evas_Object* o, bool visible);
+void ewk_view_toolbars_visible_get(Evas_Object* o, bool* visible);
 
-void ewk_view_statusbar_visible_set(Evas_Object* o, Eina_Bool visible);
-void ewk_view_statusbar_visible_get(Evas_Object* o, Eina_Bool* visible);
+void ewk_view_statusbar_visible_set(Evas_Object* o, bool visible);
+void ewk_view_statusbar_visible_get(Evas_Object* o, bool* visible);
 void ewk_view_statusbar_text_set(Evas_Object* o, const char* text);
 
-void ewk_view_scrollbars_visible_set(Evas_Object* o, Eina_Bool visible);
-void ewk_view_scrollbars_visible_get(Evas_Object* o, Eina_Bool* visible);
+void ewk_view_scrollbars_visible_set(Evas_Object* o, bool visible);
+void ewk_view_scrollbars_visible_get(Evas_Object* o, bool* visible);
 
-void ewk_view_menubar_visible_set(Evas_Object* o, Eina_Bool visible);
-void ewk_view_menubar_visible_get(Evas_Object* o, Eina_Bool* visible);
+void ewk_view_menubar_visible_set(Evas_Object* o, bool visible);
+void ewk_view_menubar_visible_get(Evas_Object* o, bool* visible);
 
 void ewk_view_tooltip_text_set(Evas_Object* o, const char* text);
 
 void ewk_view_add_console_message(Evas_Object* o, const char* message, unsigned int lineNumber, const char* sourceID);
 
 void ewk_view_run_javascript_alert(Evas_Object* o, Evas_Object* frame, const char* message);
-Eina_Bool ewk_view_run_javascript_confirm(Evas_Object* o, Evas_Object* frame, const char* message);
-Eina_Bool ewk_view_run_javascript_prompt(Evas_Object* o, Evas_Object* frame, const char* message, const char* defaultValue, char** value);
-Eina_Bool ewk_view_should_interrupt_javascript(Evas_Object* o);
+bool ewk_view_run_javascript_confirm(Evas_Object* o, Evas_Object* frame, const char* message);
+bool ewk_view_run_javascript_prompt(Evas_Object* o, Evas_Object* frame, const char* message, const char* defaultValue, char** value);
+bool ewk_view_should_interrupt_javascript(Evas_Object* o);
 uint64_t ewk_view_exceeded_database_quota(Evas_Object* o, Evas_Object* frame, const char* databaseName, uint64_t current_size, uint64_t expected_size);
 
-Eina_Bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allowsMultipleFiles, const Vector<String>& acceptMIMETypes, Eina_List** selectedFilenames);
+bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allowsMultipleFiles, const Vector<String>& acceptMIMETypes, Eina_List** selectedFilenames);
 
 void ewk_view_repaint(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
-void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, Eina_Bool main_frame);
+void ewk_view_scroll(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord sx, Evas_Coord sy, Evas_Coord sw, Evas_Coord sh, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch, bool main_frame);
 WebCore::Page* ewk_view_core_page_get(const Evas_Object* o);
 
 WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* o, Evas_Object* frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer);
@@ -160,7 +160,7 @@ int ewk_util_dpi_get();
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
-Eina_Bool ewk_view_need_touch_events_get(const Evas_Object*);
+bool ewk_view_need_touch_events_get(const Evas_Object*);
 #endif
 
 Ewk_History_Item *ewk_history_item_new_from_core(WebCore::HistoryItem *core);
@@ -169,7 +169,7 @@ void ewk_history_free(Ewk_History* history);
 
 #if ENABLE(CONTEXT_MENUS)
 Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuController* controller);
-Eina_Bool ewk_context_menu_free(Ewk_Context_Menu* o);
+bool ewk_context_menu_free(Ewk_Context_Menu* o);
 void ewk_context_menu_item_append(Ewk_Context_Menu* o, WebCore::ContextMenuItem& core);
 Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* o);
 void ewk_context_menu_show(Ewk_Context_Menu* o);
@@ -185,8 +185,8 @@ void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data* priv);
 Ewk_Window_Features* ewk_window_features_new_from_core(const WebCore::WindowFeatures* core);
 
 Evas_Object* ewk_frame_add(Evas* e);
-Eina_Bool ewk_frame_init(Evas_Object* o, Evas_Object* view, WebCore::Frame* frame);
-Eina_Bool ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer);
+bool ewk_frame_init(Evas_Object* o, Evas_Object* view, WebCore::Frame* frame);
+bool ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer);
 void ewk_frame_view_set(Evas_Object* o, Evas_Object* newParent);
 
 void ewk_frame_core_gone(Evas_Object* o);
@@ -196,8 +196,8 @@ void ewk_frame_load_provisional(Evas_Object* o);
 void ewk_frame_load_firstlayout_finished(Evas_Object* o);
 void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object* o);
 void ewk_frame_load_document_finished(Evas_Object* o);
-void ewk_frame_load_finished(Evas_Object* o, const char* error_domain, int error_code, Eina_Bool is_cancellation, const char* error_description, const char* failing_url);
-void ewk_frame_load_error(Evas_Object* o, const char* error_domain, int error_code, Eina_Bool is_cancellation, const char* error_description, const char* failing_url);
+void ewk_frame_load_finished(Evas_Object* o, const char* error_domain, int error_code, bool is_cancellation, const char* error_description, const char* failing_url);
+void ewk_frame_load_error(Evas_Object* o, const char* error_domain, int error_code, bool is_cancellation, const char* error_description, const char* failing_url);
 void ewk_frame_load_progress_changed(Evas_Object* o);
 
 void ewk_frame_request_will_send(Evas_Object* o, Ewk_Frame_Resource_Request* request);
@@ -210,12 +210,12 @@ void ewk_frame_contents_size_changed(Evas_Object* o, Evas_Coord w, Evas_Coord h)
 void ewk_frame_title_set(Evas_Object* o, const char* title);
 
 void ewk_frame_view_create_for_view(Evas_Object* o, Evas_Object* view);
-Eina_Bool ewk_frame_uri_changed(Evas_Object* o);
+bool ewk_frame_uri_changed(Evas_Object* o);
 void ewk_frame_force_layout(Evas_Object* o);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 
-Eina_Bool ewk_view_navigation_policy_decision(Evas_Object* o, Ewk_Frame_Resource_Request* request);
+bool ewk_view_navigation_policy_decision(Evas_Object* o, Ewk_Frame_Resource_Request* request);
 
 void ewk_view_contents_size_changed(Evas_Object* o, Evas_Coord w, Evas_Coord h);
 

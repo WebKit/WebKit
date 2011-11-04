@@ -171,7 +171,7 @@ void ChromeClientEfl::setToolbarsVisible(bool visible)
 
 bool ChromeClientEfl::toolbarsVisible()
 {
-    Eina_Bool visible;
+    bool visible;
 
     ewk_view_toolbars_visible_get(m_view, &visible);
     return visible;
@@ -184,7 +184,7 @@ void ChromeClientEfl::setStatusbarVisible(bool visible)
 
 bool ChromeClientEfl::statusbarVisible()
 {
-    Eina_Bool visible;
+    bool visible;
 
     ewk_view_statusbar_visible_get(m_view, &visible);
     return visible;
@@ -197,7 +197,7 @@ void ChromeClientEfl::setScrollbarsVisible(bool visible)
 
 bool ChromeClientEfl::scrollbarsVisible()
 {
-    Eina_Bool visible;
+    bool visible;
 
     ewk_view_scrollbars_visible_get(m_view, &visible);
     return visible;
@@ -210,7 +210,7 @@ void ChromeClientEfl::setMenubarVisible(bool visible)
 
 bool ChromeClientEfl::menubarVisible()
 {
-    Eina_Bool visible;
+    bool visible;
 
     ewk_view_menubar_visible_get(m_view, &visible);
     return visible;

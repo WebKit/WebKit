@@ -176,7 +176,7 @@ Eina_Bool _ewk_init_body(void)
         // Exit now - otherwise you may have some crash later
         int errnowas = errno;
         CRITICAL("Can't access HOME dir (or /tmp) - no place to save databases: %s", strerror(errnowas));
-        return EINA_FALSE;
+        return false;
     }
 
     WTF::String webkitDirectory = home + "/.webkit";
@@ -197,5 +197,5 @@ Eina_Bool _ewk_init_body(void)
     }
 #endif
 
-    return EINA_TRUE;
+    return true;
 }

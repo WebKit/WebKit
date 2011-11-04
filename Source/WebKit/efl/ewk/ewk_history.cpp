@@ -92,7 +92,7 @@ static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVe
 
 Eina_Bool ewk_history_clear(Ewk_History* history)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, false);
 
     WebCore::Page* page = core->page();
     if (page && page->groupPtr())
@@ -102,41 +102,41 @@ Eina_Bool ewk_history_clear(Ewk_History* history)
     ewk_history_limit_set(history, 0);
     ewk_history_limit_set(history, limit);
 
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_history_forward(Ewk_History* history)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, false);
     if (core->forwardListCount() < 1)
-        return EINA_FALSE;
+        return false;
     core->goForward();
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_history_back(Ewk_History* history)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, false);
     if (core->backListCount() < 1)
-        return EINA_FALSE;
+        return false;
     core->goBack();
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_history_history_item_add(Ewk_History* history, const Ewk_History_Item* item)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, false);
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, false);
     history_core->addItem(item_core);
-    return EINA_TRUE;
+    return true;
 }
 
 Eina_Bool ewk_history_history_item_set(Ewk_History* history, const Ewk_History_Item* item)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, false);
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, false);
     history_core->goToItem(item_core);
-    return EINA_TRUE;
+    return true;
 }
 
 Ewk_History_Item* ewk_history_history_item_back_get(const Ewk_History* history)
@@ -168,8 +168,8 @@ Ewk_History_Item* ewk_history_history_item_nth_get(const Ewk_History* history, i
 
 Eina_Bool ewk_history_history_item_contains(const Ewk_History* history, const Ewk_History_Item* item)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, false);
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, item_core, false);
     return history_core->containsItem(item_core);
 }
 
@@ -227,9 +227,9 @@ int ewk_history_limit_get(Ewk_History* history)
 
 Eina_Bool ewk_history_limit_set(const Ewk_History* history, int limit)
 {
-    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
+    EWK_HISTORY_CORE_GET_OR_RETURN(history, core, false);
     core->setCapacity(limit);
-    return EINA_TRUE;
+    return true;
 }
 
 Ewk_History_Item* ewk_history_item_new_from_core(WebCore::HistoryItem* core)
@@ -365,7 +365,7 @@ Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas
 
 Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)
 {
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, EINA_FALSE);
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, false);
     return core->isInPageCache();
 }
 
@@ -377,7 +377,7 @@ int ewk_history_item_visit_count(const Ewk_History_Item* item)
 
 Eina_Bool ewk_history_item_visit_last_failed(const Ewk_History_Item* item)
 {
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, EINA_TRUE);
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, true);
     return core->lastVisitWasFailure();
 }
 

@@ -1,3 +1,35 @@
+2011-11-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Use standard booleand data type.
+        https://bugs.webkit.org/show_bug.cgi?id=71433
+
+        This is a fourth step in order to be more compliant with WebKit coding style.
+        Use standard boolean data type instead of efl boolean data type. It makes efl port
+        is more close to webkit coding style.
+
+        Reviewed by Zoltan Herczeg.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * ewk/ewk_contextmenu.cpp:
+        * ewk/ewk_cookies.cpp:
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_history.cpp:
+        * ewk/ewk_js.cpp:
+        * ewk/ewk_main.cpp:
+        * ewk/ewk_network.cpp:
+        * ewk/ewk_private.h:
+        * ewk/ewk_protocol_handler.cpp:
+        * ewk/ewk_protocol_handler_soup.cpp:
+        * ewk/ewk_settings.cpp:
+        * ewk/ewk_tiled_backing_store.cpp:
+        * ewk/ewk_tiled_matrix.cpp:
+        * ewk/ewk_tiled_model.cpp:
+        * ewk/ewk_util.cpp:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view_single.cpp:
+        * ewk/ewk_view_tiled.cpp:
+
 2011-11-03  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Added ewk_tile_memory_size_get function

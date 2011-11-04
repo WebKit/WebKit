@@ -295,7 +295,7 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
 
     evas_object_image_size_set(tile->image, tile->width, tile->height);
     evas_object_image_colorspace_set(tile->image, tile->cspace);
-    tile->pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, EINA_TRUE));
+    tile->pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, true));
     tile->surface = cairo_image_surface_create_for_data(tile->pixels, format, width, height, stride);
     status = cairo_surface_status(tile->surface);
     if (status != CAIRO_STATUS_SUCCESS) {
@@ -369,7 +369,7 @@ void ewk_tile_hide(Ewk_Tile* tile)
 }
 
 /**
- * Returns EINA_TRUE if the tile is visible, EINA_FALSE otherwise.
+ * Returns true if the tile is visible, false otherwise.
  */
 Eina_Bool ewk_tile_visible_get(Ewk_Tile* tile)
 {
@@ -385,7 +385,7 @@ void ewk_tile_update_full(Ewk_Tile* tile)
     tile->stats.misses++;
 
     if (!tile->stats.full_update) {
-        tile->stats.full_update = EINA_TRUE;
+        tile->stats.full_update = true;
         if (tile->updates) {
             eina_tiler_free(tile->updates);
             tile->updates = 0;
@@ -405,7 +405,7 @@ void ewk_tile_update_area(Ewk_Tile* tile, const Eina_Rectangle* rect)
         return;
 
     if (!rect->x && !rect->y && rect->w == tile->width && rect->h == tile->height) {
-        tile->stats.full_update = EINA_TRUE;
+        tile->stats.full_update = true;
         if (tile->updates) {
             eina_tiler_free(tile->updates);
             tile->updates = 0;
@@ -549,7 +549,7 @@ void ewk_tile_unused_cache_lock_area(Ewk_Tile_Unused_Cache* tileUnusedCache, Eva
 {
     EINA_SAFETY_ON_NULL_RETURN(tileUnusedCache);
 
-    tileUnusedCache->locked.locked = EINA_TRUE;
+    tileUnusedCache->locked.locked = true;
     tileUnusedCache->locked.x = x;
     tileUnusedCache->locked.y = y;
     tileUnusedCache->locked.width = width;
@@ -561,7 +561,7 @@ void ewk_tile_unused_cache_unlock_area(Ewk_Tile_Unused_Cache* tileUnusedCache)
 {
     EINA_SAFETY_ON_NULL_RETURN(tileUnusedCache);
 
-    tileUnusedCache->locked.locked = EINA_FALSE;
+    tileUnusedCache->locked.locked = false;
 }
 
 /**
@@ -761,7 +761,7 @@ void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache* tileUnusedCache)
  * @param tileUnusedCache cache of unused tiles
  * @param tile the tile to be removed from Ewk_Tile_Unused_Cache.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return #true on success, #false otherwise.
  */
 Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile)
 {
@@ -778,7 +778,7 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
     }
     if (!foundEntry) {
         ERR("tile %p not found in cache %p", tile, tileUnusedCache);
-        return EINA_FALSE;
+        return false;
     }
 
     tileUnusedCache->entries.count--;
@@ -786,7 +786,7 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
     tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, foundEntry);
     free(item);
 
-    return EINA_TRUE;
+    return true;
 }
 
 /**
@@ -806,8 +806,8 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache,
  * @param tile_free_cb function used to free tiles.
  * @param data context to give back to @a tile_free_cb as first argument.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise. If @c tile->visible
- *         is not #EINA_FALSE, then it will return #EINA_FALSE.
+ * @return #true on success, #false otherwise. If @c tile->visible
+ *         is not #false, then it will return #false.
  *
  * @see ewk_tile_unused_cache_auto_flush()
  */
@@ -817,17 +817,17 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
 
     if (tile->visible) {
         ERR("tile=%p is not unused (visible=%d)", tile, tile->visible);
-        return EINA_FALSE;
+        return false;
     }
 
     unusedCacheEntry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(malloc(sizeof(Ewk_Tile_Unused_Cache_Entry)));
     if (!unusedCacheEntry)
-        return EINA_FALSE;
+        return false;
 
     tileUnusedCache->entries.list = eina_list_append(tileUnusedCache->entries.list, unusedCacheEntry);
     if (eina_error_get()) {
         ERR("List allocation failed");
-        return EINA_FALSE;
+        return false;
     }
 
     unusedCacheEntry->tile = tile;
@@ -838,7 +838,7 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
     tileUnusedCache->entries.count++;
     tileUnusedCache->memory.used += ewk_tile_memory_size_get(tile);
 
-    return EINA_TRUE;
+    return true;
 }
 
 void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache* tileUnusedCache)
