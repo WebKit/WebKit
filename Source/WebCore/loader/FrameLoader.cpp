@@ -3268,7 +3268,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     }
 
     // Sandboxed frames cannot open new auxiliary browsing contexts.
-    if (isDocumentSandboxed(openerFrame, SandboxNavigation))
+    if (isDocumentSandboxed(openerFrame, SandboxPopups))
         return 0;
 
     // FIXME: Setting the referrer should be the caller's responsibility.
@@ -3286,6 +3286,9 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
         return 0;
 
     Frame* frame = page->mainFrame();
+
+    frame->loader()->forceSandboxFlags(openerFrame->loader()->sandboxFlags());
+
     if (request.frameName() != "_blank")
         frame->tree()->setName(request.frameName());
 

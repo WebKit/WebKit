@@ -1,3 +1,21 @@
+2011-11-04  Adam Barth  <abarth@webkit.org>
+
+        Implement allow-popups for iframe@sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=66505
+
+        Reviewed by Darin Adler.
+
+        Enable allow-popups sandbox bit.  My previous patch attempted to
+        forward the sandbox bits during setOpener, but that interacted poorly
+        with out (internal) sandboxing of the initial document.  This patch
+        forwards the bits during createWindow, which is more targeted to the
+        case when a sandbox frame actually creates a new window.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2011-11-04  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Remove initMediaStreamEvent method
