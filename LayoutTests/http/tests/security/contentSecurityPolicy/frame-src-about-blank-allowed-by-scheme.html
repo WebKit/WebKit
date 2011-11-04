@@ -1,0 +1,7 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<meta http-equiv="X-WebKit-CSP" content="frame-src about:">
+This iframe should not be blocked by Content-Security-Policy:
+<iframe src="about:blank"></iframe>
