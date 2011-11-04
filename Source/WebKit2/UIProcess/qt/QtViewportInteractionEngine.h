@@ -66,6 +66,8 @@ public:
     void reset();
     void setConstraints(const Constraints&);
 
+    void pagePositionRequest(const QPoint& pos);
+
     bool panAnimationActive() const;
     void panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis);
     void panGestureRequestUpdate(const QPointF& touchPoint, qint64 eventTimestampMillis);
@@ -93,8 +95,8 @@ private:
     qreal innerBoundedCSSScale(qreal);
     qreal outerBoundedCSSScale(qreal);
 
-    QRectF computePosRangeForItemScale(qreal itemScale) const;
-    void animateContentIntoBoundariesIfNeeded();
+    QRectF computePosRangeForItemAtScale(qreal itemScale) const;
+    void ensureContentWithinViewportBoundary();
 
     void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);
 

@@ -37,6 +37,7 @@ public:
     void init(QTouchWebView* viewport);
 
     void loadDidCommit();
+    void scrollPositionRequested(const QPoint& pos);
     void _q_viewportUpdated();
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void updateViewportSize();

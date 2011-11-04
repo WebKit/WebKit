@@ -165,7 +165,7 @@ bool QtViewportInteractionEngine::event(QEvent* event)
         QScrollPrepareEvent* prepareEvent = static_cast<QScrollPrepareEvent*>(event);
         const QRectF viewportRect = m_viewport->boundingRect();
         const QRectF contentRect = m_viewport->mapRectFromItem(m_content, m_content->boundingRect());
-        const QRectF posRange = computePosRangeForItemScale(m_content->scale());
+        const QRectF posRange = computePosRangeForItemAtScale(m_content->scale());
         prepareEvent->setContentPosRange(posRange);
         prepareEvent->setViewportSize(viewportRect.size());
 
@@ -195,7 +195,29 @@ bool QtViewportInteractionEngine::event(QEvent* event)
     return QObject::event(event);
 }
 
-QRectF QtViewportInteractionEngine::computePosRangeForItemScale(qreal itemScale) const
+static inline QPointF boundPosition(const QPointF minPosition, const QPointF& position, const QPointF& maxPosition)
+{
+    return QPointF(qBound(minPosition.x(), position.x(), maxPosition.x()),
+                   qBound(minPosition.y(), position.y(), maxPosition.y()));
+}
+
+void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
+{
+    // FIXME: Assert when we are suspending properly.
+    if (panAnimationActive() || pinchAnimationActive() || m_pinchViewportUpdateDeferrer)
+        return; // Ignore.
+
+    qreal endItemScale = m_content->scale(); // Stay at same scale.
+
+    QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
+    QPointF endPosition = boundPosition(endPosRange.topLeft(), pagePosition * endItemScale, endPosRange.bottomRight());
+
+    QRectF endVisibleContentRect(endPosition / endItemScale, m_viewport->boundingRect().size() / endItemScale);
+
+    updateVisibleRect(endVisibleContentRect);
+}
+
+QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScale) const
 {
     const QSizeF contentItemSize = m_content->boundingRect().size() * itemScale;
     const QSizeF viewportItemSize = m_viewport->boundingRect().size();
@@ -206,7 +228,7 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemScale(qreal itemScale)
     return QRectF(QPointF(0, 0), QSizeF(horizontalRange, verticalRange));
 }
 
-void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
+void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
 {
     if (panAnimationActive() || pinchAnimationActive())
         return;
@@ -222,20 +244,13 @@ void QtViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
     const QRectF viewportRect = m_viewport->boundingRect();
     const QPointF viewportHotspot = viewportRect.center();
 
-    QPointF endPosition = m_content->mapFromItem(m_viewport, viewportHotspot) - viewportHotspot / endItemScale;
+    QPointF endPosition = m_content->mapFromItem(m_viewport, viewportHotspot) * endItemScale - viewportHotspot;
 
-    QRectF endPosRange = computePosRangeForItemScale(endItemScale);
-    // Map from valid bounds in viewport coords to end contents coords.
-    endPosRange.setSize(endPosRange.size() / endItemScale);
-
-    QPointF minValue = endPosRange.topLeft();
-    QPointF maxValue = endPosRange.bottomRight();
-
-    endPosition.setX(qBound(minValue.x(), endPosition.x(), maxValue.x()));
-    endPosition.setY(qBound(minValue.y(), endPosition.y(), maxValue.y()));
+    QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
+    endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
 
     QRectF startVisibleContentRect = m_content->mapRectFromItem(m_viewport, viewportRect);
-    QRectF endVisibleContentRect(endPosition, viewportRect.size() / endItemScale);
+    QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
 
     if (endVisibleContentRect == startVisibleContentRect)
         return;
@@ -284,7 +299,7 @@ void QtViewportInteractionEngine::setConstraints(const Constraints& constraints)
     ViewportUpdateGuard guard(this);
     m_constraints = constraints;
 
-    animateContentIntoBoundariesIfNeeded();
+    ensureContentWithinViewportBoundary();
 }
 
 bool QtViewportInteractionEngine::panAnimationActive() const
@@ -370,7 +385,7 @@ void QtViewportInteractionEngine::pinchGestureEnded()
 
     m_pinchViewportUpdateDeferrer.clear();
     // FIXME: resume the engine after the animation.
-    animateContentIntoBoundariesIfNeeded();
+    ensureContentWithinViewportBoundary();
 }
 
 void QtViewportInteractionEngine::contentViewportChanged()
@@ -379,8 +394,7 @@ void QtViewportInteractionEngine::contentViewportChanged()
         return;
 
     ViewportUpdateGuard guard(this);
-
-    animateContentIntoBoundariesIfNeeded();
+    ensureContentWithinViewportBoundary();
 }
 
 void QtViewportInteractionEngine::scaleContent(const QPointF& centerInContentCoordinates, qreal cssScale)

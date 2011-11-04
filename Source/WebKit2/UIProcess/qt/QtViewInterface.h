@@ -58,6 +58,7 @@ public:
 
     virtual QSize drawingAreaSize() = 0;
     virtual void contentSizeChanged(const QSize&) = 0;
+    virtual void scrollPositionRequested(const QPoint& pos) = 0;
 
     virtual bool isActive() = 0;
     virtual bool hasFocus() = 0;

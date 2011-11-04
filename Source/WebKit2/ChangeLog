@@ -1,3 +1,36 @@
+2011-11-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Support programmatic scrolling with the QTouchWebView
+
+        Reviewed by Simon Hausmann.
+
+        As more code can be shared between the programmatic scrolling and the
+        method for ensuring that the contents are within valid bounds, this
+        patch includes a bit of refactoring as well.
+
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        (QDesktopWebViewPrivate::scrollPositionRequested):
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::scrollPositionRequested):
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/qt/QtTouchViewInterface.cpp:
+        (WebKit::QtTouchViewInterface::scrollPositionRequested):
+        * UIProcess/qt/QtTouchViewInterface.h:
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::boundPosition):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemAtScale):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::setConstraints):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::contentViewportChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::pageDidRequestScroll):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getPropertyNames

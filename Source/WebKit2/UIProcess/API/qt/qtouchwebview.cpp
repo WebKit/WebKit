@@ -46,6 +46,11 @@ void QTouchWebViewPrivate::loadDidCommit()
     interactionEngine->reset();
 }
 
+void QTouchWebViewPrivate::scrollPositionRequested(const QPoint& pos)
+{
+    interactionEngine->pagePositionRequest(pos);
+}
+
 void QTouchWebViewPrivate::_q_viewportUpdated()
 {
     Q_Q(QTouchWebView);

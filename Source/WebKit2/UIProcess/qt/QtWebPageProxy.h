@@ -186,7 +186,6 @@ public Q_SLOTS:
     void didReceiveDownloadResponse(QWebDownloadItem*);
 
 public:
-    Q_SIGNAL void scrollRequested(int dx, int dy);
     Q_SIGNAL void zoomableAreaFound(const QRect&);
     Q_SIGNAL void updateNavigationState();
     Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);

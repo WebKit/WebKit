@@ -251,9 +251,9 @@ void QtWebPageProxy::exitAcceleratedCompositingMode()
     // FIXME: Implement.
 }
 
-void QtWebPageProxy::pageDidRequestScroll(const IntPoint& point)
+void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
 {
-    emit scrollRequested(point.x(), point.y());
+    m_viewInterface->scrollPositionRequested(pos);
 }
 
 void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)

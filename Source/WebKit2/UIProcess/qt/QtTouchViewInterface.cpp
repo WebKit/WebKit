@@ -65,6 +65,11 @@ void QtTouchViewInterface::contentSizeChanged(const QSize& newSize)
     m_pageView->setHeight(newSize.height());
 }
 
+void QtTouchViewInterface::scrollPositionRequested(const QPoint& pos)
+{
+    m_viewportView->d_func()->scrollPositionRequested(pos);
+}
+
 bool QtTouchViewInterface::isActive()
 {
     // FIXME: The scene graph does not have the concept of being active or not when this was written.
