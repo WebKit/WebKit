@@ -44,7 +44,7 @@ for(ever) {
 BUILD_SUBDIR = $$join(BUILD_SUBDIR, $${QMAKE_DIR_SEP})
 
 equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
-    CONFIG += root_project_file
+    !recursive_include:CONFIG += root_project_file
     BUILD_ROOT_RELATIVE_TO_OUT_PWD = .
 } else {
     subdir_parts = $$replace(OUT_PWD, ^$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP},)
