@@ -1,3 +1,11 @@
+2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Error out early if trying to build against Qt < 4.8
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2011-11-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix run-launcher for Qt and Gtk.

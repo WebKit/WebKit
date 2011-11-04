@@ -78,6 +78,8 @@ win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
 scratchbox: PYTHON = python2.6
 else: PYTHON = python
 
+!haveQt(4, 8): error("Building WebKit with Qt versions older than 4.8 is not supported.")
+
 !haveQt(5):!no_webkit2 {
     root_project_file {
         message("Building WebKit2 with Qt versions older than 5.0 is not supported. Disabling WebKit2.")
