@@ -1,3 +1,30 @@
+2011-11-04  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Send the submissions character encoding in hidden _charset_ field.
+        https://bugs.webkit.org/show_bug.cgi?id=19079
+
+        Reviewed by Darin Adler.
+
+        Spec reference http://dev.w3.org/html5/spec/Overview.html#attr-fe-name-charset
+        If _charset_ used as the name of a hidden control it should send character encoding
+        as value while submissions.
+
+        Tests: http/tests/misc/char-encoding-in-hidden-charset-field-default.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-Big5.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-EUC-JP.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-ISO-2022-JP.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-Shift_JIS.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-accept-charset.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-get-method.html
+               http/tests/misc/char-encoding-in-hidden-charset-field-with-one-field.html
+               http/tests/misc/char-encoding-in-text-charset-field-with-value.html
+               http/tests/misc/char-encoding-without-charset-field.html
+
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::isHiddenType):
+        (WebCore::HiddenInputType::appendFormData): For _charset_ send value as respective encodingType.
+        * html/HiddenInputType.h: Override appendFormData for hidden control types.
+
 2011-11-04  Robert Sesek  <rsesek@chromium.org>
 
         [chromium] Use Chromium's copy of libWebKitSystemInterfaceLeopard.a

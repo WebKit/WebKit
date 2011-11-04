@@ -50,6 +50,7 @@ private:
     virtual bool isHiddenType() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual void setValue(const String&, bool, bool);
+    virtual bool appendFormData(FormDataList&, bool) const;
 };
 
 } // namespace WebCore
