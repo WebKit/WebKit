@@ -84,7 +84,7 @@ public:
 
     virtual void computePreferredLogicalWidths();
 
-    void updateLogicalWidth(int);
+    void updateLogicalWidth(LayoutUnit);
 
     virtual LayoutUnit borderLeft() const;
     virtual LayoutUnit borderRight() const;
@@ -124,7 +124,7 @@ public:
 
     void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderObject* backgroundObject);
 
-    int cellBaselinePosition() const;
+    LayoutUnit cellBaselinePosition() const;
 
     void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
     void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }
@@ -145,7 +145,7 @@ public:
     virtual LayoutUnit paddingBefore(bool includeIntrinsicPadding = true) const;
     virtual LayoutUnit paddingAfter(bool includeIntrinsicPadding = true) const;
 
-    void setOverrideHeightFromRowHeight(int);
+    void setOverrideHeightFromRowHeight(LayoutUnit);
 
     virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged);
 
@@ -169,7 +169,7 @@ private:
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
 
     void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 

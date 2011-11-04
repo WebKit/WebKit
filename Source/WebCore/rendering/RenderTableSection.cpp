@@ -289,15 +289,15 @@ void RenderTableSection::setCellLogicalWidths()
                 cspan -= table()->columns()[endCol].span;
                 endCol++;
             }
-            int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
-            int oldLogicalWidth = cell->logicalWidth();
+            LayoutUnit w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
+            LayoutUnit oldLogicalWidth = cell->logicalWidth();
             if (w != oldLogicalWidth) {
                 cell->setNeedsLayout(true);
                 if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout()) {
                     if (!statePusher.didPush()) {
                         // Technically, we should also push state for the row, but since
                         // rows don't push a coordinate transform, that's not necessary.
-                        statePusher.push(this, IntSize(x(), y()));
+                        statePusher.push(this, LayoutSize(x(), y()));
                     }
                     cell->repaint();
                 }
@@ -463,10 +463,10 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
             // try to satisfy percent
             LayoutUnit add = 0;
             totalPercent = min(totalPercent, 100);
-            int rh = m_rowPos[1] - m_rowPos[0];
+            LayoutUnit rh = m_rowPos[1] - m_rowPos[0];
             for (unsigned r = 0; r < totalRows; r++) {
                 if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-                    LayoutUnit toAdd = min(dh, static_cast<LayoutUnit>((totalHeight * m_grid[r].logicalHeight.percent() / 100) - rh));
+                    LayoutUnit toAdd = min<LayoutUnit>(dh, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = max<LayoutUnit>(0, toAdd);

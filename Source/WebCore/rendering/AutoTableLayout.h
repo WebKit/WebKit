@@ -60,11 +60,11 @@ private:
 
         Length logicalWidth;
         Length effectiveLogicalWidth;
-        LayoutUnit minLogicalWidth;
-        LayoutUnit maxLogicalWidth;
-        LayoutUnit effectiveMinLogicalWidth;
-        LayoutUnit effectiveMaxLogicalWidth;
-        LayoutUnit computedLogicalWidth;
+        int minLogicalWidth;
+        int maxLogicalWidth;
+        int effectiveMinLogicalWidth;
+        int effectiveMaxLogicalWidth;
+        int computedLogicalWidth;
         bool emptyCellsOnly;
     };
 

@@ -44,7 +44,7 @@ public:
     explicit RenderTable(Node*);
     virtual ~RenderTable();
 
-    int getColumnPos(int col) const { return m_columnPos[col]; }
+    LayoutUnit getColumnPos(int col) const { return m_columnPos[col]; }
 
     int hBorderSpacing() const { return m_hSpacing; }
     int vBorderSpacing() const { return m_vSpacing; }
@@ -168,7 +168,7 @@ public:
         return c;
     }
 
-    int bordersPaddingAndSpacingInRowDirection() const
+    LayoutUnit bordersPaddingAndSpacingInRowDirection() const
     {
         return borderStart() + borderEnd() +
                (collapseBorders() ? 0 : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));

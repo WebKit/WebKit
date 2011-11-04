@@ -1,3 +1,39 @@
+2011-11-03  Levi Weintraub  <leviw@chromium.org>
+
+        Correct usage of LayoutUnits and integers in Table rendering classes
+        https://bugs.webkit.org/show_bug.cgi?id=71500
+
+        Reviewed by Darin Adler.
+
+        Fixing the Table layout classes to operate on integers -- sub-pixel table layout breaks
+        the spec. Meanwhile correcting the Table rendering classes themselves to still use
+        LayoutUnits.
+
+        No new tests -- no change in behavior.
+
+        * rendering/AutoTableLayout.cpp: Reverting to operating on integers.
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/AutoTableLayout.h: Reverting to operating on integers.
+        * rendering/FixedTableLayout.cpp: Ditto.
+        (WebCore::FixedTableLayout::computePreferredLogicalWidths):
+        (WebCore::FixedTableLayout::layout):
+        * rendering/RenderTable.h: Switching to LayoutUnits.
+        (WebCore::RenderTable::getColumnPos):
+        (WebCore::RenderTable::bordersPaddingAndSpacingInRowDirection):
+        * rendering/RenderTableCell.cpp: Switching to LayoutUnits.
+        (WebCore::RenderTableCell::updateLogicalWidth):
+        (WebCore::RenderTableCell::setOverrideHeightFromRowHeight):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        (WebCore::RenderTableCell::cellBaselinePosition):
+        (WebCore::RenderTableCell::scrollbarsChanged):
+        * rendering/RenderTableCell.h: Switching to LayoutUnits
+        * rendering/RenderTableSection.cpp: Ditto.
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::layoutRows):
+
 2011-11-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Notify scheduler on SwapBuffers in threaded compositor mode
