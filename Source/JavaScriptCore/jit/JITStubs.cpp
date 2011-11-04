@@ -2092,7 +2092,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
     if (!typeInfo.overridesHasInstance() && !value.isObject())
         return JSValue::encode(jsBoolean(false));
 
-    JSValue result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
+    JSValue result = jsBoolean(asObject(baseVal)->methodTable()->hasInstance(asObject(baseVal), callFrame, value, proto));
     CHECK_FOR_EXCEPTION_AT_END();
 
     return JSValue::encode(result);

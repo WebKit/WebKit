@@ -87,13 +87,14 @@ JSBoundFunction* JSBoundFunction::create(ExecState* exec, JSGlobalObject* global
     return function;
 }
 
-bool JSBoundFunction::hasInstance(ExecState* exec, JSValue value, JSValue)
+bool JSBoundFunction::hasInstance(JSObject* object, ExecState* exec, JSValue value, JSValue)
 {
+    JSBoundFunction* thisObject = static_cast<JSBoundFunction*>(object);
     // FIXME: our instanceof implementation will have already (incorrectly) performed
     // a [[Get]] of .prototype from the bound function object, which is incorrect!
     // https://bugs.webkit.org/show_bug.cgi?id=68656
-    JSValue proto = m_targetFunction->get(exec, exec->propertyNames().prototype);
-    return m_targetFunction->hasInstance(exec, value, proto);
+    JSValue proto = thisObject->m_targetFunction->get(exec, exec->propertyNames().prototype);
+    return thisObject->m_targetFunction->methodTable()->hasInstance(thisObject->m_targetFunction.get(), exec, value, proto);
 }
 
 JSBoundFunction::JSBoundFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs)

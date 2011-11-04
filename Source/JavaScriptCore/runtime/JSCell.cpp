@@ -190,4 +190,10 @@ void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, Enumera
     ASSERT_NOT_REACHED();
 }
 
+bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace JSC
