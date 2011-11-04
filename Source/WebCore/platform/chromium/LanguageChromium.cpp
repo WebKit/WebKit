@@ -38,9 +38,9 @@ namespace WebCore {
 
 String platformDefaultLanguage()
 {
-    static String computedDefaultLanguage;
+    DEFINE_STATIC_LOCAL(String, computedDefaultLanguage, ());
     if (computedDefaultLanguage.isEmpty())
-        computedDefaultLanguage = PlatformSupport::computedDefaultLanguage();
+        computedDefaultLanguage.append(PlatformSupport::computedDefaultLanguage());
     return computedDefaultLanguage;
 }
 

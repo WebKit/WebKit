@@ -145,7 +145,7 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 static HashSet<String>& dummyHashSet()
 {
     ASSERT_NOT_REACHED();
-    static HashSet<String> dummy;
+    DEFINE_STATIC_LOCAL(HashSet<String>, dummy, ());
     return dummy;
 }
 

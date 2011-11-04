@@ -1,3 +1,63 @@
+2011-11-04  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Remove most exit time destructors
+        https://bugs.webkit.org/show_bug.cgi?id=71524
+
+        Do this by using the DEFINE_STATIC_LOCAL macro, which allocates things on the heaps and then leaks them.
+
+        Reviewed by Dimitri Glazkov.
+
+        No behavior change, so no new tests.
+
+        * platform/chromium/CursorChromium.cpp:
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::aliasCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/chromium/LanguageChromium.cpp:
+        (WebCore::platformDefaultLanguage):
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        (WebCore::dummyHashSet):
+
 2011-11-03  Anders Carlsson  <andersca@apple.com>
 
         Add NetscapePlugin::convertFromRootView
