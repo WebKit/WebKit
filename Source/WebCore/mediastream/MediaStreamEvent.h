@@ -41,8 +41,6 @@ public:
     static PassRefPtr<MediaStreamEvent> create();
     static PassRefPtr<MediaStreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
-    void initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
-
     // From EventTarget.
     virtual bool isMediaStreamEvent() const { return true; }
 

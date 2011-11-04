@@ -57,16 +57,6 @@ MediaStreamEvent::~MediaStreamEvent()
 {
 }
 
-void MediaStreamEvent::initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_stream = stream;
-}
-
 PassRefPtr<MediaStream> MediaStreamEvent::stream() const
 {
     return m_stream;
