@@ -212,7 +212,7 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
     }
 
     if (shouldRepaint) {
-        IntRect repaintRect;
+        LayoutRect repaintRect;
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
@@ -394,7 +394,7 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
     repaint();
 }
 
-void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
+void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect)
 {
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
@@ -454,7 +454,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     if (tempResult.innerNode() && node()) {
         if (HTMLMapElement* map = imageMap()) {
-            IntRect contentBox = contentBoxRect();
+            LayoutRect contentBox = contentBoxRect();
             float scaleFactor = 1 / style()->effectiveZoom();
             LayoutPoint mapLocation(pointInContainer.x() - accumulatedOffset.x() - this->x() - contentBox.x(), pointInContainer.y() - accumulatedOffset.y() - this->y() - contentBox.y());
             mapLocation.scale(scaleFactor, scaleFactor);
@@ -495,13 +495,13 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
     bool hasRelativeWidth = contentRenderer ? contentRenderer->style()->width().isPercent() : m_imageResource->imageHasRelativeWidth();
     bool hasRelativeHeight = contentRenderer ? contentRenderer->style()->height().isPercent() : m_imageResource->imageHasRelativeHeight();
 
-    LayoutSize containerSize;
+    IntSize containerSize;
     if (hasRelativeWidth || hasRelativeHeight) {
         // Propagate the containing block size to the image resource, otherwhise we can't compute our own intrinsic size, if it's relative.
         RenderObject* containingBlock = isPositioned() ? container() : this->containingBlock();
         if (containingBlock->isBox()) {
             RenderBox* box = toRenderBox(containingBlock);
-            containerSize = LayoutSize(box->availableWidth(), box->availableHeight()); // Already contains zooming information.
+            containerSize = IntSize(box->availableWidth(), box->availableHeight()); // Already contains zooming information.
         }
     } else {
         // Propagate the current zoomed image size to the image resource, otherwhise the image size will remain the same on-screen.
