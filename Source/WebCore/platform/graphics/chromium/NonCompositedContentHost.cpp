@@ -49,6 +49,14 @@ NonCompositedContentHost::~NonCompositedContentHost()
 {
 }
 
+void NonCompositedContentHost::setBackgroundColor(const Color& color)
+{
+    if (color.isValid())
+        m_graphicsLayer->platformLayer()->setBackgroundColor(color);
+    else
+        m_graphicsLayer->platformLayer()->setBackgroundColor(Color::white);
+}
+
 void NonCompositedContentHost::setScrollLayer(GraphicsLayer* layer)
 {
     m_graphicsLayer->setNeedsDisplay();

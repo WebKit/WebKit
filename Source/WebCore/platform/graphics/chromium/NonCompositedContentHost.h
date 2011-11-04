@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class Color;
 class GraphicsLayer;
 class GraphicsContext;
 class IntPoint;
@@ -52,6 +53,7 @@ public:
     virtual ~NonCompositedContentHost();
 
     void invalidateRect(const IntRect&);
+    void setBackgroundColor(const Color&);
     void setScrollLayer(GraphicsLayer*);
     void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
     void protectVisibleTileTextures();

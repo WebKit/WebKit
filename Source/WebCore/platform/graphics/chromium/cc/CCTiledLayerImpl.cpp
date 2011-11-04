@@ -241,14 +241,10 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
 
         for (int i = left; i <= right; ++i) {
             DrawableTile* tile = tileAt(i, j);
-            if (!tile || !tile->textureId())
-                continue;
-
-            context->bindTexture(GraphicsContext3D::TEXTURE_2D, tile->textureId());
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.
-            IntRect tileRect = m_tiler->tileBounds(tile->i(), tile->j());
+            IntRect tileRect = m_tiler->tileBounds(i, j);
             IntRect displayRect = tileRect;
             tileRect.intersect(layerRect);
 
@@ -276,7 +272,7 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
             clampRect.inflateY(-clampY);
             FloatSize clampOffset = clampRect.minXMinYCorner() - FloatRect(tileRect).minXMinYCorner();
 
-            FloatPoint texOffset = m_tiler->textureOffset(tile->i(), tile->j()) + clampOffset + FloatSize(displayOffset);
+            FloatPoint texOffset = m_tiler->textureOffset(i, j) + clampOffset + FloatSize(displayOffset);
             float tileWidth = static_cast<float>(m_tiler->tileSize().width());
             float tileHeight = static_cast<float>(m_tiler->tileSize().height());
 
@@ -339,11 +335,29 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
 
             GLC(context, context->uniform4f(program->vertexShader().vertexTexTransformLocation(), vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
 
-            layerRenderer->drawTexturedQuad(globalTransform,
-                                            tileRect.width(), tileRect.height(), opacity, quad,
-                                            program->vertexShader().matrixLocation(),
-                                            program->fragmentShader().alphaLocation(),
-                                            program->vertexShader().pointLocation());
+            if (tile && tile->textureId()) {
+                context->bindTexture(GraphicsContext3D::TEXTURE_2D, tile->textureId());
+                layerRenderer->drawTexturedQuad(globalTransform,
+                                                tileRect.width(), tileRect.height(), opacity, quad,
+                                                program->vertexShader().matrixLocation(),
+                                                program->fragmentShader().alphaLocation(),
+                                                program->vertexShader().pointLocation());
+            } else {
+                TransformationMatrix tileTransform = globalTransform;
+                tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
+
+                const LayerChromium::BorderProgram* solidColorProgram = layerRenderer->borderProgram();
+                GLC(context, context->useProgram(solidColorProgram->program()));
+
+                GLC(context, context->uniform4f(solidColorProgram->fragmentShader().colorLocation(), backgroundColor().red(), backgroundColor().green(), backgroundColor().blue(), backgroundColor().alpha()));
+
+                layerRenderer->drawTexturedQuad(tileTransform,
+                                                tileRect.width(), tileRect.height(), opacity, quad,
+                                                program->vertexShader().matrixLocation(),
+                                                -1, -1);
+
+                GLC(context, context->useProgram(program->program()));
+            }
 
             prevEdgeX = edgeX;
             // Reverse direction.

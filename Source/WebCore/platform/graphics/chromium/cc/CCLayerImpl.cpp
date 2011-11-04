@@ -289,6 +289,14 @@ void CCLayerImpl::setAnchorPointZ(float anchorPointZ)
     }
 }
 
+void CCLayerImpl::setBackgroundColor(const Color& backgroundColor)
+{
+    if (m_backgroundColor != backgroundColor) {
+        m_backgroundColor = backgroundColor;
+        m_layerPropertyChanged = true;
+    }
+}
+
 void CCLayerImpl::setMasksToBounds(bool masksToBounds)
 {
     if (m_masksToBounds != masksToBounds) {

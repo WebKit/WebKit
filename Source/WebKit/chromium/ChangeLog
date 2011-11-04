@@ -1,3 +1,21 @@
+2011-11-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Implement checkerboarding for missing layer tiles
+        https://bugs.webkit.org/show_bug.cgi?id=69585
+
+        Reviewed by James Robinson.
+
+        To pipe the background color of the document to the non-composited
+        host, set it during paint. This may be more frequent than necessary,
+        but it'll catch all style changes.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::nonCompositedContentHost):
+        (WebKit::WebViewImplContentPainter::paint):
+        * src/WebViewImpl.h:
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+
 2011-11-04  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Expose deviceScaleFactor to WebKit API

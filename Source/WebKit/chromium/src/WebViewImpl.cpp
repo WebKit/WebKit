@@ -2577,6 +2577,12 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     m_nonCompositedContentHost->invalidateRect(dirtyRect);
     setRootLayerNeedsDisplay();
 }
+
+WebCore::NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
+{
+    return m_nonCompositedContentHost.get();
+}
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void WebViewImpl::scheduleAnimation()
 {
@@ -2611,6 +2617,9 @@ public:
         double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
         PlatformSupport::histogramCustomCounts("Renderer4.AccelRootPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
         PlatformSupport::histogramCustomCounts("Renderer4.AccelRootPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+
+        m_webViewImpl->nonCompositedContentHost()->setBackgroundColor(view->documentBackgroundColor());
+
     }
 
 private:

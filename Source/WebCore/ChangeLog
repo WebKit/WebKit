@@ -1,3 +1,28 @@
+2011-11-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Implement checkerboarding for missing layer tiles
+        https://bugs.webkit.org/show_bug.cgi?id=69585
+
+        Reviewed by James Robinson.
+
+        For tiles that have no texture or haven't even been created yet,
+        draw using the background color of the layer.
+
+        The only background color set is currently the non-composited content,
+        and all other layers use transparent black by default.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::setBackgroundColor):
+        * platform/graphics/chromium/NonCompositedContentHost.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::setBackgroundColor):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::backgroundColor):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::drawTiles):
+
 2011-11-04  Nico Weber  <thakis@chromium.org>
 
         [chromium] Remove most exit time destructors

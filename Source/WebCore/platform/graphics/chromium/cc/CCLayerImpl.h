@@ -89,6 +89,9 @@ public:
     void setAnchorPointZ(float);
     float anchorPointZ() const { return m_anchorPointZ; }
 
+    void setBackgroundColor(const Color&);
+    Color backgroundColor() const { return m_backgroundColor; }
+
     void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
@@ -214,6 +217,7 @@ private:
     IntSize m_contentBounds;
     IntPoint m_scrollPosition;
     IntSize m_maxScrollPosition;
+    Color m_backgroundColor;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;
