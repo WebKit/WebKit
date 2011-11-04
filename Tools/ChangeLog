@@ -1,3 +1,18 @@
+2011-11-04  Adam Roben  <aroben@apple.com>
+
+        Remove Leopard-specific code from build.webkit.org
+
+        We don't have any Leopard bots anymore.
+
+        Fixes <http://webkit.org/b/71583> build.webkit.org configuration contains obsolete Leopard code
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Removed now-unused StartATSServer
+        and StopATSServer steps.
+        (unitTestsSupported): Removed check for mac-leopard.
+        (TestFactory.__init__): Removed Leopard-specific steps.
+
 2011-11-04  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-tests autoinstalls python-irclib even though it doesn't need to
