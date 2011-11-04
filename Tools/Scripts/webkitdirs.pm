@@ -1775,12 +1775,13 @@ sub buildQMakeProject($@)
 
         if ($needsCleanBuild) {
             print ", clean build needed!\n";
-            if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
+            # FIXME: This STDIN/STDOUT check does not work on the bots. Disable until it does.
+            # if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
                 chdir $originalCwd;
                 File::Path::rmtree($dir);
                 File::Path::mkpath($dir);
                 chdir $dir or die "Failed to cd into " . $dir . "\n";
-            }
+            #}
         }
     }
 
