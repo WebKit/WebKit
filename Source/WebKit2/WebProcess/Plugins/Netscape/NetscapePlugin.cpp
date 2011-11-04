@@ -952,4 +952,13 @@ IntPoint NetscapePlugin::convertToRootView(const IntPoint& pointInPluginCoordina
     return m_pluginToRootViewTransform.mapPoint(pointInPluginCoordinates);
 }
 
+bool NetscapePlugin::convertFromRootView(const IntPoint& pointInRootViewCoordinates, IntPoint& pointInPluginCoordinates)
+{
+    if (!m_pluginToRootViewTransform.isInvertible())
+        return false;
+
+    pointInPluginCoordinates = m_pluginToRootViewTransform.inverse().mapPoint(pointInRootViewCoordinates);
+    return true;
+}
+
 } // namespace WebKit

@@ -473,11 +473,11 @@ static int32_t buttonNumber(WebMouseEvent::Button button)
     return -1;
 }
 
-static void fillInCocoaEventFromMouseEvent(NPCocoaEvent& event, const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
+static void fillInCocoaEventFromMouseEvent(NPCocoaEvent& event, const WebMouseEvent& mouseEvent, const WebCore::IntPoint& eventPositionInPluginCoordinates)
 {
     event.data.mouse.modifierFlags = modifierFlags(mouseEvent);
-    event.data.mouse.pluginX = mouseEvent.position().x() - pluginLocation.x();
-    event.data.mouse.pluginY = mouseEvent.position().y() - pluginLocation.y();
+    event.data.mouse.pluginX = eventPositionInPluginCoordinates.x();
+    event.data.mouse.pluginY = eventPositionInPluginCoordinates.y();
     event.data.mouse.buttonNumber = buttonNumber(mouseEvent.button());
     event.data.mouse.clickCount = mouseEvent.clickCount();
     event.data.mouse.deltaX = mouseEvent.deltaX();
@@ -485,7 +485,7 @@ static void fillInCocoaEventFromMouseEvent(NPCocoaEvent& event, const WebMouseEv
     event.data.mouse.deltaZ = mouseEvent.deltaZ();
 }
     
-static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
+static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const WebCore::IntPoint& eventPositionInPluginCoordinates)
 {
     NPCocoaEventType eventType;
 
@@ -508,7 +508,7 @@ static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const 
     }
 
     NPCocoaEvent event = initializeEvent(eventType);
-    fillInCocoaEventFromMouseEvent(event, mouseEvent, pluginLocation);
+    fillInCocoaEventFromMouseEvent(event, mouseEvent, eventPositionInPluginCoordinates);
     return event;
 }
 
@@ -516,7 +516,11 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 {
     switch (m_eventModel) {
         case NPEventModelCocoa: {
-            NPCocoaEvent event = initializeMouseEvent(mouseEvent, m_frameRectInWindowCoordinates.location());
+            IntPoint eventPositionInPluginCoordinates;
+            if (!convertFromRootView(mouseEvent.position(), eventPositionInPluginCoordinates))
+                return true;
+
+            NPCocoaEvent event = initializeMouseEvent(mouseEvent, eventPositionInPluginCoordinates);
 
             NPCocoaEvent* previousMouseEvent = m_currentMouseEvent;
             m_currentMouseEvent = &event;
@@ -580,11 +584,15 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
 {
     switch (m_eventModel) {
         case NPEventModelCocoa: {
+            IntPoint eventPositionInPluginCoordinates;
+            if (!convertFromRootView(wheelEvent.position(), eventPositionInPluginCoordinates))
+                return true;
+
             NPCocoaEvent event = initializeEvent(NPCocoaEventScrollWheel);
             
             event.data.mouse.modifierFlags = modifierFlags(wheelEvent);
-            event.data.mouse.pluginX = wheelEvent.position().x() - m_frameRectInWindowCoordinates.x();
-            event.data.mouse.pluginY = wheelEvent.position().y() - m_frameRectInWindowCoordinates.y();
+            event.data.mouse.pluginX = eventPositionInPluginCoordinates.x();
+            event.data.mouse.pluginY = eventPositionInPluginCoordinates.y();
             event.data.mouse.buttonNumber = 0;
             event.data.mouse.clickCount = 0;
             event.data.mouse.deltaX = wheelEvent.delta().width();
@@ -612,7 +620,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEve
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventMouseEntered);
             
-            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRectInWindowCoordinates.location());
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, IntPoint());
             return NPP_HandleEvent(&event);
         }
 
@@ -638,7 +646,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEve
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventMouseExited);
             
-            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRectInWindowCoordinates.location());
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, IntPoint());
             return NPP_HandleEvent(&event);
         }
 

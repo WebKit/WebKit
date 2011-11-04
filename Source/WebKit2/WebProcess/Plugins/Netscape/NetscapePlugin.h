@@ -220,6 +220,10 @@ private:
     // Convert the given point from plug-in coordinates to root view coordinates.
     WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const;
 
+    // Convert the given point from root view coordinates to plug-in coordinates. Returns false if the point can't be
+    // converted (if the transformation matrix isn't invertible).
+    bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
+
 #if PLUGIN_ARCHITECTURE(WIN)
     static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
     void scheduleWindowedGeometryUpdate();
