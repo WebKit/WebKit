@@ -1,3 +1,9 @@
+2011-11-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed CMake build fix for !ENABLE(SQL_DATABASE).
+
+        * CMakeLists.txt: Always compile the SQLite source files, since they are required for build.
+
 2011-11-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r99076): Pasting into password fields is broken

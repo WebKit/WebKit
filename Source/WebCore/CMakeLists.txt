@@ -1166,6 +1166,13 @@ SET(WebCore_SOURCES
     platform/network/ResourceResponseBase.cpp
     platform/network/SocketStreamHandleBase.cpp
 
+    platform/sql/SQLValue.cpp
+    platform/sql/SQLiteAuthorizer.cpp
+    platform/sql/SQLiteDatabase.cpp
+    platform/sql/SQLiteFileSystem.cpp
+    platform/sql/SQLiteStatement.cpp
+    platform/sql/SQLiteTransaction.cpp
+
     platform/text/Base64.cpp
     platform/text/BidiContext.cpp
     platform/text/Hyphenation.cpp
@@ -1428,14 +1435,6 @@ IF (ENABLE_BLOB)
 ENDIF ()
 
 IF (ENABLE_SQL_DATABASE)
-    LIST(APPEND WebCore_SOURCES
-        platform/sql/SQLValue.cpp
-        platform/sql/SQLiteAuthorizer.cpp
-        platform/sql/SQLiteDatabase.cpp
-        platform/sql/SQLiteFileSystem.cpp
-        platform/sql/SQLiteStatement.cpp
-        platform/sql/SQLiteTransaction.cpp
-    )
     LIST(APPEND WebCore_IDL_FILES
         storage/Database.idl
         storage/DatabaseCallback.idl
