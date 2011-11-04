@@ -163,6 +163,27 @@ public:
     virtual EventQueue* eventQueue() const = 0;
 
 protected:
+    class AddConsoleMessageTask : public Task {
+    public:
+        static PassOwnPtr<AddConsoleMessageTask> create(MessageSource source, MessageType type, MessageLevel level, const String& message)
+        {
+            return adoptPtr(new AddConsoleMessageTask(source, type, level, message));
+        }
+        virtual void performTask(ScriptExecutionContext*);
+    private:
+        AddConsoleMessageTask(MessageSource source, MessageType type, MessageLevel level, const String& message)
+            : m_source(source)
+            , m_type(type)
+            , m_level(level)
+            , m_message(message.isolatedCopy())
+        {
+        }
+        MessageSource m_source;
+        MessageType m_type;
+        MessageLevel m_level;
+        String m_message;
+    };
+
     // Explicitly override the security origin for this script context.
     // Note: It is dangerous to change the security origin of a script context
     //       that already contains content.

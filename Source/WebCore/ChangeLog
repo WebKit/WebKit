@@ -1,3 +1,22 @@
+2011-11-04  Michael Nordman  <michaeln@google.coom>
+
+        Allow ScriptExecutionContext::addMessage to be called from background threads.
+        https://bugs.webkit.org/show_bug.cgi?id=71575
+
+        Reviewed by Nate Chapin.
+
+        No new tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMessage):
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::create):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::performTask):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage):
+
 2011-11-04  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Re-named the original scissorRect to clipRect

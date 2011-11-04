@@ -83,6 +83,11 @@ public:
     RefPtr<ScriptCallStack> m_callStack;
 };
 
+void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext *context)
+{
+    context->addMessage(m_source, m_type, m_level, m_message, 0, String(), 0);
+}
+
 ScriptExecutionContext::ScriptExecutionContext()
     : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
