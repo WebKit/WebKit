@@ -1,0 +1,15 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function loaded() {
+    var image = document.body.getElementsByTagName('img')[0];
+    alert(image.width > 0 ? 'PASS' : 'FAIL');
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+This image should load:<br>
+<img crossorigin="anonymous" src="resources/abe.png" onload="loaded()">
