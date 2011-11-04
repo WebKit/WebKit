@@ -2507,3 +2507,6 @@ fast/viewport/viewport-75.html
 fast/viewport/viewport-76.html
 fast/viewport/viewport-warnings-6.html
 fast/viewport/viewport-warnings-3.html
+
+# track not functional yet.
+fast/events/constructors/track-event-constructor.html
