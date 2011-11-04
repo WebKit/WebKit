@@ -32,7 +32,7 @@
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
         },
         "WebIDL": {
-            "filename": r"Source/WebCore/(?!inspector).*\.idl"
+            "filename": r"Source/WebCore/(?!inspector)(?!testing).*\.idl"
         },
         "ThreadingFiles": {
             "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\."

@@ -1,3 +1,14 @@
+2011-11-04  Adam Barth  <abarth@webkit.org>
+
+        watchlist for WebIDL shouldn't trigger on Internals.idl
+        https://bugs.webkit.org/show_bug.cgi?id=70657
+
+        Reviewed by David Levin.
+
+        Internals.idl isn't part of the Web-facing IDL in the project.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-11-04  Anders Carlsson  <andersca@apple.com>
 
         Fix WKTR crash when running NPN_ConvertPoint test.
