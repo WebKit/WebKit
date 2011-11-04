@@ -5463,6 +5463,8 @@
 		C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F41046130C6E8900393DE4 /* EntryBase.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
+		CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */; };
 		CD0DBF011422768500280263 /* IRC_Composite_C_R0195_T000_P000.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD0DBD201422759500280263 /* IRC_Composite_C_R0195_T000_P000.wav */; };
 		CD0DBF021422768500280263 /* IRC_Composite_C_R0195_T000_P015.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD0DBD211422759500280263 /* IRC_Composite_C_R0195_T000_P015.wav */; };
 		CD0DBF031422768500280263 /* IRC_Composite_C_R0195_T000_P030.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD0DBD221422759500280263 /* IRC_Composite_C_R0195_T000_P030.wav */; };
@@ -12756,6 +12758,8 @@
 		C6F41046130C6E8900393DE4 /* EntryBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryBase.cpp; path = fileapi/EntryBase.cpp; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
+		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
+		CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAspectRatioValue.h; sourceTree = "<group>"; };
 		CD0DBD201422759500280263 /* IRC_Composite_C_R0195_T000_P000.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = IRC_Composite_C_R0195_T000_P000.wav; path = platform/audio/resources/IRC_Composite_C_R0195_T000_P000.wav; sourceTree = SOURCE_ROOT; };
 		CD0DBD211422759500280263 /* IRC_Composite_C_R0195_T000_P015.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = IRC_Composite_C_R0195_T000_P015.wav; path = platform/audio/resources/IRC_Composite_C_R0195_T000_P015.wav; sourceTree = SOURCE_ROOT; };
 		CD0DBD221422759500280263 /* IRC_Composite_C_R0195_T000_P030.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = IRC_Composite_C_R0195_T000_P030.wav; path = platform/audio/resources/IRC_Composite_C_R0195_T000_P030.wav; sourceTree = SOURCE_ROOT; };
@@ -20491,6 +20495,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
+				CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
@@ -24591,6 +24597,7 @@
 				07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */,
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
 				3169379C14609C6C00C01362 /* DragSession.h in Headers */,
+				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27442,6 +27449,7 @@
 				07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */,
 				07689D6E145B52CC001CD132 /* JSTrackEventCustom.cpp in Sources */,
 				2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */,
+				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* PlatformClockPOSIX.cpp in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,

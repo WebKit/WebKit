@@ -317,6 +317,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyTextShadow:
     case CSSPropertyTextTransform:
     case CSSPropertyVisibility:
+    case CSSPropertyWebkitAspectRatio:
     case CSSPropertyWebkitBorderHorizontalSpacing:
     case CSSPropertyWebkitBorderVerticalSpacing:
     case CSSPropertyWebkitBoxDirection:

@@ -962,6 +962,8 @@ webcore_sources += \
 	Source/WebCore/bridge/runtime_root.h \
 	Source/WebCore/config.h \
 	Source/WebCore/css/Counter.h \
+	Source/WebCore/css/CSSAspectRatioValue.cpp \
+	Source/WebCore/css/CSSAspectRatioValue.h \
 	Source/WebCore/css/CSSBorderImageSliceValue.cpp \
 	Source/WebCore/css/CSSBorderImageSliceValue.h \
 	Source/WebCore/css/CSSBorderImageValue.cpp \

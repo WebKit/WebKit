@@ -2033,6 +2033,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
+        case CSSPropertyWebkitAspectRatio:
         case CSSPropertyWebkitTextEmphasis:
         case CSSPropertyTextLineThrough:
         case CSSPropertyTextLineThroughColor:

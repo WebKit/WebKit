@@ -171,6 +171,8 @@ public:
     bool parseBorderImageOutset(RefPtr<CSSPrimitiveValue>&);
     bool parseBorderRadius(int propId, bool important);
 
+    bool parseAspectRatio(bool important);
+
     bool parseReflect(int propId, bool important);
 
     bool parseFlex(int propId, bool important);

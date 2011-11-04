@@ -787,6 +787,7 @@ void CSSMutableStyleDeclaration::addSubresourceStyleURLs(ListHashSet<KURL>& urls
 static const int blockProperties[] = {
     CSSPropertyOrphans,
     CSSPropertyOverflow, // This can be also be applied to replaced elements
+    CSSPropertyWebkitAspectRatio,
     CSSPropertyWebkitColumnCount,
     CSSPropertyWebkitColumnGap,
     CSSPropertyWebkitColumnRuleColor,

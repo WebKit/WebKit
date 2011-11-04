@@ -3772,6 +3772,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyTextUnderlineMode:
     case CSSPropertyTextUnderlineStyle:
     case CSSPropertyTextUnderlineWidth:
+    case CSSPropertyWebkitAspectRatio:
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextStroke:

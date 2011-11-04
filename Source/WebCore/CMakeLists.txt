@@ -416,6 +416,7 @@ SET(WebCore_SOURCES
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
+    css/CSSAspectRatioValue.cpp
     css/CSSBorderImageValue.cpp
     css/CSSBorderImageSliceValue.cpp
     css/CSSCanvasValue.cpp

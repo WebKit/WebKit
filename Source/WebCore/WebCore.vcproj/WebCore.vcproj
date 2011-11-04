@@ -32378,6 +32378,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSAspectRatioValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSAspectRatioValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSBorderImageSliceValue.cpp"
 				>
 			</File>

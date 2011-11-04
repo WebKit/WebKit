@@ -397,6 +397,7 @@ v8 {
 }
 
 SOURCES += \
+    css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImageValue.cpp \
     css/CSSCanvasValue.cpp \
@@ -1487,6 +1488,7 @@ v8 {
 }
 
 HEADERS += \
+    css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
     css/CSSBorderImageValue.h \
     css/CSSCanvasValue.h \

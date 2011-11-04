@@ -193,6 +193,7 @@ z-index
 -webkit-animation-play-state
 -webkit-animation-timing-function
 -webkit-appearance
+-webkit-aspect-ratio
 -webkit-backface-visibility
 -webkit-background-clip
 -webkit-background-composite

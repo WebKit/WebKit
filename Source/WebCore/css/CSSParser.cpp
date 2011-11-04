@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSParser.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
@@ -1509,6 +1510,8 @@ bool CSSParser::parseValue(int propId, bool important)
         addProperty(propId, val.release(), important);
         return true;
     }
+    case CSSPropertyWebkitAspectRatio:
+        return parseAspectRatio(important);
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius:
         return parseBorderRadius(propId, important);
@@ -5645,6 +5648,35 @@ bool CSSParser::parseBorderRadius(int propId, bool important)
     addProperty(CSSPropertyBorderTopRightRadius, primitiveValueCache()->createValue(Pair::create(radii[0][1].release(), radii[1][1].release())), important);
     addProperty(CSSPropertyBorderBottomRightRadius, primitiveValueCache()->createValue(Pair::create(radii[0][2].release(), radii[1][2].release())), important);
     addProperty(CSSPropertyBorderBottomLeftRadius, primitiveValueCache()->createValue(Pair::create(radii[0][3].release(), radii[1][3].release())), important);
+    return true;
+}
+
+bool CSSParser::parseAspectRatio(bool important)
+{
+    unsigned num = m_valueList->size();
+    if (num == 1 && m_valueList->valueAt(0)->id == CSSValueNone) {
+        addProperty(CSSPropertyWebkitAspectRatio, primitiveValueCache()->createIdentifierValue(CSSValueNone), important);
+        return true;
+    }
+
+    if (num != 3)
+        return false;
+
+    CSSParserValue* lvalue = m_valueList->valueAt(0);
+    CSSParserValue* op = m_valueList->valueAt(1);
+    CSSParserValue* rvalue = m_valueList->valueAt(2);
+
+    if (op->unit != CSSParserValue::Operator || op->iValue != '/')
+        return false;
+
+    if (!validUnit(lvalue, FNumber | FNonNeg, m_strict) || !validUnit(rvalue, FNumber | FNonNeg, m_strict))
+        return false;
+
+    if (!lvalue->fValue || !rvalue->fValue)
+        return false;
+
+    addProperty(CSSPropertyWebkitAspectRatio, CSSAspectRatioValue::create(lvalue->fValue, rvalue->fValue), important);
+
     return true;
 }
 

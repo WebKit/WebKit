@@ -2335,6 +2335,8 @@
             'bridge/testbindings.mm',
             'bridge/testqtbindings.cpp',
             'config.h',
+            'css/CSSAspectRatioValue.cpp',
+            'css/CSSAspectRatioValue.h',
             'css/CSSBorderImageValue.cpp',
             'css/CSSBorderImageValue.h',
             'css/CSSBorderImageSliceValue.cpp',
