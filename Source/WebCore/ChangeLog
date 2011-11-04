@@ -1,3 +1,18 @@
+2011-11-04  Nate Chapin  <japhet@chromium.org>
+
+        [V8] Null out V8NPObject::rootObject when the owning
+        Frame goes away.
+        https://bugs.webkit.org/show_bug.cgi?id=71569
+
+        Reviewed by Adam Barth.
+
+        No new tests, this has only been successfully triggered
+        using ppapi flash.
+
+        * bindings/v8/V8Helpers.cpp:
+        (WebCore::toV8Context):
+        * bindings/v8/npruntime.cpp:
+
 2011-11-04  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         Send the submissions character encoding in hidden _charset_ field.
