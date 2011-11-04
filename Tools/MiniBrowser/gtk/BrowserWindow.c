@@ -49,6 +49,7 @@ struct _BrowserWindowClass {
     GtkWindowClass parent;
 };
 
+static const char *defaultWindowTitle = "WebKitGTK+ MiniBrwoser";
 static gint windowCount = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
@@ -81,9 +82,15 @@ static void goForwardCallback(BrowserWindow *window)
     webkit_web_view_go_forward(window->webView);
 }
 
-static void webViewURIChanged(WebKitWebView *webView,  GParamSpec *pspec, BrowserWindow *window)
+static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
 {
     gtk_entry_set_text(GTK_ENTRY(window->uriEntry), webkit_web_view_get_uri(webView));
+}
+
+static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
+{
+    const char *title = webkit_web_view_get_title(webView);
+    gtk_window_set_title(GTK_WINDOW(window), title ? title : defaultWindowTitle);
 }
 
 static gboolean resetEntryProgress(GtkEntry *entry)
@@ -206,6 +213,7 @@ static void browser_window_init(BrowserWindow *window)
 {
     g_atomic_int_inc(&windowCount);
 
+    gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
     window->uriEntry = gtk_entry_new();
@@ -256,6 +264,7 @@ static void browserWindowConstructed(GObject *gObject)
 
     g_signal_connect(window->webView, "notify::uri", G_CALLBACK(webViewURIChanged), window);
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
+    g_signal_connect(window->webView, "notify::title", G_CALLBACK(webViewTitleChanged), window);
 
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
