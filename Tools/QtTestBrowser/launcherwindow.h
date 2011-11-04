@@ -35,7 +35,7 @@
 
 #include <QtNetwork/QNetworkRequest>
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
 #include <QtOpenGL/QGLWidget>
 #endif
 
@@ -84,7 +84,7 @@ public:
         , useOfflineWebApplicationCache(false)
         , useDiskCookies(true)
         , offlineStorageDefaultQuotaSize(0)
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
         , useQGLWidgetViewport(false)
 #endif
 #if defined(Q_WS_X11)
@@ -110,7 +110,7 @@ public:
     bool useOfflineWebApplicationCache;
     bool useDiskCookies;
     quint64 offlineStorageDefaultQuotaSize;
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
     bool useQGLWidgetViewport;
 #endif
 #if defined(Q_WS_X11)
@@ -179,7 +179,7 @@ protected slots:
     void showFindBar();
     void find(int mode);
 #endif
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
     void toggleQGLWidgetViewport(bool enable);
 #endif
 

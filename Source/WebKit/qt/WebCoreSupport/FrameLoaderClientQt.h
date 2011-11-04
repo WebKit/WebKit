@@ -36,7 +36,7 @@
 #include "FrameLoaderClient.h"
 #include "KURL.h"
 #include <wtf/OwnPtr.h>
-#include "PluginView.h"
+#include "WebCore/plugins/PluginView.h"
 #include "RefCounted.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"

@@ -81,7 +81,6 @@ my $osXVersion;
 my $generateDsym;
 my $isQt;
 my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
-my %qtFeatureDefaults;
 my $isGtk;
 my $isWinCE;
 my $isWinCairo;
@@ -92,7 +91,6 @@ my $isChromium;
 my $isChromiumAndroid;
 my $isChromiumMacMake;
 my $isInspectorFrontend;
-my $isWK2;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -720,9 +718,29 @@ sub getQtVersion()
     return $qtVersion;
 }
 
-sub qtFeatureDefaults()
+sub qtFeatureDefaults(;@)
 {
-    determineQtFeatureDefaults();
+    my @buildArgs = @_;
+    my %qtFeatureDefaults;
+
+    push @buildArgs, "CONFIG+=compute_defaults";
+
+    die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists($qmakebin);
+
+    my $qmakepath = File::Spec->catfile(sourceDir(), "Tools", "qmake");
+    my $qmakecommand;
+    if (isWindows()) {
+        $qmakecommand = "(set QMAKEPATH=$qmakepath) && $qmakebin";
+    } else {
+        $qmakecommand = "QMAKEPATH=$qmakepath $qmakebin";
+    }
+    my $dir = File::Spec->catfile($qmakepath, "mkspecs", "features", "features.prf");
+    my $defaults = `$qmakecommand @buildArgs $dir 2>&1`;
+
+    while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
+        $qtFeatureDefaults{$1}=$2;
+    }
+
     return %qtFeatureDefaults;
 }
 
@@ -731,20 +749,6 @@ sub commandExists($)
     my $command = shift;
     my $devnull = File::Spec->devnull();
     return `$command --version 2> $devnull`;
-}
-
-sub determineQtFeatureDefaults()
-{
-    return if %qtFeatureDefaults;
-    die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists($qmakebin);
-    my $originalCwd = getcwd();
-    chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
-    my $defaults = `$qmakebin CONFIG+=compute_defaults 2>&1`;
-    chdir $originalCwd;
-
-    while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
-        $qtFeatureDefaults{$1}=$2;
-    }
 }
 
 sub checkForArgumentAndRemoveFromARGV
@@ -767,19 +771,6 @@ sub checkForArgumentAndRemoveFromArrayRef
         splice(@$arrayRef, $index, 1);
     }
     return $#indicesToRemove > -1;
-}
-
-sub isWK2()
-{
-    if (defined($isWK2)) {
-        return $isWK2;
-    }
-    if (checkForArgumentAndRemoveFromARGV("-2")) {
-        $isWK2 = 1;
-    } else {
-        $isWK2 = 0;
-    }
-    return $isWK2;
 }
 
 sub determineIsQt()
@@ -1673,18 +1664,20 @@ sub buildCMakeProjectOrExit($$$$@)
     exit($returnCode) if $returnCode;
 }
 
+sub promptUser
+{
+    my ($prompt, $default) = @_;
+    my $defaultValue = $default ? "[$default]" : "";
+    print "$prompt $defaultValue: ";
+    chomp(my $input = <STDIN>);
+    return $input ? $input : $default;
+}
+
 sub buildQMakeProject($@)
 {
     my ($project, $clean, @buildParams) = @_;
 
-    my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
-    if (grep { $_ eq $project } @subdirs) {
-        @subdirs = ($project);
-    } else {
-        $project = 0;
-    }
-
-    my @buildArgs = ("-r");
+    my @buildArgs = ();
 
     my $makeargs = "";
     my $installHeaders;
@@ -1706,170 +1699,115 @@ sub buildQMakeProject($@)
         }
     }
 
+    my $qmakepath = File::Spec->catfile(sourceDir(), "Tools", "qmake");
+    my $qmakecommand;
+    if (isWindows()) {
+        $qmakecommand = "(set QMAKEPATH=$qmakepath) && $qmakebin";
+    } else {
+        $qmakecommand = "QMAKEPATH=$qmakepath $qmakebin";
+    }
+
     my $make = qtMakeCommand($qmakebin);
     my $config = configuration();
     push @buildArgs, "INSTALL_HEADERS=" . $installHeaders if defined($installHeaders);
     push @buildArgs, "INSTALL_LIBS=" . $installLibs if defined($installLibs);
-    my $dir = File::Spec->canonpath(productDir());
+
+    my $passedConfig = passedConfiguration() || "";
+    if ($passedConfig =~ m/debug/i) {
+        push @buildArgs, "CONFIG-=release";
+        push @buildArgs, "CONFIG+=debug";
+    } elsif ($passedConfig =~ m/release/i) {
+        push @buildArgs, "CONFIG+=release";
+        push @buildArgs, "CONFIG-=debug";
+    }
+    push @buildArgs, "CONFIG-=debug_and_release" if ($passedConfig && isDarwin());
 
     my $originalCwd = getcwd();
-    my $configArgs = "CONFIG+=compute_defaults";
-    if (isWK2()) {
-        chdir File::Spec->catfile(sourceDir(), "Source", "WebKit2");
-        $configArgs = "CONFIG+=webkit2 $configArgs";
-    } else {
-        chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
-    }
-    my $defaults = `$qmakebin $configArgs 2>&1`;
-    chdir $originalCwd;
-
+    my $dir = File::Spec->canonpath(productDir());
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
-    my $pathToDefaultsTxt = File::Spec->catfile( $dir, "defaults.txt" );
-    my $defaultsTxt = "";
-    if(open DEFAULTS, "$pathToDefaultsTxt"){
-        while (<DEFAULTS>) {
-            $defaultsTxt .= $_;
-        }
-        close (DEFAULTS);
+    my %defines = qtFeatureDefaults(@buildArgs);
+
+    my $needsCleanBuild = 0;
+
+    # Ease transition to new build layout
+    my $pathToOldDefinesFile = File::Spec->catfile($dir, "defaults.txt");
+    if (-e $pathToOldDefinesFile) {
+        print "Old build layout detected";
+        $needsCleanBuild = 1;
     }
 
-    if ($defaults ne $defaultsTxt) {
-        print "Make clean build because the Defines are changed.\n";
-        chdir $originalCwd;
-        File::Path::rmtree($dir);
-        File::Path::mkpath($dir);
-        chdir $dir or die "Failed to cd into " . $dir . "\n";
-        open DEFAULTS, ">$pathToDefaultsTxt";
-        print DEFAULTS $defaults;
-        close (DEFAULTS);
-    }
+    my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
+    if ($needsCleanBuild || (-e $pathToDefinesCache && open(DEFAULTS, $pathToDefinesCache))) {
+        if (!$needsCleanBuild) {
+            while (<DEFAULTS>) {
+                if ($_ =~ m/(\S+?)=(\S+?)/gi) {
+                    if (! exists $defines{$1}) {
+                        print "Feature $1 was removed";
+                        $needsCleanBuild = 1;
+                        last;
+                    }
 
-    print "Generating derived sources\n\n";
-
-    push @buildArgs, "OUTPUT_DIR=" . $dir;
-
-    my @dsQmakeArgs = @buildArgs;
-    push @dsQmakeArgs, "-r";
-    push @dsQmakeArgs, sourceDir() . "/Source/DerivedSources.pro";
-    if ($project) {
-        push @dsQmakeArgs, "-after SUBDIRS=" . $project. "/DerivedSources.pro";
-    }
-    push @dsQmakeArgs, "-o Makefile.DerivedSources";
-    print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
-    my $result = system "$qmakebin @dsQmakeArgs";
-    if ($result ne 0) {
-        die "Failed while running $qmakebin to generate derived sources!\n";
-    }
-
-    if ($project ne "JavaScriptCore") {
-        # FIXME: Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-        # To avoid overwriting of Makefile.DerivedSources in the root dir use Makefile.DerivedSources.Tools for Tools
-        if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
-            push @subdirs, "WebKit2";
-            if ( -e sourceDir() ."/Tools/DerivedSources.pro" ) {
-                @dsQmakeArgs = @buildArgs;
-                push @dsQmakeArgs, "-r";
-                push @dsQmakeArgs, sourceDir() . "/Tools/DerivedSources.pro";
-                push @dsQmakeArgs, "-o Makefile.DerivedSources.Tools";
-                print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
-                my $result = system "$qmakebin @dsQmakeArgs";
-                if ($result ne 0) {
-                    die "Failed while running $qmakebin to generate derived sources for Tools!\n";
+                    if ($defines{$1} != $2) {
+                        print "Feature $1 has changed ($defines{$1} -> $2)";
+                        $needsCleanBuild = 1;
+                        last;
+                    }
                 }
-                push @subdirs, "WebKitTestRunner";
+            }
+            close (DEFAULTS);
+        }
+
+        if ($needsCleanBuild) {
+            print ", clean build needed!\n";
+            if (! -t STDOUT || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
+                chdir $originalCwd;
+                File::Path::rmtree($dir);
+                File::Path::mkpath($dir);
+                chdir $dir or die "Failed to cd into " . $dir . "\n";
             }
         }
     }
 
-    for my $subdir (@subdirs) {
-        my $dsMakefile = "Makefile.DerivedSources";
-        print "Calling '$make $makeargs -C $subdir -f $dsMakefile generated_files' in " . $dir . "/$subdir\n\n";
-        if ($make eq "nmake") {
-            my $subdirWindows = $subdir;
-            $subdirWindows =~ s:/:\\:g;
-            $result = system "pushd $subdirWindows && $make $makeargs -f $dsMakefile generated_files && popd";
-        } else {
-            $result = system "$make $makeargs -C $subdir -f $dsMakefile generated_files";
+    open(DEFAULTS, ">$pathToDefinesCache");
+    print DEFAULTS "# These defines were set when building WebKit last time\n";
+    foreach my $key (sort keys %defines) {
+        print DEFAULTS "$key=$defines{$key}\n";
+    }
+    close(DEFAULTS);
+
+    my $result = 0;
+
+    my $makefile = File::Spec->catfile($dir, "Makefile");
+    if (! -e $makefile) {
+        if ($project) {
+            push @buildArgs, "-after OVERRIDE_SUBDIRS=" . $project;
         }
+
+        push @buildArgs, File::Spec->catfile(sourceDir(), "WebKit.pro");
+        my $command = "$qmakecommand @buildArgs";
+        print "Calling '$command' in " . $dir . "\n\n";
+        print "Installation headers directory: $installHeaders\n" if(defined($installHeaders));
+        print "Installation libraries directory: $installLibs\n" if(defined($installLibs));
+
+        $result = system "$command";
         if ($result ne 0) {
-            die "Failed to generate ${subdir}'s derived sources!\n";
+           die "Failed to setup build environment using $qmakebin!\n";
         }
     }
 
-    if ($config =~ m/debug/i) {
-        push @buildArgs, "CONFIG-=release";
-        push @buildArgs, "CONFIG+=debug";
-    } else {
-        my $passedConfig = passedConfiguration() || "";
-        if (!isDarwin() || $passedConfig =~ m/release/i) {
-            push @buildArgs, "CONFIG+=release";
-            push @buildArgs, "CONFIG-=debug";
-        } else {
-            push @buildArgs, "CONFIG+=debug";
-            push @buildArgs, "CONFIG+=debug_and_release";
-        }
-    }
-
-    if ($project) {
-        push @buildArgs, "-after SUBDIRS=" . $project . "/" . $project . ".pro ";
-        if ($project eq "JavaScriptCore") {
-            push @buildArgs, "-after SUBDIRS+=" . $project . "/jsc.pro ";
-        }
-    }
-    push @buildArgs, sourceDir() . "/Source/WebKit.pro";
-    print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
-    print "Installation headers directory: $installHeaders\n" if(defined($installHeaders));
-    print "Installation libraries directory: $installLibs\n" if(defined($installLibs));
-
-    $result = system "$qmakebin @buildArgs";
-    if ($result ne 0) {
-       die "Failed to setup build environment using $qmakebin!\n";
-    }
-
-    my $makefile = "";
-    if (!$project) {
-        $buildArgs[-1] = sourceDir() . "/Tools/Tools.pro";
-        $makefile = "Makefile.Tools";
-
-        print "Calling '$qmakebin @buildArgs -o $makefile' in " . $dir . "\n\n";
-        $result = system "$qmakebin @buildArgs -o $makefile";
-        if ($result ne 0) {
-            die "Failed to setup build environment using $qmakebin!\n";
-        }
-    }
-
-    if (!$project) {
-        # Manually create makefiles for the examples so we don't build by default
-        my $examplesDir = $dir . "/WebKit/qt/examples";
-        File::Path::mkpath($examplesDir);
-        $buildArgs[-1] = sourceDir() . "/Source/WebKit/qt/examples/examples.pro";
-        chdir $examplesDir or die;
-        print "Calling '$qmakebin @buildArgs' in " . $examplesDir . "\n\n";
-        $result = system "$qmakebin @buildArgs";
-        die "Failed to create makefiles for the examples!\n" if $result ne 0;
-        chdir $dir or die;
-    }
-
-    my $makeTools = "echo";
-    if (!$project) {
-        $makeTools = "echo No Makefile for Tools. Skipping make";
-
-        if (-e "$dir/$makefile") {
-            $makeTools = "$make $makeargs -f $makefile";
-        }
-    }
+    my $command = "$make $makeargs";
+    $command =~ s/\s+$//;
 
     if ($clean) {
-      print "Calling '$make $makeargs distclean' in " . $dir . "\n\n";
-      $result = system "$make $makeargs distclean";
-      $result = $result || system "$makeTools distclean";
+        $command = "$command distclean";
     } else {
-      print "Calling '$make $makeargs' in " . $dir . "\n\n";
-      $result = system "$make $makeargs";
-      $result = $result || system "$makeTools";
+        $command = "$command incremental";
     }
+
+    print "Calling '$command' in " . $dir . "\n\n";
+    $result = system $command;
 
     chdir ".." or die;
     return $result;

@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------
+# Project file for the QtTestBrowser binary
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
 TEMPLATE = app
 
 SOURCES += \
@@ -24,50 +30,26 @@ HEADERS += \
     fpstimer.h \
     cookiejar.h
 
-!isEqual(QT_ARCH,sh4) {
-    greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
-        message("QtUiTools library not found. QWidget plugin loading will be disabled")
-        DEFINES += QT_NO_UITOOLS
-    } else {
-        CONFIG += uitools
-    }
+greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
+    message("QtUiTools library not found. QWidget plugin loading will be disabled")
+    DEFINES += QT_NO_UITOOLS
+} else {
+    CONFIG += uitools
 }
 
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
-include(../../Source/WebKit.pri)
-INCLUDEPATH += ../../Source/WebKit/qt/WebCoreSupport
+load(webcore)
 
-DESTDIR = $$OUTPUT_DIR/bin
-CONFIG -= app_bundle
+CONFIG += qtwebkit
+
+DESTDIR = $$ROOT_BUILD_DIR/bin
 
 QT += network
-macx:QT+=xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
+macx:QT += xml
+haveQt(5): QT += printsupport
 
-unix:!mac:!embedded {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += fontconfig
-}
+!embedded: PKGCONFIG += fontconfig
 
-linux-* {
-    # From Creator's src/rpath.pri:
-    # Do the rpath by hand since it's not possible to use ORIGIN in QMAKE_RPATHDIR
-    # this expands to $ORIGIN (after qmake and make), it does NOT read a qmake var.
-    QMAKE_RPATHDIR = \$\$ORIGIN/../lib $$QMAKE_RPATHDIR
-    MY_RPATH = $$join(QMAKE_RPATHDIR, ":")
-
-    QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\'
-    QMAKE_RPATHDIR =
-} else {
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
-
-contains(QT_CONFIG, opengl) {
-    QT += opengl
-    DEFINES += QT_CONFIGURED_WITH_OPENGL
-}
-
-DEFINES -= QT_ASCII_CAST_WARNINGS
+contains(QT_CONFIG, opengl): QT += opengl
 
 RESOURCES += \
     QtTestBrowser.qrc

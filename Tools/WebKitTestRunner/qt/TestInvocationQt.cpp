@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#include "Assertions.h"
 #include "TestInvocation.h"
 
 #include <QBuffer>

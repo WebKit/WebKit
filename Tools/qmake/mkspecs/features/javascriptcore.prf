@@ -1,0 +1,96 @@
+# -------------------------------------------------------------------
+# This file contains shared rules used both when building
+# JavaScriptCore itself, and by targets that use JavaScriptCore.
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+JAVASCRIPTCORE_SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore
+
+# Use a config-specific target to prevent parallel builds file clashes on Mac
+mac: CONFIG(debug, debug|release): JAVASCRIPTCORE_TARGET = jscored
+else: JAVASCRIPTCORE_TARGET = jscore
+
+# Output in JavaScriptCore/<config>
+CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
+else: JAVASCRIPTCORE_DESTDIR = release
+
+JAVASCRIPTCORE_GENERATED_SOURCES_DIR = $$buildDirForSource(Source/JavaScriptCore)/$${GENERATED_SOURCES_DESTDIR}
+
+JAVASCRIPTCORE_INCLUDEPATH = \
+    $$JAVASCRIPTCORE_SOURCE_DIR \
+    $$JAVASCRIPTCORE_SOURCE_DIR/.. \
+    $$JAVASCRIPTCORE_SOURCE_DIR/../ThirdParty \
+    $$JAVASCRIPTCORE_SOURCE_DIR/assembler \
+    $$JAVASCRIPTCORE_SOURCE_DIR/bytecode \
+    $$JAVASCRIPTCORE_SOURCE_DIR/bytecompiler \
+    $$JAVASCRIPTCORE_SOURCE_DIR/heap \
+    $$JAVASCRIPTCORE_SOURCE_DIR/dfg \
+    $$JAVASCRIPTCORE_SOURCE_DIR/debugger \
+    $$JAVASCRIPTCORE_SOURCE_DIR/interpreter \
+    $$JAVASCRIPTCORE_SOURCE_DIR/jit \
+    $$JAVASCRIPTCORE_SOURCE_DIR/parser \
+    $$JAVASCRIPTCORE_SOURCE_DIR/profiler \
+    $$JAVASCRIPTCORE_SOURCE_DIR/runtime \
+    $$JAVASCRIPTCORE_SOURCE_DIR/wtf \
+    $$JAVASCRIPTCORE_SOURCE_DIR/wtf/gobject \
+    $$JAVASCRIPTCORE_SOURCE_DIR/wtf/qt \
+    $$JAVASCRIPTCORE_SOURCE_DIR/wtf/unicode \
+    $$JAVASCRIPTCORE_SOURCE_DIR/yarr \
+    $$JAVASCRIPTCORE_SOURCE_DIR/API \
+    $$JAVASCRIPTCORE_SOURCE_DIR/ForwardingHeaders \
+    $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
+
+VPATH += $$JAVASCRIPTCORE_SOURCE_DIR
+
+INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
+
+win32-g++* {
+    LIBS += -lpthreadGC2
+} else:win32-msvc* {
+    LIBS += -lpthreadVC2
+}
+
+win32-*: DEFINES += _HAS_TR1=0
+
+contains(CONFIG, use_system_icu) {
+    DEFINES += WTF_USE_ICU_UNICODE=1
+    DEFINES -= WTF_USE_QT4_UNICODE
+    LIBS += -licuuc -licui18n
+} else {
+    DEFINES += WTF_USE_QT4_UNICODE=1
+    DEFINES -= WTF_USE_ICU_UNICODE
+}
+
+wince* {
+    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
+    INCLUDEPATH += $$JAVASCRIPTCORE_SOURCE_DIR/os-win32
+}
+
+config_step {
+    pathToJavaScriptCoreOutput = $$buildDirForSource(Source/JavaScriptCore)/$$JAVASCRIPTCORE_DESTDIR
+
+    win32-msvc*|wince*|win32-icc {
+        LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
+        LIBS = -L$$pathToJavaScriptCoreOutput $$LIBS
+        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
+    } else {
+        # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW
+        # that can't resolve symbols from QtCore if libjscore comes after.
+        QMAKE_LIBDIR = $$pathToJavaScriptCoreOutput $$QMAKE_LIBDIR
+        LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
+        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}lib$${JAVASCRIPTCORE_TARGET}.a
+    }
+
+    win32-* {
+        LIBS += -lwinmm
+    }
+
+    # The following line is to prevent qmake from adding jscore to libQtWebKit's prl dependencies.
+    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit
+    # statically in applications (which isn't used often because, among other things, of licensing obstacles).
+    CONFIG -= explicitlib
+    CONFIG -= staticlib
+}
+
+

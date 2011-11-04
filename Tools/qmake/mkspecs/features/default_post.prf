@@ -1,0 +1,206 @@
+# -------------------------------------------------------------------
+# QtWebKit defaults for qmake. These rules are parsed after the
+# actual project file.
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+# Flag that we're now done processing the project file. This allows
+# a feature to distinguish between being processed due to a load()
+# or include() and a CONFIG += feature.
+CONFIG += config_step
+
+# Reorder CONFIG so that the link and include order is correct
+libraries = webkit2 webcore javascriptcore
+for(library, libraries) {
+    contains(CONFIG, $$library) {
+        CONFIG -= $$library
+        CONFIG += $$library
+    }
+}
+
+# General default build tweaks
+DEFINES += \
+    BUILDING_QT__=1
+
+CONFIG += depend_includepath
+DEPENDPATH += $$OUT_PWD
+
+INCLUDEPATH += \
+    $${ROOT_WEBKIT_DIR}/Source \
+    $${ROOT_BUILD_DIR}/include/QtWebKit \
+    $$buildDirForSource(Source/include) \
+    $${QT.script.includes}
+
+CONFIG -= warn_on
+
+*-g++*: QMAKE_CXXFLAGS = \
+    -Wall \
+    -Wextra \
+    -Wreturn-type \
+    -fno-strict-aliasing \
+    -Wchar-subscripts \
+    -Wformat-security \
+    -Wreturn-type \
+    -Wno-unused-parameter \
+    -Wno-sign-compare \
+    -Wno-switch \
+    -Wno-switch-enum \
+    -Wundef \
+    -Wmissing-noreturn \
+    -Winit-self \
+    $$QMAKE_CXXFLAGS
+
+contains(JAVASCRIPTCORE_JIT, yes): DEFINES+=ENABLE_JIT=1
+contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
+
+disable_uitools {
+    DEFINES *= QT_NO_UITOOLS
+    CONFIG -= uitools
+}
+
+# Template configurations
+contains(TEMPLATE, derived) {
+    # A (mostly) no-op template
+    TEMPLATE = aux
+
+    # Trick qmake into not generating a default $(DEL_FILE) rule
+    CONFIG += compile_libtool
+
+    CONFIG -= debug_and_release
+
+    for(generator, GENERATORS) {
+        eval($${generator}.CONFIG = target_predeps no_link)
+        eval($${generator}.dependency_type = TYPE_C)
+
+        isEmpty($${generator}.output_function) {
+            prependEach($${generator}.output, $${GENERATED_SOURCES_DESTDIR}/)
+        }
+
+        script = $$eval($${generator}.script)
+        eval($${generator}.depends += $$script)
+
+        !isEmpty($${generator}.input) {
+            # Compiler-style generator
+            QMAKE_EXTRA_COMPILERS += $$generator
+            DEFAULT_TARGETS += compiler_$${generator}_make_all
+        } else {
+            # Regular target generator
+            QMAKE_EXTRA_TARGETS += $$generator
+            DEFAULT_TARGETS += $$generator
+        }
+    }
+} else {
+    # Make sure the generated sources are compiled as well
+    for(generator, GENERATORS) {
+        isEqual($${generator}.add_output_to_sources, false): next()
+
+        isEmpty($${generator}.output_function) {
+            prependEach($${generator}.output, $${GENERATED_SOURCES_DESTDIR}/)
+        }
+
+        output = $$eval($${generator}.output)
+        input = $$eval($${generator}.input)
+        input = $$eval($$input)
+
+        for(file, input) {
+            base = $$basename(file)
+            base ~= s/\\..+//
+            newfile = $$replace(output,\\$\\{QMAKE_FILE_BASE\\}, $$base)
+
+            SOURCES += $$newfile
+        }
+
+        prependEach($${generator}.extra_sources, $${GENERATED_SOURCES_DESTDIR}/)
+        SOURCES += $$eval($${generator}.extra_sources)
+    }
+}
+
+contains(TEMPLATE, lib) {
+    DEFINES += QT_ASCII_CAST_WARNINGS
+
+    win32-msvc*|win32-icc: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32
+}
+
+equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {
+    # The root WebKit project file is the only one that allows
+    # you to pass a set of subtargets on the comand line.
+    SUBDIRS = $$OVERRIDE_SUBDIRS
+}
+
+# Remove subdirs that do not exist
+for(subdir, SUBDIRS) {
+    path = $$eval($${subdir}.file)
+    isEmpty(path): path = $$eval($${subdir}.subdir)
+    isEmpty(path): path = $${subdir}
+    !exists($${_PRO_FILE_PWD_}$${QMAKE_DIR_SEP}$${path}) {
+        #message(Removing invalid subtarget $${subdir} $${path})
+        #SUBDIRS -= $${subdir}
+    }
+}
+
+# Doing `$(MAKE) qmake' should recurse through all subdirs
+contains(TEMPLATE, subdirs):!no_recursive_qmake {
+    recursive_qmake.target = qmake_all
+
+    # We could do this using CONFIG += recurse but that adds
+    # a dependency for each recursive target on its makefile,
+    # while we want it to depend on *-qmake_all, so that we
+    # don't end up running qmake twice.
+
+    for(subdir, SUBDIRS) {
+        contains(NO_RECURSIVE_QMAKE_SUBDIRS, $${subdir}) {
+            debug(1, Skipping recursive qmake for $${subdir})
+            next()
+        }
+
+        subdir_config = $$eval($${subdir}.CONFIG)
+        contains(subdir_config, no_default_target):next()
+
+        debug(1, "Making qmake recursive for $$subdir")
+
+        variables = $$computeSubdirVariables($${subdir})
+
+        target_name = $$eval($${variables}.target)-recursive_qmake
+
+        eval($${target_name}.target = $$target_name)
+        eval($${target_name}.depends = $$eval($${variables}.target)-qmake_all)
+        commands = $$eval($${variables}.subdir_command) $(MAKE) -f $$eval($${variables}.makefile) qmake
+        eval($${target_name}.commands = $$commands)
+
+        QMAKE_EXTRA_TARGETS += $${target_name}
+        recursive_qmake.depends += $${target_name}
+    }
+
+    QMAKE_EXTRA_TARGETS += recursive_qmake
+}
+
+# Don't set OBJECTS_DIR for subdirs, as that will unconditionally
+# create the directory, even if we're not using it.
+contains(TEMPLATE, subdirs) {
+    unset(OBJECTS_DIR)
+}
+
+# Someone might remove a header from the tree without touching
+# the corresponding project file, for example if the project
+# file never had the header in HEADERS. In that case we don't
+# want warnings from make about "No rule to make target".
+ignore_missing_headers.target = %.h
+ignore_missing_headers.commands = $${MAKEFILE_NOOP_COMMAND}
+QMAKE_EXTRA_TARGETS += ignore_missing_headers
+
+# Override default target
+default_target.target = first
+for(target, $$list($$unique(DEFAULT_TARGETS))) {
+    default_target.depends += $$target
+}
+!isEmpty(default_target.depends): QMAKE_EXTRA_TARGETS += default_target
+
+# Qt's debug_and_release config will replace every occurance of
+# Release or Debug in the destination dir. This fails when the
+# desination dir is absolute and contains a static path component
+# that also contains either of those two words, so we make DESTDIR
+# relative.
+DESTDIR = $$replace(DESTDIR, ^$${ROOT_BUILD_DIR}, $${BUILD_ROOT_RELATIVE_TO_OUT_PWD})
+
+load(default_post) # Load Qt's defaults

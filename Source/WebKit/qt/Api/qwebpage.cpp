@@ -92,6 +92,7 @@
 #include "PageGroup.h"
 #include "Pasteboard.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformStrategiesQt.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -110,7 +111,6 @@
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
 #include "UtilsQt.h"
-#include "WebPlatformStrategies.h"
 #if USE(QTKIT)
 #include "WebSystemInterface.h"
 #endif
@@ -320,7 +320,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WTF::initializeMainThread();
     WebCore::SecurityOrigin::setLocalLoadPolicy(WebCore::SecurityOrigin::AllowLocalLoadsForLocalAndSubstituteData);
 
-    WebPlatformStrategies::initialize();
+    PlatformStrategiesQt::initialize();
 
 #if USE(QTKIT)
     InitWebCoreSystemInterface();

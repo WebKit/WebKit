@@ -1,0 +1,27 @@
+# -------------------------------------------------------------------
+# Unix specific defaults
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+load(functions)
+
+# Assume we use GNU make and a non-ancient GCC (compatible)
+# compiler that supports the -MD option. Relies on changes
+# introduced in Qt 5 to work correctly.
+haveQt(5): CONFIG += GNUmake gcc_MD_depends
+
+# Expose if we are building inside Scratchbox
+SBOX_CHECK = $$(_SBOX_DIR)
+!isEmpty(SBOX_CHECK): CONFIG += scratchbox
+
+# Use gold if available
+!scratchbox:!mac:exists(/usr/bin/ld.gold): QMAKE_LFLAGS += -fuse-ld=gold
+
+# If Qt is configured with embedded or QPA we set a convenience config
+# flag that can be used to test for either of these situations.
+contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
+
+!mac: CONFIG += link_pkgconfig
+
+load(default_pre)

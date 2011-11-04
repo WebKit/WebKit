@@ -1,0 +1,225 @@
+# -------------------------------------------------------------------
+# This file defines a few useful functions that are exposed to the
+# real project files.
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+defineReplace(toSanitizedPath) {
+    win* {
+        components = $$split(1, :)
+        count(components, 2): path = $$lower($$first(components)):$$last(components)
+        return($$replace(path, \\\\, /))
+    } else {
+        return($$1)
+    }
+}
+
+defineReplace(toSystemPath) {
+    return($$replace(1, [/\\\\], $${QMAKE_DIR_SEP}))
+}
+
+defineReplace(toEvaluatablePath) {
+    return($$replace(1, \\\\, \\\\\\\\))
+}
+
+defineReplace(computeSubdirVariables) {
+    unset(subdir)
+    subdir = $$1
+
+    scope = $$subdir
+    path = $$eval($${subdir}.file)
+    isEmpty(path): path = $$eval($${subdir}.subdir)
+    isEmpty(path) {
+        path = $${subdir}
+        # We can't use scope as a variable scope, so unset it for
+        # now and we'll compute a new scope based on the target.
+        unset(scope)
+    }
+
+    # Technically this could be a directory, but we assume sane naming.
+    is_file = $$find(path, \\.pr[io]$)
+    isEmpty(is_file) {
+        subdirectory = $$path
+    } else {
+        subdirectory = $$dirname(path)
+        filename = $$basename(path)
+    }
+
+    # Make directory relative
+    !isEmpty(subdirectory):subdirectory = $$replace(subdirectory, ^$${_PRO_FILE_PWD_}/,)
+
+    !isEmpty(subdirectory) {
+        subdir_command = cd $$toSystemPath($${subdirectory}$${QMAKE_DIR_SEP}) &&
+    }
+
+    target = $$eval($${subdir}.target)
+    isEmpty(target) {
+        sanitizedPath = $$toSanitizedPath($$path)
+        target = sub-$$replace(sanitizedPath, [^a-zA-Z0-9_], -)
+    }
+
+    isEmpty(scope): scope = $$target
+
+    makefile = $$eval($${subdir}.makefile)
+    isEmpty(makefile) {
+        !isEmpty(filename) {
+            filebase = $$replace(filename, \\..*$,)
+            dirbase = $$basename(subdirectory)
+            !equals(filebase, $$dirbase) {
+                makefile = $(MAKEFILE).$$filebase
+            } else {
+                makefile = $(MAKEFILE)
+            }
+        } else {
+            makefile = $(MAKEFILE)
+        }
+    }
+
+    subdir_command = $$toEvaluatablePath($$subdir_command)
+    eval($${scope}.subdir_command = $$subdir_command)
+    export($${scope}.subdir_command)
+
+    eval($${scope}.target = $$target)
+    export($${scope}.target)
+
+    eval($${scope}.makefile = $$makefile)
+    export($${scope}.makefile)
+
+    return($$scope)
+}
+
+defineReplace(buildDirForSource) {
+    unset(source)
+    source = $$1
+
+    return($${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}$$replace(source, ^$${BUILD_SUBDIR}$${QMAKE_DIR_SEP},))
+}
+
+# Qmake has QMAKE_FILE_IN_PATH, but nothing for the out file
+# This allows you do do ${QMAKE_FUNC_FILE_OUT_PATH}
+defineReplace(PATH) {
+    return($$dirname(1))
+}
+
+# We need both versions, in case the first one returns an empty string
+defineReplace(FILE_OUT_PATH) {
+    return($$dirname(2))
+}
+
+# addStrictSubdirOrderBetween(firstSubdir, secondSubdir)
+defineTest(addStrictSubdirOrderBetween) {
+    unset(firstSubdir)
+    unset(secondSubdir)
+
+    firstSubdir = $$1
+    secondSubdir = $$2
+
+    firstVariables = $$computeSubdirVariables($${firstSubdir})
+    secondVariables = $$computeSubdirVariables($${secondSubdir})
+
+    !contains(TEMPLATE, subdirs) {
+        error("Strict subdir dependencies can only be used with subdirs template")
+    }
+
+    firstSubdirFile = $$eval($${firstSubdir}.file)
+    secondSubdirFile = $$eval($${secondSubdir}.file)
+
+    isEmpty(firstSubdirFile)|isEmpty(secondSubdirFile) {
+        error("Missing subdir file ($$firstSubdirFile, $$secondSubdirFile)")
+    }
+
+    # Make sure the order is right
+    SUBDIRS -= $$firstSubdir $$secondSubdir
+    SUBDIRS += $$firstSubdir $$secondSubdir
+    NO_RECURSIVE_QMAKE_SUBDIRS += $$firstSubdir $$secondSubdir
+    CONFIG *= ordered
+
+    first_base_target = sub-$$replace(firstSubdirFile, [^a-zA-Z0-9_], -)
+    second_base_target = sub-$$replace(secondSubdirFile, [^a-zA-Z0-9_], -)
+
+    # This target ensures that running make qmake, either before any makefiles have
+    # been created, or after an initial make run, will still force qmake and make
+    # to be run on the derived sources first
+    target_make_qmake.target = $${second_base_target}-qmake_all
+
+    unix {
+        # Use a custom target for making the derived sources instead of the default ones,
+        # as the default ones depend on $(MAKEFILE), while we want to depend on *qmake_all,
+        # so that we match what the top level qmake_all target depends on, and don't end up
+        # running qmake twice for the derived sources.
+        derived_make_for_qmake.target = $${first_base_target}-make_for_qmake
+        derived_make_for_qmake.depends = $${first_base_target}-qmake_all
+        derived_make_for_qmake.commands = $(MAKE) -f $$eval($${firstSubdir}.makefile)
+        QMAKE_EXTRA_TARGETS += derived_make_for_qmake
+
+        # Use order-only-prerequisites so that we can run make on the derived sources
+        # without triggering a qmake run on the target due to updated dependencies
+        target_make_qmake.depends = "| $${derived_make_for_qmake.target}"
+
+        # This target ensures that running make before any makefiles have been created
+        # will still force qmake and make to be run on the derived sources first
+        target_make.target = $$eval($${secondSubdir}.makefile)
+        target_make.depends = "| $${first_base_target}-make_default-ordered"
+        QMAKE_EXTRA_TARGETS += target_make
+    } else {
+        # Order-only-prerequisites only works with GNU Make, not on Windows, etc
+        target_make_qmake.depends = $${first_base_target}
+    }
+
+    QMAKE_EXTRA_TARGETS += target_make_qmake
+
+    export(SUBDIRS)
+    export(NO_RECURSIVE_QMAKE_SUBDIRS)
+    export(CONFIG)
+    export(target_make_qmake.target)
+    export(target_make_qmake.depends)
+    export(derived_make_for_qmake.target)
+    export(derived_make_for_qmake.depends)
+    export(derived_make_for_qmake.commands)
+    export(target_make.target)
+    export(target_make.depends)
+    export(QMAKE_EXTRA_TARGETS)
+    return(true)
+}
+
+# Check if we have Qt version x,y,x or higher
+defineTest(haveQt) {
+    count(ARGS, 1, lessThan)|count(ARGS, 3, greaterThan) {
+        error("Unexpected number of arguments: haveQt($$ARGS)")
+    }
+
+    lessThan(QT_MAJOR_VERSION, $$1): return(false)
+    greaterThan(QT_MAJOR_VERSION, $$1): return(true)
+
+    count(ARGS, 1, greaterThan) {
+        lessThan(QT_MINOR_VERSION, $$2): return(false)
+        greaterThan(QT_MINOR_VERSION, $$2): return(true)
+
+        count(ARGS, 2, greaterThan) {
+            lessThan(QT_PATCH_VERSION, $$3): return(false)
+            greaterThan(QT_PATCH_VERSION, $$3): return(true)
+        }
+    }
+
+    return(true)
+}
+
+defineTest(prependEach) {
+    unset(variable)
+    unset(prefix)
+
+    variable = $$1
+    prefix = $$2
+
+    original_values = $$unique($$variable)
+
+    for(value, original_values) {
+        values += $${prefix}$${value}
+    }
+
+    eval($$variable = $$values)
+    export($$variable)
+
+    return(true)
+}

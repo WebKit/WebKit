@@ -387,7 +387,6 @@ Usage: $programName [options] [options to pass to build system]
   --install-headers=<path>          Set installation path for the headers (Qt only)
   --install-libs=<path>             Set installation path for the libraries (Qt only)
   --v8                              Use V8 as JavaScript engine (Qt only)
-  -2                                build WebKit2 (Qt only)
 
   --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
   --makeargs=<arguments>            Optional Makefile flags
@@ -433,17 +432,14 @@ setConfiguration();
 
 my $productDir = productDir();
 
-# Remove Qt makefiles from productDir.
-# https://bugs.webkit.org/show_bug.cgi?id=54466
-File::Find::find(sub {unlink $File::Find::name if $File::Find::name =~ m/Makefile/;}, $productDir) if (isQt() && -e $productDir);
-
 # Remove 0 byte sized files from productDir after slave lost for Qt buildbots.
 File::Find::find(\&unlinkZeroFiles, $productDir) if (isQt() && -e $productDir);
 
 sub unlinkZeroFiles()
 {
     my $file = $File::Find::name;
-    if (! -s $file) {
+    # Remove 0 size files, except .d files used for dependency tracking
+    if (! -s $file && $file !~ m/\.d$/) {
         unlink $file;
         print "0 byte sized file removed from build directory: $file\n";
     }
@@ -547,7 +543,7 @@ if (isGtk()) {
     push @options, "--install-headers=" . $installHeaders if defined($installHeaders);
     push @options, "--install-libs=" . $installLibs if defined($installLibs);
     push @options, "--makeargs=" . $makeArgs if $makeArgs;
-    push @options, "--qmakearg=CONFIG+=webkit2" if isWK2();
+    push @options, "--qmakearg=CONFIG+=no_webkit2" if $noWebKit2;
     @options = (@ARGV, @options);
 
     foreach (@features) {

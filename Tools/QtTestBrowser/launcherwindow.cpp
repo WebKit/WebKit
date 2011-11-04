@@ -168,7 +168,7 @@ void LauncherWindow::initializeView()
     } else {
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
         m_view = view;
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
         toggleQGLWidgetViewport(m_windowOptions.useQGLWidgetViewport);
 #endif
         view->setPage(page());
@@ -374,7 +374,7 @@ void LauncherWindow::createChrome()
     toggleTiledBackingStore->setEnabled(isGraphicsBased());
     toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
     QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
     toggleQGLWidgetViewport->setCheckable(true);
     toggleQGLWidgetViewport->setChecked(m_windowOptions.useQGLWidgetViewport);
@@ -753,7 +753,7 @@ void LauncherWindow::screenshot()
     }
 #endif
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
     toggleQGLWidgetViewport(m_windowOptions.useQGLWidgetViewport);
 #endif
 }
@@ -912,7 +912,7 @@ void LauncherWindow::togglePlugins(bool enable)
     page()->settings()->setAttribute(QWebSettings::PluginsEnabled, !enable);
 }
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
+#ifndef QT_NO_OPENGL
 void LauncherWindow::toggleQGLWidgetViewport(bool enable)
 {
     if (!isGraphicsBased())

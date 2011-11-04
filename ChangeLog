@@ -1,3 +1,52 @@
+2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Refactor and clean up the qmake build system
+
+        The qmake build system has accumulated a bit of cruft and redundancy
+        over time. There's also a fairly tight coupling between how to build
+        the various targets, and _what_ to build, making it harder to add new
+        rules or sources. This patch aims to elevate these issues somewhat.
+
+        This is a short-list of the changes:
+
+          * The rules for how to build targets are now mostly contained as
+            prf-files in Tools/qmake/mkspecs/features. Using mkspecs also
+            allows us to do pre- and post-processing of each project file,
+            which helps to clean up the actual project files.
+
+          * Derived sources are no longer generated as a separate make-step
+            but is part of each target's project file as a subdir. Makefile
+            rules are used to ensure that we run make on the derived sources
+            before running qmake on the actual target makefile. This makes
+            it easier to keep a proper dependency between derived sources
+            and the target.
+
+          * We use GNU make and the compiler to generate dependencies on
+            UNIX-based systems running Qt 5. This allows us to lessen the
+            need to run qmake, which should reduce compile time.
+
+          * WebKit2 is now build by default if building with Qt 5. It can
+            be disabled by passing --no-webkit2 to build-webkit.
+
+        The result of these changes are hopefully a cleaner and easier
+        build system to modify, and faster build times due to no longer
+        running qmake on every single build. It's also a first step
+        towards possibly generating the list of sources using another
+        build system.
+
+        https://bugs.webkit.org/show_bug.cgi?id=71222
+
+        Reviewed by Simon Hausmann.
+
+        * Source/DerivedSources.pro: Removed.
+        * Source/QtWebKit.pro: Added.
+        * Source/WebKit.pri: Removed.
+        * Source/WebKit.pro: Removed.
+        * Source/api.pri: Added.
+        * Source/tests.pri: Added.
+        * WebKit.pro: Added.
+        * sync.profile: Renamed from Source/sync.profile.
+
 2011-11-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Maemo specific code paths

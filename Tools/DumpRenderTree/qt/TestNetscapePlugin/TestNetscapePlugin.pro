@@ -1,11 +1,44 @@
+# -------------------------------------------------------------------
+# Project file for the NPAPI test plugin
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
 TEMPLATE = lib
 TARGET = TestNetscapePlugIn
 
-VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
-include(../../../../Source/WebKit.pri)
+SOURCES += \
+    PluginObject.cpp \
+    PluginTest.cpp \
+    TestObject.cpp \
+    main.cpp \
+    Tests/DocumentOpenInDestroyStream.cpp \
+    Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+    Tests/FormValue.cpp \
+    Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
+    Tests/GetURLWithJavaScriptURL.cpp \
+    Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
+    Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
+    Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
+    Tests/NPPSetWindowCalledDuringDestruction.cpp \
+    Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
+    Tests/NPRuntimeRemoveProperty.cpp \
+    Tests/NullNPPGetValuePointer.cpp \
+    Tests/PassDifferentNPPStruct.cpp \
+    Tests/PluginScriptableNPObjectInvokeDefault.cpp \
+    Tests/PrivateBrowsing.cpp
 
-DESTDIR = $$OUTPUT_DIR/lib/plugins
+load(webcore)
+
+VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
+
+
+INCLUDEPATH += \
+    ../../unix/TestNetscapePlugin/ForwardingHeaders \
+    ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
+    ../../TestNetscapePlugIn
+
+DESTDIR = $${ROOT_BUILD_DIR}/lib/plugins
 
 mac {
     CONFIG += plugin
@@ -16,41 +49,10 @@ mac {
 
     !build_pass:CONFIG += build_all
     debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
-}
 
-INCLUDEPATH += ../../../../Source/JavaScriptCore \
-               ../../unix/TestNetscapePlugin/ForwardingHeaders \
-               ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
-               ../../../../Source/WebCore \
-               ../../../../Source/WebCore/bridge \
-               ../../TestNetscapePlugIn
-
-SOURCES = PluginObject.cpp \
-          PluginTest.cpp \
-          TestObject.cpp \
-          main.cpp \
-          Tests/DocumentOpenInDestroyStream.cpp \
-          Tests/EvaluateJSAfterRemovingPluginElement.cpp \
-          Tests/FormValue.cpp \
-          Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
-          Tests/GetURLWithJavaScriptURL.cpp \
-          Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
-          Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
-          Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
-          Tests/NPPSetWindowCalledDuringDestruction.cpp \
-          Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
-          Tests/NPRuntimeRemoveProperty.cpp \
-          Tests/NullNPPGetValuePointer.cpp \
-          Tests/PassDifferentNPPStruct.cpp \
-          Tests/PluginScriptableNPObjectInvokeDefault.cpp \
-          Tests/PrivateBrowsing.cpp
-
-mac {
     OBJECTIVE_SOURCES += PluginObjectMac.mm
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
 }
-
-DEFINES -= QT_ASCII_CAST_WARNINGS
 
 !win32:!embedded:!mac {
     LIBS += -lX11

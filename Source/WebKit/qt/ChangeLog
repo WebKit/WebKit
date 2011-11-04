@@ -1,3 +1,176 @@
+2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Refactor and clean up the qmake build system
+
+        The qmake build system has accumulated a bit of cruft and redundancy
+        over time. There's also a fairly tight coupling between how to build
+        the various targets, and _what_ to build, making it harder to add new
+        rules or sources. This patch aims to elevate these issues somewhat.
+
+        This is a short-list of the changes:
+
+          * The rules for how to build targets are now mostly contained as
+            prf-files in Tools/qmake/mkspecs/features. Using mkspecs also
+            allows us to do pre- and post-processing of each project file,
+            which helps to clean up the actual project files.
+
+          * Derived sources are no longer generated as a separate make-step
+            but is part of each target's project file as a subdir. Makefile
+            rules are used to ensure that we run make on the derived sources
+            before running qmake on the actual target makefile. This makes
+            it easier to keep a proper dependency between derived sources
+            and the target.
+
+          * We use GNU make and the compiler to generate dependencies on
+            UNIX-based systems running Qt 5. This allows us to lessen the
+            need to run qmake, which should reduce compile time.
+
+          * WebKit2 is now build by default if building with Qt 5. It can
+            be disabled by passing --no-webkit2 to build-webkit.
+
+        The result of these changes are hopefully a cleaner and easier
+        build system to modify, and faster build times due to no longer
+        running qmake on every single build. It's also a first step
+        towards possibly generating the list of sources using another
+        build system.
+
+        https://bugs.webkit.org/show_bug.cgi?id=71222
+
+        Reviewed by Simon Hausmann.
+
+        * Api/DerivedSources.pro: Removed.
+        * Api/headers.pri: Removed.
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * QtWebKit.pro: Removed.
+        * WebCoreSupport/FrameLoaderClientQt.h: Rename due to name clash with WK2 header
+        * WebCoreSupport/PlatformStrategiesQt.cpp: Renamed from Source/WebKit/qt/WebCoreSupport/WebPlatformStrategies.cpp.
+        (PlatformStrategiesQt::initialize):
+        (PlatformStrategiesQt::PlatformStrategiesQt):
+        (PlatformStrategiesQt::createCookiesStrategy):
+        (PlatformStrategiesQt::createPluginStrategy):
+        (PlatformStrategiesQt::createLocalizationStrategy):
+        (PlatformStrategiesQt::createVisitedLinkStrategy):
+        (PlatformStrategiesQt::notifyCookiesChanged):
+        (PlatformStrategiesQt::refreshPlugins):
+        (PlatformStrategiesQt::getPluginInfo):
+        (PlatformStrategiesQt::inputElementAltText):
+        (PlatformStrategiesQt::resetButtonDefaultLabel):
+        (PlatformStrategiesQt::searchableIndexIntroduction):
+        (PlatformStrategiesQt::submitButtonDefaultLabel):
+        (PlatformStrategiesQt::fileButtonChooseFileLabel):
+        (PlatformStrategiesQt::fileButtonChooseMultipleFilesLabel):
+        (PlatformStrategiesQt::fileButtonNoFileSelectedLabel):
+        (PlatformStrategiesQt::fileButtonNoFilesSelectedLabel):
+        (PlatformStrategiesQt::defaultDetailsSummaryText):
+        (PlatformStrategiesQt::contextMenuItemTagOpenLinkInNewWindow):
+        (PlatformStrategiesQt::contextMenuItemTagDownloadLinkToDisk):
+        (PlatformStrategiesQt::contextMenuItemTagCopyLinkToClipboard):
+        (PlatformStrategiesQt::contextMenuItemTagOpenImageInNewWindow):
+        (PlatformStrategiesQt::contextMenuItemTagDownloadImageToDisk):
+        (PlatformStrategiesQt::contextMenuItemTagCopyImageToClipboard):
+        (PlatformStrategiesQt::contextMenuItemTagCopyImageUrlToClipboard):
+        (PlatformStrategiesQt::contextMenuItemTagOpenVideoInNewWindow):
+        (PlatformStrategiesQt::contextMenuItemTagOpenAudioInNewWindow):
+        (PlatformStrategiesQt::contextMenuItemTagCopyVideoLinkToClipboard):
+        (PlatformStrategiesQt::contextMenuItemTagCopyAudioLinkToClipboard):
+        (PlatformStrategiesQt::contextMenuItemTagToggleMediaControls):
+        (PlatformStrategiesQt::contextMenuItemTagToggleMediaLoop):
+        (PlatformStrategiesQt::contextMenuItemTagEnterVideoFullscreen):
+        (PlatformStrategiesQt::contextMenuItemTagMediaPlay):
+        (PlatformStrategiesQt::contextMenuItemTagMediaPause):
+        (PlatformStrategiesQt::contextMenuItemTagMediaMute):
+        (PlatformStrategiesQt::contextMenuItemTagOpenFrameInNewWindow):
+        (PlatformStrategiesQt::contextMenuItemTagCopy):
+        (PlatformStrategiesQt::contextMenuItemTagGoBack):
+        (PlatformStrategiesQt::contextMenuItemTagGoForward):
+        (PlatformStrategiesQt::contextMenuItemTagStop):
+        (PlatformStrategiesQt::contextMenuItemTagReload):
+        (PlatformStrategiesQt::contextMenuItemTagCut):
+        (PlatformStrategiesQt::contextMenuItemTagPaste):
+        (PlatformStrategiesQt::contextMenuItemTagSelectAll):
+        (PlatformStrategiesQt::contextMenuItemTagNoGuessesFound):
+        (PlatformStrategiesQt::contextMenuItemTagIgnoreSpelling):
+        (PlatformStrategiesQt::contextMenuItemTagLearnSpelling):
+        (PlatformStrategiesQt::contextMenuItemTagSearchWeb):
+        (PlatformStrategiesQt::contextMenuItemTagLookUpInDictionary):
+        (PlatformStrategiesQt::contextMenuItemTagOpenLink):
+        (PlatformStrategiesQt::contextMenuItemTagIgnoreGrammar):
+        (PlatformStrategiesQt::contextMenuItemTagSpellingMenu):
+        (PlatformStrategiesQt::contextMenuItemTagShowSpellingPanel):
+        (PlatformStrategiesQt::contextMenuItemTagCheckSpelling):
+        (PlatformStrategiesQt::contextMenuItemTagCheckSpellingWhileTyping):
+        (PlatformStrategiesQt::contextMenuItemTagCheckGrammarWithSpelling):
+        (PlatformStrategiesQt::contextMenuItemTagFontMenu):
+        (PlatformStrategiesQt::contextMenuItemTagBold):
+        (PlatformStrategiesQt::contextMenuItemTagItalic):
+        (PlatformStrategiesQt::contextMenuItemTagUnderline):
+        (PlatformStrategiesQt::contextMenuItemTagOutline):
+        (PlatformStrategiesQt::contextMenuItemTagWritingDirectionMenu):
+        (PlatformStrategiesQt::contextMenuItemTagTextDirectionMenu):
+        (PlatformStrategiesQt::contextMenuItemTagDefaultDirection):
+        (PlatformStrategiesQt::contextMenuItemTagLeftToRight):
+        (PlatformStrategiesQt::contextMenuItemTagRightToLeft):
+        (PlatformStrategiesQt::contextMenuItemTagInspectElement):
+        (PlatformStrategiesQt::searchMenuNoRecentSearchesText):
+        (PlatformStrategiesQt::searchMenuRecentSearchesText):
+        (PlatformStrategiesQt::searchMenuClearRecentSearchesText):
+        (PlatformStrategiesQt::AXWebAreaText):
+        (PlatformStrategiesQt::AXLinkText):
+        (PlatformStrategiesQt::AXListMarkerText):
+        (PlatformStrategiesQt::AXImageMapText):
+        (PlatformStrategiesQt::AXHeadingText):
+        (PlatformStrategiesQt::AXDefinitionListTermText):
+        (PlatformStrategiesQt::AXDefinitionListDefinitionText):
+        (PlatformStrategiesQt::AXButtonActionVerb):
+        (PlatformStrategiesQt::AXRadioButtonActionVerb):
+        (PlatformStrategiesQt::AXTextFieldActionVerb):
+        (PlatformStrategiesQt::AXCheckedCheckBoxActionVerb):
+        (PlatformStrategiesQt::AXUncheckedCheckBoxActionVerb):
+        (PlatformStrategiesQt::AXMenuListActionVerb):
+        (PlatformStrategiesQt::AXMenuListPopupActionVerb):
+        (PlatformStrategiesQt::AXLinkActionVerb):
+        (PlatformStrategiesQt::missingPluginText):
+        (PlatformStrategiesQt::crashedPluginText):
+        (PlatformStrategiesQt::multipleFileUploadText):
+        (PlatformStrategiesQt::unknownFileSizeText):
+        (PlatformStrategiesQt::imageTitle):
+        (PlatformStrategiesQt::mediaElementLoadingStateText):
+        (PlatformStrategiesQt::mediaElementLiveBroadcastStateText):
+        (PlatformStrategiesQt::localizedMediaControlElementString):
+        (PlatformStrategiesQt::localizedMediaControlElementHelpText):
+        (PlatformStrategiesQt::localizedMediaTimeDescription):
+        (PlatformStrategiesQt::validationMessageValueMissingText):
+        (PlatformStrategiesQt::validationMessageTypeMismatchText):
+        (PlatformStrategiesQt::validationMessagePatternMismatchText):
+        (PlatformStrategiesQt::validationMessageTooLongText):
+        (PlatformStrategiesQt::validationMessageRangeUnderflowText):
+        (PlatformStrategiesQt::validationMessageRangeOverflowText):
+        (PlatformStrategiesQt::validationMessageStepMismatchText):
+        (PlatformStrategiesQt::isLinkVisited):
+        (PlatformStrategiesQt::addVisitedLink):
+        * WebCoreSupport/PlatformStrategiesQt.h: Renamed from Source/WebKit/qt/WebCoreSupport/WebPlatformStrategies.h.
+        * declarative/declarative.pro:
+        * docs/docs.pri:
+        * docs/webkitsnippets/webelement/webelement.pro:
+        * tests/MIMESniffing/MIMESniffing.pro:
+        * tests/benchmarks/loading/loading.pro:
+        * tests/benchmarks/painting/painting.pro:
+        * tests/benchmarks/webgl/webgl.pro:
+        * tests/hybridPixmap/hybridPixmap.pro:
+        * tests/qdeclarativewebview/qdeclarativewebview.pro:
+        * tests/qgraphicswebview/qgraphicswebview.pro:
+        * tests/qwebelement/qwebelement.pro:
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebhistory/qwebhistory.pro:
+        * tests/qwebhistoryinterface/qwebhistoryinterface.pro:
+        * tests/qwebinspector/qwebinspector.pro:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebplugindatabase/qwebplugindatabase.pro:
+        * tests/qwebview/qwebview.pro:
+        * tests/tests.pri:
+        * tests/tests.pro: Removed.
+
 2011-11-03  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Fix tst_QDeclarativeWebView::basicProperties() and historyNav() autotests

@@ -1,4 +1,9 @@
-# wtf - qmake build info
+# -------------------------------------------------------------------
+# Project file for WTF
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
 HEADERS += \
     wtf/Alignment.h \
     wtf/AlwaysInline.h \
@@ -187,7 +192,6 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
     !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
         DEFINES += ENABLE_GLIB_SUPPORT=1
         PKGCONFIG += glib-2.0 gio-2.0
-        CONFIG += link_pkgconfig
 
         HEADERS += wtf/gobject/GOwnPtr.h
     }

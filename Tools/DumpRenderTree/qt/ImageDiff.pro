@@ -1,18 +1,15 @@
-TARGET = ImageDiff
-CONFIG  -= app_bundle
+# -------------------------------------------------------------------
+# Project file for the ImageDiff binary
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
 
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
-include(../../../Source/WebKit.pri)
-INCLUDEPATH += ../../../Source/JavaScriptCore
-DESTDIR = $$OUTPUT_DIR/bin
+TEMPLATE = app
+
+TARGET = ImageDiff
+DESTDIR = $$ROOT_BUILD_DIR/bin
 
 QT = core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+haveQt(5): QT += widgets
 
 SOURCES = ImageDiff.cpp
-
-unix:!mac {
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
-
-DEFINES -= QT_ASCII_CAST_WARNINGS

@@ -1,85 +1,156 @@
-# WebKit2 - Qt4 build info
+# Project include file for the WebKit2 API
+# Used in the final build step in WebKit/qt/QtWebKit.pro
 
-SOURCE_DIR = $$replace(PWD, /WebKit2, "")
+CONFIG += webkit2
+QT += declarative
 
-# Use a config-specific target to prevent parallel builds file clashes on Mac
-mac: CONFIG(debug, debug|release): WEBKIT2_TARGET = webkit2d
-else: WEBKIT2_TARGET = webkit2
+SOURCES += \
+    $$PWD/Shared/API/c/WKArray.cpp \
+    $$PWD/Shared/API/c/WKCertificateInfo.cpp \
+    $$PWD/Shared/API/c/WKContextMenuItem.cpp \
+    $$PWD/Shared/API/c/WKDictionary.cpp \
+    $$PWD/Shared/API/c/WKError.cpp \
+    $$PWD/Shared/API/c/WKGeometry.cpp \
+    $$PWD/Shared/API/c/WKGraphicsContext.cpp \
+    $$PWD/Shared/API/c/WKImage.cpp \
+    $$PWD/Shared/API/c/WKMutableDictionary.cpp \
+    $$PWD/Shared/API/c/WKNumber.cpp \
+    $$PWD/Shared/API/c/WKSecurityOrigin.cpp \
+    $$PWD/Shared/API/c/WKSerializedScriptValue.cpp \
+    $$PWD/Shared/API/c/WKString.cpp \
+    $$PWD/Shared/API/c/WKType.cpp \
+    $$PWD/Shared/API/c/WKURL.cpp \
+    $$PWD/Shared/API/c/WKURLRequest.cpp \
+    $$PWD/Shared/API/c/WKURLResponse.cpp \
+    $$PWD/Shared/API/c/WKUserContentURLPattern.cpp \
+    $$PWD/Shared/API/c/qt/WKImageQt.cpp \
+    $$PWD/UIProcess/API/C/WKAuthenticationChallenge.cpp \
+    $$PWD/UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
+    $$PWD/UIProcess/API/C/WKBackForwardList.cpp \
+    $$PWD/UIProcess/API/C/WKBackForwardListItem.cpp \
+    $$PWD/UIProcess/API/C/WKContext.cpp \
+    $$PWD/UIProcess/API/C/WKCredential.cpp \
+    $$PWD/UIProcess/API/C/WKDatabaseManager.cpp \
+    $$PWD/UIProcess/API/C/WKDownload.cpp \
+    $$PWD/UIProcess/API/C/WKFrame.cpp \
+    $$PWD/UIProcess/API/C/WKFramePolicyListener.cpp \
+    $$PWD/UIProcess/API/C/WKGeolocationManager.cpp \
+    $$PWD/UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
+    $$PWD/UIProcess/API/C/WKGeolocationPosition.cpp \
+    $$PWD/UIProcess/API/C/WKHitTestResult.cpp \
+    $$PWD/UIProcess/API/C/WKIconDatabase.cpp \
+    $$PWD/UIProcess/API/C/WKInspector.cpp \
+    $$PWD/UIProcess/API/C/WKOpenPanelParameters.cpp \
+    $$PWD/UIProcess/API/C/WKOpenPanelResultListener.cpp \
+    $$PWD/UIProcess/API/C/WKNavigationData.cpp \
+    $$PWD/UIProcess/API/C/WKPage.cpp \
+    $$PWD/UIProcess/API/C/WKPageGroup.cpp \
+    $$PWD/UIProcess/API/C/WKPluginSiteDataManager.cpp \
+    $$PWD/UIProcess/API/C/WKPreferences.cpp \
+    $$PWD/UIProcess/API/C/WKProtectionSpace.cpp \
+    $$PWD/UIProcess/API/C/WKResourceCacheManager.cpp \
+    $$PWD/UIProcess/API/cpp/qt/WKStringQt.cpp \
+    $$PWD/UIProcess/API/cpp/qt/WKURLQt.cpp \
+    $$PWD/UIProcess/API/qt/qbasewebview.cpp \
+    $$PWD/UIProcess/API/qt/qdesktopwebview.cpp \
+    $$PWD/UIProcess/API/qt/qwebdownloaditem.cpp \
+    $$PWD/UIProcess/API/qt/qtouchwebpage.cpp \
+    $$PWD/UIProcess/API/qt/qtouchwebview.cpp \
+    $$PWD/UIProcess/API/qt/qwebnavigationcontroller.cpp \
+    $$PWD/UIProcess/API/qt/qwebpreferences.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
+    $$PWD/PluginProcess/qt/PluginProcessMainQt.cpp \
+    $$PWD/WebProcess/qt/WebProcessMainQt.cpp
 
-# Output in WebKit2/<config>
-CONFIG(debug, debug|release) : WEBKIT2_DESTDIR = debug
-else: WEBKIT2_DESTDIR = release
-
-isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/WebKit2/generated
-
-WEBKIT2_INCLUDEPATH = \
-    $$SOURCE_DIR/WebKit2 \
-    $$SOURCE_DIR/WebKit2/Platform \
-    $$SOURCE_DIR/WebKit2/Platform/CoreIPC \
-    $$SOURCE_DIR/WebKit2/Platform/qt \
-    $$SOURCE_DIR/WebKit2/Shared \
-    $$SOURCE_DIR/WebKit2/Shared/API/c \
-    $$SOURCE_DIR/WebKit2/Shared/CoreIPCSupport \
-    $$SOURCE_DIR/WebKit2/Shared/Plugins \
-    $$SOURCE_DIR/WebKit2/Shared/Plugins/Netscape \
-    $$SOURCE_DIR/WebKit2/Shared/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/C \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess/Authentication \
-    $$SOURCE_DIR/WebKit2/UIProcess/Downloads \
-    $$SOURCE_DIR/WebKit2/UIProcess/Launcher \
-    $$SOURCE_DIR/WebKit2/UIProcess/Plugins \
-    $$SOURCE_DIR/WebKit2/UIProcess/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess \
-    $$SOURCE_DIR/WebKit2/WebProcess/ApplicationCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/Authentication \
-    $$SOURCE_DIR/WebKit2/WebProcess/Cookies \
-    $$SOURCE_DIR/WebKit2/WebProcess/Cookies/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/Downloads \
-    $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/FullScreen \
-    $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \
-    $$SOURCE_DIR/WebKit2/WebProcess/IconDatabase \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c \
-    $$SOURCE_DIR/WebKit2/WebProcess/KeyValueStorage \
-    $$SOURCE_DIR/WebKit2/WebProcess/MediaCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/Plugins \
-    $$SOURCE_DIR/WebKit2/WebProcess/Plugins/Netscape \
-    $$SOURCE_DIR/WebKit2/WebProcess/ResourceCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebPage \
-    $$SOURCE_DIR/WebKit2/WebProcess/qt \
-    $$SOURCE_DIR/WebKit2/PluginProcess
-
-INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
-
-defineTest(prependWebKit2Lib) {
-    pathToWebKit2Output = $$ARGS/$$WEBKIT2_DESTDIR
-
-    win32-msvc*|wince*|win32-icc {
-        LIBS = -l$$WEBKIT2_TARGET $$LIBS
-        LIBS = -L$$pathToWebKit2Output $$LIBS
-        POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}$${WEBKIT2_TARGET}.lib
-    } else {
-        QMAKE_LIBDIR = $$pathToWebKit2Output $$QMAKE_LIBDIR
-        LIBS = -l$$WEBKIT2_TARGET $$LIBS
-        POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}lib$${WEBKIT2_TARGET}.a
-    }
-
-    # The following line is to prevent qmake from adding webkit2 to libQtWebKit's prl dependencies.
-    CONFIG -= explicitlib
-    CONFIG -= staticlib
-
-    export(QMAKE_LIBDIR)
-    export(POST_TARGETDEPS)
-    export(CONFIG)
-    export(LIBS)
-
-    return(true)
-}
+HEADERS += \
+    $$PWD/Shared/API/c/WKBase.h \
+    $$PWD/Shared/API/c/WKCertificateInfo.h \
+    $$PWD/Shared/API/c/WKContextMenuItem.h \
+    $$PWD/Shared/API/c/WKContextMenuItemTypes.h \
+    $$PWD/Shared/API/c/WKDictionary.h \
+    $$PWD/Shared/API/c/WKError.h \
+    $$PWD/Shared/API/c/WKGeometry.h \
+    $$PWD/Shared/API/c/WKGraphicsContext.h \
+    $$PWD/Shared/API/c/WKImage.h \
+    $$PWD/Shared/API/c/WKMutableDictionary.h \
+    $$PWD/Shared/API/c/WKNumber.h \
+    $$PWD/Shared/API/c/WKPageLoadTypes.h \
+    $$PWD/Shared/API/c/WKSecurityOrigin.h \
+    $$PWD/Shared/API/c/WKSerializedScriptValue.h \
+    $$PWD/Shared/API/c/WKSharedAPICast.h \
+    $$PWD/Shared/API/c/WKString.h \
+    $$PWD/Shared/API/c/WKStringPrivate.h \
+    $$PWD/Shared/API/c/WKType.h \
+    $$PWD/Shared/API/c/WKURL.h \
+    $$PWD/Shared/API/c/WKURLRequest.h \
+    $$PWD/Shared/API/c/WKURLResponse.h \
+    $$PWD/Shared/API/c/WKUserContentURLPattern.h \
+    $$PWD/Shared/API/c/qt/WKImageQt.h \
+    $$PWD/UIProcess/API/C/WKAPICast.h \
+    $$PWD/UIProcess/API/C/WKAuthenticationChallenge.h \
+    $$PWD/UIProcess/API/C/WKAuthenticationDecisionListener.h \
+    $$PWD/UIProcess/API/C/WKBackForwardList.h \
+    $$PWD/UIProcess/API/C/WKBackForwardListItem.h \
+    $$PWD/UIProcess/API/C/WKContext.h \
+    $$PWD/UIProcess/API/C/WKContextPrivate.h \
+    $$PWD/UIProcess/API/C/WKCredential.h \
+    $$PWD/UIProcess/API/C/WKCredentialTypes.h \
+    $$PWD/UIProcess/API/C/WKDatabaseManager.h \
+    $$PWD/UIProcess/API/C/WKDownload.h \
+    $$PWD/UIProcess/API/C/WKFrame.h \
+    $$PWD/UIProcess/API/C/WKFramePolicyListener.h \
+    $$PWD/UIProcess/API/C/WKGeolocationManager.h \
+    $$PWD/UIProcess/API/C/WKGeolocationPermissionRequest.h \
+    $$PWD/UIProcess/API/C/WKGeolocationPosition.h \
+    $$PWD/UIProcess/API/C/WKHitTestResult.h \
+    $$PWD/UIProcess/API/C/WKIconDatabase.h \
+    $$PWD/UIProcess/API/C/WKInspector.h \
+    $$PWD/UIProcess/API/C/WKOpenPanelParameters.h \
+    $$PWD/UIProcess/API/C/WKOpenPanelResultListener.h \
+    $$PWD/UIProcess/API/C/WKNavigationData.h \
+    $$PWD/UIProcess/API/C/WKPage.h \
+    $$PWD/UIProcess/API/C/WKPageGroup.h \
+    $$PWD/UIProcess/API/C/WKPagePrivate.h \
+    $$PWD/UIProcess/API/C/WKPluginSiteDataManager.h \
+    $$PWD/UIProcess/API/C/WKPreferences.h \
+    $$PWD/UIProcess/API/C/WKPreferencesPrivate.h \
+    $$PWD/UIProcess/API/C/WKProtectionSpace.h \
+    $$PWD/UIProcess/API/C/WKProtectionSpaceTypes.h \
+    $$PWD/UIProcess/API/C/WebKit2.h \
+    $$PWD/UIProcess/API/C/qt/WKNativeEvent.h \
+    $$PWD/UIProcess/API/cpp/WKRetainPtr.h \
+    $$PWD/UIProcess/API/cpp/qt/WKStringQt.h \
+    $$PWD/UIProcess/API/cpp/qt/WKURLQt.h \
+    $$PWD/UIProcess/API/qt/qbasewebview.h \
+    $$PWD/UIProcess/API/qt/qbasewebview_p.h \
+    $$PWD/UIProcess/API/qt/qdesktopwebview.h \
+    $$PWD/UIProcess/API/qt/qdesktopwebview_p.h \
+    $$PWD/UIProcess/API/qt/qwebpreferences.h \
+    $$PWD/UIProcess/API/qt/qwebpreferences_p.h \
+    $$PWD/UIProcess/API/qt/qwebdownloaditem.h \
+    $$PWD/UIProcess/API/qt/qwebdownloaditem_p.h \
+    $$PWD/UIProcess/API/qt/qtouchwebpage.h \
+    $$PWD/UIProcess/API/qt/qtouchwebpage_p.h \
+    $$PWD/UIProcess/API/qt/qtouchwebview.h \
+    $$PWD/UIProcess/API/qt/qtouchwebview_p.h \
+    $$PWD/UIProcess/API/qt/qwebnavigationcontroller.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h \
+    $$PWD/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h

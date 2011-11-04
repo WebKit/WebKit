@@ -28,7 +28,8 @@
 #define EventSenderProxy_h
 
 #if PLATFORM(QT)
-#include <Qt>
+#include <QEvent>
+#include <QTouchEvent>
 #endif
 
 namespace WTR {

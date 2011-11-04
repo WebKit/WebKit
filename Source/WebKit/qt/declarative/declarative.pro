@@ -1,16 +1,21 @@
-TARGET  = qmlwebkitplugin
-TARGETPATH = QtWebKit
+# -------------------------------------------------------------------
+# Project file for the QtWebKit QML plugin
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
 
 TEMPLATE = lib
+TARGET  = qmlwebkitplugin
+
+TARGET.module_name = QtWebKit
+
 CONFIG += qt plugin
 
 win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
-
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE
-copy2build.output = $$OUTPUT_DIR/imports/$$TARGETPATH/qmldir
+copy2build.output = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}/qmldir
 !contains(TEMPLATE_PREFIX, vc):copy2build.variable_out = PRE_TARGETDEPS
 copy2build.commands = $$QMAKE_COPY ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 copy2build.name = COPY ${QMAKE_FILE_IN}
@@ -22,39 +27,32 @@ contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 
-include(../../../WebKit.pri)
+CONFIG += qtwebkit
 
 QT += declarative
-qt5: QT += widgets
+haveQt(5): QT += widgets
 
 contains(QT_CONFIG, qtquick1): {
     QT += qtquick1
 }
 
-linux-* {
-    # From Creator's src/rpath.pri:
-    # Do the rpath by hand since it's not possible to use ORIGIN in QMAKE_RPATHDIR
-    # this expands to $ORIGIN (after qmake and make), it does NOT read a qmake var.
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-    MY_RPATH = $$join(QMAKE_RPATHDIR, ":")
+DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
 
-    QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\'
-    QMAKE_RPATHDIR =
-} else {
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
+CONFIG += rpath
+RPATHDIR_RELATIVE_TO_DESTDIR = ../../lib
 
 SOURCES += qdeclarativewebview.cpp plugin.cpp
 HEADERS += qdeclarativewebview_p.h
 
-webkit2: DEFINES += HAVE_WEBKIT2
+!no_webkit2: {
+    DEFINES += HAVE_WEBKIT2
+    QT += network
+}
 
-DESTDIR = $$OUTPUT_DIR/imports/$$TARGETPATH
-
-target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
+target.path = $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 
 
 qmldir.files += $$PWD/qmldir
-qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
+qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 
 INSTALLS += target qmldir

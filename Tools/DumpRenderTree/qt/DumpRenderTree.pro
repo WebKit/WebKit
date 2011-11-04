@@ -1,35 +1,36 @@
+# -------------------------------------------------------------------
+# Project file for the DumpRenderTree binary (DRT)
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+TEMPLATE = app
+
 TARGET = DumpRenderTree
-CONFIG  -= app_bundle
-!isEqual(QT_ARCH,sh4) {
-    greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
-        message("QtUiTools library not found. QWidget plugin loading will be disabled")
-        DEFINES += QT_NO_UITOOLS
-    } else {
-        CONFIG += uitools
-    }
+DESTDIR = $$ROOT_BUILD_DIR/bin
+
+haveQt(5):isEmpty(QT.uitools.name) {
+    message("QtUiTools library not found. QWidget plugin loading will be disabled")
+    DEFINES += QT_NO_UITOOLS
+} else {
+    CONFIG += uitools
 }
 
-BASEDIR = $$PWD/../
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
+load(javascriptcore)
+load(webcore)
 
-include(../../../Source/WebKit.pri)
-INCLUDEPATH += ../../../Source
-INCLUDEPATH += ../../../Source/JavaScriptCore
-INCLUDEPATH += ../../../Source/JavaScriptCore/ForwardingHeaders
-INCLUDEPATH += ../../../Source/WebKit/qt/WebCoreSupport
-INCLUDEPATH += $$BASEDIR
-DESTDIR = ../../bin
+CONFIG += qtwebkit
 
-unix:!mac:!embedded {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += fontconfig
-}
+INCLUDEPATH += $$PWD/..
+
+!embedded: PKGCONFIG += fontconfig
 
 QT = core gui network testlib
 macx: QT += xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+haveQt(5): QT += widgets printsupport
 
-HEADERS = $$BASEDIR/WorkQueue.h \
+HEADERS += \
+    $$PWD/../WorkQueue.h \
     DumpRenderTreeQt.h \
     EventSenderQt.h \
     TextInputControllerQt.h \
@@ -38,8 +39,10 @@ HEADERS = $$BASEDIR/WorkQueue.h \
     GCControllerQt.h \
     PlainTextControllerQt.h \
     testplugin.h
-SOURCES = ../../../Source/JavaScriptCore/wtf/Assertions.cpp \
-    $$BASEDIR/WorkQueue.cpp \
+
+SOURCES += \
+    $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf/Assertions.cpp \
+    $$PWD/../WorkQueue.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
@@ -50,16 +53,11 @@ SOURCES = ../../../Source/JavaScriptCore/wtf/Assertions.cpp \
     testplugin.cpp \
     main.cpp
 
-unix:!mac {
-    QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
-}
-
 wince*: {
     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat $$WCECOMPAT/include
     LIBS += $$WCECOMPAT/lib/wcecompat.lib
 }
 
 DEFINES += USE_SYSTEM_MALLOC=1
-DEFINES -= QT_ASCII_CAST_WARNINGS
 
 RESOURCES = DumpRenderTree.qrc
