@@ -2354,7 +2354,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         ASSERT(!isInvalidParamForInstanceOf(callFrame, baseVal, exceptionValue));
 
-        bool result = asObject(baseVal)->methodTable()->hasInstance(asObject(baseVal), callFrame, callFrame->r(value).jsValue(), callFrame->r(baseProto).jsValue());
+        bool result = asObject(baseVal)->hasInstance(callFrame, callFrame->r(value).jsValue(), callFrame->r(baseProto).jsValue());
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = jsBoolean(result);
 

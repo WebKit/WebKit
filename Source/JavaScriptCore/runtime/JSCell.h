@@ -146,7 +146,6 @@ namespace JSC {
         static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static UString className(const JSObject*);
-        static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
 
     private:
         WriteBarrier<Structure> m_structure;

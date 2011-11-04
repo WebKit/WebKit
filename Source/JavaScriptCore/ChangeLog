@@ -1,3 +1,31 @@
+2011-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        De-virtualize JSObject::hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=71430
+
+        Unreviewed rolling out r99238, because it made a test crash on all platform.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::hasInstance):
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ClassInfo.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::hasInstance):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        * runtime/JSObject.h:
+
 2011-11-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getPropertyNames

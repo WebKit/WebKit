@@ -185,7 +185,7 @@ private:
     static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned);
 
-    static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
+    virtual bool hasInstance(ExecState* exec, JSValue value, JSValue proto);
 
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
