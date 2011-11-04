@@ -44,7 +44,7 @@ private:
     };
 
     virtual NPError NPP_GetValue(NPPVariable, void*);
-    virtual NPError NPP_SetWindow(NPP, NPWindow*);
+    virtual NPError NPP_SetWindow(NPWindow*);
     virtual NPError NPP_Destroy(NPSavedData**);
 
     bool m_willBeDestroyed;
@@ -72,7 +72,7 @@ NPError NPPSetWindowCalledDuringDestruction::NPP_GetValue(NPPVariable variable, 
     return NPERR_NO_ERROR;
 }
 
-NPError NPPSetWindowCalledDuringDestruction::NPP_SetWindow(NPP, NPWindow* window)
+NPError NPPSetWindowCalledDuringDestruction::NPP_SetWindow(NPWindow* window)
 {
     if (m_willBeDestroyed) {
         m_setWindowCalledDuringDestruction = true;

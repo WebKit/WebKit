@@ -1,6 +1,8 @@
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 </script>
 
 <embed id="testPlugin" 

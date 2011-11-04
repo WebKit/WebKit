@@ -1,3 +1,31 @@
+2011-11-04  Anders Carlsson  <andersca@apple.com>
+
+        NPN_ConvertPoint plug-in test should be called from NPP_SetWindow
+        https://bugs.webkit.org/show_bug.cgi?id=71570
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_SetWindow):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Remove the NPP parameter from NPP_SetWindow.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPPSetWindowCalledDuringDestruction.cpp:
+        (NPPSetWindowCalledDuringDestruction::NPP_SetWindow):
+        Remove the NPP parameter from NPP_SetWindow.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp:
+        (PassDifferentNPPStruct::NPP_SetWindow):
+        Remove the NPP parameter from NPP_SetWindow and use PluginTest::log for logging.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/ConvertPoint.cpp:
+        (ConvertPoint::NPP_SetWindow):
+        Run the test from NPP_SetWindow and call notifyDone() when done.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_SetWindow):
+        Remove unnecessary parameter.
+
 2011-11-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix run-qtwebkit-tests execution on the build bot(s).

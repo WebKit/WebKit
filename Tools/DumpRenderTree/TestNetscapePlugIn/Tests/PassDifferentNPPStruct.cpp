@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    virtual NPError NPP_SetWindow(NPP instance, NPWindow* window)
+    virtual NPError NPP_SetWindow(NPWindow* window)
     {
         if (m_didReceiveInitialSetWindowCall)
             return NPERR_NO_ERROR;
@@ -57,10 +57,10 @@ private:
         m_npp = oldNPP;
 
         if (error != NPERR_NO_ERROR) {
-            pluginLog(instance, "NPN_GetValue(NPNVprivateModeBool) with a different NPP struct failed with error %d", error);
+            log("NPN_GetValue(NPNVprivateModeBool) with a different NPP struct failed with error %d", error);
             return NPERR_GENERIC_ERROR;
         }
-        pluginLog(instance, "NPN_GetValue(NPNVprivateModeBool) with a different NPP struct succeeded");
+        log("NPN_GetValue(NPNVprivateModeBool) with a different NPP struct succeeded");
         return NPERR_NO_ERROR;
     }
 

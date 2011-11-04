@@ -60,7 +60,7 @@ public:
     // NPP functions.
     virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved);
     virtual NPError NPP_Destroy(NPSavedData**);
-    virtual NPError NPP_SetWindow(NPP, NPWindow*);
+    virtual NPError NPP_SetWindow(NPWindow*);
     virtual NPError NPP_NewStream(NPMIMEType, NPStream*, NPBool seekable, uint16_t* stype);
     virtual NPError NPP_DestroyStream(NPStream*, NPReason);
     virtual int32_t NPP_WriteReady(NPStream*);

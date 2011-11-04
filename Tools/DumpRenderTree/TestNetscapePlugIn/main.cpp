@@ -356,7 +356,7 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
         }
     }
     
-    return obj->pluginTest->NPP_SetWindow(instance, window);
+    return obj->pluginTest->NPP_SetWindow(window);
 }
 
 static void executeScript(const PluginObject* obj, const char* script)
