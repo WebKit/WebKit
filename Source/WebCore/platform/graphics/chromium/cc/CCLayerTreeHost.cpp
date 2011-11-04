@@ -292,8 +292,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
         rootLayer->createRenderSurface();
     rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), viewportSize()));
 
-    IntRect rootScissorRect(IntPoint(), viewportSize());
-    rootLayer->setScissorRect(rootScissorRect);
+    IntRect rootClipRect(IntPoint(), viewportSize());
+    rootLayer->setClipRect(rootClipRect);
 
     // This assert fires if updateCompositorResources wasn't called after
     // updateLayers. Only one update can be pending at any given time.

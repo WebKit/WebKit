@@ -353,7 +353,7 @@ void LayerRendererChromium::drawLayersInternal()
         rootDrawLayer->createRenderSurface();
     rootDrawLayer->renderSurface()->setContentRect(IntRect(IntPoint(), viewportSize()));
 
-    rootDrawLayer->setScissorRect(IntRect(IntPoint(), viewportSize()));
+    rootDrawLayer->setClipRect(IntRect(IntPoint(), viewportSize()));
 
     CCLayerList renderSurfaceLayerList;
     renderSurfaceLayerList.append(rootDrawLayer);
@@ -582,8 +582,8 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
     if (visibleLayerRect.isEmpty())
         return;
 
-    if (layer->usesLayerScissor())
-        setScissorToRect(layer->scissorRect());
+    if (layer->usesLayerClipping())
+        setScissorToRect(layer->clipRect());
     else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 

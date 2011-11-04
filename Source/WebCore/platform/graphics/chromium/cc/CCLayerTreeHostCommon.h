@@ -59,8 +59,8 @@ IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(LayerType* layer)
     ASSERT(layer->targetRenderSurface());
     IntRect targetSurfaceRect = layer->targetRenderSurface()->contentRect();
 
-    if (layer->usesLayerScissor())
-        targetSurfaceRect.intersect(layer->scissorRect());
+    if (layer->usesLayerClipping())
+        targetSurfaceRect.intersect(layer->clipRect());
 
     if (targetSurfaceRect.isEmpty() || layer->contentBounds().isEmpty())
         return targetSurfaceRect;

@@ -80,7 +80,7 @@ bool layerShouldBeSkipped(LayerType* layer)
     //   - the layer is not double-sided, but its back face is visible.
     //
     // Some additional conditions need to be computed at a later point after the recursion is finished.
-    //   - the intersection of render surface content and layer scissor is empty
+    //   - the intersection of render surface content and layer clipRect is empty
     //   - the visibleLayerRect is empty
 
     if (!layer->drawsContent() || !layer->opacity() || layer->bounds().isEmpty())
@@ -104,7 +104,7 @@ bool layerShouldBeSkipped(LayerType* layer)
 }
 
 // Recursively walks the layer tree starting at the given node and computes all the
-// necessary transformations, scissor rectangles, render surfaces, etc.
+// necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
 static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
@@ -214,7 +214,7 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     TransformationMatrix nextHierarchyMatrix = fullHierarchyMatrix;
 
     // FIXME: This seems like the wrong place to set this
-    layer->setUsesLayerScissor(false);
+    layer->setUsesLayerClipping(false);
 
     // The layer and its descendants render on a new RenderSurface if any of
     // these conditions hold:
@@ -257,10 +257,10 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         // Update the aggregate hierarchy matrix to include the transform of the newly created RenderSurface.
         nextHierarchyMatrix.multiply(layerOriginTransform);
 
-        // The render surface scissor rect is the scissor rect that needs to
+        // The render surface clipRect contributes to the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
         // surface and is therefore expressed in the parent's coordinate system.
-        renderSurface->setScissorRect(layer->parent() ? layer->parent()->scissorRect() : layer->scissorRect());
+        renderSurface->setClipRect(layer->parent() ? layer->parent()->clipRect() : layer->clipRect());
 
         renderSurface->clearLayerList();
 
@@ -284,10 +284,10 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             if (layer->parent()->preserves3D())
                layer->setDrawOpacity(layer->drawOpacity() * layer->parent()->drawOpacity());
 
-            // Layers inherit the scissor rect from their parent.
-            layer->setScissorRect(layer->parent()->scissorRect());
-            if (layer->parent()->usesLayerScissor())
-                layer->setUsesLayerScissor(true);
+            // Layers inherit the clip rect from their parent.
+            layer->setClipRect(layer->parent()->clipRect());
+            if (layer->parent()->usesLayerClipping())
+                layer->setUsesLayerClipping(true);
 
             layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
         }
@@ -296,10 +296,10 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             layer->clearRenderSurface();
 
         if (layer->masksToBounds()) {
-            IntRect scissor = transformedLayerRect;
-            scissor.intersect(layer->scissorRect());
-            layer->setScissorRect(scissor);
-            layer->setUsesLayerScissor(true);
+            IntRect clipRect = transformedLayerRect;
+            clipRect.intersect(layer->clipRect());
+            layer->setClipRect(clipRect);
+            layer->setUsesLayerClipping(true);
         }
     }
 
@@ -321,8 +321,8 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     // RenderSurface the layer draws into.
     if (layer->drawsContent()) {
         IntRect drawableContentRect = transformedLayerRect;
-        if (layer->usesLayerScissor())
-            drawableContentRect.intersect(layer->scissorRect());
+        if (layer->usesLayerClipping())
+            drawableContentRect.intersect(layer->clipRect());
         layer->setDrawableContentRect(drawableContentRect);
     } else
         layer->setDrawableContentRect(IntRect());
@@ -388,9 +388,9 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
         if (!layer->replicaLayer()) {
-            if (!renderSurface->scissorRect().isEmpty() && !clippedContentRect.isEmpty()) {
-                IntRect surfaceScissorRect = CCLayerTreeHostCommon::calculateVisibleRect(renderSurface->scissorRect(), clippedContentRect, renderSurface->originTransform());
-                clippedContentRect.intersect(surfaceScissorRect);
+            if (!renderSurface->clipRect().isEmpty() && !clippedContentRect.isEmpty()) {
+                IntRect surfaceClipRect = CCLayerTreeHostCommon::calculateVisibleRect(renderSurface->clipRect(), clippedContentRect, renderSurface->originTransform());
+                clippedContentRect.intersect(surfaceClipRect);
             }
             FloatPoint clippedSurfaceCenter = FloatRect(clippedContentRect).center();
             centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
@@ -407,8 +407,8 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         renderSurface->setContentRect(clippedContentRect);
 
         // Since the layer starts a new render surface we need to adjust its
-        // scissor rect to be expressed in the new surface's coordinate system.
-        layer->setScissorRect(layer->drawableContentRect());
+        // clipRect to be expressed in the new surface's coordinate system.
+        layer->setClipRect(layer->drawableContentRect());
 
         // Adjust the origin of the transform to be the center of the render surface.
         TransformationMatrix drawTransform = renderSurface->originTransform();

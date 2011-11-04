@@ -75,8 +75,8 @@ public:
     void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
     const TransformationMatrix& originTransform() const { return m_originTransform; }
 
-    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
-    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
+    const IntRect& clipRect() const { return m_clipRect; }
 
     void setContentRect(const IntRect& contentRect) { m_contentRect = contentRect; }
     const IntRect& contentRect() const { return m_contentRect; }
@@ -113,7 +113,7 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
-    IntRect m_scissorRect;
+    IntRect m_clipRect;
     Vector<RefPtr<CCLayerImpl> > m_layerList;
 };
 

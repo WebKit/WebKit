@@ -144,8 +144,8 @@ public:
     void setPreserves3D(bool preserve3D) { m_preserves3D = preserve3D; }
     bool preserves3D() const { return m_preserves3D; }
 
-    void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
-    bool usesLayerScissor() const { return m_usesLayerScissor; }
+    void setUsesLayerClipping(bool usesLayerClipping) { m_usesLayerClipping = usesLayerClipping; }
+    bool usesLayerClipping() const { return m_usesLayerClipping; }
 
     void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
@@ -183,8 +183,8 @@ public:
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
-    const IntRect& scissorRect() const { return m_scissorRect; }
-    void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
+    const IntRect& clipRect() const { return m_clipRect; }
+    void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
     RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
@@ -263,7 +263,7 @@ private:
     bool m_masksToBounds;
     bool m_opaque;
     bool m_doubleSided;
-    bool m_usesLayerScissor;
+    bool m_usesLayerClipping;
     bool m_isNonCompositedContent;
     bool m_preserves3D;
 
@@ -276,7 +276,7 @@ private:
     // Transient properties.
     OwnPtr<RenderSurfaceChromium> m_renderSurface;
     float m_drawOpacity;
-    IntRect m_scissorRect;
+    IntRect m_clipRect;
     RenderSurfaceChromium* m_targetRenderSurface;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;

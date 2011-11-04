@@ -622,11 +622,11 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setName("Test Layer"));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setVisibleLayerRect(IntRect(0, 0, 40, 50)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setScrollPosition(IntPoint(10, 10)));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setUsesLayerScissor(true));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setUsesLayerClipping(true));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setIsNonCompositedContent(true));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setReplicaLayer(dummyLayer.get()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDrawOpacity(0.5f));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setScissorRect(IntRect(3, 3, 8, 8)));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setClipRect(IntRect(3, 3, 8, 8)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setTargetRenderSurface(0));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDrawTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setScreenSpaceTransform(TransformationMatrix()));

@@ -107,8 +107,8 @@ public:
     void setPreserves3D(bool);
     bool preserves3D() const { return m_preserves3D; }
 
-    void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
-    bool usesLayerScissor() const { return m_usesLayerScissor; }
+    void setUsesLayerClipping(bool usesLayerClipping) { m_usesLayerClipping = usesLayerClipping; }
+    bool usesLayerClipping() const { return m_usesLayerClipping; }
 
     void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
@@ -137,8 +137,8 @@ public:
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
 
-    const IntRect& scissorRect() const { return m_scissorRect; }
-    void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
+    const IntRect& clipRect() const { return m_clipRect; }
+    void setClipRect(const IntRect& rect) { m_clipRect = rect; }
     CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
@@ -233,7 +233,7 @@ private:
     bool m_preserves3D;
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
-    bool m_usesLayerScissor;
+    bool m_usesLayerClipping;
     bool m_isNonCompositedContent;
 
     bool m_drawsContent;
@@ -266,10 +266,10 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;
 
-    // The scissor rectangle that should be used when this layer is drawn.
+    // The rect that contributes to the scissor when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks
     // to bounds.
-    IntRect m_scissorRect;
+    IntRect m_clipRect;
 
     // Render surface associated with this layer. The layer and its descendants
     // will render to this surface.

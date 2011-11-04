@@ -72,8 +72,8 @@ public:
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
     void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
 
-    const IntRect& scissorRect() const { return m_scissorRect; }
-    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
+    const IntRect& clipRect() const { return m_clipRect; }
+    void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
 
     bool skipsDraw() const { return m_skipsDraw; }
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
@@ -94,7 +94,7 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
-    IntRect m_scissorRect;
+    IntRect m_clipRect;
     Vector<RefPtr<LayerChromium> > m_layerList;
 };
 

@@ -112,8 +112,8 @@ void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const IntRect&)
     if (!m_maskLayer && m_owningLayer->replicaLayer())
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
-    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerScissor())
-        layerRenderer->setScissorToRect(m_scissorRect);
+    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
+        layerRenderer->setScissorToRect(m_clipRect);
     else
         GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));
 

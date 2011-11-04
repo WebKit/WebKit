@@ -157,8 +157,8 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
 
     // These properties are internal, and should not be considered "change" when they are used.
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setIsNonCompositedContent(true));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setScissorRect(arbitraryIntRect));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setUsesLayerScissor(true));
+    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setClipRect(arbitraryIntRect));
+    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setUsesLayerClipping(true));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDrawOpacity(arbitraryNumber));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setTargetRenderSurface(0));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDrawTransform(arbitraryTransform));
