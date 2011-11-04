@@ -595,31 +595,6 @@ void JITCompiler::jitAssertIsCell(GPRReg gpr)
 }
 #endif
 
-#if ENABLE(SAMPLING_COUNTERS) && CPU(X86) // Or any other little-endian 32-bit platform!
-void JITCompiler::emitCount(MacroAsembler& jit, AbstractSamplingCounter& counter, uint32_t increment)
-{
-    intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
-    jit.add32(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
-    jit.addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
-}
-#endif
-
-#if ENABLE(SAMPLING_FLAGS)
-void JITCompiler::setSamplingFlag(int32_t flag)
-{
-    ASSERT(flag >= 1);
-    ASSERT(flag <= 32);
-    or32(TrustedImm32(1u << (flag - 1)), AbsoluteAddress(SamplingFlags::addressOfFlags()));
-}
-
-void JITCompiler::clearSamplingFlag(int32_t flag)
-{
-    ASSERT(flag >= 1);
-    ASSERT(flag <= 32);
-    and32(TrustedImm32(~(1u << (flag - 1))), AbsoluteAddress(SamplingFlags::addressOfFlags()));
-}
-#endif
-
 } } // namespace JSC::DFG
 
 #endif

@@ -2508,6 +2508,10 @@ void SpeculativeJIT::compile(Node& node)
         // This is a no-op.
         noResult(m_compileIndex);
         break;
+
+    case InlineStart:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     if (node.hasResult() && node.mustGenerate())

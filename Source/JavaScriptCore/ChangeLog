@@ -1,3 +1,21 @@
+2011-11-04  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        More code clean-up in DFG 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=71540
+
+        Remove unnecessary code duplications, and fix compilation warnings.
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::emitCount):
+        (JSC::DFG::JITCompiler::setSamplingFlag):
+        (JSC::DFG::JITCompiler::clearSamplingFlag):
+        (JSC::DFG::JITCompiler::jitAssertIsCell):
+        * dfg/DFGJITCompiler32_64.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         De-virtualize JSObject::hasInstance
