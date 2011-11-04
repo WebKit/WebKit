@@ -1,3 +1,15 @@
+2011-11-04  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Use default LocalizationStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=71495
+
+        Reviewed by Adam Roben.
+
+        Use LocalizationStrategy from WebCore instead of using a copy of the strings in WebKit.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
 2011-11-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor is silent
