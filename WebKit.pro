@@ -44,8 +44,3 @@ OTHER_FILES = \
     Tools/qmake/mkspecs/features/mac/*.prf \
     Tools/qmake/mkspecs/features/unix/*.prf \
     Tools/qmake/mkspecs/features/win32/*.prf
-
-incremental.target = incremental
-!CONFIG(GNUmake): incremental.commands += $(MAKE) qmake &&
-incremental.commands += $(MAKE)
-QMAKE_EXTRA_TARGETS += incremental

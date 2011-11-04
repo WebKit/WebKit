@@ -175,6 +175,11 @@ contains(TEMPLATE, subdirs):!no_recursive_qmake {
     QMAKE_EXTRA_TARGETS += recursive_qmake
 }
 
+incremental.target = incremental
+!CONFIG(GNUmake): incremental.commands += $(MAKE) -f $(MAKEFILE) qmake &&
+incremental.commands += $(MAKE) -f $(MAKEFILE)
+QMAKE_EXTRA_TARGETS += incremental
+
 # Don't set OBJECTS_DIR for subdirs, as that will unconditionally
 # create the directory, even if we're not using it.
 contains(TEMPLATE, subdirs) {

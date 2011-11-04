@@ -1,5 +1,19 @@
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Don't build all of webkit when running build-jsc
+
+        In case the whole webkit project was built, but we then subsequently
+        want to build only JSC, we need to run make in the proper subdirectory.
+
+        This also means the incremental target needs to be added to all
+        makefiles.
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit.pro:
+
+2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Refactor and clean up the qmake build system
 
         The qmake build system has accumulated a bit of cruft and redundancy

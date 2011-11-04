@@ -1809,6 +1809,10 @@ sub buildQMakeProject($@)
         if ($result ne 0) {
            die "Failed to setup build environment using $qmakebin!\n";
         }
+    } elsif ($project) {
+        $dir = File::Spec->catfile($dir, "Source", $project);
+        chdir $dir or die "Failed to cd into " . $dir . "\n";
+        $make = "$make -f Makefile.$project";
     }
 
     my $command = "$make $makeargs";

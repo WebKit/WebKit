@@ -1,3 +1,19 @@
+2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't build all of webkit when running build-jsc
+
+        In case the whole webkit project was built, but we then subsequently
+        want to build only JSC, we need to run make in the proper subdirectory.
+
+        This also means the incremental target needs to be added to all
+        makefiles.
+
+        Reviewed by Simmon Hausmann.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProject):
+        * qmake/mkspecs/features/default_post.prf:
+
 2011-11-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix run-javascriptcore-tests for Qt when it's executed by the bot.
