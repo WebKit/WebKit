@@ -2528,3 +2528,4 @@ fast/encoding/utf-16-little-endian.html
 fast/images/pdf-as-image.html
 tables/mozilla/bugs/bug2962.html
 tables/mozilla/bugs/bug56201.html
+http/tests/misc/submit-post-keygen.html
