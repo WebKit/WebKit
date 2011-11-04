@@ -85,9 +85,6 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
 
 TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 {
-    // This test only works for the case of kMaxFramesPending = 2
-    ASSERT_EQ(2, CCFrameRateController::kMaxFramesPending);
-
     FakeCCThread thread;
     FakeCCFrameRateControllerClient client;
     RefPtr<FakeCCDelayBasedTimeSource> timeSource = FakeCCDelayBasedTimeSource::create(1000.0 / 60.0, &thread);
@@ -95,6 +92,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     controller.setClient(&client);
     controller.setActive(true);
+    controller.setMaxFramesPending(2);
 
     double elapsed = 0; // Muck around with time a bit
 

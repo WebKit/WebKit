@@ -66,6 +66,7 @@ public:
 
     void beginFrameComplete();
 
+    void setMaxFramesPending(int);
     void didSwapBuffersComplete();
     void didSwapBuffersAbort();
 

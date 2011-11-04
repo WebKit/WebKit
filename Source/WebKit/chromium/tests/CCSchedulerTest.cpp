@@ -132,4 +132,8 @@ TEST(CCSchedulerTest, RequestRedraw)
 {
 }
 
+TEST(CCSchedulerTest, RequestRedrawWithTwoFramesPending)
+{
+}
+
 }

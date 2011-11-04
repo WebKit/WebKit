@@ -52,6 +52,7 @@ public:
 
     void setActive(bool active) { m_timeSource->setActive(active); }
 
+    void setMaxPendingFrames(int);
     // Use the following methods to adjust target frame rate.
     //
     // Multiple frames can be in-progress, but for every didBeginFrame, a
@@ -61,10 +62,7 @@ public:
     void didBeginFrame();
     void didFinishFrame();
     void didAbortAllPendingFrames();
-
-    enum {
-        kMaxFramesPending = 2
-    };
+    void setMaxFramesPending(int); // 0 for unlimited.
 
 protected:
     friend class CCFrameRateControllerTimeSourceAdapter;
@@ -72,6 +70,7 @@ protected:
 
     CCFrameRateControllerClient* m_client;
     int m_numFramesPending;
+    int m_maxFramesPending;
     RefPtr<CCTimeSource> m_timeSource;
     OwnPtr<CCFrameRateControllerTimeSourceAdapter> m_timeSourceClientAdapter;
 };

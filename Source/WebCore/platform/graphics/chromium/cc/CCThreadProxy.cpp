@@ -456,9 +456,9 @@ void CCThreadProxy::scheduledActionCommit()
     m_commitCompletionEventOnImplThread = 0;
 }
 
-void CCThreadProxy::drawLayersAndSwapOnImplThread()
+void CCThreadProxy::scheduledActionDrawAndSwap()
 {
-    TRACE_EVENT("CCThreadProxy::drawLayersAndSwapOnImplThread", this, 0);
+    TRACE_EVENT("CCThreadProxy::scheduledActionDrawAndSwap", this, 0);
     ASSERT(isImplThread());
     if (!m_layerTreeHostImpl)
         return;
@@ -519,8 +519,11 @@ void CCThreadProxy::initializeLayerRendererOnImplThread(GraphicsContext3D* conte
     ASSERT(isImplThread());
     RefPtr<GraphicsContext3D> context(adoptRef(contextPtr));
     *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(context);
-    if (*initializeSucceeded)
+    if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
+        if (capabilities->usingSwapCompleteCallback)
+            m_schedulerOnImplThread->setMaxFramesPending(2);
+    }
 
     m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());
     *compositorIdentifier = m_inputHandlerOnImplThread->identifier();
@@ -537,12 +540,6 @@ void CCThreadProxy::layerTreeHostClosedOnImplThread(CCCompletionEvent* completio
     m_inputHandlerOnImplThread.clear();
     m_schedulerOnImplThread.clear();
     completion->signal();
-}
-
-void CCThreadProxy::scheduledActionDrawAndSwap()
-{
-    TRACE_EVENT("CCThreadProxy::scheduledActionDrawAndSwap", this, 0);
-    drawLayersAndSwapOnImplThread();
 }
 
 } // namespace WebCore

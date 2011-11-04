@@ -50,6 +50,7 @@ private:
 CCFrameRateController::CCFrameRateController(PassRefPtr<CCTimeSource> timer)
     : m_client(0)
     , m_numFramesPending(0)
+    , m_maxFramesPending(0)
     , m_timeSource(timer)
 {
     m_timeSourceClientAdapter = CCFrameRateControllerTimeSourceAdapter::create(this);
@@ -61,10 +62,15 @@ CCFrameRateController::~CCFrameRateController()
     m_timeSource->setActive(false);
 }
 
+void CCFrameRateController::setMaxFramesPending(int maxFramesPending)
+{
+    m_maxFramesPending = maxFramesPending;
+}
+
 void CCFrameRateController::onTimerTick()
 {
     // Don't forward the tick if we have too many frames in flight.
-    if (m_numFramesPending >= kMaxFramesPending)
+    if (m_maxFramesPending && m_numFramesPending >= m_maxFramesPending)
         return;
 
     if (m_client)

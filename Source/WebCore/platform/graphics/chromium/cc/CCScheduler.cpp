@@ -75,6 +75,11 @@ void CCScheduler::beginFrameComplete()
     processScheduledActions();
 }
 
+void CCScheduler::setMaxFramesPending(int maxFramesPending)
+{
+    m_frameRateController->setMaxFramesPending(maxFramesPending);
+}
+
 void CCScheduler::didSwapBuffersComplete()
 {
     TRACE_EVENT("CCScheduler::didSwapBuffersComplete", this, 0);
@@ -124,6 +129,7 @@ void CCScheduler::processScheduledActions()
             break;
         case CCSchedulerStateMachine::ACTION_DRAW:
             m_client->scheduledActionDrawAndSwap();
+            m_frameRateController->didBeginFrame();
             break;
         }
         m_stateMachine.updateState(action);

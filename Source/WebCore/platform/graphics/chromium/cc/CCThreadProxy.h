@@ -94,8 +94,6 @@ private:
     PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
     void beginFrameCompleteOnImplThread(CCCompletionEvent*);
-    void drawLayersAndSwapOnImplThread();
-    void drawLayersOnImplThread();
     void requestReadbackOnImplThread(ReadbackRequest*);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);

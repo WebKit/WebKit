@@ -1,3 +1,16 @@
+2011-11-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Notify scheduler on SwapBuffers in threaded compositor mode
+        https://bugs.webkit.org/show_bug.cgi?id=71381
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::didSwapBuffers):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::drawLayersAndSwapOnImplThread):
+
 2011-11-03  Daniel Bates  <dbates@rim.com>
 
         CMake: Add missing WebGL IDL file html/canvas/WebGLContextEvent.idl
