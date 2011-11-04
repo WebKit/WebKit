@@ -35,8 +35,6 @@ BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 DEBUG : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/traversing.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
@@ -46,9 +44,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 //BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
 //BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
 
-BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
-
-BUGWK67921 DEBUG : perf/show-hide-table-rows.html = PASS TIMEOUT
 BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 
 // -----------------------------------------------------------------
@@ -113,6 +108,10 @@ WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
+
+// Perf tests are really slow in debug builds and there are few benefits in
+// running them.
+WONTFIX SKIP DEBUG : perf = TIMEOUT
 
 // This test verifies that a mismatch reftest will fail if both results are the
 // same.  Because the whole point is that this test should fail when run, it's
@@ -2214,12 +2213,11 @@ BUGCR52572 LINUX WIN DEBUG : http/tests/misc/image-blocked-src-change.html = PAS
 // Started to crash around Chromium r56408.
 BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
-BUGCR66466 SLOW : perf/array-nested-loop.html = PASS TEXT
-BUGWK44199 SLOW : perf/class-list-remove.html = PASS TEXT
-BUGWK44199 : perf/clone-with-focus.html = PASS TIMEOUT TEXT
-BUGWK44199 SLOW : perf/mouse-event.html = PASS TEXT
-BUGWK44199 SLOW : perf/typing-at-end-of-line.html = PASS TEXT
-BUGWK44199 BUGWK63057 : perf/array-binary-search.html = PASS TIMEOUT MISSING TEXT
+BUGWK44199 RELEASE SLOW : perf/array-nested-loop.html = PASS TEXT
+BUGWK44199 RELEASE SLOW : perf/class-list-remove.html = PASS TEXT
+BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
+BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
+BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = PASS TEXT
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
