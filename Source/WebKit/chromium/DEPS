@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '108107'
+  'chromium_rev': '108476'
 }
 
 deps = {
@@ -156,6 +156,10 @@ deps_os = {
       From('chromium_deps', 'src/third_party/yasm/binaries'),
   },
   'mac': {
+    'third_party/apple_apsl':
+      Var('chromium_svn')+'/third_party/apple_apsl@'+Var('chromium_rev'),
+    'third_party/apple_webkit':
+      Var('chromium_svn')+'/third_party/apple_webkit@'+Var('chromium_rev'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
   },

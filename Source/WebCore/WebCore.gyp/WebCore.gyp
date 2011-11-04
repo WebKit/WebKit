@@ -35,92 +35,6 @@
     '../../WebKit/chromium/features.gypi',
     '../WebCore.gypi',
   ],
-  # Location of the chromium src directory.
-  'conditions': [
-    ['inside_chromium_build==0', {
-      # Webkit is being built outside of the full chromium project.
-      'variables': {
-        'chromium_src_dir': '../../WebKit/chromium',
-        'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg_turbo/libjpeg.gyp',
-      },
-    },{
-      # WebKit is checked out in src/chromium/third_party/WebKit
-      'variables': {
-        'chromium_src_dir': '../../../../..',
-      },
-    }],
-    ['OS == "mac"', {
-      'targets': [
-        {
-          # On the Mac, libWebKitSystemInterface*.a is used to help WebCore
-          # interface with the system.  This library is supplied as a static
-          # library in binary format.  At present, it contains many global
-          # symbols not marked private_extern.  It should be considered an
-          # implementation detail of WebCore, and does not need these symbols
-          # to be exposed so widely.
-          #
-          # This target contains an action that cracks open the existing
-          # static library and rebuilds it with these global symbols
-          # transformed to private_extern.
-          'target_name': 'webkit_system_interface',
-          'type': 'static_library',
-          'variables': {
-            'adjusted_library_path':
-                '<(PRODUCT_DIR)/libWebKitSystemInterfaceLeopardPrivateExtern.a',
-          },
-          'sources': [
-            # An empty source file is needed to convince Xcode to produce
-            # output for this target.  The resulting library won't actually
-            # contain anything.  The library at adjusted_library_path will,
-            # and that library is pushed to dependents of this target below.
-            'mac/Empty.cpp',
-          ],
-          'actions': [
-            {
-              'action_name': 'Adjust Visibility',
-              'inputs': [
-                'mac/adjust_visibility.sh',
-                '../../../WebKitLibraries/libWebKitSystemInterfaceLeopard.a',
-              ],
-              'outputs': [
-                '<(adjusted_library_path)',
-              ],
-              'action': [
-                '<@(_inputs)',
-                '<@(_outputs)',
-                '<(INTERMEDIATE_DIR)/adjust_visibility',  # work directory
-              ],
-            },
-          ],  # actions
-          'link_settings': {
-            'libraries': [
-              '<(adjusted_library_path)',
-            ],
-          },  # link_settings
-        },  # target webkit_system_interface
-      ],  # targets
-    }],  # condition OS == "mac"
-    ['OS!="win" and remove_webcore_debug_symbols==1', {
-      # Remove -g from all targets defined here.
-      'target_defaults': {
-        'cflags!': ['-g'],
-      },
-    }],
-    ['os_posix==1 and OS!="mac" and OS!="android" and gcc_version==46', {
-      'target_defaults': {
-        # Disable warnings about c++0x compatibility, as some names (such as nullptr) conflict
-        # with upcoming c++0x types.
-        'cflags_cc': ['-Wno-c++0x-compat'],
-      },
-    }],
-    ['OS=="linux" and target_arch=="arm"', {
-      # Due to a bug in gcc arm, we get warnings about uninitialized timesNewRoman.unstatic.3258
-      # and colorTransparent.unstatic.4879.
-      'target_defaults': {
-        'cflags': ['-Wno-uninitialized'],
-      },
-    }],
-  ],  # conditions
 
   'variables': {
     # If set to 1, doesn't compile debug symbols into webcore reducing the
@@ -254,6 +168,15 @@
     ],
 
     'conditions': [
+      # Location of the chromium src directory.
+      ['inside_chromium_build==0', {
+        # webkit is being built outside of the full chromium project.
+        'chromium_src_dir': '../../WebKit/chromium',
+        'libjpeg_gyp_path': '../../WebKit/chromium/third_party/libjpeg_turbo/libjpeg.gyp',
+      },{
+        # webkit is checked out in src/chromium/third_party/webkit
+        'chromium_src_dir': '../../../../..',
+      }],
       # TODO(maruel): Move it in its own project or generate it anyway?
       ['enable_svg!=0', {
         'bindings_idl_files': [
@@ -334,7 +257,82 @@
         ],
       }],
     ],
-  },
+  },  # variables
+
+  'conditions': [
+    ['OS!="win" and remove_webcore_debug_symbols==1', {
+      # Remove -g from all targets defined here.
+      'target_defaults': {
+        'cflags!': ['-g'],
+      },
+    }],
+    ['os_posix==1 and OS!="mac" and OS!="android" and gcc_version==46', {
+      'target_defaults': {
+        # Disable warnings about c++0x compatibility, as some names (such as nullptr) conflict
+        # with upcoming c++0x types.
+        'cflags_cc': ['-Wno-c++0x-compat'],
+      },
+    }],
+    ['OS=="linux" and target_arch=="arm"', {
+      # Due to a bug in gcc arm, we get warnings about uninitialized timesNewRoman.unstatic.3258
+      # and colorTransparent.unstatic.4879.
+      'target_defaults': {
+        'cflags': ['-Wno-uninitialized'],
+      },
+    }],
+    ['OS == "mac"', {
+      'targets': [
+        {
+          # On the Mac, libWebKitSystemInterface*.a is used to help WebCore
+          # interface with the system.  This library is supplied as a static
+          # library in binary format.  At present, it contains many global
+          # symbols not marked private_extern.  It should be considered an
+          # implementation detail of WebCore, and does not need these symbols
+          # to be exposed so widely.
+          #
+          # This target contains an action that cracks open the existing
+          # static library and rebuilds it with these global symbols
+          # transformed to private_extern.
+          'target_name': 'webkit_system_interface',
+          'type': 'static_library',
+          'variables': {
+            'adjusted_library_path':
+                '<(PRODUCT_DIR)/libWebKitSystemInterfaceLeopardPrivateExtern.a',
+          },
+          'sources': [
+            # An empty source file is needed to convince Xcode to produce
+            # output for this target.  The resulting library won't actually
+            # contain anything.  The library at adjusted_library_path will,
+            # and that library is pushed to dependents of this target below.
+            'mac/Empty.cpp',
+          ],
+          'actions': [
+            {
+              'action_name': 'Adjust Visibility',
+              'inputs': [
+                'mac/adjust_visibility.sh',
+                '<(chromium_src_dir)/third_party/apple_webkit/libWebKitSystemInterfaceLeopard.a',
+              ],
+              'outputs': [
+                '<(adjusted_library_path)',
+              ],
+              'action': [
+                '<@(_inputs)',
+                '<@(_outputs)',
+                '<(INTERMEDIATE_DIR)/adjust_visibility',  # work directory
+              ],
+            },
+          ],  # actions
+          'link_settings': {
+            'libraries': [
+              '<(adjusted_library_path)',
+            ],
+          },  # link_settings
+        },  # target webkit_system_interface
+      ],  # targets
+    }],  # condition OS == "mac"
+  ],  # conditions
+
   'targets': [
     {
       'target_name': 'inspector_protocol_sources',
