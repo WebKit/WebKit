@@ -3384,7 +3384,7 @@ BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
 
 // Started around WebKit r90233:r90242
 BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
-BUGWK64003 MAC DEBUG : media/video-delay-load-event.html = PASS TEXT
+BUGWK64003 DEBUG : media/video-delay-load-event.html = PASS TEXT
 
 BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
@@ -3887,3 +3887,10 @@ BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-aff
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
 BUGWK71536 : storage/indexeddb/exception-in-event-aborts.html = TEXT
+
+// This test sometimes exceeds 60-second time limit (for SLOW tests) on
+// win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
+// only TIMEOUT is specified here.
+BUGWK71542 WIN LINUX DEBUG : inspector/styles/styles-formatting.html = PASS TIMEOUT
+
+BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
