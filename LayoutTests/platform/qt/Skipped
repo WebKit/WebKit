@@ -2510,3 +2510,8 @@ fast/viewport/viewport-warnings-3.html
 
 # track not functional yet.
 fast/events/constructors/track-event-constructor.html
+
+# disable inspector tests temporarily because of a bug near build system refactoring
+http/tests/inspector-enabled
+http/tests/inspector
+inspector
