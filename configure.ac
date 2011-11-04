@@ -571,8 +571,8 @@ fi
 AC_MSG_CHECKING([whether to enable HTML5 video track support])
 AC_ARG_ENABLE(video_track,
               AC_HELP_STRING([--enable-video-track],
-                             [enable HTML5 video track support [default=yes]]),
-              [],[enable_video_track="yes"])
+                             [enable HTML5 video track support [default=no]]),
+              [],[enable_video_track="no"])
 AC_MSG_RESULT([$enable_video_track])
 
 # check whether to enable media source support

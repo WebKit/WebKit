@@ -465,6 +465,9 @@ fast/exclusions
 # For now, Web Audio API is disabled
 webaudio
 
+# VIDEO_TRACK is disabled for now
+media/track
+
 # CSS Filters is disabled
 css3/filters
 
