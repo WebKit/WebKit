@@ -303,13 +303,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 #endif
     }
 
-    // Given that the load is allowed by the same-origin policy, we should
-    // check whether the load passes the mixed-content policy.
-    //
-    // FIXME: Should we consider forPreload here?
-    if (!checkInsecureContent(type, url))
-        return false;
-
     switch (type) {
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
@@ -361,6 +354,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         break;
 #endif
     }
+
+    // Last of all, check for insecure content. We do this last so that when
+    // folks block insecure content with a CSP policy, they don't get a warning.
+    // They'll still get a warning in the console about CSP blocking the load.
+
+    // FIXME: Should we consider forPreload here?
+    if (!checkInsecureContent(type, url))
+        return false;
 
     return true;
 }

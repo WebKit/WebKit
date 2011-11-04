@@ -1,3 +1,20 @@
+2011-11-04  Adam Barth  <abarth@webkit.org>
+
+        When CSP blocks mixed content, we shouldn't also warn about mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=71588
+
+        Reviewed by Eric Seidel.
+
+        Getting both warnings confused some early adopters.  They thought the
+        insecure loads were happening even though they blocked them with CSP.
+        This patch restricts the mixed content warnings to show only when the
+        load isn't already blocked by CSP or by the embedder.
+
+        Test: http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2011-11-04  Michael Nordman  <michaeln@google.coom>
 
         Allow ScriptExecutionContext::addMessage to be called from background threads.
