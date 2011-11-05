@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+typedef Vector<char, 512> CharBuffer;
+extern CFURLRef createCFURLFromBuffer(const CharBuffer& buffer);
+
 KURL::KURL(NSURL *url)
 {
     if (!url) {
@@ -59,14 +62,22 @@ KURL::KURL(NSURL *url)
 
 KURL::operator NSURL *() const
 {
-    if (isNull())
-        return nil;
-
-    // CFURL can't hold an empty URL, unlike NSURL.
-    if (isEmpty())
-        return [NSURL URLWithString:@""];
-
     return HardAutorelease(createCFURL());
+}
+
+// We use the toll-free bridge between NSURL and CFURL to
+// create a CFURLRef supporting both empty and null values.
+CFURLRef KURL::createCFURL() const
+{
+    if (isNull())
+        return 0;
+
+    if (isEmpty())
+        return reinterpret_cast<CFURLRef>([[NSURL alloc] initWithString:@""]);
+
+    CharBuffer buffer;
+    copyToBuffer(buffer);
+    return createCFURLFromBuffer(buffer);
 }
 
 }

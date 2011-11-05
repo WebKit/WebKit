@@ -33,6 +33,10 @@ using namespace std;
 
 namespace WebCore {
 
+typedef Vector<char, 512> CharBuffer;
+
+CFURLRef createCFURLFromBuffer(const CharBuffer&);
+
 KURL::KURL(CFURLRef url)
 {
     if (!url) {
@@ -59,15 +63,8 @@ KURL::KURL(CFURLRef url)
     parse(buffer.data(), 0);
 }
 
-CFURLRef KURL::createCFURL() const
+CFURLRef createCFURLFromBuffer(const CharBuffer& buffer)
 {
-    // FIXME: What should this return for invalid URLs?
-    // Currently it throws away the high bytes of the characters in the string in that case,
-    // which is clearly wrong.
-
-    Vector<char, 512> buffer;
-    copyToBuffer(buffer);
-
     // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
     // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
     // could either be a malformed string or bytes in a different encoding, like Shift-JIS, so we fall back
@@ -77,6 +74,18 @@ CFURLRef KURL::createCFURL() const
         result = CFURLCreateAbsoluteURLWithBytes(0, reinterpret_cast<const UInt8*>(buffer.data()), buffer.size(), kCFStringEncodingISOLatin1, 0, true);
     return result;
 }
+
+#if !PLATFORM(MAC)
+CFURLRef KURL::createCFURL() const
+{
+    // FIXME: What should this return for invalid URLs?
+    // Currently it throws away the high bytes of the characters in the string in that case,
+    // which is clearly wrong.
+    CharBuffer buffer;
+    copyToBuffer(buffer);
+    return createCFURLFromBuffer(buffer);
+}
+#endif
 
 #if !(PLATFORM(QT) && USE(QTKIT))
 String KURL::fileSystemPath() const
