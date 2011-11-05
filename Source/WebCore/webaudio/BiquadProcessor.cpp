@@ -90,14 +90,10 @@ PassOwnPtr<AudioDSPKernel> BiquadProcessor::createKernel()
     return adoptPtr(new BiquadDSPKernel(this));
 }
 
-void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t framesToProcess)
+void BiquadProcessor::checkForDirtyCoefficients()
 {
-    if (!isInitialized()) {
-        destination->zero();
-        return;
-    }
-        
-    // Deal with smoothing / de-zippering.  Start out assuming filter parameters are not changing.
+    // Deal with smoothing / de-zippering. Start out assuming filter parameters are not changing.
+
     // The BiquadDSPKernel objects rely on this value to see if they need to re-compute their internal filter coefficients.
     m_filterCoefficientsDirty = false;
     
@@ -109,14 +105,24 @@ void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t fr
         m_filterCoefficientsDirty = true;
         m_hasJustReset = false;
     } else {
-        // Smooth all of the filter parameters.  If they haven't yet converged to their target value then mark coefficients as dirty.
+        // Smooth all of the filter parameters. If they haven't yet converged to their target value then mark coefficients as dirty.
         bool isStable1 = m_parameter1->smooth();
         bool isStable2 = m_parameter2->smooth();
         bool isStable3 = m_parameter3->smooth();
         if (!(isStable1 && isStable2 && isStable3))
             m_filterCoefficientsDirty = true;
     }
+}
+
+void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t framesToProcess)
+{
+    if (!isInitialized()) {
+        destination->zero();
+        return;
+    }
         
+    checkForDirtyCoefficients();
+            
     // For each channel of our input, process using the corresponding BiquadDSPKernel into the output channel.
     for (unsigned i = 0; i < m_kernels.size(); ++i)
         m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->data(), framesToProcess);
@@ -128,6 +134,20 @@ void BiquadProcessor::setType(FilterType type)
         m_type = type;
         reset(); // The filter state must be reset only if the type has changed.
     }
+}
+
+void BiquadProcessor::getFrequencyResponse(int nFrequencies,
+                                           const float* frequencyHz,
+                                           float* magResponse,
+                                           float* phaseResponse)
+{
+    // Compute the frequency response on a separate temporary kernel
+    // to avoid interfering with the processing running in the audio
+    // thread on the main kernels.
+    
+    OwnPtr<BiquadDSPKernel> responseKernel = adoptPtr(new BiquadDSPKernel(this));
+
+    responseKernel->getFrequencyResponse(nFrequencies, frequencyHz, magResponse, phaseResponse);
 }
 
 } // namespace WebCore

@@ -53,6 +53,25 @@ void BiquadFilterNode::setType(unsigned short type, ExceptionCode& ec)
     biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type));
 }
 
+
+void BiquadFilterNode::getFrequencyResponse(const Float32Array* frequencyHz,
+                                            Float32Array* magResponse,
+                                            Float32Array* phaseResponse)
+{
+    if (!frequencyHz || !magResponse || !phaseResponse)
+        return;
+    
+    int n = std::min(frequencyHz->length(),
+                     std::min(magResponse->length(), phaseResponse->length()));
+
+    if (n) {
+        biquadProcessor()->getFrequencyResponse(n,
+                                                frequencyHz->data(),
+                                                magResponse->data(),
+                                                phaseResponse->data());
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

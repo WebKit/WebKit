@@ -29,21 +29,27 @@
 #include "BiquadDSPKernel.h"
 
 #include "BiquadProcessor.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-void BiquadDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
+void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forceUpdate)
 {
-    ASSERT(source && destination && biquadProcessor());
-    
-    // Recompute filter coefficients if any of the parameters have changed.
-    // FIXME: as an optimization, implement a way that a Biquad object can simply copy its internal filter coefficients from another Biquad object.
-    // Then re-factor this code to only run for the first BiquadDSPKernel of each BiquadProcessor.
-    if (biquadProcessor()->filterCoefficientsDirty()) {
-        double value1 = biquadProcessor()->parameter1()->smoothedValue();
-        double value2 = biquadProcessor()->parameter2()->smoothedValue();
-        double gain = biquadProcessor()->parameter3()->smoothedValue();
+    if (forceUpdate || biquadProcessor()->filterCoefficientsDirty()) {
+        double value1;
+        double value2;
+        double gain;
         
+        if (useSmoothing) {
+            value1 = biquadProcessor()->parameter1()->smoothedValue();
+            value2 = biquadProcessor()->parameter2()->smoothedValue();
+            gain = biquadProcessor()->parameter3()->smoothedValue();
+        } else {
+            value1 = biquadProcessor()->parameter1()->value();
+            value2 = biquadProcessor()->parameter2()->value();
+            gain = biquadProcessor()->parameter3()->value();
+        }
+
         // Convert from Hertz to normalized frequency 0 -> 1.
         double nyquist = this->nyquist();
         double normalizedFrequency = value1 / nyquist;
@@ -83,8 +89,48 @@ void BiquadDSPKernel::process(const float* source, float* destination, size_t fr
             break;
         }
     }
+}
+
+void BiquadDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
+{
+    ASSERT(source && destination && biquadProcessor());
+    
+    // Recompute filter coefficients if any of the parameters have changed.
+    // FIXME: as an optimization, implement a way that a Biquad object can simply copy its internal filter coefficients from another Biquad object.
+    // Then re-factor this code to only run for the first BiquadDSPKernel of each BiquadProcessor.
+
+    updateCoefficientsIfNecessary(true, false);
 
     m_biquad.process(source, destination, framesToProcess);
+}
+
+void BiquadDSPKernel::getFrequencyResponse(int nFrequencies,
+                                           const float* frequencyHz,
+                                           float* magResponse,
+                                           float* phaseResponse)
+{
+    bool isGood = nFrequencies > 0 && frequencyHz && magResponse && phaseResponse;
+    ASSERT(isGood);
+    if (!isGood)
+        return;
+
+    Vector<float> frequency(nFrequencies);
+
+    double nyquist = this->nyquist();
+
+    // Convert from frequency in Hz to normalized frequency (0 -> 1),
+    // with 1 equal to the Nyquist frequency.
+    for (int k = 0; k < nFrequencies; ++k)
+        frequency[k] = frequencyHz[k] / nyquist;
+
+    // We want to get the final values of the coefficients and compute
+    // the response from that instead of some intermediate smoothed
+    // set. Forcefully update the coefficients even if they are not
+    // dirty.
+
+    updateCoefficientsIfNecessary(false, true);
+
+    m_biquad.getFrequencyResponse(nFrequencies, frequency.data(), magResponse, phaseResponse);
 }
 
 } // namespace WebCore

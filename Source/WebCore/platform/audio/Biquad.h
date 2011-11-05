@@ -70,10 +70,19 @@ public:
     // Resets filter state
     void reset();
 
+    // Filter response at a set of n frequencies. The magnitude and
+    // phase response are returned in magResponse and phaseResponse.
+    // The phase response is in radians.
+    void getFrequencyResponse(int nFrequencies,
+                              const float* frequency,
+                              float* magResponse,
+                              float* phaseResponse);
 private:
     void setNormalizedCoefficients(double b0, double b1, double b2, double a0, double a1, double a2);
-
-    // Filter coefficients
+    
+    // Filter coefficients. The filter is defined as
+    //
+    // y[n] + m_a1*y[n-1] + m_a2*y[n-2] = m_b0*x[n] + m_b1*x[n-1] + m_b2*x[n-2].
     double m_b0;
     double m_b1;
     double m_b2;

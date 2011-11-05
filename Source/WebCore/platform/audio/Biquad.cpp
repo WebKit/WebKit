@@ -375,6 +375,45 @@ void Biquad::setAllpassPole(const Complex &pole)
     setZeroPolePairs(zero, pole);
 }
 
+void Biquad::getFrequencyResponse(int nFrequencies,
+                                  const float* frequency,
+                                  float* magResponse,
+                                  float* phaseResponse)
+{
+    // Evaluate the Z-transform of the filter at given normalized
+    // frequency from 0 to 1.  (1 corresponds to the Nyquist
+    // frequency.)
+    //
+    // The z-transform of the filter is
+    //
+    // H(z) = (b0 + b1*z^(-1) + b2*z^(-2))/(1 + a1*z^(-1) + a2*z^(-2))
+    //
+    // Evaluate as
+    //
+    // b0 + (b1 + b2*z1)*z1
+    // --------------------
+    // 1 + (a1 + a2*z1)*z1
+    //
+    // with z1 = 1/z and z = exp(j*pi*frequency). Hence z1 = exp(-j*pi*frequency)
+
+    // Make local copies of the coefficients as a micro-optimization.
+    double b0 = m_b0;
+    double b1 = m_b1;
+    double b2 = m_b2;
+    double a1 = m_a1;
+    double a2 = m_a2;
+    
+    for (int k = 0; k < nFrequencies; ++k) {
+        double omega = -piDouble * frequency[k];
+        Complex z = Complex(cos(omega), sin(omega));
+        Complex numerator = b0 + (b1 + b2 * z) * z;
+        Complex denominator = Complex(1, 0) + (a1 + a2 * z) * z;
+        Complex response = numerator / denominator;
+        magResponse[k] = static_cast<float>(abs(response));
+        phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

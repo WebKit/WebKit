@@ -43,5 +43,9 @@ module audio {
         readonly attribute AudioParam frequency; // in Hertz
         readonly attribute AudioParam Q; // Quality factor
         readonly attribute AudioParam gain; // in Decibels
+
+        void getFrequencyResponse(in Float32Array frequencyHz,
+                                  in Float32Array magResponse,
+                                  in Float32Array phaseResponse);
     };
 }

@@ -1,3 +1,45 @@
+2011-11-04  Raymond Toy  <rtoy@google.com>
+
+       Add methods to compute magnitude and phase response for biquads
+       https://bugs.webkit.org/show_bug.cgi?id=71055
+
+       Reviewed by Kenneth Russell.
+
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::getFrequencyResponse):
+        Computes the magnitude and phase (radians) response for the given
+        biquad at the specified set of (normalized) frequencies.
+        * platform/audio/Biquad.h:
+        Declare getFrequencyResponse.
+        * webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::updateCoefficientsIfNecessary):
+        Factor out the code that updates filter coefficients.  Allow the
+        caller to specify whether the smoothed values are used or not and
+        whether we do the update even if the coefficients are not dirty.
+        (WebCore::BiquadDSPKernel::process):
+        Use updateCoefficientsIfNecessary to update.
+        (WebCore::BiquadDSPKernel::getFrequencyResponse):
+        Implmentation of getFrequencyResponse.
+        * webaudio/BiquadDSPKernel.h:
+        Declare getFrequencyResponse.
+        * webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::getFrequencyResponse):
+        Implementation of getFrequencyResponse
+        * webaudio/BiquadFilterNode.h:
+        Declare getFrequencyResponse.
+        * webaudio/BiquadFilterNode.idl:
+        Define interface to getFrequencyResponse.
+        * webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::checkForDirtyCoefficients):
+        Factor out code for checking for dirty coefficients.
+        (WebCore::BiquadProcessor::process):
+        Use checkForDirtyCoefficients.
+        (WebCore::BiquadProcessor::getFrequencyResponse):
+        Implementation of getFrequencyResponse
+        * webaudio/BiquadProcessor.h:
+        Declare getFrequencyResponse.
+
 2011-11-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] ResourceRequest's nsURLRequest() does not differentiate null and empty URLs with CFNetwork
