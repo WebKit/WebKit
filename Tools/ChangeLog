@@ -1,3 +1,12 @@
+2011-11-04  Eric Seidel  <eric@webkit.org>
+
+        Remove deprecated free functions in port.factory
+        https://bugs.webkit.org/show_bug.cgi?id=71494
+
+        Unreviewed.  Fix exception when running new-run-webkit-httpd.
+
+        * Scripts/new-run-webkit-httpd:
+
 2011-11-04  Adam Roben  <aroben@apple.com>
 
         Remove Leopard-specific code from build.webkit.org

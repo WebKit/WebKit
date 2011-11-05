@@ -42,13 +42,9 @@ import os
 import sys
 import tempfile
 
-# FIXME: We should not be hacking around in sys.path.
-scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
+from webkitpy.common.host import Host
+from webkitpy.layout_tests.servers import http_server
 
-import port
-from servers import http_server
 
 def run(options):
     if not options.server:
@@ -61,7 +57,8 @@ def run(options):
             # source of tests. Specifying port but no root does not seem
             # meaningful.
             raise 'Specifying port requires also a root.'
-        port_obj = port.get(None, options)
+        host = Host()
+        port_obj = host.port_factory.get(options=options)
         httpd = http_server.Lighttpd(port_obj,
                                      tempfile.gettempdir(),
                                      port=options.port,
