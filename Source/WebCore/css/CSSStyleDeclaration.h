@@ -102,15 +102,16 @@ public:
     void showStyle();
 #endif
 
-    virtual bool isMutableStyleDeclaration() const { return false; }
+    bool isMutableStyleDeclaration() const { return m_isMutableStyleDeclaration; }
 
 protected:
-    CSSStyleDeclaration(CSSRule* parentRule = 0);
+    CSSStyleDeclaration(CSSRule* parentRule = 0, bool isMutable = false);
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
 private:
-    bool m_parentIsRule;
+    bool m_isMutableStyleDeclaration : 1;
+    bool m_parentIsRule : 1;
     union {
         CSSRule* m_parentRule;
         CSSStyleSheet* m_parentStyleSheet;

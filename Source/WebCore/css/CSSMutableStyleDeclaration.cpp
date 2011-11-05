@@ -42,7 +42,8 @@ using namespace std;
 namespace WebCore {
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
-    : m_node(0)
+    : CSSStyleDeclaration(0, /* isMutable */ true)
+    , m_node(0)
     , m_strictParsing(false)
 #ifndef NDEBUG
     , m_iteratorCount(0)
@@ -51,7 +52,7 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
-    : CSSStyleDeclaration(parent)
+    : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_node(0)
     , m_strictParsing(!parent || parent->useStrictParsing())
 #ifndef NDEBUG
@@ -61,7 +62,7 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Vector<CSSProperty>& properties)
-    : CSSStyleDeclaration(parent)
+    : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_properties(properties)
     , m_node(0)
     , m_strictParsing(!parent || parent->useStrictParsing())
@@ -74,7 +75,7 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Ve
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CSSProperty* const * properties, int numProperties)
-    : CSSStyleDeclaration(parent)
+    : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_node(0)
     , m_strictParsing(!parent || parent->useStrictParsing())
 #ifndef NDEBUG

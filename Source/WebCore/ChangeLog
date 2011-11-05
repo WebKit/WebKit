@@ -1,5 +1,23 @@
 2011-11-05  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleDeclaration: Devirtualize isMutableStyleDeclaration().
+        https://bugs.webkit.org/show_bug.cgi?id=71609
+
+        Reviewed by Anders Carlsson.
+
+        Add a bool member to CSSStyleDeclaration that determines whether
+        it's a CSSMutableDeclaration.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::isMutableStyleDeclaration):
+
+2011-11-05  Andreas Kling  <kling@webkit.org>
+
         Web Inspector: Simplify InspectorCSSAgent::inlineStyleElement().
         https://bugs.webkit.org/show_bug.cgi?id=71608
 

@@ -39,8 +39,9 @@ using namespace WTF;
 
 namespace WebCore {
 
-CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
-    : m_parentIsRule(true)
+CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent, bool isMutable)
+    : m_isMutableStyleDeclaration(isMutable)
+    , m_parentIsRule(true)
     , m_parentRule(parent)
 {
 }

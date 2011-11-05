@@ -87,8 +87,6 @@ public:
 
     Node* node() const { return m_node; }
 
-    virtual bool isMutableStyleDeclaration() const { return true; }
-
     virtual String cssText() const;
     virtual void setCssText(const String&, ExceptionCode&);
 
