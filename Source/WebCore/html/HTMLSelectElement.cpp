@@ -990,6 +990,8 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
         }
         return true;
     }
+#else
+    UNUSED_PARAM(event);
 #endif
     return false;
 }
