@@ -1724,7 +1724,7 @@ void Document::setIsViewSource(bool isViewSource)
     if (!m_isViewSource)
         return;
 
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createUnique());
+    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url(), true));
 }
 
 void Document::createStyleSelector()
