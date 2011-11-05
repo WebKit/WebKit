@@ -195,7 +195,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
-    , m_sandboxFlags(SandboxAll)
     , m_forcedSandboxFlags(SandboxNone)
 {
 }
@@ -216,10 +215,6 @@ FrameLoader::~FrameLoader()
 
 void FrameLoader::init()
 {
-    // Propagate sandbox attributes to this Frameloader and its descendants.
-    // This needs to be done early, so that an initial document gets correct sandbox flags in its SecurityOrigin.
-    updateSandboxFlags();
-
     // This somewhat odd set of steps gives the frame an initial empty document.
     // It would be better if this could be done with even fewer steps.
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CreatingInitialEmptyDocument);
@@ -3169,21 +3164,14 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
     InspectorInstrumentation::didClearWindowObjectInWorld(m_frame, world);
 }
 
-void FrameLoader::updateSandboxFlags()
+SandboxFlags FrameLoader::effectiveSandboxFlags() const
 {
     SandboxFlags flags = m_forcedSandboxFlags;
     if (Frame* parentFrame = m_frame->tree()->parent())
-        flags |= parentFrame->loader()->sandboxFlags();
+        flags |= parentFrame->document()->sandboxFlags();
     if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement())
         flags |= ownerElement->sandboxFlags();
-
-    if (m_sandboxFlags == flags)
-        return;
-
-    m_sandboxFlags = flags;
-
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->updateSandboxFlags();
+    return flags;
 }
 
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
@@ -3286,7 +3274,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
 
     Frame* frame = page->mainFrame();
 
-    frame->loader()->forceSandboxFlags(openerFrame->loader()->sandboxFlags());
+    frame->loader()->forceSandboxFlags(openerFrame->document()->sandboxFlags());
 
     if (request.frameName() != "_blank")
         frame->tree()->setName(request.frameName());

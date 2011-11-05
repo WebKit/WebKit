@@ -209,12 +209,10 @@ public:
     void dispatchDidClearWindowObjectsInAllWorlds();
     void dispatchDocumentElementAvailable();
 
-    void ownerElementSandboxFlagsChanged() { updateSandboxFlags(); }
-
-    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     // The following sandbox flags will be forced, regardless of changes to
     // the sandbox attribute of any parent frames.
-    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags |= flags; m_sandboxFlags |= flags; }
+    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags |= flags; }
+    SandboxFlags effectiveSandboxFlags() const;
 
     // Mixed content related functions.
     static bool isMixedContent(SecurityOrigin* context, const KURL&);
@@ -367,8 +365,6 @@ private:
 
     bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
-    void updateSandboxFlags();
-
     Frame* m_frame;
     FrameLoaderClient* m_client;
 
@@ -425,7 +421,6 @@ private:
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
 
-    SandboxFlags m_sandboxFlags;
     SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;

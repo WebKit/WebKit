@@ -1,3 +1,31 @@
+2011-11-05  Adam Barth  <abarth@webkit.org>
+
+        Refactor sandbox flag calculation to make implementing CSP sandbox directive easier
+        https://bugs.webkit.org/show_bug.cgi?id=71603
+
+        Reviewed by Sam Weinig.
+
+        This patch changes the way we compute sandbox bits.  Instead of caching
+        the result on Frame, we always compute the sandbox bits for a new
+        document fresh from the inputs to the process (the sandbox attribute
+        and the forced sandbox flags).
+
+        This patch is just refactoring.  It shouldn't have an observable
+        effects.  This patch makes it easier to implement CSP's sandbox
+        directive in a subsequent patch.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::setSandboxFlags):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::effectiveSandboxFlags):
+        (WebCore::createWindow):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::forceSandboxFlags):
+
 2011-11-05  Andreas Kling  <kling@webkit.org>
 
         CSSStyleDeclaration: Devirtualize isMutableStyleDeclaration().

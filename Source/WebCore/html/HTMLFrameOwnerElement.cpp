@@ -80,13 +80,7 @@ DOMWindow* HTMLFrameOwnerElement::contentWindow() const
 
 void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
 {
-    if (m_sandboxFlags == flags)
-        return;
-
     m_sandboxFlags = flags;
-
-    if (Frame* frame = contentFrame())
-        frame->loader()->ownerElementSandboxFlagsChanged();
 }
 
 bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const

@@ -4402,7 +4402,7 @@ void Document::initSecurityContext()
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
-    ScriptExecutionContext::enforceSandboxFlags(m_frame->loader()->sandboxFlags());
+    ScriptExecutionContext::enforceSandboxFlags(m_frame->loader()->effectiveSandboxFlags());
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
     ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
