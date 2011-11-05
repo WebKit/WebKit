@@ -270,7 +270,6 @@ EXPORTS
     ?putDirectInternal@JSObject@JSC@@AAE_NAAVJSGlobalData@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@PAVJSCell@2@@Z
     ?putWithAttributes@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
-    ?putWithAttributes@JSObject@JSC@@UAEXPAVJSGlobalData@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ
     ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
     ?regExpFlags@JSC@@YA?AW4RegExpFlags@1@ABVUString@1@@Z

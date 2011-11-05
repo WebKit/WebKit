@@ -1,3 +1,9 @@
+2011-11-05  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-11-04  Sam Weinig  <sam@webkit.org>
 
         Reduce the number of putWithAttributes
