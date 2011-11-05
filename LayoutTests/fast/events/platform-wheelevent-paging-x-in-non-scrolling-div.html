@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+        <script>
+            var givenScrollTop = 0;
+            var givenScrollLeft = 2;
+            var expectedScrollTop = 0;
+            var expectedScrollLeft = 0;
+            var event;
+            var div;
+
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+
+            function dispatchWheelEvent()
+            {
+                var overflowElement = document.getElementById("overflow");
+                if (overflowElement)
+                    overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 110);
+                    eventSender.continuousMouseScrollBy(-window.givenScrollLeft, -window.givenScrollTop, true);
+                }
+
+                setTimeout('checkOffsets();', 100);
+            }
+
+            function checkOffsets()
+            {
+                div = document.getElementById("overflow");
+                shouldBe("div.scrollTop", "window.expectedScrollTop");
+                shouldBe("div.scrollLeft", "window.expectedScrollLeft");
+
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+
+            function mousewheelHandler(e)
+            {
+                event = e;
+                shouldBe("event.wheelDeltaY", "0");
+                shouldBe("event.wheelDeltaX", "window.givenScrollLeft*-3");
+
+                if (e.wheelDeltaY)
+                    shouldBe("event.wheelDelta", "0");
+                else
+                    shouldBe("event.wheelDelta", "window.givenScrollLeft*-3");
+            }
+        </script>
+    </head>
+
+    <body style="margin:0" onload="setTimeout('dispatchWheelEvent();', 100)">
+        <div id="overflow" style="border:2px solid black;overflow:auto;height:200px;width:200px;">
+          <div style="border:0px;background-color:red;height:300px;width:185px;"></div>
+          <div style="border:0px;background-color:green;height:300px;width:185px;"></div>
+        </div>
+        <div id="console"></div>
+    </body>
+</html>

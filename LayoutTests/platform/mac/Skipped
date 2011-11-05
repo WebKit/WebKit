@@ -466,6 +466,18 @@ http/tests/history/back-with-fragment-change.php
 fast/css/webkit-mask-crash-fieldset-legend.html
 fast/css/webkit-mask-crash-table.html
 
+# Skip because this platform does not support a paging mouse wheel event
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=70989
 fast/canvas/webgl/attrib-location-length-limits.html
 fast/canvas/webgl/uniform-location-length-limits.html

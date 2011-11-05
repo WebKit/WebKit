@@ -1,3 +1,19 @@
+2011-11-04  Stephen Chenney  <schenney@chromium.org>
+
+        Crash in ScrollAnimator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=69865
+
+        The code in ScrollAnimator assumes that horizontal per-page mouse
+        wheel events cannot happen, which is not true. This patch adds layout
+        tests for all paging wheel event situations and fixes the broken
+        horizontal case.
+
+        Reviewed by Anders Carlsson
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::handleMouseWheel): Added the ability to specify that a
+        mouse wheel event should be paging.
+
 2011-11-04  Eric Seidel  <eric@webkit.org>
 
         Remove deprecated free functions in port.factory

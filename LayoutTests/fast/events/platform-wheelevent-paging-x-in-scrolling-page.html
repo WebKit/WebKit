@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+        <script>
+            var givenScrollTop = 0;
+            var givenScrollLeft = 2; // When paging, this is ignored. Every event is one page.
+            var expectedScrollTop = 0;
+            var expectedScrollLeft = 700; // Window is 800x600. Scroll 87.5% of visible.
+            var event;
+            var div;
+
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+
+            function dispatchWheelEvent()
+            {
+                document.body.addEventListener("mousewheel", mousewheelHandler, false);
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 110);
+                    eventSender.continuousMouseScrollBy(-window.givenScrollLeft, -window.givenScrollTop, true);
+                }
+
+                setTimeout('checkOffsets();', 100);
+            }
+
+            function checkOffsets()
+            {
+                shouldBe("document.body.scrollTop", "window.expectedScrollTop");
+                shouldBe("document.body.scrollLeft", "window.expectedScrollLeft");
+
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+
+            function mousewheelHandler(e)
+            {
+                event = e;
+                shouldBe("event.wheelDeltaY", "0");
+                shouldBe("event.wheelDeltaX", "window.givenScrollLeft * -3");
+
+                if (e.wheelDeltaY)
+                    shouldBe("event.wheelDelta", "0");
+                else
+                    shouldBe("event.wheelDelta", "window.givenScrollLeft * -3");
+            }
+        </script>
+    </head>
+
+    <body style="margin:0;padding:0" onload="setTimeout('dispatchWheelEvent();', 100)">
+        <div style="margin:0;padding:0;height:200px;width:2400px">
+          <div style="margin:0;padding:0;background-color:red;height:200px;width:1200px;position:relative;left:0px;top:0px"></div>
+          <div style="margin:0;padding:0;background-color:green;height:200px;width:1200px;position:relative;left:1200px;top:-200px"></div>
+        </div>
+        <div style="margin:0;padding:0;height:200px;width:2400px">
+          <div style="margin:0;padding:0;background-color:blue;height:200px;width:1200px;position:relative;left:0px;top:0px"></div>
+          <div style="margin:0;padding:0;background-color:yellow;height:200px;width:1200px;position:relative;left:1200px;top:-200px"></div>
+        </div>
+        <div id="console"></div>
+    </body>
+</html>

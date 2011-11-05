@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+        <script>
+            var givenScrollTop = 1;
+            var givenScrollLeft = 2;
+            var expectedScrollTop = 161;
+            var expectedScrollLeft = 322;
+            var event;
+            var div;
+
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+
+            function dispatchWheelEvent()
+            {
+                var overflowElement = document.getElementById("overflow");
+                if (overflowElement)
+                    overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 110);
+                    eventSender.continuousMouseScrollBy(-window.givenScrollLeft, -window.givenScrollTop, true);
+                }
+
+                setTimeout('checkOffsets();', 100);
+            }
+
+            function checkOffsets()
+            {
+                div = document.getElementById("overflow");
+                shouldBe("div.scrollTop", "window.expectedScrollTop");
+                shouldBe("div.scrollLeft", "window.expectedScrollLeft");
+
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+
+            function mousewheelHandler(e)
+            {
+                event = e;
+                shouldBe("event.wheelDeltaY", "window.givenScrollTop * -3");
+                shouldBe("event.wheelDeltaX", "window.givenScrollLeft * -3");
+
+                if (e.wheelDeltaY)
+                    shouldBe("event.wheelDelta", "window.givenScrollTop * -3");
+                else
+                    shouldBe("event.wheelDelta", "window.givenScrollLeft * -3");
+            }
+        </script>
+    </head>
+
+    <body style="margin:0" onload="setTimeout('dispatchWheelEvent();', 100)">
+         <!-- This div is 200 pixels high. The content results in scrool bars on
+          both edges, resulting in an effective content area of 185 x 185 on
+          linux. The paging context overlap is 24 pixels. So one page of scroll
+          moves the content by 185 - 24 -= 161 pixels. -->
+        <div id="overflow" style="border:2px solid black;overflow:auto;height:200px;width:200px;">
+            <div style="height:300px;width:600px">
+              <div style="background-color:red;height:300px;width:300px;position:relative;left:0px;top:0px"></div>
+              <div style="background-color:green;height:300px;width:300px;position:relative;left:300px;top:-300px"></div>
+            </div>
+            <div style="height:300px;width:600px">
+              <div style="background-color:blue;height:300px;width:300px;position:relative;left:0px;top:0px"></div>
+              <div style="background-color:yellow;height:300px;width:300px;position:relative;left:300px;top:-300px"></div>
+            </div>
+        </div>
+        <div id="console"></div>
+    </body>
+</html>

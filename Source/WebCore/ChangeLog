@@ -1,3 +1,32 @@
+2011-11-04  Stephen Chenney  <schenney@chromium.org>
+
+        Crash in ScrollAnimator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=69865
+
+        The code in ScrollAnimator assumes that horizontal per-page mouse
+        wheel events cannot happen, which is not true. This patch adds layout
+        tests for all paging wheel event situations and fixes the broken
+        horizontal case.
+
+        Reviewed by Anders Carlsson
+
+        Tests: fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+               fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+               fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+               fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+               fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+               fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+               fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+               fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+               fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+               fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+
+        * platform/PlatformWheelEvent.h: Modify the comment to reflect the new
+        reality.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent): Modified the code to handle the
+        horizontal per-page wheel event case.
+
 2011-11-04  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Refactor MutationObserverRegistration into its own class that is
