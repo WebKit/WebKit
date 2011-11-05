@@ -5266,6 +5266,8 @@
             'dom/MutationCallback.h',
             'dom/MutationEvent.cpp',
             'dom/MutationEvent.h',
+            'dom/MutationObserverRegistration.cpp',
+            'dom/MutationObserverRegistration.h',
             'dom/MutationRecord.cpp',
             'dom/MutationRecord.h',
             'dom/NameNodeList.cpp',

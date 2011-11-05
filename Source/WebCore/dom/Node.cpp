@@ -548,10 +548,7 @@ void Node::clearRareData()
         treeScope()->removeNodeListCache();
 
 #if ENABLE(MUTATION_OBSERVERS)
-    if (Vector<MutationObserverRegistration>* registry = mutationObserverRegistry()) {
-        for (size_t i = 0; i < registry->size(); ++i)
-            registry->at(i).observer->observedNodeDestructed(this);
-    }
+    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 #endif
 
     NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
@@ -2696,59 +2693,72 @@ EventTargetData* Node::ensureEventTargetData()
 }
 
 #if ENABLE(MUTATION_OBSERVERS)
-Vector<MutationObserverRegistration>* Node::mutationObserverRegistry()
+Vector<OwnPtr<MutationObserverRegistration> >* Node::mutationObserverRegistry()
 {
     return hasRareData() ? rareData()->mutationObserverRegistry() : 0;
 }
 
-static void addMatchingObservers(HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers, Vector<MutationObserverRegistration>* registry, MutationObserverOptions options)
+HashSet<MutationObserverRegistration*>* Node::transientMutationObserverRegistry()
 {
-    if (!registry)
-        return;
+    return hasRareData() ? rareData()->transientMutationObserverRegistry() : 0;
+}
 
-    const size_t size = registry->size();
-    for (size_t i = 0; i < size; ++i) {
-        MutationObserverRegistration& entry = registry->at(i);
+void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, Node* fromNode, WebKitMutationObserver::MutationType type)
+{
+    if (Vector<OwnPtr<MutationObserverRegistration> >* registry = fromNode->mutationObserverRegistry()) {
+        const size_t size = registry->size();
+        for (size_t i = 0; i < size; ++i) {
+            MutationObserverRegistration* registration = registry->at(i).get();
+            if (registration->shouldReceiveMutationFrom(this, type)) {
+                MutationRecordDeliveryOptions deliveryOptions = registration->deliveryOptions();
+                pair<HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator, bool> result = observers.add(registration->observer(), deliveryOptions);
+                if (!result.second)
+                    result.first->second |= deliveryOptions;
 
-        if (!entry.hasAllOptions(options))
-            continue;
+            }
+        }
+    }
 
-        pair<HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator, bool> result = observers.add(entry.observer.get(), entry.options);
-        if (!result.second)
-            result.first->second |= entry.options;
+    if (HashSet<MutationObserverRegistration*>* transientRegistry = fromNode->transientMutationObserverRegistry()) {
+        for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter) {
+            MutationObserverRegistration* registration = *iter;
+            if (registration->shouldReceiveMutationFrom(this, type)) {
+                MutationRecordDeliveryOptions deliveryOptions = registration->deliveryOptions();
+                pair<HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator, bool> result = observers.add(registration->observer(), deliveryOptions);
+                if (!result.second)
+                    result.first->second |= deliveryOptions;
+            }
+        }
     }
 }
 
-void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers, WebKitMutationObserver::MutationType type)
+void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, WebKitMutationObserver::MutationType type)
 {
-    addMatchingObservers(observers, mutationObserverRegistry(), type);
-    for (Node* node = parentNode(); node; node = node->parentNode())
-        addMatchingObservers(observers, node->mutationObserverRegistry(), type | WebKitMutationObserver::Subtree);
+    for (Node* node = this; node; node = node->parentNode())
+        collectMatchingObserversForMutation(observers, node, type);
 }
 
-Node::MutationRegistrationResult Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options, Node* registrationNode)
+MutationObserverRegistration* Node::registerMutationObserver(PassRefPtr<WebKitMutationObserver> observer)
 {
-    Vector<MutationObserverRegistration>* registry = ensureRareData()->ensureMutationObserverRegistry();
-    MutationObserverRegistration registration(observer, options, registrationNode);
-
-    size_t index = registry->find(registration);
-    if (index == notFound) {
-        registry->append(registration);
-        return MutationObserverRegistered;
+    Vector<OwnPtr<MutationObserverRegistration> >* registry = ensureRareData()->ensureMutationObserverRegistry();
+    for (size_t i = 0; i < registry->size(); ++i) {
+        if (registry->at(i)->observer() == observer)
+            return registry->at(i).get();
     }
 
-    registry->at(index).options = registration.options;
-    return MutationRegistrationOptionsReset;
+    OwnPtr<MutationObserverRegistration> registration = MutationObserverRegistration::create(observer, this);
+    MutationObserverRegistration* registrationPtr = registration.get();
+    registry->append(registration.release());
+    return registrationPtr;
 }
 
-void Node::unregisterMutationObserver(PassRefPtr<WebKitMutationObserver> observer, Node* registrationNode)
+void Node::unregisterMutationObserver(MutationObserverRegistration* registration)
 {
-    Vector<MutationObserverRegistration>* registry = mutationObserverRegistry();
+    Vector<OwnPtr<MutationObserverRegistration> >* registry = mutationObserverRegistry();
     ASSERT(registry);
     if (!registry)
         return;
 
-    MutationObserverRegistration registration(observer, 0, registrationNode);
     size_t index = registry->find(registration);
     ASSERT(index != notFound);
     if (index == notFound)
@@ -2757,23 +2767,34 @@ void Node::unregisterMutationObserver(PassRefPtr<WebKitMutationObserver> observe
     registry->remove(index);
 }
 
+void Node::registerTransientMutationObserver(MutationObserverRegistration* registration)
+{
+    ensureRareData()->ensureTransientMutationObserverRegistry()->add(registration);
+}
+
+void Node::unregisterTransientMutationObserver(MutationObserverRegistration* registration)
+{
+    HashSet<MutationObserverRegistration*>* transientRegistry = transientMutationObserverRegistry();
+    ASSERT(transientRegistry);
+    if (!transientRegistry)
+        return;
+
+    ASSERT(transientRegistry->contains(registration));
+    transientRegistry->remove(registration);
+}
+
 void Node::notifyMutationObserversNodeWillDetach()
 {
     for (Node* node = parentNode(); node; node = node->parentNode()) {
-        Vector<MutationObserverRegistration>* registry = node->mutationObserverRegistry();
-        if (!registry)
-            continue;
+        if (Vector<OwnPtr<MutationObserverRegistration> >* registry = node->mutationObserverRegistry()) {
+            const size_t size = registry->size();
+            for (size_t i = 0; i < size; ++i)
+                registry->at(i)->observedSubtreeNodeWillDetach(this);
+        }
 
-        const size_t size = registry->size();
-        for (size_t i = 0; i < size; ++i) {
-            MutationObserverRegistration& registration = registry->at(i);
-            if (!registration.hasAllOptions(WebKitMutationObserver::Subtree))
-                continue;
-
-            Node* registrationNode = registration.registrationNode;
-            if (!registrationNode)
-                registrationNode = node;
-            registration.observer->willDetachNodeInObservedSubtree(registrationNode, registration.options, this);
+        if (HashSet<MutationObserverRegistration*>* transientRegistry = node->transientMutationObserverRegistry()) {
+            for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter)
+                (*iter)->observedSubtreeNodeWillDetach(this);
         }
     }
 }

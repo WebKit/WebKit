@@ -1,3 +1,79 @@
+2011-11-04  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Refactor MutationObserverRegistration into its own class that is
+        referenced by registration points
+
+        https://bugs.webkit.org/show_bug.cgi?id=71577
+
+        Reviewed by Ojan Vafai.
+
+        MutationObserverRegistration is now owned by the node which is observed. If transient
+        registrations are created, they hold a reference to this object.
+
+        The ownership relationship between Node, MutationObserverRegistration &
+        WebKitMutationObserver now goes like this: WebKitMutationObserver is RefCounted -
+        and only script and MutationObserverRegistration take references to it. Exactly
+        one MutationObserverRegistration can exist for any given tuple of
+        <Node, WebKitMutationObserver>. This represents an observer observing at a given
+        Node. Further observation by the same observer has the effect of *resetting*
+        the existing observation. The Node owns the MutationObserverRegistration.
+        Transient registrations are only pointers to the registration. The registration
+        keeps a RefPtr to its registration node and all of its transient registration nodes
+        as long as *any* transient registrations exist. This ensures the registration
+        and all registration nodes stay alive at least until the end of the microtask.
+
+        No tests required - refactor only.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CharacterData.cpp:
+        (WebCore::enqueueCharacterDataMutationRecord):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::MutationAccumulationRouter::MutationAccumulationRouter::incrementScopingLevel):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/MutationObserverRegistration.cpp: Added.
+        (WebCore::MutationObserverRegistration::create):
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::~MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::resetObservation):
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations):
+        (WebCore::MutationObserverRegistration::unregister):
+        (WebCore::MutationObserverRegistration::shouldReceiveMutationFrom):
+        * dom/MutationObserverRegistration.h: Copied from Source/WebCore/dom/WebKitMutationObserver.h.
+        (WebCore::MutationObserverRegistration::observer):
+        (WebCore::MutationObserverRegistration::deliveryOptions):
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::mutationObserverRegistry):
+        (WebCore::Node::transientMutationObserverRegistry):
+        (WebCore::addObserverToDeliverySet):
+        (WebCore::Node::collectMatchingObserversForMutation):
+        (WebCore::Node::getRegisteredMutationObserversOfType):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver):
+        (WebCore::Node::registerTransientMutationObserver):
+        (WebCore::Node::unregisterTransientMutationObserver):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::mutationObserverRegistry):
+        (WebCore::NodeRareData::ensureMutationObserverRegistry):
+        (WebCore::NodeRareData::transientMutationObserverRegistry):
+        (WebCore::NodeRareData::ensureTransientMutationObserverRegistry):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::~WebKitMutationObserver):
+        (WebCore::WebKitMutationObserver::observe):
+        (WebCore::WebKitMutationObserver::disconnect):
+        (WebCore::WebKitMutationObserver::observationStarted):
+        (WebCore::WebKitMutationObserver::observationEnded):
+        (WebCore::WebKitMutationObserver::deliver):
+        * dom/WebKitMutationObserver.h:
+
 2011-11-04  Raymond Toy  <rtoy@google.com>
 
        Add methods to compute magnitude and phase response for biquads

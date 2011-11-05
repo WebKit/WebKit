@@ -244,7 +244,7 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
         return;
     }
 
-    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
+    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
     target->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::ChildList);
     if (observers.isEmpty())
         m_accumulations.set(target, 0);

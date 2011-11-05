@@ -29,6 +29,7 @@
 #include "MicroDataItemList.h"
 #endif
 
+#include "MutationObserverRegistration.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
@@ -36,6 +37,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -88,36 +90,6 @@ private:
     NodeListsNodeData() : m_labelsNodeListCache(0) {}
 };
 
-#if ENABLE(MUTATION_OBSERVERS)
-struct MutationObserverRegistration {
-    MutationObserverRegistration(PassRefPtr<WebKitMutationObserver> observer, MutationObserverOptions options, Node* node)
-        : observer(observer)
-        , options(options)
-        , registrationNode(node)
-    {
-    }
-
-    bool operator==(const MutationObserverRegistration& other) const
-    {
-        return observer == other.observer && registrationNode == other.registrationNode;
-    }
-
-    bool hasAllOptions(MutationObserverOptions options) const
-    {
-        return (this->options & options) == options;
-    }
-
-    RefPtr<WebKitMutationObserver> observer;
-    MutationObserverOptions options;
-
-    // registrationNode will be 0 if the registration is non-transient. I.e. The registrationNode is the Node in whose
-    // registry it exists.
-    // Note that this doesn't need to be a RefPtr because the observer will be holding a RefPtr to the same node at
-    // least for the lifetime of this Registration in its m_transientObservedNodes map.
-    Node* registrationNode;
-};
-#endif // ENABLE(MUTATION_OBSERVERS)
-
 class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
@@ -168,12 +140,20 @@ public:
     }
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverRegistration>* mutationObserverRegistry() { return m_mutationObserverRegistry.get(); }
-    Vector<MutationObserverRegistration>* ensureMutationObserverRegistry()
+    Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry() { return m_mutationObserverRegistry.get(); }
+    Vector<OwnPtr<MutationObserverRegistration> >* ensureMutationObserverRegistry()
     {
         if (!m_mutationObserverRegistry)
-            m_mutationObserverRegistry = adoptPtr(new Vector<MutationObserverRegistration>);
+            m_mutationObserverRegistry = adoptPtr(new Vector<OwnPtr<MutationObserverRegistration> >);
         return m_mutationObserverRegistry.get();
+    }
+
+    HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry() { return m_transientMutationObserverRegistry.get(); }
+    HashSet<MutationObserverRegistration*>* ensureTransientMutationObserverRegistry()
+    {
+        if (!m_transientMutationObserverRegistry)
+            m_transientMutationObserverRegistry = adoptPtr(new HashSet<MutationObserverRegistration*>);
+        return m_transientMutationObserverRegistry.get();
     }
 #endif
 
@@ -195,7 +175,8 @@ private:
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
 
 #if ENABLE(MUTATION_OBSERVERS)
-    OwnPtr<Vector<MutationObserverRegistration> > m_mutationObserverRegistry;
+    OwnPtr<Vector<OwnPtr<MutationObserverRegistration> > > m_mutationObserverRegistry;
+    OwnPtr<HashSet<MutationObserverRegistration*> > m_transientMutationObserverRegistry;
 #endif
 };
 

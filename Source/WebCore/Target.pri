@@ -533,6 +533,7 @@ SOURCES += \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
+    dom/MutationObserverRegistration.cpp \
     dom/MutationRecord.cpp \
     dom/NamedNodeMap.cpp \
     dom/NameNodeList.cpp \
@@ -1620,6 +1621,7 @@ HEADERS += \
     dom/MouseRelatedEvent.h \
     dom/MutationCallback.h \
     dom/MutationEvent.h \
+    dom/MutationObserverRegistration.h \
     dom/MutationRecord.h \
     dom/NamedNodeMap.h \
     dom/NameNodeList.h \

@@ -633,7 +633,7 @@ static inline bool isOldValueRequested(const HashMap<WebKitMutationObserver*, Mu
 
 static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name, const AtomicString& oldValue)
 {
-    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
+    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
     element->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::Attributes);
     if (observers.isEmpty())
         return;

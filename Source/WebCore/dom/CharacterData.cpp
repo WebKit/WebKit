@@ -205,7 +205,7 @@ static bool isOldValueRequested(const HashMap<WebKitMutationObserver*, MutationO
 
 static void enqueueCharacterDataMutationRecord(Node* node, const String& oldData)
 {
-    HashMap<WebKitMutationObserver*, MutationObserverOptions> observers;
+    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
     node->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::CharacterData);
     if (observers.isEmpty())
         return;

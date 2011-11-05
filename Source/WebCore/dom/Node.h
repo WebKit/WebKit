@@ -34,6 +34,7 @@
 #include "WebKitMutationObserver.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/text/AtomicString.h>
 
 #if USE(JSC)
 namespace JSC {
@@ -590,16 +591,11 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationObserverOptions>&, WebKitMutationObserver::MutationType);
-
-    enum MutationRegistrationResult {
-        MutationObserverRegistered,
-        MutationRegistrationOptionsReset
-    };
-    MutationRegistrationResult registerMutationObserver(PassRefPtr<WebKitMutationObserver>, MutationObserverOptions, Node* registrationNode = 0);
-
-    void unregisterMutationObserver(PassRefPtr<WebKitMutationObserver>, Node* registrationNode = 0);
-
+    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, WebKitMutationObserver::MutationType);
+    MutationObserverRegistration* registerMutationObserver(PassRefPtr<WebKitMutationObserver>);
+    void unregisterMutationObserver(MutationObserverRegistration*);
+    void registerTransientMutationObserver(MutationObserverRegistration*);
+    void unregisterTransientMutationObserver(MutationObserverRegistration*);
     void notifyMutationObserversNodeWillDetach();
 #endif // ENABLE(MUTATION_OBSERVERS)
 
@@ -727,7 +723,9 @@ private:
     void trackForDebugging();
 
 #if ENABLE(MUTATION_OBSERVERS)
-    Vector<MutationObserverRegistration>* mutationObserverRegistry();
+    Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry();
+    HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
+    void collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, WebKitMutationObserver::MutationType);
 #endif
 
     mutable uint32_t m_nodeFlags;

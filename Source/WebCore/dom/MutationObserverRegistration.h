@@ -28,68 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitMutationObserver_h
-#define WebKitMutationObserver_h
+#ifndef MutationObserverRegistration_h
+#define MutationObserverRegistration_h
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include "WebKitMutationObserver.h"
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
-class MutationCallback;
-class MutationObserverRegistration;
-class MutationRecord;
-class Node;
-
-typedef unsigned char MutationObserverOptions;
-typedef unsigned char MutationRecordDeliveryOptions;
-
-class WebKitMutationObserver : public RefCounted<WebKitMutationObserver> {
+class MutationObserverRegistration {
 public:
-    enum MutationType {
-        ChildList = 1 << 0,
-        Attributes = 1 << 1,
-        CharacterData = 1 << 2
-    };
 
-    enum ObservationFlags  {
-        Subtree = 1 << 3,
-        AttributeFilter = 1 << 4
-    };
+    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<WebKitMutationObserver>, Node*);
 
-    enum DeliveryFlags {
-        AttributeOldValue = 1 << 5,
-        CharacterDataOldValue = 1 << 6,
-    };
+    ~MutationObserverRegistration();
 
-    static PassRefPtr<WebKitMutationObserver> create(PassRefPtr<MutationCallback>);
-    static void deliverAllMutations();
+    void resetObservation(MutationObserverOptions);
+    void observedSubtreeNodeWillDetach(PassRefPtr<Node>);
+    void clearTransientRegistrations();
+    void unregister();
 
-    ~WebKitMutationObserver();
+    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType);
 
-    void observe(Node*, MutationObserverOptions);
-    void disconnect();
-    void observationStarted(MutationObserverRegistration*);
-    void observationEnded(MutationObserverRegistration*);
-    void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+    WebKitMutationObserver* observer() { return m_observer.get(); }
+    MutationRecordDeliveryOptions deliveryOptions() { return m_options & (WebKitMutationObserver::AttributeOldValue | WebKitMutationObserver::CharacterDataOldValue); }
 
 private:
-    WebKitMutationObserver(PassRefPtr<MutationCallback>);
-    void deliver();
+    MutationObserverRegistration(PassRefPtr<WebKitMutationObserver>, Node*);
 
-    RefPtr<MutationCallback> m_callback;
-    Vector<RefPtr<MutationRecord> > m_records;
-    HashSet<MutationObserverRegistration*> m_registrations;
+    RefPtr<WebKitMutationObserver> m_observer;
+    Node* m_registrationNode;
+    RefPtr<Node> m_registrationNodeKeepAlive;
+    typedef HashSet<RefPtr<Node> > NodeHashSet;
+    OwnPtr<NodeHashSet> m_transientRegistrationNodes;
+
+    MutationObserverOptions m_options;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(MUTATION_OBSERVERS)
 
-#endif // WebKitMutationObserver_h
+#endif // MutationObserverRegistration_h
