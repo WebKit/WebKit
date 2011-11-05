@@ -1,5 +1,18 @@
 2011-11-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Andreas Kling.
+
+        Removed duplicated npruntime_internal.h from bindings/v8
+        in favour of the one from bridge/, which has a few more
+        #undefs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45617
+
+        * bindings/v8/npruntime_internal.h: Removed.
+        * Target.pri: Removed strange occurence here.
+
+2011-11-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Remove empty and unused dom/PositionCreationFunctions.h header file
         https://bugs.webkit.org/show_bug.cgi?id=71552
 

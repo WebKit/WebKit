@@ -1356,7 +1356,6 @@ v8 {
         bindings/v8/DOMWrapperWorld.h \
         bindings/v8/IsolatedWorld.h \
         bindings/v8/npruntime_impl.h \
-        bindings/v8/npruntime_internal.h \
         bindings/v8/npruntime_priv.h \
         bindings/v8/NPV8Object.h \
         bindings/v8/OwnHandle.h \
