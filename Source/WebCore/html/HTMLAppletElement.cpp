@@ -164,7 +164,7 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings()
 
 bool HTMLAppletElement::canEmbedJava() const
 {
-    if (document()->securityOrigin()->isSandboxed(SandboxPlugins))
+    if (document()->isSandboxed(SandboxPlugins))
         return false;
 
     Settings* settings = document()->settings();

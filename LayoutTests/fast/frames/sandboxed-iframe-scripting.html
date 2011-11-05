@@ -26,10 +26,6 @@ window.onload = function()
     <iframe sandbox="allow-same-origin allow-scripts"
             src="data:text/html,<script> alert('PASS: Executed script in data URL'); </script>">
     </iframe>
-    <!-- This case execute script even though it shouldn't. The problem is that
-         the iframe starts out as about:blank, which inherits the parent documents
-         SecurityOrigin, along with its frozen sandbox bits. To fix this case,
-         we'll need to move the sandbox bits from SecurityOrigin to Document. --!>
     <iframe sandbox="allow-same-origin"
             src="javascript: ++window.top.disallowedExecuted;">
     </iframe>

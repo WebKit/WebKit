@@ -1,3 +1,44 @@
+2011-11-04  Adam Barth  <abarth@webkit.org>
+
+        JavaScript URLs execute in sandboxed iframes
+        https://bugs.webkit.org/show_bug.cgi?id=71599
+
+        Reviewed by Eric Seidel.
+
+        This patch fixes the intentional regression I introduced earlier today
+        by moving the sandbox bits from SecurityOrigin to Document. In the
+        process, I renamed SecurityOrigin::createEmpty to
+        SecurityOrigin::createUnique to better align with HTML5 terminology.
+
+        * WebCore.exp.in:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * dom/Document.cpp:
+        (WebCore::Document::setIsViewSource):
+        (WebCore::Document::initSecurityContext):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::sandboxFlags):
+        (WebCore::ScriptExecutionContext::enforceSandboxFlags):
+        (WebCore::ScriptExecutionContext::isSandboxed):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::canEmbedJava):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::isDocumentSandboxed):
+        (WebCore::FrameLoader::addHTTPOriginIfNeeded):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::createUnique):
+        * page/SecurityOrigin.h:
+
 2011-11-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Potential Unused Param Build Issue

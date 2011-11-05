@@ -40,11 +40,12 @@ class KURL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
+    static PassRefPtr<SecurityOrigin> create(const KURL&, bool forceUnique = false);
+    static PassRefPtr<SecurityOrigin> createUnique();
+
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
     static PassRefPtr<SecurityOrigin> createFromString(const String&);
     static PassRefPtr<SecurityOrigin> create(const String& protocol, const String& host, int port);
-    static PassRefPtr<SecurityOrigin> create(const KURL&, SandboxFlags = SandboxNone);
-    static PassRefPtr<SecurityOrigin> createEmpty();
 
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
@@ -113,9 +114,6 @@ public:
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
     void grantUniversalAccess();
-
-    bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
-    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
     bool canAccessDatabase() const { return !isUnique(); }
     bool canAccessLocalStorage() const { return !isUnique(); }
@@ -198,7 +196,7 @@ public:
     static void resetOriginAccessWhitelists();
 
 private:
-    SecurityOrigin(const KURL&, SandboxFlags);
+    explicit SecurityOrigin(const KURL&, bool forceUnique);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.
@@ -207,7 +205,6 @@ private:
     bool isAccessWhiteListed(const SecurityOrigin*) const;
     bool isAccessToURLWhiteListed(const KURL&) const;
 
-    SandboxFlags m_sandboxFlags;
     String m_protocol;
     String m_host;
     mutable String m_encodedHost;

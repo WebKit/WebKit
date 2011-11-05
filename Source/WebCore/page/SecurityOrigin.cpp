@@ -66,12 +66,11 @@ static bool schemeRequiresAuthority(const String& scheme)
     return schemes.contains(scheme);
 }
 
-SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
-    : m_sandboxFlags(sandboxFlags)
-    , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
+SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
+    : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
-    , m_isUnique(isSandboxed(SandboxOrigin) || SchemeRegistry::shouldTreatURLSchemeAsNoAccess(m_protocol))
+    , m_isUnique(forceUnique || SchemeRegistry::shouldTreatURLSchemeAsNoAccess(m_protocol))
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
     , m_enforceFilePathSeparation(false)
@@ -131,8 +130,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
-    : m_sandboxFlags(other->m_sandboxFlags)
-    , m_protocol(other->m_protocol.isolatedCopy())
+    : m_protocol(other->m_protocol.isolatedCopy())
     , m_host(other->m_host.isolatedCopy())
     , m_encodedHost(other->m_encodedHost.isolatedCopy())
     , m_domain(other->m_domain.isolatedCopy())
@@ -152,16 +150,18 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, SandboxFlags sandboxFlags)
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, bool forceUnique)
 {
     if (!url.isValid())
-        return adoptRef(new SecurityOrigin(KURL(), sandboxFlags));
-    return adoptRef(new SecurityOrigin(url, sandboxFlags));
+        return adoptRef(new SecurityOrigin(blankURL(), forceUnique));
+    return adoptRef(new SecurityOrigin(url, forceUnique));
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createEmpty()
+PassRefPtr<SecurityOrigin> SecurityOrigin::createUnique()
 {
-    return create(KURL());
+    RefPtr<SecurityOrigin> origin = create(KURL());
+    ASSERT(origin->isUnique());
+    return origin.release();
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy()
@@ -478,7 +478,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, int port)
 {
     if (port < 0 || port > MaxAllowedPort)
-        create(KURL());
+        createUnique();
     String decodedHost = decodeURLEscapeSequences(host);
     return create(KURL(KURL(), protocol + "://" + host + ":" + String::number(port)));
 }

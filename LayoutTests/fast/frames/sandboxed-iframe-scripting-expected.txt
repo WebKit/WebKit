@@ -4,7 +4,7 @@ Verify that sandboxed frames with sandbox="allow-scripts" can execute scripts, b
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL disallowedExecuted should be 0. Was 1.
+PASS disallowedExecuted is 0
 PASS allowedExecuted is 3
 PASS successfullyParsed is true
 

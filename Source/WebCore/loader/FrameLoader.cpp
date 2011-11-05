@@ -163,7 +163,7 @@ bool isBackForwardLoadType(FrameLoadType type)
 //
 static bool isDocumentSandboxed(Frame* frame, SandboxFlags mask)
 {
-    return frame->document() && frame->document()->securityOrigin()->isSandboxed(mask);
+    return frame->document() && frame->document()->isSandboxed(mask);
 }
 
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
@@ -2546,7 +2546,7 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
     if (origin.isEmpty()) {
         // If we don't know what origin header to attach, we attach the value
         // for an empty origin.
-        request.setHTTPOrigin(SecurityOrigin::createEmpty()->toString());
+        request.setHTTPOrigin(SecurityOrigin::createUnique()->toString());
         return;
     }
 

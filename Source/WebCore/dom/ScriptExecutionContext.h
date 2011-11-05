@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
+#include "FrameLoaderTypes.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -94,7 +95,11 @@ public:
     virtual void disableEval() = 0;
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
+
+    void enforceSandboxFlags(SandboxFlags mask) { m_sandboxFlags |= mask; }
+    bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
     void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
@@ -201,6 +206,7 @@ private:
 
     void closeMessagePorts();
 
+    SandboxFlags m_sandboxFlags;
     RefPtr<SecurityOrigin> m_securityOrigin;
     RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 

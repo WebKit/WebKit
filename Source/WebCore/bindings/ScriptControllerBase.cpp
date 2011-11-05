@@ -37,7 +37,7 @@ namespace WebCore {
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
-    if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxScripts))
+    if (m_frame->document() && m_frame->document()->isSandboxed(SandboxScripts))
         return false;
 
     if (m_frame->document() && m_frame->document()->isViewSource()) {

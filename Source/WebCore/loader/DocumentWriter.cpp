@@ -119,7 +119,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
     
     // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
     // then replace the document with one whose parser will ignore the incoming data (bug 39323)
-    if (document->isPluginDocument() && document->securityOrigin()->isSandboxed(SandboxPlugins))
+    if (document->isPluginDocument() && document->isSandboxed(SandboxPlugins))
         document = SinkDocument::create(m_frame, url);
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?

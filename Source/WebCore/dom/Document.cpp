@@ -1724,7 +1724,7 @@ void Document::setIsViewSource(bool isViewSource)
     if (!m_isViewSource)
         return;
 
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url(), SandboxOrigin));
+    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createUnique());
 }
 
 void Document::createStyleSelector()
@@ -4394,7 +4394,7 @@ void Document::initSecurityContext()
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
         m_cookieURL = KURL(ParsedURLString, "");
-        ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createEmpty());
+        ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createUnique());
         ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
         return;
     }
@@ -4402,7 +4402,8 @@ void Document::initSecurityContext()
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, m_frame->loader()->sandboxFlags()));
+    ScriptExecutionContext::enforceSandboxFlags(m_frame->loader()->sandboxFlags());
+    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
     ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {

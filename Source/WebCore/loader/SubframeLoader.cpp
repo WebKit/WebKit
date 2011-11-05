@@ -112,7 +112,7 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
         return false;
 
     if (m_frame->document()) {
-        if (m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
+        if (m_frame->document()->isSandboxed(SandboxPlugins))
             return false;
         if (!m_frame->document()->contentSecurityPolicy()->allowObjectFromSource(url))
             return false;

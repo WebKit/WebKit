@@ -89,7 +89,8 @@ void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionC
 }
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_iteratingActiveDOMObjects(false)
+    : m_sandboxFlags(SandboxNone)
+    , m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
 #if ENABLE(SQL_DATABASE)
