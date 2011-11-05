@@ -5295,7 +5295,6 @@
             'dom/PopStateEvent.cpp',
             'dom/PopStateEvent.h',
             'dom/Position.cpp',
-            'dom/PositionCreationFunctions.h',
             'dom/PositionIterator.cpp',
             'dom/PositionIterator.h',
             'dom/ProcessingInstruction.cpp',

@@ -1,3 +1,16 @@
+2011-11-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Remove empty and unused dom/PositionCreationFunctions.h header file
+        https://bugs.webkit.org/show_bug.cgi?id=71552
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The file is empty (0 bytes) and not used anywhere. It was added in
+        2009 in r48234 but hasn't been touched since then.
+
+        * WebCore.gypi:
+        * dom/PositionCreationFunctions.h: Removed.
+
 2011-11-04  Adam Barth  <abarth@webkit.org>
 
         Fix assert after running tests in dumpAsText folders.  See
