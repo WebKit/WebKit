@@ -192,8 +192,7 @@ void JSActivation::putWithAttributes(ExecState* exec, const Identifier& property
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
     ASSERT(!hasGetterSetterProperties());
-    PutPropertySlot slot;
-    JSObject::putWithAttributes(exec, propertyName, value, attributes, true, slot);
+    JSObject::putWithAttributes(exec, propertyName, value, attributes);
 }
 
 bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

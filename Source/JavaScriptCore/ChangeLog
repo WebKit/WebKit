@@ -1,3 +1,24 @@
+2011-11-04  Sam Weinig  <sam@webkit.org>
+
+        Reduce the number of putWithAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=71597
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Remove exports of removed functions.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::putWithAttributes):
+        Calling the overload without the extra parameters does the same thing.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putWithAttributes):
+        * runtime/JSObject.h:
+        Remove four unused JSObject::putWithAttributes overloads and make one of the remaining
+        two overloads not virtual, since no one overrides it.
+
 2011-11-04  Pratik Solanki  <psolanki@apple.com>
 
         sqrtDouble and andnotDouble should be declared noreturn

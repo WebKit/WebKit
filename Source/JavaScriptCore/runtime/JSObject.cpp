@@ -200,38 +200,16 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
+void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(value));
+    PutPropertySlot slot;
+    putDirectInternal(exec->globalData(), propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
     putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
-}
-
-void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName, JSValue value, unsigned attributes)
-{
-    putWithAttributes(globalData, Identifier::from(globalData, propertyName), value, attributes);
-}
-
-void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
-{
-    JSGlobalData& globalData = exec->globalData();
-    putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(value));
-}
-
-void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
-{
-    PutPropertySlot slot;
-    JSGlobalData& globalData = exec->globalData();
-    putDirectInternal(globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
-}
-
-void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue value, unsigned attributes)
-{
-    putWithAttributes(exec, Identifier::from(exec, propertyName), value, attributes);
 }
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
