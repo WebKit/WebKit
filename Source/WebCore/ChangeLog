@@ -1,3 +1,16 @@
+2011-11-05  Andreas Kling  <kling@webkit.org>
+
+        Web Inspector: Simplify InspectorCSSAgent::inlineStyleElement().
+        https://bugs.webkit.org/show_bug.cgi?id=71608
+
+        Reviewed by Pavel Feldman.
+
+        Use CSSMutableStyleDeclaration::isInlineStyleDeclaration() instead
+        of doing the same checks manually.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::inlineStyleElement):
+
 2011-11-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Andreas Kling.

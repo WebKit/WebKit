@@ -440,10 +440,10 @@ Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
 {
     if (!style || !style->isMutableStyleDeclaration())
         return 0;
-    Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->node();
-    if (!node || !node->isStyledElement() || static_cast<StyledElement*>(node)->getInlineStyleDecl() != style)
+    CSSMutableStyleDeclaration* mutableStyle = static_cast<CSSMutableStyleDeclaration*>(style);
+    if (!mutableStyle->isInlineStyleDeclaration())
         return 0;
-    return static_cast<Element*>(node);
+    return static_cast<Element*>(mutableStyle->node());
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)
