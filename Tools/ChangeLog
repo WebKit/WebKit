@@ -1,3 +1,15 @@
+2011-11-04  Eric Seidel  <eric@webkit.org>
+
+        Upgrade to the latest Mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=71594
+
+        Reviewed by Adam Barth.
+
+        I noticed our mechanize was somewhat out of date when removing Python 2.5 support.
+        Mechanize is no longer two separate libraries, so importing it is much simpler.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-11-04  Stephen Chenney  <schenney@chromium.org>
 
         Crash in ScrollAnimator.cpp
