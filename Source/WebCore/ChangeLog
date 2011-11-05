@@ -1,3 +1,20 @@
+2011-11-04  Ben Wells  <benwells@chromium.org>
+
+        Canvas drawImage(canvas) with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=71537
+
+        Reviewed by Stephen White.
+
+        drawImage(canvas) now uses the same approach as drawImage(image) to fix these errors.
+
+        Test: fast/canvas/canvas-composite-canvas.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::drawImageToContext):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedDrawImage):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-11-04  Adam Barth  <abarth@webkit.org>
 
         JavaScript URLs execute in sandboxed iframes

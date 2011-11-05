@@ -1431,8 +1431,20 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
 
-    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
-    didDraw(dstRect);
+    if (rectContainsCanvas(dstRect)) {
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        didDrawEntireCanvas();
+    } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
+        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        didDrawEntireCanvas();
+    } else if (state().m_globalComposite == CompositeCopy) {
+        clearCanvas();
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        didDrawEntireCanvas();
+    } else {
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        didDraw(dstRect);
+    }
 }
 
 #if ENABLE(VIDEO)
@@ -1604,7 +1616,17 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRec
     c->restore();
 }
 
-void CanvasRenderingContext2D::fullCanvasCompositedDrawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(Image* image, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+{
+    context->drawImage(image, styleColorSpace, dest, src, op);
+}
+
+static void drawImageToContext(ImageBuffer* imageBuffer, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+{
+    context->drawImageBuffer(imageBuffer, styleColorSpace, dest, src, op);
+}
+
+template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -1630,7 +1652,7 @@ void CanvasRenderingContext2D::fullCanvasCompositedDrawImage(Image* image, Color
     buffer->context()->translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
     buffer->context()->translate(croppedOffset.width(), croppedOffset.height());
     buffer->context()->concatCTM(effectiveTransform);
-    buffer->context()->drawImage(image, styleColorSpace, adjustedDest, src, CompositeSourceOver);
+    drawImageToContext(image, buffer->context(), styleColorSpace, adjustedDest, src, CompositeSourceOver);
 
     compositeBuffer(buffer.get(), bufferRect, op);
 }

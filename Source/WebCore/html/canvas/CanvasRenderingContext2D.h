@@ -307,7 +307,7 @@ private:
     void compositeBuffer(ImageBuffer*, const IntRect&, CompositeOperator);
 
     template<class T> void fullCanvasCompositedFill(const T&);
-    void fullCanvasCompositedDrawImage(Image*, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
+    template<class T> void fullCanvasCompositedDrawImage(T*, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
 
