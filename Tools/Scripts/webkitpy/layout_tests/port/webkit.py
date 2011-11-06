@@ -248,63 +248,71 @@ class WebKitPort(Port):
         try:
             output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
         except OSError, e:
-            _log.warn("Exception runnig driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
-            return []
+            _log.warn("Exception running driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
+            return None
 
         # Note: win/DumpRenderTree.cpp does not print a leading space before the features_string.
         match_object = re.match("SupportedFeatures:\s*(?P<features_string>.*)\s*", output)
         if not match_object:
-            return []
+            return None
         return match_object.group('features_string').split(' ')
 
-    def _supported_symbol_list(self):
-        """Return the supported symbols of WebCore."""
+    def _webcore_symbols_string(self):
         webcore_library_path = self._path_to_webcore_library()
         if not webcore_library_path:
-            return []
-        symbol_list = ' '.join(os.popen("nm " + webcore_library_path).readlines())
-        return symbol_list
+            return None
+        try:
+            return self._executive.run_command('nm', webcore_library_path, error_handler=Executive.ignore_error)
+        except OSError, e:
+            _log.warn("Failed to run nm: %s.  Can't determine WebCore supported features." % e)
+        return None
 
-    def _directories_for_features(self):
-        """Return the supported feature dictionary. The keys are the
-        features and the values are the directories in lists."""
-        directories_for_features = {
+    # Ports which use run-time feature detection should define this method and return
+    # a dictionary mapping from Feature Names to skipped directoires.  NRWT will
+    # run DumpRenderTree --print-supported-features and parse the output.
+    # If the Feature Names are not found in the output, the corresponding directories
+    # will be skipped.
+    def _missing_feature_to_skipped_tests(self):
+        """Return the supported feature dictionary. Keys are feature names and values
+        are the lists of directories to skip if the feature name is not matched."""
+        # FIXME: This list matches WebKitWin and should be moved onto the Win port.
+        return {
             "Accelerated Compositing": ["compositing"],
             "3D Rendering": ["animations/3d", "transforms/3d"],
         }
-        return directories_for_features
 
-    def _directories_for_symbols(self):
-        """Return the supported feature dictionary. The keys are the
-        symbols and the values are the directories in lists."""
-        directories_for_symbol = {
+    # Ports which use compile-time feature detection should define this method and return
+    # a dictionary mapping from symbol substrings to possibly disabled test directories.
+    # When the symbol substrings are not matched, the directories will be skipped.
+    # If ports don't ever enable certain features, then those directories can just be
+    # in the Skipped list instead of compile-time-checked here.
+    def _missing_symbol_to_skipped_tests(self):
+        """Return the supported feature dictionary. The keys are symbol-substrings
+        and the values are the lists of directories to skip if that symbol is missing."""
+        return {
             "MathMLElement": ["mathml"],
             "GraphicsLayer": ["compositing"],
             "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
             "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
             "MHTMLArchive": ["mhtml"],
         }
-        return directories_for_symbol
 
     def _skipped_tests_for_unsupported_features(self):
-        """Return the directories of unsupported tests. Search for the
-        symbols in the symbol_list, if found add the corresponding
-        directories to the skipped directory list."""
-        feature_list = self._runtime_feature_list()
-        directories = self._directories_for_features()
+        # If the port supports runtime feature detection, disable any tests
+        # for features missing from the runtime feature list.
+        supported_feature_list = self._runtime_feature_list()
+        # If _runtime_feature_list returns a non-None value, then prefer
+        # runtime feature detection over static feature detection.
+        if supported_feature_list is not None:
+            return reduce(operator.add, [directories for feature, directories in self._missing_feature_to_skipped_tests().items() if feature not in supported_feature_list])
 
-        # if DRT feature detection not supported
-        if not feature_list:
-            feature_list = self._supported_symbol_list()
-            directories = self._directories_for_symbols()
-
-        if not feature_list:
-            return []
-
-        skipped_directories = [directories[feature]
-                              for feature in directories.keys()
-                              if feature not in feature_list]
-        return reduce(operator.add, skipped_directories)
+        # Runtime feature detection not supported, fallback to static dectection:
+        # Disable any tests for symbols missing from the webcore symbol string.
+        webcore_symbols_string = self._webcore_symbols_string()
+        if webcore_symbols_string is not None:
+            return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in webcore_symbols_string], [])
+        # Failed to get any runtime or symbol information, don't skip any tests.
+        return []
 
     def _tests_from_skipped_file_contents(self, skipped_file_contents):
         tests_to_skip = []

@@ -117,7 +117,7 @@ class GtkPort(webkit.WebKitPort):
 
         for library in gtk_library_names:
             full_library = self._build_path(".libs", library)
-            if os.path.isfile(full_library):
+            if self._filesystem.isfile(full_library):
                 return full_library
         return None
 

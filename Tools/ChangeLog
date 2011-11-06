@@ -1,3 +1,43 @@
+2011-11-06  Eric Seidel  <eric@webkit.org>
+
+        Clarify how the symbol and runtime-feature based test exclusion works and cleanup the code a bit
+        https://bugs.webkit.org/show_bug.cgi?id=66078
+
+        Reviewed by Adam Barth.
+
+        The runtime feature detection was fixed to work in bug 64472.
+        In this bug I moved the symbol-based feature detection from
+        popen() to Executive.run_command and cleaned up the callers
+        and unittests to make sure that we're correctly parsing the
+        nm output correctly.  The old code happened to work even though
+        the runtime-features path was using "str in list" and the
+        symbol features path was using "str in str" and it just happened
+        to do what we wanted to.  Now runtime features and symbol feature
+        blacklists are computed separately (and with better documentation).
+
+        This system remains confusing, partially because these are black-lists
+        which are amended to whatever static blacklist may exist for the
+        port as part of a Skipped list file.
+
+        For example, notice how the runtime feature list only has directory
+        blacklists for a couple features.  If all features are off,
+        how do we skip enough tests with only 2 entries in the blacklist map?
+        The answer is that Windows is the only port to use runtime feature
+        detection, and the win/Skipped file turns off all the other features
+        statically (like mathml, mhtml, wss, etc.) where as some other ports (like AppleMac)
+        which use symbol-based feature detection turn of mathml, wcss, etc
+        using the blacklists found in _missing_symbol_to_skipped_tests.
+
+        I also noticed a couple places where we still referenced xhtmlmp
+        even though support for such has been removed from WebKit.  Removed those.
+
+        This should result in no functional change.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+         - Use self._filesystem instead of os.path
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-11-06  Dan Bernstein  <mitz@apple.com>
 
         Made show-pretty-diff work when the input path contains spaces.
