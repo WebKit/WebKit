@@ -1,3 +1,13 @@
+2011-11-06  Sam Weinig  <sam@webkit.org>
+
+        Allow use of FINAL in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=71630
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig:
+        Don't warn about C++11 extensions used in C++98 mode.
+
 2011-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         Value profiling should just use two buckets
