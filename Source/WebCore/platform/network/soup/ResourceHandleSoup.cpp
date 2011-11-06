@@ -139,8 +139,6 @@ static bool startNonHTTPRequest(ResourceHandle*, KURL);
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
-    if (m_soupRequest)
-        g_object_set_data(G_OBJECT(m_soupRequest.get()), "webkit-resource", 0);
 }
 
 ResourceHandle::~ResourceHandle()
@@ -378,15 +376,11 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
 {
     ResourceHandleInternal* d = handle->getInternal();
 
-    if (d->m_soupRequest) {
-        g_object_set_data(G_OBJECT(d->m_soupRequest.get()), "webkit-resource", 0);
+    if (d->m_soupRequest)
         d->m_soupRequest.clear();
-    }
 
-    if (d->m_inputStream) {
-        g_object_set_data(G_OBJECT(d->m_inputStream.get()), "webkit-resource", 0);
+    if (d->m_inputStream)
         d->m_inputStream.clear();
-    }
 
     d->m_cancellable.clear();
 
@@ -431,11 +425,9 @@ static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest*
                          String::fromUTF8(error->message));
 }
 
-static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer userData)
+static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer data)
 {
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
-    if (!handle)
-        return;
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
     ResourceHandleInternal* d = handle->getInternal();
     ResourceHandleClient* client = handle->client();
@@ -494,9 +486,6 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
     d->m_inputStream = adoptGRef(in);
     d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
-    // readCallback needs it
-    g_object_set_data(G_OBJECT(d->m_inputStream.get()), "webkit-resource", handle.get());
-
     // If not using SoupMessage we need to call didReceiveResponse now.
     // (This will change later when SoupRequest supports content sniffing.)
     if (!d->m_soupMessage) {
@@ -517,7 +506,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
          soup_session_pause_message(handle->defaultSession(), d->m_soupMessage.get());
 
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
-                              G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, 0);
+                              G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
 static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNameString, size_t offset, size_t lengthToSend, unsigned long& totalBodySize)
@@ -647,8 +636,6 @@ static bool startHTTPRequest(ResourceHandle* handle)
         return false;
     }
 
-    g_object_set_data(G_OBJECT(d->m_soupRequest.get()), "webkit-resource", handle);
-
     d->m_soupMessage = adoptGRef(soup_request_http_get_message(SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
     if (!d->m_soupMessage)
         return false;
@@ -694,7 +681,7 @@ static bool startHTTPRequest(ResourceHandle* handle)
     // Send the request only if it's not been explicitely deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
-        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
     }
 
     return true;
@@ -760,7 +747,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     if (!defersLoading && !d->m_cancellable && d->m_soupRequest.get()) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
-        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, this);
         return;
     }
 
@@ -815,22 +802,18 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     syncLoader.run();
 }
 
-static void closeCallback(GObject* source, GAsyncResult* res, gpointer)
+static void closeCallback(GObject* source, GAsyncResult* res, gpointer data)
 {
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
-    if (!handle)
-        return;
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
     ResourceHandleInternal* d = handle->getInternal();
     g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
     cleanupSoupRequestOperation(handle.get());
 }
 
-static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer)
+static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer data)
 {
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
-    if (!handle)
-        return;
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
     ResourceHandleInternal* d = handle->getInternal();
     ResourceHandleClient* client = handle->client();
@@ -852,7 +835,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer)
         // We inform WebCore of load completion now instead of waiting for the input
         // stream to close because the input stream is closed asynchronously.
         client->didFinishLoading(handle.get(), 0);
-        g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, closeCallback, 0);
+        g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, closeCallback, handle.get());
         return;
     }
 
@@ -868,7 +851,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer)
     }
 
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
-                              d->m_cancellable.get(), readCallback, 0);
+                              d->m_cancellable.get(), readCallback, handle.get());
 }
 
 static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
@@ -892,13 +875,11 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
         return false;
     }
 
-    g_object_set_data(G_OBJECT(d->m_soupRequest.get()), "webkit-resource", handle);
-
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run
     handle->ref();
 
     d->m_cancellable = adoptGRef(g_cancellable_new());
-    soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+    soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
 
     return true;
 }

@@ -1,5 +1,25 @@
 2011-11-05  Dan Winship  <danw@gnome.org>
 
+        [GTK] Actually use the user_data arguments to gio async functions
+        instead of using g_object_set_data() to basically reinvent them.
+        https://bugs.webkit.org/show_bug.cgi?id=71614
+
+        Reviewed by Martin Robinson.
+
+        No new tests; behavior is unchanged
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::cleanupSoupRequestOperation):
+        (WebCore::sendRequestCallback):
+        (WebCore::startHTTPRequest):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::closeCallback):
+        (WebCore::readCallback):
+        (WebCore::startNonHTTPRequest):
+
+2011-11-05  Dan Winship  <danw@gnome.org>
+
         [GTK] Don't unnecessarily 0-initialize read buffers.
         https://bugs.webkit.org/show_bug.cgi?id=71612
 
