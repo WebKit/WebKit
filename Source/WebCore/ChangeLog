@@ -1,5 +1,17 @@
 2011-11-05  Dan Winship  <danw@gnome.org>
 
+        [GTK] Don't unnecessarily 0-initialize read buffers.
+        https://bugs.webkit.org/show_bug.cgi?id=71612
+
+        Reviewed by Martin Robinson.
+
+        No new tests; behavior is unchanged
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback):
+
+2011-11-05  Dan Winship  <danw@gnome.org>
+
         [GTK] Remove a bit of dead code
         https://bugs.webkit.org/show_bug.cgi?id=71613
 

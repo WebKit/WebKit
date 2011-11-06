@@ -492,7 +492,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
     }
 
     d->m_inputStream = adoptGRef(in);
-    d->m_buffer = static_cast<char*>(g_slice_alloc0(READ_BUFFER_SIZE));
+    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
     // readCallback needs it
     g_object_set_data(G_OBJECT(d->m_inputStream.get()), "webkit-resource", handle.get());
