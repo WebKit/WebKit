@@ -73,6 +73,7 @@ private:
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void parseReportURI(const String&);
     void addDirective(const String& name, const String& value);
+    void applySandboxPolicy(const String& sandboxPolicy);
 
     PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
 
@@ -100,6 +101,7 @@ private:
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPDirective> m_connectSrc;
+    bool m_haveSandboxPolicy;
     Vector<KURL> m_reportURLs;
 };
 

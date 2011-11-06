@@ -486,6 +486,7 @@ ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext* scriptExecu
     : m_havePolicy(false)
     , m_scriptExecutionContext(scriptExecutionContext)
     , m_reportOnly(false)
+    , m_haveSandboxPolicy(false)
 {
 }
 
@@ -764,6 +765,13 @@ PassOwnPtr<CSPDirective> ContentSecurityPolicy::createCSPDirective(const String&
     return adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext));
 }
 
+void ContentSecurityPolicy::applySandboxPolicy(const String& sandboxPolicy)
+{
+    ASSERT(!m_haveSandboxPolicy);
+    m_haveSandboxPolicy = true;
+    m_scriptExecutionContext->enforceSandboxFlags(SecurityOrigin::parseSandboxPolicy(sandboxPolicy));
+}
+
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
 {
     DEFINE_STATIC_LOCAL(String, defaultSrc, ("default-src"));
@@ -775,6 +783,7 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
     DEFINE_STATIC_LOCAL(String, connectSrc, ("connect-src"));
+    DEFINE_STATIC_LOCAL(String, sandbox, ("sandbox"));
     DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
 
     ASSERT(!name.isEmpty());
@@ -797,6 +806,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_mediaSrc = createCSPDirective(name, value);
     else if (!m_connectSrc && equalIgnoringCase(name, connectSrc))
         m_connectSrc = createCSPDirective(name, value);
+    else if (!m_haveSandboxPolicy && equalIgnoringCase(name, sandbox))
+        applySandboxPolicy(value);
     else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
     else
