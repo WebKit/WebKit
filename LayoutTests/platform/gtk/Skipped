@@ -211,33 +211,6 @@ storage/open-database-set-empty-version.html
 # https://bugs.webkit.org/show_bug.cgi?id=60158
 fast/dom/Geolocation/argument-types.html
 
-# Crashing on debug bots because of failing ASSERT in FrameView.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=61924
-editing/pasteboard/drop-file-svg.html
-http/tests/misc/SVGFont-delayed-load.html
-svg/custom/frame-getSVGDocument.html
-svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml
-svg/custom/object-sizing-height-50p-on-target-svg.xhtml
-svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml
-svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml
-svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml
-svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml
-svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml
-svg/custom/object-sizing-width-50p-on-target-svg.xhtml
-svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml
-svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml
-svg/custom/object-sizing.xhtml
-svg/hixie/intrinsic/001.html
-svg/hixie/intrinsic/002.html
-svg/hixie/intrinsic/003.html
-
-# Crashing on debug bots because of failing ASSERT in webkitwebdatasource.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=61937
-http/tests/fileapi/create-blob-url-from-data-url.html
-http/tests/history/back-during-onload-triggered-by-back.html
-http/tests/history/back-to-post.php
-http/tests/history/cross-origin-replace-history-object-child.html
-
 # crashing on debug bots because of failing ASSERT in TextIterator.cpp
 # https://bugs.webkit.org/show_bug.cgi?id=63611
 editing/deleting/smart-delete-003.html
