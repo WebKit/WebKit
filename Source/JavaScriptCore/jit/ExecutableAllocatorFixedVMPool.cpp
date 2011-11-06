@@ -53,7 +53,7 @@ static const size_t fixedPoolSize = 1024 * 1024 * 1024;
 static const size_t fixedPoolSize = 32 * 1024 * 1024;
 #endif
 
-class FixedVMPoolExecutableAllocator: public MetaAllocator {
+class FixedVMPoolExecutableAllocator : public MetaAllocator {
 public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(32) // round up all allocations to 32 bytes

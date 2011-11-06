@@ -33,7 +33,7 @@ namespace JSC {
 
 class JSCell;
 
-class VTableSpectrum: Spectrum<void*> {
+class VTableSpectrum : Spectrum<void*> {
 public:
     VTableSpectrum();
     ~VTableSpectrum();

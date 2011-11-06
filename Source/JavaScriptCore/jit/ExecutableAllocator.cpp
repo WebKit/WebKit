@@ -41,7 +41,7 @@ namespace JSC {
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 
-class DemandExecutableAllocator: public MetaAllocator {
+class DemandExecutableAllocator : public MetaAllocator {
 public:
     DemandExecutableAllocator()
         : MetaAllocator(32) // round up all allocations to 32 bytes

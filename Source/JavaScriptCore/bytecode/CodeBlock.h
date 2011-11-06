@@ -103,7 +103,7 @@ namespace JSC {
     };
 
 #if ENABLE(JIT)
-    struct CallLinkInfo: public BasicRawSentinelNode<CallLinkInfo> {
+    struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
         CallLinkInfo()
             : hasSeenShouldRepatch(false)
             , isCall(false)

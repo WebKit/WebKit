@@ -35,7 +35,7 @@ namespace WTF {
 // node in the forest. Typically you use it by using UnionFind as a
 // superclass:
 //
-// class MemberOfSet: public UnionFind<MemberOfSet> { ... }
+// class MemberOfSet : public UnionFind<MemberOfSet> { ... }
 //
 // Calling x->find() gives you a MemberOfSet* that represents the
 // disjoint set that x belongs to. Calling x->unify(y) unifies x's

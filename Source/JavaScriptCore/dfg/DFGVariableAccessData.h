@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-class VariableAccessData: public UnionFind<VariableAccessData> {
+class VariableAccessData : public UnionFind<VariableAccessData> {
 public:
     VariableAccessData()
         : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))

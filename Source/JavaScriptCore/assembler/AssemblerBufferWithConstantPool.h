@@ -83,7 +83,7 @@ namespace JSC {
 */
 
 template <int maxPoolSize, int barrierSize, int maxInstructionSize, class AssemblerType>
-class AssemblerBufferWithConstantPool: public AssemblerBuffer {
+class AssemblerBufferWithConstantPool : public AssemblerBuffer {
     typedef SegmentedVector<uint32_t, 512> LoadOffsets;
     using AssemblerBuffer::putIntegral;
     using AssemblerBuffer::putIntegralUnchecked;

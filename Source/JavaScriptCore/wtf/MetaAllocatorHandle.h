@@ -37,7 +37,7 @@ namespace WTF {
 
 class MetaAllocator;
 
-class MetaAllocatorHandle: public RefCounted<MetaAllocatorHandle> {
+class MetaAllocatorHandle : public RefCounted<MetaAllocatorHandle> {
 private:
     MetaAllocatorHandle(MetaAllocator*, void* start, size_t sizeInBytes);
     

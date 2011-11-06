@@ -1,5 +1,21 @@
 2011-11-06  Sam Weinig  <sam@webkit.org>
 
+        Add space missing from some class declarations
+        https://bugs.webkit.org/show_bug.cgi?id=71632
+
+        Reviewed by Anders Carlsson.
+
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * bytecode/CodeBlock.h:
+        * dfg/DFGVariableAccessData.h:
+        * heap/VTableSpectrum.h:
+        * jit/ExecutableAllocator.cpp:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        * wtf/MetaAllocatorHandle.h:
+        * wtf/UnionFind.h:
+
+2011-11-06  Sam Weinig  <sam@webkit.org>
+
         Allow use of FINAL in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=71630
 
