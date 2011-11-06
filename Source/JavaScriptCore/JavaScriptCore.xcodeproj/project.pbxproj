@@ -50,6 +50,7 @@
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F16D726142C39C000CF784A /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F16D724142C39A200CF784A /* BitVector.cpp */; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F2E5BF7146357D5003EB2EB /* Spectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2E5BF5146357D2003EB2EB /* Spectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A4A1460CD6B00131F8F /* DataFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -813,6 +814,7 @@
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
 		0F16D724142C39A200CF784A /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
+		0F2E5BF5146357D2003EB2EB /* Spectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spectrum.h; sourceTree = "<group>"; };
 		0F426A451460CBAB00131F8F /* ValueRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRecovery.h; sourceTree = "<group>"; };
 		0F426A461460CBAB00131F8F /* VirtualRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualRegister.h; sourceTree = "<group>"; };
 		0F426A4A1460CD6B00131F8F /* DataFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFormat.h; sourceTree = "<group>"; };
@@ -1855,6 +1857,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				0F2E5BF5146357D2003EB2EB /* Spectrum.h */,
 				0FD52AAC1430359D0026DC9F /* UnionFind.h */,
 				0F636D9F142D27D200B2E66A /* PackedIntVector.h */,
 				0F16D724142C39A200CF784A /* BitVector.cpp */,
@@ -2897,6 +2900,7 @@
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
+				0F2E5BF7146357D5003EB2EB /* Spectrum.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

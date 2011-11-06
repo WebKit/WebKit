@@ -49,9 +49,7 @@ VTableSpectrum::~VTableSpectrum()
 
 void VTableSpectrum::countVPtr(void* vTablePointer)
 {
-    std::pair<HashMap<void*, unsigned long>::iterator, bool> result = m_map.add(vTablePointer, 1);
-    if (!result.second)
-        result.first->second++;
+    add(vTablePointer);
 }
 
 void VTableSpectrum::count(JSCell* cell)
@@ -59,45 +57,17 @@ void VTableSpectrum::count(JSCell* cell)
     countVPtr(cell->vptr());
 }
 
-struct VTableAndCount {
-    void* vtable;
-    unsigned long count;
-    
-    VTableAndCount() { }
-    
-    VTableAndCount(void* vtable, unsigned long count)
-        : vtable(vtable)
-        , count(count)
-    {
-    }
-    
-    bool operator<(const VTableAndCount& other) const
-    {
-        if (count != other.count)
-            return count < other.count;
-        return vtable > other.vtable; // this results in lower-addressed vtables being printed first
-    }
-};
-
 void VTableSpectrum::dump(FILE* output, const char* comment)
 {
     fprintf(output, "%s:\n", comment);
     
-    HashMap<void*, unsigned long>::iterator begin = m_map.begin();
-    HashMap<void*, unsigned long>::iterator end = m_map.end();
-    
-    Vector<VTableAndCount, 0> list;
-    
-    for (HashMap<void*, unsigned long>::iterator iter = begin; iter != end; ++iter)
-        list.append(VTableAndCount(iter->first, iter->second));
-    
-    std::sort(list.begin(), list.end());
+    Vector<KeyAndCount> list = buildList();
     
     for (size_t index = list.size(); index-- > 0;) {
-        VTableAndCount item = list.at(index);
+        KeyAndCount item = list.at(index);
 #if PLATFORM(MAC)
         Dl_info info;
-        if (dladdr(item.vtable, &info)) {
+        if (dladdr(item.key, &info)) {
             char* findResult = strrchr(info.dli_fname, '/');
             const char* strippedFileName;
             
@@ -106,11 +76,11 @@ void VTableSpectrum::dump(FILE* output, const char* comment)
             else
                 strippedFileName = info.dli_fname;
             
-            fprintf(output, "    %s:%s(%p): %lu\n", strippedFileName, info.dli_sname, item.vtable, item.count);
+            fprintf(output, "    %s:%s(%p): %lu\n", strippedFileName, info.dli_sname, item.key, item.count);
             continue;
         }
 #endif
-        fprintf(output, "    %p: %lu\n", item.vtable, item.count);
+        fprintf(output, "    %p: %lu\n", item.key, item.count);
     }
     
     fflush(output);

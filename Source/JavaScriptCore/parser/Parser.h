@@ -1029,6 +1029,7 @@ PassRefPtr<ParsedNode> Parser::parse(JSGlobalObject* lexicalGlobalObject, Debugg
 template <class ParsedNode>
 PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, Debugger* debugger, ExecState* execState, JSObject** exception)
 {
+    SamplingRegion samplingRegion("Parsing");
     Parser parser(globalData, source, parameters, strictness, parserMode);
     return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
 }

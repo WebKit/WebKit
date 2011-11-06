@@ -148,6 +148,8 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scop
 
 JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+    SamplingRegion samplingRegion(jitType == JITCode::BaselineJIT ? "Baseline Compilation (TOTAL)" : "DFG Compilation (TOTAL)");
+    
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
 #endif
@@ -280,6 +282,8 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* s
 
 JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+    SamplingRegion samplingRegion(jitType == JITCode::BaselineJIT ? "Baseline Compilation (TOTAL)" : "DFG Compilation (TOTAL)");
+    
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
 #endif
@@ -455,6 +459,8 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
 
 JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+    SamplingRegion samplingRegion(jitType == JITCode::BaselineJIT ? "Baseline Compilation (TOTAL)" : "DFG Compilation (TOTAL)");
+    
 #if !ENABLE(JIT)
     UNUSED_PARAM(exec);
     UNUSED_PARAM(jitType);
@@ -515,6 +521,8 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
 JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+    SamplingRegion samplingRegion(jitType == JITCode::BaselineJIT ? "Baseline Compilation (TOTAL)" : "DFG Compilation (TOTAL)");
+    
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
     UNUSED_PARAM(exec);

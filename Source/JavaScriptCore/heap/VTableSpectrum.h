@@ -27,13 +27,13 @@
 #define VTableSpectrum_h
 
 #include <stdio.h>
-#include <wtf/HashMap.h>
+#include <wtf/Spectrum.h>
 
 namespace JSC {
 
 class JSCell;
 
-class VTableSpectrum {
+class VTableSpectrum: Spectrum<void*> {
 public:
     VTableSpectrum();
     ~VTableSpectrum();
@@ -42,9 +42,6 @@ public:
     void count(JSCell*);
     
     void dump(FILE* output, const char* comment);
-    
-private:
-    HashMap<void*, unsigned long> m_map;
 };
 
 } // namespace JSC

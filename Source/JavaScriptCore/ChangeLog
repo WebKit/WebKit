@@ -1,3 +1,60 @@
+2011-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should be able to sample itself in a more flexible way than just sampling flags
+        https://bugs.webkit.org/show_bug.cgi?id=71522
+
+        Reviewed by Gavin Barraclough.
+        
+        Added a construct that looks like SamplingRegion samplingRegion("name").
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingRegion::Locker::Locker):
+        (JSC::SamplingRegion::Locker::~Locker):
+        (JSC::SamplingRegion::sample):
+        (JSC::SamplingRegion::dump):
+        (JSC::SamplingRegion::dumpInternal):
+        (JSC::SamplingThread::threadStartFunc):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingRegion::SamplingRegion):
+        (JSC::SamplingRegion::~SamplingRegion):
+        (JSC::SamplingRegion::exchangeCurrent):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        * heap/VTableSpectrum.cpp:
+        (JSC::VTableSpectrum::countVPtr):
+        (JSC::VTableSpectrum::dump):
+        * heap/VTableSpectrum.h:
+        * jsc.cpp:
+        (main):
+        (runWithScripts):
+        * parser/Parser.h:
+        (JSC::parse):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+        * wtf/Platform.h:
+        * wtf/Spectrum.h: Added.
+        (WTF::Spectrum::Spectrum):
+        (WTF::Spectrum::add):
+        (WTF::Spectrum::get):
+        (WTF::Spectrum::begin):
+        (WTF::Spectrum::end):
+        (WTF::Spectrum::KeyAndCount::KeyAndCount):
+        (WTF::Spectrum::KeyAndCount::operator<):
+        (WTF::Spectrum::buildList):
+        * wtf/wtf.pri:
+
 2011-11-05  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

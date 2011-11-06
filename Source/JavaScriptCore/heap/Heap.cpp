@@ -553,6 +553,8 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
 
 void Heap::markRoots(bool fullGC)
 {
+    SamplingRegion samplingRegion("Garbage Collection: Tracing");
+
     COND_GCPHASE(fullGC, MarkFullRoots, MarkYoungRoots);
     UNUSED_PARAM(fullGC);
     ASSERT(isValidThreadState(m_globalData));
@@ -759,6 +761,8 @@ void Heap::collectAllGarbage()
 
 void Heap::collect(SweepToggle sweepToggle)
 {
+    SamplingRegion samplingRegion("Garbage Collection");
+    
     GCPHASE(Collect);
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
@@ -792,6 +796,7 @@ void Heap::collect(SweepToggle sweepToggle)
     }
 
     if (sweepToggle == DoSweep) {
+        SamplingRegion samplingRegion("Garbage Collection: Sweeping");
         GCPHASE(Sweeping);
         sweep();
         shrink();

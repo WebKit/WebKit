@@ -126,7 +126,7 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
     asm volatile(
         "lock; cmpxchgl %3, %2\n\t"
         "sete %1"
-        : "+a"(expected), "=r"(result), "+m"(*location)
+        : "+a"(expected), "=q"(result), "+m"(*location)
         : "r"(newValue)
         : "memory"
         );
@@ -138,6 +138,38 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
     CRASH();
     return 0;
 #endif
+}
+
+inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* newValue)
+{
+    // FIXME: Implement COMPARE_AND_SWAP on other architectures and compilers. Currently
+    // it only works on X86 or X86_64 with a GCC-style compiler.
+#if ENABLE(COMPARE_AND_SWAP)
+    bool result;
+    asm volatile(
+#if CPU(X86_64)
+        "lock; cmpxchgq %3, %2\n\t"
+#else
+        "lock; cmpxchgl %3, %2\n\t"
+#endif
+        "sete %1"
+        : "+a"(expected), "=q"(result), "+m"(*location)
+        : "r"(newValue)
+        : "memory"
+        );
+    return result;
+#else // ENABLE(COMPARE_AND_SWAP)
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(expected);
+    UNUSED_PARAM(newValue);
+    CRASH();
+    return 0;
+#endif // ENABLE(COMPARE_AND_SWAP)
+}
+
+inline bool weakCompareAndSwap(volatile uintptr_t* location, uintptr_t expected, uintptr_t newValue)
+{
+    return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
 }
 
 } // namespace WTF

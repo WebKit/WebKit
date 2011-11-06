@@ -140,6 +140,8 @@ bool BytecodeGenerator::dumpsGeneratedCode()
 
 JSObject* BytecodeGenerator::generate()
 {
+    SamplingRegion samplingRegion("Bytecode Generation");
+    
     m_codeBlock->setThisRegister(m_thisRegister.index());
 
     m_scopeNode->emitBytecode(*this);

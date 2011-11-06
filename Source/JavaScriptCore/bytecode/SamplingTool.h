@@ -34,7 +34,9 @@
 #include "Opcode.h"
 #include "SamplingCounter.h"
 #include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -92,6 +94,89 @@ namespace JSC {
         static uint64_t s_flagCounts[33];
 #endif
     };
+
+#if ENABLE(SAMPLING_REGIONS)
+    class SamplingRegion {
+    public:
+        // Create a scoped sampling region using a C string constant name that describes
+        // what you are doing. This must be a string constant that persists for the
+        // lifetime of the process and is immutable.
+        SamplingRegion(const char* name)
+        {
+            if (!isMainThread()) {
+                m_name = 0;
+                return;
+            }
+            
+            m_name = name;
+            exchangeCurrent(this, &m_previous);
+            ASSERT(!m_previous || m_previous > this);
+        }
+        
+        ~SamplingRegion()
+        {
+            if (!m_name)
+                return;
+            
+            ASSERT(bitwise_cast<SamplingRegion*>(s_currentOrReserved & ~1) == this);
+            exchangeCurrent(m_previous);
+        }
+        
+        static void sample();
+        
+        static void dump();
+        
+    private:
+        const char* m_name;
+        SamplingRegion* m_previous;
+
+        static void exchangeCurrent(SamplingRegion* current, SamplingRegion** previousPtr = 0)
+        {
+            uintptr_t previous;
+            while (true) {
+                previous = s_currentOrReserved;
+                
+                // If it's reserved (i.e. sampling thread is reading it), loop around.
+                if (previous & 1) {
+#if OS(UNIX)
+                    sched_yield();
+#endif
+                    continue;
+                }
+                
+                // If we're going to CAS, then make sure previous is set.
+                if (previousPtr)
+                    *previousPtr = bitwise_cast<SamplingRegion*>(previous);
+                
+                if (WTF::weakCompareAndSwap(&s_currentOrReserved, previous, bitwise_cast<uintptr_t>(current)))
+                    break;
+            }
+        }
+        
+        static void dumpInternal();
+
+        class Locker {
+        public:
+            Locker();
+            ~Locker();
+        };
+
+        static volatile uintptr_t s_currentOrReserved;
+        
+        // rely on identity hashing of string constants
+        static Spectrum<const char*>* s_spectrum;
+        
+        static unsigned long s_noneOfTheAbove;
+        
+        static unsigned s_numberOfSamplesSinceDump;
+    };
+#else // ENABLE(SAMPLING_REGIONS)
+    class SamplingRegion {
+    public:
+        SamplingRegion(const char*) { }
+        void dump();
+    };
+#endif // ENABLE(SAMPLING_REGIONS)
 
     class CodeBlock;
     class ExecState;

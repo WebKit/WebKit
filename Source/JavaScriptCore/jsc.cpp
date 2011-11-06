@@ -31,6 +31,7 @@
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSString.h"
+#include "MainThread.h"
 #include "SamplingTool.h"
 #include <math.h>
 #include <stdio.h>
@@ -404,6 +405,7 @@ int main(int argc, char** argv)
 #endif
 
     // Initialize JSC before getting JSGlobalData.
+    WTF::initializeMainThread();
     JSC::initializeThreading();
 
     // We can't use destructors in the following code because it uses Windows
@@ -471,6 +473,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::stop();
+#endif
+#if ENABLE(SAMPLING_REGIONS)
+    SamplingRegion::dump();
 #endif
     globalData.dumpSampleData(globalObject->globalExec());
 #if ENABLE(SAMPLING_COUNTERS)

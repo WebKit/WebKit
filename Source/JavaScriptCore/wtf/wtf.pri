@@ -97,6 +97,7 @@ HEADERS += \
     wtf/RefPtrHashMap.h \
     wtf/RetainPtr.h \
     wtf/SHA1.h \
+    wtf/Spectrum.h \
     wtf/StackBounds.h \
     wtf/StaticConstructors.h \
     wtf/StdLibExtras.h \
