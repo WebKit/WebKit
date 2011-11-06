@@ -3319,8 +3319,6 @@
             'platform/graphics/ANGLEWebKitBridge.h',
             'platform/graphics/BitmapImage.cpp',
             'platform/graphics/Color.cpp',
-            'platform/graphics/ContextShadow.cpp',
-            'platform/graphics/ContextShadow.h',
             'platform/graphics/Extensions3D.h',
             'platform/graphics/FloatPoint.cpp',
             'platform/graphics/FloatPoint3D.cpp',
