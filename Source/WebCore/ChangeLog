@@ -1,3 +1,16 @@
+2011-11-06  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Unindent edited text by pressing Shift + Tab
+        https://bugs.webkit.org/show_bug.cgi?id=70181
+
+        Indent and unindent text in all selected lines.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype.unindentLines.get var):
+        (WebInspector.TextEditorMainPanel.prototype.unindentLines):
+
 2011-11-05  Martin Robinson  <mrobinson@igalia.com>
 
         Remove ContextShadow

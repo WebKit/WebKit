@@ -1051,9 +1051,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (!selection)
             return false;
 
-        if (shiftKey)
-            return true;
-
         this.beginUpdates();
         this._enterTextChangeMode();
 
@@ -1061,13 +1058,76 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (range.startLine > range.endLine || (range.startLine === range.endLine && range.startColumn > range.endColumn))
             range = new WebInspector.TextRange(range.endLine, range.endColumn, range.startLine, range.startColumn);
 
-        var newRange = this._setText(range, WebInspector.settings.textEditorIndent.get());
+        var newRange;
+        if (shiftKey)
+            newRange = this._unindentLines(range);
+        else {
+            if (range.isEmpty()) {
+                newRange = this._setText(range, WebInspector.settings.textEditorIndent.get());
+                newRange.startColumn = newRange.endColumn;
+            } else
+                newRange = this._indentLines(range);
+
+        }
 
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();
-
-        this._setCaretLocation(newRange.endLine, newRange.endColumn, true);
+        this._restoreSelection(newRange, true);
         return true;
+    },
+
+    _indentLines: function(range)
+    {
+        var indent = WebInspector.settings.textEditorIndent.get();
+
+        if (this._lastEditedRange)
+            this._textModel.markUndoableState();
+
+        for (var lineNumber = range.startLine; lineNumber <= range.endLine; lineNumber++)
+            this._textModel.setText(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), indent);
+
+        var newRange = range.clone();
+        newRange.startColumn += indent.length;
+        newRange.endColumn += indent.length;
+        this._lastEditedRange = newRange;
+
+        return newRange;
+    },
+
+    _unindentLines: function(range)
+    {
+        if (this._lastEditedRange)
+            this._textModel.markUndoableState();
+
+        var indent = WebInspector.settings.textEditorIndent.get();
+        var indentLength = indent === WebInspector.TextEditorModel.Indent.TabCharacter ? 4 : indent.length;
+        var lineIndentRegex = new RegExp("^ {1," + indentLength + "}");
+        var newRange = range.clone();
+
+        for (var lineNumber = range.startLine; lineNumber <= range.endLine; lineNumber++) {
+            var line = this._textModel.line(lineNumber);
+            var firstCharacter = line.charAt(0);
+            var lineIndentLength;
+
+            if (firstCharacter === " ")
+                lineIndentLength = line.match(lineIndentRegex)[0].length;
+            else if (firstCharacter === "\t")
+                lineIndentLength = 1;
+            else
+                continue;
+
+            this._textModel.setText(new WebInspector.TextRange(lineNumber, 0, lineNumber, lineIndentLength), "");
+
+            if (lineNumber === range.startLine)
+                newRange.startColumn = Math.max(0, newRange.startColumn - lineIndentLength);
+        }
+
+        if (lineIndentLength)
+            newRange.endColumn = Math.max(0, newRange.endColumn - lineIndentLength);
+
+        this._lastEditedRange = newRange;
+
+        return newRange;
     },
 
     _splitChunkOnALine: function(lineNumber, chunkNumber, createSuffixChunk)
