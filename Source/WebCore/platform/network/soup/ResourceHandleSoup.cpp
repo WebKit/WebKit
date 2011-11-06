@@ -826,13 +826,12 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer)
     cleanupSoupRequestOperation(handle.get());
 }
 
-static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer data)
+static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(source, "webkit-resource"));
     if (!handle)
         return;
 
-    bool convertToUTF16 = static_cast<bool>(data);
     ResourceHandleInternal* d = handle->getInternal();
     ResourceHandleClient* client = handle->client();
 
@@ -860,13 +859,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
     // It's mandatory to have sent a response before sending data
     ASSERT(!d->m_response.isNull());
 
-    if (G_LIKELY(!convertToUTF16))
-        client->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
-    else {
-        // We have to convert it to UTF-16 due to limitations in KURL
-        String data = String::fromUTF8(d->m_buffer, bytesRead);
-        client->didReceiveData(handle.get(), reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), bytesRead);
-    }
+    client->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
 
     // didReceiveData may cancel the load, which may release the last reference.
     if (d->m_cancelled || !client) {
@@ -875,7 +868,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
     }
 
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
-                              d->m_cancellable.get(), readCallback, data);
+                              d->m_cancellable.get(), readCallback, 0);
 }
 
 static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
