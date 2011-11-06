@@ -1,3 +1,17 @@
+2011-11-06  Darin Adler  <darin@apple.com>
+
+        Leaks seen in RenderFlowThread::setRegionRangeForBox on Leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=71260
+
+        Reviewed by Mark Rowe.
+
+        Memory leak fix covered by existing tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        Instead of calling remove, call take and then delete, since the
+        values of the map are owned and need to be deleted when removed.
+
 2011-11-06  Adam Barth  <abarth@webkit.org>
 
         Implement the sandbox directive for CSP

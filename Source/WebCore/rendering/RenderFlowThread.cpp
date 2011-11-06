@@ -634,7 +634,7 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
             break;
     }
     
-    m_regionRangeMap.remove(box);
+    delete m_regionRangeMap.take(box);
 }
 
 bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, LayoutUnit offsetFromLogicalTopOfFirstPage)
