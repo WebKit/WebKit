@@ -1,3 +1,27 @@
+2011-11-05  Darin Adler  <darin@apple.com>
+
+        Improve pending resource hash table code, including fixing a memory leak
+        https://bugs.webkit.org/show_bug.cgi?id=71616
+
+        Reviewed by Adam Roben.
+
+        Memory leak fix and refactoring covered by existing tests.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource): Replace the combination
+        of contains, get, and add with just add, removing an extra unneeded hash table
+        lookup each time this function is called.
+        (WebCore::SVGDocumentExtensions::isElementInPendingResources): Added a comment
+        about the performance of this function. Removed unnecessary check for an empty
+        map; the code already efficiently exits doing nothing without the check.
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources): Removed
+        unnecessary check for an empty map; the code already efficiently does nothing
+        without the check. Use removePendingResource rather than calling remove to
+        avoid leaking the SVGPendingElements set.
+        (WebCore::SVGDocumentExtensions::removePendingResource): Replace the
+        combination of get and remove with a call to take, removing an extra
+        unneeded hash table lookup each time this function is called
+
 2011-11-05  Dan Winship  <danw@gnome.org>
 
         [GTK] Actually use the user_data arguments to gio async functions
