@@ -1,3 +1,33 @@
+2011-11-04  Jon Lee  <jonlee@apple.com>
+
+        Dragging a file onto <input type="file"> should give distinct visual feedback
+        https://bugs.webkit.org/show_bug.cgi?id=13897
+        <rdar://problem/5232483>
+
+        Reviewed by Dan Bernstein.
+
+        When hovering over a file input element, we set the button's state to active
+        to differentiate dragging one file over the input element (which populates that
+        element) versus over the document (which would load the file into the view).
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::canReceiveDroppedFiles):
+        (WebCore::HTMLInputElement::setCanReceiveDroppedFiles): If set, the element
+        is updated, which sets the active state on the button control.
+        * html/HTMLInputElement.h: Add a boolean member representing whether the file
+        input can receive dropped files.
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController): Update/set the file input that
+        can receive dropped files.
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::concludeEditDrag):
+        * page/DragController.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement): Sets the button active
+        state if the input can receive dropped files.
+
 2011-11-05  Darin Adler  <darin@apple.com>
 
         Improve pending resource hash table code, including fixing a memory leak

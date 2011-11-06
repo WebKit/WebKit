@@ -209,6 +209,10 @@ public:
     FileList* files();
     void receiveDroppedFiles(const Vector<String>&);
     Icon* icon() const;
+    // These functions are used for rendering the input active during a
+    // drag-and-drop operation.
+    bool canReceiveDroppedFiles() const;
+    void setCanReceiveDroppedFiles(bool);
 
     void addSearchResult();
     void onSearch();
@@ -351,6 +355,7 @@ private:
     bool m_stateRestored : 1;
     bool m_parsingInProgress : 1;
     bool m_wasModifiedByUser : 1;
+    bool m_canReceiveDroppedFiles : 1;
     OwnPtr<InputType> m_inputType;
 };
 

@@ -71,6 +71,8 @@ void RenderFileUploadControl::updateFromElement()
         // updateFromElement() eventually.
         if (button->disabled() != newDisabled)
             button->setDisabled(newDisabled);
+        
+        button->setActive(input->canReceiveDroppedFiles());
     }
 
     // This only supports clearing out the files, but that's OK because for

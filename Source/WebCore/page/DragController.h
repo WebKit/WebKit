@@ -42,6 +42,7 @@ namespace WebCore {
     class Element;
     class Frame;
     class FrameSelection;
+    class HTMLInputElement;
     class Image;
     class IntRect;
     class Node;
@@ -117,6 +118,7 @@ namespace WebCore {
         
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
+        RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
         
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;

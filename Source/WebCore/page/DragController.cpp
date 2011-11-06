@@ -88,6 +88,7 @@ DragController::DragController(Page* page, DragClient* client)
     , m_client(client)
     , m_documentUnderMouse(0)
     , m_dragInitiator(0)
+    , m_fileInputElementUnderMouse(0)
     , m_dragDestinationAction(DragDestinationActionNone)
     , m_dragSourceAction(DragSourceActionNone)
     , m_didInitiateDrag(false)
@@ -181,6 +182,9 @@ void DragController::dragExited(DragData* dragData)
         clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
     }
     mouseMovedIntoDocument(0);
+    if (m_fileInputElementUnderMouse)
+        m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
+    m_fileInputElementUnderMouse = 0;
 }
 
 DragSession DragController::dragUpdated(DragData* dragData)
@@ -328,25 +332,32 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
             return false;
         
         HTMLInputElement* elementAsFileInput = asFileInput(element);
-        if (!elementAsFileInput)
+        if (m_fileInputElementUnderMouse != elementAsFileInput) {
+            if (m_fileInputElementUnderMouse)
+                m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
+            m_fileInputElementUnderMouse = elementAsFileInput;
+        }
+        
+        if (!m_fileInputElementUnderMouse)
             m_page->dragCaretController()->setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
 
         Frame* innerFrame = element->document()->frame();
         dragSession.operation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
-        dragSession.mouseIsOverFileInput = elementAsFileInput;
+        dragSession.mouseIsOverFileInput = m_fileInputElementUnderMouse;
         dragSession.numberOfItemsToBeAccepted = 0;
 
         unsigned numberOfFiles = dragData->numberOfFiles();
-        if (elementAsFileInput) {
-            if (elementAsFileInput->disabled())
+        if (m_fileInputElementUnderMouse) {
+            if (m_fileInputElementUnderMouse->disabled())
                 dragSession.numberOfItemsToBeAccepted = 0;
-            else if (elementAsFileInput->multiple())
+            else if (m_fileInputElementUnderMouse->multiple())
                 dragSession.numberOfItemsToBeAccepted = numberOfFiles;
             else
                 dragSession.numberOfItemsToBeAccepted = 1;
             
             if (!dragSession.numberOfItemsToBeAccepted)
                 dragSession.operation = DragOperationNone;
+            m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(dragSession.numberOfItemsToBeAccepted);
         } else {
             // We are not over a file input element. The dragged item(s) will only
             // be loaded into the view the number of dragged items is 1.
@@ -355,8 +366,12 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         
         return true;
     }
-    // If we're not over an editable region, make sure we're clearing any prior drag cursor.
+    
+    // We are not over an editable region. Make sure we're clearing any prior drag cursor.
     m_page->dragCaretController()->clear();
+    if (m_fileInputElementUnderMouse)
+        m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
+    m_fileInputElementUnderMouse = 0;
     return false;
 }
 
@@ -399,6 +414,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
 {
     ASSERT(dragData);
     ASSERT(!m_isHandlingDrag);
+
+    if (m_fileInputElementUnderMouse) {
+        m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
+        m_fileInputElementUnderMouse = 0;
+    }
 
     if (!m_documentUnderMouse)
         return false;

@@ -94,6 +94,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_stateRestored(false)
     , m_parsingInProgress(createdByParser)
     , m_wasModifiedByUser(false)
+    , m_canReceiveDroppedFiles(false)
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
@@ -1408,6 +1409,19 @@ void HTMLInputElement::receiveDroppedFiles(const Vector<String>& filenames)
 Icon* HTMLInputElement::icon() const
 {
     return m_inputType->icon();
+}
+
+bool HTMLInputElement::canReceiveDroppedFiles() const
+{
+    return m_canReceiveDroppedFiles;
+}
+
+void HTMLInputElement::setCanReceiveDroppedFiles(bool canReceiveDroppedFiles)
+{
+    if (m_canReceiveDroppedFiles == canReceiveDroppedFiles)
+        return;
+    m_canReceiveDroppedFiles = canReceiveDroppedFiles;
+    renderer()->updateFromElement();
 }
 
 String HTMLInputElement::visibleValue() const
