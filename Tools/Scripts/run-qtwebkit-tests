@@ -209,8 +209,8 @@ class Main(Log):
         """ Find && execute && publish results of all test. "All in one" function. """
         # This is needed for Qt finding our QML modules. The current code makes our
         # two existing API tests (WK1 API and WK2 UI process API) work correctly.
-        qml_import_path = self._options.path + "../../../imports"
-        qml_import_path += ":" + self._options.path + "../../../../../imports"
+        qml_import_path = self._options.path + "../../../../imports"
+        qml_import_path += ":" + self._options.path + "../../../../../../imports"
         os.putenv("QML_IMPORT_PATH", qml_import_path)
         path = os.getenv("PATH")
         path += ":" + self._options.path + "../../../../../bin"
