@@ -1,14 +1,14 @@
 <html>
 <head>
     <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setFrameFlatteningEnabled(true);
+        }
+
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.setFrameFlatteningEnabled(true);
-            }
-
             setTimeout(function() {
                 var theframe = document.getElementById("theframe");
                 var width = parseInt(getComputedStyle(theframe).width);

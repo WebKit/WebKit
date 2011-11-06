@@ -1,18 +1,14 @@
 <html>
 <head>
     <script type="text/javascript">
-        function test()
-        {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.setFrameFlatteningEnabled(true);
-            }
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setFrameFlatteningEnabled(true);
         }
-
     </script>
 </head>
-<body onload="test()">
+<body>
     <style>body { background-color: green; }</style>
     <p>This test passes if it does not crash <a href="https://bugs.webkit.org/show_bug.cgi?id=52449">https://bugs.webkit.org/show_bug.cgi?id=52449</a></p>
 

@@ -7,13 +7,13 @@
         }
     </style>
     <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.setFrameFlatteningEnabled(true);
+        }
+
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
-                layoutTestController.setFrameFlatteningEnabled(true);
-            }
-
             setTimeout(function() {
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();

@@ -1,13 +1,13 @@
 <html>
 <head>
     <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.setFrameFlatteningEnabled(true);
+        }
+
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
-                layoutTestController.setFrameFlatteningEnabled(true);
-            }
-
             setTimeout(function() {
                 scrollTo(1200, 0);
                 var i = document.body.offsetWidth;
