@@ -1,3 +1,14 @@
+2011-11-05  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Use the security origin instead of the URL when checking notification permissions
+        https://bugs.webkit.org/show_bug.cgi?id=71590
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::checkPermission):
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+
 2011-11-05  Darin Adler  <darin@apple.com>
 
         Fix a small leak in Mac version of LayoutTestController

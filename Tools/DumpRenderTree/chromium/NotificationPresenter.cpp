@@ -66,9 +66,7 @@ NotificationPresenter::~NotificationPresenter()
 
 void NotificationPresenter::grantPermission(const WebString& origin)
 {
-    // Make sure it's in the form of an origin.
-    GURL url(origin);
-    m_allowedOrigins.add(WTF::String(url.GetOrigin().spec().c_str()));
+    m_allowedOrigins.add(WTF::String(origin.data(), origin.length()));
 }
 
 bool NotificationPresenter::simulateClick(const WebString& title)
@@ -135,11 +133,11 @@ void NotificationPresenter::objectDestroyed(const WebKit::WebNotification& notif
     m_activeNotifications.remove(id);
 }
 
-WebNotificationPresenter::Permission NotificationPresenter::checkPermission(const WebURL& url)
+WebNotificationPresenter::Permission NotificationPresenter::checkPermission(const WebSecurityOrigin& origin)
 {
     // Check with the layout test controller
-    WTF::String origin = WTF::String(static_cast<GURL>(url).GetOrigin().spec().c_str());
-    bool allowed = m_allowedOrigins.find(origin) != m_allowedOrigins.end();
+    WebString originString = origin.toString();
+    bool allowed = m_allowedOrigins.find(WTF::String(originString.data(), originString.length())) != m_allowedOrigins.end();
     return allowed ? WebNotificationPresenter::PermissionAllowed
         : WebNotificationPresenter::PermissionDenied;
 }

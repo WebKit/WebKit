@@ -96,7 +96,7 @@ void NotificationPresenterImpl::notificationObjectDestroyed(Notification* notifi
 
 NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
 {
-    int result = m_presenter->checkPermission(context->url());
+    int result = m_presenter->checkPermission(WebSecurityOrigin(context->securityOrigin()));
     return static_cast<NotificationPresenter::Permission>(result);
 }
 

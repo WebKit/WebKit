@@ -56,7 +56,7 @@ public:
     virtual bool show(const WebKit::WebNotification&);
     virtual void cancel(const WebKit::WebNotification&);
     virtual void objectDestroyed(const WebKit::WebNotification&);
-    virtual Permission checkPermission(const WebKit::WebURL&);
+    virtual Permission checkPermission(const WebKit::WebSecurityOrigin&);
     virtual void requestPermission(const WebKit::WebSecurityOrigin&, WebKit::WebNotificationPermissionCallback*);
 
     void reset() { m_allowedOrigins.clear(); }
