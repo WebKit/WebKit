@@ -64,7 +64,7 @@ my $prettyPatchDir = sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/";
 my $prettyPatchTool = sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/prettify.rb";
 
 my $pathToPrettify = "ruby -I " . sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/ " . sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/prettify.rb";
-system "$pathToPrettify $inputPath > $prettydiffPath";
+system "$pathToPrettify " . quotemeta($inputPath) . " > $prettydiffPath";
 
 if (isAppleMacWebKit()) {
     system "open", $prettydiffPath;

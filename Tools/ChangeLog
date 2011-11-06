@@ -1,3 +1,11 @@
+2011-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Made show-pretty-diff work when the input path contains spaces.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/show-pretty-diff:
+
 2011-11-05  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Use the security origin instead of the URL when checking notification permissions
