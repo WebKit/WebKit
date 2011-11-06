@@ -47,11 +47,15 @@ void injectInternalsObject(v8::Local<v8::Context> context)
 
 void resetInternalsObject(v8::Local<v8::Context> context)
 {
+    // This can happen if JavaScript is disabled in the main frame.
+    if (context.IsEmpty())
+        return;
+
     v8::Context::Scope contextScope(context);
     v8::HandleScope scope;
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(v8::String::New(Internals::internalsId)));
-    Internals * internals = V8Internals::toNative(object);
+    Internals* internals = V8Internals::toNative(object);
     if (internals) {
         ScriptExecutionContext* scriptContext = getScriptExecutionContext();
         if (scriptContext->isDocument())

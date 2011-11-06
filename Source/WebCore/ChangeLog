@@ -1,3 +1,11 @@
+2011-11-06  Adam Barth  <abarth@webkit.org>
+
+        Don't crash when a context hasn't been created.  This fixed a
+        testing-only crash on the bots in the Chromium port.
+
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::resetInternalsObject):
+
 2011-11-06  Darin Adler  <darin@apple.com>
 
         Leaks seen in RenderFlowThread::setRegionRangeForBox on Leaks bot
