@@ -59,6 +59,7 @@ class MockExecutive(object):
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=False):
+        assert(isinstance(args, list) or isinstance(args, tuple))
         if self._should_log:
             log("MOCK run_command: %s, cwd=%s" % (args, cwd))
         if self._should_throw:
@@ -92,6 +93,7 @@ class MockExecutive2(object):
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=False):
+        assert(isinstance(args, list) or isinstance(args, tuple))
         if self._exception:
             raise self._exception
         if self._run_command_fn:

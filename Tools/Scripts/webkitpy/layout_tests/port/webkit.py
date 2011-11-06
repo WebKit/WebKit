@@ -262,7 +262,7 @@ class WebKitPort(Port):
         if not webcore_library_path:
             return None
         try:
-            return self._executive.run_command('nm', webcore_library_path, error_handler=Executive.ignore_error)
+            return self._executive.run_command(['nm', webcore_library_path], error_handler=Executive.ignore_error)
         except OSError, e:
             _log.warn("Failed to run nm: %s.  Can't determine WebCore supported features." % e)
         return None
