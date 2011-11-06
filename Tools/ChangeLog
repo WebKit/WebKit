@@ -1,5 +1,14 @@
 2011-11-06  Eric Seidel  <eric@webkit.org>
 
+        Split chunk handling out of prepare_lists_and_print_output to make it more readable
+        https://bugs.webkit.org/show_bug.cgi?id=71629
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
+2011-11-06  Eric Seidel  <eric@webkit.org>
+
         Clarify how the symbol and runtime-feature based test exclusion works and cleanup the code a bit
         https://bugs.webkit.org/show_bug.cgi?id=66078
 

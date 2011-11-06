@@ -385,6 +385,88 @@ class Manager(object):
             self._options.lint_test_files,
             port.test_expectations_overrides())
 
+    def _split_into_chunks_if_necessary(self, skipped):
+        if not self._options.run_chunk and not self._options.run_part:
+            return skipped
+
+        # If the user specifies they just want to run a subset of the tests,
+        # just grab a subset of the non-skipped tests.
+        chunk_value = self._options.run_chunk or self._options.run_part
+        test_files = self._test_files_list
+        try:
+            (chunk_num, chunk_len) = chunk_value.split(":")
+            chunk_num = int(chunk_num)
+            assert(chunk_num >= 0)
+            test_size = int(chunk_len)
+            assert(test_size > 0)
+        except AssertionError:
+            _log.critical("invalid chunk '%s'" % chunk_value)
+            return None
+
+        # Get the number of tests
+        num_tests = len(test_files)
+
+        # Get the start offset of the slice.
+        if self._options.run_chunk:
+            chunk_len = test_size
+            # In this case chunk_num can be really large. We need
+            # to make the slave fit in the current number of tests.
+            slice_start = (chunk_num * chunk_len) % num_tests
+        else:
+            # Validate the data.
+            assert(test_size <= num_tests)
+            assert(chunk_num <= test_size)
+
+            # To count the chunk_len, and make sure we don't skip
+            # some tests, we round to the next value that fits exactly
+            # all the parts.
+            rounded_tests = num_tests
+            if rounded_tests % test_size != 0:
+                rounded_tests = (num_tests + test_size - (num_tests % test_size))
+
+            chunk_len = rounded_tests / test_size
+            slice_start = chunk_len * (chunk_num - 1)
+            # It does not mind if we go over test_size.
+
+        # Get the end offset of the slice.
+        slice_end = min(num_tests, slice_start + chunk_len)
+
+        files = test_files[slice_start:slice_end]
+
+        tests_run_msg = 'Running: %d tests (chunk slice [%d:%d] of %d)' % ((slice_end - slice_start), slice_start, slice_end, num_tests)
+        self._printer.print_expected(tests_run_msg)
+
+        # If we reached the end and we don't have enough tests, we run some
+        # from the beginning.
+        if slice_end - slice_start < chunk_len:
+            extra = chunk_len - (slice_end - slice_start)
+            extra_msg = ('   last chunk is partial, appending [0:%d]' % extra)
+            self._printer.print_expected(extra_msg)
+            tests_run_msg += "\n" + extra_msg
+            files.extend(test_files[0:extra])
+        tests_run_filename = self._fs.join(self._results_directory, "tests_run.txt")
+        self._fs.write_text_file(tests_run_filename, tests_run_msg)
+
+        len_skip_chunk = int(len(files) * len(skipped) / float(len(self._test_files)))
+        skip_chunk_list = list(skipped)[0:len_skip_chunk]
+        skip_chunk = set(skip_chunk_list)
+
+        # FIXME: This is a total hack.
+        # Update expectations so that the stats are calculated correctly.
+        # We need to pass a list that includes the right # of skipped files
+        # to ParseExpectations so that ResultSummary() will get the correct
+        # stats. So, we add in the subset of skipped files, and then
+        # subtract them back out.
+        self._test_files_list = files + skip_chunk_list
+        self._test_files = set(self._test_files_list)
+
+        self.parse_expectations()
+
+        self._test_files = set(files)
+        self._test_files_list = files
+
+        return skip_chunk
+
     # FIXME: This method is way too long and needs to be broken into pieces.
     def prepare_lists_and_print_output(self):
         """Create appropriate subsets of test lists and returns a
@@ -394,8 +476,7 @@ class Manager(object):
         # Remove skipped - both fixable and ignored - files from the
         # top-level list of files to test.
         num_all_test_files = len(self._test_files)
-        self._printer.print_expected("Found:  %d tests" %
-                                     (len(self._test_files)))
+        self._printer.print_expected("Found:  %d tests" % (len(self._test_files)))
         if not num_all_test_files:
             _log.critical('No tests to run.')
             return None
@@ -421,102 +502,21 @@ class Manager(object):
         else:
             self._test_files_list.sort(key=lambda test: test_key(self._port, test))
 
-        # If the user specifies they just want to run a subset of the tests,
-        # just grab a subset of the non-skipped tests.
-        if self._options.run_chunk or self._options.run_part:
-            chunk_value = self._options.run_chunk or self._options.run_part
-            test_files = self._test_files_list
-            try:
-                (chunk_num, chunk_len) = chunk_value.split(":")
-                chunk_num = int(chunk_num)
-                assert(chunk_num >= 0)
-                test_size = int(chunk_len)
-                assert(test_size > 0)
-            except AssertionError:
-                _log.critical("invalid chunk '%s'" % chunk_value)
-                return None
+        skipped = self._split_into_chunks_if_necessary(skipped)
 
-            # Get the number of tests
-            num_tests = len(test_files)
-
-            # Get the start offset of the slice.
-            if self._options.run_chunk:
-                chunk_len = test_size
-                # In this case chunk_num can be really large. We need
-                # to make the slave fit in the current number of tests.
-                slice_start = (chunk_num * chunk_len) % num_tests
-            else:
-                # Validate the data.
-                assert(test_size <= num_tests)
-                assert(chunk_num <= test_size)
-
-                # To count the chunk_len, and make sure we don't skip
-                # some tests, we round to the next value that fits exactly
-                # all the parts.
-                rounded_tests = num_tests
-                if rounded_tests % test_size != 0:
-                    rounded_tests = (num_tests + test_size -
-                                     (num_tests % test_size))
-
-                chunk_len = rounded_tests / test_size
-                slice_start = chunk_len * (chunk_num - 1)
-                # It does not mind if we go over test_size.
-
-            # Get the end offset of the slice.
-            slice_end = min(num_tests, slice_start + chunk_len)
-
-            files = test_files[slice_start:slice_end]
-
-            tests_run_msg = 'Running: %d tests (chunk slice [%d:%d] of %d)' % (
-                (slice_end - slice_start), slice_start, slice_end, num_tests)
-            self._printer.print_expected(tests_run_msg)
-
-            # If we reached the end and we don't have enough tests, we run some
-            # from the beginning.
-            if slice_end - slice_start < chunk_len:
-                extra = chunk_len - (slice_end - slice_start)
-                extra_msg = ('   last chunk is partial, appending [0:%d]' %
-                            extra)
-                self._printer.print_expected(extra_msg)
-                tests_run_msg += "\n" + extra_msg
-                files.extend(test_files[0:extra])
-            tests_run_filename = self._fs.join(self._results_directory, "tests_run.txt")
-            self._fs.write_text_file(tests_run_filename, tests_run_msg)
-
-            len_skip_chunk = int(len(files) * len(skipped) /
-                                 float(len(self._test_files)))
-            skip_chunk_list = list(skipped)[0:len_skip_chunk]
-            skip_chunk = set(skip_chunk_list)
-
-            # Update expectations so that the stats are calculated correctly.
-            # We need to pass a list that includes the right # of skipped files
-            # to ParseExpectations so that ResultSummary() will get the correct
-            # stats. So, we add in the subset of skipped files, and then
-            # subtract them back out.
-            self._test_files_list = files + skip_chunk_list
-            self._test_files = set(self._test_files_list)
-
-            self.parse_expectations()
-
-            self._test_files = set(files)
-            self._test_files_list = files
-        else:
-            skip_chunk = skipped
-
-        result_summary = ResultSummary(self._expectations, self._test_files | skip_chunk)
+        result_summary = ResultSummary(self._expectations, self._test_files | skipped)
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
         self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")
         self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
         self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped")
 
         if self._options.force:
-            self._printer.print_expected('Running all tests, including '
-                                         'skips (--force)')
+            self._printer.print_expected('Running all tests, including skips (--force)')
         else:
             # Note that we don't actually run the skipped tests (they were
             # subtracted out of self._test_files, above), but we stub out the
             # results here so the statistics can remain accurate.
-            for test in skip_chunk:
+            for test in skipped:
                 result = test_results.TestResult(test)
                 result.type = test_expectations.SKIP
                 result_summary.add(result, expected=True)
@@ -873,7 +873,7 @@ class Manager(object):
         Return:
           The number of unexpected results (0 == success)
         """
-        # gather_test_files() must have been called first to initialize us.
+        # collect_tests() must have been called first to initialize us.
         # If we didn't find any files to test, we've errored out already in
         # prepare_lists_and_print_output().
         assert(len(self._test_files))
