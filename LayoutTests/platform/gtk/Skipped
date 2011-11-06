@@ -381,11 +381,6 @@ media/context-menu-actions.html
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 
-# DRT missing didRunInsecureContent notification
-# https://bugs.webkit.org/show_bug.cgi?id=59367
-http/tests/security/mixedContent/insecure-css-in-iframe.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
-
 # Animation API is disabled
 animations/animation-api-1.html
 
@@ -448,10 +443,6 @@ fast/mutation
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
-
-# [DRT] didDetectXSS is not implemented
-# https://bugs.webkit.org/show_bug.cgi?id=71465
-http/tests/security/xssAuditor/script-tag-with-callbacks.html
 
 ###############################################################################
 # TESTS FAILING
@@ -1660,3 +1651,16 @@ fast/viewport/viewport-86.html
 fast/viewport/viewport-warnings-3.html
 fast/viewport/viewport-warnings-4.html
 fast/viewport/viewport-warnings-6.html
+
+# [DRT] didDetectXSS is not implemented
+# https://bugs.webkit.org/show_bug.cgi?id=71465
+http/tests/security/xssAuditor/script-tag-with-callbacks.html
+
+# DRT missing didRunInsecureContent notification
+# https://bugs.webkit.org/show_bug.cgi?id=59367
+http/tests/security/mixedContent/insecure-css-in-iframe.html
+http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
+
+# ASSERT(!needsLayout()) in frame flattening test
+# https://bugs.webkit.org/show_bug.cgi?id=65530
+fast/frames/flattening/iframe-flattening-nested.html
