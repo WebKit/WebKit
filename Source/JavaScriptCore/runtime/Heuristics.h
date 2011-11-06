@@ -60,6 +60,7 @@ extern unsigned largeFailCountThresholdBaseForLoop;
 extern unsigned reoptimizationRetryCounterMax;
 extern unsigned reoptimizationRetryCounterStep;
 
+extern unsigned minimumOptimizationDelay;
 extern unsigned maximumOptimizationDelay;
 extern double desiredProfileLivenessRate;
 extern double desiredProfileFullnessRate;

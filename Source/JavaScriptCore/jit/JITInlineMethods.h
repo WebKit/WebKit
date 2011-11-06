@@ -462,6 +462,9 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
         return;
     
     const RegisterID value = regT0;
+#if USE(JSVALUE32_64)
+    const RegisterID valueTag = regT1;
+#endif
     const RegisterID scratch = regT3;
     
     ValueProfile* valueProfile;
@@ -474,6 +477,19 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
     
     ASSERT(valueProfile);
     
+    if (ValueProfile::numberOfBuckets == 1) {
+        // We're in a simple configuration: only one bucket, so we can just do a direct
+        // store.
+#if USE(JSVALUE64)
+        storePtr(value, valueProfile->m_buckets);
+#else
+        EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile->m_buckets);
+        store32(value, &descriptor->asBits.payload);
+        store32(valueTag, &descriptor->asBits.tag);
+#endif
+        return;
+    }
+    
     if (m_randomGenerator.getUint32() & 1)
         add32(Imm32(1), bucketCounterRegister);
     else
@@ -483,7 +499,6 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
 #if USE(JSVALUE64)
     storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
 #elif USE(JSVALUE32_64)
-    const RegisterID valueTag = regT1;
     store32(value, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
     store32(valueTag, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
 #endif

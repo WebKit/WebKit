@@ -1,3 +1,28 @@
+2011-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Value profiling should just use two buckets
+        https://bugs.webkit.org/show_bug.cgi?id=71619
+
+        Reviewed by Gavin Barraclough.
+        
+        Added one more configuration options (like Heuristics::minimumOptimizationDelay),
+        improved debugging in JIT optimization support, changed the number of buckets
+        in the value profile from 9 to 2, and wrote a more optimal value profiling path
+        in the old JIT to take advantage of this. It's still possible to play around with
+        larger numbers of buckets, and we should probably keep this for a little while
+        until we convince ourselves that using just two buckets is the right call.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/ValueProfile.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be able to sample itself in a more flexible way than just sampling flags

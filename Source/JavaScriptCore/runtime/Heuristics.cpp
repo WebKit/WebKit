@@ -74,6 +74,7 @@ unsigned largeFailCountThresholdBaseForLoop;
 unsigned reoptimizationRetryCounterMax;
 unsigned reoptimizationRetryCounterStep;
 
+unsigned minimumOptimizationDelay;
 unsigned maximumOptimizationDelay;
 double desiredProfileLivenessRate;
 double desiredProfileFullnessRate;
@@ -157,6 +158,7 @@ void initializeHeuristics()
 
     SET(reoptimizationRetryCounterStep, 1);
 
+    SET(minimumOptimizationDelay,   1);
     SET(maximumOptimizationDelay,   5);
     SET(desiredProfileLivenessRate, 0.75);
     SET(desiredProfileFullnessRate, 0.35);

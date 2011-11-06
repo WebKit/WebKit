@@ -1956,9 +1956,11 @@ bool CodeBlock::shouldOptimizeNow()
 #endif
 
     if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= Heuristics::desiredProfileLivenessRate)
-        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= Heuristics::desiredProfileFullnessRate))
+        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= Heuristics::desiredProfileFullnessRate)
+        && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Heuristics::minimumOptimizationDelay)
         return true;
     
+    ASSERT(m_optimizationDelayCounter < std::numeric_limits<uint8_t>::max());
     m_optimizationDelayCounter++;
     optimizeAfterWarmUp();
     return false;

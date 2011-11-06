@@ -1958,7 +1958,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        printf("Optimizing %p from loop succeeded, performing OSR.\n", codeBlock);
+        printf("Optimizing %p from loop succeeded, performing OSR after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
 
         codeBlock->optimizeSoon();
@@ -1968,7 +1968,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("Optimizing %p from loop succeeded, OSR failed.\n", codeBlock);
+    printf("Optimizing %p from loop succeeded, OSR failed, after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
@@ -2058,7 +2058,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
     ASSERT(codeBlock->replacement()->getJITType() == JITCode::DFGJIT);
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("Optimizing %p from return succeeded.\n", codeBlock);
+    printf("Optimizing %p from return succeeded after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
     
     codeBlock->optimizeSoon();
