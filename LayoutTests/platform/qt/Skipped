@@ -2522,15 +2522,4 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
 # disable a few more failures due to build system refactoring.
-editing/deleting/5408255.html
-editing/deleting/deletionUI-single-instance.html
-editing/execCommand/insertImage.html
-fast/block/float/015.html
-fast/dom/Element/id-in-deletebutton.html
-fast/dom/inner-text.html
-fast/encoding/utf-16-big-endian.html
-fast/encoding/utf-16-little-endian.html
-fast/images/pdf-as-image.html
-tables/mozilla/bugs/bug2962.html
-tables/mozilla/bugs/bug56201.html
 http/tests/misc/submit-post-keygen.html
