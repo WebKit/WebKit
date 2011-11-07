@@ -1072,7 +1072,7 @@
         }],
         ['OS=="mac"', {
           'include_dirs': [
-            '../../../WebKitLibraries',
+            '<(chromium_src_dir)/third_party/apple_webkit',
           ],
         }],
         ['OS=="win"', {
@@ -1261,7 +1261,7 @@
               'ScrollbarPartAnimation=ChromiumWebCoreObjCScrollbarPartAnimation',
             ],
             'include_dirs': [
-              '../../../WebKitLibraries',
+              '<(chromium_src_dir)/third_party/apple_webkit',
             ],
             'postbuilds': [
               {
@@ -1471,7 +1471,7 @@
         }],['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [
-            '../../../WebKitLibraries',
+            '<(chromium_src_dir)/third_party/apple_webkit',
           ],
           'dependencies': [
             'webkit_system_interface',
@@ -1896,7 +1896,7 @@
         ['OS=="mac"', {
           'direct_dependent_settings': {
             'include_dirs': [
-              '../../../WebKitLibraries',
+              '<(chromium_src_dir)/third_party/apple_webkit',
               '../../WebKit/mac/WebCoreSupport',
             ],
           },
