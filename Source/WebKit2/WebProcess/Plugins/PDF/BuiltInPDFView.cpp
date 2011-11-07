@@ -463,12 +463,14 @@ bool BuiltInPDFView::handleMouseEvent(const WebMouseEvent& event)
         // When support for PDF forms is added, we'll need to actually focus the plug-in when clicking in a form.
         break;
     }
-    case WebEvent::MouseUp:
+    case WebEvent::MouseUp: {
+        PlatformMouseEvent platformEvent = platform(event);
         if (m_horizontalScrollbar)
-            m_horizontalScrollbar->mouseUp();
+            m_horizontalScrollbar->mouseUp(platformEvent);
         if (m_verticalScrollbar)
-            m_verticalScrollbar->mouseUp();
+            m_verticalScrollbar->mouseUp(platformEvent);
         break;
+    }
     default:
         break;
     }

@@ -126,7 +126,7 @@ bool PopupListBox::handleMouseMoveEvent(const PlatformMouseEvent& event)
 bool PopupListBox::handleMouseReleaseEvent(const PlatformMouseEvent& event)
 {
     if (m_capturingScrollbar) {
-        m_capturingScrollbar->mouseUp();
+        m_capturingScrollbar->mouseUp(event);
         m_capturingScrollbar = 0;
         return true;
     }

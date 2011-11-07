@@ -41,6 +41,7 @@
 - (void)setKnobProportion:(CGFloat)proportion;
 - (void)setKnobStyle:(NSScrollerKnobStyle)knobStyle;
 - (void)setDelegate:(id)delegate;
+- (void)setUiStateTransitionProgress:(CGFloat)uiStateTransitionProgress;
 - (BOOL)isHorizontal;
 - (CGFloat)trackWidth;
 - (CGFloat)trackBoxWidth;
@@ -49,9 +50,12 @@
 - (CGFloat)knobOverlapEndInset;
 - (CGFloat)trackEndInset;
 - (CGFloat)knobEndInset;
+- (CGFloat)uiStateTransitionProgress;
 - (NSRect)rectForPart:(NSScrollerPart)partCode;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag alpha:(CGFloat)alpha;
 - (void)drawKnob;
+- (void)mouseEnteredScroller;
+- (void)mouseExitedScroller;
 @end
 
 @interface NSObject (ScrollbarPainterController)

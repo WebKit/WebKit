@@ -97,7 +97,7 @@ public:
     bool mouseExited();
     
     // Used by some platform scrollbars to know when they've been released from capture.
-    bool mouseUp();
+    bool mouseUp(const PlatformMouseEvent&);
 
     bool mouseDown(const PlatformMouseEvent&);
 

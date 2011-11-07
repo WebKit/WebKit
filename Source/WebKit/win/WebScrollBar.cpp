@@ -230,7 +230,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::handleMouseEvent(
             m_scrollBar->mouseDown(mouseEvent);
             break;
         case WM_LBUTTONUP:
-            m_scrollBar->mouseUp();
+            m_scrollBar->mouseUp(mouseEvent);
             break;
         case WM_MOUSEMOVE:
             m_scrollBar->mouseMoved(mouseEvent);

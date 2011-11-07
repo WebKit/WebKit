@@ -1,3 +1,16 @@
+2011-11-07  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71490
+        Support uiStateTransitionProgress for scrollbars
+        -and corresponding-
+        <rdar://problem/9849612>
+
+        Reviewed by Sam Weinig.
+
+        Scrollbar::mouseUp() now takes a PlatformMouseEvent as a parameter.
+        * WebScrollBar.cpp:
+        (WebScrollBar::handleMouseEvent):
+
 2011-11-02  Darin Adler  <darin@apple.com>
 
         Change remaining callers of releaseRef to call leakRef

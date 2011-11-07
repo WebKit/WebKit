@@ -45,6 +45,15 @@
 using namespace WebCore;
 using namespace std;
 
+#if USE(SCROLLBAR_PAINTER)
+static bool supportsUIStateTransitionProgress()
+{
+    // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
+    static bool globalSupportsUIStateTransitionProgress = [NSClassFromString(@"NSScrollerImp") instancesRespondToSelector:@selector(mouseEnteredScroller)];
+    return globalSupportsUIStateTransitionProgress;
+}
+#endif
+
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
 - (void)_stopRun;
@@ -243,32 +252,53 @@ static NSSize abs(NSSize size)
 
 @end
 
+enum FeatureToAnimate {
+    ThumbAlpha,
+    TrackAlpha,
+    UIStateTransition
+};
+
 @interface WebScrollbarPartAnimation : NSAnimation
 {
     RetainPtr<ScrollbarPainter> _scrollerPainter;
-    WebCore::ScrollbarPart _part;
-    WebCore::ScrollAnimatorMac* _animator;
-    CGFloat _initialAlpha;
-    CGFloat _newAlpha;
+    FeatureToAnimate _featureToAnimate;
+    ScrollAnimatorMac* _animator;
+    CGFloat _startValue;
+    CGFloat _endValue;
 }
-- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part scrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration;
+- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter animate:(FeatureToAnimate)featureToAnimate scrollAnimator:(ScrollAnimatorMac*)scrollAnimator animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
 @end
 
 @implementation WebScrollbarPartAnimation
 
-- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part scrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
+- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter animate:(FeatureToAnimate)featureToAnimate scrollAnimator:(ScrollAnimatorMac*)scrollAnimator animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
 {
     self = [super initWithDuration:duration animationCurve:NSAnimationEaseInOut];
     if (!self)
         return nil;
     
     _scrollerPainter = scrollerPainter;
-    _part = part;
+    _featureToAnimate = featureToAnimate;
     _animator = scrollAnimator;
-    _initialAlpha = _part == WebCore::ThumbPart ? [_scrollerPainter.get() knobAlpha] : [_scrollerPainter.get() trackAlpha];
-    _newAlpha = newAlpha;
+    _startValue = startValue;
+    _endValue = endValue;
     
     return self;    
+}
+
+- (void)setScrollbarPainter:(ScrollbarPainter)scrollerPainter
+{
+    _scrollerPainter = scrollerPainter;
+}
+
+- (void)setStartValue:(CGFloat)startValue
+{
+    _startValue = startValue;
+}
+
+- (void)setEndValue:(CGFloat)endValue
+{
+    _endValue = endValue;
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress
@@ -278,22 +308,29 @@ static NSSize abs(NSSize size)
     if (!_animator)
         return;
 
-    CGFloat currentAlpha;
-    if (_initialAlpha > _newAlpha)
-        currentAlpha = 1 - progress;
+    CGFloat currentValue;
+    if (_startValue > _endValue)
+        currentValue = 1 - progress;
     else
-        currentAlpha = progress;
-    
-    if (_part == WebCore::ThumbPart)
-        [_scrollerPainter.get() setKnobAlpha:currentAlpha];
-    else
-        [_scrollerPainter.get() setTrackAlpha:currentAlpha];
+        currentValue = progress;
+
+    switch (_featureToAnimate) {
+    case ThumbAlpha:
+        [_scrollerPainter.get() setKnobAlpha:currentValue];
+        break;
+    case TrackAlpha:
+        [_scrollerPainter.get() setTrackAlpha:currentValue];
+        break;
+    case UIStateTransition:
+        [_scrollerPainter.get() setUiStateTransitionProgress:currentValue];
+        break;
+    }
 
     // Invalidate the scrollbars so that they paint the animation
-    if (WebCore::Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar())
-        verticalScrollbar->invalidateRect(WebCore::IntRect(0, 0, verticalScrollbar->width(), verticalScrollbar->height()));
-    if (WebCore::Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar())
-        horizontalScrollbar->invalidateRect(WebCore::IntRect(0, 0, horizontalScrollbar->width(), horizontalScrollbar->height()));
+    if (Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar())
+        verticalScrollbar->invalidate();
+    if (Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar())
+        horizontalScrollbar->invalidate();
 }
 
 - (void)scrollAnimatorDestroyed
@@ -315,6 +352,9 @@ static NSSize abs(NSSize size)
 
     RetainPtr<WebScrollbarPartAnimation> _verticalTrackAnimation;
     RetainPtr<WebScrollbarPartAnimation> _horizontalTrackAnimation;
+
+    RetainPtr<WebScrollbarPartAnimation> _verticalUIStateTransitionAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _horizontalUIStateTransitionAnimation;
 }
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
 - (void)cancelAnimations;
@@ -339,6 +379,8 @@ static NSSize abs(NSSize size)
     [_horizontalKnobAnimation.get() stopAnimation];
     [_verticalTrackAnimation.get() stopAnimation];
     [_horizontalTrackAnimation.get() stopAnimation];
+    [_verticalUIStateTransitionAnimation.get() stopAnimation];
+    [_horizontalUIStateTransitionAnimation.get() stopAnimation];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -364,7 +406,25 @@ static NSSize abs(NSSize size)
     return dummyLayer;
 }
 
-- (void)setUpAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
+- (NSPoint)mouseLocationInScrollerForScrollerImp:(id)scrollerImp
+{
+    if (!_animator)
+        return NSZeroPoint;
+
+    ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
+    Scrollbar* scrollbar;
+    if ([scrollerPainter isHorizontal])
+        scrollbar = _animator->scrollableArea()->horizontalScrollbar();
+    else 
+        scrollbar = _animator->scrollableArea()->verticalScrollbar();
+
+    if (!scrollbar)
+        return NSZeroPoint;
+
+    return scrollbar->convertFromContainingView(_animator->scrollableArea()->currentMousePosition());
+}
+
+- (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If the user has scrolled the page, then the scrollbars must be animated here. 
     // This overrides the early returns.
@@ -398,9 +458,10 @@ static NSSize abs(NSSize size)
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
     scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
-                                                                    part:part
-                                                                    scrollAnimator:_animator 
-                                                                    animateAlphaTo:newAlpha 
+                                                                    animate:part == ThumbPart ? ThumbAlpha : TrackAlpha
+                                                                    scrollAnimator:_animator
+                                                                    animateFrom:part == ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
+                                                                    animateTo:newAlpha 
                                                                     duration:duration]);
     [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
     [scrollbarPartAnimation.get() startAnimation];
@@ -414,9 +475,9 @@ static NSSize abs(NSSize size)
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
     if ([scrollerImp isHorizontal])
-        [self setUpAnimation:_horizontalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
+        [self setUpAlphaAnimation:_horizontalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
     else
-        [self setUpAnimation:_verticalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
+        [self setUpAlphaAnimation:_verticalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
 }
 
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
@@ -426,9 +487,44 @@ static NSSize abs(NSSize size)
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
     if ([scrollerImp isHorizontal])
-        [self setUpAnimation:_horizontalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
+        [self setUpAlphaAnimation:_horizontalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
     else
-        [self setUpAnimation:_verticalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
+        [self setUpAlphaAnimation:_verticalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
+}
+
+- (void)scrollerImp:(id)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
+{
+    if (!_animator)
+        return;
+
+    if (!supportsUIStateTransitionProgress())
+        return;
+
+    ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
+    RetainPtr<WebScrollbarPartAnimation> scrollbarPartAnimation = [scrollerPainter isHorizontal] ? _horizontalUIStateTransitionAnimation : _verticalUIStateTransitionAnimation;
+
+    // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
+    [scrollerPainter setUiStateTransitionProgress:1 - [scrollerPainter uiStateTransitionProgress]];
+
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:duration];
+    if (!scrollbarPartAnimation) {
+        scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
+                                                                    animate:UIStateTransition
+                                                                    scrollAnimator:_animator
+                                                                    animateFrom:[scrollerPainter uiStateTransitionProgress]
+                                                                    animateTo:1.0 
+                                                                    duration:duration]);
+        [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
+    } else {
+        // If we don't need to initialize the animation, just reset the values in case they have changed.
+        [scrollbarPartAnimation.get() setScrollbarPainter:scrollerPainter];
+        [scrollbarPartAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
+        [scrollbarPartAnimation.get() setEndValue:1.0];
+        [scrollbarPartAnimation.get() setDuration:duration];
+    }
+    [scrollbarPartAnimation.get() startAnimation];
+    [NSAnimationContext endGrouping];
 }
 
 - (void)scrollerImp:(id)scrollerImp overlayScrollerStateChangedTo:(NSUInteger)newOverlayScrollerState
@@ -445,6 +541,8 @@ static NSSize abs(NSSize size)
     [_horizontalKnobAnimation.get() scrollAnimatorDestroyed];
     [_verticalTrackAnimation.get() scrollAnimatorDestroyed];
     [_horizontalTrackAnimation.get() scrollAnimatorDestroyed];
+    [_verticalUIStateTransitionAnimation.get() scrollAnimatorDestroyed];
+    [_horizontalUIStateTransitionAnimation.get() scrollAnimatorDestroyed];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -654,6 +752,38 @@ void ScrollAnimatorMac::mouseMovedInContentArea() const
         return;
 #if USE(SCROLLBAR_PAINTER)
     [m_scrollbarPainterController.get() mouseMovedInContentArea];
+#endif
+}
+
+void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
+{
+    if (!scrollableArea()->isOnActivePage())
+        return;
+#if USE(SCROLLBAR_PAINTER)
+    if (!supportsUIStateTransitionProgress())
+        return;
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter mouseEnteredScroller];
+    }
+#else
+    UNUSED_PARAM(scrollbar);
+#endif
+}
+
+void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
+{
+    if (!scrollableArea()->isOnActivePage())
+        return;
+#if USE(SCROLLBAR_PAINTER)
+    if (!supportsUIStateTransitionProgress())
+        return;
+    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
+        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+        [painter mouseExitedScroller];
+    }
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 

@@ -1524,7 +1524,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     bool swallowClickEvent = mouseEvent.button() != RightButton && targetNode(mev) == m_clickNode && dispatchMouseEvent(eventNames().clickEvent, targetNode(mev), true, m_clickCount, mouseEvent, true);
 
     if (m_lastScrollbarUnderMouse)
-        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp();
+        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
 
     bool swallowMouseReleaseEvent = !swallowMouseUpEvent && handleMouseReleaseEvent(mev);
 
@@ -1712,7 +1712,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
-        return m_lastScrollbarUnderMouse->mouseUp();
+        return m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
     }
 
     HitTestRequest request(HitTestRequest::MouseUp);

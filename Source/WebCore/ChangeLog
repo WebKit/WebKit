@@ -1,3 +1,81 @@
+2011-11-07  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71490
+        Support uiStateTransitionProgress for scrollbars
+        -and corresponding-
+        <rdar://problem/9849612>
+
+        Reviewed by Sam Weinig.
+
+        Step 1 of supporting uiStateTransitionProgress is knowing when the mouse has 
+        entered or exited a scrollbar. These changes to Scrollbar pass that information 
+        on to the ScrollAnimator. Also, Scrollbar::mouseUp() now takes a 
+        PlatformMouseEvent as a parameter. This is necessary because m_hoveredNode is not 
+        always up to date on a mouseUp, so mouseUp must hitTest the scrollbar to see if 
+        the mouse has exited the scrollbar.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseExited):
+        (WebCore::Scrollbar::mouseUp):
+        * platform/Scrollbar.h:
+
+        These changes are required now that Scrollbar::mouseUp() takes a parameter.
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::handleMouseReleaseEvent):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::wndProc):
+        
+        ScrollAnimator passes the information on to AppKit.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimator::mouseExitedScrollbar):
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+
+        There are several new pieces of AppKit api we must call into.
+        * platform/mac/NSScrollerImpDetails.h:
+
+        This is a temporary function that is needed for the time being since there is new 
+        AppKit api required for this to work.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (supportsUIStateTransitionProgress):
+
+        I refactored WebScrollbarPartAnimation so that it can handle the 
+        uiStateTransitionProgress animation as well as the alpha animations it already 
+        handled. This mostly involved re-naming things and making use of a new enum called 
+        FeatureToAnimate which keeps track of what the instance of 
+        WebScrollbarPartAnimation is animating.
+        (-[WebScrollbarPartAnimation initWithScrollbarPainter:animate:scrollAnimator:animateFrom:animateTo:duration:]):
+        (-[WebScrollbarPartAnimation setScrollbarPainter:]):
+        (-[WebScrollbarPartAnimation setStartValue:]):
+        (-[WebScrollbarPartAnimation setEndValue:]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:]):
+
+        WebScrollbarPainterDelegate has two new animations, 
+        _verticalUIStateTransitionAnimation, and _horizontalUIStateTransitionAnimation. It 
+        also responds to a few new delegate calls.
+        (-[WebScrollbarPainterDelegate cancelAnimations]):
+
+        This is a new delegate call needed for uiStateTransitionProgress.
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+
+        I re-named setUpAnimation to setUpAlphaAnimation since it does a lot of things 
+        that are specific to the alpha animation and I chose not to re-use it for 
+        uiStateTransition.
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+
+        New delegate call for the uiStateTransition animation that sets up that animation 
+        and kicks it off.
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollAnimatorDestroyed]):
+
 2011-11-07  Alice Boxhall  <aboxhall@chromium.org>
 
         Remove unnecessary use of function pointer in FrameSelection::modify()
