@@ -167,6 +167,12 @@ IF (ENABLE_BLOB)
     )
 ENDIF ()
 
+IF (ENABLE_REQUEST_ANIMATION_FRAME)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSCustomSQLStatementErrorCallback.cpp

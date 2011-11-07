@@ -1,3 +1,15 @@
+2011-11-07  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [EFL] Support requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=67112
+
+        Reviewed by Andreas Kling.
+
+        Add build-option for requestAnimationFrame feature.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Ensure we always export symbols for the QtWebKit API when building WebKit

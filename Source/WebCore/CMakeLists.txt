@@ -2171,6 +2171,15 @@ IF (ENABLE_WEBGL)
     )
 ENDIF ()
 
+IF (ENABLE_REQUEST_ANIMATION_FRAME)
+    LIST(APPEND WebCore_IDL_FILES
+        dom/RequestAnimationFrameCallback.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        dom/ScriptedAnimationController.cpp
+    )
+ENDIF ()
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
