@@ -32,6 +32,7 @@
 #include "BlobURL.h"
 #include "Document.h"
 #include "FileSystem.h"
+#include "HTMLParserIdioms.h"
 #include "KURL.h"
 #include "OriginAccessEntry.h"
 #include "SchemeRegistry.h"
@@ -551,12 +552,12 @@ SandboxFlags SecurityOrigin::parseSandboxPolicy(const String& policy)
     unsigned length = policy.length();
     unsigned start = 0;
     while (true) {
-        while (start < length && isASCIISpace(characters[start]))
+        while (start < length && isHTMLSpace(characters[start]))
             ++start;
         if (start >= length)
             break;
         unsigned end = start + 1;
-        while (end < length && !isASCIISpace(characters[end]))
+        while (end < length && !isHTMLSpace(characters[end]))
             ++end;
 
         // Turn off the corresponding sandbox flag if it's set as "allowed".

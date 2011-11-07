@@ -1,0 +1,7 @@
+ALERT: PASS: Form feed is a delimiter.
+ALERT: PASS: Newline is a delimiter.
+ALERT: PASS: Return is a delimiter.
+ALERT: PASS: Tab is a delimiter.
+ALERT: PASS: Space is a delimiter character.
+This tests whether we correct parse various space characters in the sandbox attribute.
+ 

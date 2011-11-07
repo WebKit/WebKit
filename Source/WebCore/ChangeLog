@@ -1,5 +1,21 @@
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
+        iframe sandbox treats vertical tab as a valid delimiter
+        https://bugs.webkit.org/show_bug.cgi?id=71704
+
+        Reviewed by Eric Seidel.
+
+        This patch adjusts our parser slightly to match the HTML5 spec.  The
+        only difference is in how we handle vertical tabs.  Previously, we
+        treated them as a delimiter, but we're not supposed to do that.
+
+        Test: fast/frames/sandboxed-iframe-parsing-space-characters.html
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::parseSandboxPolicy):
+
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
         Factor SecurityContext out of ScriptExecutionContext
         https://bugs.webkit.org/show_bug.cgi?id=71721
 
