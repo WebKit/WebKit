@@ -426,6 +426,24 @@ inline void Lexer<T>::record8(int c)
 }
 
 template <typename T>
+inline void assertCharIsIn8BitRange(T c)
+{
+    ASSERT(c >= 0);
+    ASSERT(c <= 0xFF);
+}
+
+template <>
+inline void assertCharIsIn8BitRange(UChar c)
+{
+    ASSERT(c <= 0xFF);
+}
+
+template <>
+inline void assertCharIsIn8BitRange(LChar)
+{
+}
+
+template <typename T>
 inline void Lexer<T>::append8(const T* p, size_t length)
 {
     // FIXME: Change three occurrances of m_buffer16 to m_buffer8 and
@@ -436,8 +454,7 @@ inline void Lexer<T>::append8(const T* p, size_t length)
 
     for (size_t i = 0; i < length; i++) {
         T c = p[i];
-        ASSERT(c >= 0);
-        ASSERT(c <= 0xFF);
+        assertCharIsIn8BitRange(c);
         rawBuffer[i] = c;
     }
 }
