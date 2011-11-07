@@ -57,16 +57,6 @@ public:
         return adoptRef(new BeforeLoadEvent(type, initializer));
     }
 
-    void initBeforeLoadEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& url)
-    {
-        if (dispatched())
-            return;
-
-        initEvent(type, canBubble, cancelable);
-
-        m_url = url;
-    }
-
     const String& url() const { return m_url; }
 
     virtual const AtomicString& interfaceName() const { return eventNames().interfaceForBeforeLoadEvent; }

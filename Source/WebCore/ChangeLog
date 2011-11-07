@@ -1,3 +1,15 @@
+2011-11-06  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove initBeforeLoadEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71636
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/Window/window-properties.html
+
+        * dom/BeforeLoadEvent.h:
+        * dom/BeforeLoadEvent.idl:
+
 2011-11-06  Adam Barth  <abarth@webkit.org>
 
         Don't crash when a context hasn't been created.  This fixed a
