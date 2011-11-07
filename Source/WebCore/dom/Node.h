@@ -82,8 +82,6 @@ class SVGUseElement;
 class TagNodeList;
 class TreeScope;
 
-struct MutationObserverRegistration;
-
 typedef int ExceptionCode;
 
 const int nodeStyleChangeShift = 25;
