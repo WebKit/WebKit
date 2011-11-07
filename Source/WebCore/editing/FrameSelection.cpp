@@ -1024,7 +1024,11 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     VisiblePosition result;
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        next = (direction == DirectionUp ? previousLinePosition : nextLinePosition)(p, xPos);
+        if (direction == DirectionUp)
+            next = previousLinePosition(p, xPos);
+        else
+            next = nextLinePosition(p, xPos);
+
         if (next.isNull() || next == p)
             break;
         LayoutUnit nextY;
