@@ -405,7 +405,9 @@ int main(int argc, char** argv)
 #endif
 
     // Initialize JSC before getting JSGlobalData.
+#if ENABLE(SAMPLING_REGIONS)
     WTF::initializeMainThread();
+#endif
     JSC::initializeThreading();
 
     // We can't use destructors in the following code because it uses Windows
