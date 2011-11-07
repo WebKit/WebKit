@@ -122,6 +122,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
@@ -4467,7 +4468,7 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
 
 bool Document::allowDatabaseAccess() const
 {
-    if (!page() || page()->settings()->privateBrowsingEnabled())
+    if (!page() || (page()->settings()->privateBrowsingEnabled() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(securityOrigin()->protocol())))
         return false;
     return true;
 }

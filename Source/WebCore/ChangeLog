@@ -1,3 +1,60 @@
+2011-11-07  Jessie Berlin  <jberlin@apple.com>
+
+        Need a way to allow a scheme access to Local Storage and Databases while Private Browsing is
+        enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=71631
+
+        Reviewed by Jon Honeycutt.
+
+        Check the SchemeRegistry before preventing read/write access to Local Storage and Databases
+        in Private Browsing.
+
+        * WebCore.exp.in:
+        Export the symbols for registering the schemes as allowing Local Storage and Database access
+        in Private Browsing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::allowDatabaseAccess):
+        Check if the scheme allows Database access in Private Browsing.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemesAllowingLocalStorageAccessInPrivateBrowsing):
+        (WebCore::schemesAllowingDatabaseAccessInPrivateBrowsing):
+        (WebCore::SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing):
+        (WebCore::SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing):
+        (WebCore::SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing):
+        (WebCore::SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing):
+        * platform/SchemeRegistry.h:
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length):
+        Ask the storage area if it is disabled by Private Browsing in the frame instead of just
+        checking if Private Browsing is enabled for that frame because the answer might depend on
+        what type of storage that storage area is.
+        (WebCore::Storage::key):
+        Ditto.
+        (WebCore::Storage::getItem):
+        Ditto.
+        (WebCore::Storage::contains):
+        Ditto.
+
+        * storage/StorageArea.h:
+        Make it possible to query a StorageArea for whether it is disabled by Private Browsing in a
+        Frame.
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::disabledByPrivateBrowsingInFrame):
+        Renamed from privateBrowsingEnabled.
+        Check not only if Private Browsing is enabled for the Frame, but also if the storage type is
+        Local Storage and if there is an exception for the scheme of the resource currently loaded
+        into the Frame.
+        (WebCore::StorageAreaImpl::setItem):
+        Renamed privateBrowsingEnabled -> disabledByPrivateBrowsingInFrame.
+        (WebCore::StorageAreaImpl::removeItem):
+        Ditto.
+        (WebCore::StorageAreaImpl::clear):
+        Ditto.
+        * storage/StorageAreaImpl.h:
+
 2011-11-07  Dominic Cooney  <dominicc@chromium.org>
 
         Remove initCloseEvent method

@@ -54,7 +54,7 @@ Storage::~Storage()
 
 unsigned Storage::length() const
 {
-    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
+    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
         return 0;
 
     return m_storageArea->length(m_frame);
@@ -62,7 +62,7 @@ unsigned Storage::length() const
 
 String Storage::key(unsigned index) const
 {
-    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
+    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
         return String();
 
     return m_storageArea->key(index, m_frame);
@@ -70,7 +70,7 @@ String Storage::key(unsigned index) const
 
 String Storage::getItem(const String& key) const
 {
-    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
+    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
         return String();
 
     return m_storageArea->getItem(key, m_frame);
@@ -103,7 +103,7 @@ void Storage::clear()
 
 bool Storage::contains(const String& key) const
 {
-    if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
+    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
         return false;
 
     return m_storageArea->contains(key, m_frame);

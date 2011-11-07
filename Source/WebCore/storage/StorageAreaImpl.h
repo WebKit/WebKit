@@ -51,6 +51,8 @@ namespace WebCore {
         virtual bool clear(Frame* sourceFrame);
         virtual bool contains(const String& key, Frame* sourceFrame) const;
 
+        virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
+
         PassRefPtr<StorageAreaImpl> copy();
         void close();
 

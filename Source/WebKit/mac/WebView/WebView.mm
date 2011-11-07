@@ -2641,6 +2641,16 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     SchemeRegistry::registerURLSchemeAsSecure(scheme);
 }
 
++ (void)_registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:(NSString *)scheme
+{
+    SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(scheme);
+}
+
++ (void)_registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:(NSString *)scheme
+{
+    SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(scheme);
+}
+
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin
 {
     _private->page->setPageScaleFactor(scale, IntPoint(origin));
