@@ -38,34 +38,48 @@ namespace WebCore {
 
 ColorChooserClient::~ColorChooserClient()
 {
-    ColorChooser::chooser()->disconnectClient(this);
+    discardChooser();
 }
 
-static ColorChooser* staticChooser = 0;
-
-ColorChooser* ColorChooser::chooser()
+ColorChooser* ColorChooserClient::newColorChooser()
 {
-    if (!staticChooser)
-        staticChooser = adoptPtr(new ColorChooser()).leakPtr();
-    return staticChooser;
+    discardChooser();
+
+    m_chooser = ColorChooser::create(this);
+    return m_chooser.get();
 }
 
-void ColorChooser::connectClient(ColorChooserClient* client)
+void ColorChooserClient::discardChooser()
 {
-    if (client != m_client)
-        m_client = client;
+    if (m_chooser)
+        m_chooser->disconnectClient();
+    m_chooser.clear();
 }
 
-void ColorChooser::disconnectClient(ColorChooserClient* client)
+inline ColorChooser::ColorChooser(ColorChooserClient* client)
+    : m_client(client)
 {
-    if (client == m_client)
-        m_client = 0;
 }
 
-void ColorChooser::didChooseColor(const Color& color) const
+PassRefPtr<ColorChooser> ColorChooser::create(ColorChooserClient* client)
+{
+    return adoptRef(new ColorChooser(client));
+}
+
+ColorChooser::~ColorChooser()
+{
+}
+
+void ColorChooser::didChooseColor(const Color& color)
 {
     if (m_client)
         m_client->didChooseColor(color);
+}
+
+void ColorChooser::didCleanup()
+{
+    if (m_client)
+        m_client->didCleanup();
 }
 
 }

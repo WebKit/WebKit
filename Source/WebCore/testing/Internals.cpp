@@ -174,19 +174,14 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
 }
 
 #if ENABLE(INPUT_COLOR)
-bool Internals::connectColorChooserClient(Element* element)
+void Internals::selectColorInColorChooser(Element* element, const String& colorValue)
 {
     if (!element->hasTagName(HTMLNames::inputTag))
-        return false;
+        return;
     HTMLInputElement* inputElement = element->toInputElement();
     if (!inputElement)
-        return false;
-    return inputElement->connectToColorChooser();
-}
-
-void Internals::selectColorInColorChooser(const String& colorValue)
-{
-    ColorChooser::chooser()->colorSelected(Color(colorValue));
+        return;
+    inputElement->selectColorInColorChooser(Color(colorValue));
 }
 #endif
 

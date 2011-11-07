@@ -7,21 +7,32 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description('Test if change event fires properly when color chooser changes. Bug 66848');
+description('Test if change event fires properly when color chooser changes. Bug 66848 <br> To manually test this, click on the input color element in the top left corner and change the value from the color chooser. See if the number of "value changed" messages matches the number of times you changed the color.');
 
 var input = document.createElement('input');
 input.type = 'color';
 input.value = '#000000';
+document.body.appendChild(input);
+
+input.style.position = 'absolute';
+input.style.left = '0';
+input.style.top = '0';
+input.style.width = '20px';
+input.style.height = '20px';
+
 input.onchange = function() {
     debug("value changed to " + input.value);
-    finishJSTest();
 };
-if (!internals.connectColorChooserClient(input))
-    testFailed("Could not connect ColorChooserClient.");
-internals.selectColorInColorChooser('#ff0000');
+
+eventSender.mouseMoveTo(10, 10);
+eventSender.mouseDown();
+eventSender.mouseUp();
+
 // input.onchange should be called
-internals.selectColorInColorChooser('#ff0000');
+internals.selectColorInColorChooser(input, '#ff0000');
 // input.onchange should not be called
+internals.selectColorInColorChooser(input, '#ff0000');
+
 shouldBe('input.value', '"#ff0000"');
 </script>
 </body>

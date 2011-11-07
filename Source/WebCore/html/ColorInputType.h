@@ -57,10 +57,10 @@ private:
     virtual void detach();
 
     // ColorChooserClient implementation.
-    virtual void didChooseColor(const Color&);
-    virtual bool isColorInputType() const;
+    virtual void didChooseColor(const Color&) OVERRIDE;
+    virtual void didCleanup() OVERRIDE;
 
-    void cleanupColorChooserIfCurrentClient() const;
+    void cleanupColorChooser();
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
 };

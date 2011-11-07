@@ -233,7 +233,7 @@ public:
 
 #if ENABLE(INPUT_COLOR)
     // For test purposes.
-    bool connectToColorChooser();
+    void selectColorInColorChooser(const Color&);
 #endif
 
     String defaultToolTip() const;

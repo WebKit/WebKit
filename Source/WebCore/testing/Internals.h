@@ -60,8 +60,7 @@ public:
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
 
 #if ENABLE(INPUT_COLOR)
-    bool connectColorChooserClient(Element*);
-    void selectColorInColorChooser(const String& colorValue);
+    void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
 
 #if ENABLE(INSPECTOR)

@@ -1,3 +1,49 @@
+2011-11-07  Keishi Hattori  <keishi@webkit.org>
+
+        Change ColorChooser from singleton to ordinary object
+        https://bugs.webkit.org/show_bug.cgi?id=71644
+
+        Reviewed by Kent Tamura.
+
+        Changing WebCore::ColorChooser from a singleton to an ordinary object can broaden how browsers implement the color chooser interface.
+
+        * WebCore.exp.in:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::~ColorInputType):
+        (WebCore::ColorInputType::setValue): If a chooser exists, calls Chrome::setSelectedColorInColorChooser
+        (WebCore::ColorInputType::handleDOMActivateEvent):
+        (WebCore::ColorInputType::detach):
+        (WebCore::ColorInputType::didCleanup): Called after cleanup is complete.
+        (WebCore::ColorInputType::cleanupColorChooser): Renamed from cleanupColorChooserIfCurrentClient.
+        * html/ColorInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectColorInColorChooser):
+        * html/HTMLInputElement.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::cleanupColorChooser): Added colorChooser argument because there are many WebCore::ColorChoosers now.
+        (WebCore::EmptyChromeClient::setSelectedColorInColorChooser): Ditto.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::cleanupColorChooser): Added colorChooser argument because there are many WebCore::ColorChoosers now.
+        (WebCore::Chrome::setSelectedColorInColorChooser): Ditto.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ColorChooser.cpp:
+        (WebCore::ColorChooserClient::~ColorChooserClient):
+        (WebCore::ColorChooserClient::newColorChooser): Creates a new color chooser that is connected to itself.
+        (WebCore::ColorChooserClient::discardChooser): Discards the connected color chooser.
+        (WebCore::ColorChooser::ColorChooser): ColorChooser is RefCounted.
+        (WebCore::ColorChooser::create): Creates a ColorChooser that is connected to the given ColorChooserClient.
+        (WebCore::ColorChooser::~ColorChooser):
+        (WebCore::ColorChooser::didChooseColor): Called from WebKit side when user chose a color. Calls ColorChooserClient::didChooseColor
+        (WebCore::ColorChooser::didCleanup): Called from WebKit side when user color chooser was cleaned up. Calls ColorChooserClient::didCleanup
+        * platform/ColorChooser.h:
+        (WebCore::ColorChooserClient::chooser): Returns the current ColorChooser.
+        (WebCore::ColorChooser::disconnectClient): Disconnects the ColorChooserClient.
+        * testing/Internals.cpp:
+        (WebCore::Internals::selectColorInColorChooser): Added element argument. This calls didChooseColor on the ColorChooser of that element.
+        * testing/Internals.h:
+        * testing/Internals.idl: Removed connectColorChooserClient and updated selectColorInColorChooser.
+
 2011-11-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Cannot edit elements commented with <!--

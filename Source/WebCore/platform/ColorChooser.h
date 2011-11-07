@@ -31,6 +31,8 @@
 #define ColorChooser_h
 
 #include "Color.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(INPUT_COLOR)
 
@@ -42,23 +44,29 @@ class ColorChooserClient {
 public:
     virtual ~ColorChooserClient();
     virtual void didChooseColor(const Color&) = 0;
-    virtual bool isColorInputType() const { return false; }
-};
+    virtual void didCleanup() = 0;
+    ColorChooser* chooser() { return m_chooser.get(); }
 
-class ColorChooser {
-public:
-    static ColorChooser* chooser();
-
-    ColorChooserClient* client() const { return m_client; };
-    void connectClient(ColorChooserClient*);
-    void disconnectClient(ColorChooserClient*);
-
-    void didChooseColor(const Color&) const;
+protected:
+    ColorChooser* newColorChooser();
+    void discardChooser();
 
 private:
-    ColorChooser()
-        : m_client(0)
-    { }
+    RefPtr<ColorChooser> m_chooser;
+};
+
+class ColorChooser : public RefCounted<ColorChooser> {
+public:
+    static PassRefPtr<ColorChooser> create(ColorChooserClient*);
+    ~ColorChooser();
+
+    void disconnectClient() { m_client = 0; }
+
+    void didChooseColor(const Color&);
+    void didCleanup();
+
+private:
+    ColorChooser(ColorChooserClient*);
 
     ColorChooserClient* m_client;
 };

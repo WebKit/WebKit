@@ -1537,12 +1537,14 @@ bool HTMLInputElement::recalcWillValidate() const
 }
 
 #if ENABLE(INPUT_COLOR)
-bool HTMLInputElement::connectToColorChooser()
+void HTMLInputElement::selectColorInColorChooser(const Color& color)
 {
     if (!m_inputType->isColorControl())
-        return false;
-    ColorChooser::chooser()->connectClient(static_cast<ColorInputType*>(m_inputType.get()));
-    return true;
+        return;
+    RefPtr<ColorChooser> chooser = static_cast<ColorInputType*>(m_inputType.get())->chooser();
+    if (!chooser)
+        return;
+    chooser->didChooseColor(color);
 }
 #endif
     

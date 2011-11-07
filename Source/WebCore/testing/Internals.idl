@@ -39,8 +39,7 @@ module window {
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
 
 #if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
-        boolean connectColorChooserClient(in Element element);
-        void selectColorInColorChooser(in DOMString colorValue);
+        void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
 
         void setInspectorResourcesDataSizeLimits(in Document document, in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
