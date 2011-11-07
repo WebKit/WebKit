@@ -224,7 +224,7 @@ RenderBoxRegionInfo* RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
 
 void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
 {
-    m_renderBoxRegionInfo.remove(box);
+    delete m_renderBoxRegionInfo.take(box);
 }
 
 void RenderRegion::deleteAllRenderBoxRegionInfo()

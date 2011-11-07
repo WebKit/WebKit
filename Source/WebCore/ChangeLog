@@ -1,3 +1,20 @@
+2011-11-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Leaks seen in RenderRegion::setRenderBoxRegionInfo on Leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=71259
+
+        Reviewed by Darin Adler.
+
+        Leak fixes covered by existing tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegions):
+        The RenderBoxRegionInfo taken out of RenderRegion must be deleted on all code paths.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        The RenderBoxRegionInfo map owns the values, therefore, when values are removed from map
+        they must also be deleted.
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         iframe sandbox treats vertical tab as a valid delimiter
