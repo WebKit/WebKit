@@ -1,3 +1,14 @@
+2011-11-07  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove initPopStateEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71691
+
+        Reviewed by Ojan Vafai.
+
+        * dom/PopStateEvent.cpp:
+        * dom/PopStateEvent.h:
+        * dom/PopStateEvent.idl:
+
 2011-11-07  Andreas Kling  <kling@webkit.org>
 
         CSSValue: Devirtualize isFooType().

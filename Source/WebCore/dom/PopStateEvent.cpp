@@ -85,16 +85,6 @@ PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const 
     return adoptRef(new PopStateEvent(type, initializer));
 }
 
-void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& state)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_state = state;
-}
-
 const AtomicString& PopStateEvent::interfaceName() const
 {
     return eventNames().interfaceForPopStateEvent;

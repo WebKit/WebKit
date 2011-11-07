@@ -15,8 +15,11 @@ onpopstate = function(event)
 
 onload = function()
 {
-    var evt = document.createEvent("PopStateEvent");
-    evt.initPopStateEvent("popstate", false, false, { testValue: "Success"} );
+    var evt = new PopStateEvent('popstate', {
+            bubbles: false,
+            cancelable: false,
+            state: { testValue: 'Success' }
+        });
     window.dispatchEvent(evt);
 }
 

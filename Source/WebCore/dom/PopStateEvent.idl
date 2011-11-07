@@ -31,11 +31,6 @@ module events {
         CanBeConstructed,
         CustomConstructor,
     ] PopStateEvent : Event {
-        void initPopStateEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
-                               in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
-                               in [Optional=CallWithDefaultValue] boolean cancelableArg, 
-                               in [Optional=CallWithDefaultValue] DOMObject stateArg);
-
         readonly attribute [CustomGetter] DOMObject state;
     };
 #endif
