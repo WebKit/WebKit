@@ -245,14 +245,22 @@ void CSSStyleSheet::startLoadingDynamicSheet()
         owner->startLoadingDynamicSheet();
 }
 
-Document* CSSStyleSheet::document()
+Node* CSSStyleSheet::styleSheetOwnerNode() const
 {
-    for (CSSStyleSheet* sheet = this; sheet; sheet = sheet->parentStyleSheet()) {
+    for (const CSSStyleSheet* sheet = this; sheet; sheet = sheet->parentStyleSheet()) {
         if (Node* ownerNode = sheet->ownerNode())
-            return ownerNode->document();
+            return ownerNode;
     }
     return 0;
 }
+
+Document* CSSStyleSheet::document()
+{
+    Node* ownerNode = styleSheetOwnerNode();
+
+    return ownerNode ? ownerNode->document() : 0;
+}
+
 
 void CSSStyleSheet::styleSheetChanged()
 {
