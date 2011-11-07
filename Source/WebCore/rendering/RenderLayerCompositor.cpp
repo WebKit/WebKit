@@ -144,7 +144,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         forceCompositingMode = settings->forceCompositingMode() && hasAcceleratedCompositing;
 
         if (forceCompositingMode && m_renderView->document()->ownerElement())
-            forceCompositingMode = requiresCompositingForScrollableFrame();
+            forceCompositingMode = settings->acceleratedCompositingForScrollableFramesEnabled() && requiresCompositingForScrollableFrame();
     }
 
     // We allow the chrome to override the settings, in case the page is rendered

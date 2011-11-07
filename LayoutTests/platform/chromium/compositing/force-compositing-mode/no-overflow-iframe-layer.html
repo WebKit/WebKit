@@ -15,8 +15,10 @@
       }
     }
     window.addEventListener("load", doTest, false);
-    if (window.internals)
+    if (window.internals) {
       internals.setForceCompositingMode(document, true);
+      internals.setEnableCompositingForScrollableFrames(document, true);
+    }
   </script>
 </head>
 <body>

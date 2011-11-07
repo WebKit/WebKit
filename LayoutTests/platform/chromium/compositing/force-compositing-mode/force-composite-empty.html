@@ -1,8 +1,10 @@
 <html>
   <head>
     <script>
-      if (window.internals)
+      if (window.internals) {
         window.internals.setForceCompositingMode(document, true);
+        window.internals.setEnableCompositingForScrollableFrames(document, true);
+      }
       function doTest() {
         if (window.layoutTestController) {
           document.getElementById("layertree").innerText = layoutTestController.layerTreeAsText();

@@ -7,8 +7,10 @@
     }
   </style>
   <script>
-    if (window.internals)
+    if (window.internals) {
       internals.setForceCompositingMode(document, true);
+      internals.setEnableCompositingForScrollableFrames(document, true);
+    }
     function doTest()
     {
       if (window.layoutTestController) {

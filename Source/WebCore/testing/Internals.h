@@ -76,6 +76,7 @@ public:
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
     void setEnableCompositingForFixedPosition(Document*, bool enabled, ExceptionCode&);
+    void setEnableCompositingForScrollableFrames(Document*, bool enabled, ExceptionCode&);
     void setAcceleratedDrawingEnabled(Document*, bool enabled, ExceptionCode&);
 
     void setEnableScrollAnimator(Document*, bool enabled, ExceptionCode&);
