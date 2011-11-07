@@ -48,7 +48,6 @@ public:
     virtual void detachCompositingContext() { }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) { }
     virtual void scheduleCompositingLayerSync() { }
-    virtual void syncCompositingLayers() { }
     virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

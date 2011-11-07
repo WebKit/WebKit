@@ -310,10 +310,6 @@ void DrawingAreaImpl::scheduleCompositingLayerSync()
     m_layerTreeHost->scheduleLayerFlush();
 }
 
-void DrawingAreaImpl::syncCompositingLayers()
-{
-}
-
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);
