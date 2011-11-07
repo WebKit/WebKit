@@ -553,6 +553,10 @@ WebInspector._registerShortcuts = function()
     section.addRelatedKeys(keys, WebInspector.UIString("Next/previous panel"));
     section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
+    
+    var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
+    section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all scripts"));
+    
     if (WebInspector.isMac()) {
         keys = [
             shortcut.shortcutToString("g", shortcut.Modifiers.Meta),

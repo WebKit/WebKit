@@ -41,7 +41,10 @@ WebInspector.AdvancedSearchController = function()
 
 WebInspector.AdvancedSearchController.createShortcut = function()
 {
-    return WebInspector.KeyboardShortcut.makeDescriptor("f", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
+    if (WebInspector.isMac())
+        return WebInspector.KeyboardShortcut.makeDescriptor("f", WebInspector.KeyboardShortcut.Modifiers.Meta | WebInspector.KeyboardShortcut.Modifiers.Alt);
+    else
+        return WebInspector.KeyboardShortcut.makeDescriptor("f", WebInspector.KeyboardShortcut.Modifiers.Ctrl | WebInspector.KeyboardShortcut.Modifiers.Shift);
 }
 
 WebInspector.AdvancedSearchController.prototype = {

@@ -1,3 +1,16 @@
+2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add advanced search shortcut to ShortcutsScreen.
+        https://bugs.webkit.org/show_bug.cgi?id=71302
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController.createShortcut):
+        * inspector/front-end/inspector.js:
+        (WebInspector._registerShortcuts):
+
 2011-11-07  Andreas Kling  <kling@webkit.org>
 
         CSSImageValue: Remove inheritance from CachedImageClient.
