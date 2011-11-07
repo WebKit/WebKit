@@ -1,3 +1,13 @@
+2011-11-07  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Uninitialized Heap member var
+        https://bugs.webkit.org/show_bug.cgi?id=71722
+
+        Reviewed by Filip Pizlo.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Initialize m_blockFreeingThreadShouldQuit
+
 2011-11-07  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG 32_64 - registers cannot be reused arbitrarily if speculation failures are possible
