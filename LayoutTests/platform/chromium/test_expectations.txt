@@ -2088,10 +2088,11 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-BUGCR46603 SLOW RELEASE : fast/frames/lots-of-iframes.html = PASS TEXT
-BUGCR46603 SLOW RELEASE : fast/frames/lots-of-objects.html = PASS TEXT
-BUGCR46603 DEBUG : fast/frames/lots-of-iframes.html = TIMEOUT
-BUGCR46603 DEBUG : fast/frames/lots-of-objects.html = TIMEOUT
+BUGCR46603 SLOW RELEASE : fast/frames/lots-of-iframes.html = PASS
+BUGCR46603 SLOW RELEASE : fast/frames/lots-of-objects.html = PASS
+// These tests are really slow in debug.
+BUGCR46603 SKIP DEBUG : fast/frames/lots-of-iframes.html = TIMEOUT
+BUGCR46603 SKIP DEBUG : fast/frames/lots-of-objects.html = TIMEOUT
 
 // LayoutTestController::pageProperty is not implemented for Chromium yet.
 BUGWK35961 : printing/page-rule-selection.html = TEXT
