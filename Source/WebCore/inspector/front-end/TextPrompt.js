@@ -105,7 +105,7 @@ WebInspector.TextPrompt.prototype = {
         element.parentElement.insertBefore(this.proxyElement, element);
         this.proxyElement.appendChild(element);
         this._element.addStyleClass("text-prompt");
-        this._element.addEventListener("keydown", this._boundOnKeyDown, false);
+        this._element.addEventListener("keydown", this._boundOnKeyDown, true);
         this._element.addEventListener("selectstart", this._selectStart.bind(this), false);
 
         if (typeof this._suggestBoxClassName === "string")
@@ -1078,8 +1078,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
     enterKeyPressed: function(event)
     {
-        this.acceptSuggestion();
-        return true;
+        return this.acceptSuggestion();
     },
 
     tabKeyPressed: function(event)
