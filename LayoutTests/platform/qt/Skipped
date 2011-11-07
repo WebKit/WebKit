@@ -1176,7 +1176,6 @@ fast/forms/textarea-scroll-height.html
 fast/forms/textarea-scrollbar.html
 fast/forms/textarea-scrolled-type.html
 fast/frames/iframe-window-focus.html
-fast/html/keygen.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
 fast/js/string-capitalization.html
@@ -1338,6 +1337,9 @@ fast/text/international/thai-line-breaks.html
 # --crashed with --platform mac --ignore-metrics
 fast/text/midword-break-after-breakable-char.html
 
+# No support for <keygen> with Qt (see TemporaryLinkStubs.cpp)
+fast/html/keygen.html
+http/tests/misc/submit-post-keygen.html
 
 # -- pass with --platform mac --ignore-metrics
 fast/backgrounds/animated-gif-as-background.html
@@ -2520,6 +2522,3 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
-
-# disable a few more failures due to build system refactoring.
-http/tests/misc/submit-post-keygen.html
