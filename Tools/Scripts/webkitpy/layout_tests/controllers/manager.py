@@ -504,6 +504,16 @@ class Manager(object):
 
         skipped = self._split_into_chunks_if_necessary(skipped)
 
+        # FIXME: It's unclear how --repeat-each and --iterations should interact with chunks?
+        if self._options.repeat_each:
+            list_with_repetitions = []
+            for test in self._test_files_list:
+                list_with_repetitions += ([test] * self._options.repeat_each)
+            self._test_files_list = list_with_repetitions
+
+        if self._options.iterations:
+            self._test_files_list = self._test_files_list * self._options.iterations
+
         result_summary = ResultSummary(self._expectations, self._test_files | skipped)
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
         self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")

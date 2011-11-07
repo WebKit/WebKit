@@ -1,3 +1,14 @@
+2011-11-07  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests: support --repeat-each feature from old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=62199
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2011-11-07  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Rename WebView::scalePage to WebView::setPageScaleFactor to match WebCore

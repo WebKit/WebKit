@@ -326,6 +326,16 @@ class MainTest(unittest.TestCase):
     def test_threaded(self):
         self.assertTrue(passing_run(['--threaded']))
 
+    def test_repeat_each(self):
+        tests_to_run = ['passes/image.html', 'passes/text.html']
+        tests_run = get_tests_run(['--repeat-each', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, ['passes/image.html', 'passes/image.html', 'passes/text.html', 'passes/text.html'])
+
+    def test_iterations(self):
+        tests_to_run = ['passes/image.html', 'passes/text.html']
+        tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html', 'passes/image.html', 'passes/text.html'])
+
     def test_run_chunk(self):
         # Test that we actually select the right chunk
         all_tests_run = get_tests_run(flatten_batches=True)
