@@ -444,6 +444,18 @@ fast/mutation
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 
+# Skip because this platform does not support a paging mouse wheel event
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
