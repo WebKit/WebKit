@@ -464,7 +464,7 @@ private:
 template <>
 inline void InlineBidiResolver::appendRun()
 {
-    if (!m_emptyRun && !m_eor.atEnd()) {
+    if (!m_emptyRun && !m_eor.atEnd() && !m_reachedEndOfLine) {
         // Keep track of when we enter/leave "unicode-bidi: isolate" inlines.
         // Initialize our state depending on if we're starting in the middle of such an inline.
         // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
