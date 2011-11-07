@@ -67,7 +67,7 @@ private:
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual void minOrMaxAttributeChanged();
     virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
-    virtual String fallbackValue();
+    virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String& proposedValue) const;
     virtual bool shouldRespectListAttribute();
 };

@@ -94,7 +94,7 @@ void BaseCheckableInputType::accessKeyAction(bool sendToAnyElement)
     element()->dispatchSimulatedClick(0, sendToAnyElement);
 }
 
-String BaseCheckableInputType::fallbackValue()
+String BaseCheckableInputType::fallbackValue() const
 {
     return "on";
 }

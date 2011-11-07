@@ -63,7 +63,7 @@ void ResetInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-String ResetInputType::defaultValue()
+String ResetInputType::defaultValue() const
 {
     return resetButtonDefaultLabel();
 }

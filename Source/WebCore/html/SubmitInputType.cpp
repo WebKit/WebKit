@@ -80,7 +80,7 @@ bool SubmitInputType::canBeSuccessfulSubmitButton()
     return true;
 }
 
-String SubmitInputType::defaultValue()
+String SubmitInputType::defaultValue() const
 {
     return submitButtonDefaultLabel();
 }

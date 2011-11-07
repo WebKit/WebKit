@@ -46,7 +46,7 @@ private:
     virtual bool supportsRequired() const;
     virtual void handleDOMActivateEvent(Event*);
     virtual bool canBeSuccessfulSubmitButton();
-    virtual String defaultValue();
+    virtual String defaultValue() const OVERRIDE;
     virtual bool isSubmitButton() const;
     virtual bool isTextButton() const;
 };

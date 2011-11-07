@@ -295,7 +295,7 @@ void RangeInputType::setValue(const String& value, bool valueChanged, bool sendC
     sliderThumbElementOf(element())->setPositionFromValue();
 }
 
-String RangeInputType::fallbackValue()
+String RangeInputType::fallbackValue() const
 {
     return serializeForNumberType(StepRange(element()).defaultValue());
 }

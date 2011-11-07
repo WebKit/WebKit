@@ -44,7 +44,7 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsValidation() const;
     virtual void handleDOMActivateEvent(Event*);
-    virtual String defaultValue();
+    virtual String defaultValue() const OVERRIDE;
     virtual bool isTextButton() const;
 };
 

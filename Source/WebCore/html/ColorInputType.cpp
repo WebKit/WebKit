@@ -84,7 +84,7 @@ bool ColorInputType::supportsRequired() const
     return false;
 }
 
-String ColorInputType::fallbackValue()
+String ColorInputType::fallbackValue() const
 {
     return String("#000000");
 }

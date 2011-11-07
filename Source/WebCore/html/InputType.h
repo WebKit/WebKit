@@ -121,8 +121,8 @@ public:
     // DOM property functions
 
     virtual bool getTypeSpecificValue(String&); // Checked first, before internal storage or the value attribute.
-    virtual String fallbackValue(); // Checked last, if both internal storage and value attribute are missing.
-    virtual String defaultValue(); // Checked after even fallbackValue, only when the valueWithDefault function is called.
+    virtual String fallbackValue() const; // Checked last, if both internal storage and value attribute are missing.
+    virtual String defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;

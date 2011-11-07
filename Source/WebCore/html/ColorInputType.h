@@ -48,7 +48,7 @@ private:
     virtual bool isColorControl() const;
     virtual const AtomicString& formControlType() const;
     virtual bool supportsRequired() const;
-    virtual String fallbackValue();
+    virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String&) const;
     virtual Color valueAsColor() const;
     virtual void createShadowSubtree();

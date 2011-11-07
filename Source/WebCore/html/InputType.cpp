@@ -508,12 +508,12 @@ bool InputType::getTypeSpecificValue(String&)
     return false;
 }
 
-String InputType::fallbackValue()
+String InputType::fallbackValue() const
 {
     return String();
 }
 
-String InputType::defaultValue()
+String InputType::defaultValue() const
 {
     return String();
 }
