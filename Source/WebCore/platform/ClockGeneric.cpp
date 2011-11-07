@@ -24,82 +24,59 @@
  */
 
 #include "config.h"
-#include "PlatformClockPOSIX.h"
+#include "ClockGeneric.h"
 
 #include "FloatConversion.h"
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
 static const int32_t usecPerSec = 1e6;
 
-static float timevalToFloat(timeval val)
-{
-    return val.tv_sec + (val.tv_usec / static_cast<float>(usecPerSec));
-}
-
-static timeval timevalDelta(timeval first, timeval second)
-{
-    timeval delta;
-    delta.tv_sec = first.tv_sec - second.tv_sec;
-    delta.tv_usec = first.tv_usec - second.tv_usec;
-    while (delta.tv_usec < 0) {
-        delta.tv_usec += usecPerSec;
-        delta.tv_sec--;
-    }
-    return delta;
-}
-
-PlatformClockPOSIX::PlatformClockPOSIX()
+ClockGeneric::GenericClock()
     : m_running(false)
     , m_rate(1)
     , m_offset(0)
 {
-    m_startTime = m_lastTime = now();
+    m_startTime = m_lastTime = currentTime();
 }
 
-void PlatformClockPOSIX::setCurrentTime(float time)
+void ClockGeneric::setCurrentTime(float time)
 {
-    m_startTime = m_lastTime = now();
+    m_startTime = m_lastTime = currentTime();
     m_offset = time;
 }
 
-float PlatformClockPOSIX::currentTime() const
+float ClockGeneric::currentTime() const
 {
     if (m_running)
-        m_lastTime = now();
-    float time = (timevalToFloat(timevalDelta(m_lastTime, m_startTime)) * m_rate) + m_offset;
+        m_lastTime = currentTime();
+    float time = (narrowPrecisionToFloat(m_lastTime - m_startTime) * m_rate) + m_offset;
     return time;
 }
 
-void PlatformClockPOSIX::setPlayRate(float rate)
+void ClockGeneric::setPlayRate(float rate)
 {
     m_offset = currentTime();
-    m_lastTime = m_startTime = now();
+    m_lastTime = m_startTime = currentTime();
     m_rate = rate;
 }
 
-void PlatformClockPOSIX::start()
+void ClockGeneric::start()
 {
     if (m_running)
         return;
 
-    m_lastTime = m_startTime = now();
+    m_lastTime = m_startTime = currentTime();
     m_running = true;
 }
 
-void PlatformClockPOSIX::stop()
+void ClockGeneric::stop()
 {
     if (!m_running)
         return;
 
     m_offset = currentTime();
-    m_lastTime = m_startTime = now();
+    m_lastTime = m_startTime = currentTime();
     m_running = false;
-}
-
-timeval PlatformClockPOSIX::now() const
-{
-    timeval val;
-    gettimeofday(&val, 0);
-    return val;
 }

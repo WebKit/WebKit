@@ -23,17 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformClockPOSIX_h
-#define PlatformClockPOSIX_h
+#ifndef ClockGeneric_h
+#define ClockGeneric_h
 
 #include "Clock.h"
-#include <time.h>
 
 namespace WebCore {
 
-class PlatformClockPOSIX : public Clock {
+class ClockGeneric : public Clock {
 public:
-    PlatformClockPOSIX();
+    ClockGeneric();
 
 private:
     virtual void setCurrentTime(float);
@@ -46,13 +45,11 @@ private:
     virtual void stop();
     virtual bool isRunning() const { return m_running; }
 
-    timeval now() const;
-
     bool m_running;
     float m_rate;
     float m_offset;
-    timeval m_startTime;
-    mutable timeval m_lastTime;
+    double m_startTime;
+    mutable double m_lastTime;
 };
 
 }

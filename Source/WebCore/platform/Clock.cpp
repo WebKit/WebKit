@@ -29,7 +29,7 @@
 #if USE(COREAUDIO)
     #include "PlatformClockCA.h"
 #else
-    #include "PlatformClockPOSIX.h"
+    #include "ClockGeneric.h"
 #endif
 
 using namespace WebCore;
@@ -39,6 +39,6 @@ PassRefPtr<Clock> Clock::create()
 #if USE(COREAUDIO)
     return adoptRef(new PlatformClockCA());
 #else
-    return adoptRef(new PlatformClockPOSIX());
+    return adoptRef(new ClockGeneric());
 #endif
 }

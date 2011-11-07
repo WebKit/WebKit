@@ -1032,6 +1032,7 @@ SOURCES += \
     platform/FileIconLoader.cpp \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
+    platform/ClockGeneric.cpp \
     platform/GeolocationService.cpp \
     platform/image-decoders/qt/ImageFrameQt.cpp \
     platform/graphics/FontDescription.cpp \
@@ -2070,6 +2071,7 @@ HEADERS += \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
     platform/mock/ScrollbarThemeMock.h \
+    platform/ClockGeneric.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/filters/FEBlend.h \

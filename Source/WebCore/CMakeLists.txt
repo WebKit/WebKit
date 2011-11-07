@@ -1022,6 +1022,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
+    platform/Clock.cpp
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp
     platform/ContentType.cpp
@@ -1033,6 +1034,7 @@ SET(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/FileIconLoader.cpp
     platform/FileSystem.cpp
+    platform/ClockGeneric.cpp
     platform/GeolocationService.cpp
     platform/KURL.cpp
     platform/KillRingNone.cpp
