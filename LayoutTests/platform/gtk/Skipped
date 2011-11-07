@@ -589,9 +589,6 @@ http/tests/xmlhttprequest/send-array-buffer.html
 # Possible bug in eventSender.zoomPageOut() ? https://bugs.webkit.org/show_bug.cgi?id=30575
 fast/dom/elementFromPoint-relative-to-viewport.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=51213
-fast/dom/gc-11.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=53085
 # Cairo doesn't support repeat-x and repeat-y
 fast/canvas/patternfill-repeat.html
