@@ -1,5 +1,13 @@
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Ensure we always export symbols for the QtWebKit API when building WebKit
+
+        Reviewed-by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Sanitize qmake paths correctly before comparing
 
         The qmake function toSanitizedPath had a bug causing empty paths on MinGW,

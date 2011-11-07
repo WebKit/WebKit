@@ -13,8 +13,6 @@ load(features)
 
 include(WebKit/WebKit.pri)
 
-DEFINES += BUILDING_WEBKIT
-
 !v8:CONFIG += javascriptcore
 
 CONFIG += webcore
