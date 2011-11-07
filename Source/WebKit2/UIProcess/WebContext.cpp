@@ -224,6 +224,11 @@ void WebContext::languageChanged()
     sendToAllProcesses(Messages::WebProcess::LanguageChanged(defaultLanguage()));
 }
 
+void WebContext::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+{
+    sendToAllProcesses(Messages::WebProcess::FullKeyboardAccessModeChanged(fullKeyboardAccessEnabled));
+}
+
 void WebContext::ensureWebProcess()
 {
     if (m_process)
@@ -261,6 +266,8 @@ void WebContext::ensureWebProcess()
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
     parameters.textCheckerState = TextChecker::state();
+
+    parameters.fullKeyboardAccessEnabled = WebProcessProxy::fullKeyboardAccessEnabled();
 
     parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
 

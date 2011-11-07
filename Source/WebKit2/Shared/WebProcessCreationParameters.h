@@ -81,6 +81,8 @@ struct WebProcessCreationParameters {
 
     TextCheckerState textCheckerState;
 
+    bool fullKeyboardAccessEnabled;
+
     double defaultRequestTimeoutInterval;
 
 #if USE(CFURLSTORAGESESSIONS)

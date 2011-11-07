@@ -1,3 +1,55 @@
+2011-11-07  Alexey Proskuryakov  <ap@apple.com>
+
+        The Full Keyboard Access preference should be read in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=71734
+        <rdar://problem/9237619>
+
+        Reviewed by Darin Adler.
+
+        This is consistent with how other global preferences (like language) are handled, and lets
+        us tighten up the sandbox a little.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Added fullKeyboardAccessEnabled, so that newly started processes have the right preference value.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::fullKeyboardAccessModeChanged): If preference changes while a web process
+        is already running, tell it.
+        (WebKit::WebContext::ensureWebProcess): Set parameters.fullKeyboardAccessEnabled from current
+        preference.
+
+        * UIProcess/WebProcessProxy.cpp: (WebKit::WebProcessProxy::fullKeyboardAccessEnabled):
+        * UIProcess/mac/WebProcessProxyMac.mm: (WebKit::WebProcessProxy::fullKeyboardAccessEnabled):
+        * UIProcess/WebProcessProxy.h:
+        Proxy it to Objective-C code. WebProcessProxy is as good place to have the static function
+        as any. One day, we will make code more consistent with language and other global preferences.
+
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.h: Copied from Source/WebKit2/WebProcess/mac/WKFullKeyboardAccessWatcher.h.
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.mm: Copied from Source/WebKit2/WebProcess/mac/WKFullKeyboardAccessWatcher.mm.
+        * WebProcess/mac/WKFullKeyboardAccessWatcher.h: Removed.
+        * WebProcess/mac/WKFullKeyboardAccessWatcher.mm: Removed.
+        (-[WKFullKeyboardAccessWatcher retrieveKeyboardUIModeFromPreferences:]): Once retrieved,
+        push the preference value.
+
+        * WebKit2.xcodeproj/project.pbxproj: WKFullKeyboardAccessWatcher is now in UI process.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::fullKeyboardAccessModeChanged):
+        (WebKit::WebProcess::fullKeyboardAccessEnabled):
+        * WebProcess/mac/WebProcessMac.mm:
+        WebCprocess now holds the preference value in a mamber value, which UI process pushes
+        updates to.
+
+        * WebProcess/WebProcess.messages.in: Added a message for changes preference value.
+
+        * WebProcess/com.apple.WebProcess.sb: We no longer need read access to com.apple.universalaccess.plist.
+
 2011-11-07  Anders Carlsson  <andersca@apple.com>
 
         Add TiledCoreAnimationDrawingArea stub classes

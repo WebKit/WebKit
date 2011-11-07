@@ -196,6 +196,8 @@ public:
     static bool omitPDFSupport();
 #endif
 
+    void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 

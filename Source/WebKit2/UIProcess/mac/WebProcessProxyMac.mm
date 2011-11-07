@@ -30,6 +30,7 @@
 #import "SecItemResponseData.h"
 #import "SecKeychainItemRequestData.h"
 #import "SecKeychainItemResponseData.h"
+#import "WKFullKeyboardAccessWatcher.h"
 #import <Security/SecItem.h>
 
 namespace WebKit {
@@ -105,6 +106,11 @@ void WebProcessProxy::secKeychainItemModifyContent(const SecKeychainItemRequestD
     OSStatus resultCode = SecKeychainItemModifyContent(request.keychainItem(), request.attributeList(), request.length(), request.data());
     
     response = resultCode;
+}
+
+bool WebProcessProxy::fullKeyboardAccessEnabled()
+{
+    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
 }
 
 } // namespace WebKit

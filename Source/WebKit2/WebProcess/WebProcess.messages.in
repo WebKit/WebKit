@@ -42,6 +42,7 @@ messages -> WebProcess {
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     LanguageChanged(WTF::String language)
+    FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif

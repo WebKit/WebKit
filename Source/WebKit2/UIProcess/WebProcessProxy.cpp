@@ -247,6 +247,13 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
     return false;
 }
 
+#if !PLATFORM(MAC)
+bool WebProcessProxy::fullKeyboardAccessEnabled()
+{
+    return false;
+}
+#endif
+
 void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const CoreIPC::DataReference& backForwardData)
 {
     MESSAGE_CHECK_URL(originalURL);

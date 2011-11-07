@@ -133,11 +133,6 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
-bool WebProcess::fullKeyboardAccessEnabled()
-{
-    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
-}
-
 #if ENABLE(WEB_PROCESS_SANDBOX)
 static void appendSandboxParameterPathInternal(Vector<const char*>& vector, const char* name, const char* path)
 {

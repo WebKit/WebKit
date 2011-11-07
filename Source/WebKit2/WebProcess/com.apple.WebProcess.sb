@@ -65,9 +65,6 @@
        (subpath "/Library/Video/Plug-Ins")
        (subpath "/Library/QuickTime")
 
-       ;; FIXME: This should be removed when <rdar://problem/9237619> is fixed.
-       (home-literal "/Library/Preferences/com.apple.universalaccess.plist")
-
        ;; FIXME: This should be removed when <rdar://problem/9276253> is fixed.
        (home-subpath "/Library/Keyboard Layouts")
 

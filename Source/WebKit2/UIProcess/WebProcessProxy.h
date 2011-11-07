@@ -110,6 +110,8 @@ public:
     bool checkURLReceivedFromWebProcess(const String&);
     bool checkURLReceivedFromWebProcess(const WebCore::KURL&);
 
+    static bool fullKeyboardAccessEnabled();
+
     // FIXME: This variant of send is deprecated. All clients should move to an overload that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
 

@@ -26,14 +26,27 @@
 #import "config.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
+#import "WebContext.h"
+
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
 
+using namespace WebKit;
+
 @implementation WKFullKeyboardAccessWatcher
+
+- (void)notifyAllWebContexts
+{
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i)
+        contexts[i]->fullKeyboardAccessModeChanged(fullKeyboardAccessEnabled);
+}
 
 - (void)retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
 {
+    BOOL oldValue = fullKeyboardAccessEnabled;
+
     CFPreferencesAppSynchronize(UniversalAccessDomain);
 
     Boolean keyExistsAndHasValidFormat;
@@ -44,6 +57,9 @@ const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
         // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists.
         fullKeyboardAccessEnabled = (mode & 0x2);
     }
+
+    if (fullKeyboardAccessEnabled != oldValue)
+        [self notifyAllWebContexts];
 }
 
 - (id)init
