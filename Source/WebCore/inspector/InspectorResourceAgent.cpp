@@ -73,6 +73,7 @@ namespace ResourceAgentState {
 static const char resourceAgentEnabled[] = "resourceAgentEnabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
 static const char cacheDisabled[] = "cacheDisabled";
+static const char userAgentOverride[] = "userAgentOverride";
 }
 
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
@@ -85,7 +86,6 @@ void InspectorResourceAgent::clearFrontend()
     m_frontend = 0;
     ErrorString error;
     disable(&error);
-    m_userAgentOverride = "";
 }
 
 void InspectorResourceAgent::restore()
@@ -348,8 +348,9 @@ void InspectorResourceAgent::didLoadXHRSynchronously()
 
 void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
 {
-    if (!m_userAgentOverride.isEmpty())
-        *userAgent = m_userAgentOverride;
+    String userAgentOverride = m_state->getString(ResourceAgentState::userAgentOverride);
+    if (!userAgentOverride.isEmpty())
+        *userAgent = userAgentOverride;
 }
 
 void InspectorResourceAgent::willRecalculateStyle()
@@ -469,7 +470,7 @@ void InspectorResourceAgent::disable(ErrorString*)
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
 {
-    m_userAgentOverride = userAgent;
+    m_state->setString(ResourceAgentState::userAgentOverride, userAgent);
 }
 
 void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)

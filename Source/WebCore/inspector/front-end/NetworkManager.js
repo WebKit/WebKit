@@ -40,7 +40,11 @@ WebInspector.NetworkManager = function()
         NetworkAgent.setCacheDisabled(true);
     NetworkAgent.enable();
 
-    WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged.bind(this));
+    WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged, this);
+
+    if (WebInspector.settings.userAgent.get())
+        this._userAgentSettingChanged();
+    WebInspector.settings.userAgent.addChangeListener(this._userAgentSettingChanged, this);
 }
 
 WebInspector.NetworkManager.EventTypes = {
@@ -75,6 +79,11 @@ WebInspector.NetworkManager.prototype = {
     _cacheDisabledSettingChanged: function(event)
     {
         NetworkAgent.setCacheDisabled(event.data);
+    },
+
+    _userAgentSettingChanged: function()
+    {
+        NetworkAgent.setUserAgentOverride(WebInspector.settings.userAgent.get());
     }
 }
 

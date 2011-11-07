@@ -130,6 +130,7 @@ body:not(.platform-mac) .help-close-button {
 .help-table td {
     white-space: nowrap;
     vertical-align: top;
+    width: 50%;
 }
 
 .help-key-cell {
@@ -174,6 +175,11 @@ body.platform-mac .help-key {
     padding-left: 3px;
 }
 
+
+.help-content fieldset label {
+    padding-right: 4px;
+}
+
 .help-content p.help-section {
     margin-bottom: 15px;
 }
@@ -190,7 +196,6 @@ body.platform-mac .help-key {
 }
 
 .help-content select {
-    margin-left: 1em;
     background-color: rgb(64, 64, 64);
     color: white;
     border-color: black;

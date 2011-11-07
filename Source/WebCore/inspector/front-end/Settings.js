@@ -90,6 +90,8 @@ WebInspector.Settings = function()
     this.xhrBreakpoints = this.createSetting("xhrBreakpoints", []);
     this.workerInspectionEnabled = this.createSetting("workerInspectionEnabled", []);
     this.cacheDisabled = this.createSetting("cacheDisabled", false);
+    this.overrideUserAgent = this.createSetting("overrideUserAgent", "");
+    this.userAgent = this.createSetting("userAgent", "");
     this.showScriptFolders = this.createSetting("showScriptFolders", true);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused

@@ -1,3 +1,36 @@
+2011-11-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce UserAgent override setting.
+        https://bugs.webkit.org/show_bug.cgi?id=71627
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::clearFrontend):
+        (WebCore::InspectorResourceAgent::applyUserAgentOverride):
+        (WebCore::InspectorResourceAgent::setUserAgentOverride):
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen):
+        (WebInspector.HelpScreen.prototype.show):
+        (WebInspector.HelpScreen.prototype._onBlur):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype._cacheDisabledSettingChanged):
+        (WebInspector.NetworkManager.prototype._userAgentSettingChanged):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        (WebInspector.SettingsScreen.prototype._createSelectSetting.get for):
+        (WebInspector.SettingsScreen.prototype._createCustomSetting):
+        (WebInspector.SettingsScreen.prototype._createUserActionControl.checkboxClicked):
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.get const):
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.textDoubleClicked):
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.textChanged):
+        * inspector/front-end/helpScreen.css:
+        (.help-table td):
+        (.help-content fieldset label):
+
 2011-11-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: autocomplete combobox for Styles sidebar and Console.

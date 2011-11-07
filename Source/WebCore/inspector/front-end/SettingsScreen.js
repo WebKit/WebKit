@@ -52,15 +52,16 @@ WebInspector.SettingsScreen = function()
 
     p = this._appendSection(WebInspector.UIString("Text editor"));
     p.appendChild(this._createSelectSetting(WebInspector.UIString("Indent"), [
-        [ WebInspector.TextEditorModel.Indent.TwoSpaces, WebInspector.UIString("2 spaces") ],
-        [ WebInspector.TextEditorModel.Indent.FourSpaces, WebInspector.UIString("4 spaces") ],
-        [ WebInspector.TextEditorModel.Indent.EightSpaces, WebInspector.UIString("8 spaces") ],
-        [ WebInspector.TextEditorModel.Indent.TabCharacter, WebInspector.UIString("Tab character") ] ], WebInspector.settings.textEditorIndent));
+            [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
+            [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
+            [ WebInspector.UIString("8 spaces"), WebInspector.TextEditorModel.Indent.EightSpaces ],
+            [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
+        ], WebInspector.settings.textEditorIndent));
 
-    if (Preferences.canDisableCache) {
-        p = this._appendSection(WebInspector.UIString("Network"), true);
+    p = this._appendSection(WebInspector.UIString("Network"), true);
+    if (Preferences.canDisableCache)
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
-    }
+    p.appendChild(this._createUserActionControl());
 
     p = this._appendSection(WebInspector.UIString("Scripts"), true);
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show script folders"), WebInspector.settings.showScriptFolders));
@@ -129,17 +130,16 @@ WebInspector.SettingsScreen.prototype = {
     _createSelectSetting: function(name, options, setting)
     {
         var fieldsetElement = document.createElement("fieldset");
-        fieldsetElement.textContent = name;
+        fieldsetElement.createChild("label").textContent = name;
 
         var select = document.createElement("select");
         var settingValue = setting.get();
 
         for (var i = 0; i < options.length; ++i) {
             var option = options[i];
-            select.add(new Option(option[1], option[0]));
-            if (settingValue === option[0])
+            select.add(new Option(option[0], option[1]));
+            if (settingValue === option[1])
                 select.selectedIndex = i;
-
         }
 
         function changeListener(e)
@@ -196,11 +196,121 @@ WebInspector.SettingsScreen.prototype = {
     {
         var p = document.createElement("p");
         var fieldsetElement = document.createElement("fieldset");
-        fieldsetElement.textContent = name;
+        fieldsetElement.createChild("label").textContent = name;
         fieldsetElement.appendChild(element);
         p.appendChild(fieldsetElement);
         return p;
+    },
+
+    _createUserActionControl: function()
+    {
+        var userAgent = WebInspector.settings.userAgent.get();
+
+        var p = document.createElement("p");
+        var labelElement = p.createChild("label");
+        var checkboxElement = labelElement.createChild("input");
+        checkboxElement.type = "checkbox";
+        checkboxElement.checked = !!userAgent;
+        checkboxElement.addEventListener("click", checkboxClicked.bind(this), false);
+        labelElement.appendChild(document.createTextNode("Override User Agent"));
+
+        var selectSectionElement;
+        function checkboxClicked()
+        {
+            if (checkboxElement.checked) {
+                selectSectionElement = this._createUserAgentSelectRowElement();
+                p.appendChild(selectSectionElement);
+            } else {
+                if (selectSectionElement) {
+                    p.removeChild(selectSectionElement);
+                    selectSectionElement = null;
+                }
+                WebInspector.settings.userAgent.set("");
+            }
+        }
+
+        checkboxClicked.call(this);
+        return p;
+    },
+
+    _createUserAgentSelectRowElement: function()
+    {
+        var userAgent = WebInspector.settings.userAgent.get();
+        const userAgents = [
+            ["Internet Explorer 9", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0"],
+            ["Internet Explorer 8", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0"],
+            ["Internet Explorer 7", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0"],
+
+            ["Firefox 7 \u2014 Windows", "Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"],
+            ["Firefox 7 \u2014 Mac", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"],
+            ["Firefox 4 \u2014 Windows", "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"],
+            ["Firefox 4 \u2014 Mac", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"],
+
+            ["iPhone \u2014 iOS 5", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3"],
+            ["iPhone \u2014 iOS 4", "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5"],
+            ["iPad \u2014 iOS 5", "Mozilla/5.0 (iPad; CPU OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3"],
+            ["iPad \u2014 iOS 4", "Mozilla/5.0 (iPad; CPU OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5"],
+
+            ["Android 2.3 \u2014 Nexus S", "Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"],
+            [WebInspector.UIString("Other..."), "Other"]
+        ];
+
+        var fieldsetElement = document.createElement("fieldset");
+        var selectElement = fieldsetElement.createChild("select");
+        var otherUserAgentElement = fieldsetElement.createChild("input");
+        otherUserAgentElement.value = userAgent;
+        otherUserAgentElement.title = userAgent;
+
+        var selectionRestored = false;
+        for (var i = 0; i < userAgents.length; ++i) {
+            var agent = userAgents[i];
+            selectElement.add(new Option(agent[0], agent[1]));
+            if (userAgent === agent[1]) {
+                selectElement.selectedIndex = i;
+                selectionRestored = true;
+            }
+        }
+
+        if (!selectionRestored) {
+            if (!userAgent)
+                selectElement.selectedIndex = 0;
+            else
+                selectElement.selectedIndex = userAgents.length - 1;
+        }
+
+        selectElement.addEventListener("change", selectionChanged.bind(this), false);
+
+        function selectionChanged()
+        {
+            var value = selectElement.options[selectElement.selectedIndex].value;
+            if (value !== "Other") {
+                WebInspector.settings.userAgent.set(value);
+                otherUserAgentElement.value = value;
+                otherUserAgentElement.title = value;
+                otherUserAgentElement.disabled = true;
+            } else {
+                otherUserAgentElement.disabled = false;
+                otherUserAgentElement.focus();
+            }
+        }
+
+        fieldsetElement.addEventListener("dblclick", textDoubleClicked.bind(this), false);
+        otherUserAgentElement.addEventListener("blur", textChanged.bind(this), false);
+
+        function textDoubleClicked()
+        {
+            selectElement.selectedIndex = userAgents.length - 1;
+            selectionChanged.call(this);
+        }
+
+        function textChanged()
+        {
+            WebInspector.settings.userAgent.set(otherUserAgentElement.value);
+        }
+
+        selectionChanged.call(this);
+        return fieldsetElement;
     }
-};
+}
 
 WebInspector.SettingsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;

@@ -36,13 +36,13 @@ WebInspector.HelpScreen = function(title)
     this._element = document.createElement("div");
     this._element.className = "help-window-outer";
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
+    this._element.tabIndex = 0;
+    this._element.addEventListener("focus", this._onBlur.bind(this), false);
 
     var mainWindow = this._element.createChild("div", "help-window-main");
     var captionWindow = mainWindow.createChild("div", "help-window-caption");
     var closeButton = captionWindow.createChild("button", "help-close-button");
     this.contentElement = mainWindow.createChild("div", "help-content");
-    this.contentElement.tabIndex = 0;
-    this.contentElement.addEventListener("blur", this._onBlur.bind(this), false);
     captionWindow.createChild("h1", "help-window-title").textContent = title;
 
     closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
@@ -64,7 +64,7 @@ WebInspector.HelpScreen.prototype = {
         this._isShown = true;
         this._onHide = onHide;
         this._previousFocusElement = WebInspector.currentFocusElement();
-        WebInspector.setCurrentFocusElement(this.contentElement);
+        WebInspector.setCurrentFocusElement(this._element);
     },
 
     hide: function()
@@ -89,10 +89,10 @@ WebInspector.HelpScreen.prototype = {
         }
     },
 
-    _onBlur: function()
+    _onBlur: function(event)
     {
-         // Pretend we're modal, grab focus back if we're still shown.
-        if (this._isShown)
-            WebInspector.setCurrentFocusElement(this.contentElement);
+        // Pretend we're modal, grab focus back if we're still shown.
+        if (this._isShown && event.target !== this._element && !this._element.isAncestor(event.target))
+            WebInspector.setCurrentFocusElement(this._element);
     }
 }
