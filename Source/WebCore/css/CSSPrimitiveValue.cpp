@@ -670,12 +670,6 @@ Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
     return m_value.pair;
 }
 
-bool CSSPrimitiveValue::parseString(const String& /*string*/, bool /*strict*/)
-{
-    // FIXME
-    return false;
-}
-
 int CSSPrimitiveValue::getIdent() const
 {
     if (m_type != CSS_IDENT)

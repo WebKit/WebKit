@@ -1,3 +1,13 @@
+2011-11-07  Andreas Kling  <kling@webkit.org>
+
+        CSSPrimitiveValue: Remove unused virtual function parseString().
+        <http://webkit.org/b/71671>
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+
 2011-11-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: use toString as the Date object description.

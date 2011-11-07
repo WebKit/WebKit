@@ -207,7 +207,6 @@ public:
     int getIdent() const;
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
-    virtual bool parseString(const String&, bool = false);
     virtual String cssText() const;
 
     bool isQuirkValue() { return m_isQuirkValue; }
