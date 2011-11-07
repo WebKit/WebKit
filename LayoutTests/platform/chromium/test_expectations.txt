@@ -3898,3 +3898,7 @@ BUGENNE GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = FAI
 BUGWK71542 WIN LINUX DEBUG : inspector/styles/styles-formatting.html = PASS TIMEOUT
 
 BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
+
+BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT
+BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT
+BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
