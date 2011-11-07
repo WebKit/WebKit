@@ -49,6 +49,10 @@ function setupExpectationsTest()
     g_builders = {};
     g_allExpectations = null;
     g_allTests = null;
+    g_currentState = {};
+    for (var key in g_defaultCrossDashboardStateValues) {
+        g_currentState[key] = g_defaultCrossDashboardStateValues[key];
+    }
 }
 
 // Processes the expectations for a test and asserts that the final expectations

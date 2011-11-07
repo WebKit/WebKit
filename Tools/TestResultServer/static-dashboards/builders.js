@@ -91,17 +91,9 @@ function associateBuildersWithMaster(builders, master)
 
 var CHROMIUM_DEPS_BUILDERS = [
     ['Webkit Win (deps)', BuilderGroup.DEFAULT_BUILDER],
-    ['Webkit Win (deps)(dbg)(1)'],
-    ['Webkit Win (deps)(dbg)(2)'],
     ['Webkit Linux (deps)', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Webkit Linux (deps)(dbg)(1)'],
-    ['Webkit Linux (deps)(dbg)(2)'],
     ['Webkit Mac10.6 (deps)'],
-    ['Webkit Mac10.6 (deps)(dbg)(1)'],
-    ['Webkit Mac10.6 (deps)(dbg)(2)'],
     ['Webkit Mac10.6 (CG)(deps)'],
-    ['Webkit Mac10.6 (CG)(deps)(dbg)(1)'],
-    ['Webkit Mac10.6 (CG)(deps)(dbg)(2)']
 ];
 associateBuildersWithMaster(CHROMIUM_DEPS_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 
@@ -113,8 +105,7 @@ var CHROMIUM_TOT_BUILDERS = [
     ['Webkit Win (dbg)(2)'],
     ['Webkit Linux', BuilderGroup.EXPECTATIONS_BUILDER],
     ['Webkit Linux 32'],
-    ['Webkit Linux (dbg)(1)'],
-    ['Webkit Linux (dbg)(2)'],
+    ['Webkit Linux (dbg)'],
     ['Webkit Mac10.5'],
     ['Webkit Mac10.5 (dbg)(1)'],
     ['Webkit Mac10.5 (dbg)(2)'],
@@ -150,18 +141,17 @@ var CHROMIUM_GPU_MESA_BUILDERS = [
     ['Webkit Win (dbg)(2) - GPU'],
     ['Webkit Linux - GPU', BuilderGroup.EXPECTATIONS_BUILDER],
     ['Webkit Linux 32 - GPU'],
-    ['Webkit Linux (dbg)(1) - GPU'],
-    ['Webkit Linux (dbg)(2) - GPU'],
-    ['Webkit Mac10.5 (CG) - GPU'],
-    ['Webkit Mac10.5 (CG)(dbg)(1) - GPU'],
-    ['Webkit Mac10.5 (CG)(dbg)(2) - GPU'],
-    ['Webkit Mac10.6 (CG) - GPU'],
-    ['Webkit Mac10.6 (CG)(dbg) - GPU'],
+    ['Webkit Linux (dbg) - GPU'],
     ['Webkit Mac10.5 - GPU'],
     ['Webkit Mac10.5 (dbg)(1) - GPU'],
     ['Webkit Mac10.5 (dbg)(2) - GPU'],
     ['Webkit Mac10.6 - GPU'],
-    ['Webkit Mac10.6 (dbg) - GPU']
+    ['Webkit Mac10.6 (dbg) - GPU'],
+    ['Webkit Mac10.5 (CG) - GPU'],
+    ['Webkit Mac10.5 (CG)(dbg)(1) - GPU'],
+    ['Webkit Mac10.5 (CG)(dbg)(2) - GPU'],
+    ['Webkit Mac10.6 (CG) - GPU'],
+    ['Webkit Mac10.6 (CG)(dbg) - GPU']
 ];
 associateBuildersWithMaster(CHROMIUM_GPU_MESA_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 

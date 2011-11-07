@@ -1,3 +1,14 @@
+2011-11-07  Tony Chang  <tony@chromium.org>
+
+        [chromium] update flakiness dashboard to reflect current bots
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/builders.js: Remove (deps) debug
+            bots and merged linux debug bots into a single bot.
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (setupExpectationsTest):
+
 2011-11-07  Dana Jansens  <danakj@chromium.org>
 
         Add cc-bugs group to watch changes in chromium graphics
