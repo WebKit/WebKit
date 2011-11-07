@@ -1,3 +1,16 @@
+2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Fix the Qt build on Mac OS X when using the QuickTime media backend
+
+        When QtWebKit is built on Mac OS X using the QuickTime media backend
+        we build both KURLCFNet.cpp and KURLMac, just like the Mac port, so
+        we have to guard the potentially duplicate symbol createCFURL with
+        more than just !PLATFORM(MAC).
+
+        Reviewed by Andreas Kling.
+
+        * platform/cf/KURLCFNet.cpp:
+
 2011-11-07  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: follow up to r99407. Style the suggest box.

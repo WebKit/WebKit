@@ -75,7 +75,7 @@ CFURLRef createCFURLFromBuffer(const CharBuffer& buffer)
     return result;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !(PLATFORM(QT) && USE(QTKIT))
 CFURLRef KURL::createCFURL() const
 {
     // FIXME: What should this return for invalid URLs?
