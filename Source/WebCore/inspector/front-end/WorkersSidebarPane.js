@@ -137,9 +137,11 @@ WebInspector.WorkerListSidebarPane = function(workerManager)
     this._enableWorkersCheckbox.addEventListener(this._autoattachToWorkersClicked.bind(this));
     this._enableWorkersCheckbox.checked = false;
 
-    if (Preferences.sharedWorkersListURL) {
-        var link = this._createSharedWorkersLink(Preferences.sharedWorkersListURL)
-        this.bodyElement.appendChild(link);
+    if (Preferences.sharedWorkersDebugNote) {
+        var note = this.bodyElement.createChild("div");
+        note.id = "shared-workers-list";
+        note.addStyleClass("sidebar-label")
+        note.textContent = Preferences.sharedWorkersDebugNote;
     }
 
     var separator = this.bodyElement.createChild("div", "sidebar-separator");
@@ -198,24 +200,6 @@ WebInspector.WorkerListSidebarPane.prototype = {
     _autoattachToWorkersClicked: function(event)
     {
         WorkerAgent.setAutoconnectToWorkers(event.target.checked);
-    },
-
-    _createSharedWorkersLink: function(url)
-    {
-        var linkBlock = document.createElement("div");
-        linkBlock.id = "shared-workers-list";
-        linkBlock.addStyleClass("sidebar-label");
-        linkBlock.title = WebInspector.UIString("Open a page with list of all shared workers");
-
-        var link = linkBlock.createChild("a");
-        link.href = "#";
-        link.textContent = WebInspector.UIString("Discover shared workers");
-        link.target = "_blank";
-        link.onclick = function(event) {
-            PageAgent.open(url, true);
-            event.preventDefault();
-        };
-        return linkBlock;
     }
 }
 

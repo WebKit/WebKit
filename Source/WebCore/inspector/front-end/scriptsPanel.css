@@ -179,6 +179,7 @@
 
 #shared-workers-list {
     margin: 5px 0px 5px 20px;
+    font-style:italic;
 }
 
 #pause-workers-checkbox > input {

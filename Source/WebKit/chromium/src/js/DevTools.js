@@ -57,7 +57,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.canDisableCache = true;
     Preferences.showNetworkPanelInitiatorColumn = true;
     Preferences.haveExtensions = true;
-    Preferences.sharedWorkersListURL = "chrome://workers/";
+    Preferences.sharedWorkersDebugNote = "Shared workers can be inspected in the Task Manager";
     Preferences.localizeUI = false;
 })();
 

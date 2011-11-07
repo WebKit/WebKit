@@ -1,3 +1,16 @@
+2011-11-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: use native worker inspector instead of fake workers
+        https://bugs.webkit.org/show_bug.cgi?id=71670
+
+        chrome://workers link is replaced with instructions on discovering shared workers
+        in Task Manager.
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+        ():
+
 2011-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

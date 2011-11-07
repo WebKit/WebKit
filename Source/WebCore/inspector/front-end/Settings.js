@@ -57,7 +57,7 @@ var Preferences = {
     canDisableCache: false,
     showNetworkPanelInitiatorColumn: false,
     haveExtensions: false,
-    sharedWorkersListURL: undefined,
+    sharedWorkersDebugNote: undefined,
     localizeUI: true
 }
 
@@ -88,7 +88,6 @@ WebInspector.Settings = function()
     this.eventListenerBreakpoints = this.createSetting("eventListenerBreakpoints", []);
     this.domBreakpoints = this.createSetting("domBreakpoints", []);
     this.xhrBreakpoints = this.createSetting("xhrBreakpoints", []);
-    this.workerInspectionEnabled = this.createSetting("workerInspectionEnabled", []);
     this.cacheDisabled = this.createSetting("cacheDisabled", false);
     this.overrideUserAgent = this.createSetting("overrideUserAgent", "");
     this.userAgent = this.createSetting("userAgent", "");

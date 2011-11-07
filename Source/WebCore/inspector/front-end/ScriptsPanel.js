@@ -117,9 +117,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
     }
 
-    if (Preferences.canInspectWorkers && WebInspector.workerManager)
-        this.sidebarElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
-    if (Preferences.canInspectWorkers && WebInspector.workerManager && WebInspector.settings.workerInspectionEnabled.get()) {
+    if (Preferences.canInspectWorkers && WebInspector.workerManager) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
     } else
@@ -1146,32 +1144,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
         this._presentationModel.setFormatSource(this._toggleFormatSourceButton.toggled);
-    },
-
-    _contextMenu: function(event)
-    {
-        var contextMenu = new WebInspector.ContextMenu();
-
-        function enableWorkerInspection()
-        {
-            var newValue = !WebInspector.settings.workerInspectionEnabled.get();
-            WebInspector.settings.workerInspectionEnabled.set(newValue);
-            WorkerAgent.setWorkerInspectionEnabled(newValue);
-            if (newValue) {
-                var element = this.sidebarPanes.workers.element;
-                delete this.sidebarPanes.workers;
-                this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
-                element.parentNode.replaceChild(this.sidebarPanes.workerList.element, element);
-            } else {
-                var element = this.sidebarPanes.workerList.element;
-                delete this.sidebarPanes.workerList;
-                this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
-                element.parentNode.replaceChild(this.sidebarPanes.workers.element, element);
-            }
-        }
-        contextMenu.appendCheckboxItem(WebInspector.UIString("Enable worker inspection"), enableWorkerInspection.bind(this), WebInspector.settings.workerInspectionEnabled.get());
-
-        contextMenu.show(event);
     }
 }
 
