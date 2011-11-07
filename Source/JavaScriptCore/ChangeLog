@@ -1,3 +1,12 @@
+2011-11-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch the value profiler back to 8 buckets, because we suspect that while this
+        is more expensive it's also more stable.
+
+        Rubber stamped by Geoff Garen.
+
+        * bytecode/ValueProfile.h:
+
 2011-11-07  Andrew Wason  <rectalogic@rectalogic.com>
 
         Uninitialized Heap member var

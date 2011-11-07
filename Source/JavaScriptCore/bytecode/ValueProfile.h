@@ -38,7 +38,7 @@ namespace JSC {
 
 #if ENABLE(VALUE_PROFILER)
 struct ValueProfile {
-    static const unsigned logNumberOfBuckets = 0; // 1 bucket
+    static const unsigned logNumberOfBuckets = 3; // 8 buckets
     static const unsigned numberOfBuckets = 1 << logNumberOfBuckets;
     static const unsigned numberOfSpecFailBuckets = 1;
     static const unsigned bucketIndexMask = numberOfBuckets - 1;
