@@ -11,11 +11,18 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 
 BUGWK68536 : media/media-blocked-by-beforeload.html = PASS TEXT
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
+BUGWK36165 : media/video-played-collapse.html = PASS TEXT
+BUGWK54637 : media/video-display-toggle.html = PASS TEXT
+BUGWK54637 : media/video-controls-in-media-document.html = PASS TEXT
+BUGWK54637 : media/controls-after-reload.html = PASS TEXT
+BUGWK55126 : media/video-aspect-ratio.html = PASS TEXT
 
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS TEXT
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS TEXT
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS TEXT
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS TEXT
+BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS TEXT
+BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS TEXT
 
 BUGWK68520 : svg/W3C-SVG-1.1-SE/filters-image-05-f.svg = PASS TEXT
 
@@ -26,5 +33,33 @@ BUGWK68516 : fast/workers/shared-worker-frame-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/worker-close-more.html = PASS TEXT
 BUGWK68516 : fast/workers/dedicated-worker-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/worker-lifecycle.html = PASS TEXT
+
+BUGWK37550 : fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html = PASS TEXT
+
+BUGWK37557 : http/tests/misc/image-blocked-src-change.html = PASS TEXT
+BUGWK53428 : http/tests/misc/favicon-as-image.html = PASS TEXT
+
+BUGWK61852 : svg/custom/animate-target-id-changed.svg = PASS TEXT
+BUGWK56561 : svg/custom/clip-path-referencing-use2.svg = PASS TEXT
+BUGWK61914 : svg/custom/object-sizing-explicit-width-height.xhtml = PASS TEXT
+BUGWK37560 : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
+
+BUGWK37562 : plugins/update-widgets-crash.html = PASS TEXT
+BUGWK37572 : plugins/open-and-close-window-with-plugin.html = PASS TEXT
+
+BUGWK43034 : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = PASS TEXT
+
+BUGWK53995 : editing/selection/end-of-document.html = PASS TEXT
+BUGWK51325 : editing/selection/extend-by-character-003.html = PASS TEXT
+BUGWK51699 : editing/selection/extend-by-character-004.html = PASS TEXT
+BUGWK51699 : editing/selection/extend-by-character-005.html = PASS TEXT
+BUGWK53074 : editing/selection/extend-selection-bidi.html = PASS TEXT
+
+BUGWK61932 : jquery/manipulation.html = PASS TEXT
+
+BUGWK37623 : scrollbars/scrollbar-crash-on-refresh.html = PASS TEXT
+
+BUGWK22770 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = PASS TEXT
+BUGWK59937 : tables/mozilla_expected_failures/bugs/bug85016.html = PASS TEXT
 
 // End of Flaky tests
