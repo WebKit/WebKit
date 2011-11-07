@@ -1,3 +1,13 @@
+2011-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99470.
+        http://trac.webkit.org/changeset/99470
+        https://bugs.webkit.org/show_bug.cgi?id=71740
+
+        "Broke test-webkitpy" (Requested by eseidel2 on #webkit).
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-11-07  Tony Chang  <tony@chromium.org>
 
         [chromium] update flakiness dashboard to reflect current bots
