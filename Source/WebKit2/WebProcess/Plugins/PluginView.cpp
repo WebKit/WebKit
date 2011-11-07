@@ -469,6 +469,10 @@ void PluginView::initializePlugin()
     
     m_isInitialized = true;
 
+#if PLATFORM(MAC)
+    windowAndViewFramesChanged(m_webPage->windowFrameInScreenCoordinates(), m_webPage->viewFrameInWindowCoordinates());
+#endif
+
     viewGeometryDidChange();
 
     redeliverManualStream();
@@ -481,7 +485,6 @@ void PluginView::initializePlugin()
         }
     }
 
-    windowAndViewFramesChanged(m_webPage->windowFrameInScreenCoordinates(), m_webPage->viewFrameInWindowCoordinates());
     setWindowIsVisible(m_webPage->windowIsVisible());
     setWindowIsFocused(m_webPage->windowIsFocused());
 #endif

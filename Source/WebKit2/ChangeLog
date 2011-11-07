@@ -1,3 +1,26 @@
+2011-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Simplify NetscapePlugin::convertPoint and make it work (in theory) with transformed plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=71699
+
+        Reviewed by Sam Weinig.
+
+        Add a getScreenTransform function which given a coordinate space returns a transform that converts a
+        point from that coordinate space to the screen coordinate space. We then get the source -> screen transform
+        and the destination -> screen transform. We invert the destination -> screen transform, multiply it with the
+        source -> screen transform and use mapPoint to get a complete affine transform from the source to the destination space
+        and use mapPoint to map the source point and return the destination point.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::getScreenTransform):
+        (WebKit::NetscapePlugin::convertPoint):
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        Call windowAndViewFramesChanged before viewGeometryDidChange so that the window and view frames will be up to date by
+        the time NPP_SetWindow is called in the plug-in.
+
 2011-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Put handling of gestures and their interaction in one place

@@ -65,6 +65,9 @@ public:
 
     mach_port_t compositingRenderServerPort();
 
+    // Computes an affine transform from the given coordinate space to the screen coordinate space.
+    bool getScreenTransform(NPCoordinateSpace sourceSpace, WebCore::AffineTransform&);
+
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
     bool isWindowActive() const { return m_windowHasFocus; }

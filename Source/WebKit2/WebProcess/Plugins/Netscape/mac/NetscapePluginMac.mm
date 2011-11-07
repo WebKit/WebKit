@@ -88,75 +88,66 @@ NPError NetscapePlugin::setEventModel(NPEventModel eventModel)
     return NPERR_NO_ERROR;
 }
 
-static double flipScreenYCoordinate(double y)
+bool NetscapePlugin::getScreenTransform(NPCoordinateSpace sourceSpace, AffineTransform& transform)
 {
-    return [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - y;
+    ASSERT(transform.isIdentity());
+
+    switch (sourceSpace) {
+        case NPCoordinateSpacePlugin: {
+            transform.translate(m_windowFrameInScreenCoordinates.x(), m_windowFrameInScreenCoordinates.y());
+            transform.translate(m_viewFrameInWindowCoordinates.x(), m_viewFrameInWindowCoordinates.height() + m_viewFrameInWindowCoordinates.y());
+            transform.flipY();
+            transform *= m_pluginToRootViewTransform;
+            return true;
+        }
+
+        case NPCoordinateSpaceWindow: {
+            transform.translate(m_windowFrameInScreenCoordinates.x(), m_windowFrameInScreenCoordinates.y());
+            return true;
+        }
+
+        case NPCoordinateSpaceFlippedWindow: {
+            transform.translate(m_windowFrameInScreenCoordinates.x(), m_windowFrameInScreenCoordinates.height() + m_windowFrameInScreenCoordinates.y());
+            transform.flipY();
+            return true;
+        }
+
+        case NPCoordinateSpaceScreen: {
+            // Nothing to do.
+            return true;
+        }
+
+        case NPCoordinateSpaceFlippedScreen: {
+            double screenHeight = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height;
+            transform.translate(0, screenHeight);
+            transform.flipY();
+            return true;
+        }
+
+        default:
+            return false;
+    }
 }
 
 NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace)
 {
-    if (sourceSpace == destSpace) {
-        destX = sourceX;
-        destY = sourceY;
-        return true;
-    }
-
-    double sourceXInScreenSpace;
-    double sourceYInScreenSpace;
-
-    FloatPoint sourceInScreenSpace;
-    switch (sourceSpace) {
-    case NPCoordinateSpacePlugin:
-        sourceXInScreenSpace = sourceX + m_windowFrameInScreenCoordinates.x() + m_viewFrameInWindowCoordinates.x() + m_npWindow.x;
-        sourceYInScreenSpace = m_windowFrameInScreenCoordinates.y() + m_viewFrameInWindowCoordinates.y() + m_viewFrameInWindowCoordinates.height() - (sourceY + m_npWindow.y);
-        break;
-    case NPCoordinateSpaceWindow:
-        sourceXInScreenSpace = sourceX + m_windowFrameInScreenCoordinates.x();
-        sourceYInScreenSpace = sourceY + m_windowFrameInScreenCoordinates.y();
-        break;
-    case NPCoordinateSpaceFlippedWindow:
-        sourceXInScreenSpace = sourceX + m_windowFrameInScreenCoordinates.x();
-        sourceYInScreenSpace = m_windowFrameInScreenCoordinates.y() + m_windowFrameInScreenCoordinates.height() - sourceY;
-        break;
-    case NPCoordinateSpaceScreen:
-        sourceXInScreenSpace = sourceX;
-        sourceYInScreenSpace = sourceY;
-        break;
-    case NPCoordinateSpaceFlippedScreen:
-        sourceXInScreenSpace = sourceX;
-        sourceYInScreenSpace = flipScreenYCoordinate(sourceY);
-        break;
-    default:
+    AffineTransform sourceTransform;
+    if (!getScreenTransform(sourceSpace, sourceTransform))
         return false;
-    }
 
-    // Now convert back.
-    switch (destSpace) {
-    case NPCoordinateSpacePlugin:
-        destX = sourceXInScreenSpace - (m_windowFrameInScreenCoordinates.x() + m_viewFrameInWindowCoordinates.x() + m_npWindow.x);
-        destY = m_windowFrameInScreenCoordinates.y() + m_viewFrameInWindowCoordinates.y() + m_viewFrameInWindowCoordinates.height() - (sourceYInScreenSpace + m_npWindow.y);
-        break;
-    case NPCoordinateSpaceWindow:
-        destX = sourceXInScreenSpace - m_windowFrameInScreenCoordinates.x();
-        destY = sourceYInScreenSpace - m_windowFrameInScreenCoordinates.y();
-        break;
-    case NPCoordinateSpaceFlippedWindow:
-        destX = sourceXInScreenSpace - m_windowFrameInScreenCoordinates.x();
-        destY = sourceYInScreenSpace - m_windowFrameInScreenCoordinates.y();
-        destY = m_windowFrameInScreenCoordinates.height() - destY;
-        break;
-    case NPCoordinateSpaceScreen:
-        destX = sourceXInScreenSpace;
-        destY = sourceYInScreenSpace;
-        break;
-    case NPCoordinateSpaceFlippedScreen:
-        destX = sourceXInScreenSpace;
-        destY = flipScreenYCoordinate(sourceYInScreenSpace);
-        break;
-    default:
+    AffineTransform destTransform;
+    if (!getScreenTransform(destSpace, destTransform))
         return false;
-    }
 
+    if (!destTransform.isInvertible())
+        return false;
+
+    AffineTransform transform = destTransform.inverse() * sourceTransform;
+
+    FloatPoint destinationPoint = transform.mapPoint(FloatPoint(sourceX, sourceY));
+
+    destX = destinationPoint.x();
+    destY = destinationPoint.y();
     return true;
 }
 
