@@ -428,6 +428,7 @@ inline void Lexer<T>::record8(int c)
 template <typename T>
 inline void assertCharIsIn8BitRange(T c)
 {
+    UNUSED_PARAM(c);
     ASSERT(c >= 0);
     ASSERT(c <= 0xFF);
 }
@@ -435,6 +436,7 @@ inline void assertCharIsIn8BitRange(T c)
 template <>
 inline void assertCharIsIn8BitRange(UChar c)
 {
+    UNUSED_PARAM(c);
     ASSERT(c <= 0xFF);
 }
 

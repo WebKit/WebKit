@@ -1,3 +1,10 @@
+2011-11-07  Dmitry Lomov  <dslomov@google.com>
+
+        Unreviewed. Release build fix.
+
+        * parser/Lexer.cpp:
+        (JSC::assertCharIsIn8BitRange):
+
 2011-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         Switch the value profiler back to 8 buckets, because we suspect that while this
