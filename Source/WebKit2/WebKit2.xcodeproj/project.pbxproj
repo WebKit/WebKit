@@ -727,7 +727,7 @@
 		BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597CE112B56AC00EC8C23 /* WKPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */; };
 		BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597D4112B56DC00EC8C23 /* WKPage.cpp */; };
-		BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597D5112B56DC00EC8C23 /* WKPage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597D5112B56DC00EC8C23 /* WKPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD597FD112B57BE00EC8C23 /* WebPreferences.h */; };
 		BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */; };
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };

@@ -1,3 +1,12 @@
+2011-11-07  Sam Weinig  <sam@webkit.org>
+
+        WKPage.h should be in PrivateHeaders.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Mark WKPage.h private.
+
 2011-11-07  Anders Carlsson  <andersca@apple.com>
 
         Simplify NetscapePlugin::convertPoint and make it work (in theory) with transformed plug-ins
