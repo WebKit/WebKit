@@ -457,6 +457,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
         var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        var commentNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-comment");
         var populated = WebInspector.populateHrefContextMenu(contextMenu, this.selectedDOMNode(), event);
         if (tag && treeElement._populateTagContextMenu) {
             if (populated)
@@ -467,6 +468,11 @@ WebInspector.ElementsTreeOutline.prototype = {
             if (populated)
                 contextMenu.appendSeparator();
             treeElement._populateTextContextMenu(contextMenu, textNode);
+            populated = true;
+        } else if (commentNode && treeElement._populateNodeContextMenu) {
+            if (populated)
+                contextMenu.appendSeparator();
+            treeElement._populateNodeContextMenu(contextMenu, textNode);
             populated = true;
         }
 
@@ -1039,17 +1045,22 @@ WebInspector.ElementsTreeElement.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit attribute" : "Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
         contextMenu.appendSeparator();
 
-        // Add free-form node-related actions.
-        contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete node" : "Delete Node"), this.remove.bind(this));
-
+        this._populateNodeContextMenu(contextMenu);
         this.treeOutline._populateContextMenu(contextMenu, this.representedObject);
     },
 
     _populateTextContextMenu: function(contextMenu, textNode)
     {
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit text" : "Edit Text"), this._startEditingTextNode.bind(this, textNode));
+        this._populateNodeContextMenu(contextMenu);
+    },
+
+    _populateNodeContextMenu: function(contextMenu)
+    {
+        // Add free-form node-related actions.
+        contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete node" : "Delete Node"), this.remove.bind(this));
     },
 
     _startEditing: function()

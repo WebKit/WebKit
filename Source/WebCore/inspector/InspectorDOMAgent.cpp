@@ -50,6 +50,7 @@
 #include "DOMNodeHighlighter.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -738,27 +739,59 @@ void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagN
 
 void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::String* outerHTML)
 {
-    HTMLElement* element = assertHTMLElement(errorString, nodeId);
-    if (element)
-        *outerHTML = element->outerHTML();
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return;
+
+    if (node->isHTMLElement()) {
+        *outerHTML = static_cast<HTMLElement*>(node)->outerHTML();
+        return;
+    }
+
+    if (node->isCommentNode()) {
+        *outerHTML = "<!--" + node->nodeValue() + "-->";
+        return;
+    }
+
+    if (node->isTextNode()) {
+        *outerHTML = node->nodeValue();
+        return;
+    }
+
+    *errorString = "Only HTMLElements, Comments, and Text nodes are supported";
 }
 
 void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML, int* newId)
 {
-    HTMLElement* htmlElement = assertHTMLElement(errorString, nodeId);
-    if (!htmlElement)
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
         return;
 
-    bool requiresTotalUpdate = htmlElement->tagName() == "HTML" || htmlElement->tagName() == "BODY" || htmlElement->tagName() == "HEAD";
+    Element* parentElement = node->parentElement();
+    if (!parentElement)
+        return;
 
-    bool childrenRequested = m_childrenRequested.contains(nodeId);
-    Node* previousSibling = htmlElement->previousSibling();
-    ContainerNode* parentNode = htmlElement->parentNode();
+    Document* document = node->ownerDocument();
+    if (!document->isHTMLDocument()) {
+        *errorString = "Not an HTML document";
+        return;
+    }
+
+    Node* previousSibling = node->previousSibling(); // Remember previous sibling before replacing node.
+
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+    fragment->parseHTML(outerHTML, parentElement);
 
     ExceptionCode ec = 0;
-    htmlElement->setOuterHTML(outerHTML, ec);
-    if (ec)
+    parentElement->replaceChild(fragment.release(), node, ec);
+    if (ec) {
+        *errorString = "Failed to replace Node with new contents";
         return;
+    }
+
+    bool requiresTotalUpdate = false;
+    if (node->isHTMLElement())
+        requiresTotalUpdate = node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD";
 
     if (requiresTotalUpdate) {
         RefPtr<Document> document = m_document;
@@ -768,7 +801,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
+    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentElement->firstChild();
     if (!newNode) {
         // The only child node has been deleted.
         *newId = 0;
@@ -776,6 +809,8 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     }
 
     *newId = pushNodePathToFrontend(newNode);
+
+    bool childrenRequested = m_childrenRequested.contains(nodeId);
     if (childrenRequested)
         pushChildNodesToFrontend(*newId);
 }

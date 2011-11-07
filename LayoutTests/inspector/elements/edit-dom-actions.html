@@ -18,7 +18,7 @@ function test()
 
         function testRemove(next)
         {
-            domActionTest("testRemove", "node-to-remove", testBody, next);
+            domActionTestForNodeId("testRemove", "node-to-remove", testBody, next);
 
             function testBody(node, done)
             {
@@ -30,7 +30,7 @@ function test()
 
         function testSetNodeName(next)
         {
-            domActionTest("testSetNodeName", "node-to-set-name", testBody, next);
+            domActionTestForNodeId("testSetNodeName", "node-to-set-name", testBody, next);
 
             function testBody(node, done)
             {
@@ -40,7 +40,7 @@ function test()
 
         function testSetNodeNameInput(next)
         {
-            domActionTest("testSetNodeNameInput", "node-to-set-name-input", testBody, next);
+            domActionTestForNodeId("testSetNodeNameInput", "node-to-set-name-input", testBody, next);
 
             function testBody(node, done)
             {
@@ -50,7 +50,7 @@ function test()
 
         function testSetNodeValue(next)
         {
-            domActionTest("testSetNodeValue", "node-to-set-value", testBody, next);
+            domActionTestForNodeId("testSetNodeValue", "node-to-set-value", testBody, next);
 
             function testBody(node, done)
             {
@@ -60,7 +60,7 @@ function test()
 
         function testSetAttribute(next)
         {
-            domActionTest("testSetAttribute", "node-to-set-attribute", testBody, next);
+            domActionTestForNodeId("testSetAttribute", "node-to-set-attribute", testBody, next);
          
             function testBody(node, done)
             {
@@ -70,7 +70,7 @@ function test()
 
         function testRemoveAttribute(next)
         {
-            domActionTest("testRemoveAttribute", "node-to-remove-attribute", testBody, next);
+            domActionTestForNodeId("testRemoveAttribute", "node-to-remove-attribute", testBody, next);
          
             function testBody(node, done)
             {
@@ -80,7 +80,7 @@ function test()
 
         function testAddAttribute(next)
         {
-            domActionTest("testAddAttribute", "node-to-add-attribute", testBody, next);
+            domActionTestForNodeId("testAddAttribute", "node-to-add-attribute", testBody, next);
          
             function testBody(node, done)
             {
@@ -99,9 +99,44 @@ function test()
             }
         },
 
+        function testEditCommentAsHTML(next)
+        {
+            function commentNodeSelectionCallback(testNode, callback)
+            {
+                var childNodes = testNode.children;
+                for (var i = 0; i < childNodes.length; ++i) {
+                    if (childNodes[i].nodeType() === 8) {
+                        WebInspector.updateFocusedNode(childNodes[i].id);
+                        callback(childNodes[i]);
+                        return;
+                    }
+                }
+                InspectorTest.addResult("Comment node not found");
+                InspectorTest.completeTest();
+            }
+            domActionTest("testEditCommentAsHTML", commentNodeSelectionCallback, testBody, next);
+
+            function testBody(node, done)
+            {
+                var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+                treeElement._editAsHTML();
+                InspectorTest.runAfterPendingDispatches(step2);
+
+                function step2()
+                {
+                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
+                    treeElement._htmlEditElement.textContent = "<div foo=\"bar-comment\">Element</div>";
+                    var event = InspectorTest.createKeyEvent("Enter");
+                    event.isMetaOrCtrlForTest = true;
+                    treeElement._htmlEditElement.dispatchEvent(event);
+                    InspectorTest.runAfterPendingDispatches(done);
+                }
+            }
+        },
+
         function testEditAsHTML(next)
         {
-            domActionTest("testEditAsHTML", "node-to-edit-as-html", testBody, next);
+            domActionTestForNodeId("testEditAsHTML", "node-to-edit-as-html", testBody, next);
 
             function testBody(node, done)
             {
@@ -116,19 +151,28 @@ function test()
                     var event = InspectorTest.createKeyEvent("Enter");
                     event.isMetaOrCtrlForTest = true;
                     treeElement._htmlEditElement.dispatchEvent(event);
-                    InspectorTest.runAfterPendingDispatches(done);
+                    InspectorTest.runAfterPendingDispatches(InspectorTest.expandElementsTree.bind(InspectorTest, done));
                 }
             }
         }
     ]);
 
-    function domActionTest(testName, dataNode, testBody, next)
+    function domActionTestForNodeId(testName, dataNodeId, testBody, next)
+    {
+        function callback(testNode, continuation)
+        {
+            InspectorTest.selectNodeWithId(dataNodeId, continuation);
+        }
+        domActionTest(testName, callback, testBody, next);
+    }
+
+    function domActionTest(testName, dataNodeSelectionCallback, testBody, next)
     {
         var testNode = InspectorTest.expandedNodeWithId(testName);
         InspectorTest.addResult("==== before ====");
         InspectorTest.dumpElementsTree(testNode);
 
-        InspectorTest.selectNodeWithId(dataNode, step0);
+        dataNodeSelectionCallback(testNode, step0);
 
         function step0(node)
         {
@@ -208,6 +252,11 @@ Tests that user can mutate DOM by means of elements panel.
     <div id="testEditAsHTML">
         <div id="node-to-edit-as-html"><span id="span">Text</span></div>
     </div>
+
+    <div id="testEditCommentAsHTML">
+        <!-- Comment -->
+    </div>
+
 </div>
 </body>
 </html>
