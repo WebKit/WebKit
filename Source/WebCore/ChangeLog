@@ -1,3 +1,27 @@
+2011-11-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: autocomplete combobox for Styles sidebar and Console.
+        https://bugs.webkit.org/show_bug.cgi?id=65511
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        (WebInspector.TextPrompt.prototype.setSuggestBoxEnabled):
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.prototype.applySuggestion):
+        (WebInspector.TextPrompt.prototype.acceptSuggestion):
+        (WebInspector.TextPromptWithHistory):
+        * inspector/front-end/inspector.css:
+        (.suggest-box.generic-suggest):
+        (.suggest-box.generic-suggest.above-anchor):
+        (.suggest-box.generic-suggest .content):
+
 2011-11-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: split script-formatter test into multiple tests.

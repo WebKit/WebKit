@@ -112,6 +112,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), ExpressionStopCharacters + ".");
+    this.prompt.setSuggestBoxEnabled("generic-suggest");
     this.prompt.attach(this.promptElement);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
 }
@@ -352,12 +353,7 @@ WebInspector.ConsoleView.prototype = {
         if (dotNotation || bracketNotation)
             expressionString = expressionString.substr(0, lastIndex);
 
-        if (!expressionString && !prefix) {
-            completionsReadyCallback([]);
-            return;
-        }
-
-        if (parseInt(expressionString, 10) == expressionString) {
+        if (expressionString && parseInt(expressionString, 10) == expressionString) {
             // User is entering float value, do not suggest anything.
             completionsReadyCallback([]);
             return;

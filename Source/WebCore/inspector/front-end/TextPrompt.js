@@ -29,11 +29,11 @@
 
 /**
  * @constructor
+ * @extends WebInspector.Object
  * @param {function(Range, boolean, function(*))} completions
  * @param {string} stopCharacters
- * @param {WebInspector.TextPrompt.SuggestBoxConfig=} suggestBoxConfig
  */
-WebInspector.TextPrompt = function(completions, stopCharacters, suggestBoxConfig)
+WebInspector.TextPrompt = function(completions, stopCharacters)
 {
     /**
      * @type {Element|undefined}
@@ -41,9 +41,13 @@ WebInspector.TextPrompt = function(completions, stopCharacters, suggestBoxConfig
     this._proxyElement;
     this._loadCompletions = completions;
     this._completionStopCharacters = stopCharacters;
-    this._suggestBoxConfig = suggestBoxConfig;
     this._suggestForceable = true;
 }
+
+WebInspector.TextPrompt.Events = {
+    ItemApplied: "text-prompt-item-applied",
+    ItemAccepted: "text-prompt-item-accepted"
+};
 
 WebInspector.TextPrompt.prototype = {
     get proxyElement()
@@ -54,6 +58,11 @@ WebInspector.TextPrompt.prototype = {
     setSuggestForceable: function(x)
     {
         this._suggestForceable = x;
+    },
+
+    setSuggestBoxEnabled: function(className)
+    {
+        this._suggestBoxClassName = className;
     },
 
     /**
@@ -99,11 +108,9 @@ WebInspector.TextPrompt.prototype = {
         this._element.addEventListener("keydown", this._boundOnKeyDown, true);
         this._element.addEventListener("selectstart", this._selectStart.bind(this), false);
 
-        if (this._suggestBoxConfig) {
-            this._suggestBox = new WebInspector.TextPrompt.SuggestBox(this, this._element, this._suggestBoxConfig.styleClass);
-            this._applyCallback = this._suggestBoxConfig.applyItemCallback;
-            this._acceptCallback = this._suggestBoxConfig.acceptItemCallback;
-        }
+        if (typeof this._suggestBoxClassName === "string")
+            this._suggestBox = new WebInspector.TextPrompt.SuggestBox(this, this._element, this._suggestBoxClassName);
+
         return this.proxyElement;
     },
 
@@ -482,8 +489,8 @@ WebInspector.TextPrompt.prototype = {
         var selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
-        if (isIntermediateSuggestion && this._applyCallback)
-            this._applyCallback();
+        if (isIntermediateSuggestion)
+            this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemApplied, { itemText: completionText });
     },
 
     acceptSuggestion: function()
@@ -491,8 +498,7 @@ WebInspector.TextPrompt.prototype = {
         this.acceptAutoComplete();
         if (this._suggestBox)
             this._suggestBox.hide();
-        if (this._acceptCallback)
-            this._acceptCallback();
+        this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemAccepted);
     },
 
     isSuggestBoxVisible: function()
@@ -624,29 +630,17 @@ WebInspector.TextPrompt.prototype = {
     }
 }
 
-/**
- * @constructor
- * @param {string=} styleClass
- * @param {function(*)=} applyItemCallback
- * @param {function(*)=} acceptItemCallback
- */
-WebInspector.TextPrompt.SuggestBoxConfig = function(styleClass, applyItemCallback, acceptItemCallback)
-{
-    this.styleClass = styleClass;
-    this.applyItemCallback = applyItemCallback;
-    this.acceptItemCallback = acceptItemCallback;
-}
+WebInspector.TextPrompt.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor
  * @extends {WebInspector.TextPrompt}
  * @param {function(Range, boolean, function(*))} completions
  * @param {string} stopCharacters
- * @param {WebInspector.TextPrompt.SuggestBoxConfig=} suggestBoxConfig
  */
-WebInspector.TextPromptWithHistory = function(completions, stopCharacters, suggestBoxConfig)
+WebInspector.TextPromptWithHistory = function(completions, stopCharacters)
 {
-    WebInspector.TextPrompt.call(this, completions, stopCharacters, suggestBoxConfig);
+    WebInspector.TextPrompt.call(this, completions, stopCharacters);
 
     /**
      * @type {Array.<string>}

@@ -107,7 +107,7 @@ WebInspector.StylesSidebarPane.ColorFormat = {
     HSLA: "hsla"
 }
 
-WebInspector.StylesSidebarPane.StyleValueDelimiters = " \t\n\"':;,/()";
+WebInspector.StylesSidebarPane.StyleValueDelimiters = " \xA0\t\n\"':;,/()";
 
 
 // Keep in sync with RenderStyleConstants.h PseudoId enum. Array below contains pseudo id names for corresponding enum indexes.
@@ -1872,7 +1872,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (selectElement.parentElement)
             selectElement.parentElement.scrollIntoViewIfNeeded(false);
 
+        var applyItemCallback = !isEditingName ? this._applyFreeFlowStyleTextEdit.bind(this, true) : undefined;
         this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(isEditingName ? WebInspector.CSSCompletions.cssNameCompletions : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent), this, isEditingName);
+        if (applyItemCallback) {
+            this._prompt.addEventListener(WebInspector.TextPrompt.Events.ItemApplied, applyItemCallback, this);
+            this._prompt.addEventListener(WebInspector.TextPrompt.Events.ItemAccepted, applyItemCallback, this);
+        }
         var proxyElement = this._prompt.attachAndStartEditing(selectElement, blurListener.bind(this, context));
 
         proxyElement.addEventListener("keydown", this.editingNameValueKeyDown.bind(this, context), false);
@@ -2199,10 +2204,13 @@ WebInspector.StylePropertyTreeElement.prototype.__proto__ = TreeElement.prototyp
 /**
  * @constructor
  * @extends {WebInspector.TextPrompt}
+ * @param {function(*)=} acceptCallback
  */
-WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(cssCompletions, sidebarPane, isEditingName)
+WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(cssCompletions, sidebarPane, isEditingName, acceptCallback)
 {
+    // Use the same callback both for applyItemCallback and acceptItemCallback.
     WebInspector.TextPrompt.call(this, this._buildPropertyCompletions.bind(this), WebInspector.StylesSidebarPane.StyleValueDelimiters);
+    this.setSuggestBoxEnabled("generic-suggest");
     this._cssCompletions = cssCompletions;
     this._sidebarPane = sidebarPane;
     this._isEditingName = isEditingName;
@@ -2222,8 +2230,11 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             }
             break;
         case "U+0009":
-            this.acceptAutoComplete();
-            return;
+            if (this.isSuggestBoxVisible()) {
+                this._suggestBox.acceptSuggestion();
+                return !this._isEditingName;
+            }
+            return this.acceptAutoComplete();
         }
 
         WebInspector.TextPrompt.prototype.onKeyDown.call(this, event);
@@ -2231,19 +2242,11 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
 
     _handleNameOrValueUpDown: function(event)
     {
+        // Handle numeric value increment/decrement only at this point.
         if (!this._isEditingName && this._handleUpOrDownValue(event))
             return true;
 
-        var reverse = event.keyIdentifier === "Up";
-        if (this.autoCompleteElement)
-            this.complete(false, true, reverse); // Accept the current suggestion, if any.
-        else {
-            // Select the word suffix to affect it when computing the subsequent suggestion.
-            this._selectCurrentWordSuffix();
-        }
-
-        this.complete(false, true, reverse); // Actually increment/decrement the suggestion.
-        return true;
+        return false;
     },
 
     _handleUpOrDownValue: function(event)
@@ -2311,22 +2314,6 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             return true;
         }
         return false;
-    },
-
-    _selectCurrentWordSuffix: function()
-    {
-        var selection = window.getSelection();
-        if (!selection.rangeCount)
-            return;
-
-        var selectionRange = selection.getRangeAt(0);
-        if (!selectionRange.commonAncestorContainer.isDescendant(this._element))
-            return;
-        var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this._element, "forward");
-        if (!wordSuffixRange.toString())
-            return;
-        selection.removeAllRanges();
-        selection.addRange(wordSuffixRange);
     },
 
     _buildPropertyCompletions: function(wordRange, force, completionsReadyCallback)
