@@ -33,7 +33,7 @@ using namespace WebCore;
 
 static const int32_t usecPerSec = 1e6;
 
-ClockGeneric::GenericClock()
+ClockGeneric::ClockGeneric()
     : m_running(false)
     , m_rate(1)
     , m_offset(0)

@@ -1,3 +1,15 @@
+2011-11-07  Jer Noble  <jer.noble@apple.com>
+
+        Build fix due to a erroneous search-and-replace.
+
+        Unreviewed build fix.
+
+        Replace all instances of GenericClock with ClockGeneric.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::ClockGeneric):
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move parseSandboxPolicy to SecurityContext
@@ -31,7 +43,7 @@
         * platform/Clock.cpp:
         (Clock::create):
         * platform/ClockGeneric.cpp: Renamed from Source/WebCore/platform/posix/PlatformClockPOSIX.cpp.
-        (ClockGeneric::GenericClock):
+        (ClockGeneric::ClockGeneric):
         (ClockGeneric::setCurrentTime):
         (ClockGeneric::currentTime):
         (ClockGeneric::setPlayRate):
