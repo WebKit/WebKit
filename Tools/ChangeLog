@@ -1,3 +1,12 @@
+2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Print right order for changing feature defines
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProject):
+
 2011-11-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial fix after build system refactoring.

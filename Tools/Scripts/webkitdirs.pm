@@ -1764,7 +1764,7 @@ sub buildQMakeProject($@)
                     }
 
                     if ($defines{$1} != $2) {
-                        print "Feature $1 has changed ($defines{$1} -> $2)";
+                        print "Feature $1 has changed ($2 -> $defines{$1})";
                         $needsCleanBuild = 1;
                         last;
                     }
