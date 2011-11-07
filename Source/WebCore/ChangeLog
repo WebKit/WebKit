@@ -1,5 +1,25 @@
 2011-11-07  Andreas Kling  <kling@webkit.org>
 
+        CSSImageValue: Remove inheritance from CachedImageClient.
+        <http://webkit.org/b/71675>
+
+        Reviewed by Antti Koivisto.
+
+        CSSImageValue doesn't actually use any of the CachedImageClient
+        functionality, and holds a reference to the resource via the
+        CachedResourceHandle in StyleCachedImage.
+
+        So we can safely remove the multiple inheritance and simplify
+        the class.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::~CSSImageValue):
+        (WebCore::CSSImageValue::cachedImage):
+        (WebCore::CSSImageValue::clearCachedImage):
+        * css/CSSImageValue.h:
+
+2011-11-07  Andreas Kling  <kling@webkit.org>
+
         CSSPrimitiveValue: Remove unused virtual function parseString().
         <http://webkit.org/b/71671>
 

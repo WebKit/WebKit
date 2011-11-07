@@ -45,8 +45,6 @@ CSSImageValue::CSSImageValue()
 
 CSSImageValue::~CSSImageValue()
 {
-    if (m_image && m_image->isCachedImage())
-        static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->removeClient(this);
 }
 
 StyleImage* CSSImageValue::cachedOrPendingImage()
@@ -73,10 +71,8 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         m_accessedImage = true;
 
         ResourceRequest request(loader->document()->completeURL(url));
-        if (CachedImage* cachedImage = loader->requestImage(request)) {
-            cachedImage->addClient(this);
+        if (CachedImage* cachedImage = loader->requestImage(request))
             m_image = StyleCachedImage::create(cachedImage);
-        }
     }
 
     return (m_image && m_image->isCachedImage()) ? static_cast<StyleCachedImage*>(m_image.get()) : 0;
@@ -91,8 +87,6 @@ String CSSImageValue::cachedImageURL()
 
 void CSSImageValue::clearCachedImage()
 {
-    if (m_image && m_image->isCachedImage())
-        static_cast<StyleCachedImage*>(m_image.get())->cachedImage()->removeClient(this);
     m_image = 0;
     m_accessedImage = false;
 }
