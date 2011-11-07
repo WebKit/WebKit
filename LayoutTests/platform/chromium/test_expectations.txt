@@ -615,10 +615,8 @@ BUGWK60109 WIN : inspector/elements/edit-dom-actions.html = PASS TEXT TIMEOUT
 BUGWK60109 SLOW LINUX DEBUG : inspector/elements/edit-dom-actions.html = PASS
 
 // -----------------------------------------------------------------
-// Other
+// Editing tests
 // -----------------------------------------------------------------
-
-BUGWK69791 WIN LINUX : plugins/iframe-plugin-bgcolor.html = TEXT
 
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
@@ -680,8 +678,6 @@ BUGCASEQ LINUX WIN : editing/selection/select-from-textfield-outwards.html = IMA
 
 BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = PASS TEXT
 
-BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
-
 BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
 
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
@@ -697,6 +693,9 @@ BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
+
+BUGWK69791 WIN LINUX : plugins/iframe-plugin-bgcolor.html = TEXT
+
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 
 // This test seems to hang on Vista, in addition to the other problems.
