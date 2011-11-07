@@ -97,6 +97,8 @@ public:
 
     static const SVGPropertyInfo* dPropertyInfo();
 
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
+
 private:
     SVGPathElement(const QualifiedName&, Document*);
 
@@ -126,6 +128,8 @@ private:
     OwnPtr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
     RefPtr<SVGAnimatedPathSegListPropertyTearOff> m_animatablePathSegList;
+    FloatRect m_cachedBBoxRect;
+    bool m_cachedBBoxRectIsValid;                       
 };
 
 } // namespace WebCore

@@ -771,7 +771,7 @@ void CanvasRenderingContext2D::closePath()
     if (m_path.isEmpty())
         return;
 
-    FloatRect boundRect = m_path.boundingRect();
+    FloatRect boundRect = m_path.fastBoundingRect();
     if (boundRect.width() || boundRect.height())
         m_path.closeSubpath();
 }
@@ -956,7 +956,7 @@ void CanvasRenderingContext2D::fill()
             didDrawEntireCanvas();
         } else {
             c->fillPath(m_path);
-            didDraw(m_path.boundingRect());
+            didDraw(m_path.fastBoundingRect());
         }
     }
 
@@ -974,7 +974,7 @@ void CanvasRenderingContext2D::stroke()
         return;
 
     if (!m_path.isEmpty()) {
-        FloatRect dirtyRect = m_path.boundingRect();
+        FloatRect dirtyRect = m_path.fastBoundingRect();
         // Fast approximation of the stroke's bounding rect.
         // This yields a slightly oversized rect but is very fast
         // compared to Path::strokeBoundingRect().
@@ -1580,7 +1580,7 @@ template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRe
     IntRect canvasRect(0, 0, canvas()->width(), canvas()->height());
     canvasRect = canvas()->baseTransform().mapRect(canvasRect);
     Path path = transformAreaToDevice(area);
-    IntRect bufferRect = enclosingIntRect(path.boundingRect());
+    IntRect bufferRect = enclosingIntRect(path.fastBoundingRect());
     IntPoint originalLocation = bufferRect.location();
     bufferRect.intersect(canvasRect);
     if (croppedOffset)

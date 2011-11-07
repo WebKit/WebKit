@@ -76,6 +76,7 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* do
     : SVGStyledTransformableElement(tagName, document)
     , m_pathByteStream(SVGPathByteStream::create())
     , m_pathSegList(PathSegUnalteredRole)
+    , m_cachedBBoxRectIsValid(false)
 {
     ASSERT(hasTagName(SVGNames::pathTag));
     registerAnimatedPropertiesForSVGPathElement();
@@ -266,6 +267,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             SVGPathParserFactory* factory = SVGPathParserFactory::self();
             factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
             m_pathSegList.value = newList;
+            m_cachedBBoxRectIsValid = false;
         }
 
         if (renderer)
@@ -350,6 +352,8 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
     }
 
     invalidateSVGAttributes();
+    
+    m_cachedBBoxRectIsValid = false;
 
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
     if (!renderer)
@@ -357,6 +361,25 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
 
     renderer->setNeedsPathUpdate();
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+}
+
+FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
+{
+    if (styleUpdateStrategy == AllowStyleUpdate)
+        this->document()->updateLayoutIgnorePendingStylesheets();
+
+    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+
+    // FIXME: Eventually we should support getBBox for detached elements.
+    if (!renderer)
+        return FloatRect();
+
+    if (!m_cachedBBoxRectIsValid) {
+        m_cachedBBoxRect = renderer->path().boundingRect();
+        m_cachedBBoxRectIsValid = true;
+    }
+    
+    return m_cachedBBoxRect;
 }
 
 }

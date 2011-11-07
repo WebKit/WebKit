@@ -105,7 +105,10 @@ namespace WebCore {
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
+        // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
+        // should perfectly bound the points within the path.
         FloatRect boundingRect() const;
+        FloatRect fastBoundingRect() const;
         FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
         
         float length() const;

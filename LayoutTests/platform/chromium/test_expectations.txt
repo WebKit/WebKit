@@ -3899,3 +3899,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = P
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
 
 BUGWK71658 MAC DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS TIMEOUT
+
+// Introduced due to BUGWK53512, fails under Skia right now
+BUGWK65939 : svg/custom/getBBox-path.svg = TEXT

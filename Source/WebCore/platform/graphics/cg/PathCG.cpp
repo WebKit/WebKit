@@ -124,7 +124,7 @@ static CGMutablePathRef copyCGPathClosingSubpaths(CGPathRef originalPath)
 
 bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
-    if (!boundingRect().contains(point))
+    if (!fastBoundingRect().contains(point))
         return false;
 
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
@@ -162,6 +162,17 @@ void Path::translate(const FloatSize& size)
 }
 
 FloatRect Path::boundingRect() const
+{
+    // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
+    // does not, but only exists on 10.6 and above.
+#if !defined(BUILDING_ON_LEOPARD)
+    return CGPathGetPathBoundingBox(m_path);
+#else
+    return CGPathGetBoundingBox(m_path);
+#endif
+}
+
+FloatRect Path::fastBoundingRect() const
 {
     return CGPathGetBoundingBox(m_path);
 }

@@ -357,7 +357,7 @@ void RenderSVGPath::updateCachedBoundaries()
     }
 
     // Cache _unclipped_ fill bounding box, used for calculations in resources
-    m_fillBoundingBox = m_path.boundingRect();
+    m_fillBoundingBox = m_path.fastBoundingRect();
 
     // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
     // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
