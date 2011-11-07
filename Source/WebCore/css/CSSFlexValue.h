@@ -47,15 +47,14 @@ public:
 
     virtual String cssText() const;
 
-    virtual bool isFlexValue() const { return true; }
-
     float positiveFlex() { return m_positiveFlex; }
     float negativeFlex() { return m_negativeFlex; }
     CSSPrimitiveValue* preferredSize() { return m_preferredSize.get(); }
 
 private:
     CSSFlexValue(float positiveFlex, float negativeFlex, PassRefPtr<CSSPrimitiveValue> preferredSize)
-        : m_positiveFlex(positiveFlex)
+        : CSSValue(FlexClass)
+        , m_positiveFlex(positiveFlex)
         , m_negativeFlex(negativeFlex)
         , m_preferredSize(preferredSize)
     {

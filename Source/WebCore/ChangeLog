@@ -1,3 +1,163 @@
+2011-11-07  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: Devirtualize isFooType().
+        <http://webkit.org/b/71668>
+
+        Reviewed by Darin Adler.
+
+        Add a member to CSSValue to determine which subclass a given
+        value object is, along with 5 bits to tell us whether the
+        value is primitive/mutable/initial/inherited/a list.
+
+        All non-private subclass constructors now take CSSValue::ClassType
+        as their first argument. A few constructors were duplicated as
+        private members to allow calling them from ::create() methods
+        without passing an explicit ClassType.
+
+        Furthermore, since CSSValue::cssValueType() can be inferred from
+        the subclass type, we compute it instead of storing it in a member.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Adding CSSValue.cpp.
+
+        * css/CSSValue.cpp: Added.
+        (WebCore::CSSValue::cssValueType):
+
+            Out-of-line implementation of this method. Only used by CSSOM.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isMutableValue):
+        (WebCore::CSSValue::isPrimitiveValue):
+        (WebCore::CSSValue::isValueList):
+        (WebCore::CSSValue::isInitialValue):
+        (WebCore::CSSValue::isInheritedValue):
+        (WebCore::CSSValue::isBorderImageValue):
+        (WebCore::CSSValue::isBorderImageSliceValue):
+        (WebCore::CSSValue::isCursorImageValue):
+        (WebCore::CSSValue::isFontFamilyValue):
+        (WebCore::CSSValue::isFontFeatureValue):
+        (WebCore::CSSValue::isFontValue):
+        (WebCore::CSSValue::isImageGeneratorValue):
+        (WebCore::CSSValue::isImageValue):
+        (WebCore::CSSValue::isImplicitInitialValue):
+        (WebCore::CSSValue::isReflectValue):
+        (WebCore::CSSValue::isShadowValue):
+        (WebCore::CSSValue::isTimingFunctionValue):
+        (WebCore::CSSValue::isWebKitCSSTransformValue):
+        (WebCore::CSSValue::isCSSLineBoxContainValue):
+        (WebCore::CSSValue::isFlexValue):
+        (WebCore::CSSValue::isWebKitCSSFilterValue):
+        (WebCore::CSSValue::isSVGColor):
+        (WebCore::CSSValue::isSVGPaint):
+        (WebCore::CSSValue::classType):
+        (WebCore::CSSValue::CSSValue):
+        (WebCore::CSSValue::isPrimitiveType):
+        (WebCore::CSSValue::isListType):
+        (WebCore::CSSValue::isMutableType):
+        (WebCore::CSSValue::isInheritedType):
+        (WebCore::CSSValue::isInitialType):
+
+            Store subclass type information into a member variable and
+            made all the isFooValue() functions non-virtual and inline.
+            Some subclass type lookups (primitive values, notably) are
+            cached in a bool member on construction.
+
+        * css/CSSAspectRatioValue.h:
+        (WebCore::CSSAspectRatioValue::CSSAspectRatioValue):
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::CSSBorderImageSliceValue):
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        * css/CSSBorderImageValue.h:
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        * css/CSSCursorImageValue.h:
+        * css/CSSFlexValue.h:
+        (WebCore::CSSFlexValue::CSSFlexValue):
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::CSSFontFaceSrcValue):
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::CSSFunctionValue):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::isLinearGradient):
+        (WebCore::CSSGradientValue::isRadialGradient):
+        (WebCore::CSSGradientValue::CSSGradientValue):
+        (WebCore::CSSLinearGradientValue::CSSLinearGradientValue):
+        (WebCore::CSSRadialGradientValue::CSSRadialGradientValue):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CSSImageGeneratorValue):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue):
+        * css/CSSImageValue.h:
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::CSSInheritedValue):
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        (WebCore::CSSInitialValue::create):
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::CSSLineBoxContainValue):
+        * css/CSSLineBoxContainValue.h:
+        * css/CSSMutableValue.h:
+        (WebCore::CSSMutableValue::CSSMutableValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::CSSReflectValue):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSTimingFunctionValue::isLinearTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isCubicBezierTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isStepsTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::CSSTimingFunctionValue):
+        (WebCore::CSSLinearTimingFunctionValue::CSSLinearTimingFunctionValue):
+        (WebCore::CSSCubicBezierTimingFunctionValue::CSSCubicBezierTimingFunctionValue):
+        (WebCore::CSSStepsTimingFunctionValue::CSSStepsTimingFunctionValue):
+        * css/CSSUnicodeRangeValue.h:
+        (WebCore::CSSUnicodeRangeValue::CSSUnicodeRangeValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        * css/CSSValueList.h:
+        * css/FontFamilyValue.cpp:
+        (WebCore::FontFamilyValue::FontFamilyValue):
+        * css/FontFamilyValue.h:
+        * css/FontFeatureValue.cpp:
+        (WebCore::FontFeatureValue::FontFeatureValue):
+        * css/FontFeatureValue.h:
+        * css/FontValue.h:
+        (WebCore::FontValue::FontValue):
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::ShadowValue):
+        * css/ShadowValue.h:
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::WebKitCSSFilterValue):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::WebKitCSSTransformValue):
+        * css/WebKitCSSTransformValue.h:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor):
+        * svg/SVGColor.h:
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::SVGPaint):
+        * svg/SVGPaint.h:
+
+            Propagate subclass type information and kill isFooType() virtuals.
+
 2011-11-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Leaks seen in RenderRegion::setRenderBoxRegionInfo on Leaks bot

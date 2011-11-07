@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WebKitCSSTransformValue::WebKitCSSTransformValue(TransformOperationType op)
-    : CSSValueList(false)
+    : CSSValueList(WebKitCSSTransformClass, false)
     , m_type(op)
 {
 }

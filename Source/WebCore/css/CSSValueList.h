@@ -61,11 +61,11 @@ public:
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
-    CSSValueList(bool isSpaceSeparated);
-    CSSValueList(CSSParserValueList*);
+    CSSValueList(ClassType, bool isSpaceSeparated);
 
 private:
-    virtual bool isValueList() const { return true; }
+    explicit CSSValueList(bool isSpaceSeparated);
+    explicit CSSValueList(CSSParserValueList*);
 
     Vector<RefPtr<CSSValue> > m_values;
     bool m_isSpaceSeparated;

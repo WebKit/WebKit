@@ -31,7 +31,14 @@
 namespace WebCore {
 
 SVGColor::SVGColor(const SVGColorType& colorType)
-    : m_colorType(colorType)
+    : CSSMutableValue(SVGColorClass)
+    , m_colorType(colorType)
+{
+}
+
+SVGColor::SVGColor(ClassType classType, const SVGColorType& colorType)
+    : CSSMutableValue(classType)
+    , m_colorType(colorType)
 {
 }
 

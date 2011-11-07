@@ -37,11 +37,9 @@ public:
 
 private:
     CSSInheritedValue()
-        : CSSValue(CSS_INHERIT)
+        : CSSValue(InheritedClass)
     {
     }
-
-    virtual bool isInheritedValue() const { return true; }
 };
 
 } // namespace WebCore

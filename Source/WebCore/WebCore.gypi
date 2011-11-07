@@ -2419,6 +2419,7 @@
             'css/CSSUnicodeRangeValue.cpp',
             'css/CSSUnicodeRangeValue.h',
             'css/CSSUnknownRule.h',
+            'css/CSSValue.cpp',
             'css/CSSValueList.cpp',
             'css/CSSWrapShapes.cpp',
             'css/Counter.h',

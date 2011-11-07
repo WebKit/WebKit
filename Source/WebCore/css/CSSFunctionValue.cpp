@@ -33,7 +33,8 @@
 namespace WebCore {
 
 CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
-    : m_name(function->name)
+    : CSSValue(FunctionClass)
+    , m_name(function->name)
 {
     if (function->args)
         m_args = CSSValueList::createFromParserValueList(function->args.get());

@@ -444,6 +444,7 @@ SOURCES += \
     css/CSSStyleSheet.cpp \
     css/CSSTimingFunctionValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
+    css/CSSValue.cpp \
     css/CSSValueList.cpp \
     css/CSSWrapShapes.cpp \
     css/FontFamilyValue.cpp \
@@ -1535,6 +1536,8 @@ HEADERS += \
     css/CSSStyleSheet.h \
     css/CSSTimingFunctionValue.h \
     css/CSSUnicodeRangeValue.h \
+    css/CSSValue.cpp \
+    css/CSSValue.h \
     css/CSSValueList.h \
     css/CSSWrapShapes.h \
     css/FontFamilyValue.h \

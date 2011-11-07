@@ -35,7 +35,7 @@
 namespace WebCore {
 
 WebKitCSSFilterValue::WebKitCSSFilterValue(FilterOperationType operationType)
-    : CSSValueList(true)
+    : CSSValueList(WebKitCSSFilterClass, true)
     , m_type(operationType)
 {
 }

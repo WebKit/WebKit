@@ -31,15 +31,21 @@
 
 namespace WebCore {
 
-CSSImageValue::CSSImageValue(const String& url)
-    : CSSPrimitiveValue(url, CSS_URI)
+CSSImageValue::CSSImageValue(ClassType classType, const String& url)
+    : CSSPrimitiveValue(classType, url, CSS_URI)
     , m_accessedImage(false)
 {
 }
 
 CSSImageValue::CSSImageValue()
-    : CSSPrimitiveValue(CSSValueNone)
+    : CSSPrimitiveValue(ImageClass, CSSValueNone)
     , m_accessedImage(true)
+{
+}
+
+CSSImageValue::CSSImageValue(const String& url)
+    : CSSPrimitiveValue(ImageClass, url, CSS_URI)
+    , m_accessedImage(false)
 {
 }
 

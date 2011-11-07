@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,34 +21,25 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#ifndef FontFeatureValue_h
-#define FontFeatureValue_h
-
+#include "config.h"
 #include "CSSValue.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 
-class FontFeatureValue : public CSSValue {
-public:
-    static PassRefPtr<FontFeatureValue> create(const String& tag, int value)
-    {
-        return adoptRef(new FontFeatureValue(tag, value));
-    }
+CSSValue::Type CSSValue::cssValueType() const
+{
+    if (isInheritedValue())
+        return CSS_INHERIT;
+    if (isPrimitiveValue())
+        return CSS_PRIMITIVE_VALUE;
+    if (isValueList())
+        return CSS_VALUE_LIST;
+    if (isInitialValue())
+        return CSS_INITIAL;
+    return CSS_CUSTOM;
+}
 
-    const String& tag() const { return m_tag; }
-    int value() const { return m_value; }
-    virtual String cssText() const;
-
-private:
-    FontFeatureValue(const String&, int);
-
-    String m_tag;
-    const int m_value;
-};
-
-} // namespace
-
-#endif
+}

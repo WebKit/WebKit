@@ -4140,6 +4140,7 @@
 		ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
+		AD03AAFA1468455300A39B5B /* CSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD03AAF81468453900A39B5B /* CSSValue.cpp */; };
 		AD4495F3141FC08900541EDF /* EventListenerMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4495F1141FC08900541EDF /* EventListenerMap.cpp */; };
 		AD4495F4141FC08900541EDF /* EventListenerMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4495F2141FC08900541EDF /* EventListenerMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
@@ -11236,6 +11237,7 @@
 		ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenuClient.h; sourceTree = "<group>"; };
 		ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMenuList.cpp; sourceTree = "<group>"; };
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
+		AD03AAF81468453900A39B5B /* CSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValue.cpp; sourceTree = "<group>"; };
 		AD4495F1141FC08900541EDF /* EventListenerMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventListenerMap.cpp; sourceTree = "<group>"; };
 		AD4495F2141FC08900541EDF /* EventListenerMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListenerMap.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
@@ -20509,6 +20511,7 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				AD03AAF81468453900A39B5B /* CSSValue.cpp */,
 				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
 				CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
@@ -24974,6 +24977,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD03AAFA1468455300A39B5B /* CSSValue.cpp in Sources */,
 				B5B5DC69119BB3D5002A8790 /* AbstractDatabase.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,

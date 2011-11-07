@@ -50,8 +50,9 @@ public:
 
 private:
     CSSCrossfadeValue(PassRefPtr<CSSImageValue> fromImage, PassRefPtr<CSSImageValue> toImage)
-    : m_fromImage(fromImage)
-    , m_toImage(toImage)
+        : CSSImageGeneratorValue(CrossfadeClass)
+        , m_fromImage(fromImage)
+        , m_toImage(toImage)
     {
     }
 

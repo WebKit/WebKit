@@ -66,8 +66,6 @@ public:
 private:
     WebKitCSSFilterValue(FilterOperationType);
 
-    virtual bool isWebKitCSSFilterValue() const { return true; }
-
     FilterOperationType m_type;
 };
 

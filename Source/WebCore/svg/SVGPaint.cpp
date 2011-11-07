@@ -54,7 +54,7 @@ static inline SVGColor::SVGColorType colorTypeForPaintType(const SVGPaint::SVGPa
 }
 
 SVGPaint::SVGPaint(const SVGPaintType& paintType, const String& uri)
-    : SVGColor(colorTypeForPaintType(paintType))
+    : SVGColor(SVGPaintClass, colorTypeForPaintType(paintType))
     , m_paintType(paintType)
     , m_uri(uri)
 {

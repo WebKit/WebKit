@@ -54,7 +54,7 @@ static inline SVGCursorElement* resourceReferencedByCursorElement(const String& 
 #endif
 
 CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotSpot)
-    : CSSImageValue(url)
+    : CSSImageValue(CursorImageClass, url)
     , m_hotSpot(hotSpot)
 {
 }

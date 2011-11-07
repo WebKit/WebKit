@@ -26,7 +26,7 @@
 namespace WebCore {
 
 FontFamilyValue::FontFamilyValue(const String& familyName)
-    : CSSPrimitiveValue(String(), CSS_STRING)
+    : CSSPrimitiveValue(FontFamilyClass, String(), CSS_STRING)
     , m_familyName(familyName)
 {
     // If there is anything in parentheses or square brackets at the end, delete it.

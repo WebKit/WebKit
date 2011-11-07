@@ -53,7 +53,6 @@ public:
 
 private:
     CSSBorderImageSliceValue(PassRefPtr<CSSPrimitiveValue> slices, bool fill);
-    virtual bool isBorderImageSliceValue() const { return true; }
 };
 
 } // namespace WebCore

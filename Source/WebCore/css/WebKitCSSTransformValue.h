@@ -74,8 +74,6 @@ public:
 private:
     WebKitCSSTransformValue(TransformOperationType);
 
-    virtual bool isWebKitCSSTransformValue() const { return true; }
-
     TransformOperationType m_type;
 };
 

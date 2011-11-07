@@ -59,16 +59,17 @@ public:
 
     void sortStopsIfNeeded();
 
-    virtual bool isLinearGradient() const { return false; }
-    virtual bool isRadialGradient() const { return false; }
+    bool isLinearGradient() const { return classType() == LinearGradientClass; }
+    bool isRadialGradient() const { return classType() == RadialGradientClass; }
 
     bool isRepeating() const { return m_repeating; }
 
     bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
 
 protected:
-    CSSGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
-        : m_stopsSorted(false)
+    CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, bool deprecatedType = false)
+        : CSSImageGeneratorValue(classType)
+        , m_stopsSorted(false)
         , m_deprecatedType(deprecatedType)
         , m_repeating(repeat == Repeating)
     {
@@ -112,11 +113,9 @@ public:
 
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
-        : CSSGradientValue(repeat, deprecatedType)
+        : CSSGradientValue(LinearGradientClass, repeat, deprecatedType)
     {
     }
-
-    virtual bool isLinearGradient() const { return true; }
 
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
@@ -144,11 +143,9 @@ public:
 
 private:
     CSSRadialGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
-        : CSSGradientValue(repeat, deprecatedType)
+        : CSSGradientValue(RadialGradientClass, repeat, deprecatedType)
     {
     }
-
-    virtual bool isRadialGradient() const { return true; }
 
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);

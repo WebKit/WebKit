@@ -47,9 +47,10 @@ public:
     RefPtr<CSSValueList> family;
 
 private:
-    FontValue() { }
-
-    virtual bool isFontValue() const { return true; }
+    FontValue()
+        : CSSValue(FontClass)
+    {
+    }
 };
 
 } // namespace

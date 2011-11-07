@@ -48,7 +48,8 @@ public:
 
 private:
     CSSUnicodeRangeValue(UChar32 from, UChar32 to)
-        : m_from(from)
+        : CSSValue(UnicodeRangeClass)
+        , m_from(from)
         , m_to(to)
     {
     }

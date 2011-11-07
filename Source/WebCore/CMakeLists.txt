@@ -463,6 +463,7 @@ SET(WebCore_SOURCES
     css/CSSStyleSheet.cpp
     css/CSSTimingFunctionValue.cpp
     css/CSSUnicodeRangeValue.cpp
+    css/CSSValue.cpp
     css/CSSValueList.cpp
     css/CSSWrapShapes.cpp
     css/FontFamilyValue.cpp

@@ -68,7 +68,8 @@ public:
 
 private:
     CSSFontFaceSrcValue(const String& resource, bool local)
-        : m_resource(resource)
+        : CSSValue(FontFaceSrcClass)
+        , m_resource(resource)
         , m_isLocal(local)
 #if ENABLE(SVG_FONTS)
         , m_svgFontFaceElement(0)

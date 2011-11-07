@@ -50,7 +50,6 @@ public:
 
 private:
     CSSCursorImageValue(const String& url, const IntPoint& hotSpot);
-    virtual bool isCursorImageValue() const { return true; }
 
     IntPoint m_hotSpot;
 

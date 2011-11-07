@@ -27,13 +27,7 @@ namespace WebCore {
 
 class CSSMutableValue : public CSSValue {
 public:
-    CSSMutableValue()
-        : m_node(0)
-    {
-    }
-
     virtual ~CSSMutableValue() { }
-    virtual bool isMutableValue() const { return true; }
 
     Node* node() const { return m_node; }
     void setNode(Node* node) { m_node = node; }
@@ -44,6 +38,14 @@ public:
             return;
         m_node->setNeedsStyleRecalc(FullStyleChange);
     }
+
+protected:
+    CSSMutableValue(ClassType classType)
+        : CSSValue(classType)
+        , m_node(0)
+    {
+    }
+
 
 private:
     Node* m_node;

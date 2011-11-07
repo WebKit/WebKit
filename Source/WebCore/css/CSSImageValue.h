@@ -42,7 +42,7 @@ public:
     StyleImage* cachedOrPendingImage();
 
 protected:
-    CSSImageValue(const String& url);
+    CSSImageValue(ClassType, const String& url);
 
     StyleCachedImage* cachedImage(CachedResourceLoader*, const String& url);
     String cachedImageURL();
@@ -50,7 +50,7 @@ protected:
 
 private:
     CSSImageValue();
-    virtual bool isImageValue() const { return true; }
+    explicit CSSImageValue(const String& url);
 
     RefPtr<StyleImage> m_image;
     bool m_accessedImage;

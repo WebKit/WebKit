@@ -50,7 +50,8 @@ public:
 
 private:
     CSSAspectRatioValue(float numeratorValue, float denominatorValue)
-        : m_numeratorValue(numeratorValue)
+        : CSSValue(AspectRatioClass)
+        , m_numeratorValue(numeratorValue)
         , m_denominatorValue(denominatorValue)
     {
     }

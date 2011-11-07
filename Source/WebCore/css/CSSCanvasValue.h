@@ -48,7 +48,8 @@ public:
 
 private:
     CSSCanvasValue()
-        : m_element(0)
+        : CSSImageGeneratorValue(CanvasClass)
+        , m_element(0)
     {
     }
 

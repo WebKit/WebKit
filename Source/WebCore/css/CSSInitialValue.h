@@ -43,8 +43,7 @@ public:
 
 private:
     CSSInitialValue(bool implicit)
-        : CSSValue(CSS_INITIAL)
-        , m_implicit(implicit)
+        : CSSValue(implicit ? ImplicitInitialClass : InitialClass)
     {
     }
 
@@ -52,11 +51,6 @@ private:
     {
         return adoptRef(new CSSInitialValue(implicit));
     }
-
-    virtual bool isInitialValue() const { return true; }
-    virtual bool isImplicitInitialValue() const { return m_implicit; }
-
-    bool m_implicit;
 };
 
 } // namespace WebCore

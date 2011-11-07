@@ -49,7 +49,7 @@ public:
     virtual IntSize fixedSize(const RenderObject*) { return IntSize(); }
 
 protected:
-    CSSImageGeneratorValue();
+    CSSImageGeneratorValue(ClassType);
 
     Image* getImage(RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
@@ -58,9 +58,6 @@ protected:
     ImageBySizeCache m_imageCache;
     RefPtr<StyleGeneratedImage> m_image;
     bool m_accessedImage;
-
-private:
-    virtual bool isImageGeneratorValue() const { return true; }
 };
 
 } // namespace WebCore

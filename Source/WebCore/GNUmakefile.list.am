@@ -1064,6 +1064,7 @@ webcore_sources += \
 	Source/WebCore/css/CSSUnicodeRangeValue.cpp \
 	Source/WebCore/css/CSSUnicodeRangeValue.h \
 	Source/WebCore/css/CSSUnknownRule.h \
+	Source/WebCore/css/CSSValue.cpp \
 	Source/WebCore/css/CSSValue.h \
 	Source/WebCore/css/CSSValueList.cpp \
 	Source/WebCore/css/CSSValueList.h \

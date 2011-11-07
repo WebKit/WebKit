@@ -44,54 +44,145 @@ public:
 
     virtual ~CSSValue() { }
 
-    Type cssValueType() const { return static_cast<Type>(m_type); }
+    Type cssValueType() const;
 
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
-    virtual bool isMutableValue() const { return false; }
+    bool isMutableValue() const { return m_isMutable; }
+    bool isPrimitiveValue() const { return m_isPrimitive; }
+    bool isValueList() const { return m_isList; }
+    bool isInitialValue() const { return m_isInitial; }
+    bool isInheritedValue() const { return m_isInherited; }
 
-    virtual bool isBorderImageValue() const { return false; }
-    virtual bool isBorderImageSliceValue() const { return false; }
-    virtual bool isCursorImageValue() const { return false; }
+    bool isBorderImageValue() const { return m_classType == BorderImageClass; }
+    bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
+    bool isCursorImageValue() const { return m_classType == CursorImageClass; }
+    bool isFontFamilyValue() const { return m_classType == FontFamilyClass; }
+    bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
+    bool isFontValue() const { return m_classType == FontClass; }
+    bool isImageGeneratorValue() const { return m_classType == CanvasClass || m_classType == CrossfadeClass || m_classType == LinearGradientClass || m_classType == RadialGradientClass; }
+    bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
+    bool isImplicitInitialValue() const { return m_classType == ImplicitInitialClass; }
+    bool isReflectValue() const { return m_classType == ReflectClass; }
+    bool isShadowValue() const { return m_classType == ShadowClass; }
+    bool isTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass || m_classType == LinearTimingFunctionClass || m_classType == StepsTimingFunctionClass; }
+    bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
+    bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
 #if ENABLE(CSS3_FLEXBOX)
-    virtual bool isFlexValue() const { return false; }
+    bool isFlexValue() const { return m_classType == FlexClass; }
 #endif
-    virtual bool isFontFamilyValue() const { return false; }
-    virtual bool isFontFeatureValue() const { return false; }
-    virtual bool isFontValue() const { return false; }
-    virtual bool isImageGeneratorValue() const { return false; }
-    virtual bool isImageValue() const { return false; }
-    virtual bool isInheritedValue() const { return false; }
-    virtual bool isInitialValue() const { return false; }
-    virtual bool isImplicitInitialValue() const { return false; }
-    virtual bool isPrimitiveValue() const { return false; }
-    virtual bool isReflectValue() const { return false; }
-    virtual bool isShadowValue() const { return false; }
-    virtual bool isTimingFunctionValue() const { return false; }
-    virtual bool isValueList() const { return false; }
-    virtual bool isWebKitCSSTransformValue() const { return false; }
-    virtual bool isCSSLineBoxContainValue() const { return false; }
 #if ENABLE(CSS_FILTERS)
-    virtual bool isWebKitCSSFilterValue() const { return false; }
+    bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
 #endif
 #if ENABLE(SVG)
-    virtual bool isSVGColor() const { return false; }
-    virtual bool isSVGPaint() const { return false; }
+    bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
+    bool isSVGPaint() const { return m_classType == SVGPaintClass; }
 #endif
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }
 
 protected:
-    CSSValue(Type type = CSS_CUSTOM)
-        : m_type(type)
+
+    enum ClassType {
+        AspectRatioClass,
+        BorderImageClass,
+        BorderImageSliceClass,
+        CanvasClass,
+        CursorImageClass,
+        FontFamilyClass,
+        FontFeatureClass,
+        FontClass,
+        FontFaceSrcClass,
+        FunctionClass,
+        LinearGradientClass,
+        RadialGradientClass,
+        CrossfadeClass,
+        ImageClass,
+        InheritedClass,
+        InitialClass,
+        ImplicitInitialClass,
+        PrimitiveClass,
+        ReflectClass,
+        ShadowClass,
+        LinearTimingFunctionClass,
+        CubicBezierTimingFunctionClass,
+        StepsTimingFunctionClass,
+        UnicodeRangeClass,
+        ValueListClass,
+        WebKitCSSTransformClass,
+        LineBoxContainClass,
+#if ENABLE(CSS3_FLEXBOX)
+        FlexClass,
+#endif
+#if ENABLE(CSS_FILTERS)
+        WebKitCSSFilterClass,
+#endif
+#if ENABLE(SVG)
+        SVGColorClass,
+        SVGPaintClass,
+#endif
+    };
+
+    ClassType classType() const { return static_cast<ClassType>(m_classType); }
+
+    CSSValue(ClassType classType)
+        : m_classType(classType)
+        , m_isPrimitive(isPrimitiveType(classType))
+        , m_isMutable(isMutableType(classType))
+        , m_isList(isListType(classType))
+        , m_isInitial(isInitialType(classType))
+        , m_isInherited(isInheritedType(classType))
     {
     }
 
 private:
+    static bool isPrimitiveType(ClassType type)
+    {
+        return type == PrimitiveClass
+            || type == ImageClass
+            || type == CursorImageClass
+            || type == FontFamilyClass;
+    }
+
+    static bool isListType(ClassType type)
+    {
+        return type == ValueListClass
+#if ENABLE(CSS_FILTERS)
+            || type == WebKitCSSFilterClass
+#endif
+            || type == WebKitCSSTransformClass;
+    }
+
+    static bool isMutableType(ClassType type)
+    {
+#if ENABLE(SVG)
+        return type == SVGColorClass
+            || type == SVGPaintClass;
+#else
+        UNUSED_PARAM(type);
+        return false;
+#endif
+    }
+
+    static bool isInheritedType(ClassType type)
+    {
+        return type == InheritedClass;
+    }
+
+    static bool isInitialType(ClassType type)
+    {
+        return type == InitialClass || type == ImplicitInitialClass;
+    }
+
     // FIXME: This class is currently a little bloated, but that will change.
     //        See <http://webkit.org/b/71666> for more information.
-    unsigned m_type : 3; // Type
+    unsigned m_classType : 5; // ClassType
+    bool m_isPrimitive : 1;
+    bool m_isMutable : 1;
+    bool m_isList : 1;
+    bool m_isInitial : 1;
+    bool m_isInherited : 1;
 };
 
 } // namespace WebCore

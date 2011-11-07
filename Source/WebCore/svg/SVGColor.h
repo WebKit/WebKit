@@ -72,7 +72,7 @@ public:
 protected:
     friend class CSSComputedStyleDeclaration;
 
-    SVGColor(const SVGColorType&);
+    SVGColor(ClassType, const SVGColorType&);
     virtual ~SVGColor() { }
     virtual String cssText() const;
 
@@ -80,7 +80,7 @@ protected:
     void setColorType(const SVGColorType& type) { m_colorType = type; }
 
 private:
-    virtual bool isSVGColor() const { return true; }
+    SVGColor(const SVGColorType&);
 
     Color m_color;
     SVGColorType m_colorType;

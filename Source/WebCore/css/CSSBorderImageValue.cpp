@@ -28,7 +28,8 @@ namespace WebCore {
 
 CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
     PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
-    : m_image(image)
+    : CSSValue(BorderImageClass)
+    , m_image(image)
     , m_imageSlice(imageSlice)
     , m_borderSlice(borderSlice)
     , m_outset(outset)

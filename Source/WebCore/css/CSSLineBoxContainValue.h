@@ -55,7 +55,6 @@ private:
 
 private:
     CSSLineBoxContainValue(LineBoxContain);
-    virtual bool isCSSLineBoxContainValue() const { return true; }
 };
 
 } // namespace

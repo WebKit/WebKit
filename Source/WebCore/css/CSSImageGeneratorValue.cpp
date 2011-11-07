@@ -35,8 +35,9 @@
 
 namespace WebCore {
 
-CSSImageGeneratorValue::CSSImageGeneratorValue()
-: m_accessedImage(false)
+CSSImageGeneratorValue::CSSImageGeneratorValue(ClassType classType)
+    : CSSValue(classType)
+    , m_accessedImage(false)
 {
 }
 

@@ -214,25 +214,27 @@ public:
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
-    // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
-    CSSPrimitiveValue(int ident);
-    CSSPrimitiveValue(double, UnitTypes);
-    CSSPrimitiveValue(const String&, UnitTypes);
+    CSSPrimitiveValue(ClassType, int ident);
+    CSSPrimitiveValue(ClassType, const String&, UnitTypes);
 
 private:
     CSSPrimitiveValue();
-    CSSPrimitiveValue(unsigned color); // RGB value
-    CSSPrimitiveValue(const Length&);
+    // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
+    explicit CSSPrimitiveValue(int ident);
+    explicit CSSPrimitiveValue(unsigned color); // RGB value
+    explicit CSSPrimitiveValue(const Length&);
+    CSSPrimitiveValue(const String&, UnitTypes);
+    CSSPrimitiveValue(double, UnitTypes);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(T* val)
-        : CSSValue(CSS_PRIMITIVE_VALUE)
+        : CSSValue(PrimitiveClass)
     {
         init(PassRefPtr<T>(val));
     }
 
     template<typename T> CSSPrimitiveValue(PassRefPtr<T> val)
-        : CSSValue(CSS_PRIMITIVE_VALUE)
+        : CSSValue(PrimitiveClass)
     {
         init(val);
     }
@@ -257,8 +259,6 @@ private:
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
     double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize);
-
-    virtual bool isPrimitiveValue() const { return true; }
 
     signed m_type : UnitTypesBits;
     mutable unsigned m_hasCachedCSSText : 1;

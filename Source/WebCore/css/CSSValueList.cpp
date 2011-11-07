@@ -27,14 +27,20 @@
 
 namespace WebCore {
 
+CSSValueList::CSSValueList(ClassType classType, bool isSpaceSeparated)
+    : CSSValue(classType)
+    , m_isSpaceSeparated(isSpaceSeparated)
+{
+}
+
 CSSValueList::CSSValueList(bool isSpaceSeparated)
-    : CSSValue(CSS_VALUE_LIST)
+    : CSSValue(ValueListClass)
     , m_isSpaceSeparated(isSpaceSeparated)
 {
 }
 
 CSSValueList::CSSValueList(CSSParserValueList* list)
-    : CSSValue(CSS_VALUE_LIST)
+    : CSSValue(ValueListClass)
     , m_isSpaceSeparated(true)
 {
     if (list) {
