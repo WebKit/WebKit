@@ -228,8 +228,13 @@ WebInspector.TextPrompt.prototype = {
             break;
         case "Right":
         case "End":
-            if (!this.acceptAutoComplete())
-                this.autoCompleteSoon();
+            if (this.isSuggestBoxVisible())
+                handled = this._suggestBox.tabKeyPressed(event);
+            else {
+                handled = this.acceptAutoComplete();
+                if (!handled)
+                    this.autoCompleteSoon();
+            }
             break;
         case "U+001B": // Esc
             if (this.isSuggestBoxVisible()) {
@@ -1018,8 +1023,6 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         var childText = child ? child.textContent : null;
         this.contentElement.removeChildren();
 
-        delete this._selectedElement;
-
         var userEnteredText = this._textPrompt._userEnteredText;
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
@@ -1027,6 +1030,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
             this.contentElement.appendChild(currentItemElement);
         }
 
+        this._selectedElement = this.contentElement.firstChild;
         this._updateSelection();
     },
 

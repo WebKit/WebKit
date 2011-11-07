@@ -1,3 +1,16 @@
+2011-11-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: TextPrompt+SuggestBox should autocomplete on "Right" keydown and with a single suggestion in place
+        https://bugs.webkit.org/show_bug.cgi?id=71676
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.onKeyDown):
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateItems):
+        * inspector/front-end/inspectorCommon.css:
+        (body): Revert inadvertent style change from a preceding commit.
+
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Fix the Qt build on Mac OS X when using the QuickTime media backend
