@@ -1841,12 +1841,17 @@ double WebView::zoomFactorToZoomLevel(double factor)
 float WebViewImpl::pageScaleFactor() const
 {
     if (!page())
-        return 1.0;
+        return 1;
 
     return page()->pageScaleFactor();
 }
 
-void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
+void WebViewImpl::scalePage(float scaleFactor, const WebPoint& origin)
+{
+    setPageScaleFactor(scaleFactor, origin);
+}
+
+void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
 {
     if (!page())
         return;

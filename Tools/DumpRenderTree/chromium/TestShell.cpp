@@ -270,7 +270,7 @@ void TestShell::resetTestController()
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
-    webView()->scalePage(1, WebPoint(0, 0));
+    webView()->setPageScaleFactor(1, WebPoint(0, 0));
     webView()->enableFixedLayoutMode(false);
     webView()->setFixedLayoutSize(WebSize(0, 0));
     webView()->mainFrame()->clearOpener();

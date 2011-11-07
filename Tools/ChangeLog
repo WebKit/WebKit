@@ -1,3 +1,15 @@
+2011-11-07  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Rename WebView::scalePage to WebView::setPageScaleFactor to match WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=71485
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::scalePageBy):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Put the jsc binary in 'bin' instead of leaving it deep in the build tree

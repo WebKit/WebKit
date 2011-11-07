@@ -158,7 +158,8 @@ public:
     virtual void zoomLimitsChanged(double minimumZoomLevel,
                                    double maximumZoomLevel);
     virtual float pageScaleFactor() const;
-    virtual void scalePage(float scaleFactor, WebPoint origin);
+    virtual void scalePage(float scaleFactor, const WebPoint& origin);
+    virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin);
     virtual float deviceScaleFactor() const;
     virtual void setDeviceScaleFactor(float);
     virtual bool isFixedLayoutModeEnabled() const;

@@ -1,3 +1,26 @@
+2011-11-07  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Rename WebView::scalePage to WebView::setPageScaleFactor to match WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=71485
+
+        Reviewed by Darin Fisher.
+
+        Created new method setPageScaleFactor to replace scalePage to match
+        renamed method in WebCore. This change will happen in three stages:
+
+        1. A new method is created called setPageScaleFactor with the same
+           functionality as scalePage.
+        2. All call sites of scalePage are changed to setPageScaleFactor in the Chromium
+           repository.
+        3. scalePage is deleted from WebView/WebViewImpl
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::pageScaleFactor):
+        (WebKit::WebViewImpl::scalePage):
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        * src/WebViewImpl.h:
+
 2011-11-07  Jessie Berlin  <jberlin@apple.com>
 
         Need a way to allow a scheme access to Local Storage and Databases while Private Browsing is
