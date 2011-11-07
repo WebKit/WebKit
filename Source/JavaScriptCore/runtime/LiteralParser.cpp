@@ -50,17 +50,17 @@ bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSour
     do {
         Vector<JSONPPathEntry> path;
         // Unguarded next to start off the lexer
-        Identifier name = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
+        Identifier name = Identifier(&m_exec->globalData(), m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
         JSONPPathEntry entry;
         if (name == m_exec->globalData().propertyNames->varKeyword) {
             if (m_lexer.next() != TokIdentifier)
                 return false;
             entry.m_type = JSONPPathEntryTypeDeclare;
-            entry.m_pathEntryName = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
+            entry.m_pathEntryName = Identifier(&m_exec->globalData(), m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
             path.append(entry);
         } else {
             entry.m_type = JSONPPathEntryTypeDot;
-            entry.m_pathEntryName = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
+            entry.m_pathEntryName = Identifier(&m_exec->globalData(), m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
             path.append(entry);
         }
         if (m_exec->globalData().keywords->isKeyword(entry.m_pathEntryName))
@@ -85,7 +85,7 @@ bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSour
                 entry.m_type = JSONPPathEntryTypeDot;
                 if (m_lexer.next() != TokIdentifier)
                     return false;
-                entry.m_pathEntryName = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
+                entry.m_pathEntryName = Identifier(&m_exec->globalData(), m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
                 break;
             }
             case TokLParen: {
@@ -340,7 +340,7 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
                             return TokError;
                         }
                     }
-                    builder.append(JSC::Lexer::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
+                    builder.append(JSC::Lexer<UChar>::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
                     m_ptr += 5;
                     break;
 

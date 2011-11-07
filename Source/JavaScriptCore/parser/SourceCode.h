@@ -75,7 +75,7 @@ namespace JSC {
         const UChar* data() const { return m_provider->data() + m_startChar; }
         int length() const { return m_endChar - m_startChar; }
         
-        SourceCode subExpression(int, int, int);
+        SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine);
 
     private:
         RefPtr<SourceProvider> m_provider;
@@ -88,8 +88,8 @@ namespace JSC {
     {
         return SourceCode(UStringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
     }
-    
-    inline SourceCode SourceCode::subExpression(int openBrace, int closeBrace, int firstLine)
+
+    inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine)
     {
         ASSERT(provider()->data()[openBrace] == '{');
         ASSERT(provider()->data()[closeBrace] == '}');

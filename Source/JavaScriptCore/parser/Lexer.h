@@ -61,8 +61,15 @@ private:
     const HashTable m_keywordTable;
 };
 
+enum LexerFlags {
+    LexerFlagsIgnoreReservedWords = 1, 
+    LexerFlagsDontBuildStrings = 2,
+    LexexFlagsDontBuildKeywords = 4
+};
+
 class RegExp;
 
+template <typename T>
 class Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
     WTF_MAKE_FAST_ALLOCATED;
@@ -82,12 +89,6 @@ public:
     void setIsReparsing() { m_isReparsing = true; }
     bool isReparsing() const { return m_isReparsing; }
 
-    // Functions for the parser itself.
-    enum LexType {
-        IgnoreReservedWords = 1, 
-        DontBuildStrings = 2,
-        DontBuildKeywords = 4
-    };
     JSTokenType lex(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
@@ -102,7 +103,6 @@ public:
     bool sawError() const { return m_error; }
     UString getErrorMessage() const { return m_lexErrorMessage; }
     void clear();
-    int currentOffset() { return m_code - m_codeStart; }
     void setOffset(int offset)
     {
         m_error = 0;
@@ -121,17 +121,16 @@ public:
     }
 
     SourceProvider* sourceProvider() const { return m_source->provider(); }
-    
+
     JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
 
 private:
-    friend class JSGlobalData;
-
     void record8(int);
+    void append8(const T*, size_t);
     void record16(int);
-    void record16(UChar);
-
-    void copyCodeWithoutBOMs();
+    void record16(T);
+    void append16(const LChar*, size_t);
+    void append16(const UChar* characters, size_t length) { m_buffer16.append(characters, length); }
 
     ALWAYS_INLINE void shift();
     ALWAYS_INLINE int peek(int offset);
@@ -139,18 +138,24 @@ private:
     void shiftLineTerminator();
 
     UString getInvalidCharMessage();
-    ALWAYS_INLINE const UChar* currentCharacter() const;
-    ALWAYS_INLINE int currentOffset() const;
+    ALWAYS_INLINE const T* currentCharacter() const;
+    ALWAYS_INLINE int currentOffset() const { return m_code - m_codeStart; }
+    ALWAYS_INLINE void setOffsetFromCharOffset(const T* charOffset) { setOffset(charOffset - m_codeStart); }
 
+    ALWAYS_INLINE void setCodeStart(const StringImpl*);
+
+    ALWAYS_INLINE const Identifier* makeIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeIdentifier(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(const UChar* characters, size_t length);
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
-    enum ShiftType { DoBoundsCheck, DoNotBoundsCheck };
-    template <int shiftAmount, ShiftType shouldBoundsCheck> void internalShift();
+    template <int shiftAmount> void internalShift();
     template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
-    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned, bool strictMode);
+    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned lexerFlags, bool strictMode);
+    template <bool shouldBuildIdentifiers> NEVER_INLINE JSTokenType parseIdentifierSlowCase(JSTokenData*, unsigned lexerFlags, bool strictMode);
     template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData*, bool strictMode);
+    template <bool shouldBuildStrings> NEVER_INLINE bool parseStringSlowCase(JSTokenData*, bool strictMode);
     ALWAYS_INLINE void parseHex(double& returnValue);
     ALWAYS_INLINE bool parseOctal(double& returnValue);
     ALWAYS_INLINE bool parseDecimal(double& returnValue);
@@ -163,16 +168,16 @@ private:
     int m_lineNumber;
     int m_lastLineNumber;
 
-    Vector<char> m_buffer8;
+    Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
     bool m_terminator;
     bool m_delimited; // encountered delimiter like "'" and "}" on last run
     int m_lastToken;
 
     const SourceCode* m_source;
-    const UChar* m_code;
-    const UChar* m_codeStart;
-    const UChar* m_codeEnd;
+    const T* m_code;
+    const T* m_codeStart;
+    const T* m_codeEnd;
     bool m_isReparsing;
     bool m_atLineStart;
     bool m_error;
@@ -186,37 +191,69 @@ private:
     JSGlobalData* m_globalData;
 };
 
-ALWAYS_INLINE bool Lexer::isWhiteSpace(int ch)
+template <typename T>
+ALWAYS_INLINE bool Lexer<T>::isWhiteSpace(int ch)
 {
     return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
 }
 
-ALWAYS_INLINE bool Lexer::isLineTerminator(int ch)
+template <typename T>
+ALWAYS_INLINE bool Lexer<T>::isLineTerminator(int ch)
 {
     return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
 }
 
-inline unsigned char Lexer::convertHex(int c1, int c2)
+template <typename T>
+inline unsigned char Lexer<T>::convertHex(int c1, int c2)
 {
     return (toASCIIHexValue(c1) << 4) | toASCIIHexValue(c2);
 }
 
-inline UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
+template <typename T>
+inline UChar Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
 {
     return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
 }
 
-ALWAYS_INLINE const Identifier* Lexer::makeIdentifier(const UChar* characters, size_t length)
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const LChar* characters, size_t length)
 {
     return &m_arena->makeIdentifier(m_globalData, characters, length);
 }
 
-ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexType, bool strictMode)
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const UChar* characters, size_t length)
 {
-    ASSERT((lexType & IgnoreReservedWords));
-    const UChar* start = m_code;
-    const UChar* ptr = start;
-    const UChar* end = m_codeEnd;
+    return &m_arena->makeIdentifier(m_globalData, characters, length);
+}
+
+template <>
+ALWAYS_INLINE void Lexer<LChar>::setCodeStart(const StringImpl* sourceString)
+{
+    ASSERT(sourceString->is8Bit());
+    m_codeStart = sourceString->characters8();
+}
+
+template <>
+ALWAYS_INLINE void Lexer<UChar>::setCodeStart(const StringImpl* sourceString)
+{
+    ASSERT(!sourceString->is8Bit());
+    m_codeStart = sourceString->characters16();
+}
+
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(const UChar* characters, size_t length)
+{
+    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+}
+
+template <typename T>
+ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexerFlags, bool strictMode)
+{
+    ASSERT((lexerFlags & LexerFlagsIgnoreReservedWords));
+    const T* start = m_code;
+    const T* ptr = start;
+    const T* end = m_codeEnd;
     if (ptr >= end) {
         ASSERT(ptr == end);
         goto slowCase;
@@ -241,7 +278,7 @@ ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* tokenData, JST
     m_code = ptr;
 
     // Create the identifier if needed
-    if (lexType & DontBuildKeywords)
+    if (lexerFlags & LexexFlagsDontBuildKeywords)
         tokenData->ident = 0;
     else
         tokenData->ident = makeIdentifier(start, ptr - start);
@@ -252,7 +289,7 @@ ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* tokenData, JST
     return IDENT;
     
 slowCase:
-    return lex(tokenData, tokenInfo, lexType, strictMode);
+    return lex(tokenData, tokenInfo, lexerFlags, strictMode);
 }
 
 } // namespace JSC

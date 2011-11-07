@@ -489,20 +489,20 @@ private:
     bool isFunctionBodyNode(FunctionBodyNode*) { return true; }
 
 
-    ALWAYS_INLINE void next(unsigned lexType = 0)
+    ALWAYS_INLINE void next(unsigned lexerFlags = 0)
     {
         m_lastLine = m_token.m_info.line;
         m_lastTokenEnd = m_token.m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType, strictMode());
+        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexerFlags, strictMode());
     }
 
-    ALWAYS_INLINE void nextExpectIdentifier(unsigned lexType = 0)
+    ALWAYS_INLINE void nextExpectIdentifier(unsigned lexerFlags = 0)
     {
         m_lastLine = m_token.m_info.line;
         m_lastTokenEnd = m_token.m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_info, lexType, strictMode());
+        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_info, lexerFlags, strictMode());
     }
 
     ALWAYS_INLINE bool nextTokenIsColon()
@@ -920,7 +920,7 @@ private:
     mutable const JSGlobalData* m_globalData;
     const SourceCode* m_source;
     ParserArena* m_arena;
-    Lexer* m_lexer;
+    Lexer<UChar>* m_lexer;
     
     StackBounds m_stack;
     bool m_error;

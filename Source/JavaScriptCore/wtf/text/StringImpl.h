@@ -44,8 +44,8 @@ typedef const struct __CFString * CFStringRef;
 // Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {
 struct IdentifierCStringTranslator;
-struct IdentifierCharBufferTranslator;
-struct IdentifierUCharBufferTranslator;
+template <typename T> struct IdentifierCharBufferTranslator;
+struct IdentifierLCharFromUCharTranslator;
 }
 
 namespace WTF {
@@ -63,8 +63,9 @@ typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 class StringImpl {
     WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
     friend struct JSC::IdentifierCStringTranslator;
-    friend struct JSC::IdentifierCharBufferTranslator;
-    friend struct JSC::IdentifierUCharBufferTranslator;
+    friend struct JSC::IdentifierCharBufferTranslator<LChar>;
+    friend struct JSC::IdentifierCharBufferTranslator<UChar>;
+    friend struct JSC::IdentifierLCharFromUCharTranslator;
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;

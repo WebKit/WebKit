@@ -85,7 +85,7 @@ static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
         if (c == '%') {
             int charLen = 0;
             if (k <= len - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
-                const char b0 = Lexer::convertHex(p[1], p[2]);
+                const char b0 = Lexer<UChar>::convertHex(p[1], p[2]);
                 const int sequenceLen = UTF8SequenceLength(b0);
                 if (sequenceLen != 0 && k <= len - sequenceLen * 3) {
                     charLen = sequenceLen * 3;
@@ -94,7 +94,7 @@ static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
                     for (int i = 1; i < sequenceLen; ++i) {
                         const UChar* q = p + i * 3;
                         if (q[0] == '%' && isASCIIHexDigit(q[1]) && isASCIIHexDigit(q[2]))
-                            sequence[i] = Lexer::convertHex(q[1], q[2]);
+                            sequence[i] = Lexer<UChar>::convertHex(q[1], q[2]);
                         else {
                             charLen = 0;
                             break;
@@ -123,7 +123,7 @@ static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
                         && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
                         && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
                     charLen = 6;
-                    u = Lexer::convertUnicode(p[2], p[3], p[4], p[5]);
+                    u = Lexer<UChar>::convertUnicode(p[2], p[3], p[4], p[5]);
                 }
             }
             if (charLen && (u == 0 || u >= 128 || !strchr(doNotUnescape, u))) {
@@ -173,12 +173,12 @@ static int parseDigit(unsigned short c, int radix)
     return digit;
 }
 
-double parseIntOverflow(const char* s, int length, int radix)
+double parseIntOverflow(const LChar* s, int length, int radix)
 {
     double number = 0.0;
     double radixMultiplier = 1.0;
 
-    for (const char* p = s + length - 1; p >= s; p--) {
+    for (const LChar* p = s + length - 1; p >= s; p--) {
         if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
                 number = std::numeric_limits<double>::infinity();
@@ -578,12 +578,12 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
         UChar u;
         if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
             if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
-                u = Lexer::convertUnicode(c[2], c[3], c[4], c[5]);
+                u = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
                 c = &u;
                 k += 5;
             }
         } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
-            u = UChar(Lexer::convertHex(c[1], c[2]));
+            u = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
             c = &u;
             k += 2;
         }

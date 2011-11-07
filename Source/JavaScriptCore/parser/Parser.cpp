@@ -57,7 +57,7 @@ Parser::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParam
     , m_lastIdentifier(0)
     , m_sourceElements(0)
 {
-    m_lexer = new Lexer(globalData);
+    m_lexer = new Lexer<UChar>(globalData);
     m_arena = m_globalData->parserArena;
     m_lexer->setCode(source, m_arena);
 
@@ -1158,9 +1158,9 @@ template <bool complete, class TreeBuilder> TreeProperty Parser::parseProperty(T
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
         if (complete || (wasIdent && (*ident == m_globalData->propertyNames->get || *ident == m_globalData->propertyNames->set)))
-            nextExpectIdentifier(Lexer::IgnoreReservedWords);
+            nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
         else
-            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+            nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
         
         if (match(COLON)) {
             next();
@@ -1489,7 +1489,7 @@ template <class TreeBuilder> TreeExpression Parser::parseMemberExpression(TreeBu
         case DOT: {
             m_nonTrivialExpressionCount++;
             int expressionEnd = lastTokenEnd();
-            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+            nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT);
             base = context.createDotAccess(m_lexer->lastLineNumber(), base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
             next();

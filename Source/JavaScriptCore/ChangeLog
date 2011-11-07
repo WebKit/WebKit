@@ -1,3 +1,118 @@
+2011-11-07  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize JSC::Lexer class by character type
+        https://bugs.webkit.org/show_bug.cgi?id=71331
+
+        Change the Lexer class to be a template class based on the character
+        type of the source.  In the process updated the parseIdentifier()
+        and parseString() methods to create 8 bit strings where possible.
+        Also added some helper methods for accumulating temporary string
+        data in the 8 and 16 bit vectors.
+
+        Changed the SourceProvider::data() virtual method to return a
+        StringImpl* instead of a UChar*.
+
+        Updated the KeywordLookup generator to create code to match keywords
+        for both 8 and 16 bit source strings.
+
+        Due to a compiler bug (<rdar://problem/10194295>) moved enum
+        definition outside of Lexer class declaration.  Remove second enum
+        no longer needed.
+
+        Reviewed by Darin Adler.
+
+        * KeywordLookupGenerator.py:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * parser/Lexer.cpp:
+        (JSC::::Lexer):
+        (JSC::::~Lexer):
+        (JSC::::getInvalidCharMessage):
+        (JSC::::currentCharacter):
+        (JSC::::setCode):
+        (JSC::::internalShift):
+        (JSC::::shift):
+        (JSC::::peek):
+        (JSC::::getUnicodeCharacter):
+        (JSC::::shiftLineTerminator):
+        (JSC::::lastTokenWasRestrKeyword):
+        (JSC::::record8):
+        (JSC::::append8):
+        (JSC::::append16):
+        (JSC::::record16):
+        (JSC::::parseIdentifier):
+        (JSC::::parseIdentifierSlowCase):
+        (JSC::::parseString):
+        (JSC::::parseStringSlowCase):
+        (JSC::::parseHex):
+        (JSC::::parseOctal):
+        (JSC::::parseDecimal):
+        (JSC::::parseNumberAfterDecimalPoint):
+        (JSC::::parseNumberAfterExponentIndicator):
+        (JSC::::parseMultilineComment):
+        (JSC::::nextTokenIsColon):
+        (JSC::::lex):
+        (JSC::::scanRegExp):
+        (JSC::::skipRegExp):
+        (JSC::::clear):
+        (JSC::::sourceCode):
+        * parser/Lexer.h:
+        (JSC::Lexer::append16):
+        (JSC::Lexer::currentOffset):
+        (JSC::Lexer::setOffsetFromCharOffset):
+        (JSC::::isWhiteSpace):
+        (JSC::::isLineTerminator):
+        (JSC::::convertHex):
+        (JSC::::convertUnicode):
+        (JSC::::makeIdentifier):
+        (JSC::::setCodeStart):
+        (JSC::::makeIdentifierLCharFromUChar):
+        (JSC::::lexExpectIdentifier):
+        * parser/Parser.cpp:
+        (JSC::Parser::Parser):
+        (JSC::Parser::parseProperty):
+        (JSC::Parser::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::next):
+        (JSC::Parser::nextExpectIdentifier):
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeIdentifier):
+        (JSC::IdentifierArena::makeIdentifierLCharFromUChar):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::subExpression):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::stringData):
+        * parser/SourceProviderCache.h:
+        * parser/SyntaxChecker.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierTable::add):
+        (JSC::IdentifierLCharFromUCharTranslator::hash):
+        (JSC::IdentifierLCharFromUCharTranslator::equal):
+        (JSC::IdentifierLCharFromUCharTranslator::translate):
+        (JSC::Identifier::add8):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        (JSC::Identifier::createLCharFromUChar):
+        (JSC::Identifier::canUseSingleCharacterString):
+        (JSC::IdentifierCharBufferTranslator::hash):
+        (JSC::IdentifierCharBufferTranslator::equal):
+        (JSC::IdentifierCharBufferTranslator::translate):
+        (JSC::Identifier::add):
+        (JSC::Identifier::equal):
+        (JSC::IdentifierTable::add):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        (JSC::parseIntOverflow):
+        (JSC::globalFuncUnescape):
+        * runtime/JSGlobalObjectFunctions.h:
+        (JSC::parseIntOverflow):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::tryJSONPParse):
+        (JSC::LiteralParser::Lexer::lexString):
+        * wtf/text/StringImpl.h:
+
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Put the jsc binary in 'bin' instead of leaving it deep in the build tree

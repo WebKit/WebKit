@@ -57,6 +57,7 @@ namespace JSC {
 
         virtual UString getRange(int start, int end) const = 0;
         virtual const UChar* data() const = 0;
+        virtual const StringImpl* stringData() const = 0;
         virtual int length() const = 0;
         
         const UString& url() { return m_url; }
@@ -91,6 +92,7 @@ namespace JSC {
             return m_source.substringSharingImpl(start, end - start);
         }
         const UChar* data() const { return m_data; }
+        const StringImpl* stringData() const { return m_source.impl(); }
         int length() const { return m_source.length(); }
 
     private:

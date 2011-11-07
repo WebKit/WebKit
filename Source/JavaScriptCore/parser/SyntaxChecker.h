@@ -115,8 +115,8 @@ public:
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
     static const bool CanUseFunctionCache = true;
-    static const unsigned DontBuildKeywords = Lexer::DontBuildKeywords;
-    static const unsigned DontBuildStrings = Lexer::DontBuildStrings;
+    static const unsigned DontBuildKeywords = LexexFlagsDontBuildKeywords;
+    static const unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
 
     int createSourceElements() { return 1; }
     ExpressionType makeFunctionCallNode(int, int, int, int, int, int) { return CallExpr; }
