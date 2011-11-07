@@ -1,3 +1,12 @@
+2011-11-07  Dana Jansens  <danakj@chromium.org>
+
+        Add cc-bugs group to watch changes in chromium graphics
+        https://bugs.webkit.org/show_bug.cgi?id=71690
+
+        Reviewed by James Robinson.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-11-07  Balazs Ankes  <Ankes.Balazs@stud.u-szeged.hu>
 
         [NRWT] Parsing of test_expectations.txt should be agnostic to newline at end
