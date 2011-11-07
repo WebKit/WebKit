@@ -627,7 +627,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
 void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeIndex);
-    GPRTemporary scratch(this, value);
+    GPRTemporary scratch(this);
     GPRReg valueTagGPR = value.tagGPR();
     GPRReg valuePayloadGPR = value.payloadGPR();
     GPRReg scratchGPR = scratch.gpr();
@@ -1243,7 +1243,7 @@ void SpeculativeJIT::compile(Node& node)
     case ArithAbs: {
         if (at(node.child1()).shouldSpeculateInteger() && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this);
             GPRTemporary scratch(this);
             
             m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
@@ -1421,7 +1421,7 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         GPRTemporary storage(this);
-        GPRTemporary resultTag(this, base);
+        GPRTemporary resultTag(this);
 
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
@@ -1888,7 +1888,7 @@ void SpeculativeJIT::compile(Node& node)
         
         if (isOtherPrediction(at(node.child1()).prediction())) {
             JSValueOperand thisValue(this, node.child1());
-            GPRTemporary scratch(this, thisValue);
+            GPRTemporary scratch(this);
             
             GPRReg thisValueTagGPR = thisValue.tagGPR();
             GPRReg scratchGPR = scratch.gpr();
