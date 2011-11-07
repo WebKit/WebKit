@@ -23,7 +23,6 @@
 
 #include "qbasewebview.h"
 #include "qwebkitglobal.h"
-#include <WebKit2/WKBase.h>
 
 class QDesktopWebViewPrivate;
 
@@ -42,6 +41,10 @@ class QDropEvent;
 class QTouchEvent;
 class QWheelEvent;
 QT_END_NAMESPACE
+
+typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
+typedef const struct OpaqueWKPage* WKPageRef;
 
 namespace WTR {
     class PlatformWebView;

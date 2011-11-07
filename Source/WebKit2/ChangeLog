@@ -1,5 +1,14 @@
 2011-11-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Make it possible to include qdesktopwebview.h from apps
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/qdesktopwebview.h: Don't include C API headers, forward
+        declare the structs manually.
+
+2011-11-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix failing inspector tests after build system changes
         https://bugs.webkit.org/show_bug.cgi?id=71677
 
