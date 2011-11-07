@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,44 @@
  */
 
 #include "config.h"
-#include "DrawingArea.h"
-
-// Subclasses
-#include "DrawingAreaImpl.h"
-
-#if USE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
-
-#if PLATFORM(MAC)
 #include "TiledCoreAnimationDrawingArea.h"
-#endif
 
-#include "WebPageCreationParameters.h"
+using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+PassOwnPtr<TiledCoreAnimationDrawingArea> TiledCoreAnimationDrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
-#if USE(TILED_BACKING_STORE)
-    case DrawingAreaTypeTiled:
-        return adoptPtr(new TiledDrawingArea(webPage));
-#endif
-#if PLATFORM(MAC)
-    case DrawingAreaTypeTiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-#endif
-    }
-
-    return nullptr;
+    return adoptPtr(new TiledCoreAnimationDrawingArea(webPage, parameters));
 }
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
-    : m_type(type)
-    , m_webPage(webPage)
+TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
+    : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
 {
 }
 
-DrawingArea::~DrawingArea()
+TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
+}
+
+void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect&)
+{
+    // FIXME: Implement.
+}
+
+void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    // FIXME: Implement.
+}
+
+void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer*)
+{
+    // FIXME: Implement.
+}
+
+void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
+{
+    // FIXME: Implement
 }
 
 } // namespace WebKit

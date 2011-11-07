@@ -33,6 +33,9 @@ enum DrawingAreaType {
 #if USE(TILED_BACKING_STORE)
     DrawingAreaTypeTiled,
 #endif
+#if PLATFORM(MAC)
+    DrawingAreaTypeTiledCoreAnimation,
+#endif
 };
 
 } // namespace WebKit

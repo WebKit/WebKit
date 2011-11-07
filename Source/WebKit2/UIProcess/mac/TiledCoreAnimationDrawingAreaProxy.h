@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DrawingArea.h"
+#ifndef TiledCoreAnimationDrawingAreaProxy_h
+#define TiledCoreAnimationDrawingAreaProxy_h
 
-// Subclasses
-#include "DrawingAreaImpl.h"
-
-#if USE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "TiledCoreAnimationDrawingArea.h"
-#endif
-
-#include "WebPageCreationParameters.h"
+#include "DrawingAreaProxy.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
-{
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
-#if USE(TILED_BACKING_STORE)
-    case DrawingAreaTypeTiled:
-        return adoptPtr(new TiledDrawingArea(webPage));
-#endif
-#if PLATFORM(MAC)
-    case DrawingAreaTypeTiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-#endif
-    }
+class TiledCoreAnimationDrawingAreaProxy : public DrawingAreaProxy {
+public:
+    static PassOwnPtr<TiledCoreAnimationDrawingAreaProxy> create(WebPageProxy*);
+    virtual ~TiledCoreAnimationDrawingAreaProxy();
 
-    return nullptr;
-}
+private:
+    explicit TiledCoreAnimationDrawingAreaProxy(WebPageProxy*);
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
-    : m_type(type)
-    , m_webPage(webPage)
-{
-}
-
-DrawingArea::~DrawingArea()
-{
-}
+    // DrawingAreaProxy
+    virtual void deviceScaleFactorDidChange() OVERRIDE;
+    virtual void sizeDidChange() OVERRIDE;
+};
 
 } // namespace WebKit
+
+#endif // TiledCoreAnimationDrawingAreaProxy_h

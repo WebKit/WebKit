@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,32 @@
  */
 
 #include "config.h"
-#include "DrawingArea.h"
-
-// Subclasses
-#include "DrawingAreaImpl.h"
-
-#if USE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "TiledCoreAnimationDrawingArea.h"
-#endif
-
-#include "WebPageCreationParameters.h"
+#include "TiledCoreAnimationDrawingAreaProxy.h"
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+PassOwnPtr<TiledCoreAnimationDrawingAreaProxy> TiledCoreAnimationDrawingAreaProxy::create(WebPageProxy* webPageProxy)
 {
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
-#if USE(TILED_BACKING_STORE)
-    case DrawingAreaTypeTiled:
-        return adoptPtr(new TiledDrawingArea(webPage));
-#endif
-#if PLATFORM(MAC)
-    case DrawingAreaTypeTiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-#endif
-    }
-
-    return nullptr;
+    return adoptPtr(new TiledCoreAnimationDrawingAreaProxy(webPageProxy));
 }
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
-    : m_type(type)
-    , m_webPage(webPage)
+TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy* webPageProxy)
+    : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy)
 {
 }
 
-DrawingArea::~DrawingArea()
+TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 {
+}
+
+void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
+{
+    // FIXME: Implement.
+}
+
+void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
+{
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

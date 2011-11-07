@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef TiledCoreAnimationDrawingArea_h
+#define TiledCoreAnimationDrawingArea_h
+
 #include "DrawingArea.h"
-
-// Subclasses
-#include "DrawingAreaImpl.h"
-
-#if USE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "TiledCoreAnimationDrawingArea.h"
-#endif
-
-#include "WebPageCreationParameters.h"
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
-{
-    switch (parameters.drawingAreaType) {
-    case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
-#if USE(TILED_BACKING_STORE)
-    case DrawingAreaTypeTiled:
-        return adoptPtr(new TiledDrawingArea(webPage));
-#endif
-#if PLATFORM(MAC)
-    case DrawingAreaTypeTiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-#endif
-    }
+class TiledCoreAnimationDrawingArea : public DrawingArea {
+public:
+    static PassOwnPtr<TiledCoreAnimationDrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    virtual ~TiledCoreAnimationDrawingArea();
 
-    return nullptr;
-}
+private:
+    TiledCoreAnimationDrawingArea(WebPage*, const WebPageCreationParameters&);
 
-DrawingArea::DrawingArea(DrawingAreaType type, WebPage* webPage)
-    : m_type(type)
-    , m_webPage(webPage)
-{
-}
+    // DrawingArea
+    virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
 
-DrawingArea::~DrawingArea()
-{
-}
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void scheduleCompositingLayerSync() OVERRIDE;
+
+};
 
 } // namespace WebKit
+
+#endif // TiledCoreAnimationDrawingArea_h

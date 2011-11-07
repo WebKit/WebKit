@@ -43,6 +43,7 @@
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
+#import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
@@ -2056,8 +2057,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @implementation WKView (Internal)
 
+- (BOOL)_shouldUseTiledDrawingArea
+{
+    return NO;
+}
+
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
+    if ([self _shouldUseTiledDrawingArea])
+        return TiledCoreAnimationDrawingAreaProxy::create(_data->_page.get());
+
     return DrawingAreaProxyImpl::create(_data->_page.get());
 }
 

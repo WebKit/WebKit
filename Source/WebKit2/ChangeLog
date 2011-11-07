@@ -1,5 +1,36 @@
 2011-11-07  Anders Carlsson  <andersca@apple.com>
 
+        Add TiledCoreAnimationDrawingArea stub classes
+        https://bugs.webkit.org/show_bug.cgi?id=71729
+
+        Reviewed by Sam Weinig.
+
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _shouldUseTiledDrawingArea]):
+        (-[WKView WebKit::]):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h: Copied from Source/WebKit2/Shared/DrawingAreaInfo.h.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm: Copied from Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp.
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::create):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sizeDidChange):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h: Copied from Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm: Copied from Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp.
+        (WebKit::TiledCoreAnimationDrawingArea::create):
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setNeedsDisplay):
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync):
+
+2011-11-07  Anders Carlsson  <andersca@apple.com>
+
         Follow-up build fix.
 
         * WebProcess/WebPage/DrawingAreaImpl.h:
