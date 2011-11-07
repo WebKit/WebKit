@@ -293,6 +293,18 @@ bool NetscapePlugin::platformInvalidate(const IntRect&)
 
 void NetscapePlugin::platformGeometryDidChange()
 {
+    switch (m_eventModel) {
+    case NPEventModelCocoa:
+        // Nothing to do
+        break;
+#ifndef NP_NO_CARBON
+    case NPEventModelCarbon:
+        updateFakeWindowBounds();
+        break;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void NetscapePlugin::platformVisibilityDidChange()
@@ -322,6 +334,21 @@ WindowRef NetscapePlugin::windowRef() const
     ASSERT(m_eventModel == NPEventModelCarbon);
 
     return reinterpret_cast<WindowRef>(m_npCGContext.window);
+}
+
+void NetscapePlugin::updateFakeWindowBounds()
+{
+    double screenX, screenY;
+    bool didConvert = convertPoint(0, 0, NPCoordinateSpacePlugin, screenX, screenY, NPCoordinateSpaceFlippedScreen);
+    ASSERT_UNUSED(didConvert, didConvert);
+    
+    Rect bounds;
+    bounds.top = screenY;
+    bounds.left = screenX;
+    bounds.bottom = screenY + m_pluginSize.height();
+    bounds.right = screenX + m_pluginSize.width();
+    
+    ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
 }
 
 unsigned NetscapePlugin::buttonState()
@@ -834,7 +861,7 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
 
 bool NetscapePlugin::wantsWindowRelativeNPWindowCoordinates()
 {
-    return true;
+    return false;
 }
 
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
@@ -872,26 +899,6 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
     }
 }
 
-#ifndef NP_NO_CARBON
-static Rect computeFakeWindowBoundsRect(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates)
-{
-    // Carbon global coordinates has the origin set at the top left corner of the main viewing screen, so we want to flip the y coordinate.
-    CGFloat maxY = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]);
-
-    int flippedWindowFrameYCoordinate = maxY - windowFrameInScreenCoordinates.maxY();
-    int flippedViewFrameYCoordinate = windowFrameInScreenCoordinates.height() - viewFrameInWindowCoordinates.maxY();
-
-    Rect bounds;
-    
-    bounds.top = flippedWindowFrameYCoordinate + flippedViewFrameYCoordinate;
-    bounds.left = windowFrameInScreenCoordinates.x();
-    bounds.right = bounds.left + viewFrameInWindowCoordinates.width();
-    bounds.bottom = bounds.top + viewFrameInWindowCoordinates.height();
-    
-    return bounds;
-}
-#endif
-
 void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
@@ -903,12 +910,9 @@ void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScre
             break;
 
 #ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            Rect bounds = computeFakeWindowBoundsRect(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
-
-            ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
+        case NPEventModelCarbon:
+            updateFakeWindowBounds();
             break;
-        }
 #endif
 
         default:

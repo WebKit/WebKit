@@ -1,3 +1,28 @@
+2011-11-07  Anders Carlsson  <andersca@apple.com>
+
+        NetscapePlugin::wantsWindowRelativeNPWindowCoordinates should return false on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=71707
+
+        Reviewed by Sam Weinig.
+
+        This changes the way the fake Carbon plug-in window is positioned, so that it's always the same size
+        and location as the plug-in (relative to the screen).
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        Call updateFakeWindowBounds.
+
+        (WebKit::NetscapePlugin::updateFakeWindowBounds):
+        Convert the plug-in position to screen coordinates and set the window bounds to be the location and
+        size of the plug-in, where the location is relative to the screen.
+
+        (WebKit::NetscapePlugin::wantsWindowRelativeNPWindowCoordinates):
+        Return false.
+
+        (WebKit::NetscapePlugin::windowAndViewFramesChanged):
+        Call updateFakeWindowBounds.
+
 2011-11-07  Sam Weinig  <sam@webkit.org>
 
         WKPage.h should be in PrivateHeaders.

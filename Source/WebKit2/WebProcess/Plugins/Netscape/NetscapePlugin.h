@@ -71,6 +71,7 @@ public:
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
     bool isWindowActive() const { return m_windowHasFocus; }
+    void updateFakeWindowBounds();
 
     static NetscapePlugin* netscapePluginFromWindow(WindowRef);
     static unsigned buttonState();
