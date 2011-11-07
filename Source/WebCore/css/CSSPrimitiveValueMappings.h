@@ -50,7 +50,8 @@
 namespace WebCore {
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
-    : m_type(CSS_NUMBER)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
 {
     m_value.num = static_cast<double>(i);
@@ -66,7 +67,8 @@ template<> inline CSSPrimitiveValue::operator short() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned short i)
-    : m_type(CSS_NUMBER)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
 {
     m_value.num = static_cast<double>(i);
@@ -82,7 +84,8 @@ template<> inline CSSPrimitiveValue::operator unsigned short() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(int i)
-    : m_type(CSS_NUMBER)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
 {
     m_value.num = static_cast<double>(i);
@@ -98,7 +101,8 @@ template<> inline CSSPrimitiveValue::operator int() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned i)
-    : m_type(CSS_NUMBER)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
 {
     m_value.num = static_cast<double>(i);
@@ -115,7 +119,8 @@ template<> inline CSSPrimitiveValue::operator unsigned() const
 
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(float i)
-    : m_type(CSS_NUMBER)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)
 {
     m_value.num = static_cast<double>(i);
@@ -131,7 +136,8 @@ template<> inline CSSPrimitiveValue::operator float() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnSpan columnSpan)
-    : m_hasCachedCSSText(false)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_hasCachedCSSText(false)
 {
     switch (columnSpan) {
     case ColumnSpanAll:
@@ -157,7 +163,8 @@ template<> inline CSSPrimitiveValue::operator ColumnSpan() const
 
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(PrintColorAdjust value)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (value) {
@@ -185,7 +192,8 @@ template<> inline CSSPrimitiveValue::operator PrintColorAdjust() const
 
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -237,7 +245,8 @@ template<> inline CSSPrimitiveValue::operator OutlineIsAuto() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -319,7 +328,8 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -508,7 +518,8 @@ template<> inline CSSPrimitiveValue::operator ControlPart() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBackfaceVisibility e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -536,7 +547,8 @@ template<> inline CSSPrimitiveValue::operator EBackfaceVisibility() const
 
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillAttachment e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -568,7 +580,8 @@ template<> inline CSSPrimitiveValue::operator EFillAttachment() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -609,7 +622,8 @@ template<> inline CSSPrimitiveValue::operator EFillBox() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillRepeat e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -646,7 +660,8 @@ template<> inline CSSPrimitiveValue::operator EFillRepeat() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxAlignment e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -693,7 +708,8 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -720,7 +736,8 @@ template<> inline CSSPrimitiveValue::operator EBoxSizing() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxDirection e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -747,7 +764,8 @@ template<> inline CSSPrimitiveValue::operator EBoxDirection() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxLines e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -774,7 +792,8 @@ template<> inline CSSPrimitiveValue::operator EBoxLines() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxOrient e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -803,7 +822,8 @@ template<> inline CSSPrimitiveValue::operator EBoxOrient() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECaptionSide e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -840,7 +860,8 @@ template<> inline CSSPrimitiveValue::operator ECaptionSide() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EClear e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -877,7 +898,8 @@ template<> inline CSSPrimitiveValue::operator EClear() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1002,7 +1024,8 @@ template<> inline CSSPrimitiveValue::operator ECursor() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1082,7 +1105,8 @@ template<> inline CSSPrimitiveValue::operator EDisplay() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EEmptyCell e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1109,7 +1133,8 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1151,7 +1176,8 @@ template<> inline CSSPrimitiveValue::operator EFlexAlign() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1188,7 +1214,8 @@ template<> inline CSSPrimitiveValue::operator EFlexPack() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexFlow e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1225,7 +1252,8 @@ template<> inline CSSPrimitiveValue::operator EFlexFlow() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1263,7 +1291,8 @@ template<> inline CSSPrimitiveValue::operator EFloat() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EKHTMLLineBreak e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1290,7 +1319,8 @@ template<> inline CSSPrimitiveValue::operator EKHTMLLineBreak() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStylePosition e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1309,7 +1339,8 @@ template<> inline CSSPrimitiveValue::operator EListStylePosition() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1570,7 +1601,8 @@ template<> inline CSSPrimitiveValue::operator EListStyleType() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarginCollapse e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1602,7 +1634,8 @@ template<> inline CSSPrimitiveValue::operator EMarginCollapse() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeBehavior e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1639,7 +1672,8 @@ template<> inline CSSPrimitiveValue::operator EMarqueeBehavior() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1666,7 +1700,8 @@ template<> inline CSSPrimitiveValue::operator RegionOverflow() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeDirection e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1720,7 +1755,8 @@ template<> inline CSSPrimitiveValue::operator EMarqueeDirection() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMatchNearestMailBlockquoteColor e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1747,7 +1783,8 @@ template<> inline CSSPrimitiveValue::operator EMatchNearestMailBlockquoteColor()
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ENBSPMode e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1774,7 +1811,8 @@ template<> inline CSSPrimitiveValue::operator ENBSPMode() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EOverflow e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1821,7 +1859,8 @@ template<> inline CSSPrimitiveValue::operator EOverflow() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPageBreak e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1855,7 +1894,8 @@ template<> inline CSSPrimitiveValue::operator EPageBreak() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPosition e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1892,7 +1932,8 @@ template<> inline CSSPrimitiveValue::operator EPosition() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EResize e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1932,7 +1973,8 @@ template<> inline CSSPrimitiveValue::operator EResize() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETableLayout e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -1959,7 +2001,8 @@ template<> inline CSSPrimitiveValue::operator ETableLayout() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlign e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2028,7 +2071,8 @@ template<> inline CSSPrimitiveValue::operator ETextDecoration() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2065,7 +2109,8 @@ template<> inline CSSPrimitiveValue::operator ETextSecurity() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextTransform e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2102,7 +2147,8 @@ template<> inline CSSPrimitiveValue::operator ETextTransform() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2144,7 +2190,8 @@ template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserDrag e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2176,7 +2223,8 @@ template<> inline CSSPrimitiveValue::operator EUserDrag() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserModify e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2198,7 +2246,8 @@ template<> inline CSSPrimitiveValue::operator EUserModify() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserSelect e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2227,7 +2276,8 @@ template<> inline CSSPrimitiveValue::operator EUserSelect() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVerticalAlign a)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (a) {
@@ -2291,7 +2341,8 @@ template<> inline CSSPrimitiveValue::operator EVerticalAlign() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVisibility e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2323,7 +2374,8 @@ template<> inline CSSPrimitiveValue::operator EVisibility() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWhiteSpace e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2370,7 +2422,8 @@ template<> inline CSSPrimitiveValue::operator EWhiteSpace() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWordBreak e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2402,7 +2455,8 @@ template<> inline CSSPrimitiveValue::operator EWordBreak() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWordWrap e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2429,7 +2483,8 @@ template<> inline CSSPrimitiveValue::operator EWordWrap() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextDirection e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2456,7 +2511,8 @@ template<> inline CSSPrimitiveValue::operator TextDirection() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WritingMode e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2493,7 +2549,8 @@ template<> inline CSSPrimitiveValue::operator WritingMode() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextCombine e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2520,7 +2577,8 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisPosition position)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (position) {
@@ -2547,7 +2605,8 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisPosition() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOverflow overflow)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (overflow) {
@@ -2574,7 +2633,8 @@ template<> inline CSSPrimitiveValue::operator TextOverflow() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisFill fill)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (fill) {
@@ -2601,7 +2661,8 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisFill() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisMark mark)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (mark) {
@@ -2651,7 +2712,8 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisMark() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2678,7 +2740,8 @@ template<> inline CSSPrimitiveValue::operator TextOrientation() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2745,7 +2808,8 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmoothingMode smoothing)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (smoothing) {
@@ -2785,7 +2849,8 @@ template<> inline CSSPrimitiveValue::operator FontSmoothingMode() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontWeight weight)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (weight) {
@@ -2854,7 +2919,8 @@ template<> inline CSSPrimitiveValue::operator FontWeight() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontItalic italic)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (italic) {
@@ -2885,7 +2951,8 @@ template<> inline CSSPrimitiveValue::operator FontItalic() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmallCaps smallCaps)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (smallCaps) {
@@ -2914,7 +2981,8 @@ template<> inline CSSPrimitiveValue::operator FontSmallCaps() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextRenderingMode e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -2951,7 +3019,8 @@ template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColorSpace space)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (space) {
@@ -2983,7 +3052,8 @@ template<> inline CSSPrimitiveValue::operator ColorSpace() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Hyphens hyphens)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (hyphens) {
@@ -3015,7 +3085,8 @@ template<> inline CSSPrimitiveValue::operator Hyphens() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3054,7 +3125,8 @@ template<> inline CSSPrimitiveValue::operator Order() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Order e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3091,7 +3163,8 @@ template<> inline CSSPrimitiveValue::operator ESpeak() const
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3123,7 +3196,8 @@ template<> inline CSSPrimitiveValue::operator LineCap() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineJoin e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3155,7 +3229,8 @@ template<> inline CSSPrimitiveValue::operator LineJoin() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WindRule e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3183,7 +3258,8 @@ template<> inline CSSPrimitiveValue::operator WindRule() const
 
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignmentBaseline e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3262,7 +3338,8 @@ template<> inline CSSPrimitiveValue::operator EAlignmentBaseline() const
 #endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderCollapse e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3289,7 +3366,8 @@ template<> inline CSSPrimitiveValue::operator EBorderCollapse() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderFit e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3316,7 +3394,8 @@ template<> inline CSSPrimitiveValue::operator EBorderFit() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3353,7 +3432,8 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETransformStyle3D e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3380,7 +3460,8 @@ template<> inline CSSPrimitiveValue::operator ETransformStyle3D() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnAxis e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3414,7 +3495,8 @@ template<> inline CSSPrimitiveValue::operator ColumnAxis() const
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3446,7 +3528,8 @@ template<> inline CSSPrimitiveValue::operator EColorInterpolation() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorRendering e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3478,7 +3561,8 @@ template<> inline CSSPrimitiveValue::operator EColorRendering() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDominantBaseline e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3555,7 +3639,8 @@ template<> inline CSSPrimitiveValue::operator EDominantBaseline() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EShapeRendering e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3592,7 +3677,8 @@ template<> inline CSSPrimitiveValue::operator EShapeRendering() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAnchor e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3624,7 +3710,8 @@ template<> inline CSSPrimitiveValue::operator ETextAnchor() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(SVGWritingMode e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
@@ -3671,7 +3758,8 @@ template<> inline CSSPrimitiveValue::operator SVGWritingMode() const
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {

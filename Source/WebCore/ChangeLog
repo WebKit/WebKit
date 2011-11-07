@@ -1,3 +1,18 @@
+2011-11-07  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r99409): Broke transitions/clip-transition.html
+        <http://webkit.org/b/71692>
+
+        Reviewed by Darin Adler.
+
+        Add missing base class initializers to CSSPrimitiveValue constructors.
+        This was causing some CSSPrimitiveValues to masquerade as CSS_CUSTOM values.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+
 2011-11-07  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Support requestAnimationFrame API

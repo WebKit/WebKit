@@ -225,8 +225,17 @@ private:
     CSSPrimitiveValue(const Length&);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
-    template<typename T> CSSPrimitiveValue(T* val) { init(PassRefPtr<T>(val)); }
-    template<typename T> CSSPrimitiveValue(PassRefPtr<T> val) { init(val); }
+    template<typename T> CSSPrimitiveValue(T* val)
+        : CSSValue(CSS_PRIMITIVE_VALUE)
+    {
+        init(PassRefPtr<T>(val));
+    }
+
+    template<typename T> CSSPrimitiveValue(PassRefPtr<T> val)
+        : CSSValue(CSS_PRIMITIVE_VALUE)
+    {
+        init(val);
+    }
 
     static void create(int); // compile-time guard
     static void create(unsigned); // compile-time guard
