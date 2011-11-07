@@ -28,6 +28,7 @@
 #include "SecurityContext.h"
 
 #include "ContentSecurityPolicy.h"
+#include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -49,6 +50,42 @@ void SecurityContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigi
 void SecurityContext::setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy> contentSecurityPolicy)
 {
     m_contentSecurityPolicy = contentSecurityPolicy;
+}
+
+SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy)
+{
+    // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox
+    // Parse the unordered set of unique space-separated tokens.
+    SandboxFlags flags = SandboxAll;
+    const UChar* characters = policy.characters();
+    unsigned length = policy.length();
+    unsigned start = 0;
+    while (true) {
+        while (start < length && isHTMLSpace(characters[start]))
+            ++start;
+        if (start >= length)
+            break;
+        unsigned end = start + 1;
+        while (end < length && !isHTMLSpace(characters[end]))
+            ++end;
+
+        // Turn off the corresponding sandbox flag if it's set as "allowed".
+        String sandboxToken = policy.substring(start, end - start);
+        if (equalIgnoringCase(sandboxToken, "allow-same-origin"))
+            flags &= ~SandboxOrigin;
+        else if (equalIgnoringCase(sandboxToken, "allow-forms"))
+            flags &= ~SandboxForms;
+        else if (equalIgnoringCase(sandboxToken, "allow-scripts"))
+            flags &= ~SandboxScripts;
+        else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
+            flags &= ~SandboxTopNavigation;
+        else if (equalIgnoringCase(sandboxToken, "allow-popups"))
+            flags &= ~SandboxPopups;
+
+        start = end + 1;
+    }
+
+    return flags;
 }
 
 }

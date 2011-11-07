@@ -30,7 +30,6 @@
 #define SecurityOrigin_h
 
 #include "PlatformString.h"
-#include "SecurityContext.h" // FIXME: Remove once parseSandboxPolicy moves to SecurityContext.
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -177,8 +176,6 @@ public:
     // This method checks for equality, ignoring the value of document.domain
     // (and whether it was set) but considering the host. It is used for postMessage.
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
-
-    static SandboxFlags parseSandboxPolicy(const String& policy);
 
     static bool shouldHideReferrer(const KURL&, const String& referrer);
 

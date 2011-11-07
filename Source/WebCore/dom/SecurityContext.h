@@ -29,6 +29,7 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -57,6 +58,8 @@ public:
 
     void enforceSandboxFlags(SandboxFlags mask) { m_sandboxFlags |= mask; }
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
+
+    static SandboxFlags parseSandboxPolicy(const String& policy);
 
 protected:
     SecurityContext();

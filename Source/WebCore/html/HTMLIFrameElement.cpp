@@ -32,7 +32,6 @@
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
 #include "RenderIFrame.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -92,7 +91,7 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
             // Add a rule that nulls out our border width.
             addCSSLength(attr, CSSPropertyBorderWidth, "0");
     } else if (attr->name() == sandboxAttr)
-        setSandboxFlags(attr->isNull() ? SandboxNone : SecurityOrigin::parseSandboxPolicy(attr->value()));
+        setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
     else
         HTMLFrameElementBase::parseMappedAttribute(attr);
 }

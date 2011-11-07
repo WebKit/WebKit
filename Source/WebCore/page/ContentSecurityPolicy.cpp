@@ -769,7 +769,7 @@ void ContentSecurityPolicy::applySandboxPolicy(const String& sandboxPolicy)
 {
     ASSERT(!m_haveSandboxPolicy);
     m_haveSandboxPolicy = true;
-    m_scriptExecutionContext->enforceSandboxFlags(SecurityOrigin::parseSandboxPolicy(sandboxPolicy));
+    m_scriptExecutionContext->enforceSandboxFlags(SecurityContext::parseSandboxPolicy(sandboxPolicy));
 }
 
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
