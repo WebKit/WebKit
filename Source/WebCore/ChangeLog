@@ -1,3 +1,18 @@
+2011-11-07  Noel Gordon  <noel.gordon@gmail.com>
+
+        Refactor canvas encoding mimeType validation
+        https://bugs.webkit.org/show_bug.cgi?id=71651
+
+        Reviewed by Andreas Kling.
+
+        No new tests, refactoring only, covered by existing canvas tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toEncodingMimeType): move encoder mimeType
+        validation logic into a helper routine.
+        (WebCore::HTMLCanvasElement::toDataURL):
+        * html/HTMLCanvasElement.h:
+
 2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Suggest box should consume enter key pressed event.

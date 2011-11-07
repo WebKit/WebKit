@@ -91,6 +91,7 @@ public:
 
     CanvasRenderingContext* getContext(const String&, CanvasContextAttributes* attributes = 0);
 
+    static String toEncodingMimeType(const String& mimeType);
     String toDataURL(const String& mimeType, const double* quality, ExceptionCode&);
     String toDataURL(const String& mimeType, ExceptionCode& ec) { return toDataURL(mimeType, 0, ec); }
 
