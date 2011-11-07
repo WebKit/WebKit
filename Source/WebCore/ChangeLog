@@ -1,3 +1,13 @@
+2011-11-07  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: follow up to r99407. Style the suggest box.
+        https://bugs.webkit.org/show_bug.cgi?id=65511
+
+
+        * inspector/front-end/TextPrompt.js:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/textPrompt.css:
+
 2011-11-07  Roland Steiner  <rolandsteiner@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=70223

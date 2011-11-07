@@ -815,7 +815,7 @@ WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, classNam
     window.addEventListener("scroll", this._boundOnScroll, true);
     window.addEventListener("resize", this._boundOnResize, true);
 
-    this._element = this._parentElement.createChild("div", "suggest-box custom-popup-vertical-scroll custom-popup-horizontal-scroll " + (className || ""));
+    this._element = this._parentElement.createChild("div", "suggest-box " + (className || ""));
     this._element.addEventListener("mousedown", this._onboxmousedown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
     this.contentElement = this.containerElement.createChild("div", "content");
@@ -855,9 +855,9 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         // Lay out the suggest-box relative to the anchorBox.
         const anchorBox = this._inputElement.boxInWindow(window, this._parentElement);
         const suggestBoxPaddingX = 21;
-        const suggestBoxPaddingY = 12;
+        const suggestBoxPaddingY = 2;
         const spacer = 6;
-        const minHeight = 50;
+        const minHeight = 25;
         const maxWidth = document.body.offsetWidth - anchorBox.x - spacer;
         const width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
 
@@ -967,7 +967,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
      */
     updateSuggestionsSoon: function(completions)
     {
-        if (!("_suggestTimeout" in this))
+        if (!this._suggestTimeout)
             this._suggestTimeout = setTimeout(this.updateSuggestions.bind(this, completions), 10);
     },
 
@@ -976,7 +976,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
      */
     updateSuggestions: function(completions)
     {
-        if ("_suggestTimeout" in this) {
+        if (this._suggestTimeout) {
             clearTimeout(this._suggestTimeout);
             delete this._suggestTimeout;
         }
@@ -1017,6 +1017,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         var child = this.contentElement.firstChild;
         var childText = child ? child.textContent : null;
         this.contentElement.removeChildren();
+
         delete this._selectedElement;
 
         var userEnteredText = this._textPrompt._userEnteredText;

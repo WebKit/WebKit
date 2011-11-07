@@ -35,7 +35,6 @@
     border: 1px solid black;
     padding: 2px;
     z-index: 100;
-    -webkit-box-shadow: 10px 10px 8px rgba(40, 40, 40, 0.40);
 }
 
 .suggest-box.visible {
@@ -48,7 +47,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    margin: 2px 0;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -67,8 +65,7 @@
 }
 
 .suggest-box-content-item.selected {
-    border: 1px solid rgb(0, 0, 0);
-    background-color: rgb(238, 238, 238);
+    background-color: rgb(212, 212, 212);
 }
 
 .suggest-box-content-item:hover:not(.selected) {

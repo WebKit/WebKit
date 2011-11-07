@@ -2520,19 +2520,12 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 /* Generic suggest box style */
 
 .suggest-box.generic-suggest {
-    border-radius: 0 5px 5px 5px;
     margin-left: -1px;
     border-color: rgb(66%, 66%, 66%);
-    -webkit-box-shadow: 8px 8px 6px rgba(40, 40, 40, 0.40);
 }
 
 .suggest-box.generic-suggest.above-anchor {
    border-radius: 5px 5px 5px 0;
-    -webkit-box-shadow: 8px -8px 6px rgba(40, 40, 40, 0.40);
-}
-
-.suggest-box.generic-suggest .content {
-    margin: 3px;
 }
 
 /* Custom popup scrollers */
