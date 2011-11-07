@@ -389,8 +389,7 @@ sub productDir
 sub jscProductDir
 {
     my $productDir = productDir();
-    $productDir .= "/Source/JavaScriptCore" if isQt();
-    $productDir .= "/$configuration" if (isQt() && isWindows());
+    $productDir .= "/bin" if isQt();
     $productDir .= "/Programs" if (isGtk() || isEfl());
 
     return $productDir;

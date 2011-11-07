@@ -1,5 +1,18 @@
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Put the jsc binary in 'bin' instead of leaving it deep in the build tree
+
+        Allows us to not package up the whole Source/JavaScriptCore directory for the
+        buildbots.
+
+        Reviewed-by Simon Hausmann.
+
+        * BuildSlaveSupport/built-product-archive:
+        * Scripts/webkitdirs.pm:
+        (jscProductDir):
+
+2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Ensure we always export symbols for the QtWebKit API when building WebKit
 
         Reviewed-by Simon Hausmann.

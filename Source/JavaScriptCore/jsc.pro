@@ -7,7 +7,7 @@
 TEMPLATE = app
 
 TARGET = jsc
-DESTDIR = .
+DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 QT -= gui
 
