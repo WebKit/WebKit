@@ -1,5 +1,19 @@
 2011-11-06  Keishi Hattori  <keishi@webkit.org>
 
+        Remove ColorInputType::handleClickEvent
+        https://bugs.webkit.org/show_bug.cgi?id=71640
+
+        Reviewed by Kent Tamura.
+
+        When you click the input color element, both ColorInputType::handleClickEvent and
+        ColorInputType::handleDOMActivateEvent are called, causing Chrome::openColorChooser
+        to be called too many times.
+
+        * html/ColorInputType.cpp: Removed ColorInputType::handleClickEvent
+        * html/ColorInputType.h: Removed ColorInputType::handleClickEvent
+
+2011-11-06  Keishi Hattori  <keishi@webkit.org>
+
         Remove extra semicolon in ColorInputType
         https://bugs.webkit.org/show_bug.cgi?id=71639
 

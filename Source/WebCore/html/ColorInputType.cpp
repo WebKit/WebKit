@@ -132,21 +132,6 @@ void ColorInputType::setValue(const String& value, bool valueChanged, bool sendC
     }
 }
 
-void ColorInputType::handleClickEvent(MouseEvent* event)
-{
-    if (event->isSimulated())
-        return;
-
-    if (element()->disabled() || element()->readOnly())
-        return;
-
-    if (Chrome* chrome = this->chrome()) {
-        ColorChooser::chooser()->connectClient(this);
-        chrome->openColorChooser(ColorChooser::chooser(), valueAsColor());
-    }
-    event->setDefaultHandled();
-}
-
 void ColorInputType::handleDOMActivateEvent(Event* event)
 {
     if (element()->disabled() || element()->readOnly() || !element()->renderer())
