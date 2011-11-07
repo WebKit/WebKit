@@ -430,6 +430,9 @@ InjectedScript.prototype = {
         if (subtype === "regexp")
             return this._toString(obj);
 
+        if (subtype === "date")
+            return this._toString(obj);
+
         var className = InjectedScriptHost.internalConstructorName(obj);
         if (subtype === "array") {
             if (typeof obj.length === "number")

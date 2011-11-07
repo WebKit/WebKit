@@ -1,3 +1,15 @@
+2011-11-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: use toString as the Date object description.
+        https://bugs.webkit.org/show_bug.cgi?id=71605
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/remote-object.html
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2011-10-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] get JS-specific methods out of SourceFrame
