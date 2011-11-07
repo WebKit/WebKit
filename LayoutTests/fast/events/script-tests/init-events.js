@@ -130,17 +130,6 @@ shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", \"
 shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", null, 1001').attrName", "'null'");
 shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", \"d\", 1001').attrChange", "1001");
 
-// initOverflowEvent has an interface that has an design that's inconsistent with the init functions from other events.
-shouldBe("testInitEvent('Overflow', '1001, false, false').type", "'overflowchanged'");
-shouldBe("testInitEvent('Overflow', '1001, false, false').bubbles", "false");
-shouldBe("testInitEvent('Overflow', '1001, false, false').cancelable", "false");
-shouldBe("testInitEvent('Overflow', '1001, false, false').orient", "1001");
-shouldBe("testInitEvent('Overflow', '1001, false, false').horizontalOverflow", "false");
-shouldBe("testInitEvent('Overflow', '1001, true, false').horizontalOverflow", "true");
-shouldBe("testInitEvent('Overflow', '1001, false, false').verticalOverflow", "false");
-shouldBe("testInitEvent('Overflow', '1001, false, true').verticalOverflow", "true");
-shouldBe("createEventHelper('Overflow').orient", "OverflowEvent.VERTICAL");
-
 shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').type", "'a'");
 shouldBe("testInitEvent('Progress', 'null, false, false, false, 1001, 1002').type", "'null'");
 shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').bubbles", "false");

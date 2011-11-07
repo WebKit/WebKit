@@ -1,3 +1,16 @@
+2011-11-07  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove initOverflowEvent from JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=71687
+
+        Reviewed by Ojan Vafai.
+
+        Now that OverflowEvent has a constructor, we don't need the
+        initOverflowEvent method. It has to remain in the Objective C
+        binding because it is part of the Objective C public API.
+
+        * dom/OverflowEvent.idl:
+
 2011-11-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Refactor canvas encoding mimeType validation

@@ -116,15 +116,6 @@ PASS testInitEvent('Mutation', '"a", false, false, null, "b", null, "d", 1001').
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", "d", 1001').attrName is 'd'
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", null, 1001').attrName is 'null'
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", "d", 1001').attrChange is 1001
-PASS testInitEvent('Overflow', '1001, false, false').type is 'overflowchanged'
-PASS testInitEvent('Overflow', '1001, false, false').bubbles is false
-PASS testInitEvent('Overflow', '1001, false, false').cancelable is false
-PASS testInitEvent('Overflow', '1001, false, false').orient is 1001
-PASS testInitEvent('Overflow', '1001, false, false').horizontalOverflow is false
-PASS testInitEvent('Overflow', '1001, true, false').horizontalOverflow is true
-PASS testInitEvent('Overflow', '1001, false, false').verticalOverflow is false
-PASS testInitEvent('Overflow', '1001, false, true').verticalOverflow is true
-PASS createEventHelper('Overflow').orient is OverflowEvent.VERTICAL
 PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').type is 'a'
 PASS testInitEvent('Progress', 'null, false, false, false, 1001, 1002').type is 'null'
 PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').bubbles is false
