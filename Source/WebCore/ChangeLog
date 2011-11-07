@@ -1,3 +1,31 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Factor SecurityContext out of ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=71721
+
+        Reviewed by Eric Seidel.
+
+        The new SecurityContext object lets us tightly scope control of
+        the security-critical information in ScriptExecutionContext.
+        Originally I had hoped to put all this state on SecurityOrigin, but
+        SecurityOrigin gets shared between documents in some corner cases, so
+        it's not a good fit for state like the sandbox flags and the CSP policy
+        that really needs to be per-document.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * page/SecurityOrigin.h:
+
 2011-11-07  Kentaro Hara  <haraken@chromium.org>
 
         Refactor CodeGeneratorV8.pm before making a core change for bug 71093.

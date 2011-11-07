@@ -92,18 +92,6 @@ namespace WebCore {
         NoReferrer
     };
 
-    enum SandboxFlag {
-        SandboxNone = 0,
-        SandboxNavigation = 1,
-        SandboxPlugins = 1 << 1,
-        SandboxOrigin = 1 << 2,
-        SandboxForms = 1 << 3,
-        SandboxScripts = 1 << 4,
-        SandboxTopNavigation = 1 << 5,
-        SandboxPopups = 1 << 6,
-        SandboxAll = -1 // Mask with all bits set to 1.
-    };
-
     // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
     // to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
     // replace the document.  It is a FIXME to eliminate this extra parameter from
@@ -118,7 +106,6 @@ namespace WebCore {
         NotAboutToInstantiatePlugin
     };
 
-    typedef int SandboxFlags;
 }
 
 #endif

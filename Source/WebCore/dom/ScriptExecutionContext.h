@@ -29,16 +29,14 @@
 
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
-#include "FrameLoaderTypes.h"
 #include "KURL.h"
+#include "SecurityContext.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
 
@@ -48,14 +46,12 @@
 
 namespace WebCore {
 
-class ContentSecurityPolicy;
 class DOMTimer;
 class EventListener;
 class EventQueue;
 class EventTarget;
 class MessagePort;
 class ScriptCallStack;
-class SecurityOrigin;
 
 #if ENABLE(SQL_DATABASE)
 class Database;
@@ -67,7 +63,7 @@ class DatabaseThread;
 class FileThread;
 #endif
 
-class ScriptExecutionContext {
+class ScriptExecutionContext : public SecurityContext {
 public:
     ScriptExecutionContext();
     virtual ~ScriptExecutionContext();
@@ -93,13 +89,6 @@ public:
     virtual String userAgent(const KURL&) const = 0;
 
     virtual void disableEval() = 0;
-
-    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
-    SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
-    ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
-
-    void enforceSandboxFlags(SandboxFlags mask) { m_sandboxFlags |= mask; }
-    bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
     void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
@@ -189,13 +178,6 @@ protected:
         String m_message;
     };
 
-    // Explicitly override the security origin for this script context.
-    // Note: It is dangerous to change the security origin of a script context
-    //       that already contains content.
-    void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
-
-    void setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>);
-
 private:
     virtual const KURL& virtualURL() const = 0;
     virtual KURL virtualCompleteURL(const String&) const = 0;
@@ -205,10 +187,6 @@ private:
     bool dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL);
 
     void closeMessagePorts();
-
-    SandboxFlags m_sandboxFlags;
-    RefPtr<SecurityOrigin> m_securityOrigin;
-    RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;

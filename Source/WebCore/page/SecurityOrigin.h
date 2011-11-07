@@ -29,8 +29,8 @@
 #ifndef SecurityOrigin_h
 #define SecurityOrigin_h
 
-#include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include "SecurityContext.h" // FIXME: Remove once parseSandboxPolicy moves to SecurityContext.
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

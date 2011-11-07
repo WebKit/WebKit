@@ -89,8 +89,7 @@ void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionC
 }
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_sandboxFlags(SandboxNone)
-    , m_iteratingActiveDOMObjects(false)
+    : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
 #if ENABLE(SQL_DATABASE)
@@ -292,16 +291,6 @@ void ScriptExecutionContext::closeMessagePorts() {
         ASSERT((*iter)->scriptExecutionContext() == this);
         (*iter)->close();
     }
-}
-
-void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
-{
-    m_securityOrigin = securityOrigin;
-}
-
-void ScriptExecutionContext::setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy> contentSecurityPolicy)
-{
-    m_contentSecurityPolicy = contentSecurityPolicy;
 }
 
 bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL)

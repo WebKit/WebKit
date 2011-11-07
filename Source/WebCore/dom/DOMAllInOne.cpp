@@ -110,6 +110,7 @@
 #include "ScriptExecutionContext.cpp"
 #include "ScriptRunner.cpp"
 #include "ScriptableDocumentParser.cpp"
+#include "SecurityContext.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowContentElement.cpp"
 #include "ShadowInclusionSelector.cpp"

@@ -1330,6 +1330,8 @@ webcore_sources += \
 	Source/WebCore/dom/ScriptExecutionContext.h \
 	Source/WebCore/dom/ScriptRunner.cpp \
 	Source/WebCore/dom/ScriptRunner.h \
+	Source/WebCore/dom/SecurityContext.cpp \
+	Source/WebCore/dom/SecurityContext.h \
 	Source/WebCore/dom/SelectorQuery.cpp \
 	Source/WebCore/dom/SelectorQuery.h \
 	Source/WebCore/dom/ShadowContentElement.cpp \

@@ -3247,6 +3247,8 @@
 		976D6C93122B8A3D001FD1F7 /* AsyncFileWriterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C74122B8A3D001FD1F7 /* AsyncFileWriterClient.h */; };
 		976D6C94122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */; };
 		976D6C95122B8A3D001FD1F7 /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */; };
+		976F36EA14686225005E93B4 /* SecurityContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976F36E814686225005E93B4 /* SecurityContext.cpp */; };
+		976F36EB14686225005E93B4 /* SecurityContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 976F36E914686225005E93B4 /* SecurityContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		977B37231228721700B81FF8 /* HTMLElementStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B371F1228721700B81FF8 /* HTMLElementStack.cpp */; };
 		977B37241228721700B81FF8 /* HTMLElementStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B37201228721700B81FF8 /* HTMLElementStack.h */; };
 		977B37251228721700B81FF8 /* HTMLTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B37211228721700B81FF8 /* HTMLTreeBuilder.cpp */; };
@@ -10411,6 +10413,8 @@
 		976D6C74122B8A3D001FD1F7 /* AsyncFileWriterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFileWriterClient.h; path = fileapi/AsyncFileWriterClient.h; sourceTree = "<group>"; };
 		976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadableBlobRegistry.cpp; path = fileapi/ThreadableBlobRegistry.cpp; sourceTree = "<group>"; };
 		976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadableBlobRegistry.h; path = fileapi/ThreadableBlobRegistry.h; sourceTree = "<group>"; };
+		976F36E814686225005E93B4 /* SecurityContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityContext.cpp; sourceTree = "<group>"; };
+		976F36E914686225005E93B4 /* SecurityContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityContext.h; sourceTree = "<group>"; };
 		977B371F1228721700B81FF8 /* HTMLElementStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLElementStack.cpp; path = parser/HTMLElementStack.cpp; sourceTree = "<group>"; };
 		977B37201228721700B81FF8 /* HTMLElementStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLElementStack.h; path = parser/HTMLElementStack.h; sourceTree = "<group>"; };
 		977B37211228721700B81FF8 /* HTMLTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLTreeBuilder.cpp; path = parser/HTMLTreeBuilder.cpp; sourceTree = "<group>"; };
@@ -21204,6 +21208,8 @@
 				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
 				8A413ADF1207BBA50082016E /* ScriptRunner.cpp */,
 				8A413ADE1207BBA50082016E /* ScriptRunner.h */,
+				976F36E814686225005E93B4 /* SecurityContext.cpp */,
+				976F36E914686225005E93B4 /* SecurityContext.h */,
 				E45322A9140CE267005A0F92 /* SelectorQuery.cpp */,
 				E45322AA140CE267005A0F92 /* SelectorQuery.h */,
 				A766CF8B13810E0C0011A0B3 /* ShadowContentElement.cpp */,
@@ -24617,6 +24623,7 @@
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
 				3169379C14609C6C00C01362 /* DragSession.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
+				976F36EB14686225005E93B4 /* SecurityContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27473,6 +27480,7 @@
 				CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* PlatformClockPOSIX.cpp in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
+				976F36EA14686225005E93B4 /* SecurityContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

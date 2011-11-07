@@ -562,6 +562,7 @@ SOURCES += \
     dom/ScriptElement.cpp \
     dom/ScriptExecutionContext.cpp \
     dom/ScriptRunner.cpp \
+    dom/SecurityContext.cpp \
     dom/SelectorQuery.cpp \
     dom/ShadowContentElement.cpp \
     dom/ShadowInclusionSelector.cpp \

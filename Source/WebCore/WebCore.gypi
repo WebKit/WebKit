@@ -5316,6 +5316,8 @@
             'dom/ScriptableDocumentParser.h',
             'dom/ScriptedAnimationController.cpp',
             'dom/ScriptedAnimationController.h',
+            'dom/SecurityContext.cpp',
+            'dom/SecurityContext.h',
             'dom/SelectorQuery.cpp',
             'dom/SelectorQuery.h',
             'dom/ShadowContentElement.cpp',

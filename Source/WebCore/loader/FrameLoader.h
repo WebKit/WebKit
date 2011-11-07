@@ -41,6 +41,7 @@
 #include "PolicyChecker.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadNotifier.h"
+#include "SecurityContext.h"
 #include "SubframeLoader.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
