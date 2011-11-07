@@ -291,6 +291,17 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;
 }
 
+static void initResources()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+    Q_INIT_RESOURCE(WebKit);
+    Q_INIT_RESOURCE(WebCore);
+    Q_INIT_RESOURCE(InspectorBackendStub);
+    initialized = true;
+}
+
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , page(0)
@@ -315,6 +326,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
     , m_lastDropAction(Qt::IgnoreAction)
 {
+    initResources();
     WebCore::InitializeLoggingChannelsIfNecessary();
     ScriptController::initializeThreading();
     WTF::initializeMainThread();

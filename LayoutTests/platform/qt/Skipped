@@ -2521,11 +2521,6 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
-# disable inspector tests temporarily because of a bug near build system refactoring
-http/tests/inspector-enabled
-http/tests/inspector
-inspector
-
 # disable a few more failures due to build system refactoring.
 editing/deleting/5408255.html
 editing/deleting/deletionUI-single-instance.html

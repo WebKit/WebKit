@@ -1,3 +1,19 @@
+2011-11-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix failing inspector tests after build system changes
+        https://bugs.webkit.org/show_bug.cgi?id=71677
+
+        Reviewed by Tor Arne Vestbø.
+
+        Ensure symbols from the qt resource system are referenced
+        from outside the static webcore library. One way of doing that is
+        to initialize the resources right away, as explained in the documentation
+        of th Qt resource system.
+
+        * Api/qwebpage.cpp:
+        (initResources):
+        (QWebPagePrivate::QWebPagePrivate):
+
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Refactor and clean up the qmake build system
