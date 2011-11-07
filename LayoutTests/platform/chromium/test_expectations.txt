@@ -38,7 +38,7 @@ BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
-//BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
+BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 // See BUGCR104797
 //BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
@@ -3894,8 +3894,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/content-opacity-2.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
-
-BUGWK71658 MAC DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS TIMEOUT
 
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
