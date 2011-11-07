@@ -61,7 +61,6 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.promptElement.id = "console-prompt";
     this.promptElement.className = "source-code";
     this.promptElement.spellcheck = false;
-    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
     this.messagesElement.appendChild(this.promptElement);
     this.messagesElement.appendChild(document.createElement("br"));
 
@@ -114,6 +113,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), ExpressionStopCharacters + ".");
     this.prompt.setSuggestBoxEnabled("generic-suggest");
     this.prompt.attach(this.promptElement);
+    this.prompt.proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
 }
 

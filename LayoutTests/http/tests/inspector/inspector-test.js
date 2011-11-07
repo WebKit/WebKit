@@ -33,7 +33,7 @@ InspectorTest.evaluateInConsole = function(code, callback)
     WebInspector.consoleView.prompt.text = code;
     var event = document.createEvent("KeyboardEvent");
     event.initKeyboardEvent("keydown", true, true, null, "Enter", "");
-    WebInspector.consoleView.promptElement.dispatchEvent(event);
+    WebInspector.consoleView.prompt.proxyElement.dispatchEvent(event);
     InspectorTest.addConsoleSniffer(
         function(commandResult) {
             callback(commandResult.toMessageElement().textContent);
