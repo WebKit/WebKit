@@ -3159,7 +3159,6 @@ BUGWK65463 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tr
 BUG_HCLAM : fast/url/ipv6.html = TEXT
 
 // Flaky
-BUGWK60344 MAC DEBUG : fast/css/counters/complex-before.html = PASS CRASH
 BUGWK60346 : fast/xpath/4XPath/Core/test_boolean_expr.html = PASS CRASH
 
 // Since http://trac.webkit.org/changeset/85788
@@ -3813,10 +3812,6 @@ BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+T
 
 BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT TEXT
 
-// Intermittent ASSERT seen on the bot.
-BUGWK67031 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
-BUGWK67031 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
-
 BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT
 
 BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
@@ -3839,16 +3834,9 @@ BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 
-BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = PASS CRASH
-
 BUGWK71127 : fast/js/kde/RegExp.html = TEXT
 BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
 BUGWK71127 : fast/js/array-prototype-properties.html = TEXT
-
-BUGWK71139 SNOWLEOPARD : http/tests/security/cross-frame-access-custom.html = CRASH PASS
-BUGWK71139 SNOWLEOPARD : fast/frames/content-opacity-2.html = CRASH PASS
-BUGWK71139 SNOWLEOPARD : fast/parser/close-while-stopping.html = CRASH PASS
-BUGWK71139 SNOWLEOPARD : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
 BUGWK71209 LINUX MAC GPU GPU-CG : compositing/visibility/visibility-image-layers.html = IMAGE
@@ -3901,3 +3889,13 @@ BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-y-in-scrolling-pa
 BUGWK71652 WIN RELEASE : perf/document-contains.html = PASS TIMEOUT
 
 BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
+
+// Intermittent assertion failures on snowleopard bots.
+BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/content-opacity-2.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
+
+BUGWK71658 MAC DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS TIMEOUT
