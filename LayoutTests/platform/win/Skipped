@@ -1444,5 +1444,3 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=71581
-inspector/debugger/script-formatter.html

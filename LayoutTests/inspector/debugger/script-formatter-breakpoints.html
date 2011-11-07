@@ -1,0 +1,96 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function f1()
+{
+    var a=0;var b=1;var c=3;var d=4;var e=5;
+    var f=0;
+    return 0;
+}
+
+function f2()
+{
+    var x = 0;
+    return 0;
+}
+
+var test = function()
+{
+    var panel = WebInspector.panels.scripts;
+
+    InspectorTest.runDebuggerTestSuite([
+        function testBreakpointsInOriginalAndFormattedSource(next)
+        {
+            var root;
+            InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                root = sourceFrame._url.substr(0, sourceFrame._url.lastIndexOf("/") + 1);
+                InspectorTest.setBreakpoint(sourceFrame, 10, "", true);
+                InspectorTest.waitUntilPaused(pausedInF1);
+                InspectorTest.evaluateInPageWithTimeout("f1()");
+            }
+
+            function pausedInF1(callFrames)
+            {
+                InspectorTest.assertEquals("f1", callFrames[0].functionName);
+                InspectorTest.resumeExecution(resumed);
+            }
+
+            function resumed()
+            {
+                InspectorTest.navigate(root + "resources/test-navigation.html", didNavigateAnotherPage);
+            }
+
+            function didNavigateAnotherPage()
+            {
+                InspectorTest.addResult("Navigated to test-navigation.html");
+                panel._toggleFormatSource();
+                InspectorTest.showScriptSource("test-navigation.html", didShowAnotherPage);
+            }
+
+            function didShowAnotherPage(sourceFrame)
+            {
+                InspectorTest.navigate(root + "script-formatter-breakpoints.html", didNavigateBack);
+            }
+
+            function didNavigateBack()
+            {
+                InspectorTest.addResult("Navigated back to test page.");
+                InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowFormattedScriptSource);
+            }
+
+            function didShowFormattedScriptSource(sourceFrame)
+            {
+                // There should be no breakpoint in f1 since script is pretty-printed now.
+                InspectorTest.evaluateInPageWithTimeout("f1()");
+                InspectorTest.setBreakpoint(panel.visibleView, 24, "", true);
+                InspectorTest.waitUntilPaused(pausedInF2);
+                InspectorTest.evaluateInPageWithTimeout("f2()");
+            }
+
+            function pausedInF2(callFrames)
+            {
+                InspectorTest.assertEquals("f2", callFrames[0].functionName);
+                panel._toggleFormatSource();
+                InspectorTest.resumeExecution(next);
+            }
+        }
+    ]);
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests the script formatting is working fine with breakpoints.
+</p>
+
+</body>
+</html>

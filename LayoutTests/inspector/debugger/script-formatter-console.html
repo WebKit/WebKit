@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function f1()
+{
+    console.log("Test message.");
+}
+
+var test = function()
+{
+    var panel = WebInspector.panels.scripts;
+    var worker = new Worker("ScriptFormatterWorker.js");
+
+    InspectorTest.runDebuggerTestSuite([
+        function testConsoleMessagesForFormattedScripts(next)
+        {
+            InspectorTest.showScriptSource("script-formatter-console.html", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.evaluateInPage("f1()", didEvaluate);
+            }
+
+            function didEvaluate()
+            {
+                dumpConsoleMessageURLs();
+                InspectorTest.addSniffer(WebInspector, "formatLinkText", setTimeout.bind(window, didFormatLinkText, 0));
+                panel._toggleFormatSource();
+            }
+
+            function didFormatLinkText()
+            {
+                dumpConsoleMessageURLs();
+                next();
+            }
+        }
+    ]);
+
+    function dumpConsoleMessageURLs()
+    {
+        var messages = WebInspector.console.messages;
+        for (var i = 0; i < messages.length; ++i) {
+            var element = messages[i].toMessageElement();
+            var anchor = element.querySelector(".console-message-url");
+            InspectorTest.addResult(anchor.textContent);
+        }
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that the script formatting changes console line numbers.
+</p>
+
+</body>
+</html>

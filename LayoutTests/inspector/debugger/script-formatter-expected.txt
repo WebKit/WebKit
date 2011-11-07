@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 24: Test message.
 Tests the script formatting functionality.
 
 Debugger was enabled.
@@ -15,19 +14,5 @@ function f() {
 function g() {
 }
 </script></body></html>
-
-Running: testBreakpointsInOriginalAndFormattedSource
-Script execution paused.
-Script execution resumed.
-Page reloaded.
-Navigated to test-navigation.html
-Page reloaded.
-Navigated back to test page.
-Script execution paused.
-Script execution resumed.
-
-Running: testConsoleMessagesForFormattedScripts
-script-formatter.html:24
-script-formatter.html:32
 Debugger was disabled.
 

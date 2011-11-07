@@ -657,7 +657,8 @@ WebInspector.ScriptsPanel.prototype = {
     _removeSourceFrame: function(uiSourceCode)
     {
         var option = uiSourceCode._option;
-        if (option)
+        // FIXME: find out why we are getting here with option detached.
+        if (option && this._filesSelectElement === option.parentElement)
             this._filesSelectElement.removeChild(option);
 
         var sourceFrame = uiSourceCode._sourceFrame;

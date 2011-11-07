@@ -1,3 +1,16 @@
+2011-11-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: split script-formatter test into multiple tests.
+        https://bugs.webkit.org/show_bug.cgi?id=71607
+
+        Reviewed by Yury Semikhatsky.
+
+        Tests: inspector/debugger/script-formatter-breakpoints.html
+               inspector/debugger/script-formatter-console.html
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+
 2011-11-07  Keishi Hattori  <keishi@webkit.org>
 
         Change ColorChooser from singleton to ordinary object

@@ -486,5 +486,3 @@ fast/canvas/webgl/uniform-location-length-limits.html
 # It needs a rebaseline
 fast/repaint/table-extra-bottom-grow.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=71581
-inspector/debugger/script-formatter.html

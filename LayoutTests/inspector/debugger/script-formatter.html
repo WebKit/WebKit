@@ -6,24 +6,6 @@
 
 <script>
 
-function f1()
-{
-    var a=0;var b=1;var c=3;var d=4;var e=5;
-    var f=0;
-    return 0;
-}
-
-function f2()
-{
-    var x = 0;
-    return 0;
-}
-
-function f3()
-{
-    console.log("Test message.");
-}
-
 var test = function()
 {
     var panel = WebInspector.panels.scripts;
@@ -108,92 +90,6 @@ var test = function()
 
             var content = "<html><body><script>function f(){}<" + "/script><script>function g(){}<" + "/script></body></html>";
             worker.postMessage({ mimeType: "text/html", content: content });
-        },
-
-        function testBreakpointsInOriginalAndFormattedSource(next)
-        {
-            var root;
-            InspectorTest.showScriptSource("script-formatter.html", didShowScriptSource);
-
-            function didShowScriptSource(sourceFrame)
-            {
-                root = sourceFrame._url.substr(0, sourceFrame._url.lastIndexOf("/") + 1);
-                InspectorTest.setBreakpoint(sourceFrame, 11, "", true);
-                InspectorTest.waitUntilPaused(pausedInF1);
-                InspectorTest.evaluateInPageWithTimeout("f1()");
-            }
-
-            function pausedInF1(callFrames)
-            {
-                InspectorTest.assertEquals("f1", callFrames[0].functionName);
-                InspectorTest.resumeExecution(resumed);
-            }
-
-            function resumed()
-            {
-                InspectorTest.navigate(root + "resources/test-navigation.html", didNavigateAnotherPage);
-            }
-
-            function didNavigateAnotherPage()
-            {
-                InspectorTest.addResult("Navigated to test-navigation.html");
-                panel._toggleFormatSource();
-                InspectorTest.showScriptSource("test-navigation.html", didShowAnotherPage);
-            }
-
-            function didShowAnotherPage(sourceFrame)
-            {
-                InspectorTest.navigate(root + "script-formatter.html", didNavigateBack);
-            }
-
-            function didNavigateBack()
-            {
-                InspectorTest.addResult("Navigated back to test page.");
-                InspectorTest.showScriptSource("script-formatter.html", didShowFormattedScriptSource);
-            }
-
-            function didShowFormattedScriptSource(sourceFrame)
-            {
-                // There should be no breakpoint in f1 since script is pretty-printed now.
-                InspectorTest.evaluateInPageWithTimeout("f1()");
-                InspectorTest.setBreakpoint(panel.visibleView, 24, "", true);
-                InspectorTest.waitUntilPaused(pausedInF2);
-                InspectorTest.evaluateInPageWithTimeout("f2()");
-            }
-
-            function pausedInF2(callFrames)
-            {
-                InspectorTest.assertEquals("f2", callFrames[0].functionName);
-                panel._toggleFormatSource();
-                InspectorTest.resumeExecution(next);
-            }
-        },
-
-        function testConsoleMessagesForFormattedScripts(next)
-        {
-            function dumpConsoleMessageURLs()
-            {
-                var messages = WebInspector.console.messages;
-                for (var i = 0; i < messages.length; ++i) {
-                    var element = messages[i].toMessageElement();
-                    var anchor = element.querySelector(".console-message-url");
-                    InspectorTest.addResult(anchor.textContent);
-                }
-            }
-            InspectorTest.evaluateInPage("f3()", didEvaluate);
-
-            function didEvaluate()
-            {
-                dumpConsoleMessageURLs();
-                InspectorTest.addSniffer(WebInspector, "formatLinkText", setTimeout.bind(window, didFormatLinkText, 0));
-                panel._toggleFormatSource();
-            }
-
-            function didFormatLinkText()
-            {
-                dumpConsoleMessageURLs();
-                next();
-            }
         }
     ]);
 }

@@ -1,0 +1,15 @@
+Tests the script formatting is working fine with breakpoints.
+
+Debugger was enabled.
+
+Running: testBreakpointsInOriginalAndFormattedSource
+Script execution paused.
+Script execution resumed.
+Page reloaded.
+Navigated to test-navigation.html
+Page reloaded.
+Navigated back to test page.
+Script execution paused.
+Script execution resumed.
+Debugger was disabled.
+
