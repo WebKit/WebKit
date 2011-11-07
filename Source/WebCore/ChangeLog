@@ -1,3 +1,13 @@
+2011-11-06  Keishi Hattori  <keishi@webkit.org>
+
+        Remove extra semicolon in ColorInputType
+        https://bugs.webkit.org/show_bug.cgi?id=71639
+
+        Reviewed by Kent Tamura.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::setValue):
+
 2011-11-06  Dominic Cooney  <dominicc@chromium.org>
 
         Remove initBeforeLoadEvent method

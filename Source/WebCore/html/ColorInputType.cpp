@@ -118,7 +118,7 @@ void ColorInputType::createShadowSubtree()
     updateColorSwatch();
 }
 
-void ColorInputType::setValue(const String& value, bool valueChanged, bool sendChangeEvent);
+void ColorInputType::setValue(const String& value, bool valueChanged, bool sendChangeEvent)
 {
     InputType::setValue(value, valueChanged, sendChangeEvent);
 
