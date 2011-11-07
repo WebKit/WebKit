@@ -204,7 +204,7 @@ static inline QPointF boundPosition(const QPointF minPosition, const QPointF& po
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
 {
     // FIXME: Assert when we are suspending properly.
-    if (panAnimationActive() || pinchAnimationActive() || m_pinchViewportUpdateDeferrer)
+    if (scrollAnimationActive() || scaleAnimationActive() || pinchGestureActive())
         return; // Ignore.
 
     qreal endItemScale = m_content->scale(); // Stay at same scale.
@@ -230,7 +230,7 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScal
 
 void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
 {
-    if (panAnimationActive() || pinchAnimationActive())
+    if (scrollAnimationActive() || scaleAnimationActive())
         return;
 
     qreal currentCSSScale = cssScaleFromItem(m_content->scale());
@@ -302,11 +302,23 @@ void QtViewportInteractionEngine::setConstraints(const Constraints& constraints)
     ensureContentWithinViewportBoundary();
 }
 
-bool QtViewportInteractionEngine::panAnimationActive() const
+bool QtViewportInteractionEngine::scrollAnimationActive() const
 {
     QScroller* scroller = const_cast<QtViewportInteractionEngine*>(this)->scroller();
+    return scroller->state() == QScroller::Scrolling;
+}
 
-    return scroller->state() != QScroller::Inactive;
+void QtViewportInteractionEngine::interruptScrollAnimation()
+{
+    // Stopping the scroller immediately stops kinetic scrolling and if the view is out of bounds it
+    // is moved inside valid bounds immediately as well. This is the behavior that we want.
+    scroller()->stop();
+}
+
+bool QtViewportInteractionEngine::panGestureActive() const
+{
+    QScroller* scroller = const_cast<QtViewportInteractionEngine*>(this)->scroller();
+    return scroller->state() == QScroller::Pressed || scroller->state() == QScroller::Dragging;
 }
 
 void QtViewportInteractionEngine::panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis)
@@ -335,9 +347,20 @@ void QtViewportInteractionEngine::panGestureEnded(const QPointF& touchPoint, qin
     scroller()->handleInput(QScroller::InputRelease, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
 }
 
-bool QtViewportInteractionEngine::pinchAnimationActive() const
+bool QtViewportInteractionEngine::scaleAnimationActive() const
 {
     return m_scaleAnimation->state() == QAbstractAnimation::Running;
+}
+
+void QtViewportInteractionEngine::interruptScaleAnimation()
+{
+    // This interrupts the scale animation exactly where it is, even if it is out of bounds.
+    m_scaleAnimation->stop();
+}
+
+bool QtViewportInteractionEngine::pinchGestureActive() const
+{
+    return !!m_pinchViewportUpdateDeferrer;
 }
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)

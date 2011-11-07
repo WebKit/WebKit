@@ -61,6 +61,7 @@ private:
 
     void touchEvent(QTouchEvent*);
 
+    QtViewportInteractionEngine* m_interactionEngine;
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
 };

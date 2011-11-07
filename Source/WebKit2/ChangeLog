@@ -1,3 +1,37 @@
+2011-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Put handling of gestures and their interaction in one place
+        https://bugs.webkit.org/show_bug.cgi?id=71682
+
+        Reviewed by Simon Hausmann.
+
+        Before this patch, the interaction (ie. cancelling animations, events)
+        was handled in the respective recognizers which then knew about each
+        others.
+
+        * UIProcess/qt/QtGestureRecognizer.h:
+        (WebKit::QtGestureRecognizer::isRecognized):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        * UIProcess/qt/QtTouchWebPageProxy.cpp:
+        (QtTouchWebPageProxy::QtTouchWebPageProxy):
+        (QtTouchWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/QtTouchWebPageProxy.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::scrollAnimationActive):
+        (WebKit::QtViewportInteractionEngine::interruptScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::panGestureActive):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationActive):
+        (WebKit::QtViewportInteractionEngine::interruptScaleAnimation):
+        (WebKit::QtViewportInteractionEngine::pinchGestureActive):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-11-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make it possible to include qdesktopwebview.h from apps

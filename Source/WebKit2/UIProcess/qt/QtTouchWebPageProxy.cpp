@@ -22,6 +22,7 @@
 #include "QtTouchWebPageProxy.h"
 
 #include "DrawingAreaProxyImpl.h"
+#include "QtViewportInteractionEngine.h"
 #include <IntRect.h>
 #include <NativeWebTouchEvent.h>
 #include <WebEventFactoryQt.h>
@@ -31,6 +32,7 @@ using namespace WebCore;
 
 QtTouchWebPageProxy::QtTouchWebPageProxy(QtTouchViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine)
     : QtWebPageProxy(viewInterface, 0)
+    , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
 {
@@ -67,12 +69,40 @@ void QtTouchWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, b
     if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
         m_panGestureRecognizer.reset();
         m_pinchGestureRecognizer.reset();
-    } else {
-        // Convert the event timestamp from second to millisecond.
-        qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
-        m_panGestureRecognizer.recognize(event.nativeEvent(), eventTimestampMillis);
-        m_pinchGestureRecognizer.recognize(event.nativeEvent());
+        return;
     }
+
+    const QTouchEvent* ev = event.nativeEvent();
+
+    switch (ev->type()) {
+    case QEvent::TouchBegin:
+        ASSERT(!m_interactionEngine->panGestureActive());
+        ASSERT(!m_interactionEngine->pinchGestureActive());
+
+        // The interaction engine might still be animating kinetic scrolling or a scale animation
+        // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
+        // where as it does not stop the scale animation.
+        if (m_interactionEngine->scrollAnimationActive())
+            m_interactionEngine->interruptScrollAnimation();
+        break;
+    case QEvent::TouchUpdate:
+        // The scale animation can only be interrupted by a pinch gesture, which will then take over.
+        if (m_interactionEngine->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
+            m_interactionEngine->interruptScaleAnimation();
+        break;
+    default:
+        break;
+    }
+
+    // If the scale animation is active we don't pass the event to the recognizers. In the future
+    // we would want to queue the event here and repost then when the animation ends.
+    if (m_interactionEngine->scaleAnimationActive())
+        return;
+
+    // Convert the event timestamp from second to millisecond.
+    qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
+    m_panGestureRecognizer.recognize(ev, eventTimestampMillis);
+    m_pinchGestureRecognizer.recognize(ev);
 }
 #endif
 

@@ -68,13 +68,19 @@ public:
 
     void pagePositionRequest(const QPoint& pos);
 
-    bool panAnimationActive() const;
+    bool scrollAnimationActive() const;
+    void interruptScrollAnimation();
+
+    bool panGestureActive() const;
     void panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis);
     void panGestureRequestUpdate(const QPointF& touchPoint, qint64 eventTimestampMillis);
     void panGestureCancelled();
     void panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis);
 
-    bool pinchAnimationActive() const;
+    bool scaleAnimationActive() const;
+    void interruptScaleAnimation();
+
+    bool pinchGestureActive() const;
     void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates);
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();

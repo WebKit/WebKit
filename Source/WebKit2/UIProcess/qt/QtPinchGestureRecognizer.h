@@ -38,7 +38,7 @@ QT_END_NAMESPACE
 
 namespace WebKit {
 
-class QtPinchGestureRecognizer : private QtGestureRecognizer {
+class QtPinchGestureRecognizer : public QtGestureRecognizer {
 public:
     struct TouchPointInformation {
         inline TouchPointInformation();

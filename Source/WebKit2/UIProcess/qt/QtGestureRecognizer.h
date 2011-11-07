@@ -31,6 +31,9 @@ namespace WebKit {
 class QtViewportInteractionEngine;
 
 class QtGestureRecognizer {
+public:
+    bool isRecognized() const { return m_state == GestureRecognized; }
+
 protected:
     QtGestureRecognizer(QtViewportInteractionEngine*);
     void reset();
