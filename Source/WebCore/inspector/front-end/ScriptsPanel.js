@@ -1179,13 +1179,13 @@ WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 /**
  * @constructor
- * @implements {WebInspector.SourceFrameDelegate}
+ * @implements {WebInspector.JavaScriptSourceFrameDelegate}
  * @param {WebInspector.ScriptsPanel} scriptsPanel
  * @param {WebInspector.UISourceCode} uiSourceCode
  */
 WebInspector.SourceFrameDelegateForScriptsPanel = function(scriptsPanel, uiSourceCode)
 {
-    WebInspector.SourceFrameDelegate.call(this);
+    WebInspector.JavaScriptSourceFrameDelegate.call(this);
 
     this._scriptsPanel = scriptsPanel;
     this._model = this._scriptsPanel._presentationModel;
@@ -1253,4 +1253,4 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     }
 }
 
-WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;
+WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.JavaScriptSourceFrameDelegate.prototype;

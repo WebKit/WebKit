@@ -82,7 +82,7 @@ WebInspector.ResourceView.nonSourceViewForResource = function(resource)
  */
 WebInspector.ResourceSourceFrame = function(resource)
 {
-    WebInspector.SourceFrame.call(this, WebInspector.SourceFrameDelegate.stub, resource.url);
+    WebInspector.SourceFrame.call(this, resource.url);
     this._resource = resource;
 }
 
