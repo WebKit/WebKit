@@ -56,7 +56,6 @@
 #include "V8EventListener.h"
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
-#include "V8HTMLAudioElementConstructor.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLImageElementConstructor.h"
 #include "V8HTMLOptionElementConstructor.h"
@@ -226,16 +225,6 @@ void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
     // Put property on the front (this) object.
     info.This()->Set(name, value);
 }
-
-#if ENABLE(VIDEO)
-
-v8::Handle<v8::Value> V8DOMWindow::AudioAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    DOMWindow* window = V8DOMWindow::toNative(info.Holder());
-    return V8DOMWrapper::getConstructor(&V8HTMLAudioElementConstructor::info, window);
-}
-
-#endif
 
 v8::Handle<v8::Value> V8DOMWindow::ImageAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {

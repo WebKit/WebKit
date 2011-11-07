@@ -1,3 +1,26 @@
+2011-11-07  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [CustomGetter] IDL from 'HTMLAudioElementConstructor' of V8
+        https://bugs.webkit.org/show_bug.cgi?id=71660
+
+        Reviewed by Adam Barth.
+
+        Currently, "new Audio()" uses a custom getter to get the template
+        of 'HTMLAudioElementConstructor'. However, this getter does not need to
+        be custom and can use a default getter 'DOMWindowInternal::DOMWindowConstructorGetter'.
+
+        Tests: fast/js/custom-constructors.html
+               media/audio-constructor.html
+               media/audio-constructor-src.html
+               media/audio-constructor-preload.html
+               media/audio-controls-do-not-fade-out.html
+               media/audio-controls-rendering.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp: Removed a custom getter.
+        * page/DOMWindow.idl: Removed [CustomGetter] IDL from 'HTMLAudioElementConstructor' of V8. Renamed 'HTMLAudioElementConstructor' to 'HTMLAudioElementConstructorConstructor' in order to make 'new Audio()' use the template of (not 'HTMLAudioElement' but) 'HTMLAudioElementConstructor'. Note that CodeGenerator*.pm strips /Constructor$/ from an IDL type.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): If an IDL type is 'XXXXConstructorConstructor', then we do not add a header file 'XXXXConstructor.h' to JSDOMWindow.cpp, because the NamedConstructor declaration is written in the header file of class XXXX 'XXXX.h'. Incidentally, the reason why CodeGeneratorV8.pm does not need a corresponding change is that V8 is still generating the NamedConstructor declaration in its dedicated header file 'XXXXConstructor.h'. This V8 issue will be fixed in the upcoming patch that implements [NamedConstructor] IDL in V8.
+
 2011-11-07  Robert Sesek  <rsesek@chromium.org>
 
         [chromium] Update WebCore.gyp to not use WebKitLibraries in include_dirs

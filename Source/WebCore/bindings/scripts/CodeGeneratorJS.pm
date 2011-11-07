@@ -1817,7 +1817,10 @@ sub GenerateImplementation
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;
-                            if ($constructorType ne "DOMObject") {
+                            # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
+                            # We do not generate the header file for NamedConstructor of class XXXX,
+                            # since we generate the NamedConstructor declaration into the header file of class XXXX.
+                            if ($constructorType ne "DOMObject" and $constructorType !~ /Constructor$/) {
                                 AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                             }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
