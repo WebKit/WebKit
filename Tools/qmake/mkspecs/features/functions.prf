@@ -6,12 +6,13 @@
 # -------------------------------------------------------------------
 
 defineReplace(toSanitizedPath) {
-    win* {
-        components = $$split(1, :)
+    path = $$1
+    win32-msvc* {
+        components = $$split(path, :)
         count(components, 2): path = $$lower($$first(components)):$$last(components)
         return($$replace(path, \\\\, /))
     } else {
-        return($$1)
+        return($$path)
     }
 }
 

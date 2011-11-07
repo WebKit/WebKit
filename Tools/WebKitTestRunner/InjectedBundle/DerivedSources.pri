@@ -8,7 +8,8 @@
 # so that the resulting generated sources can be added to SOURCES.
 # We only set the template if we're a top level target, so that we
 # don't override what Target.pri has already set.
-equals(_FILE_, $$_PRO_FILE_): TEMPLATE = derived
+sanitizedFile = $$toSanitizedPath($$_FILE_)
+equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 
 load(features)
 

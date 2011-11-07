@@ -1,5 +1,19 @@
 2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Sanitize qmake paths correctly before comparing
+
+        The qmake function toSanitizedPath had a bug causing empty paths on MinGW,
+        which caused us to always generate derived webcore sources, but never build
+        them. The bug has been fixed, and we now also sanitize paths for the injected
+        bundle derived sources.
+
+        Reviewed by Simon Hausmann.
+
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+        * qmake/mkspecs/features/functions.prf:
+
+2011-11-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Print right order for changing feature defines
 
         Reviewed by Simon Hausmann.
