@@ -53,11 +53,6 @@ public:
 
     virtual ~PageTransitionEvent();
 
-    void initPageTransitionEvent(const AtomicString& type, 
-                                 bool canBubbleArg,
-                                 bool cancelableArg,
-                                 bool persisted);
-
     virtual const AtomicString& interfaceName() const;
 
     bool persisted() const { return m_persisted; }
