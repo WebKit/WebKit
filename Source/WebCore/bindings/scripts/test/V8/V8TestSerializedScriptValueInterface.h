@@ -26,16 +26,16 @@
 #include "TestSerializedScriptValueInterface.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
-#include <wtf/text/StringHash.h>
 #include <v8.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class V8TestSerializedScriptValueInterface {
 public:
     static const bool hasDependentLifetime = false;
-    static bool HasInstance(v8::Handle<v8::Value> value);
+    static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static TestSerializedScriptValueInterface* toNative(v8::Handle<v8::Object> object)

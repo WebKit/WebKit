@@ -39,7 +39,6 @@ my $outputHeadersDir = "";
 my @headerContent = ();
 my @implContentHeader = ();
 my @implFixedHeader = ();
-my @implHeaderContent = ();
 my @implContent = ();
 my @implContentDecls = ();
 my %implIncludes = ();
@@ -283,6 +282,8 @@ sub GenerateHeader
     $headerIncludes{"wtf/text/StringHash.h"} = 1;
     $headerIncludes{"WrapperTypeInfo.h"} = 1;
     $headerIncludes{"V8DOMWrapper.h"} = 1;
+    $headerIncludes{"wtf/HashMap.h"} = 1;
+    $headerIncludes{"v8.h"} = 1;
 
     my $headerClassInclude = GetHeaderClassInclude($implClassName);
     $headerIncludes{$headerClassInclude} = 1 if $headerClassInclude ne "";
@@ -290,15 +291,12 @@ sub GenerateHeader
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
 
     foreach my $headerInclude (sort keys(%headerIncludes)) {
-        if ($headerInclude =~ /wtf/) {
+        if ($headerInclude =~ /wtf|v8\.h/) {
             push(@headerContent, "#include \<${headerInclude}\>\n");
         } else {
             push(@headerContent, "#include \"${headerInclude}\"\n");
         }
     }
-
-    push(@headerContent, "#include <v8.h>\n");
-    push(@headerContent, "#include <wtf/HashMap.h>\n");
 
     push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\ntemplate<typename PropertyType> class SVGPropertyTearOff;\n") if $svgPropertyType;
@@ -339,7 +337,7 @@ sub GenerateHeader
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
 
     push(@headerContent, <<END);
-    static bool HasInstance(v8::Handle<v8::Value> value);
+    static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static ${nativeType}* toNative(v8::Handle<v8::Object> object)
@@ -385,7 +383,7 @@ END
 
     if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"}) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
+    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
 END
     }
 
@@ -1522,7 +1520,8 @@ sub GenerateConstructorCallback
         }
     }
 
-    my @extraArgumentList;
+    my @beforeArgumentList;
+    my @afterArgumentList;
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
 {
@@ -1546,9 +1545,8 @@ END
     my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
     push(@implContent, $parameterCheckString);
 
-    my @contextArgument;
     if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
-        push(@contextArgument, "context");
+        push(@beforeArgumentList, "context");
         push(@implContent, <<END);
 
     ScriptExecutionContext* context = getScriptExecutionContext();
@@ -1558,7 +1556,7 @@ END
     }
 
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
-        push(@extraArgumentList, "ec");
+        push(@afterArgumentList, "ec");
     }
 
     my @argumentList;
@@ -1569,7 +1567,7 @@ END
         $index++;
     }
 
-    my $argumentString = join(", ", @contextArgument, @argumentList, @extraArgumentList);
+    my $argumentString = join(", ", @beforeArgumentList, @argumentList, @afterArgumentList);
     push(@implContent, "\n");
     push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::create(${argumentString});\n");
 
@@ -3519,7 +3517,6 @@ sub WriteData
 
         %implIncludes = ();
         @implFixedHeader = ();
-        @implHeaderContent = ();
         @implContentDecls = ();
         @implContent = ();
     }
