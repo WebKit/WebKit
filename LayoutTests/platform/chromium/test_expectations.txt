@@ -3291,9 +3291,6 @@ BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 
-BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
-BUGCR84317 MAC LEOPARD RELEASE : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
-
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
@@ -3842,7 +3839,7 @@ BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 
-BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = FAIL CRASH
+BUGWK71083 MAC : fast/frames/iframe-double-scale-contents.html = PASS CRASH
 
 BUGWK71127 : fast/js/kde/RegExp.html = TEXT
 BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
@@ -3882,8 +3879,6 @@ BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
-BUGWK71536 : storage/indexeddb/exception-in-event-aborts.html = TEXT
-
 BUGENNE GPU : compositing/geometry/fixed-position.html = FAIL
 BUGENNE GPU : compositing/geometry/horizontal-scroll-composited.html = FAIL
 BUGENNE GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
@@ -3902,3 +3897,7 @@ BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
 BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT
 BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT
 BUGWK71606 MAC CPU-CG : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
+
+BUGWK71652 WIN RELEASE : perf/document-contains.html = PASS TIMEOUT
+
+BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
