@@ -1,3 +1,16 @@
+2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Suggest box should consume enter key pressed event.
+        https://bugs.webkit.org/show_bug.cgi?id=71700
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.SuggestBox.prototype.enterKeyPressed):
+
 2011-11-07  Dominic Cooney  <dominicc@chromium.org>
 
         Remove initPageTransitionEvent method
