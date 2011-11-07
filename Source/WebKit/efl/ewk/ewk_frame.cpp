@@ -1151,6 +1151,7 @@ bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> 
         return true;
     }
 
+    evas_object_smart_callback_call(smartData->view, "frame,created", frame);
     smartData->frame->loader()->loadURLIntoChildFrame(url, referrer, coreFrame);
 
     // The frame's onload handler may have removed it from the document.
@@ -1160,7 +1161,6 @@ bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> 
         return true;
     }
 
-    // TODO: announce frame was created?
     return true;
 }
 

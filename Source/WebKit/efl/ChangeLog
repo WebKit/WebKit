@@ -1,3 +1,21 @@
+2011-11-07  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Emit the "frame,created" signal earlier.
+        https://bugs.webkit.org/show_bug.cgi?id=71696
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        FrameLoader::loadURLIntoChildFrame will trigger the machinery that will call
+        FrameLoaderClientEfl::dispatchDidStartProvisionalLoad. However, since we were
+        emitting the "frame,created" signal after that, applications would connect to
+        it after some other frame signals had already been emitted. Should help tests
+        such as http/tests/loading/empty-subframe.html pass.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_child_add):
+        * ewk/ewk_view.cpp:
+        (ewk_view_frame_create):
+
 2011-11-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] DRT: Fix the order of the items in the dumped history list.

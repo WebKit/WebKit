@@ -3393,7 +3393,6 @@ WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* ewkView, Evas
     smartData->changed.frame_rect = true;
     _ewk_view_smart_changed(smartData);
 
-    evas_object_smart_callback_call(ewkView, "frame,created", frame);
     return coreFrame.release();
 }
 
