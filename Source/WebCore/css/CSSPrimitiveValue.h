@@ -220,9 +220,9 @@ protected:
 private:
     CSSPrimitiveValue();
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
-    explicit CSSPrimitiveValue(int ident);
-    explicit CSSPrimitiveValue(unsigned color); // RGB value
-    explicit CSSPrimitiveValue(const Length&);
+    CSSPrimitiveValue(int ident);
+    CSSPrimitiveValue(unsigned color); // RGB value
+    CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const String&, UnitTypes);
     CSSPrimitiveValue(double, UnitTypes);
 
