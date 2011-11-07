@@ -120,6 +120,9 @@ contains(TEMPLATE, lib) {
     # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
     DEFINES += BUILDING_WEBKIT
 
+    # Build both debug and release configurations
+    mac: CONFIG += build_all
+
     DEFINES += QT_ASCII_CAST_WARNINGS
 
     win32-msvc*|win32-icc: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32

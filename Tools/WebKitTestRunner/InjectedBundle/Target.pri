@@ -7,6 +7,8 @@
 TEMPLATE = lib
 TARGET = WTRInjectedBundle
 
+mac:debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
+
 SOURCES += \
     InjectedBundle.cpp \
     InjectedBundle.h \
@@ -41,12 +43,6 @@ HEADERS += \
 DESTDIR = $${ROOT_BUILD_DIR}/lib
 
 QT += declarative widgets
-
-!CONFIG(release, debug|release) {
-    OBJECTS_DIR = obj/debug
-} else { # Release
-    OBJECTS_DIR = obj/release
-}
 
 load(features)
 load(webcore)

@@ -17,9 +17,6 @@ DESTDIR = $$WEBKIT2_DESTDIR
 
 QT += declarative
 
-# Build both debug and release configurations
-mac: CONFIG += build_all
-
 WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2= \
     $$PWD/../WebKit/qt/WebCoreSupport/QtWebComboBox.h
 

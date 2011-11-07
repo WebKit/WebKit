@@ -209,20 +209,18 @@ mac {
         !build_pass {
             message("Building QtWebKit as a framework, as that's how Qt was built. You can")
             message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
-
-            CONFIG += build_all
         } else {
             isEmpty(QT_SOURCE_TREE):debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
         }
 
         CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
         FRAMEWORK_HEADERS.version = Versions
-        FRAMEWORK_HEADERS.files = $$dirname(headers.files)/$${TARGET}
+        FRAMEWORK_HEADERS.files = $$dirname(headers.files)/QtWebKit
         FRAMEWORK_HEADERS.path = Headers
         QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
 
         # No-op to satisfy the dependency for FRAMEWORK_HEADERS
-        module_include.target = $$dirname(headers.files)/$${TARGET}
+        module_include.target = $$dirname(headers.files)/QtWebKit
         module_include.commands = $${MAKEFILE_NOOP_COMMAND}
         contains(QMAKE_EXTRA_TARGETS, fwheader_generator): module_include.depends += fwheader_generator
         QMAKE_EXTRA_TARGETS += module_include
