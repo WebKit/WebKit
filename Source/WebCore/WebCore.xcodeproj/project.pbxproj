@@ -12426,6 +12426,12 @@
 		BC98543C0CD3D98B00069BC1 /* JSConsole.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSConsole.h; sourceTree = "<group>"; };
 		BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetCustom.cpp; sourceTree = "<group>"; };
 		BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAbstractViewFrame.h; sourceTree = "<group>"; };
+		BC9A6141146859D9006057FD /* DOMExceptions.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMExceptions.in; sourceTree = "<group>"; };
+		BC9A6142146859D9006057FD /* EventFactory.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventFactory.in; sourceTree = "<group>"; };
+		BC9A6143146859D9006057FD /* EventTargetFactory.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventTargetFactory.in; sourceTree = "<group>"; };
+		BC9A6144146859D9006057FD /* make_dom_exceptions.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_dom_exceptions.pl; sourceTree = "<group>"; };
+		BC9A6145146859D9006057FD /* make_event_factory.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_event_factory.pl; sourceTree = "<group>"; };
+		BC9A6146146859D9006057FD /* make_names.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_names.pl; sourceTree = "<group>"; };
 		BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
@@ -21024,6 +21030,7 @@
 				978D07BD145A0F6C0096908D /* DOMCoreException.cpp */,
 				BC60D6E80D28D83400B9918F /* DOMCoreException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */,
+				BC9A6141146859D9006057FD /* DOMExceptions.in */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
 				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
@@ -21055,14 +21062,15 @@
 				14E836D209F8512000B85AE4 /* Event.idl */,
 				4138D3341244054800323D33 /* EventContext.cpp */,
 				4138D3331244054800323D33 /* EventContext.h */,
-				4AF1AD3C13FD23A400AA9590 /* EventDispatchMediator.cpp */,
-				4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */,
 				418A06CF133C04D500CD379C /* EventDispatcher.cpp */,
 				418A06CE133C04D500CD379C /* EventDispatcher.h */,
+				4AF1AD3C13FD23A400AA9590 /* EventDispatchMediator.cpp */,
+				4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */,
 				978D07BB145A0F560096908D /* EventException.cpp */,
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
 				97665011144FAA4200F6BB51 /* EventFactory.h */,
+				BC9A6142146859D9006057FD /* EventFactory.in */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				85AFA7410AAF298400E84305 /* EventListener.idl */,
 				AD4495F1141FC08900541EDF /* EventListenerMap.cpp */,
@@ -21073,6 +21081,7 @@
 				E12EDBE90B308E0B002704B6 /* EventTarget.cpp */,
 				E12EDB7A0B308A78002704B6 /* EventTarget.h */,
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
+				BC9A6143146859D9006057FD /* EventTargetFactory.in */,
 				BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */,
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
@@ -21087,6 +21096,9 @@
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
 				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
+				BC9A6144146859D9006057FD /* make_dom_exceptions.pl */,
+				BC9A6145146859D9006057FD /* make_event_factory.pl */,
+				BC9A6146146859D9006057FD /* make_names.pl */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
 				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
 				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,

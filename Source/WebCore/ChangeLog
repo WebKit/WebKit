@@ -1,3 +1,12 @@
+2011-11-07  Sam Weinig  <sam@webkit.org>
+
+        Add missing .in and .pl files to the Xcode project for easy access.
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add some missing files to the Xcode project.
+
 2011-11-07  Jessie Berlin  <jberlin@apple.com>
 
         Need a way to allow a scheme access to Local Storage and Databases while Private Browsing is
