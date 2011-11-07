@@ -1,3 +1,14 @@
+2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Suggest box should not accept suggestion on space key pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=71706
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.onKeyDown):
+        (WebInspector.TextPrompt.SuggestBox.prototype.tabKeyPressed):
+
 2011-11-07  Andreas Kling  <kling@webkit.org>
 
         Don't use CSSOM's CSSValue.cssValueType internally in WebCore.

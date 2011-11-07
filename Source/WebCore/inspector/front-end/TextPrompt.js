@@ -246,8 +246,7 @@ WebInspector.TextPrompt.prototype = {
             if (this._suggestForceable && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                 this.defaultKeyHandler(event, true);
                 handled = true;
-            } else if (this.isSuggestBoxVisible())
-                handled = this._suggestBox.spaceKeyPressed(event);
+            }
             break;
         case "Alt":
         case "Meta":
@@ -1084,11 +1083,5 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     tabKeyPressed: function(event)
     {
         return this.enterKeyPressed(event);
-    },
-
-    spaceKeyPressed: function(event)
-    {
-        this.acceptSuggestion();
-        return false; // Do not inhibit a whitespace entry after the suggestion.
     }
 }
