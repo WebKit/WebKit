@@ -1,3 +1,20 @@
+2011-11-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::putWithAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=71716
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Added putWithAttributes to the MethodTable, changed all the virtual 
+        implementations of putWithAttributes to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::putWithAttributes):
+        * bindings/js/JSDOMWindowShell.h:
+
 2011-11-07  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71490

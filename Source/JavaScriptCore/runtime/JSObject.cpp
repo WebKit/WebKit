@@ -200,10 +200,10 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
-    putDirectInternal(exec->globalData(), propertyName, value, attributes, true, slot, getJSFunction(value));
+    object->putDirectInternal(exec->globalData(), propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
@@ -683,7 +683,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
                 attributes |= Setter;
                 accessor->setSetter(exec->globalData(), asObject(oldDescriptor.setter()));
             }
-            target->putWithAttributes(exec, propertyName, accessor, attributes);
+            target->methodTable()->putWithAttributes(target, exec, propertyName, accessor, attributes);
             return true;
         }
         JSValue newValue = jsUndefined();
@@ -691,7 +691,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->putWithAttributes(exec, propertyName, newValue, attributes & ~(Getter | Setter));
+        target->methodTable()->putWithAttributes(target, exec, propertyName, newValue, attributes & ~(Getter | Setter));
         return true;
     }
     attributes &= ~ReadOnly;

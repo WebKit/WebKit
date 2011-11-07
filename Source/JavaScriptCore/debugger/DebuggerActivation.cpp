@@ -73,9 +73,10 @@ void DebuggerActivation::put(JSCell* cell, ExecState* exec, const Identifier& pr
     thisObject->m_activation->methodTable()->put(thisObject->m_activation.get(), exec, propertyName, value, slot);
 }
 
-void DebuggerActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void DebuggerActivation::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    m_activation->putWithAttributes(exec, propertyName, value, attributes);
+    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    thisObject->m_activation->methodTable()->putWithAttributes(thisObject->m_activation.get(), exec, propertyName, value, attributes);
 }
 
 bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

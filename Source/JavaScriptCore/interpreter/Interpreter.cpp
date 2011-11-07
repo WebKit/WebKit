@@ -793,7 +793,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                     PutPropertySlot slot;
                     globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 } else
-                    globalObject->putWithAttributes(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, DontEnum | DontDelete);
+                    globalObject->methodTable()->putWithAttributes(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, DontEnum | DontDelete);
                 // var declarations return undefined
                 result = jsUndefined();
                 continue;

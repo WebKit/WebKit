@@ -83,6 +83,9 @@ namespace JSC {
 
         typedef bool (*HasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue, JSValue);
         HasInstanceFunctionPtr hasInstance;
+
+        typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        PutWithAttributesFunctionPtr putWithAttributes;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -122,6 +125,7 @@ struct MemberCheck##member { \
         &ClassName::getPropertyNames, \
         &ClassName::className, \
         &ClassName::hasInstance, \
+        &ClassName::putWithAttributes, \
     }, \
     sizeof(ClassName)
 

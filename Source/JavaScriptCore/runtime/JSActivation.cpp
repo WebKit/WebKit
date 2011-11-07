@@ -181,18 +181,19 @@ void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& property
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum
-void JSActivation::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSActivation::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    JSActivation* thisObject = static_cast<JSActivation*>(object);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
+    if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
-    ASSERT(!hasGetterSetterProperties());
-    JSObject::putWithAttributes(exec, propertyName, value, attributes);
+    ASSERT(!thisObject->hasGetterSetterProperties());
+    JSObject::putWithAttributes(thisObject, exec, propertyName, value, attributes);
 }
 
 bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

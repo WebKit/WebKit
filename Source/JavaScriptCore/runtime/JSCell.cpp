@@ -196,4 +196,9 @@ bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
     return false;
 }
 
+void JSCell::putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

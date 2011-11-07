@@ -69,4 +69,9 @@ bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDe
     return false;
 }
 
+void JSVariableObject::putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

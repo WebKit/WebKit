@@ -106,7 +106,7 @@ namespace JSC {
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
-        virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        static void putWithAttributes(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
         void putWithAttributes(JSGlobalData*, const Identifier& propertyName, JSValue, unsigned attributes);
 
         bool propertyIsEnumerable(ExecState*, const Identifier& propertyName) const;

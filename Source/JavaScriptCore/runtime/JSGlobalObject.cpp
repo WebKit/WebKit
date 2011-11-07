@@ -146,20 +146,21 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& proper
     JSVariableObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSGlobalObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
+    if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
 
-    JSValue valueBefore = getDirect(exec->globalData(), propertyName);
+    JSValue valueBefore = thisObject->getDirect(exec->globalData(), propertyName);
     PutPropertySlot slot;
-    JSVariableObject::put(this, exec, propertyName, value, slot);
+    JSVariableObject::put(thisObject, exec, propertyName, value, slot);
     if (!valueBefore) {
-        JSValue valueAfter = getDirect(exec->globalData(), propertyName);
+        JSValue valueAfter = thisObject->getDirect(exec->globalData(), propertyName);
         if (valueAfter)
-            JSObject::putWithAttributes(exec, propertyName, valueAfter, attributes);
+            JSObject::putWithAttributes(thisObject, exec, propertyName, valueAfter, attributes);
     }
 }
 

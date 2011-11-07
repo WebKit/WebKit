@@ -73,9 +73,10 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& p
     ASSERT_NOT_REACHED();
 }
 
-void JSStaticScopeObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSStaticScopeObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
+    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(object);
+    if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
     
     ASSERT_NOT_REACHED();

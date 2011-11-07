@@ -50,7 +50,7 @@ namespace JSC {
 
         virtual ~JSVariableObject();
 
-        virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes) = 0;
+        static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
 
         static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
