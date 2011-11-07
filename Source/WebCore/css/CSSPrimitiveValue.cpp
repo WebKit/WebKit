@@ -164,14 +164,16 @@ static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue()
-    : m_type(0)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(0)
     , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(int ident)
-    : m_type(CSS_IDENT)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
@@ -179,7 +181,8 @@ CSSPrimitiveValue::CSSPrimitiveValue(int ident)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
-    : m_type(type)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(type)
     , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
@@ -188,7 +191,8 @@ CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
-    : m_type(type)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(type)
     , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
@@ -197,7 +201,8 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
-    : m_type(CSS_RGBCOLOR)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_type(CSS_RGBCOLOR)
     , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
@@ -205,7 +210,8 @@ CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
-    : m_hasCachedCSSText(false)
+    : CSSValue(CSS_PRIMITIVE_VALUE)
+    , m_hasCachedCSSText(false)
     , m_isQuirkValue(false)
 {
     switch (length.type()) {
@@ -662,11 +668,6 @@ Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
     }
 
     return m_value.pair;
-}
-
-unsigned short CSSPrimitiveValue::cssValueType() const
-{
-    return CSS_PRIMITIVE_VALUE;
 }
 
 bool CSSPrimitiveValue::parseString(const String& /*string*/, bool /*strict*/)

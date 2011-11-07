@@ -252,8 +252,6 @@ private:
 
     virtual bool isPrimitiveValue() const { return true; }
 
-    virtual unsigned short cssValueType() const;
-
     signed m_type : UnitTypesBits;
     mutable unsigned m_hasCachedCSSText : 1;
     unsigned m_isQuirkValue : 1;

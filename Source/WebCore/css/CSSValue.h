@@ -34,8 +34,7 @@ typedef int ExceptionCode;
 
 class CSSValue : public RefCounted<CSSValue> {
 public:
-    // FIXME: Change name to Type.
-    enum UnitTypes {
+    enum Type {
         CSS_INHERIT = 0,
         CSS_PRIMITIVE_VALUE = 1,
         CSS_VALUE_LIST = 2,
@@ -45,8 +44,7 @@ public:
 
     virtual ~CSSValue() { }
 
-    // FIXME: Change this to return UnitTypes.
-    virtual unsigned short cssValueType() const { return CSS_CUSTOM; }
+    Type cssValueType() const { return static_cast<Type>(m_type); }
 
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
@@ -81,6 +79,17 @@ public:
 #endif
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }
+
+protected:
+    CSSValue(Type type = CSS_CUSTOM)
+        : m_type(type)
+    {
+    }
+
+private:
+    // FIXME: This class is currently a little bloated, but that will change.
+    //        See <http://webkit.org/b/71666> for more information.
+    unsigned m_type : 3; // Type
 };
 
 } // namespace WebCore

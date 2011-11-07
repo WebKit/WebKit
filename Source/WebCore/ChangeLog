@@ -1,3 +1,33 @@
+2011-11-06  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: Devirtualize cssValueType().
+        <http://webkit.org/b/71667>
+
+        Reviewed by Antti Koivisto.
+
+        Keep the cssValueType in a CSSValue member instead of using
+        virtual functions.
+
+        This is part of a project to completely devirtualize CSSValue
+        <http://webkit.org/b/71666> and will incur a temporary object
+        size regression for CSSValue while the work is ongoing.
+
+        * css/CSSInheritedValue.cpp:
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::CSSInheritedValue):
+        * css/CSSInitialValue.cpp:
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::cssValueType):
+        (WebCore::CSSValue::CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        * css/CSSValueList.h:
+
 2011-11-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce UserAgent override setting.

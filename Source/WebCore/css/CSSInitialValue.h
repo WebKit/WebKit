@@ -43,7 +43,8 @@ public:
 
 private:
     CSSInitialValue(bool implicit)
-        : m_implicit(implicit)
+        : CSSValue(CSS_INITIAL)
+        , m_implicit(implicit)
     {
     }
 
@@ -52,7 +53,6 @@ private:
         return adoptRef(new CSSInitialValue(implicit));
     }
 
-    virtual unsigned short cssValueType() const;
     virtual bool isImplicitInitialValue() const { return m_implicit; }
 
     bool m_implicit;

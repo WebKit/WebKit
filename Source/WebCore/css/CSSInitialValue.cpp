@@ -25,11 +25,6 @@
 
 namespace WebCore {
 
-unsigned short CSSInitialValue::cssValueType() const
-{
-    return CSS_INITIAL;
-}
-
 String CSSInitialValue::cssText() const
 {
     return "initial";

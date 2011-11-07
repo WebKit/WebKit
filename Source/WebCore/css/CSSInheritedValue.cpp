@@ -25,11 +25,6 @@
 
 namespace WebCore {
 
-unsigned short CSSInheritedValue::cssValueType() const
-{
-    return CSS_INHERIT;
-}
-
 String CSSInheritedValue::cssText() const
 {
     return "inherit";

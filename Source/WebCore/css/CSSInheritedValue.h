@@ -36,8 +36,10 @@ public:
     virtual String cssText() const;
 
 private:
-    CSSInheritedValue() { }
-    virtual unsigned short cssValueType() const;
+    CSSInheritedValue()
+        : CSSValue(CSS_INHERIT)
+    {
+    }
 };
 
 } // namespace WebCore

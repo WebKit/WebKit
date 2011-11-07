@@ -28,12 +28,14 @@
 namespace WebCore {
 
 CSSValueList::CSSValueList(bool isSpaceSeparated)
-    : m_isSpaceSeparated(isSpaceSeparated)
+    : CSSValue(CSS_VALUE_LIST)
+    , m_isSpaceSeparated(isSpaceSeparated)
 {
 }
 
 CSSValueList::CSSValueList(CSSParserValueList* list)
-    : m_isSpaceSeparated(true)
+    : CSSValue(CSS_VALUE_LIST)
+    , m_isSpaceSeparated(true)
 {
     if (list) {
         size_t size = list->size();
@@ -44,11 +46,6 @@ CSSValueList::CSSValueList(CSSParserValueList* list)
 
 CSSValueList::~CSSValueList()
 {
-}
-
-unsigned short CSSValueList::cssValueType() const
-{
-    return CSS_VALUE_LIST;
 }
 
 void CSSValueList::append(PassRefPtr<CSSValue> val)

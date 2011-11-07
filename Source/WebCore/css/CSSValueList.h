@@ -67,8 +67,6 @@ protected:
 private:
     virtual bool isValueList() const { return true; }
 
-    virtual unsigned short cssValueType() const;
-
     Vector<RefPtr<CSSValue> > m_values;
     bool m_isSpaceSeparated;
 };
