@@ -2111,7 +2111,7 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {
-            if (current.value()->cssValueType() != CSSValue::CSS_INHERIT)
+            if (!current.value()->isInheritedValue())
                 continue;
             // If the property value is explicitly inherited, we need to apply further non-inherited properties
             // as they might override the value inherited here. This is really per-property but that is
@@ -2475,12 +2475,8 @@ bool CSSStyleSelector::useSVGZoomRules()
 
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
-    Length l;
-
-    unsigned short valueType = value->cssValueType();
-
-    bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
-    bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
+    bool isInherit = m_parentNode && value->isInheritedValue();
+    bool isInitial = value->isInitialValue() || (!m_parentNode && value->isInheritedValue());
 
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
@@ -3407,7 +3403,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakInside, RegionBreakInside, PageBreak)
         return;
     case CSSPropertyWebkitMarquee:
-        if (valueType != CSSValue::CSS_INHERIT || !m_parentNode) return;
+        if (!m_parentNode || !value->isInheritedValue())
+            return;
         m_style->setMarqueeDirection(m_parentStyle->marqueeDirection());
         m_style->setMarqueeIncrement(m_parentStyle->marqueeIncrement());
         m_style->setMarqueeSpeed(m_parentStyle->marqueeSpeed());
@@ -4159,7 +4156,7 @@ Length CSSStyleSelector::inchLength(double inch) const
 
 void CSSStyleSelector::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setAttachment(FillLayer::initialFillAttachment(layer->type()));
         return;
     }
@@ -4185,7 +4182,7 @@ void CSSStyleSelector::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSVal
 
 void CSSStyleSelector::mapFillClip(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setClip(FillLayer::initialFillClip(layer->type()));
         return;
     }
@@ -4199,7 +4196,7 @@ void CSSStyleSelector::mapFillClip(CSSPropertyID, FillLayer* layer, CSSValue* va
 
 void CSSStyleSelector::mapFillComposite(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setComposite(FillLayer::initialFillComposite(layer->type()));
         return;
     }
@@ -4213,7 +4210,7 @@ void CSSStyleSelector::mapFillComposite(CSSPropertyID, FillLayer* layer, CSSValu
 
 void CSSStyleSelector::mapFillOrigin(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setOrigin(FillLayer::initialFillOrigin(layer->type()));
         return;
     }
@@ -4246,7 +4243,7 @@ StyleImage* CSSStyleSelector::cachedOrPendingFromValue(CSSPropertyID property, C
 
 void CSSStyleSelector::mapFillImage(CSSPropertyID property, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setImage(FillLayer::initialFillImage(layer->type()));
         return;
     }
@@ -4256,7 +4253,7 @@ void CSSStyleSelector::mapFillImage(CSSPropertyID property, FillLayer* layer, CS
 
 void CSSStyleSelector::mapFillRepeatX(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setRepeatX(FillLayer::initialFillRepeatX(layer->type()));
         return;
     }
@@ -4270,7 +4267,7 @@ void CSSStyleSelector::mapFillRepeatX(CSSPropertyID, FillLayer* layer, CSSValue*
 
 void CSSStyleSelector::mapFillRepeatY(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setRepeatY(FillLayer::initialFillRepeatY(layer->type()));
         return;
     }
@@ -4299,8 +4296,7 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
 
     LengthSize b = FillLayer::initialFillSizeLength(layer->type());
 
-    if (value->cssValueType() == CSSValue::CSS_INITIAL || primitiveValue->getIdent() == CSSValueContain
-        || primitiveValue->getIdent() == CSSValueCover) {
+    if (value->isInitialValue() || primitiveValue->getIdent() == CSSValueContain || primitiveValue->getIdent() == CSSValueCover) {
         layer->setSizeLength(b);
         return;
     }
@@ -4341,7 +4337,7 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
 
 void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setXPosition(FillLayer::initialFillXPosition(layer->type()));
         return;
     }
@@ -4365,7 +4361,7 @@ void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValu
 
 void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setYPosition(FillLayer::initialFillYPosition(layer->type()));
         return;
     }
@@ -4389,7 +4385,7 @@ void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValu
 
 void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         animation->setDelay(Animation::initialAnimationDelay());
         return;
     }
@@ -4406,7 +4402,7 @@ void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
 
 void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setDirection(Animation::initialAnimationDirection());
         return;
     }
@@ -4420,7 +4416,7 @@ void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
 
 void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         animation->setDuration(Animation::initialAnimationDuration());
         return;
     }
@@ -4437,7 +4433,7 @@ void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* valu
 
 void CSSStyleSelector::mapAnimationFillMode(Animation* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setFillMode(Animation::initialAnimationFillMode());
         return;
     }
@@ -4464,7 +4460,7 @@ void CSSStyleSelector::mapAnimationFillMode(Animation* layer, CSSValue* value)
 
 void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         animation->setIterationCount(Animation::initialAnimationIterationCount());
         return;
     }
@@ -4481,7 +4477,7 @@ void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue
 
 void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setName(Animation::initialAnimationName());
         return;
     }
@@ -4498,7 +4494,7 @@ void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)
 
 void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         layer->setPlayState(Animation::initialAnimationPlayState());
         return;
     }
@@ -4513,7 +4509,7 @@ void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
 
 void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         animation->setProperty(Animation::initialAnimationProperty());
         return;
     }
@@ -4532,7 +4528,7 @@ void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* valu
 
 void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+    if (value->isInitialValue()) {
         animation->setTimingFunction(Animation::initialAnimationTimingFunction());
         return;
     }

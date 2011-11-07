@@ -171,7 +171,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
     RefPtr<CSSValue> cssValue = imp->getPropertyCSSValue(propInfo->propID);
     if (cssValue) {
         if (propInfo->hadPixelOrPosPrefix &&
-            cssValue->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+            cssValue->isPrimitiveValue()) {
             return v8::Number::New(static_cast<CSSPrimitiveValue*>(
                 cssValue.get())->getFloatValue(CSSPrimitiveValue::CSS_PX));
         }

@@ -1,3 +1,58 @@
+2011-11-07  Andreas Kling  <kling@webkit.org>
+
+        Don't use CSSOM's CSSValue.cssValueType internally in WebCore.
+        <http://webkit.org/b/71679>
+
+        Reviewed by Darin Adler.
+
+        Swap out cssValueType() usage for isPrimitiveValue(), isInitialValue()
+        and isInheritedValue() to increase code clarity.
+
+        The plan is to turn cssValueType() into a computed value based on the
+        CSSValue subclass (coming soon to <http://webkit.org/b/71668>.)
+        This is a clean-up in preparation for that.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter):
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::isInheritedValue):
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::isInitialValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillAttachment):
+        (WebCore::CSSStyleSelector::mapFillClip):
+        (WebCore::CSSStyleSelector::mapFillComposite):
+        (WebCore::CSSStyleSelector::mapFillOrigin):
+        (WebCore::CSSStyleSelector::mapFillImage):
+        (WebCore::CSSStyleSelector::mapFillRepeatX):
+        (WebCore::CSSStyleSelector::mapFillRepeatY):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        (WebCore::CSSStyleSelector::mapAnimationDelay):
+        (WebCore::CSSStyleSelector::mapAnimationDirection):
+        (WebCore::CSSStyleSelector::mapAnimationDuration):
+        (WebCore::CSSStyleSelector::mapAnimationFillMode):
+        (WebCore::CSSStyleSelector::mapAnimationIterationCount):
+        (WebCore::CSSStyleSelector::mapAnimationName):
+        (WebCore::CSSStyleSelector::mapAnimationPlayState):
+        (WebCore::CSSStyleSelector::mapAnimationProperty):
+        (WebCore::CSSStyleSelector::mapAnimationTimingFunction):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isInheritedValue):
+        (WebCore::CSSValue::isInitialValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::extractFontSizeDelta):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+
 2011-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99432.

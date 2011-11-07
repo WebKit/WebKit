@@ -422,7 +422,7 @@ void EditingStyle::extractFontSizeDelta()
 
     // Get the adjustment amount out of the style.
     RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta);
-    if (!value || value->cssValueType() != CSSValue::CSS_PRIMITIVE_VALUE)
+    if (!value || !value->isPrimitiveValue())
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value.get());
@@ -1050,10 +1050,12 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
         for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
             const CSSProperty& property = *it;
             CSSValue* value = property.value();
-            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-                if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                    if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                        fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+            if (!value->isPrimitiveValue())
+                continue;
+            if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
+                if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+            }
         }
     }
     m_mutableStyle->merge(fromComputedStyle.get());

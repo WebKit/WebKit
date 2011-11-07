@@ -62,6 +62,8 @@ public:
     virtual bool isFontValue() const { return false; }
     virtual bool isImageGeneratorValue() const { return false; }
     virtual bool isImageValue() const { return false; }
+    virtual bool isInheritedValue() const { return false; }
+    virtual bool isInitialValue() const { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
     virtual bool isPrimitiveValue() const { return false; }
     virtual bool isReflectValue() const { return false; }

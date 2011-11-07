@@ -110,10 +110,9 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
     SVGRenderStyle* svgstyle = m_style->accessSVGStyle();
-    unsigned short valueType = value->cssValueType();
 
-    bool isInherit = m_parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT;
-    bool isInitial = valueType == CSSPrimitiveValue::CSS_INITIAL || (!m_parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT);
+    bool isInherit = m_parentNode && value->isInheritedValue();
+    bool isInitial = value->isInitialValue() || (!m_parentNode && value->isInheritedValue());
 
     // What follows is a list that maps the CSS properties into their
     // corresponding front-end RenderStyle values. Shorthands(e.g. border,
