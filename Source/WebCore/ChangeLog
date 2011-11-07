@@ -1,3 +1,14 @@
+2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Suggest box should be open immediately if forced by Ctrl+Space.
+        https://bugs.webkit.org/show_bug.cgi?id=71710
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.clearAutoComplete):
+        (WebInspector.TextPrompt.prototype.autoCompleteSoon):
+
 2011-11-07  vsevik@chromium.org  <vsevik@chromium.org>
 
         Web Inspector: Suggest box should consume enter key pressed event.

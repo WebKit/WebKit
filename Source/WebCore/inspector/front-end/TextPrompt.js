@@ -296,7 +296,7 @@ WebInspector.TextPrompt.prototype = {
      */
     clearAutoComplete: function(includeTimeout)
     {
-        if (includeTimeout && "_completeTimeout" in this) {
+        if (includeTimeout && this._completeTimeout) {
             clearTimeout(this._completeTimeout);
             delete this._completeTimeout;
         }
@@ -334,8 +334,9 @@ WebInspector.TextPrompt.prototype = {
      */
     autoCompleteSoon: function(force)
     {
-        if (!("_completeTimeout" in this))
-            this._completeTimeout = setTimeout(this.complete.bind(this, true, force), this.isSuggestBoxVisible() ? 0 : 250);
+        var immediately = this.isSuggestBoxVisible() || force;
+        if (!this._completeTimeout)
+            this._completeTimeout = setTimeout(this.complete.bind(this, true, force), immediately ? 0 : 250);
     },
 
     /**
