@@ -470,9 +470,9 @@ void NetscapePlugin::platformSetFocus(bool focusIn)
     NPP_HandleEvent(&xEvent);
 }
 
-bool NetscapePlugin::wantsWindowRelativeNPWindowCoordinates()
+bool NetscapePlugin::wantsPluginRelativeNPWindowCoordinates()
 {
-    return false;
+    return true;
 }
 
 bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)

@@ -483,7 +483,12 @@ NPError NetscapePlugin::NPP_SetValue(NPNVariable variable, void *value)
 
 void NetscapePlugin::callSetWindow()
 {
-    if (wantsWindowRelativeNPWindowCoordinates()) {
+    if (wantsPluginRelativeNPWindowCoordinates()) {
+        m_npWindow.x = 0;
+        m_npWindow.y = 0;
+        m_npWindow.clipRect.top = m_clipRect.y();
+        m_npWindow.clipRect.left = m_clipRect.x();
+    } else {
         IntPoint pluginLocationInRootViewCoordinates = convertToRootView(IntPoint());
         IntPoint clipRectInRootViewCoordinates = convertToRootView(m_clipRect.location());
 
@@ -491,11 +496,6 @@ void NetscapePlugin::callSetWindow()
         m_npWindow.y = pluginLocationInRootViewCoordinates.y();
         m_npWindow.clipRect.top = clipRectInRootViewCoordinates.y();
         m_npWindow.clipRect.left = clipRectInRootViewCoordinates.x();
-    } else {
-        m_npWindow.x = 0;
-        m_npWindow.y = 0;
-        m_npWindow.clipRect.top = m_clipRect.y();
-        m_npWindow.clipRect.left = m_clipRect.x();
     }
 
     m_npWindow.width = m_pluginSize.width();
@@ -686,7 +686,7 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
     bool shouldCallWindow = true;
 
     // If the plug-in doesn't want window relative coordinates, we don't need to call setWindow unless its size or clip rect changes.
-    if (!wantsWindowRelativeNPWindowCoordinates() && m_pluginSize == pluginSize && m_clipRect == clipRect)
+    if (wantsPluginRelativeNPWindowCoordinates() && m_pluginSize == pluginSize && m_clipRect == clipRect)
         shouldCallWindow = false;
 
     m_pluginSize = pluginSize;

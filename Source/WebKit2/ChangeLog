@@ -1,5 +1,28 @@
 2011-11-07  Anders Carlsson  <andersca@apple.com>
 
+        Rename NetscapePlugin::wantsWindowRelativeNPWindowCoordinates to NetscapePlugin::wantsPluginRelativeNPWindowCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=71708
+
+        Reviewed by Sam Weinig.
+
+        The name wantsPluginRelativeNPWindowCoordinates is more clear than wantsWindowRelativeNPWindowCoordinates. Rename the functions
+        everywhere and, since the meaning is now inverted, invert the checks and return values.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindow):
+        (WebKit::NetscapePlugin::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginNone.cpp:
+        (WebKit::NetscapePlugin::wantsPluginRelativeNPWindowCoordinates):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::wantsPluginRelativeNPWindowCoordinates):
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::wantsPluginRelativeNPWindowCoordinates):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::wantsPluginRelativeNPWindowCoordinates):
+
+2011-11-07  Anders Carlsson  <andersca@apple.com>
+
         NetscapePlugin::wantsWindowRelativeNPWindowCoordinates should return false on Mac
         https://bugs.webkit.org/show_bug.cgi?id=71707
 

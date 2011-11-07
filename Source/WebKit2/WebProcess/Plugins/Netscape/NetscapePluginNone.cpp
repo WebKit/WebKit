@@ -88,9 +88,9 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
     return false;
 }
 
-bool NetscapePlugin::wantsWindowRelativeNPWindowCoordinates()
+bool NetscapePlugin::wantsPluginRelativeNPWindowCoordinates()
 {
-    return false;
+    return true;
 }
 
 } // namespace WebKit

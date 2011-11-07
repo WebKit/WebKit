@@ -164,7 +164,7 @@ private:
     bool platformHandleKeyboardEvent(const WebKeyboardEvent&);
     void platformSetFocus(bool);
 
-    static bool wantsWindowRelativeNPWindowCoordinates();
+    static bool wantsPluginRelativeNPWindowCoordinates();
 
     // Plugin
     virtual bool initialize(const Parameters&);
