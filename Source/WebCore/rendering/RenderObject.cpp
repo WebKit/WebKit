@@ -1133,26 +1133,38 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
-    LayoutRect adjustedPaintRec = paintRect;
-    adjustedPaintRec.inflate(offset);
+    LayoutRect inner = paintRect;
+    inner.inflate(offset);
 
-    if (adjustedPaintRec.isEmpty())
+    if (inner.isEmpty())
         return;
+
+    LayoutRect outer = inner;
+    outer.inflate(outlineWidth);
 
     bool useTransparencyLayer = outlineColor.hasAlpha();
     if (useTransparencyLayer) {
+        if (outlineStyle == SOLID) {
+            Path path;
+            path.addRect(outer);
+            path.addRect(inner);
+            graphicsContext->setFillRule(RULE_EVENODD);
+            graphicsContext->setFillColor(outlineColor, styleToUse->colorSpace());
+            graphicsContext->fillPath(path);
+            return;
+        }
         graphicsContext->beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
         outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
     }
 
-    LayoutUnit leftOuter = adjustedPaintRec.x() - outlineWidth;
-    LayoutUnit leftInner = adjustedPaintRec.x();
-    LayoutUnit rightOuter = adjustedPaintRec.maxX() + outlineWidth;
-    LayoutUnit rightInner = adjustedPaintRec.maxX();
-    LayoutUnit topOuter = adjustedPaintRec.y() - outlineWidth;
-    LayoutUnit topInner = adjustedPaintRec.y();
-    LayoutUnit bottomOuter = adjustedPaintRec.maxY() + outlineWidth;
-    LayoutUnit bottomInner = adjustedPaintRec.maxY();
+    LayoutUnit leftOuter = outer.x();
+    LayoutUnit leftInner = inner.x();
+    LayoutUnit rightOuter = outer.maxX();
+    LayoutUnit rightInner = inner.maxX();
+    LayoutUnit topOuter = outer.y();
+    LayoutUnit topInner = inner.y();
+    LayoutUnit bottomOuter = outer.maxY();
+    LayoutUnit bottomInner = inner.maxY();
     
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, leftInner, bottomOuter, BSLeft, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, topOuter, rightOuter, topInner, BSTop, outlineColor, outlineStyle, outlineWidth, outlineWidth);

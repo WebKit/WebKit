@@ -1,3 +1,18 @@
+2011-11-07  David Barr  <davidbarr@chromium.org>
+
+        Optimize outline rendering to avoid transparency layers
+        https://bugs.webkit.org/show_bug.cgi?id=60750
+
+        Add fast path for solid block outlines with alpha.
+        Improve readability of piecewise path while at it.
+
+        Reviewed by Simon Fraser.
+
+        No intended change in behaviour, no new tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+
 2011-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Suggest box should not accept suggestion on space key pressed.
