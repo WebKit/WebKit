@@ -212,6 +212,12 @@ BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
 
+// Chromium Mac doesn't support autocorrection panel
+WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-delete.html = FAIL
+WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = FAIL
+WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-removing-underline.html = FAIL
+WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-simple.html = FAIL
+
 // Checks for very kjs-specific garbage collector behavior.
 // Would have to be implemented much differently to work in v8.
 WONTFIX SKIP : fast/dom/gc-10.html = FAIL
@@ -647,13 +653,6 @@ BUGCR14832 : editing/selection/user-drag-element-and-user-select-none.html = FAI
 // Fails due to textInputController.setInputMethod not implemented for Mac.
 BUGCR19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
 BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
-
-// Tests added in r69269.
-// Apple-Mac port corrects "notationl" to "notational" automatically?
-BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
-BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
-BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
-BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
