@@ -356,7 +356,7 @@ class WebKitPort(Port):
         expectations_path = self.path_to_test_expectations_file()
         if self._filesystem.exists(expectations_path):
             _log.debug("Using test_expectations.txt: %s" % expectations_path)
-            expectations = self._filesystem.read_text_file(expectations_path) + expectations
+            expectations = self._filesystem.read_text_file(expectations_path) + '\n' + expectations
         return expectations
 
     def _skipped_list_as_expectations(self):

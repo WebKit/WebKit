@@ -163,9 +163,20 @@ class WebKitPortTest(port_testcase.PortTestCase):
         mock_fs = MockFileSystem(files)
         port = TestWebKitPort(filesystem=mock_fs)
         self.assertEqual(port.test_expectations(),
+        """BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n
+BUG_SKIPPED SKIP : fast/html/keygen.html = FAIL
+BUG_SKIPPED SKIP : media = FAIL""")
+        files = {
+            '/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt': 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL',
+            '/mock-checkout/LayoutTests/platform/testwebkitport/Skipped': 'fast/html/keygen.html',
+        }
+        mock_fs = MockFileSystem(files)
+        port = TestWebKitPort(filesystem=mock_fs)
+        self.assertEqual(port.test_expectations(),
         """BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL
 BUG_SKIPPED SKIP : fast/html/keygen.html = FAIL
 BUG_SKIPPED SKIP : media = FAIL""")
+
 
     def test_build_driver(self):
         output = OutputCapture()
