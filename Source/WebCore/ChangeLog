@@ -1,3 +1,15 @@
+2011-11-08  Justin Schuh  <jschuh@chromium.org>
+
+        Document::loader should use documentLoader(), not activeDocumentLoader()
+        https://bugs.webkit.org/show_bug.cgi?id=65895
+
+        Reviewed by Brady Eidson.
+
+        Test: fast/loader/stateobjects/replacestate-in-onunload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::loader):
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         CSSImageGeneratorValue: Devirtualize image(), isFixedSize() and fixedSize().

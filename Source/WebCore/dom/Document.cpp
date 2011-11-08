@@ -5066,7 +5066,7 @@ DocumentLoader* Document::loader() const
     if (!m_frame)
         return 0;
     
-    DocumentLoader* loader = m_frame->loader()->activeDocumentLoader();
+    DocumentLoader* loader = m_frame->loader()->documentLoader();
     if (!loader)
         return 0;
     
