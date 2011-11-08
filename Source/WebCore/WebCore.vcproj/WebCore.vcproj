@@ -33418,14 +33418,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\ImageBySizeCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\ImageBySizeCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\InlineBox.cpp"
 				>
 				<FileConfiguration

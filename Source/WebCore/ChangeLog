@@ -1,3 +1,30 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Fold ImageBySizeCache again into CSSImageGeneratorValue
+        https://bugs.webkit.org/show_bug.cgi?id=71785
+
+        Reviewed by Zoltan Herczeg.
+
+        Remove ImageBySizeCache, and fold it into CSSImageGeneratorValue, as it used to be.
+        CachedImage has switched to SVGImageCache and no longer needs it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::removeClient):
+        (WebCore::CSSImageGeneratorValue::getImage):
+        (WebCore::CSSImageGeneratorValue::putImage):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::SizeAndCount::SizeAndCount):
+        (WebCore::CSSImageGeneratorValue::clients):
+        * rendering/ImageBySizeCache.cpp: Removed.
+        * rendering/ImageBySizeCache.h: Removed.
+
 2011-11-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Avoid automatic Console suggestions with empty expression

@@ -1217,7 +1217,6 @@ SET(WebCore_SOURCES
     rendering/FixedTableLayout.cpp
     rendering/HitTestingTransformState.cpp
     rendering/HitTestResult.cpp
-    rendering/ImageBySizeCache.cpp
     rendering/InlineBox.cpp
     rendering/InlineFlowBox.cpp
     rendering/InlineTextBox.cpp
