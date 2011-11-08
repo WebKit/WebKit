@@ -108,6 +108,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGAbstractValue.h \
+	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
+	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
@@ -135,6 +137,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
 	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \
 	Source/JavaScriptCore/dfg/DFGOSREntry.h \
+	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGPropagator.cpp \
 	Source/JavaScriptCore/dfg/DFGPropagator.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \

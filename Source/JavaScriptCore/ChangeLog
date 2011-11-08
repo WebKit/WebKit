@@ -1,3 +1,18 @@
+2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG 32_64 - update make lists for efl, gtk, and Qt ports with DFG change r99519
+        https://bugs.webkit.org/show_bug.cgi?id=71768
+
+        Reviewed by Geoffrey Garen.
+
+        Also includes a fix to make the newly introduced AssemblyHelpers
+        friend of JSValue as we need the Tag definitions.
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * runtime/JSValue.h:
+
 2011-11-07  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Fix gcc 4.4 compilation warnings in DFG 32_64

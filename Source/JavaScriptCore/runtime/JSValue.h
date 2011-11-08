@@ -47,6 +47,7 @@ namespace JSC {
     class UString;
 #if ENABLE(DFG_JIT)
     namespace DFG {
+        class AssemblyHelpers;
         class JITCompiler;
         class JITCodeGenerator;
         class JSValueSource;
@@ -109,6 +110,7 @@ namespace JSC {
         friend class JSInterfaceJIT;
         friend class SpecializedThunkJIT;
 #if ENABLE(DFG_JIT)
+        friend class DFG::AssemblyHelpers;
         friend class DFG::JITCompiler;
         friend class DFG::JITCodeGenerator;
         friend class DFG::JSValueSource;
