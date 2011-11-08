@@ -207,17 +207,17 @@ PASS keyRange.lower is 'aaf'
 PASS keyRange.upper is 'abf'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
-Passing an invalid key into only([])
+Passing an invalid key into only({})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
-Passing an invalid key into upperBound([])
+Passing an invalid key into upperBound({})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
-Passing an invalid key into lowerBound([])
+Passing an invalid key into lowerBound({})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
-Passing an invalid key into bound(null, [])
+Passing an invalid key into bound(null, {})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
-Passing an invalid key into bound([],null)
+Passing an invalid key into bound({},null)
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
-Passing an invalid key into bound([], [])
+Passing an invalid key into bound({}, {})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 PASS successfullyParsed is true
 

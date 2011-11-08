@@ -129,7 +129,8 @@ static const unsigned char kIDBKeyNullTypeByte = 0;
 static const unsigned char kIDBKeyStringTypeByte = 1;
 static const unsigned char kIDBKeyDateTypeByte = 2;
 static const unsigned char kIDBKeyNumberTypeByte = 3;
-static const unsigned char kIDBKeyMinKeyTypeByte = 4;
+static const unsigned char kIDBKeyArrayTypeByte = 4;
+static const unsigned char kIDBKeyMinKeyTypeByte = 5;
 
 static const unsigned char kObjectStoreDataIndexId = 1;
 static const unsigned char kExistsEntryIndexId = 2;
@@ -301,8 +302,9 @@ const char* decodeStringWithLength(const char* p, const char* limit, String& fou
     return p;
 }
 
-int compareEncodedStringsWithLength(const char* p, const char* limitP, const char* q, const char* limitQ)
+int compareEncodedStringsWithLength(const char*& p, const char* limitP, const char*& q, const char* limitQ)
 {
+    ASSERT(&p != &q);
     ASSERT(limitP >= p);
     ASSERT(limitQ >= q);
     int64_t lenP, lenQ;
@@ -314,8 +316,16 @@ int compareEncodedStringsWithLength(const char* p, const char* limitP, const cha
     ASSERT(p + lenP * 2 <= limitP);
     ASSERT(q + lenQ * 2 <= limitQ);
 
+    const char* startP = p;
+    const char* startQ = q;
+    p += lenP * 2;
+    q += lenQ * 2;
+
+    if (p > limitP || q > limitQ)
+        return 0;
+
     const size_t lmin = static_cast<size_t>(lenP < lenQ ? lenP : lenQ);
-    if (int x = memcmp(p, q, lmin * 2))
+    if (int x = memcmp(startP, startQ, lmin * 2))
         return x;
 
     if (lenP == lenQ)
@@ -348,30 +358,49 @@ const char* decodeDouble(const char* p, const char* limit, double* d)
 Vector<char> encodeIDBKey(const IDBKey& key)
 {
     Vector<char> ret;
+    encodeIDBKey(key, ret);
+    return ret;
+}
 
+void encodeIDBKey(const IDBKey& key, Vector<char>& into)
+{
+    size_t previousSize = into.size();
     switch (key.type()) {
     case IDBKey::InvalidType:
+    case IDBKey::MinType:
         ASSERT_NOT_REACHED();
-        return encodeByte(kIDBKeyNullTypeByte);
+        into.append(encodeByte(kIDBKeyNullTypeByte));
+        return;
+    case IDBKey::ArrayType:
+        {
+            into.append(encodeByte(kIDBKeyArrayTypeByte));
+            size_t length = key.array().size();
+            into.append(encodeVarInt(length));
+            for (size_t i = 0; i < length; ++i)
+                encodeIDBKey(*key.array()[i], into);
+            ASSERT_UNUSED(previousSize, into.size() > previousSize);
+            return;
+        }
     case IDBKey::StringType:
-        ret = encodeByte(kIDBKeyStringTypeByte);
-        ret.append(encodeStringWithLength(key.string()));
-        return ret;
+        into.append(encodeByte(kIDBKeyStringTypeByte));
+        into.append(encodeStringWithLength(key.string()));
+        ASSERT_UNUSED(previousSize, into.size() > previousSize);
+        return;
     case IDBKey::DateType:
-        ret = encodeByte(kIDBKeyDateTypeByte);
-        ret.append(encodeDouble(key.date()));
-        ASSERT(ret.size() == 9);
-        return ret;
+        into.append(encodeByte(kIDBKeyDateTypeByte));
+        into.append(encodeDouble(key.date()));
+        ASSERT_UNUSED(previousSize, into.size() - previousSize == 9);
+        return;
     case IDBKey::NumberType:
-        ret = encodeByte(kIDBKeyNumberTypeByte);
-        ret.append(encodeDouble(key.number()));
-        ASSERT(ret.size() == 9);
-        return ret;
+        into.append(encodeByte(kIDBKeyNumberTypeByte));
+        into.append(encodeDouble(key.number()));
+        ASSERT_UNUSED(previousSize, into.size() - previousSize == 9);
+        return;
     }
 
     ASSERT_NOT_REACHED();
-    return Vector<char>();
 }
+
 
 const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& foundKey)
 {
@@ -380,35 +409,58 @@ const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& found
         return 0;
 
     unsigned char type = *p++;
-    String s;
-    double d;
 
     switch (type) {
     case kIDBKeyNullTypeByte:
-        // Null.
         foundKey = IDBKey::createInvalid();
         return p;
+
+    case kIDBKeyArrayTypeByte:
+        {
+            int64_t length;
+            p = decodeVarInt(p, limit, length);
+            if (!p)
+                return 0;
+            if (length < 0)
+                return 0;
+            IDBKey::KeyArray array;
+            while (length--) {
+                RefPtr<IDBKey> key;
+                p = decodeIDBKey(p, limit, key);
+                if (!p)
+                    return 0;
+                array.append(key);
+            }
+            foundKey = IDBKey::createArray(array);
+            return p;
+        }
     case kIDBKeyStringTypeByte:
-        // String.
-        p = decodeStringWithLength(p, limit, s);
-        if (!p)
-            return 0;
-        foundKey = IDBKey::createString(s);
-        return p;
+        {
+            String s;
+            p = decodeStringWithLength(p, limit, s);
+            if (!p)
+                return 0;
+            foundKey = IDBKey::createString(s);
+            return p;
+        }
     case kIDBKeyDateTypeByte:
-        // Date.
-        p = decodeDouble(p, limit, &d);
-        if (!p)
-            return 0;
-        foundKey = IDBKey::createDate(d);
-        return p;
+        {
+            double d;
+            p = decodeDouble(p, limit, &d);
+            if (!p)
+                return 0;
+            foundKey = IDBKey::createDate(d);
+            return p;
+        }
     case kIDBKeyNumberTypeByte:
-        // Number.
-        p = decodeDouble(p, limit, &d);
-        if (!p)
-            return 0;
-        foundKey = IDBKey::createNumber(d);
-        return p;
+        {
+            double d;
+            p = decodeDouble(p, limit, &d);
+            if (!p)
+                return 0;
+            foundKey = IDBKey::createNumber(d);
+            return p;
+        }
     }
 
     ASSERT_NOT_REACHED();
@@ -417,38 +469,137 @@ const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& found
 
 const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result)
 {
+    ASSERT(result);
     const char* p = start;
     if (p >= limit)
         return 0;
 
     unsigned char type = *p++;
 
-    int64_t stringLen;
-
     switch (type) {
     case kIDBKeyNullTypeByte:
     case kIDBKeyMinKeyTypeByte:
         *result = encodeByte(type);
         return p;
+    case kIDBKeyArrayTypeByte:
+        {
+            int64_t length;
+            p = decodeVarInt(p, limit, length);
+            if (!p)
+                return 0;
+            if (length < 0)
+                return 0;
+            result->clear();
+            result->append(start, p - start);
+            while (length--) {
+                Vector<char> subkey;
+                p = extractEncodedIDBKey(p, limit, &subkey);
+                if (!p)
+                    return 0;
+                result->append(subkey);
+            }
+            return p;
+        }
     case kIDBKeyStringTypeByte:
-        // String.
-        p = decodeVarInt(p, limit, stringLen);
-        if (!p)
-            return 0;
-        if (p + stringLen * 2 > limit)
-            return 0;
-        result->clear();
-        result->append(start, p - start + stringLen * 2);
-        return p + stringLen * 2;
+        {
+            int64_t length;
+            p = decodeVarInt(p, limit, length);
+            if (!p)
+                return 0;
+            if (p + length * 2 > limit)
+                return 0;
+            result->clear();
+            result->append(start, p - start + length * 2);
+            return p + length * 2;
+        }
     case kIDBKeyDateTypeByte:
     case kIDBKeyNumberTypeByte:
-        // Date or number.
         if (p + sizeof(double) > limit)
             return 0;
         result->clear();
         result->append(start, 1 + sizeof(double));
         return p + sizeof(double);
     }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static IDBKey::Type keyTypeByteToKeyType(unsigned char type)
+{
+    switch (type) {
+    case kIDBKeyNullTypeByte:
+        return IDBKey::InvalidType;
+    case kIDBKeyArrayTypeByte:
+        return IDBKey::ArrayType;
+    case kIDBKeyStringTypeByte:
+        return IDBKey::StringType;
+    case kIDBKeyDateTypeByte:
+        return IDBKey::DateType;
+    case kIDBKeyNumberTypeByte:
+        return IDBKey::NumberType;
+    case kIDBKeyMinKeyTypeByte:
+        return IDBKey::MinType;
+    }
+
+    ASSERT_NOT_REACHED();
+    return IDBKey::InvalidType;
+}
+
+int compareEncodedIDBKeys(const char*& p, const char* limitA, const char*& q, const char* limitB)
+{
+    ASSERT(&p != &q);
+    ASSERT(p < limitA);
+    ASSERT(q < limitB);
+    unsigned char typeA = *p++;
+    unsigned char typeB = *q++;
+
+    if (int x = IDBKey::compareTypes(keyTypeByteToKeyType(typeA), keyTypeByteToKeyType(typeB)))
+        return x;
+
+    switch (typeA) {
+    case kIDBKeyNullTypeByte:
+    case kIDBKeyMinKeyTypeByte:
+        // Null type or max type; no payload to compare.
+        return 0;
+    case kIDBKeyArrayTypeByte:
+        {
+            int64_t lengthA, lengthB;
+            p = decodeVarInt(p, limitA, lengthA);
+            if (!p)
+                return 0;
+            q = decodeVarInt(q, limitB, lengthB);
+            if (!q)
+                return 0;
+            if (lengthA < 0 || lengthB < 0)
+                return 0;
+            for (int64_t i = 0; i < lengthA && i < lengthB; ++i) {
+                if (int cmp = compareEncodedIDBKeys(p, limitA, q, limitB))
+                    return cmp;
+            }
+            if (lengthA < lengthB)
+                return -1;
+            if (lengthA > lengthB)
+                return 1;
+            return 0;
+        }
+    case kIDBKeyStringTypeByte:
+        return compareEncodedStringsWithLength(p, limitA, q, limitB);
+    case kIDBKeyDateTypeByte:
+    case kIDBKeyNumberTypeByte:
+        {
+            double d, e;
+            p = decodeDouble(p, limitA, &d);
+            ASSERT(p);
+            q = decodeDouble(q, limitB, &e);
+            ASSERT(q);
+            if (d < e)
+                return -1;
+            if (d > e)
+                return 1;
+            return 0;
+        }
+    }
+
     ASSERT_NOT_REACHED();
     return 0;
 }
@@ -463,38 +614,7 @@ int compareEncodedIDBKeys(const Vector<char>& keyA, const Vector<char>& keyB)
     const char* q = keyB.data();
     const char* limitB = q + keyB.size();
 
-    unsigned char typeA = *p++;
-    unsigned char typeB = *q++;
-
-    double d, e;
-
-    if (int x = typeB - typeA) // FIXME: Note the subtleness!
-        return x;
-
-    switch (typeA) {
-    case kIDBKeyNullTypeByte:
-    case kIDBKeyMinKeyTypeByte:
-        // Null type or max type; no payload to compare.
-        return 0;
-    case kIDBKeyStringTypeByte:
-        // String type.
-        return compareEncodedStringsWithLength(p, limitA, q, limitB);
-    case kIDBKeyDateTypeByte:
-    case kIDBKeyNumberTypeByte:
-        // Date or number.
-        p = decodeDouble(p, limitA, &d);
-        ASSERT(p);
-        q = decodeDouble(q, limitB, &e);
-        ASSERT(q);
-        if (d < e)
-            return -1;
-        if (d > e)
-            return 1;
-        return 0;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return compareEncodedIDBKeys(p, limitA, q, limitB);
 }
 
 namespace {

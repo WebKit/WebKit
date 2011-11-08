@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,6 +155,8 @@ TEST(InjectIDBKeyTest, SubProperty)
     checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(object), "foo.baz");
     checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "foo.baz");
     checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "bar");
+    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), SerializedScriptValue::create(object), "foo.baz");
+    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), SerializedScriptValue::create(object), "bar");
 
     checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.bar.baz");
     checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");

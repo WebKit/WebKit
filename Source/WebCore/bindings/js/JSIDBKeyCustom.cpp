@@ -48,6 +48,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, IDBKey* key)
     case IDBKey::StringType:
         return jsString(exec, key->string());
     // FIXME: Implement dates.
+    // FIXME: Implement arrays.
     }
 
     ASSERT_NOT_REACHED();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,8 @@
 #include "IDBKey.h"
 #include "V8Binding.h"
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 v8::Handle<v8::Value> toV8(IDBKey* key)
@@ -43,6 +45,7 @@ v8::Handle<v8::Value> toV8(IDBKey* key)
 
     switch (key->type()) {
     case IDBKey::InvalidType:
+    case IDBKey::MinType:
         ASSERT_NOT_REACHED();
         return v8::Undefined();
     case IDBKey::NumberType:
@@ -51,6 +54,13 @@ v8::Handle<v8::Value> toV8(IDBKey* key)
         return v8String(key->string());
     case IDBKey::DateType:
         return v8::Date::New(key->date());
+    case IDBKey::ArrayType:
+        {
+            v8::Local<v8::Array> array = v8::Array::New(key->array().size());
+            for (size_t i = 0; i < key->array().size(); ++i)
+                array->Set(i, toV8(key->array()[i].get()));
+            return array;
+        }
     }
 
     ASSERT_NOT_REACHED();

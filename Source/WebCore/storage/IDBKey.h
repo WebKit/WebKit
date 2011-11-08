@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class IDBKey : public ThreadSafeRefCounted<IDBKey> {
 public:
+    typedef Vector<RefPtr<IDBKey> > KeyArray;
+
     static PassRefPtr<IDBKey> createInvalid()
     {
         RefPtr<IDBKey> idbKey(new IDBKey());
@@ -67,17 +70,34 @@ public:
         return idbKey.release();
     }
 
+    static PassRefPtr<IDBKey> createArray(const KeyArray& array)
+    {
+        RefPtr<IDBKey> idbKey(new IDBKey());
+        idbKey->m_type = ArrayType;
+        idbKey->m_array = array;
+        return idbKey.release();
+    }
+
     ~IDBKey();
 
     // In order of the least to the highest precedent in terms of sort order.
     enum Type {
         InvalidType = 0,
+        ArrayType,
         StringType,
         DateType,
-        NumberType
+        NumberType,
+        MinType
     };
 
     Type type() const { return m_type; }
+    bool valid() const { return m_type != InvalidType; }
+
+    const KeyArray& array() const
+    {
+        ASSERT(m_type == ArrayType);
+        return m_array;
+    }
 
     const String& string() const
     {
@@ -101,6 +121,11 @@ public:
     bool isLessThan(const IDBKey* other) const;
     bool isEqual(const IDBKey* other) const;
 
+    static int compareTypes(Type a, Type b)
+    {
+        return b - a;
+    }
+
     using ThreadSafeRefCounted<IDBKey>::ref;
     using ThreadSafeRefCounted<IDBKey>::deref;
 
@@ -108,6 +133,7 @@ private:
     IDBKey();
 
     Type m_type;
+    KeyArray m_array;
     String m_string;
     double m_date;
     double m_number;

@@ -19,7 +19,7 @@ PASS event.target.result.direction is 0
 PASS event.target.result.key is 'myKey'
 PASS event.target.result.value is 'myValue'
 
-Passing an invalid key into .continue().
+Passing an invalid key into .continue({}).
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 
 Opening an empty cursor.

@@ -41,6 +41,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WebIDBKey WebIDBKey::createArray(const WebVector<WebIDBKey>& array)
+{
+    WebIDBKey key;
+    key.assignArray(array);
+    return key;
+}
+
 WebIDBKey WebIDBKey::createString(const WebString& string)
 {
     WebIDBKey key;
@@ -86,6 +93,66 @@ void WebIDBKey::assign(const WebIDBKey& value)
     m_private = value.m_private;
 }
 
+static PassRefPtr<IDBKey> convertFromWebIDBKeyArray(const WebVector<WebIDBKey>& array)
+{
+    IDBKey::KeyArray keys;
+    keys.reserveCapacity(array.size());
+    for (size_t i = 0; i < array.size(); ++i) {
+        switch (array[i].type()) {
+        case WebIDBKey::ArrayType:
+            keys.append(convertFromWebIDBKeyArray(array[i].array()));
+            break;
+        case WebIDBKey::StringType:
+            keys.append(IDBKey::createString(array[i].string()));
+            break;
+        case WebIDBKey::DateType:
+            keys.append(IDBKey::createDate(array[i].date()));
+            break;
+        case WebIDBKey::NumberType:
+            keys.append(IDBKey::createNumber(array[i].number()));
+            break;
+        case WebIDBKey::InvalidType:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    return IDBKey::createArray(keys);
+}
+
+static void convertToWebIDBKeyArray(const IDBKey::KeyArray& array, WebVector<WebIDBKey>& result)
+{
+    WebVector<WebIDBKey> keys(array.size());
+    WebVector<WebIDBKey> subkeys;
+    for (size_t i = 0; i < array.size(); ++i) {
+        RefPtr<IDBKey> key = array[i];
+        switch (key->type()) {
+        case IDBKey::ArrayType:
+            convertToWebIDBKeyArray(key->array(), subkeys);
+            keys[i] = WebIDBKey::createArray(subkeys);
+            break;
+        case IDBKey::StringType:
+            keys[i] = WebIDBKey::createString(key->string());
+            break;
+        case IDBKey::DateType:
+            keys[i] = WebIDBKey::createDate(key->date());
+            break;
+        case IDBKey::NumberType:
+            keys[i] = WebIDBKey::createNumber(key->number());
+            break;
+        case IDBKey::InvalidType:
+        case IDBKey::MinType:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    result.swap(keys);
+}
+
+void WebIDBKey::assignArray(const WebVector<WebIDBKey>& array)
+{
+    m_private = convertFromWebIDBKeyArray(array);
+}
+
 void WebIDBKey::assignString(const WebString& string)
 {
     m_private = IDBKey::createString(string);
@@ -116,6 +183,13 @@ WebIDBKey::Type WebIDBKey::type() const
     if (!m_private.get())
         return InvalidType;
     return Type(m_private->type());
+}
+
+WebVector<WebIDBKey> WebIDBKey::array() const
+{
+    WebVector<WebIDBKey> keys;
+    convertToWebIDBKeyArray(m_private->array(), keys);
+    return keys;
 }
 
 WebString WebIDBKey::string() const

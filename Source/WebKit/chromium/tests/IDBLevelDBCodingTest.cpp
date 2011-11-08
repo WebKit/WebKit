@@ -39,6 +39,31 @@ using namespace IDBLevelDBCoding;
 
 namespace {
 
+static PassRefPtr<IDBKey> createArrayIDBKey()
+{
+    return IDBKey::createArray(IDBKey::KeyArray());
+}
+
+static PassRefPtr<IDBKey> createArrayIDBKey(PassRefPtr<IDBKey> prpKey1)
+{
+    RefPtr<IDBKey> key1 = prpKey1;
+
+    IDBKey::KeyArray array;
+    array.append(key1);
+    return IDBKey::createArray(array);
+}
+
+static PassRefPtr<IDBKey> createArrayIDBKey(PassRefPtr<IDBKey> prpKey1, PassRefPtr<IDBKey> prpKey2)
+{
+    RefPtr<IDBKey> key1 = prpKey1;
+    RefPtr<IDBKey> key2 = prpKey2;
+
+    IDBKey::KeyArray array;
+    array.append(key1);
+    array.append(key2);
+    return IDBKey::createArray(array);
+}
+
 TEST(IDBLevelDBCodingTest, EncodeByte)
 {
     Vector<char> expected;
@@ -63,11 +88,13 @@ TEST(IDBLevelDBCodingTest, MaxIDBKey)
     Vector<char> maxKey = maxIDBKey();
 
     Vector<char> minKey = minIDBKey();
+    Vector<char> arrayKey = encodeIDBKey(*IDBKey::createArray(IDBKey::KeyArray()));
     Vector<char> stringKey = encodeIDBKey(*IDBKey::createString("Hello world"));
     Vector<char> numberKey = encodeIDBKey(*IDBKey::createNumber(3.14));
     Vector<char> dateKey = encodeIDBKey(*IDBKey::createDate(1000000));
 
     EXPECT_GT(compareEncodedIDBKeys(maxKey, minKey), 0);
+    EXPECT_GT(compareEncodedIDBKeys(maxKey, arrayKey), 0);
     EXPECT_GT(compareEncodedIDBKeys(maxKey, stringKey), 0);
     EXPECT_GT(compareEncodedIDBKeys(maxKey, numberKey), 0);
     EXPECT_GT(compareEncodedIDBKeys(maxKey, dateKey), 0);
@@ -78,11 +105,13 @@ TEST(IDBLevelDBCodingTest, MinIDBKey)
     Vector<char> minKey = minIDBKey();
 
     Vector<char> maxKey = maxIDBKey();
+    Vector<char> arrayKey = encodeIDBKey(*IDBKey::createArray(IDBKey::KeyArray()));
     Vector<char> stringKey = encodeIDBKey(*IDBKey::createString("Hello world"));
     Vector<char> numberKey = encodeIDBKey(*IDBKey::createNumber(3.14));
     Vector<char> dateKey = encodeIDBKey(*IDBKey::createDate(1000000));
 
     EXPECT_LT(compareEncodedIDBKeys(minKey, maxKey), 0);
+    EXPECT_LT(compareEncodedIDBKeys(minKey, arrayKey), 0);
     EXPECT_LT(compareEncodedIDBKeys(minKey, stringKey), 0);
     EXPECT_LT(compareEncodedIDBKeys(minKey, numberKey), 0);
     EXPECT_LT(compareEncodedIDBKeys(minKey, dateKey), 0);
@@ -230,6 +259,14 @@ TEST(IDBLevelDBCodingTest, DecodeStringWithLength)
     }
 }
 
+static int compareStrings(const char* p, const char* limitP, const char* q, const char* limitQ)
+{
+    int result = compareEncodedStringsWithLength(p, limitP, q, limitQ);
+    EXPECT_EQ(p, limitP);
+    EXPECT_EQ(q, limitQ);
+    return result;
+}
+
 TEST(IDBLevelDBCodingTest, CompareEncodedStringsWithLength)
 {
     const UChar testStringA[] = {0x1000, 0x1000, '\0'};
@@ -272,10 +309,10 @@ TEST(IDBLevelDBCodingTest, CompareEncodedStringsWithLength)
         const char* q = encodedB.data();
         const char* limitQ = q + encodedB.size();
 
-        EXPECT_LT(compareEncodedStringsWithLength(p, limitP, q, limitQ), 0);
-        EXPECT_GT(compareEncodedStringsWithLength(q, limitQ, p, limitP), 0);
-        EXPECT_EQ(compareEncodedStringsWithLength(p, limitP, p, limitP), 0);
-        EXPECT_EQ(compareEncodedStringsWithLength(q, limitQ, q, limitQ), 0);
+        EXPECT_LT(compareStrings(p, limitP, q, limitQ), 0);
+        EXPECT_GT(compareStrings(q, limitQ, p, limitP), 0);
+        EXPECT_EQ(compareStrings(p, limitP, p, limitP), 0);
+        EXPECT_EQ(compareStrings(q, limitQ, q, limitQ), 0);
     }
 }
 
@@ -327,7 +364,25 @@ TEST(IDBLevelDBCodingTest, EncodeDecodeIDBKey)
     EXPECT_EQ(v.data() + v.size(), p);
     EXPECT_EQ(0, decodeIDBKey(v.data(), v.data() + v.size() - 1, decodedKey));
 
+    expectedKey = createArrayIDBKey();
+    v = encodeIDBKey(*expectedKey);
+    p = decodeIDBKey(v.data(), v.data() + v.size(), decodedKey);
+    EXPECT_TRUE(decodedKey->isEqual(expectedKey.get()));
+    EXPECT_EQ(v.data() + v.size(), p);
+    EXPECT_EQ(0, decodeIDBKey(v.data(), v.data() + v.size() - 1, decodedKey));
+
     expectedKey = IDBKey::createDate(7890);
+    v = encodeIDBKey(*expectedKey);
+    p = decodeIDBKey(v.data(), v.data() + v.size(), decodedKey);
+    EXPECT_TRUE(decodedKey->isEqual(expectedKey.get()));
+    EXPECT_EQ(v.data() + v.size(), p);
+    EXPECT_EQ(0, decodeIDBKey(v.data(), v.data() + v.size() - 1, decodedKey));
+
+    IDBKey::KeyArray array;
+    array.append(IDBKey::createNumber(1234));
+    array.append(IDBKey::createString("Hello World!"));
+    array.append(IDBKey::createDate(7890));
+    expectedKey = IDBKey::createArray(array);
     v = encodeIDBKey(*expectedKey);
     p = decodeIDBKey(v.data(), v.data() + v.size(), decodedKey);
     EXPECT_TRUE(decodedKey->isEqual(expectedKey.get()));
@@ -353,6 +408,18 @@ TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)
     keys.append(IDBKey::createString("baaa"));
     keys.append(IDBKey::createString("baab"));
     keys.append(IDBKey::createString("c"));
+
+    keys.append(createArrayIDBKey());
+    keys.append(createArrayIDBKey(IDBKey::createNumber(0)));
+    keys.append(createArrayIDBKey(IDBKey::createNumber(0), IDBKey::createNumber(3.14)));
+    keys.append(createArrayIDBKey(IDBKey::createDate(0)));
+    keys.append(createArrayIDBKey(IDBKey::createDate(0), IDBKey::createDate(0)));
+    keys.append(createArrayIDBKey(IDBKey::createString("")));
+    keys.append(createArrayIDBKey(IDBKey::createString(""), IDBKey::createString("a")));
+    keys.append(createArrayIDBKey(createArrayIDBKey()));
+    keys.append(createArrayIDBKey(createArrayIDBKey(), createArrayIDBKey()));
+    keys.append(createArrayIDBKey(createArrayIDBKey(createArrayIDBKey())));
+    keys.append(createArrayIDBKey(createArrayIDBKey(createArrayIDBKey(createArrayIDBKey()))));
 
     for (size_t i = 0; i < keys.size() - 1; ++i) {
         RefPtr<IDBKey> keyA = keys[i];

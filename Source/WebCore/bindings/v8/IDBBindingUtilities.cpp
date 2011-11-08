@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,9 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
+static const size_t maximumDepth = 20000;
+
+static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vector<v8::Handle<v8::Array> >& stack)
 {
     if (value->IsNumber() && !isnan(value->NumberValue()))
         return IDBKey::createNumber(value->NumberValue());
@@ -46,7 +48,37 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
         return IDBKey::createString(v8ValueToWebCoreString(value));
     if (value->IsDate())
         return IDBKey::createDate(value->NumberValue());
+    if (value->IsArray()) {
+        v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
 
+        if (stack.contains(array))
+            return 0;
+        if (stack.size() >= maximumDepth)
+            return 0;
+        stack.append(array);
+
+        IDBKey::KeyArray subkeys;
+        uint32_t length = array->Length();
+        for (uint32_t i = 0; i < length; ++i) {
+            v8::Local<v8::Value> item = array->Get(v8::Int32::New(i));
+            RefPtr<IDBKey> subkey = createIDBKeyFromValue(item, stack);
+            if (!subkey)
+                return 0;
+            subkeys.append(subkey);
+        }
+
+        stack.removeLast();
+        return IDBKey::createArray(subkeys);
+    }
+    return 0;
+}
+
+PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
+{
+    Vector<v8::Handle<v8::Array> > stack;
+    RefPtr<IDBKey> key = createIDBKeyFromValue(value, stack);
+    if (key)
+        return key;
     return IDBKey::createInvalid();
 }
 

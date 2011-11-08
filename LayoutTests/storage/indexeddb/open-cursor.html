@@ -37,8 +37,8 @@ function cursorSuccess()
     shouldBe("event.target.result.value", "'myValue'");
     debug("");
     try {
-        debug("Passing an invalid key into .continue().");
-        event.target.result.continue([]);
+        debug("Passing an invalid key into .continue({}).");
+        event.target.result.continue({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());

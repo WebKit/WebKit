@@ -125,48 +125,48 @@ function test()
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
 
     try {
-        debug("Passing an invalid key into only([])");
-        webkitIDBKeyRange.only([]);
+        debug("Passing an invalid key into only({})");
+        webkitIDBKeyRange.only({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
 
     try {
-        debug("Passing an invalid key into upperBound([])");
-        webkitIDBKeyRange.upperBound([]);
+        debug("Passing an invalid key into upperBound({})");
+        webkitIDBKeyRange.upperBound({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
  
     try {
-        debug("Passing an invalid key into lowerBound([])");
-        webkitIDBKeyRange.lowerBound([]);
+        debug("Passing an invalid key into lowerBound({})");
+        webkitIDBKeyRange.lowerBound({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
 
     try {
-        debug("Passing an invalid key into bound(null, [])");
-        webkitIDBKeyRange.bound(null, []);
+        debug("Passing an invalid key into bound(null, {})");
+        webkitIDBKeyRange.bound(null, {});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
 
     try {
-        debug("Passing an invalid key into bound([],null)");
-        webkitIDBKeyRange.bound([], null);
+        debug("Passing an invalid key into bound({},null)");
+        webkitIDBKeyRange.bound({}, null);
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
 
     try {
-        debug("Passing an invalid key into bound([], [])");
-        webkitIDBKeyRange.bound([], []);
+        debug("Passing an invalid key into bound({}, {})");
+        webkitIDBKeyRange.bound({}, {});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());

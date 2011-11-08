@@ -96,19 +96,19 @@ removeSuccessButFalse():
 PASS event.target.result is false
 store = event.target.source
 Passing an invalid key into store.get().
-Expecting exception from store.get([])
+Expecting exception from store.get({})
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.delete().
-Expecting exception from store.delete([])
+Expecting exception from store.delete({})
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.add().
-Expecting exception from store.add(null, [])
+Expecting exception from store.add(null, {})
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 Passing an invalid key into store.put().
-Expecting exception from store.put(null, [])
+Expecting exception from store.put(null, {})
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true

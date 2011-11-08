@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,16 @@ int IDBKey::compare(const IDBKey* other) const
         return m_type > other->m_type ? -1 : 1;
 
     switch (m_type) {
+    case ArrayType:
+        for (size_t i = 0; i < m_array.size() && i < other->m_array.size(); ++i) {
+            if (int result = m_array[i]->compare(other->m_array[i].get()))
+                return result;
+        }
+        if (m_array.size() < other->m_array.size())
+            return -1;
+        if (m_array.size() > other->m_array.size())
+            return 1;
+        return 0;
     case StringType:
         return -codePointCompare(other->m_string, m_string);
     case DateType:
@@ -55,6 +65,7 @@ int IDBKey::compare(const IDBKey* other) const
         return (m_number < other->m_number) ? -1 :
                 (m_number > other-> m_number) ? 1 : 0;
     case InvalidType:
+    case MinType:
         ASSERT_NOT_REACHED();
         return 0;
     }

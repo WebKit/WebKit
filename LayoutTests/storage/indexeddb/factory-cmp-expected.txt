@@ -10,7 +10,6 @@ PASS IDBDatabaseException == null is false
 PASS typeof indexedDB.cmp === 'function' is true
 
 compare valid keys
-(Array keys are not yet implemented so many tests will fail)
 PASS indexedDB.cmp(-Infinity,-Number.MAX_VALUE) === -1 is true
 PASS indexedDB.cmp(-Number.MAX_VALUE,-Infinity) === 1 is true
 PASS indexedDB.cmp(-Infinity,-Infinity) === 0 is true
@@ -95,118 +94,118 @@ PASS indexedDB.cmp('𝄞','�') === -1 is true
 PASS indexedDB.cmp('�','𝄞') === 1 is true
 PASS indexedDB.cmp('𝄞','𝄞') === 0 is true
 PASS indexedDB.cmp('�','�') === 0 is true
-FAIL indexedDB.cmp('�',[]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([],'�') === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
+PASS indexedDB.cmp('�',[]) === -1 is true
+PASS indexedDB.cmp([],'�') === 1 is true
 PASS indexedDB.cmp('�','�') === 0 is true
-FAIL indexedDB.cmp([],[]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([],[-Infinity]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-Infinity],[]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([],[]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-Infinity],[-Infinity]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-Infinity],[-1.7976931348623157e+308]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1.7976931348623157e+308],[-Infinity]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-Infinity],[-Infinity]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1.7976931348623157e+308],[-1.7976931348623157e+308]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1.7976931348623157e+308],[-1]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1],[-1.7976931348623157e+308]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1.7976931348623157e+308],[-1.7976931348623157e+308]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1],[-1]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1],[-5e-324]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-5e-324],[-1]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-1],[-1]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-5e-324],[-5e-324]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-5e-324],[0]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([0],[-5e-324]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([-5e-324],[-5e-324]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([0],[0]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([0],[5e-324]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([5e-324],[0]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([0],[0]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([5e-324],[5e-324]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([5e-324],[1]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1],[5e-324]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([5e-324],[5e-324]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1],[1]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1],[1.7976931348623157e+308]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1.7976931348623157e+308],[1]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1],[1]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1.7976931348623157e+308],[1.7976931348623157e+308]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1.7976931348623157e+308],[Infinity]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([Infinity],[1.7976931348623157e+308]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([1.7976931348623157e+308],[1.7976931348623157e+308]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([Infinity],[Infinity]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([Infinity],[new Date(0)]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(0)],[Infinity]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([Infinity],[Infinity]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(0)],[new Date(0)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(0)],[new Date(1000)]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1000)],[new Date(0)]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(0)],[new Date(0)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1000)],[new Date(1000)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1000)],[new Date(1317399931023)]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1000)]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1000)],[new Date(1000)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1317399931023)],['']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([''],[new Date(1317399931023)]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([''],['']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([''],['\0']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['\0'],['']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([''],['']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['\0'],['\0']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['\0'],['a']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['a'],['\0']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['\0'],['\0']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['a'],['a']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['a'],['aa']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['aa'],['a']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['a'],['a']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['aa'],['aa']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['aa'],['b']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['b'],['aa']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['aa'],['aa']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['b'],['b']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['b'],['ba']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['ba'],['b']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['b'],['b']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['ba'],['ba']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['ba'],['¢']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['¢'],['ba']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['ba'],['ba']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['¢'],['¢']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['¢'],['水']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['水'],['¢']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['¢'],['¢']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['水'],['水']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['水'],['𝄞']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['𝄞'],['水']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['水'],['水']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['𝄞'],['𝄞']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['𝄞'],['�']) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['�'],['𝄞']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['𝄞'],['𝄞']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['�'],['�']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['�'],[[]]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[]],['�']) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp(['�'],['�']) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[]],[[]]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[]],[[], []]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], []],[[]]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[]],[[]]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], []],[[], []]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], []],[[], [], []]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], [], []],[[], []]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], []],[[], []]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], [], []],[[], [], []]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], [], []],[[[]]]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[]]],[[], [], []]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[], [], []],[[], [], []]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[]]],[[[]]]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[]]],[[[[]]]]) === -1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[[]]]],[[[]]]) === 1 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[]]],[[[]]]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
-FAIL indexedDB.cmp([[[[]]]],[[[[]]]]) === 0 should be true. Threw exception Error: DATA_ERR: DOM IDBDatabase Exception 5
+PASS indexedDB.cmp([],[]) === 0 is true
+PASS indexedDB.cmp([],[-Infinity]) === -1 is true
+PASS indexedDB.cmp([-Infinity],[]) === 1 is true
+PASS indexedDB.cmp([],[]) === 0 is true
+PASS indexedDB.cmp([-Infinity],[-Infinity]) === 0 is true
+PASS indexedDB.cmp([-Infinity],[-Number.MAX_VALUE]) === -1 is true
+PASS indexedDB.cmp([-Number.MAX_VALUE],[-Infinity]) === 1 is true
+PASS indexedDB.cmp([-Infinity],[-Infinity]) === 0 is true
+PASS indexedDB.cmp([-Number.MAX_VALUE],[-Number.MAX_VALUE]) === 0 is true
+PASS indexedDB.cmp([-Number.MAX_VALUE],[-1]) === -1 is true
+PASS indexedDB.cmp([-1],[-Number.MAX_VALUE]) === 1 is true
+PASS indexedDB.cmp([-Number.MAX_VALUE],[-Number.MAX_VALUE]) === 0 is true
+PASS indexedDB.cmp([-1],[-1]) === 0 is true
+PASS indexedDB.cmp([-1],[-Number.MIN_VALUE]) === -1 is true
+PASS indexedDB.cmp([-Number.MIN_VALUE],[-1]) === 1 is true
+PASS indexedDB.cmp([-1],[-1]) === 0 is true
+PASS indexedDB.cmp([-Number.MIN_VALUE],[-Number.MIN_VALUE]) === 0 is true
+PASS indexedDB.cmp([-Number.MIN_VALUE],[0]) === -1 is true
+PASS indexedDB.cmp([0],[-Number.MIN_VALUE]) === 1 is true
+PASS indexedDB.cmp([-Number.MIN_VALUE],[-Number.MIN_VALUE]) === 0 is true
+PASS indexedDB.cmp([0],[0]) === 0 is true
+PASS indexedDB.cmp([0],[Number.MIN_VALUE]) === -1 is true
+PASS indexedDB.cmp([Number.MIN_VALUE],[0]) === 1 is true
+PASS indexedDB.cmp([0],[0]) === 0 is true
+PASS indexedDB.cmp([Number.MIN_VALUE],[Number.MIN_VALUE]) === 0 is true
+PASS indexedDB.cmp([Number.MIN_VALUE],[1]) === -1 is true
+PASS indexedDB.cmp([1],[Number.MIN_VALUE]) === 1 is true
+PASS indexedDB.cmp([Number.MIN_VALUE],[Number.MIN_VALUE]) === 0 is true
+PASS indexedDB.cmp([1],[1]) === 0 is true
+PASS indexedDB.cmp([1],[Number.MAX_VALUE]) === -1 is true
+PASS indexedDB.cmp([Number.MAX_VALUE],[1]) === 1 is true
+PASS indexedDB.cmp([1],[1]) === 0 is true
+PASS indexedDB.cmp([Number.MAX_VALUE],[Number.MAX_VALUE]) === 0 is true
+PASS indexedDB.cmp([Number.MAX_VALUE],[Infinity]) === -1 is true
+PASS indexedDB.cmp([Infinity],[Number.MAX_VALUE]) === 1 is true
+PASS indexedDB.cmp([Number.MAX_VALUE],[Number.MAX_VALUE]) === 0 is true
+PASS indexedDB.cmp([Infinity],[Infinity]) === 0 is true
+PASS indexedDB.cmp([Infinity],[new Date(0)]) === -1 is true
+PASS indexedDB.cmp([new Date(0)],[Infinity]) === 1 is true
+PASS indexedDB.cmp([Infinity],[Infinity]) === 0 is true
+PASS indexedDB.cmp([new Date(0)],[new Date(0)]) === 0 is true
+PASS indexedDB.cmp([new Date(0)],[new Date(1000)]) === -1 is true
+PASS indexedDB.cmp([new Date(1000)],[new Date(0)]) === 1 is true
+PASS indexedDB.cmp([new Date(0)],[new Date(0)]) === 0 is true
+PASS indexedDB.cmp([new Date(1000)],[new Date(1000)]) === 0 is true
+PASS indexedDB.cmp([new Date(1000)],[new Date(1317399931023)]) === -1 is true
+PASS indexedDB.cmp([new Date(1317399931023)],[new Date(1000)]) === 1 is true
+PASS indexedDB.cmp([new Date(1000)],[new Date(1000)]) === 0 is true
+PASS indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) === 0 is true
+PASS indexedDB.cmp([new Date(1317399931023)],['']) === -1 is true
+PASS indexedDB.cmp([''],[new Date(1317399931023)]) === 1 is true
+PASS indexedDB.cmp([new Date(1317399931023)],[new Date(1317399931023)]) === 0 is true
+PASS indexedDB.cmp([''],['']) === 0 is true
+PASS indexedDB.cmp([''],['\0']) === -1 is true
+PASS indexedDB.cmp(['\0'],['']) === 1 is true
+PASS indexedDB.cmp([''],['']) === 0 is true
+PASS indexedDB.cmp(['\0'],['\0']) === 0 is true
+PASS indexedDB.cmp(['\0'],['a']) === -1 is true
+PASS indexedDB.cmp(['a'],['\0']) === 1 is true
+PASS indexedDB.cmp(['\0'],['\0']) === 0 is true
+PASS indexedDB.cmp(['a'],['a']) === 0 is true
+PASS indexedDB.cmp(['a'],['aa']) === -1 is true
+PASS indexedDB.cmp(['aa'],['a']) === 1 is true
+PASS indexedDB.cmp(['a'],['a']) === 0 is true
+PASS indexedDB.cmp(['aa'],['aa']) === 0 is true
+PASS indexedDB.cmp(['aa'],['b']) === -1 is true
+PASS indexedDB.cmp(['b'],['aa']) === 1 is true
+PASS indexedDB.cmp(['aa'],['aa']) === 0 is true
+PASS indexedDB.cmp(['b'],['b']) === 0 is true
+PASS indexedDB.cmp(['b'],['ba']) === -1 is true
+PASS indexedDB.cmp(['ba'],['b']) === 1 is true
+PASS indexedDB.cmp(['b'],['b']) === 0 is true
+PASS indexedDB.cmp(['ba'],['ba']) === 0 is true
+PASS indexedDB.cmp(['ba'],['¢']) === -1 is true
+PASS indexedDB.cmp(['¢'],['ba']) === 1 is true
+PASS indexedDB.cmp(['ba'],['ba']) === 0 is true
+PASS indexedDB.cmp(['¢'],['¢']) === 0 is true
+PASS indexedDB.cmp(['¢'],['水']) === -1 is true
+PASS indexedDB.cmp(['水'],['¢']) === 1 is true
+PASS indexedDB.cmp(['¢'],['¢']) === 0 is true
+PASS indexedDB.cmp(['水'],['水']) === 0 is true
+PASS indexedDB.cmp(['水'],['𝄞']) === -1 is true
+PASS indexedDB.cmp(['𝄞'],['水']) === 1 is true
+PASS indexedDB.cmp(['水'],['水']) === 0 is true
+PASS indexedDB.cmp(['𝄞'],['𝄞']) === 0 is true
+PASS indexedDB.cmp(['𝄞'],['�']) === -1 is true
+PASS indexedDB.cmp(['�'],['𝄞']) === 1 is true
+PASS indexedDB.cmp(['𝄞'],['𝄞']) === 0 is true
+PASS indexedDB.cmp(['�'],['�']) === 0 is true
+PASS indexedDB.cmp(['�'],[[]]) === -1 is true
+PASS indexedDB.cmp([[]],['�']) === 1 is true
+PASS indexedDB.cmp(['�'],['�']) === 0 is true
+PASS indexedDB.cmp([[]],[[]]) === 0 is true
+PASS indexedDB.cmp([[]],[[], []]) === -1 is true
+PASS indexedDB.cmp([[], []],[[]]) === 1 is true
+PASS indexedDB.cmp([[]],[[]]) === 0 is true
+PASS indexedDB.cmp([[], []],[[], []]) === 0 is true
+PASS indexedDB.cmp([[], []],[[], [], []]) === -1 is true
+PASS indexedDB.cmp([[], [], []],[[], []]) === 1 is true
+PASS indexedDB.cmp([[], []],[[], []]) === 0 is true
+PASS indexedDB.cmp([[], [], []],[[], [], []]) === 0 is true
+PASS indexedDB.cmp([[], [], []],[[[]]]) === -1 is true
+PASS indexedDB.cmp([[[]]],[[], [], []]) === 1 is true
+PASS indexedDB.cmp([[], [], []],[[], [], []]) === 0 is true
+PASS indexedDB.cmp([[[]]],[[[]]]) === 0 is true
+PASS indexedDB.cmp([[[]]],[[[[]]]]) === -1 is true
+PASS indexedDB.cmp([[[[]]]],[[[]]]) === 1 is true
+PASS indexedDB.cmp([[[]]],[[[]]]) === 0 is true
+PASS indexedDB.cmp([[[[]]]],[[[[]]]]) === 0 is true
 
 compare invalid keys
 Expecting exception from indexedDB.cmp(void 0, true)

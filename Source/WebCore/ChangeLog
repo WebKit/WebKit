@@ -1,3 +1,38 @@
+2011-11-08  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: implement compound (array) key support
+        https://bugs.webkit.org/show_bug.cgi?id=62284
+
+        Reviewed by Tony Chang.
+
+        Add support for Array values as IDBKeys. (Multirow indexes are still
+        not yet supported.)
+
+        Tests: storage/indexeddb/cursor-key-order.html
+               storage/indexeddb/key-type-array.html
+
+        * bindings/js/JSIDBKeyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        * storage/IDBKey.cpp:
+        (WebCore::IDBKey::compare):
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::createArray):
+        (WebCore::IDBKey::valid):
+        (WebCore::IDBKey::array):
+        (WebCore::IDBKey::compareTypes):
+        * storage/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::compareEncodedStringsWithLength):
+        (WebCore::IDBLevelDBCoding::encodeIDBKey):
+        (WebCore::IDBLevelDBCoding::decodeIDBKey):
+        (WebCore::IDBLevelDBCoding::extractEncodedIDBKey):
+        (WebCore::IDBLevelDBCoding::keyTypeByteToKeyType):
+        (WebCore::IDBLevelDBCoding::compareEncodedIDBKeys):
+        * storage/IDBLevelDBCoding.h:
+
 2011-11-08  Daniel Bates  <dbates@webkit.org>
 
         Remove get() defined in CredentialStorageQt.cpp

@@ -250,16 +250,16 @@ function removeSuccessButFalse()
     var store = evalAndLog("store = event.target.source");
 
     debug("Passing an invalid key into store.get().");
-    evalAndExpectException("store.get([])", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.get({})", "webkitIDBDatabaseException.DATA_ERR");
 
     debug("Passing an invalid key into store.delete().");
-    evalAndExpectException("store.delete([])", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.delete({})", "webkitIDBDatabaseException.DATA_ERR");
 
     debug("Passing an invalid key into store.add().");
-    evalAndExpectException("store.add(null, [])", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.add(null, {})", "webkitIDBDatabaseException.DATA_ERR");
 
     debug("Passing an invalid key into store.put().");
-    evalAndExpectException("store.put(null, [])", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put(null, {})", "webkitIDBDatabaseException.DATA_ERR");
 
     done();
 }

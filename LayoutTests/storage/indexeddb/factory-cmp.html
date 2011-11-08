@@ -32,8 +32,6 @@ function testValidKeys()
     debug("");
     debug("compare valid keys");
 
-    debug("(Array keys are not yet implemented so many tests will fail)");
-
     var keys = [
         "-Infinity",
         "-Number.MAX_VALUE",
@@ -61,17 +59,16 @@ function testValidKeys()
         "'\uD834\uDD1E'", // U+1D11E MUSICAL SYMBOL G-CLEF (UTF-16 surrogate pair)
         "'\uFFFD'", // U+FFFD REPLACEMENT CHARACTER
 
-        // FIXME: Array keys are NYI, but these should pass once implemented
         "[]",
 
         "[-Infinity]",
-        "[-1.7976931348623157e+308]",
+        "[-Number.MAX_VALUE]",
         "[-1]",
-        "[-5e-324]",
+        "[-Number.MIN_VALUE]",
         "[0]",
-        "[5e-324]",
+        "[Number.MIN_VALUE]",
         "[1]",
-        "[1.7976931348623157e+308]",
+        "[Number.MAX_VALUE]",
         "[Infinity]",
  
         "[new Date(0)]",
@@ -96,7 +93,7 @@ function testValidKeys()
         "[[], [], []]",
 
         "[[[]]]",
-        "[[[[]]]]",
+        "[[[[]]]]"
     ];
 
     var i, key1, key2;
