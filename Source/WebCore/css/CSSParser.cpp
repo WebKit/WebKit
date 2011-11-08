@@ -5675,7 +5675,7 @@ bool CSSParser::parseAspectRatio(bool important)
     if (!lvalue->fValue || !rvalue->fValue)
         return false;
 
-    addProperty(CSSPropertyWebkitAspectRatio, CSSAspectRatioValue::create(lvalue->fValue, rvalue->fValue), important);
+    addProperty(CSSPropertyWebkitAspectRatio, CSSAspectRatioValue::create(narrowPrecisionToFloat(lvalue->fValue), narrowPrecisionToFloat(rvalue->fValue)), important);
 
     return true;
 }

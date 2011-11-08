@@ -1,3 +1,13 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix Snow Leopard 32bit builds.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAspectRatio): CSSParserValue::fValue is a double, use narrowPrecisionToFloat() to convert double->float.
+        * platform/ClockGeneric.cpp: Remove unneeded variable out of 32bit integer value range.
+        * webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::getFrequencyResponse): Use narrowPrecisionTofloat() to convert double->float.
+
 2011-11-07  Daniel Bates  <dbates@rim.com>
 
         Add CredentialStorage.cpp to WebCore/CMakeLists.txt

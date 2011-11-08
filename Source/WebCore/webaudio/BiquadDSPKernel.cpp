@@ -29,6 +29,7 @@
 #include "BiquadDSPKernel.h"
 
 #include "BiquadProcessor.h"
+#include "FloatConversion.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -121,7 +122,7 @@ void BiquadDSPKernel::getFrequencyResponse(int nFrequencies,
     // Convert from frequency in Hz to normalized frequency (0 -> 1),
     // with 1 equal to the Nyquist frequency.
     for (int k = 0; k < nFrequencies; ++k)
-        frequency[k] = frequencyHz[k] / nyquist;
+        frequency[k] = narrowPrecisionToFloat(frequencyHz[k] / nyquist);
 
     // We want to get the final values of the coefficients and compute
     // the response from that instead of some intermediate smoothed
