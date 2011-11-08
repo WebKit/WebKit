@@ -7,8 +7,15 @@ DesktopWebView {
     width: 200
     height: 400
 
-    property int expectedLength : 0
-    property int totalBytes : 0
+    property int expectedLength: 0
+    property bool downloadFinished: false
+    property int totalBytes: 0
+
+    SignalSpy {
+        id: loadSpy
+        target: webView
+        signalName: "loadSucceeded"
+    }
 
     SignalSpy {
         id: spy
@@ -26,32 +33,45 @@ DesktopWebView {
     Connections {
         id: download
         ignoreUnknownSignals: true
-        onSucceeded: { totalBytes = download.target.totalBytesReceived }
-    }
-
-    SignalSpy {
-        id: otherSpy
-        target: download
-        signalName: "succeeded"
+        onSucceeded: {
+            downloadFinished = true
+            totalBytes = download.target.totalBytesReceived
+        }
     }
 
     TestCase {
         name: "DesktopWebViewDownload"
-        when: windowShown
+
+        // Delayed windowShown to workaround problems with Qt5 in debug mode.
+        when: false
+        Timer {
+            running: parent.windowShown
+            repeat: false
+            interval: 1
+            onTriggered: parent.when = true
+        }
+
+        function init() {
+            spy.clear()
+            loadSpy.clear()
+            expectedLength = 0
+            downloadFinished = false
+            totalBytes = 0
+        }
 
         function test_downloadRequest() {
-            spy.clear()
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/download.html"))
+            loadSpy.wait()
             mouseClick(webView, 100, 100, Qt.LeftButton)
             spy.wait()
             compare(spy.count, 1)
         }
 
         function test_expectedLength() {
-            spy.clear()
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/download.html"))
+            loadSpy.wait()
             mouseClick(webView, 100, 100, Qt.LeftButton)
             spy.wait()
             compare(spy.count, 1)
@@ -59,16 +79,13 @@ DesktopWebView {
         }
 
         function test_succeeded() {
-            spy.clear()
             compare(spy.count, 0)
-            otherSpy.clear()
-            compare(otherSpy.count, 0)
             webView.load(Qt.resolvedUrl("../common/download.html"))
+            loadSpy.wait()
             mouseClick(webView, 100, 100, Qt.LeftButton)
             spy.wait()
             compare(spy.count, 1)
-            otherSpy.wait()
-            compare(otherSpy.count, 1)
+            verify(downloadFinished)
             compare(totalBytes, expectedLength)
         }
     }

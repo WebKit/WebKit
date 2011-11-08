@@ -29,7 +29,15 @@ DesktopWebView {
 
     TestCase {
         name: "DesktopWebViewLinkHovered"
-        when: windowShown
+
+        // Delayed windowShown to workaround problems with Qt5 in debug mode.
+        when: false
+        Timer {
+            running: parent.windowShown
+            repeat: false
+            interval: 1
+            onTriggered: parent.when = true
+        }
 
         function init() {
             webView.lastUrl = ""

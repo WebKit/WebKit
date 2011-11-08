@@ -34,7 +34,15 @@ Item {
 
     TestCase {
         name: "DesktopWebViewNavigationPolicyForUrl"
-        when: windowShown
+
+        // Delayed windowShown to workaround problems with Qt5 in debug mode.
+        when: false
+        Timer {
+            running: parent.windowShown
+            repeat: false
+            interval: 1
+            onTriggered: parent.when = true
+        }
 
         function test_usePolicy() {
             webView.load(Qt.resolvedUrl("../common/test2.html"))

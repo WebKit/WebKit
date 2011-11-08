@@ -1,3 +1,22 @@
+2011-11-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Workaround some problems in QML API tests
+        https://bugs.webkit.org/show_bug.cgi?id=71818
+
+        Reviewed by Tor Arne Vestbø.
+
+        This commit workaround the issue of QML's QtTest crashing when we run tests after
+        "windowShown". We delay to the next run of the mainloop. This workaround is not
+        pretty but shouldn't affect the semantics of the tests. And we benefit more from
+        having working tests right now.
+
+        This patch also improves Download to: wait for the load before emitting click, and
+        properly identifying the "succeeded" signal of the downloadItem object.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_download.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_navigationPolicyForUrl.qml:
+
 2011-11-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Clean up QtViewportInteractionEngine
