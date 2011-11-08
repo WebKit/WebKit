@@ -3570,8 +3570,8 @@ BUG_REED WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/canvas-lineWidth.html = TEXT
 
-BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+// BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
+// BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
@@ -3920,8 +3920,8 @@ BUGWK71793 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
 BUGWK71793 WIN LINUX : svg/as-image/animated-svg-as-image-same-image.html = IMAGE+TEXT
 BUGWK71793 MAC : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGWK71793 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK71793 : svg/as-background-image/svg-as-background-1.html = IMAGE
-BUGWK71793 : svg/as-background-image/svg-as-background-3.html = IMAGE
 // Uncomment the above results when you remove any of the following lines.
 BUGWK71793 BUGCR83426 : svg/as-border-image/svg-as-border-image.html = IMAGE
 BUGWK71793 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
+BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-1.html = IMAGE
+BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-3.html = IMAGE
