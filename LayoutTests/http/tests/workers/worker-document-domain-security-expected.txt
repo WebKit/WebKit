@@ -1,0 +1,3 @@
+PASS: Got security error.
+PASS: No exception throw when accessing a same-origin URL after setting document.domain.
+

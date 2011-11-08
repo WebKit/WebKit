@@ -80,10 +80,11 @@ KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
         return KURL();
     }
 
-    if (!scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(scriptURL).get())) {
+    if (!scriptExecutionContext()->securityOrigin()->canRequest(scriptURL)) {
         ec = SECURITY_ERR;
         return KURL();
     }
+
     return scriptURL;
 }
 
