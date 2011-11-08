@@ -1,3 +1,59 @@
+2011-11-08  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Merge QtDesktopWebPageProxy and QtTouchWebPageProxy into QtWebPageProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=71355
+
+        Reviewed by Simon Hausmann.
+
+        As we try to unify our public API offer we need to merge our double
+        WebPageProxy implementations first into a common class. That will help
+        to merge our TouchWebView and DesktopWebView views into one class later.
+        This commit just merge stuff around and doesn't contain any functional changes.
+
+        * Target.pri:
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::init):
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPagePrivate::paintToCurrentGLContext):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::init):
+        (QTouchWebViewPrivate::_q_viewportUpdated):
+        (QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged):
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/qt/QtDesktopWebPageProxy.cpp: Removed.
+        * UIProcess/qt/QtDesktopWebPageProxy.h: Removed.
+        * UIProcess/qt/QtTouchWebPageProxy.cpp: Removed.
+        * UIProcess/qt/QtTouchWebPageProxy.h: Removed.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (dragOperationToDropAction):
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::handleEvent):
+        (QtWebPageProxy::handleMouseMoveEvent):
+        (QtWebPageProxy::handleMousePressEvent):
+        (QtWebPageProxy::handleMouseReleaseEvent):
+        (QtWebPageProxy::handleMouseDoubleClickEvent):
+        (QtWebPageProxy::handleWheelEvent):
+        (QtWebPageProxy::handleHoverLeaveEvent):
+        (QtWebPageProxy::handleHoverMoveEvent):
+        (QtWebPageProxy::handleDragEnterEvent):
+        (QtWebPageProxy::handleDragLeaveEvent):
+        (QtWebPageProxy::handleDragMoveEvent):
+        (QtWebPageProxy::handleDropEvent):
+        (QtWebPageProxy::timerEvent):
+        (QtWebPageProxy::processDidCrash):
+        (QtWebPageProxy::didReceiveDownloadResponse):
+        (QtWebPageProxy::paintContent):
+        (QtWebPageProxy::createDrawingAreaProxy):
+        (QtWebPageProxy::renderToCurrentGLContext):
+        (QtWebPageProxy::doneWithTouchEvent):
+        (QtWebPageProxy::setVisibleContentRectAndScale):
+        (QtWebPageProxy::setVisibleContentRectTrajectoryVector):
+        (QtWebPageProxy::touchEvent):
+        (QtWebPageProxy::findZoomableAreaForPoint):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-08  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2][GTK] Application cache directory is incorrectly set

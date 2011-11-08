@@ -22,7 +22,6 @@
 #define qtouchwebpage_p_h
 
 #include "QtSGUpdateQueue.h"
-#include "QtTouchWebPageProxy.h"
 #include "qtouchwebpage.h"
 #include "qwebnavigationcontroller.h"
 #include <QMenu>
@@ -41,7 +40,6 @@ public:
     void _q_onAfterSceneRender();
     void _q_onSceneGraphInitialized();
     void paintToCurrentGLContext();
-    QtTouchWebPageProxy* touchPageProxy() { return static_cast<QtTouchWebPageProxy*>(pageProxy); }
 
     QTouchWebPage* const q;
     QtWebPageProxy* pageProxy;

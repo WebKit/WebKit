@@ -21,7 +21,7 @@
 #include "config.h"
 #include "qtouchwebpage.h"
 
-#include "QtTouchWebPageProxy.h"
+#include "QtWebPageProxy.h"
 #include "TransformationMatrix.h"
 #include "qtouchwebpage_p.h"
 #include <QApplication>
@@ -153,7 +153,7 @@ void QTouchWebPagePrivate::paintToCurrentGLContext()
 
     glScissor(left, bottom, width, height);
 
-    touchPageProxy()->renderToCurrentGLContext(transform, opacity);
+    pageProxy->renderToCurrentGLContext(transform, opacity);
     glDisable(GL_SCISSOR_TEST);
 }
 

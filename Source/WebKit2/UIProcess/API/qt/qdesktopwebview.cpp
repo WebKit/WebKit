@@ -21,11 +21,12 @@
 #include "config.h"
 #include "qdesktopwebview.h"
 
-#include "QtDesktopWebPageProxy.h"
+#include "QtWebPageProxy.h"
 #include "QtWebError.h"
 #include "UtilsQt.h"
 #include "qdesktopwebview_p.h"
 #include "qwebdownloaditem.h"
+#include "qwebpreferences_p.h"
 #include <QFileDialog>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qquickcanvas.h>
@@ -277,7 +278,9 @@ QDesktopWebView::QDesktopWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 
 void QDesktopWebViewPrivate::init(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    setPageProxy(new QtDesktopWebPageProxy(this, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(this, 0, this, contextRef, pageGroupRef));
+    QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, false);
+    pageProxy->init();
     enableMouseEvents();
 }
 

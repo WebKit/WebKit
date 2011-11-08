@@ -21,9 +21,12 @@
 #ifndef QtWebPageProxy_h
 #define QtWebPageProxy_h
 
+#include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include "PageClient.h"
 #include "QtDownloadManager.h"
+#include "QtPanGestureRecognizer.h"
+#include "QtPinchGestureRecognizer.h"
 #include "QtPolicyInterface.h"
 #include "QtViewInterface.h"
 #include "ShareableBitmap.h"
@@ -68,8 +71,10 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(WebKit::QtViewInterface*, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
+
+    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
 
     virtual bool handleEvent(QEvent*);
 
@@ -176,10 +181,16 @@ public:
     void setPageZoomFactor(qreal zoomFactor);
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
 
+    void setVisibleContentRectAndScale(const QRectF&, float);
+    void setVisibleContentRectTrajectoryVector(const QPointF&);
+    void findZoomableAreaForPoint(const QPoint&);
+    void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
+
     QWKHistory* history() const;
     QtViewInterface* viewInterface() const { return m_viewInterface; }
 
     void handleDownloadRequest(DownloadProxy*);
+    void init();
 
 public Q_SLOTS:
     void navigationStateChanged();
@@ -191,11 +202,12 @@ public:
     Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
-    void init();
-
-    virtual void paintContent(QPainter* painter, const QRect& area) = 0;
+    virtual void paintContent(QPainter* painter, const QRect& area);
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
     WebKit::QtViewInterface* const m_viewInterface;
+    QtViewportInteractionEngine* m_interactionEngine;
+    QtPanGestureRecognizer m_panGestureRecognizer;
+    QtPinchGestureRecognizer m_pinchGestureRecognizer;
     WebKit::QtPolicyInterface* const m_policyInterface;
 
 private:
@@ -203,6 +215,25 @@ private:
     bool handleKeyReleaseEvent(QKeyEvent*);
     bool handleFocusInEvent(QFocusEvent*);
     bool handleFocusOutEvent(QFocusEvent*);
+    bool handleMouseMoveEvent(QMouseEvent*);
+    bool handleMousePressEvent(QMouseEvent*);
+    bool handleMouseReleaseEvent(QMouseEvent*);
+    bool handleMouseDoubleClickEvent(QMouseEvent*);
+    bool handleWheelEvent(QWheelEvent*);
+    bool handleHoverLeaveEvent(QHoverEvent*);
+    bool handleHoverMoveEvent(QHoverEvent*);
+    bool handleDragEnterEvent(QDragEnterEvent*);
+    bool handleDragLeaveEvent(QDragLeaveEvent*);
+    bool handleDragMoveEvent(QDragMoveEvent*);
+    bool handleDropEvent(QDropEvent*);
+
+    virtual void timerEvent(QTimerEvent*);
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
+#endif
+
+    void touchEvent(QTouchEvent*);
 
     static PassRefPtr<WebContext> defaultWKContext();
     static RefPtr<WebContext> s_defaultContext;
@@ -218,6 +249,8 @@ private:
     int m_loadProgress;
 
     bool m_navigatorQtObjectEnabled;
+    QPoint m_tripleClick;
+    QBasicTimer m_tripleClickTimer;
 };
 
 #endif /* QtWebPageProxy_h */

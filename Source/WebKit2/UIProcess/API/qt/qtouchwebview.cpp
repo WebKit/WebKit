@@ -25,6 +25,7 @@
 #include "QtWebPageProxy.h"
 #include "qtouchwebpage_p.h"
 #include "qtouchwebview_p.h"
+#include "qwebpreferences_p.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
@@ -34,8 +35,10 @@ void QTouchWebViewPrivate::init(QTouchWebView* viewport)
     viewInterface.reset(new WebKit::QtTouchViewInterface(viewport, pageView.data()));
     interactionEngine.reset(new QtViewportInteractionEngine(viewport, pageView.data()));
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtTouchWebPageProxy(viewInterface.data(), interactionEngine.data()));
-    pageViewPrivate->setPageProxy(touchPageProxy());
+    setPageProxy(new QtWebPageProxy(viewInterface.data(), interactionEngine.data()));
+    pageViewPrivate->setPageProxy(pageProxy.data());
+    QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
+    pageProxy->init();
 
     QObject::connect(interactionEngine.data(), SIGNAL(viewportUpdateRequested()), viewport, SLOT(_q_viewportUpdated()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
@@ -56,12 +59,12 @@ void QTouchWebViewPrivate::_q_viewportUpdated()
     Q_Q(QTouchWebView);
     const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->scale();
-    touchPageProxy()->setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
+    pageProxy->setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
 }
 
 void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
 {
-    touchPageProxy()->setVisibleContentRectTrajectoryVector(trajectoryVector);
+    pageProxy->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 void QTouchWebViewPrivate::updateViewportSize()

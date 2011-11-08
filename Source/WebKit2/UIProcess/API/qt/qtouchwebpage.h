@@ -27,7 +27,6 @@
 #include <QSharedPointer>
 
 class QTouchWebPagePrivate;
-class QtTouchWebPageProxy;
 class QWebNavigationController;
 class QWebPreferences;
 

@@ -29,15 +29,19 @@
 
 #include "ClientImpl.h"
 #include "DownloadProxy.h"
+#include "DrawingAreaProxyImpl.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "MutableArray.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebMouseEvent.h"
+#include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "QtPolicyInterface.h"
 #include "QtViewInterface.h"
+#include "QtViewportInteractionEngine.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
 #include "WebContext.h"
@@ -58,6 +62,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Region.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -78,6 +83,20 @@ PassRefPtr<WebContext> QtWebPageProxy::defaultWKContext()
         s_downloadManager = QtDownloadManager::create(s_defaultContext.get());
     }
     return s_defaultContext;
+}
+
+static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
+{
+    Qt::DropAction result = Qt::IgnoreAction;
+    if (dragOperation & DragOperationCopy)
+        result = Qt::CopyAction;
+    else if (dragOperation & DragOperationMove)
+        result = Qt::MoveAction;
+    else if (dragOperation & DragOperationGeneric)
+        result = Qt::MoveAction;
+    else if (dragOperation & DragOperationLink)
+        result = Qt::LinkAction;
+    return result;
 }
 
 static inline Qt::DropActions dragOperationToDropActions(unsigned dragOperations)
@@ -108,8 +127,11 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_viewInterface(viewInterface)
+    , m_interactionEngine(viewportInteractionEngine)
+    , m_panGestureRecognizer(viewportInteractionEngine)
+    , m_pinchGestureRecognizer(viewportInteractionEngine)
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
@@ -152,6 +174,29 @@ QtWebPageProxy::~QtWebPageProxy()
 bool QtWebPageProxy::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
+    case QEvent::MouseMove:
+        return handleMouseMoveEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonPress:
+        return handleMousePressEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonRelease:
+        return handleMouseReleaseEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonDblClick:
+        return handleMouseDoubleClickEvent(reinterpret_cast<QMouseEvent*>(ev));
+    case QEvent::Wheel:
+        return handleWheelEvent(reinterpret_cast<QWheelEvent*>(ev));
+    case QEvent::HoverLeave:
+        return handleHoverLeaveEvent(reinterpret_cast<QHoverEvent*>(ev));
+    case QEvent::HoverEnter: // Fall-through, for WebKit the distinction doesn't matter.
+    case QEvent::HoverMove:
+        return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
+    case QEvent::DragEnter:
+        return handleDragEnterEvent(reinterpret_cast<QDragEnterEvent*>(ev));
+    case QEvent::DragLeave:
+        return handleDragLeaveEvent(reinterpret_cast<QDragLeaveEvent*>(ev));
+    case QEvent::DragMove:
+        return handleDragMoveEvent(reinterpret_cast<QDragMoveEvent*>(ev));
+    case QEvent::Drop:
+        return handleDropEvent(reinterpret_cast<QDropEvent*>(ev));
     case QEvent::KeyPress:
         return handleKeyPressEvent(reinterpret_cast<QKeyEvent*>(ev));
     case QEvent::KeyRelease:
@@ -160,10 +205,142 @@ bool QtWebPageProxy::handleEvent(QEvent* ev)
         return handleFocusInEvent(reinterpret_cast<QFocusEvent*>(ev));
     case QEvent::FocusOut:
         return handleFocusOutEvent(reinterpret_cast<QFocusEvent*>(ev));
+    case QEvent::TouchBegin:
+    case QEvent::TouchEnd:
+    case QEvent::TouchUpdate:
+        touchEvent(static_cast<QTouchEvent*>(ev));
+        return true;
     }
 
     // FIXME: Move all common event handling here.
     return false;
+}
+
+bool QtWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
+{
+    // For some reason mouse press results in mouse hover (which is
+    // converted to mouse move for WebKit). We ignore these hover
+    // events by comparing lastPos with newPos.
+    // NOTE: lastPos from the event always comes empty, so we work
+    // around that here.
+    static QPointF lastPos = QPointF();
+    if (lastPos == ev->pos())
+        return ev->isAccepted();
+    lastPos = ev->pos();
+
+    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/0));
+
+    return ev->isAccepted();
+}
+
+bool QtWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
+{
+    if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < QApplication::startDragDistance()) {
+        m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/3));
+        return ev->isAccepted();
+    }
+
+    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/1));
+    return ev->isAccepted();
+}
+
+bool QtWebPageProxy::handleMouseReleaseEvent(QMouseEvent* ev)
+{
+    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/0));
+    return ev->isAccepted();
+}
+
+bool QtWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
+{
+    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/2));
+
+    m_tripleClickTimer.start(QApplication::doubleClickInterval(), this);
+    m_tripleClick = ev->localPos().toPoint();
+    return ev->isAccepted();
+}
+
+bool QtWebPageProxy::handleWheelEvent(QWheelEvent* ev)
+{
+    m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
+    return ev->isAccepted();
+}
+
+bool QtWebPageProxy::handleHoverLeaveEvent(QHoverEvent* ev)
+{
+    // To get the correct behavior of mouseout, we need to turn the Leave event of our webview into a mouse move
+    // to a very far region.
+    QHoverEvent fakeEvent(QEvent::HoverMove, QPoint(INT_MIN, INT_MIN), ev->oldPos());
+    return handleHoverMoveEvent(&fakeEvent);
+}
+
+bool QtWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
+{
+    QMouseEvent me(QEvent::MouseMove, ev->pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    me.setAccepted(ev->isAccepted());
+
+    return handleMouseMoveEvent(&me);
+}
+
+bool QtWebPageProxy::handleDragEnterEvent(QDragEnterEvent* ev)
+{
+    m_webPageProxy->resetDragOperation();
+    // FIXME: Should not use QCursor::pos()
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    m_webPageProxy->dragEntered(&dragData);
+    ev->acceptProposedAction();
+    return true;
+}
+
+bool QtWebPageProxy::handleDragLeaveEvent(QDragLeaveEvent* ev)
+{
+    bool accepted = ev->isAccepted();
+
+    // FIXME: Should not use QCursor::pos()
+    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
+    m_webPageProxy->dragExited(&dragData);
+    m_webPageProxy->resetDragOperation();
+
+    ev->setAccepted(accepted);
+    return accepted;
+}
+
+bool QtWebPageProxy::handleDragMoveEvent(QDragMoveEvent* ev)
+{
+    bool accepted = ev->isAccepted();
+
+    // FIXME: Should not use QCursor::pos()
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    m_webPageProxy->dragUpdated(&dragData);
+    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragSession().operation));
+    if (m_webPageProxy->dragSession().operation != DragOperationNone)
+        ev->accept();
+
+    ev->setAccepted(accepted);
+    return accepted;
+}
+
+bool QtWebPageProxy::handleDropEvent(QDropEvent* ev)
+{
+    bool accepted = ev->isAccepted();
+
+    // FIXME: Should not use QCursor::pos()
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
+    SandboxExtension::Handle handle;
+    m_webPageProxy->performDrag(&dragData, String(), handle);
+    ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragSession().operation));
+    ev->accept();
+
+    ev->setAccepted(accepted);
+    return accepted;
+}
+
+void QtWebPageProxy::timerEvent(QTimerEvent* ev)
+{
+    int timerId = ev->timerId();
+    if (timerId == m_tripleClickTimer.timerId())
+        m_tripleClickTimer.stop();
+    else
+        QObject::timerEvent(ev);
 }
 
 bool QtWebPageProxy::handleKeyPressEvent(QKeyEvent* ev)
@@ -472,6 +649,8 @@ void QtWebPageProxy::didRelaunchProcess()
 void QtWebPageProxy::processDidCrash()
 {
     updateNavigationState();
+    m_panGestureRecognizer.reset();
+    m_pinchGestureRecognizer.reset();
     m_viewInterface->processDidCrash();
 }
 
@@ -619,6 +798,100 @@ void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* download)
 {
     // Now that our downloadItem has everything we need we can emit downloadRequested.
     m_viewInterface->downloadRequested(download);
+}
+
+void QtWebPageProxy::paintContent(QPainter* painter, const QRect& area)
+{
+    // FIXME: Do something with the unpainted region?
+    WebCore::Region unpaintedRegion;
+    static_cast<DrawingAreaProxyImpl*>(m_webPageProxy->drawingArea())->paint(painter, area, unpaintedRegion);
+}
+
+PassOwnPtr<DrawingAreaProxy> QtWebPageProxy::createDrawingAreaProxy()
+{
+    return DrawingAreaProxyImpl::create(m_webPageProxy.get());
+}
+
+void QtWebPageProxy::renderToCurrentGLContext(const TransformationMatrix& transform, float opacity)
+{
+    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
+    if (drawingArea)
+        drawingArea->paintToCurrentGLContext(transform, opacity);
+}
+
+#if ENABLE(TOUCH_EVENTS)
+void QtWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
+{
+    if (!m_interactionEngine)
+        return;
+    if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
+        m_panGestureRecognizer.reset();
+        m_pinchGestureRecognizer.reset();
+        return;
+    }
+
+    const QTouchEvent* ev = event.nativeEvent();
+
+    switch (ev->type()) {
+    case QEvent::TouchBegin:
+        ASSERT(!m_interactionEngine->panGestureActive());
+        ASSERT(!m_interactionEngine->pinchGestureActive());
+
+        // The interaction engine might still be animating kinetic scrolling or a scale animation
+        // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
+        // where as it does not stop the scale animation.
+        if (m_interactionEngine->scrollAnimationActive())
+            m_interactionEngine->interruptScrollAnimation();
+        break;
+    case QEvent::TouchUpdate:
+        // The scale animation can only be interrupted by a pinch gesture, which will then take over.
+        if (m_interactionEngine->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
+            m_interactionEngine->interruptScaleAnimation();
+        break;
+    default:
+        break;
+    }
+
+    // If the scale animation is active we don't pass the event to the recognizers. In the future
+    // we would want to queue the event here and repost then when the animation ends.
+    if (m_interactionEngine->scaleAnimationActive())
+        return;
+
+    // Convert the event timestamp from second to millisecond.
+    qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
+    m_panGestureRecognizer.recognize(ev, eventTimestampMillis);
+    m_pinchGestureRecognizer.recognize(ev);
+}
+#endif
+
+void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
+{
+    QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
+    m_webPageProxy->drawingArea()->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
+
+    // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
+    m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
+}
+
+void QtWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
+{
+    m_webPageProxy->drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
+}
+
+void QtWebPageProxy::touchEvent(QTouchEvent* event)
+{
+#if ENABLE(TOUCH_EVENTS)
+    m_webPageProxy->handleTouchEvent(NativeWebTouchEvent(event));
+    event->accept();
+#else
+    ASSERT_NOT_REACHED();
+    ev->ignore();
+#endif
+}
+
+void QtWebPageProxy::findZoomableAreaForPoint(const QPoint& point)
+{
+    m_webPageProxy->findZoomableAreaForPoint(point);
 }
 
 #include "moc_QtWebPageProxy.cpp"

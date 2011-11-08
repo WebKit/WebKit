@@ -22,7 +22,7 @@
 #define qtouchwebview_p_h
 
 #include "QtTouchViewInterface.h"
-#include "QtTouchWebPageProxy.h"
+#include "QtWebPageProxy.h"
 #include "QtViewportInteractionEngine.h"
 #include "qbasewebview_p.h"
 #include <QScopedPointer>
@@ -42,7 +42,6 @@ public:
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void updateViewportSize();
     void updateViewportConstraints();
-    QtTouchWebPageProxy* touchPageProxy() { return static_cast<QtTouchWebPageProxy*>(QBaseWebViewPrivate::pageProxy.data()); }
 
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
 
