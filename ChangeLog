@@ -1,3 +1,16 @@
+2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Enable DFG JIT by default on X86 Linux and Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=71686
+
+        Reviewed by Filip Pizlo.
+
+        Remove the DFG cmake option for Efl port as we'll determine whether to
+        switch on DFG or not based on build target platforms.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Ensure forwarding headers are generated before generating install rules

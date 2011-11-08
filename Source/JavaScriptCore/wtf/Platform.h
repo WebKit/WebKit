@@ -882,8 +882,13 @@
 #define ENABLE_JIT 1
 #endif
 
-/* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
+/* Currently for JSVALUE64, only tested on PLATFORM(MAC) */
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
+#define ENABLE_DFG_JIT 1
+#endif
+
+/* Currently DFG for X86 are only tested on Linux OS and Mac Platform */
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && CPU(X86) && (PLATFORM(MAC) || OS(LINUX))
 #define ENABLE_DFG_JIT 1
 #endif
 

@@ -1,5 +1,16 @@
 2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        Enable DFG JIT by default on X86 Linux and Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=71686
+
+        Reviewed by Filip Pizlo.
+
+        We can get 9% on SunSpider, 89% on Kraken and 37% on V8, on Linux X86.
+
+        * wtf/Platform.h:
+
+2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         DFG 32_64 - update make lists for efl, gtk, and Qt ports with DFG change r99519
         https://bugs.webkit.org/show_bug.cgi?id=71768
 
