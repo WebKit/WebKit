@@ -2473,9 +2473,7 @@ inspector/extensions/extensions-console.html
 
 # [Qt] 4 new tests fail introduced in r98852
 # https://bugs.webkit.org/show_bug.cgi?id=71253
-svg/zoom/page/zoom-background-images.html
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
-svg/zoom/page/zoom-svg-as-background-with-relative-size.html
 fast/backgrounds/size/contain-and-cover-zoomed.html
 
 # new bug revealed by r99071
