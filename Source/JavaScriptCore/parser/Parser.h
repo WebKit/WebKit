@@ -920,7 +920,7 @@ private:
     mutable const JSGlobalData* m_globalData;
     const SourceCode* m_source;
     ParserArena* m_arena;
-    Lexer<UChar>* m_lexer;
+    OwnPtr< Lexer<UChar> > m_lexer;
     
     StackBounds m_stack;
     bool m_error;

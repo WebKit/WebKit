@@ -1,3 +1,17 @@
+2011-11-08  Michael Saboff  <msaboff@apple.com>
+
+        JSC::Parser::Parser leaks Lexer member
+        https://bugs.webkit.org/show_bug.cgi?id=71847
+
+        Changed m_lexer member of Parser to be OwnPtr to fix a memory leak.
+
+        Reviewed by Oliver Hunt.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::Parser):
+        (JSC::Parser::parseFunctionBody):
+        * parser/Parser.h:
+
 2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Enable DFG JIT by default on X86 Linux and Mac platforms

@@ -57,7 +57,7 @@ Parser::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParam
     , m_lastIdentifier(0)
     , m_sourceElements(0)
 {
-    m_lexer = new Lexer<UChar>(globalData);
+    m_lexer = adoptPtr(new Lexer<UChar>(globalData));
     m_arena = m_globalData->parserArena;
     m_lexer->setCode(source, m_arena);
 
@@ -740,7 +740,7 @@ template <class TreeBuilder> TreeFunctionBody Parser::parseFunctionBody(TreeBuil
         return context.createFunctionBody(m_lexer->lastLineNumber(), strictMode());
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth = 0;
-    typename TreeBuilder::FunctionBodyBuilder bodyBuilder(const_cast<JSGlobalData*>(m_globalData), m_lexer);
+    typename TreeBuilder::FunctionBodyBuilder bodyBuilder(const_cast<JSGlobalData*>(m_globalData), m_lexer.get());
     failIfFalse(parseSourceElements<CheckForStrictMode>(bodyBuilder));
     return context.createFunctionBody(m_lexer->lastLineNumber(), strictMode());
 }
