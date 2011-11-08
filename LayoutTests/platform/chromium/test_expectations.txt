@@ -3933,6 +3933,14 @@ BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-3.html = IMAGE
 BUGWK71830 : svg/zoom/page/zoom-svg-as-relative-image.html = IMAGE
 BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE+TEXT
 
+BUGWK71863 : fast/block/positioning/vertical-rl/001.html = IMAGE
+BUGWK71863 : fast/multicol/vertical-rl/float-avoidance.html = IMAGE
+BUGWK71863 : fast/multicol/vertical-rl/float-paginate-complex.html = IMAGE
+BUGWK71863 : fast/multicol/vertical-rl/column-break-with-balancing.html = IMAGE
+BUGWK71863 : fast/multicol/vertical-rl/column-rules.html = IMAGE
+
+BUG_OJAN : storage/indexeddb/key-type-array.html = TIMEOUT CRASH
+
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/regexp-caching.html = TEXT
@@ -3941,4 +3949,4 @@ BUGRICOW : fast/js/toString-recursion.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
 // Need rebaseline.
-BUGXJI WIN LINUX : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
+BUGXJI WIN LINUX : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT MISSING
