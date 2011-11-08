@@ -42,13 +42,20 @@
 #endif
 
 // options handling
+class Utils : public QObject {
+    Q_OBJECT
+public:
+    Utils(QObject* parent = 0)
+        : QObject(parent) { }
+
+    Q_INVOKABLE static QUrl urlFromUserInput(const QString& input);
+};
+
 bool takeOptionFlag(QStringList* arguments, const QString& name);
 QString takeOptionValue(QStringList* arguments, const QString& name);
 QString formatKeys(QList<QString> keys);
 QList<QString> enumToKeys(const QMetaObject, const QString&, const QString&);
 
 NO_RETURN void appQuit(int status, const QString& msg = QString());
-
-QUrl urlFromUserInput(const QString& input);
 
 #endif

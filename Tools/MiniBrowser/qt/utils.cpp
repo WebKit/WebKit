@@ -87,7 +87,7 @@ void appQuit(int exitCode, const QString& msg)
     exit(exitCode);
 }
 
-QUrl urlFromUserInput(const QString& string)
+QUrl Utils::urlFromUserInput(const QString& string)
 {
     QString input(string);
     QFileInfo fi(input);

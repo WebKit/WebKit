@@ -47,6 +47,8 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     qmlImportDir.cd("../imports");
     engine()->addImportPath(qmlImportDir.canonicalPath());
 
+    Utils* utils = new Utils(this);
+    engine()->rootContext()->setContextProperty("utils", utils);
     engine()->rootContext()->setContextProperty("options", options);
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
@@ -68,7 +70,7 @@ QObject* BrowserWindow::webView() const
 
 void BrowserWindow::load(const QString& url)
 {
-    QUrl completedUrl = urlFromUserInput(url);
+    QUrl completedUrl = Utils::urlFromUserInput(url);
     QMetaObject::invokeMethod(rootObject(), "load", Qt::DirectConnection, Q_ARG(QVariant, completedUrl));
 }
 

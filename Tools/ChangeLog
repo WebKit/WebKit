@@ -1,3 +1,22 @@
+2011-11-07  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] MiniBrowser should use urlFromUserInput()
+        https://bugs.webkit.org/show_bug.cgi?id=71680
+
+        Use urlFromUserInput() / QUrl::fromUserInput() to automatically
+        complete urls in MiniBrowser.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::load):
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/utils.cpp:
+        (Utils::urlFromUserInput):
+        * MiniBrowser/qt/utils.h:
+        (Utils::Utils):
+
 2011-11-07  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Added myself as a committer.

@@ -178,7 +178,7 @@ Rectangle {
 
                 Keys.onReturnPressed:{
                     console.log("going to: ", addressLine.text)
-                    webView.load(addressLine.text)
+                    webView.load(utils.urlFromUserInput(addressLine.text))
                 }
 
                 Keys.onPressed: {
