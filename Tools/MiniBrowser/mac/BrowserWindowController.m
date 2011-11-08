@@ -325,11 +325,6 @@ static void didRunInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTy
     LOG(@"didRunInsecureContentForFrame");
 }
 
-static void didDetectXSSForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didDetectXSSForFrame");
-}
-
 static void didStartProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProgress];
@@ -609,7 +604,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didChangeBackForwardList,
         0, // shouldGoToBackForwardItem
         0,  // didFailToInitializePlugin
-        didDetectXSSForFrame,
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
