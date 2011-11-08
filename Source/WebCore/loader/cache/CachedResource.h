@@ -290,7 +290,7 @@ private:
     bool m_inCache : 1;
     bool m_loading : 1;
 
-    unsigned m_type : 3; // Type
+    unsigned m_type : 4; // Type
     unsigned m_status : 3; // Status
 
 #ifndef NDEBUG

@@ -1,3 +1,16 @@
+2011-11-08  Gavin Peters  <gavinp@chromium.org>
+
+        Fix width of m_type in CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=71727
+
+        Reviewed by Nate Chapin.
+
+        Test: fast/dom/HTMLLinkElement/cachedresource-types.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+
 2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't set OBJECTS_DIR and DEFINES in default_pre

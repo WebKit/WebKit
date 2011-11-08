@@ -112,6 +112,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
 {
+    ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
