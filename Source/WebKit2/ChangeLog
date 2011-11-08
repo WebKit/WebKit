@@ -1,3 +1,9 @@
+2011-11-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix after r98624 and r99613.
+
+        * win/WebKit2CFLite.def: Add missing exports.
+
 2011-11-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71856
