@@ -77,9 +77,6 @@ protected:
 
     void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
 
-    // Create the gradient for a given size.
-    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&) = 0;
-
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
 
@@ -111,14 +108,14 @@ public:
 
     virtual String cssText() const;
 
+    // Create the gradient for a given size.
+    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
         : CSSGradientValue(LinearGradientClass, repeat, deprecatedType)
     {
     }
-
-    // Create the gradient for a given size.
-    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
 
     RefPtr<CSSPrimitiveValue> m_angle; // may be null.
 };
@@ -141,14 +138,14 @@ public:
     void setEndHorizontalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endHorizontalSize = val; }
     void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
 
+    // Create the gradient for a given size.
+    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+
 private:
     CSSRadialGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
         : CSSGradientValue(RadialGradientClass, repeat, deprecatedType)
     {
     }
-
-    // Create the gradient for a given size.
-    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
 
     // Resolve points/radii to front end values.
     float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, float* widthOrHeight = 0);

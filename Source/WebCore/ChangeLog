@@ -1,5 +1,19 @@
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
+        CSSGradientValue: Devirtualize createGradient().
+        <http://webkit.org/b/71800>
+
+        Reviewed by Antti Koivisto.
+
+        Make createGradient() non-virtual and call the appropriate subclass
+        implementation in image() based on is{Linear,Radial}Gradient().
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * css/CSSGradientValue.h:
+
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
         CSSCanvasValue: Remove inheritance from CanvasObserver.
         <http://webkit.org/b/71796>
 

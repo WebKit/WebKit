@@ -58,7 +58,16 @@ PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize&
     }
 
     // We need to create an image.
-    RefPtr<Image> newImage = GeneratedImage::create(createGradient(renderer, size), size);
+    RefPtr<Gradient> gradient;
+
+    if (isLinearGradient())
+        gradient = static_cast<CSSLinearGradientValue*>(this)->createGradient(renderer, size);
+    else {
+        ASSERT(isRadialGradient());
+        gradient = static_cast<CSSRadialGradientValue*>(this)->createGradient(renderer, size);
+    }
+
+    RefPtr<Image> newImage = GeneratedImage::create(gradient, size);
     if (cacheable)
         putImage(size, newImage);
 
