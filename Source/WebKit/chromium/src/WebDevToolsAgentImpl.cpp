@@ -38,6 +38,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
+#include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorProtocolVersion.h"
 #include "MemoryCache.h"
@@ -379,6 +380,22 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
 void WebDevToolsAgent::processPendingMessages()
 {
     PageScriptDebugServer::shared().runPendingTasks();
+}
+
+WebString WebDevToolsAgent::disconnectEventAsText()
+{
+    class ChannelImpl : public InspectorFrontendChannel {
+    public:
+        virtual bool sendMessageToFrontend(const String& message)
+        {
+            m_message = message;
+            return true;
+        }
+        String m_message;
+    } channel;
+    InspectorFrontend::Inspector inspector(&channel);
+    inspector.disconnectFromBackend();
+    return channel.m_message;
 }
 
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)

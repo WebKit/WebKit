@@ -1,3 +1,24 @@
+2011-11-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: display notification in the front-end when inspected worker terminates
+        https://bugs.webkit.org/show_bug.cgi?id=71770
+
+        When inspected worker terminates we will show a notification similar to the help
+        screen. The notification disappears when the worker restarts or the user closes it
+        manually.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.loaded):
+        (WebInspector.WorkerManager.showWorkerTerminatedScreen):
+        (WebInspector.WorkerTerminatedScreen):
+        * inspector/front-end/inspector.js:
+        (WebInspector.disconnectFromBackend):
+        (WebInspector.frontendReused):
+
 2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Fold ImageBySizeCache again into CSSImageGeneratorValue

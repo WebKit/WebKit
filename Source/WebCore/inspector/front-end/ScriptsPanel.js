@@ -117,7 +117,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
     }
 
-    if (Preferences.canInspectWorkers && WebInspector.workerManager) {
+    if (Preferences.canInspectWorkers && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
     } else

@@ -47,9 +47,9 @@ WebInspector.WorkerManager.isWorkerFrontend = function()
 WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["dedicatedWorkerId"];
-    if (workerId) {
+    if (workerId)
         WebInspector.WorkerManager._initializeDedicatedWorkerFrontend(workerId);
-    } else
+    else
         WebInspector.workerManager = new WebInspector.WorkerManager();
 }
 
@@ -104,6 +104,17 @@ WebInspector.WorkerManager._calculateWorkerInspectorTitle = function()
         }
         InspectorFrontendHost.inspectedURLChanged(result.value);
     }
+}
+
+WebInspector.WorkerManager.showWorkerTerminatedScreen = function()
+{
+    function onHide()
+    {
+        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, screen.hide, screen);
+    }
+    var screen = new WebInspector.WorkerTerminatedScreen();
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, screen.hide, screen);
+    screen.show(onHide.bind(this));
 }
 
 WebInspector.WorkerManager.Events = {
@@ -232,3 +243,13 @@ WebInspector.DedicatedWorkerMessageForwarder.prototype = {
         this._workerManager._sendMessageToWorkerInspector(workerId, message);
     }
 }
+
+WebInspector.WorkerTerminatedScreen = function()
+{
+    WebInspector.HelpScreen.call(this, WebInspector.UIString("Inspected worker terminated"));
+    var p = this.contentElement.createChild("p");
+    p.addStyleClass("help-section");
+    p.textContent = WebInspector.UIString("Inspected worker has terminated. Once it restarts we will attach to it automatically.");
+}
+
+WebInspector.WorkerTerminatedScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;

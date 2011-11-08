@@ -461,7 +461,10 @@ WebInspector.close = function(event)
 
 WebInspector.disconnectFromBackend = function()
 {
-    InspectorFrontendHost.disconnectFromBackend();
+    if (WebInspector.WorkerManager.isWorkerFrontend())
+        WebInspector.WorkerManager.showWorkerTerminatedScreen();
+    else
+        InspectorFrontendHost.disconnectFromBackend();
 }
 
 WebInspector.documentClick = function(event)

@@ -90,6 +90,10 @@ public:
     WEBKIT_EXPORT static bool shouldInterruptForMessage(const WebString&);
     WEBKIT_EXPORT static void processPendingMessages();
 
+    // Returns a disconnect event that can be dispatched on the front-end
+    // in order to let it know that it has disconnected from the agent.
+    WEBKIT_EXPORT static WebString disconnectEventAsText();
+
     typedef void (*MessageLoopDispatchHandler)();
 
     // Installs dispatch handle that is going to be called periodically
