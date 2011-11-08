@@ -77,11 +77,9 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
 
 void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    if (m_currentPosX != offset.x() || m_currentPosY != offset.y()) {
-        m_currentPosX = offset.x();
-        m_currentPosY = offset.y();
-        notifyPositionChanged();
-    }
+    m_currentPosX = offset.x();
+    m_currentPosY = offset.y();
+    notifyPositionChanged();
 }
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)

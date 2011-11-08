@@ -1,3 +1,35 @@
+2011-11-08  Xiaomei Ji  <xji@chromium.org>
+
+        REGRESSION: rtl horizontal scrollbar / resize bug - Body shifts on resize when scrolled all the way to the left
+        https://bugs.webkit.org/show_bug.cgi?id=70395
+
+        Reviewed by Tony Chang.
+
+        Change the condition to perform immediate scolling inside ScrollView::updateScrollbars()
+        to be correct for RTL page as well, which is checking either the scroll position change or
+        the m_scrollOrigin changes (such as in window resize in which scroll position might remain the same).
+
+        And remove condition checking inside ScrollableArea::scrollToOffsetWithoutAnimation() since
+        the pass-in offset is adjusted within the current scroll range, it could be the same as
+        m_currentPos when m_currentPos is (0, 0) and current scroll range is smaller than old 
+        scroll range, but scolling is still needed when page resize and scroll range changes.
+
+        Test: fast/dom/rtl-scroll-to-leftmost-and-resize.html
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation): Remove condition checking.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Change condition to perform immediate scrolling to be
+        correct for RTL pages as well.
+        * platform/ScrollableArea.cpp: Update m_scrollOriginChanged.
+        (WebCore::ScrollableArea::ScrollableArea):
+        (WebCore::ScrollableArea::setScrollOrigin):
+        (WebCore::ScrollableArea::setScrollOriginX):
+        (WebCore::ScrollableArea::setScrollOriginY):
+        * platform/ScrollableArea.h: Add m_scrollOriginChanged.
+        (WebCore::ScrollableArea::scrollOriginChanged):
+        (WebCore::ScrollableArea::resetScrollOriginChanged):
+
 2011-11-08  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10262225> Allow RenderView to have columns

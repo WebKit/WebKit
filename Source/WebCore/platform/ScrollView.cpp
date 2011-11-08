@@ -584,9 +584,11 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             invalidateScrollCornerRect(oldScrollCornerRect);
     }
 
-    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset)) + IntSize(scrollOrigin().x(), scrollOrigin().y());
-    if (scrollPoint != scrollPosition())
-        ScrollableArea::scrollToOffsetWithoutAnimation(scrollPoint);
+    IntPoint adjustedScrollPosition = adjustScrollPositionWithinRange(IntPoint(desiredOffset));
+    if (adjustedScrollPosition != scrollPosition() || scrollOriginChanged()) {
+        resetScrollOriginChanged();
+        ScrollableArea::scrollToOffsetWithoutAnimation(adjustedScrollPosition + IntSize(scrollOrigin().x(), scrollOrigin().y()));
+    }
 
     // Make sure the scrollbar offsets are up to date.
     if (m_horizontalScrollbar)

@@ -85,6 +85,7 @@ public:
 
     ScrollAnimator* scrollAnimator() const;
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    bool scrollOriginChanged() const { return m_scrollOriginChanged; }
 
     virtual bool isActive() const = 0;
     virtual int scrollSize(ScrollbarOrientation) const = 0;
@@ -165,9 +166,10 @@ public:
     void setScrollOffsetFromInternals(const IntPoint&);
 
 protected:
-    void setScrollOrigin(const IntPoint& origin) { m_scrollOrigin = origin; } 
-    void setScrollOriginX(int x) { m_scrollOrigin.setX(x); }
-    void setScrollOriginY(int y) { m_scrollOrigin.setY(y); }
+    void setScrollOrigin(const IntPoint&);
+    void setScrollOriginX(int);
+    void setScrollOriginY(int);
+    void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
 
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
@@ -211,6 +213,8 @@ private:
     // vertical-rl / ltr            YES                     NO
     // vertical-rl / rtl            YES                     YES
     IntPoint m_scrollOrigin;
+
+    bool m_scrollOriginChanged;
 };
 
 } // namespace WebCore

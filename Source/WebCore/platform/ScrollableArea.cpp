@@ -48,6 +48,7 @@ ScrollableArea::ScrollableArea()
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_scrollbarOverlayStyle(ScrollbarOverlayStyleDefault)
+    , m_scrollOriginChanged(false)
 {
 }
 
@@ -62,7 +63,31 @@ ScrollAnimator* ScrollableArea::scrollAnimator() const
 
     return m_scrollAnimator.get();
 }
+
+void ScrollableArea::setScrollOrigin(const IntPoint& origin)
+{
+    if (m_scrollOrigin != origin) {
+        m_scrollOrigin = origin;
+        m_scrollOriginChanged = true;
+    }
+}
  
+void ScrollableArea::setScrollOriginX(int x)
+{
+    if (m_scrollOrigin.x() != x) {
+        m_scrollOrigin.setX(x);
+        m_scrollOriginChanged = true;
+    }
+}
+
+void ScrollableArea::setScrollOriginY(int y)
+{
+    if (m_scrollOrigin.y() != y) {
+        m_scrollOrigin.setY(y);
+        m_scrollOriginChanged = true;
+    }
+}
+
 bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     ScrollbarOrientation orientation;
