@@ -1,3 +1,9 @@
+2011-11-08  Zeno Albisser  <zeno@webkit.org>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-11-08  Andy Wingo  <wingo@igalia.com>
 
         Skip some ECMAScript tests that fail on Linux in some time zones.
