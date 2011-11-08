@@ -184,9 +184,9 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLOListElement.type]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLOptGroupElement.label]
 
-TEST SUCCEEDED: The value was the empty string. [tested HTMLOptionElement.text]
-TEST SUCCEEDED: The value was the empty string. [tested HTMLOptionElement.label]
-TEST SUCCEEDED: The value was the empty string. [tested HTMLOptionElement.value]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.text]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.label]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.value]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLParagraphElement.align]
 

@@ -26,15 +26,15 @@ module html {
         readonly attribute HTMLFormElement form;
         attribute [Reflect=selected] boolean defaultSelected;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        attribute [ConvertNullToNullString] DOMString text setter raises(DOMException);
+        attribute DOMString text setter raises(DOMException);
 #else
         readonly attribute DOMString text;
 #endif
         readonly attribute long index;
         attribute [Reflect] boolean disabled;
-        attribute [ConvertNullToNullString] DOMString label;
+        attribute DOMString label;
         attribute boolean selected;
-        attribute [ConvertNullToNullString] DOMString value;
+        attribute DOMString value;
     };
 
 }

@@ -68,9 +68,9 @@ static v8::Handle<v8::Value> v8HTMLOptionElementConstructorCallback(const v8::Ar
     String value;
     bool defaultSelected = false;
     bool selected = false;
-    if (args.Length() > 0 && !args[0]->IsUndefined())
+    if (args.Length() > 0)
         data = toWebCoreString(args[0]);
-    if (args.Length() > 1 && !args[1]->IsUndefined())
+    if (args.Length() > 1)
         value = toWebCoreString(args[1]);
     if (args.Length() > 2)
         defaultSelected = args[2]->BooleanValue();

@@ -1,3 +1,24 @@
+2011-11-07  Kentaro Hara  <haraken@chromium.org>
+
+        Fixed wrong test results of fast/js/custom-constructors.html
+        https://bugs.webkit.org/show_bug.cgi?id=71669
+
+        Reviewed by Darin Adler.
+
+        According to the HTMLOptionElement spec
+        (http://dev.w3.org/html5/spec/the-button-element.html#the-option-element),
+        'text', 'label' and 'value' have neither [TreatUndefinedAs=EmptyString]
+        nor [TreatNullAs=EmptyString]. Thus, an undefined value should be
+        converted to a string "undefined" and a null value should be
+        converted to a string "null", following the step 3 of the IDL
+        conversion spec (http://dev.w3.org/2006/webapi/WebIDL/#es-DOMString).
+
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement): Removed isUndefined() check from 'text' and 'value' since the spec does not have [TreatUndefinedAs=EmptyString].
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::v8HTMLOptionElementConstructorCallback): Ditto.
+        * html/HTMLOptionElement.idl: Removed [ConvertNullToNullString] from 'text', 'label' and 'value' since the spec does not have [TreatNullAs=EmptyString].
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move DomainRelaxationForbidden scheme registry to SchemeRegistry

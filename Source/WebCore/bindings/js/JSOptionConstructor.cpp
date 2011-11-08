@@ -56,11 +56,11 @@ static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)
         return throwVMError(exec, createReferenceError(exec, "Option constructor associated document is unavailable"));
 
     String data;
-    if ((exec->argumentCount() >= 1) && !exec->argument(0).isUndefined())
+    if (exec->argumentCount() >= 1)
         data = ustringToString(exec->argument(0).toString(exec));
 
     String value;
-    if ((exec->argumentCount() >= 2)  && !exec->argument(1).isUndefined())
+    if (exec->argumentCount() >= 2)
         value = ustringToString(exec->argument(1).toString(exec));
     bool defaultSelected = (exec->argumentCount() >= 3) && exec->argument(2).toBoolean(exec);
     bool selected = (exec->argumentCount() >= 4) && exec->argument(3).toBoolean(exec);
