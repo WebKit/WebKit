@@ -2429,6 +2429,8 @@ void FrameView::setVisibleScrollerThumbRect(const LayoutRect& scrollerThumb)
 
 bool FrameView::isOnActivePage() const
 {
+    if (!m_frame)
+        return false;
     if (m_frame->view() != this)
         return false;
     if (Document* document = m_frame->document())
