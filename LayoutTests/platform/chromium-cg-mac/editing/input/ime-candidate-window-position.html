@@ -27,12 +27,12 @@ function doTest() {
 }
 </script>
 </head>
-<body onload="doTest()">
+<body>
 <div>
 This test ensures that the IME candidate window appears at the appropriate position.  Enter some text with IME in the following gray box and convert them.  Then check whether the candidate window appears the below of the composition text.  In DRT, this test checks it by calling textInputController.firstRectForCharacterRange().
 </div>
 <div id="console"></div>
-<iframe name="iframe" style="position: absolute; top: 200px; left: 200px;" src="../resources/ime-candidate-window-position-iframe.html" width="300" height="300">
+<iframe name="iframe" style="position: absolute; top: 200px; left: 200px;" src="../resources/ime-candidate-window-position-iframe.html" width="300" height="300" onload="doTest()">
 </iframe>
 <script src="../../../../fast/js/resources/js-test-post.js"></script>
 </body>
