@@ -264,7 +264,8 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
         // Some rules have resources associated with them that we need to retrieve.
         if (rule->isImportRule()) {
             CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
-            KURL importURL = styleSheet->document()->completeURL(importRule->href());
+            Document* document = styleSheet->findDocument();
+            KURL importURL = document->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
             serializeCSSStyleSheet(importRule->styleSheet(), importURL);
@@ -332,7 +333,8 @@ void PageSerializer::retrieveResourcesForCSSDeclaration(CSSStyleDeclaration* sty
 
         CachedImage* image = static_cast<StyleCachedImage*>(styleImage)->cachedImage();
 
-        KURL url = cssStyleSheet->document()->completeURL(image->url());
+        Document* document = cssStyleSheet->findDocument();
+        KURL url = document->completeURL(image->url());
         addImageToResources(image, 0, url);
     }
 }

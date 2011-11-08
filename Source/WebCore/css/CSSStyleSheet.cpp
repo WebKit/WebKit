@@ -158,7 +158,8 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
 {
     KURL url = finalURL();
-    if (!url.isEmpty() && document() && !document()->securityOrigin()->canRequest(url))
+    Document* document = findDocument();
+    if (!url.isEmpty() && document && !document->securityOrigin()->canRequest(url))
         return 0;
     return CSSRuleList::create(this, omitCharsetRules);
 }
@@ -245,7 +246,7 @@ void CSSStyleSheet::startLoadingDynamicSheet()
         owner->startLoadingDynamicSheet();
 }
 
-Node* CSSStyleSheet::styleSheetOwnerNode() const
+Node* CSSStyleSheet::findStyleSheetOwnerNode() const
 {
     for (const CSSStyleSheet* sheet = this; sheet; sheet = sheet->parentStyleSheet()) {
         if (Node* ownerNode = sheet->ownerNode())
@@ -254,13 +255,12 @@ Node* CSSStyleSheet::styleSheetOwnerNode() const
     return 0;
 }
 
-Document* CSSStyleSheet::document()
+Document* CSSStyleSheet::findDocument()
 {
-    Node* ownerNode = styleSheetOwnerNode();
+    Node* ownerNode = findStyleSheetOwnerNode();
 
     return ownerNode ? ownerNode->document() : 0;
 }
-
 
 void CSSStyleSheet::styleSheetChanged()
 {
@@ -272,7 +272,7 @@ void CSSStyleSheet::styleSheetChanged()
      * basically we just need to recreate the document's selector with the
      * already existing style sheets.
      */
-    if (Document* documentToUpdate = rootSheet->document())
+    if (Document* documentToUpdate = rootSheet->findDocument())
         documentToUpdate->styleSelectorChanged(DeferRecalcStyle);
 }
 

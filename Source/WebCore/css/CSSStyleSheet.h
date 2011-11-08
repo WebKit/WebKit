@@ -95,8 +95,8 @@ public:
     virtual void checkLoaded();
     void startLoadingDynamicSheet();
 
-    Node* styleSheetOwnerNode() const;
-    Document* document();
+    Node* findStyleSheetOwnerNode() const;
+    Document* findDocument();
 
     const String& charset() const { return m_charset; }
 

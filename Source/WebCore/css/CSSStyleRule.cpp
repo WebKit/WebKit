@@ -63,7 +63,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     Document* doc = 0;
 
     if (CSSStyleSheet* styleSheet = m_style->parentStyleSheet())
-        doc = styleSheet->document();
+        doc = styleSheet->findDocument();
 
     if (!doc)
         doc = m_style->node() ? m_style->node()->document() : 0;

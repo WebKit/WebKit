@@ -66,7 +66,8 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     CSSStyleSheet* parent = parentStyleSheet();
     bool strict = !parent || parent->useStrictParsing();
     bool enforceMIMEType = strict;
-    bool needsSiteSpecificQuirks = parent && parent->document() && parent->document()->settings() && parent->document()->settings()->needsSiteSpecificQuirks();
+    Document* document = parent ? parent->findDocument() : 0;
+    bool needsSiteSpecificQuirks = document && document->settings() && document->settings()->needsSiteSpecificQuirks();
 
 #ifdef BUILDING_ON_LEOPARD
     if (enforceMIMEType && needsSiteSpecificQuirks) {
@@ -79,7 +80,7 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
     String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
     m_styleSheet->parseString(sheetText, strict);
 
-    if (!parent || !parent->document() || !parent->document()->securityOrigin()->canRequest(baseURL))
+    if (!document || !document->securityOrigin()->canRequest(baseURL))
         crossOriginCSS = true;
 
     if (crossOriginCSS && !validMIMEType && !m_styleSheet->hasSyntacticallyValidCSSHeader())
@@ -113,10 +114,13 @@ bool CSSImportRule::isLoading() const
 void CSSImportRule::requestStyleSheet()
 {
     CSSStyleSheet* parentSheet = parentStyleSheet();
-    if (!parentSheet || !parentSheet->document())
+    if (!parentSheet)
+        return;
+    Document* document = parentSheet->findDocument();
+    if (!document)
         return;
 
-    CachedResourceLoader* cachedResourceLoader = parentSheet->document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
     if (!cachedResourceLoader)
         return;
 
@@ -135,7 +139,7 @@ void CSSImportRule::requestStyleSheet()
         rootSheet = sheet;
     }
 
-    ResourceRequest request(parentSheet->document()->completeURL(absHref));
+    ResourceRequest request(document->completeURL(absHref));
     if (parentSheet->isUserStyleSheet())
         m_cachedSheet = cachedResourceLoader->requestUserCSSStyleSheet(request, parentSheet->charset());
     else

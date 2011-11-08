@@ -343,17 +343,20 @@ static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propert
     }
 
     CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
-    if (!styleSheet || !styleSheet->document())
+    if (!styleSheet)
+        return false;
+    Document* document = styleSheet->findDocument();
+    if (!document)
         return false;
     if (validPrimitive) {
-        CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createIdentifierValue(valueID), important);
+        CSSProperty property(propertyId, document->cssPrimitiveValueCache()->createIdentifierValue(valueID), important);
         declaration->addParsedProperty(property);
         return true;
     }
     RGBA32 color;
     if (!CSSParser::parseColor(string, color, strict && string[0] != '#'))
         return false;
-    CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createColorValue(color), important);
+    CSSProperty property(propertyId, document->cssPrimitiveValueCache()->createColorValue(color), important);
     declaration->addParsedProperty(property);
     return true;
 }
@@ -435,9 +438,12 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
         return false;
 
     CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
-    if (!styleSheet || !styleSheet->document())
+    if (!styleSheet)
         return false;
-    CSSProperty property(propertyId, styleSheet->document()->cssPrimitiveValueCache()->createValue(number, unit), important);
+    Document* document = styleSheet->findDocument();
+    if (!document)
+        return false;
+    CSSProperty property(propertyId, document->cssPrimitiveValueCache()->createValue(number, unit), important);
     declaration->addParsedProperty(property);
     return true;
 }
@@ -648,14 +654,15 @@ void CSSParser::clearProperties()
 void CSSParser::setStyleSheet(CSSStyleSheet* styleSheet)
 {
     m_styleSheet = styleSheet;
-    m_primitiveValueCache = document() ? document()->cssPrimitiveValueCache() : CSSPrimitiveValueCache::create();
+    Document* document = findDocument();
+    m_primitiveValueCache = document ? document->cssPrimitiveValueCache() : CSSPrimitiveValueCache::create();
 }
 
-Document* CSSParser::document() const
+Document* CSSParser::findDocument() const
 {
     if (!m_styleSheet)
         return 0;
-    return m_styleSheet->document();
+    return m_styleSheet->findDocument();
 }
 
 bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
@@ -2794,7 +2801,8 @@ PassRefPtr<CSSValue> CSSParser::parseAttr(CSSParserValueList* args)
     if (attrName[0] == '-')
         return 0;
 
-    if (document() && document()->isHTMLDocument())
+    Document* document = findDocument();
+    if (document && document->isHTMLDocument())
         attrName = attrName.lower();
 
     return primitiveValueCache()->createValue(attrName, CSSPrimitiveValue::CSS_ATTR);

@@ -521,7 +521,7 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
     }
 
     if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
-        if (Document* document = styleSheet->document())
+        if (Document* document = styleSheet->findDocument())
             document->styleSelectorChanged(DeferRecalcStyle);
     }
 }

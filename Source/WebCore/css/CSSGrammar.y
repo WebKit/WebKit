@@ -985,7 +985,7 @@ element_name:
     IDENT {
         CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Document* doc = p->document();
+        Document* doc = p->findDocument();
         if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
@@ -1053,7 +1053,7 @@ attr_name:
     IDENT maybe_space {
         CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Document* doc = p->document();
+        Document* doc = p->findDocument();
         if (doc && doc->isHTMLDocument())
             str.lower();
         $$ = str;
@@ -1465,7 +1465,7 @@ unary_term:
       $$.fValue = $1;
       $$.unit = CSSPrimitiveValue::CSS_REMS;
       CSSParser* p = static_cast<CSSParser*>(parser);
-      if (Document* doc = p->document())
+      if (Document* doc = p->findDocument())
           doc->setUsesRemUnits(true);
   }
   ;

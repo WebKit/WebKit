@@ -73,7 +73,7 @@ public:
     bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* = 0, CSSStyleSheet* contextStyleSheet = 0);
     bool parseMediaQuery(MediaList*, const String&);
 
-    Document* document() const;
+    Document* findDocument() const;
 
     CSSPrimitiveValueCache* primitiveValueCache() const { return m_primitiveValueCache.get(); }
 

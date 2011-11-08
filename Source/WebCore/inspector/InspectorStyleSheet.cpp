@@ -829,7 +829,7 @@ InspectorCSSId InspectorStyleSheet::ruleOrStyleId(CSSStyleDeclaration* style) co
 
 Document* InspectorStyleSheet::ownerDocument() const
 {
-    return m_pageStyleSheet->document();
+    return m_pageStyleSheet->findDocument();
 }
 
 RefPtr<CSSRuleSourceData> InspectorStyleSheet::ruleSourceDataFor(CSSStyleDeclaration* style) const
