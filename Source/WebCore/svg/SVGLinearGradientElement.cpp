@@ -137,8 +137,8 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
             attributes.setSpreadMethod(current->spreadMethod());
 
-        if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::gradientUnitsAttr))
-            attributes.setBoundingBoxMode(current->gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        if (!attributes.hasGradientUnits() && current->hasAttribute(SVGNames::gradientUnitsAttr))
+            attributes.setGradientUnits(current->gradientUnits());
 
         if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr)) {
             AffineTransform transform;
@@ -191,14 +191,8 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
 
 void SVGLinearGradientElement::calculateStartEndPoints(const LinearGradientAttributes& attributes, FloatPoint& startPoint, FloatPoint& endPoint)
 {
-    // Determine gradient start/end points
-    if (attributes.boundingBoxMode()) {
-        startPoint = FloatPoint(attributes.x1().valueAsPercentage(), attributes.y1().valueAsPercentage());
-        endPoint = FloatPoint(attributes.x2().valueAsPercentage(), attributes.y2().valueAsPercentage());
-    } else {
-        startPoint = FloatPoint(attributes.x1().value(this), attributes.y1().value(this));
-        endPoint = FloatPoint(attributes.x2().value(this), attributes.y2().value(this));
-    }
+    startPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.x1(), attributes.y1());
+    endPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
 bool SVGLinearGradientElement::selfHasRelativeLengths() const

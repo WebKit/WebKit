@@ -1,3 +1,96 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Introduce SVGLengthContext, to allow to resolve relative units to arbitary viewports
+        https://bugs.webkit.org/show_bug.cgi?id=71780
+
+        Reviewed by Zoltan Herczeg.
+
+        Introduce SVGLengthContext to cleanup SVGLength, by moving all conversion of relative units that depend on style or viewport
+        out of SVGLength, into SVGLengthContext. Pass SVGLengthContext& to SVGLength::value/setValue/... functions instead of a pure
+        "const SVGElement* context", which was previously used to determine the viewport when resolving percentage units.
+        SVGLengthContext carries an additional FloatRect of the custom viewport, to which percentages are resolved, if specified.
+
+        This allows us to kill several duplicates of the same code, which handles objectBoundingBox mode for gradients/patterns/masks/etc..
+        A follow-up patch will convert filters to use the new SVGLengthContext::resolveRectangle code as well.
+
+        This is a preparation for bug 10430, to fix feImage + objectBoundingBox support when rendering referenced elements, instead of files.
+
+        Doesn't affect any tests yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        (WebCore::RenderSVGResourceLinearGradient::gradientUnits):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::calculatePatternBoundaries):
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        (WebCore::RenderSVGResourceRadialGradient::gradientUnits):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeCommonGradientProperties):
+        (WebCore::writeSVGResourceContainer):
+        * svg/GradientAttributes.h:
+        (WebCore::GradientAttributes::GradientAttributes):
+        (WebCore::GradientAttributes::gradientUnits):
+        (WebCore::GradientAttributes::setGradientUnits):
+        (WebCore::GradientAttributes::hasGradientUnits):
+        * svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::PatternAttributes):
+        (WebCore::PatternAttributes::patternUnits):
+        (WebCore::PatternAttributes::patternContentUnits):
+        (WebCore::PatternAttributes::setPatternUnits):
+        (WebCore::PatternAttributes::setPatternContentUnits):
+        (WebCore::PatternAttributes::hasPatternUnits):
+        (WebCore::PatternAttributes::hasPatternContentUnits):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::operator SVGLengthContext):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::filterBoundingBox):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::unitMode):
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::setValue):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::blend):
+        * svg/SVGLengthContext.cpp: Added.
+        (WebCore::SVGLengthContext::SVGLengthContext):
+        (WebCore::SVGLengthContext::resolveRectangle):
+        (WebCore::SVGLengthContext::resolvePoint):
+        (WebCore::SVGLengthContext::resolveLength):
+        (WebCore::SVGLengthContext::convertValueToUserUnits):
+        (WebCore::SVGLengthContext::convertValueFromUserUnits):
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToPercentage):
+        (WebCore::SVGLengthContext::convertValueFromPercentageToUserUnits):
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToEMS):
+        (WebCore::SVGLengthContext::convertValueFromEMSToUserUnits):
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToEXS):
+        (WebCore::SVGLengthContext::convertValueFromEXSToUserUnits):
+        (WebCore::SVGLengthContext::determineViewport):
+        * svg/SVGLengthContext.h: Added.
+        (WebCore::SVGLengthContext::resolveRectangle):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        (WebCore::SVGLinearGradientElement::calculateStartEndPoints):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::maskBoundingBox):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        (WebCore::SVGRadialGradientElement::calculateFocalCenterPointsAndRadius):
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         CSSValue: Devirtualize addSubresourceStyleURLs().

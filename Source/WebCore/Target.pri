@@ -2594,6 +2594,7 @@ HEADERS += \
     svg/SVGImageLoader.h \
     svg/SVGLangSpace.h \
     svg/SVGLength.h \
+    svg/SVGLengthContext.h \
     svg/SVGLengthList.h \
     svg/SVGLinearGradientElement.h \
     svg/SVGLineElement.h \
@@ -3463,6 +3464,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGImageElement.cpp \
               svg/SVGLangSpace.cpp \
               svg/SVGLength.cpp \
+              svg/SVGLengthContext.cpp \
               svg/SVGLengthList.cpp \
               svg/SVGLinearGradientElement.cpp \
               svg/SVGLineElement.cpp \

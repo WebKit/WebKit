@@ -190,6 +190,7 @@ void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 FloatRect SVGFilterElement::filterBoundingBox(const FloatRect& objectBoundingBox) const
 {
+    // FIXME: A follow-up patch will make filters use SVGLengthContext::resolveRectangle.
     FloatRect filterBBox;
     if (filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         filterBBox = FloatRect(x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),

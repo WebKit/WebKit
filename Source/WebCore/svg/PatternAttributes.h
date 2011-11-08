@@ -36,8 +36,8 @@ struct PatternAttributes {
         , m_height()
         , m_viewBox()
         , m_preserveAspectRatio()
-        , m_boundingBoxMode(true)
-        , m_boundingBoxModeContent(false)
+        , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
         , m_patternContentElement(0)
         , m_xSet(false)
         , m_ySet(false)
@@ -45,8 +45,8 @@ struct PatternAttributes {
         , m_heightSet(false)
         , m_viewBoxSet(false)
         , m_preserveAspectRatioSet(false)
-        , m_boundingBoxModeSet(false)
-        , m_boundingBoxModeContentSet(false)
+        , m_patternUnitsSet(false)
+        , m_patternContentUnitsSet(false)
         , m_patternTransformSet(false)
         , m_patternContentElementSet(false)
     {
@@ -58,8 +58,8 @@ struct PatternAttributes {
     SVGLength height() const { return m_height; }
     FloatRect viewBox() const { return m_viewBox; }
     SVGPreserveAspectRatio preserveAspectRatio() const { return m_preserveAspectRatio; }
-    bool boundingBoxMode() const { return m_boundingBoxMode; }
-    bool boundingBoxModeContent() const { return m_boundingBoxModeContent; }
+    SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits; }
+    SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits; }
     AffineTransform patternTransform() const { return m_patternTransform; }
     const SVGPatternElement* patternContentElement() const { return m_patternContentElement; }
 
@@ -99,16 +99,16 @@ struct PatternAttributes {
         m_preserveAspectRatioSet = true;
     }
 
-    void setBoundingBoxMode(bool value)
+    void setPatternUnits(SVGUnitTypes::SVGUnitType value)
     {
-        m_boundingBoxMode = value;
-        m_boundingBoxModeSet = true;
+        m_patternUnits = value;
+        m_patternUnitsSet = true;
     }
 
-    void setBoundingBoxModeContent(bool value)
+    void setPatternContentUnits(SVGUnitTypes::SVGUnitType value)
     {
-        m_boundingBoxModeContent = value;
-        m_boundingBoxModeContentSet = true;
+        m_patternContentUnits = value;
+        m_patternContentUnitsSet = true;
     }
 
     void setPatternTransform(const AffineTransform& value)
@@ -129,8 +129,8 @@ struct PatternAttributes {
     bool hasHeight() const { return m_heightSet; }
     bool hasViewBox() const { return m_viewBoxSet; }
     bool hasPreserveAspectRatio() const { return m_preserveAspectRatioSet; }
-    bool hasBoundingBoxMode() const { return m_boundingBoxModeSet; }
-    bool hasBoundingBoxModeContent() const { return m_boundingBoxModeContentSet; }
+    bool hasPatternUnits() const { return m_patternUnitsSet; }
+    bool hasPatternContentUnits() const { return m_patternContentUnitsSet; }
     bool hasPatternTransform() const { return m_patternTransformSet; }
     bool hasPatternContentElement() const { return m_patternContentElementSet; }
 
@@ -142,8 +142,8 @@ private:
     SVGLength m_height;
     FloatRect m_viewBox;
     SVGPreserveAspectRatio m_preserveAspectRatio;
-    bool m_boundingBoxMode;
-    bool m_boundingBoxModeContent;
+    SVGUnitTypes::SVGUnitType m_patternUnits;
+    SVGUnitTypes::SVGUnitType m_patternContentUnits;
     AffineTransform m_patternTransform;
     const SVGPatternElement* m_patternContentElement;
 
@@ -154,8 +154,8 @@ private:
     bool m_heightSet : 1;
     bool m_viewBoxSet : 1;
     bool m_preserveAspectRatioSet : 1;
-    bool m_boundingBoxModeSet : 1;
-    bool m_boundingBoxModeContentSet : 1;
+    bool m_patternUnitsSet : 1;
+    bool m_patternContentUnitsSet : 1;
     bool m_patternTransformSet : 1;
     bool m_patternContentElementSet : 1;
 };

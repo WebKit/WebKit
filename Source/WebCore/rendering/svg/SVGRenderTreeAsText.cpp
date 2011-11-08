@@ -495,14 +495,9 @@ static void writeChildren(TextStream& ts, const RenderObject& object, int indent
         write(ts, *child, indent + 1);
 }
 
-static inline String boundingBoxModeString(bool boundingBoxMode)
+static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethodType spreadMethod, const AffineTransform& gradientTransform, SVGUnitTypes::SVGUnitType gradientUnits)
 {
-    return boundingBoxMode ? "objectBoundingBox" : "userSpaceOnUse";
-}
-
-static inline void writeCommonGradientProperties(TextStream& ts, SVGSpreadMethodType spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
-{
-    writeNameValuePair(ts, "gradientUnits", boundingBoxModeString(boundingBoxMode));
+    writeNameValuePair(ts, "gradientUnits", gradientUnits);
 
     if (spreadMethod != SVGSpreadMethodPad)
         ts << " [spreadMethod=" << spreadMethod << "]";
@@ -562,8 +557,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         PatternAttributes attributes;
         static_cast<SVGPatternElement*>(pattern->node())->collectPatternAttributes(attributes);
 
-        writeNameValuePair(ts, "patternUnits", boundingBoxModeString(attributes.boundingBoxMode()));
-        writeNameValuePair(ts, "patternContentUnits", boundingBoxModeString(attributes.boundingBoxModeContent()));
+        writeNameValuePair(ts, "patternUnits", attributes.patternUnits());
+        writeNameValuePair(ts, "patternContentUnits", attributes.patternContentUnits());
 
         AffineTransform transform = attributes.patternTransform();
         if (!transform.isIdentity())
@@ -578,7 +573,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
         LinearGradientAttributes attributes;
         linearGradientElement->collectGradientAttributes(attributes);
-        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
+        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
         FloatPoint startPoint;
         FloatPoint endPoint;
@@ -594,7 +589,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
         RadialGradientAttributes attributes;
         radialGradientElement->collectGradientAttributes(attributes);
-        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
+        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
         FloatPoint focalPoint;
         FloatPoint centerPoint;

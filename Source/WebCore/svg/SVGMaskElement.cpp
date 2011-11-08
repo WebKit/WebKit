@@ -159,19 +159,7 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
 
 FloatRect SVGMaskElement::maskBoundingBox(const FloatRect& objectBoundingBox) const
 {
-    FloatRect maskBBox;
-    if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        maskBBox = FloatRect(x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),
-                             y().valueAsPercentage() * objectBoundingBox.height() + objectBoundingBox.y(),
-                             width().valueAsPercentage() * objectBoundingBox.width(),
-                             height().valueAsPercentage() * objectBoundingBox.height());
-    else
-        maskBBox = FloatRect(x().value(this),
-                             y().value(this),
-                             width().value(this),
-                             height().value(this));
-
-    return maskBBox;
+    return SVGLengthContext::resolveRectangle<SVGMaskElement>(this, maskUnits(), objectBoundingBox);
 }
 
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)

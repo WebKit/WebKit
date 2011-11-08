@@ -1737,6 +1737,7 @@ IF (ENABLE_SVG)
         svg/SVGImageLoader.cpp
         svg/SVGLangSpace.cpp
         svg/SVGLength.cpp
+        svg/SVGLengthContext.cpp
         svg/SVGLengthList.cpp
         svg/SVGLineElement.cpp
         svg/SVGLinearGradientElement.cpp

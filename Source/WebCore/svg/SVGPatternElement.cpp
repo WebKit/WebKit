@@ -211,11 +211,11 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         if (!attributes.hasPreserveAspectRatio() && current->hasAttribute(SVGNames::preserveAspectRatioAttr))
             attributes.setPreserveAspectRatio(current->preserveAspectRatio());
 
-        if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
-            attributes.setBoundingBoxMode(current->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        if (!attributes.hasPatternUnits() && current->hasAttribute(SVGNames::patternUnitsAttr))
+            attributes.setPatternUnits(current->patternUnits());
 
-        if (!attributes.hasBoundingBoxModeContent() && current->hasAttribute(SVGNames::patternContentUnitsAttr))
-            attributes.setBoundingBoxModeContent(current->patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        if (!attributes.hasPatternContentUnits() && current->hasAttribute(SVGNames::patternContentUnitsAttr))
+            attributes.setPatternContentUnits(current->patternContentUnits());
 
         if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr)) {
             AffineTransform transform;

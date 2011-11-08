@@ -96,7 +96,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
     // then the given effect (e.g. a gradient or a filter) will be ignored.
     FloatRect objectBoundingBox = object->objectBoundingBox();
-    if (m_attributes.boundingBoxMode() && objectBoundingBox.isEmpty())
+    if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
     if (!m_pattern.contains(object))
@@ -208,17 +208,7 @@ static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attr
                                                    const SVGPatternElement* patternElement)
 {
     ASSERT(patternElement);
-
-    if (attributes.boundingBoxMode())
-        return FloatRect(attributes.x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),
-                         attributes.y().valueAsPercentage() * objectBoundingBox.height() + objectBoundingBox.y(),
-                         attributes.width().valueAsPercentage() * objectBoundingBox.width(),
-                         attributes.height().valueAsPercentage() * objectBoundingBox.height());
-
-    return FloatRect(attributes.x().value(patternElement),
-                     attributes.y().value(patternElement),
-                     attributes.width().value(patternElement),
-                     attributes.height().value(patternElement));
+    return SVGLengthContext::resolveRectangle(patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());
 }
 
 bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
@@ -240,7 +230,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
     // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())
         tileImageTransform = viewBoxCTM;
-    else if (attributes.boundingBoxModeContent())
+    else if (attributes.patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         tileImageTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
 
     return true;
@@ -271,7 +261,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
         tileImageContext->concatCTM(tileImageTransform);
 
     AffineTransform contentTransformation;
-    if (attributes.boundingBoxModeContent())
+    if (attributes.patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.

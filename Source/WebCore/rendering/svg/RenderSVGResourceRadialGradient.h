@@ -39,7 +39,7 @@ public:
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;
 
-    virtual bool boundingBoxMode() const { return m_attributes.boundingBoxMode(); }
+    virtual SVGUnitTypes::SVGUnitType gradientUnits() const { return m_attributes.gradientUnits(); }
     virtual void calculateGradientTransform(AffineTransform& transform) { transform = m_attributes.gradientTransform(); }
     virtual bool collectGradientAttributes(SVGGradientElement*);
     virtual void buildGradient(GradientData*, SVGGradientElement*) const;

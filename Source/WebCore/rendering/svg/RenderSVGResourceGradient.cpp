@@ -164,7 +164,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
     // then the given effect (e.g. a gradient or a filter) will be ignored.
     FloatRect objectBoundingBox = object->objectBoundingBox();
-    if (boundingBoxMode() && objectBoundingBox.isEmpty())
+    if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
     if (!m_gradient.contains(object))
@@ -181,9 +181,9 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
         // box applied to the gradient space transform now, so the gradient shader can use it.
 #if USE(CG)
-        if (boundingBoxMode() && !objectBoundingBox.isEmpty() && !isPaintingText) {
+        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty() && !isPaintingText) {
 #else
-        if (boundingBoxMode() && !objectBoundingBox.isEmpty()) {
+        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty()) {
 #endif
             gradientData->userspaceTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
             gradientData->userspaceTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
@@ -250,7 +250,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
             calculateGradientTransform(gradientTransform);
 
             FloatRect targetRect;
-            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, targetRect, object, boundingBoxMode(), gradientTransform));
+            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, targetRect, object, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform));
             context->setFillGradient(gradientData->gradient);
 
             context->fillRect(targetRect);

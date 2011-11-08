@@ -23,6 +23,7 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
+#include "SVGLengthContext.h"
 #include "SVGLocatable.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
@@ -61,6 +62,10 @@ public:
     virtual bool isFilterEffect() const { return false; }
     virtual bool isGradientStop() const { return false; }
     virtual bool isTextContent() const { return false; }
+
+    // FIXME: This is a temporary construct to aid reducing the impact of introducing SVGLengthContext.
+    // It will be removed once all code that uses x().value(this) is gone.
+    operator SVGLengthContext() const { return SVGLengthContext(this); }
 
     // For SVGTests
     virtual bool isValid() const { return true; }

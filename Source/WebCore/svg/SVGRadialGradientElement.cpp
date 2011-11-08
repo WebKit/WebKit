@@ -143,8 +143,8 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
             attributes.setSpreadMethod(current->spreadMethod());
 
-        if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::gradientUnitsAttr))
-            attributes.setBoundingBoxMode(current->gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        if (!attributes.hasGradientUnits() && current->hasAttribute(SVGNames::gradientUnitsAttr))
+            attributes.setGradientUnits(current->gradientUnits());
 
         if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr)) {
             AffineTransform transform;
@@ -208,15 +208,9 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
 void SVGRadialGradientElement::calculateFocalCenterPointsAndRadius(const RadialGradientAttributes& attributes, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius)
 {
     // Determine gradient focal/center points and radius
-    if (attributes.boundingBoxMode()) {
-        focalPoint = FloatPoint(attributes.fx().valueAsPercentage(), attributes.fy().valueAsPercentage());
-        centerPoint = FloatPoint(attributes.cx().valueAsPercentage(), attributes.cy().valueAsPercentage());
-        radius = attributes.r().valueAsPercentage();
-    } else {
-        focalPoint = FloatPoint(attributes.fx().value(this), attributes.fy().value(this));
-        centerPoint = FloatPoint(attributes.cx().value(this), attributes.cy().value(this));
-        radius = attributes.r().value(this);
-    }
+    focalPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.fx(), attributes.fy());
+    centerPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.cx(), attributes.cy());
+    radius = SVGLengthContext::resolveLength(this, attributes.gradientUnits(), attributes.r());
 
     // Eventually adjust focal points, as described below
     float deltaX = focalPoint.x() - centerPoint.x();

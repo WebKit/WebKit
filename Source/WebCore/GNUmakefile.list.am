@@ -3743,6 +3743,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGLangSpace.h \
 	Source/WebCore/svg/SVGLength.cpp \
 	Source/WebCore/svg/SVGLength.h \
+	Source/WebCore/svg/SVGLengthContext.cpp \
+	Source/WebCore/svg/SVGLengthContext.h \
 	Source/WebCore/svg/SVGLengthList.cpp \
 	Source/WebCore/svg/SVGLengthList.h \
 	Source/WebCore/svg/SVGLinearGradientElement.cpp \
