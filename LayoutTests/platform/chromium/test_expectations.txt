@@ -3214,7 +3214,7 @@ BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS 
 // Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
 BUGCR83426 MAC : svg/as-border-image/svg-as-border-image-2.html = PASS IMAGE
-BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
+// BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = PASS IMAGE
@@ -3847,7 +3847,7 @@ BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = F
 BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
-BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
+// BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
 
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
 
@@ -3893,3 +3893,35 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
 BUGWK67019 : fast/text/international/locale-sensitive-fonts.html = MISSING FAIL
+
+// SVG failures after r99539.
+BUGWK71793 : css2.1/20110323/background-intrinsic-004.htm = IMAGE
+BUGWK71793 : css2.1/20110323/background-intrinsic-005.htm = IMAGE
+BUGWK71793 : fast/backgrounds/animated-svg-as-mask.html = IMAGE
+BUGWK71793 : svg/as-background-image/animated-svg-as-background.html = IMAGE
+BUGWK71793 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
+BUGWK71793 : svg/as-background-image/svg-as-background-2.html = IMAGE
+BUGWK71793 : svg/as-background-image/svg-as-background-4.html = IMAGE
+BUGWK71793 : svg/as-background-image/svg-as-background-with-relative-size.html = IMAGE
+BUGWK71793 : svg/as-background-image/svg-background-partial-redraw.html = IMAGE
+BUGWK71793 : svg/as-image/animated-svg-as-image.html = IMAGE
+BUGWK71793 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
+BUGWK71793 : svg/as-image/img-preserveAspectRatio-support-2.html = IMAGE
+BUGWK71793 : svg/as-image/same-image-two-instances.html = IMAGE
+BUGWK71793 : svg/as-image/svg-image-change-content-size.xhtml = IMAGE
+BUGWK71793 : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
+BUGWK71793 : svg/wicd/test-scalable-background-image2.xhtml = IMAGE
+BUGWK71793 : svg/zoom/page/zoom-background-images.html = IMAGE
+BUGWK71793 : svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html = IMAGE
+BUGWK71793 : svg/zoom/page/zoom-svg-as-background-with-relative-size.html = IMAGE
+BUGWK71793 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
+BUGWK71793 WIN LINUX : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = IMAGE+TEXT
+BUGWK71793 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = IMAGE
+BUGWK71793 WIN LINUX : svg/as-image/animated-svg-as-image-same-image.html = IMAGE+TEXT
+BUGWK71793 MAC : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
+BUGWK71793 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
+BUGWK71793 : svg/as-background-image/svg-as-background-1.html = IMAGE
+BUGWK71793 : svg/as-background-image/svg-as-background-3.html = IMAGE
+// Uncomment the above results when you remove any of the following lines.
+BUGWK71793 BUGCR83426 : svg/as-border-image/svg-as-border-image.html = IMAGE
+BUGWK71793 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
