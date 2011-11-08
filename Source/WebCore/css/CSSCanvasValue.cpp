@@ -34,7 +34,7 @@ namespace WebCore {
 CSSCanvasValue::~CSSCanvasValue()
 {
     if (m_element)
-        m_element->removeObserver(this);
+        m_element->removeObserver(&m_canvasObserver);
 }
 
 String CSSCanvasValue::cssText() const
@@ -78,7 +78,7 @@ HTMLCanvasElement* CSSCanvasValue::element(Document* document)
         m_element = document->getCSSCanvasElement(m_name);
         if (!m_element)
             return 0;
-        m_element->addObserver(this);
+        m_element->addObserver(&m_canvasObserver);
     }
     return m_element;
 }

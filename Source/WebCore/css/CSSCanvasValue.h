@@ -33,7 +33,7 @@ namespace WebCore {
 
 class Document;
 
-class CSSCanvasValue : public CSSImageGeneratorValue, private CanvasObserver {
+class CSSCanvasValue : public CSSImageGeneratorValue {
 public:
     static PassRefPtr<CSSCanvasValue> create() { return adoptRef(new CSSCanvasValue); }
     virtual ~CSSCanvasValue();
@@ -49,15 +49,40 @@ public:
 private:
     CSSCanvasValue()
         : CSSImageGeneratorValue(CanvasClass)
+        , m_canvasObserver(this)
         , m_element(0)
     {
     }
 
-    virtual void canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect);
-    virtual void canvasResized(HTMLCanvasElement*);
-    virtual void canvasDestroyed(HTMLCanvasElement*);
+    // NOTE: We put the CanvasObserver in a member instead of inheriting from it
+    // to avoid adding a vptr to CSSCanvasValue.
+    class CanvasObserverProxy : public CanvasObserver {
+    public:
+        CanvasObserverProxy(CSSCanvasValue* ownerValue) : m_ownerValue(ownerValue) { }
+        virtual ~CanvasObserverProxy() { }
+        virtual void canvasChanged(HTMLCanvasElement* canvas, const FloatRect& changedRect)
+        {
+            m_ownerValue->canvasChanged(canvas, changedRect);
+        }
+        virtual void canvasResized(HTMLCanvasElement* canvas)
+        {
+            m_ownerValue->canvasResized(canvas);
+        }
+        virtual void canvasDestroyed(HTMLCanvasElement* canvas)
+        {
+            m_ownerValue->canvasDestroyed(canvas);
+        }
+    private:
+        CSSCanvasValue* m_ownerValue;
+    };
+
+    void canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect);
+    void canvasResized(HTMLCanvasElement*);
+    void canvasDestroyed(HTMLCanvasElement*);
 
     HTMLCanvasElement* element(Document*);
+
+    CanvasObserverProxy m_canvasObserver;
 
     // The name of the canvas.
     String m_name;

@@ -1,3 +1,28 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        CSSCanvasValue: Remove inheritance from CanvasObserver.
+        <http://webkit.org/b/71796>
+
+        Reviewed by Antti Koivisto.
+
+        To completely devirtualize all the CSSValues, we need to remove
+        CSSCanvasValue's inheritance from CanvasObserver, as that is forcing
+        a vptr into the class.
+
+        Use the same approach as CSSImportRule and make a simple proxying
+        CanvasObserver subclass and put that as a member variable of the value.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::~CSSCanvasValue):
+        (WebCore::CSSCanvasValue::element):
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        (WebCore::CSSCanvasValue::CanvasObserverProxy::CanvasObserverProxy):
+        (WebCore::CSSCanvasValue::CanvasObserverProxy::~CanvasObserverProxy):
+        (WebCore::CSSCanvasValue::CanvasObserverProxy::canvasChanged):
+        (WebCore::CSSCanvasValue::CanvasObserverProxy::canvasResized):
+        (WebCore::CSSCanvasValue::CanvasObserverProxy::canvasDestroyed):
+
 2011-11-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: display notification in the front-end when inspected worker terminates
