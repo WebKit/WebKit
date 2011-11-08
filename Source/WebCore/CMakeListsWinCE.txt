@@ -80,6 +80,7 @@ LIST(APPEND WebCore_SOURCES
     platform/wince/MIMETypeRegistryWince.cpp
     platform/wince/SharedTimerWince.cpp
 
+    platform/network/win/CredentialStorageWin.cpp
     platform/network/win/CookieJarWin.cpp
     platform/network/win/CookieStorageWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp

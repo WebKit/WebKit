@@ -1,3 +1,22 @@
+2011-11-07  Daniel Bates  <dbates@rim.com>
+
+        Add CredentialStorage.cpp to WebCore/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=71748
+
+        Reviewed by Martin Robinson.
+
+        Adds CredentialStorage.cpp to WebCore/CMakeLists.txt since its provides a
+        base implementation of this feature.
+
+        Also adds a stub implementation of CredentialStorage to the WinCE port.
+
+        * CMakeLists.txt: Added source file CredentialStorage.cpp.
+        * CMakeListsEfl.txt: Added source file CredentialStorageCurl.cpp when building
+          with the Curl networking backend.
+        * CMakeListsWinCE.txt: Added source file CredentialStorageWin.cpp.
+        * platform/network/win/CredentialStorageWin.cpp: Added.
+        (WebCore::Credential::getFromPersistentStorage): Stub implementation.
+
 2011-11-07  Kentaro Hara  <haraken@chromium.org>
 
         Remove [CustomGetter] IDL for window.Image of V8
