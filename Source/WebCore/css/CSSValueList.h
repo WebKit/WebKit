@@ -58,7 +58,7 @@ public:
 
     virtual String cssText() const;
 
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
     CSSValueList(ClassType, bool isSpaceSeparated);

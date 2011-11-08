@@ -80,7 +80,7 @@ public:
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
 #endif
 
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
 

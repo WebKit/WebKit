@@ -211,7 +211,7 @@ public:
 
     bool isQuirkValue() { return m_isQuirkValue; }
 
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
     CSSPrimitiveValue(ClassType, int ident);

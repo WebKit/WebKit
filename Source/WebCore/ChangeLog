@@ -1,3 +1,23 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: Devirtualize addSubresourceStyleURLs().
+        <http://webkit.org/b/71805>
+
+        Reviewed by Antti Koivisto.
+
+        Make addSubresourceStyleURLs() non-virtual and call the appropriate
+        subclass implementation based on the subclass type info.
+
+        * css/CSSBorderImageValue.h:
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSReflectValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        * css/CSSValueList.h:
+
 2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: do not show object popover when selection is active

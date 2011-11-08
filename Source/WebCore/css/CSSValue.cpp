@@ -27,6 +27,12 @@
 #include "config.h"
 #include "CSSValue.h"
 
+#include "CSSBorderImageValue.h"
+#include "CSSFontFaceSrcValue.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSReflectValue.h"
+#include "CSSValueList.h"
+
 namespace WebCore {
 
 CSSValue::Type CSSValue::cssValueType() const
@@ -40,6 +46,20 @@ CSSValue::Type CSSValue::cssValueType() const
     if (isInitialValue())
         return CSS_INITIAL;
     return CSS_CUSTOM;
+}
+
+void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+{
+    if (isPrimitiveValue())
+        static_cast<CSSPrimitiveValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
+    else if (isValueList())
+        static_cast<CSSValueList*>(this)->addSubresourceStyleURLs(urls, styleSheet);
+    else if (classType() == BorderImageClass)
+        static_cast<CSSBorderImageValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
+    else if (classType() == FontFaceSrcClass)
+        static_cast<CSSFontFaceSrcValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
+    else if (classType() == ReflectClass)
+        static_cast<CSSReflectValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
 }
 
 }
