@@ -1,3 +1,13 @@
+2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: do not show object popover when selection is active
+        https://bugs.webkit.org/show_bug.cgi?id=71804
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._shouldShowPopover):
+
 2011-11-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Do not hide SuggestBox if typed-in string in the middle of input equals one of suggestions

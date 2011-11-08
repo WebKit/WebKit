@@ -248,6 +248,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return false;
         if (!element.enclosingNodeOrSelfWithClass("webkit-line-content"))
             return false;
+        if (window.getSelection().type === "Range")
+            return false;
 
         // We are interested in identifiers and "this" keyword.
         if (element.hasStyleClass("webkit-javascript-keyword"))
