@@ -1,5 +1,45 @@
 2011-11-07  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG code base should allow for classes not related to DFG::JITCompiler
+        to use DFG idioms
+        https://bugs.webkit.org/show_bug.cgi?id=71746
+
+        Reviewed by Gavin Barraclough.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAssemblyHelpers.cpp: Added.
+        (JSC::DFG::AssemblyHelpers::decodedCodeMapFor):
+        (JSC::DFG::AssemblyHelpers::emitCount):
+        (JSC::DFG::AssemblyHelpers::setSamplingFlag):
+        (JSC::DFG::AssemblyHelpers::clearSamplingFlag):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsInt32):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSInt32):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSNumber):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSDouble):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsCell):
+        * dfg/DFGAssemblyHelpers.h: Added.
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::graph):
+        * dfg/DFGJITCompiler32_64.cpp:
+        * dfg/DFGOSRExit.h: Added.
+        (JSC::DFG::SpeculationRecovery::SpeculationRecovery):
+        (JSC::DFG::SpeculationRecovery::type):
+        (JSC::DFG::SpeculationRecovery::dest):
+        (JSC::DFG::SpeculationRecovery::src):
+        (JSC::DFG::OSRExit::numberOfRecoveries):
+        (JSC::DFG::OSRExit::valueRecovery):
+        (JSC::DFG::OSRExit::isArgument):
+        (JSC::DFG::OSRExit::isVariable):
+        (JSC::DFG::OSRExit::argumentForIndex):
+        (JSC::DFG::OSRExit::variableForIndex):
+        (JSC::DFG::OSRExit::operandForArgument):
+        (JSC::DFG::OSRExit::operandForIndex):
+        * dfg/DFGSpeculativeJIT.h:
+
+2011-11-07  Filip Pizlo  <fpizlo@apple.com>
+
         Switch back to 1+1 value profiling buckets, since it didn't help on arewefastyet,
         but it appears to help on other benchmarks.
 

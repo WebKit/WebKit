@@ -30,6 +30,7 @@
 
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
+#include <dfg/DFGAssemblyHelpers.h>
 #include <dfg/DFGFPRInfo.h>
 #include <dfg/DFGGPRInfo.h>
 #include <dfg/DFGGraph.h>
@@ -51,10 +52,6 @@ class SpeculationRecovery;
 
 struct EntryLocation;
 struct OSRExit;
-
-#ifndef NDEBUG
-typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
-#endif
 
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
 struct SpeculationFailureDebugInfo {
@@ -111,12 +108,11 @@ struct CallExceptionRecord {
 // relationship). The JITCompiler holds references to information required during
 // compilation, and also records information used in linking (e.g. a list of all
 // call to be linked).
-class JITCompiler : public MacroAssembler {
+class JITCompiler : public AssemblyHelpers {
 public:
     JITCompiler(JSGlobalData* globalData, Graph& dfg, CodeBlock* codeBlock)
-        : m_globalData(globalData)
+        : AssemblyHelpers(globalData, codeBlock)
         , m_graph(dfg)
-        , m_codeBlock(codeBlock)
     {
     }
 
@@ -125,84 +121,6 @@ public:
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
-    CodeBlock* codeBlock() { return m_codeBlock; }
-    JSGlobalData* globalData() { return m_globalData; }
-    AssemblerType_T& assembler() { return m_assembler; }
-
-#if CPU(X86_64) || CPU(X86)
-    void preserveReturnAddressAfterCall(GPRReg reg)
-    {
-        pop(reg);
-    }
-
-    void restoreReturnAddressBeforeReturn(GPRReg reg)
-    {
-        push(reg);
-    }
-
-    void restoreReturnAddressBeforeReturn(Address address)
-    {
-        push(address);
-    }
-
-    void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, GPRReg to)
-    {
-        loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
-    }
-    void emitPutToCallFrameHeader(GPRReg from, RegisterFile::CallFrameHeaderEntry entry)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
-    }
-
-    void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
-    {
-        storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
-    }
-#endif
-
-    Jump branchIfNotCell(GPRReg reg)
-    {
-#if USE(JSVALUE64)
-        return branchTestPtr(MacroAssembler::NonZero, reg, GPRInfo::tagMaskRegister);
-#else
-        return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
-#endif
-    }
-    
-    static Address addressForGlobalVar(GPRReg global, int32_t varNumber)
-    {
-        return Address(global, varNumber * sizeof(Register));
-    }
-
-    static Address tagForGlobalVar(GPRReg global, int32_t varNumber)
-    {
-        return Address(global, varNumber * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-    }
-
-    static Address payloadForGlobalVar(GPRReg global, int32_t varNumber)
-    {
-        return Address(global, varNumber * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-
-    static Address addressFor(VirtualRegister virtualRegister)
-    {
-        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register));
-    }
-
-    static Address tagFor(VirtualRegister virtualRegister)
-    {
-        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-    }
-
-    static Address payloadFor(VirtualRegister virtualRegister)
-    {
-        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-    }
-
-    Jump branchIfNotObject(GPRReg structureReg)
-    {
-        return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
-    }
 
     // Notify the JIT of a call that does not require linking.
     void notifyCall(Call functionCall, CodeOrigin codeOrigin)
@@ -238,36 +156,6 @@ public:
         return functionCall;
     }
     
-#ifndef NDEBUG
-    // Add a debug call. This call has no effect on JIT code execution state.
-    void debugCall(V_DFGDebugOperation_EP function, void* argument)
-    {
-        for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
-            storePtr(GPRInfo::toRegister(i), m_globalData->debugDataBuffer + i);
-        for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-            storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
-        }
-#if CPU(X86_64)
-        move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-#elif CPU(X86)
-        poke(GPRInfo::callFrameRegister, 0);
-        poke(TrustedImmPtr(argument), 1);
-#else
-#error "DFG JIT not supported on this platform."
-#endif
-        move(TrustedImmPtr(reinterpret_cast<void*>(function)), GPRInfo::regT0);
-        call(GPRInfo::regT0);
-        for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-            loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
-        }
-        for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
-            loadPtr(m_globalData->debugDataBuffer + i, GPRInfo::toRegister(i));
-    }
-#endif
-
     // Helper methods to check nodes for constants.
     bool isConstant(NodeIndex nodeIndex) { return graph().isConstant(nodeIndex); }
     bool isJSConstant(NodeIndex nodeIndex) { return graph().isJSConstant(nodeIndex); }
@@ -312,71 +200,6 @@ public:
     void emitStoreCell(NodeIndex, GPRReg payload, bool indexIsCell = false);
     void emitStoreBool(NodeIndex, GPRReg payload, bool indexIsBool = false);
     void emitStoreDouble(NodeIndex, FPRReg value);
-#endif
-
-    // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
-#if DFG_ENABLE(JIT_ASSERT)
-    void jitAssertIsInt32(GPRReg);
-    void jitAssertIsJSInt32(GPRReg);
-    void jitAssertIsJSNumber(GPRReg);
-    void jitAssertIsJSDouble(GPRReg);
-    void jitAssertIsCell(GPRReg);
-#else
-    void jitAssertIsInt32(GPRReg) {}
-    void jitAssertIsJSInt32(GPRReg) {}
-    void jitAssertIsJSNumber(GPRReg) {}
-    void jitAssertIsJSDouble(GPRReg) {}
-    void jitAssertIsCell(GPRReg) {}
-#endif
-
-    // These methods convert between doubles, and doubles boxed and JSValues.
-#if USE(JSVALUE64)
-    GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
-    {
-        moveDoubleToPtr(fpr, gpr);
-        subPtr(GPRInfo::tagTypeNumberRegister, gpr);
-        return gpr;
-    }
-    FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
-    {
-        jitAssertIsJSDouble(gpr);
-        addPtr(GPRInfo::tagTypeNumberRegister, gpr);
-        movePtrToDouble(gpr, fpr);
-        return fpr;
-    }
-#elif USE(JSVALUE32_64)
-    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
-    {
-#if CPU(X86)
-        movePackedToInt32(fpr, payloadGPR);
-        rshiftPacked(TrustedImm32(32), fpr);
-        movePackedToInt32(fpr, tagGPR);
-#endif
-    }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
-    {
-        jitAssertIsJSDouble(tagGPR);
-#if CPU(X86)
-        moveInt32ToPacked(payloadGPR, fpr);
-        moveInt32ToPacked(tagGPR, scratchFPR);
-        lshiftPacked(TrustedImm32(32), scratchFPR);
-        orPacked(scratchFPR, fpr);
-#endif
-    }
-#endif
-
-#if ENABLE(SAMPLING_COUNTERS)
-    // Debug profiling tool.
-    static void emitCount(MacroAssembler&, AbstractSamplingCounter&, uint32_t increment = 1);
-    void emitCount(AbstractSamplingCounter& counter, uint32_t increment = 1)
-    {
-        emitCount(*this, counter, increment);
-    }
-#endif
-
-#if ENABLE(SAMPLING_FLAGS)
-    void setSamplingFlag(int32_t flag);
-    void clearSamplingFlag(int32_t flag);
 #endif
 
 #if USE(JSVALUE64)
@@ -432,14 +255,6 @@ public:
         return m_graph.valueProfileFor(nodeIndex, baselineCodeBlockFor(m_graph[nodeIndex].codeOrigin));
     }
     
-    JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
-    {
-        if (!codeOrigin.inlineCallFrame)
-            return codeBlock()->globalObject();
-        // FIXME: if we ever inline based on executable not function, this code will need to change.
-        return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
-    }
-    
 private:
     // Internal implementation to compile.
     void compileEntry();
@@ -449,30 +264,9 @@ private:
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
     void linkOSRExits(SpeculativeJIT&);
     
-    CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
-    {
-        if (codeOrigin.inlineCallFrame) {
-            ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
-            ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
-            return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
-        }
-        ASSERT(codeBlock()->alternative() == codeBlock()->baselineVersion());
-        return codeBlock()->alternative();
-    }
-    
-    Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
-
-    // The globalData, used to access constants such as the vPtrs.
-    JSGlobalData* m_globalData;
-
     // The dataflow graph currently being generated.
     Graph& m_graph;
 
-    // The codeBlock currently being generated, used to access information such as constant values, immediates.
-    CodeBlock* m_codeBlock;
-    
-    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> > m_decodedCodeMaps;
-    
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.
     Vector<CallLinkRecord> m_calls;

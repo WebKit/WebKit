@@ -28,45 +28,14 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractState.h"
+#include "DFGJITCodeGenerator.h"
+#include "DFGOSRExit.h"
 #include "ValueRecovery.h"
-#include <dfg/DFGAbstractState.h>
-#include <dfg/DFGJITCodeGenerator.h>
 
 namespace JSC { namespace DFG {
 
 class SpeculativeJIT;
-
-// This enum describes the types of additional recovery that
-// may need be performed should a speculation check fail.
-enum SpeculationRecoveryType {
-    SpeculativeAdd,
-    BooleanSpeculationCheck
-};
-
-// === SpeculationRecovery ===
-//
-// This class provides additional information that may be associated with a
-// speculation check - for example 
-class SpeculationRecovery {
-public:
-    SpeculationRecovery(SpeculationRecoveryType type, GPRReg dest, GPRReg src)
-        : m_type(type)
-        , m_dest(dest)
-        , m_src(src)
-    {
-    }
-
-    SpeculationRecoveryType type() { return m_type; }
-    GPRReg dest() { return m_dest; }
-    GPRReg src() { return m_src; }
-
-private:
-    // Indicates the type of additional recovery to be performed.
-    SpeculationRecoveryType m_type;
-    // different recovery types may required different additional information here.
-    GPRReg m_dest;
-    GPRReg m_src;
-};
 
 enum ValueSourceKind {
     SourceNotSet,
@@ -146,62 +115,6 @@ private:
     NodeIndex m_nodeIndex;
 };
     
-// === OSRExit ===
-//
-// This structure describes how to exit the speculative path by
-// going into baseline code.
-struct OSRExit {
-    OSRExit(JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
-    
-    JSValueSource m_jsValueSource;
-    ValueProfile* m_valueProfile;
-    
-    MacroAssembler::Jump m_check;
-    NodeIndex m_nodeIndex;
-    CodeOrigin m_codeOrigin;
-    
-    unsigned m_recoveryIndex;
-    
-    // Convenient way of iterating over ValueRecoveries while being
-    // generic over argument versus variable.
-    int numberOfRecoveries() const { return m_arguments.size() + m_variables.size(); }
-    const ValueRecovery& valueRecovery(int index) const
-    {
-        if (index < (int)m_arguments.size())
-            return m_arguments[index];
-        return m_variables[index - m_arguments.size()];
-    }
-    bool isArgument(int index) const { return index < (int)m_arguments.size(); }
-    bool isVariable(int index) const { return !isArgument(index); }
-    int argumentForIndex(int index) const
-    {
-        return index;
-    }
-    int variableForIndex(int index) const
-    {
-        return index - m_arguments.size();
-    }
-    int operandForArgument(int argument) const
-    {
-        return argument - m_arguments.size() - RegisterFile::CallFrameHeaderSize;
-    }
-    int operandForIndex(int index) const
-    {
-        if (index < (int)m_arguments.size())
-            return operandForArgument(index);
-        return index - m_arguments.size();
-    }
-    
-#ifndef NDEBUG
-    void dump(FILE* out) const;
-#endif
-    
-    Vector<ValueRecovery, 0> m_arguments;
-    Vector<ValueRecovery, 0> m_variables;
-    int m_lastSetOperand;
-};
-typedef SegmentedVector<OSRExit, 16> OSRExitVector;
-
 // === SpeculativeJIT ===
 //
 // The SpeculativeJIT is used to generate a fast, but potentially

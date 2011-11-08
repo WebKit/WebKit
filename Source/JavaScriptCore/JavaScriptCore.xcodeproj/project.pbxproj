@@ -68,6 +68,9 @@
 		0F963B2F13FC66BB0002D9B2 /* MetaAllocatorHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBD7E691447999600481315 /* CodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBD7E671447998F00481315 /* CodeOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC097681468A6EF00CF2442 /* DFGOSRExit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC0976D1468AB4E00CF2442 /* DFGAssemblyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0976C1468AB4A00CF2442 /* DFGAssemblyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC0976E1468AB5100CF2442 /* DFGAssemblyHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0976B1468AB4A00CF2442 /* DFGAssemblyHelpers.cpp */; };
 		0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
 		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -833,6 +836,9 @@
 		0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
 		0FBD7E671447998F00481315 /* CodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeOrigin.h; sourceTree = "<group>"; };
+		0FC097681468A6EF00CF2442 /* DFGOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExit.h; path = dfg/DFGOSRExit.h; sourceTree = "<group>"; };
+		0FC0976B1468AB4A00CF2442 /* DFGAssemblyHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAssemblyHelpers.cpp; path = dfg/DFGAssemblyHelpers.cpp; sourceTree = "<group>"; };
+		0FC0976C1468AB4A00CF2442 /* DFGAssemblyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAssemblyHelpers.h; path = dfg/DFGAssemblyHelpers.h; sourceTree = "<group>"; };
 		0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierSupport.cpp; sourceTree = "<group>"; };
 		0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierSupport.h; sourceTree = "<group>"; };
 		0FC815121405118600CFA603 /* VTableSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTableSpectrum.cpp; sourceTree = "<group>"; };
@@ -2292,6 +2298,9 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0FC0976B1468AB4A00CF2442 /* DFGAssemblyHelpers.cpp */,
+				0FC0976C1468AB4A00CF2442 /* DFGAssemblyHelpers.h */,
+				0FC097681468A6EF00CF2442 /* DFGOSRExit.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
 				0F62016E143FCD2F0068B77C /* DFGAbstractState.h */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
@@ -2901,6 +2910,8 @@
 				0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
 				0F2E5BF7146357D5003EB2EB /* Spectrum.h in Headers */,
+				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
+				0FC0976D1468AB4E00CF2442 /* DFGAssemblyHelpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3432,6 +3443,7 @@
 				0FE228EE1436AB2C00196C48 /* Heuristics.cpp in Sources */,
 				0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */,
 				BC3C4CA01458F5450025FB62 /* JSGlobalThis.cpp in Sources */,
+				0FC0976E1468AB5100CF2442 /* DFGAssemblyHelpers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

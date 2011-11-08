@@ -558,43 +558,6 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
 #endif
 }
 
-#if DFG_ENABLE(JIT_ASSERT)
-void JITCompiler::jitAssertIsInt32(GPRReg gpr)
-{
-    UNUSED_PARAM(gpr);
-}
-
-void JITCompiler::jitAssertIsJSInt32(GPRReg gpr)
-{
-    Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
-    breakpoint();
-    checkJSInt32.link(this);
-}
-
-void JITCompiler::jitAssertIsJSNumber(GPRReg gpr)
-{
-    Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
-    Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    breakpoint();
-    checkJSInt32.link(this);
-    checkJSDouble.link(this);
-}
-
-void JITCompiler::jitAssertIsJSDouble(GPRReg gpr)
-{
-    Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
-    breakpoint();
-    checkJSDouble.link(this);
-}
-
-void JITCompiler::jitAssertIsCell(GPRReg gpr)
-{
-    Jump checkCell = branch32(Equal, gpr, TrustedImm32(JSValue::CellTag));
-    breakpoint();
-    checkCell.link(this);
-}
-#endif
-
 } } // namespace JSC::DFG
 
 #endif
