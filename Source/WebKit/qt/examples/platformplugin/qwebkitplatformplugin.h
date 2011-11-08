@@ -26,14 +26,14 @@
  *  and may be changed from version to version or even be completely removed.
 */
 
-#include <QObject>
-#include <QUrl>
 #if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 #include <QMediaPlayer>
 #endif
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
+#include <QtGui/QColor>
 
-class QWebSelectData
-{
+class QWebSelectData {
 public:
     virtual ~QWebSelectData() {}
 
@@ -46,10 +46,13 @@ public:
     virtual bool itemIsSelected(int index) const = 0;
     virtual int itemCount() const = 0;
     virtual bool multiple() const = 0;
+    virtual QColor backgroundColor() const = 0;
+    virtual QColor foregroundColor() const = 0;
+    virtual QColor itemBackgroundColor(int index) const = 0;
+    virtual QColor itemForegroundColor(int index) const = 0;
 };
 
-class QWebSelectMethod : public QObject
-{
+class QWebSelectMethod : public QObject {
     Q_OBJECT
 public:
     virtual ~QWebSelectMethod() {}
@@ -62,8 +65,7 @@ Q_SIGNALS:
     void didHide();
 };
 
-class QWebNotificationData
-{
+class QWebNotificationData {
 public:
     virtual ~QWebNotificationData() {}
 
@@ -73,8 +75,7 @@ public:
     virtual const QUrl openerPageUrl() const = 0;
 };
 
-class QWebNotificationPresenter : public QObject
-{
+class QWebNotificationPresenter : public QObject {
     Q_OBJECT
 public:
     QWebNotificationPresenter() {}
@@ -87,8 +88,7 @@ Q_SIGNALS:
     void notificationClicked();
 };
 
-class QWebHapticFeedbackPlayer: public QObject
-{
+class QWebHapticFeedbackPlayer: public QObject {
     Q_OBJECT
 public:
     QWebHapticFeedbackPlayer() {}
@@ -105,8 +105,7 @@ public:
     virtual void playHapticFeedback(const HapticEvent, const QString& hapticType, const HapticStrength) = 0;
 };
 
-class QWebTouchModifier : public QObject
-{
+class QWebTouchModifier : public QObject {
     Q_OBJECT
 public:
     virtual ~QWebTouchModifier() {}
@@ -135,8 +134,31 @@ public Q_SLOTS:
 };
 #endif
 
-class QWebKitPlatformPlugin
-{
+class QWebSpellChecker : public QObject {
+    Q_OBJECT
+public:
+    struct GrammarDetail {
+        int location;
+        int length;
+        QStringList guesses;
+        QString userDescription;
+    };
+
+    virtual bool isContinousSpellCheckingEnabled() const = 0;
+    virtual void toggleContinousSpellChecking() = 0;
+
+    virtual void learnWord(const QString& word) = 0;
+    virtual void ignoreWordInSpellDocument(const QString& word) = 0;
+    virtual void checkSpellingOfString(const QString& word, int* misspellingLocation, int* misspellingLength) = 0;
+    virtual QString autoCorrectSuggestionForMisspelledWord(const QString& word) = 0;
+    virtual void guessesForWord(const QString& word, const QString& context, QStringList& guesses) = 0;
+
+    virtual bool isGrammarCheckingEnabled() = 0;
+    virtual void toggleGrammarChecking() = 0;
+    virtual void checkGrammarOfString(const QString&, QList<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
+};
+
+class QWebKitPlatformPlugin {
 public:
     virtual ~QWebKitPlatformPlugin() {}
 
@@ -145,11 +167,12 @@ public:
         Notifications,
         Haptics,
         TouchInteraction,
-        FullScreenVideoPlayer
+        FullScreenVideoPlayer,
+        SpellChecker
     };
 
-    virtual bool supportsExtension(Extension extension) const = 0;
-    virtual QObject* createExtension(Extension extension) const = 0;
+    virtual bool supportsExtension(Extension) const = 0;
+    virtual QObject* createExtension(Extension) const = 0;
 };
 
 QT_BEGIN_NAMESPACE

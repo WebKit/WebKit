@@ -1,3 +1,19 @@
+2011-11-08  Luiz Agostini  <luiz.agostini@palm.com>
+
+        [Qt] Removing qwebkitglobal.h inclusion from qwebkitplatformplugin.h
+        https://bugs.webkit.org/show_bug.cgi?id=71759
+
+        Reviewed by Simon Hausmann.
+
+        qwebkitplatformplugin.h must not depend on qwebkitglobal.h.
+
+        * Api/qwebkitplatformplugin.h:
+
+        Updating the copy of qwebkitplatformplugin.h that is used by the example plugin. The previous
+        one was very outdated.
+
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move DomainRelaxationForbidden scheme registry to SchemeRegistry

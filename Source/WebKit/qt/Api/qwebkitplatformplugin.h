@@ -21,8 +21,6 @@
 #ifndef QWEBKITPLATFORMPLUGIN_H
 #define QWEBKITPLATFORMPLUGIN_H
 
-#include "qwebkitglobal.h"
-
 /*
  *  Warning: The contents of this file is not  part of the public QtWebKit API
  *  and may be changed from version to version or even be completely removed.
@@ -136,7 +134,7 @@ public Q_SLOTS:
 };
 #endif
 
-class QWEBKIT_EXPORT QWebSpellChecker : public QObject {
+class QWebSpellChecker : public QObject {
     Q_OBJECT
 public:
     struct GrammarDetail {
