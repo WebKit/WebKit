@@ -173,7 +173,7 @@ void IDBRequest::setCursorType(IDBCursorBackendInterface::CursorType cursorType)
 
 void IDBRequest::setCursor(PassRefPtr<IDBCursor> cursor)
 {
-    // FIXME: Assert !m_cursor when the new onSuccessCursorContinue() callback is used.
+    ASSERT(!m_cursor);
     m_cursor = cursor;
 }
 

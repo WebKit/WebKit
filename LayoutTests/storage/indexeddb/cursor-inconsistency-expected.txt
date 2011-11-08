@@ -30,7 +30,7 @@ PASS event.target.result.value is "someValue1"
 event.target.result.continue()
 
 checkCursor()
-FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor === event.target.result is true
 PASS storedCursor.key is "someKey2"
 PASS event.target.result.key is "someKey2"
 PASS storedCursor.value is "someValue2"
@@ -38,7 +38,7 @@ PASS event.target.result.value is "someValue2"
 event.target.result.continue()
 
 checkCursor()
-FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor === event.target.result is true
 PASS storedCursor.key is "someKey3"
 PASS event.target.result.key is "someKey3"
 PASS storedCursor.value is "someValue3"
@@ -46,7 +46,7 @@ PASS event.target.result.value is "someValue3"
 event.target.result.continue()
 
 checkCursor()
-FAIL storedCursor === event.target.result should be true. Was false.
+PASS storedCursor === event.target.result is true
 PASS storedCursor.key is "someKey4"
 PASS event.target.result.key is "someKey4"
 PASS storedCursor.value is "someValue4"
