@@ -268,7 +268,18 @@ protected:
         ASSERT(info.registerFormat() != DataFormatNone);
         ASSERT(info.registerFormat() != DataFormatDouble);
         ASSERT(info.registerFormat() != DataFormatJSDouble);
-        return !(info.registerFormat() & DataFormatJS) ? (info.gpr() == exclude || info.gpr() == exclude2) :  (info.tagGPR() == exclude || info.tagGPR() == exclude2 || info.payloadGPR() == exclude || info.payloadGPR() == exclude2);
+
+        if (exclude == InvalidGPRReg && exclude2 == InvalidGPRReg)
+            return false;
+
+        bool matched = false;
+        if (exclude2 == InvalidGPRReg)
+            matched = (!(info.registerFormat() & DataFormatJS)) ? (info.gpr() == exclude) :  (info.tagGPR() == exclude || info.payloadGPR() == exclude);
+        else if (exclude == InvalidGPRReg)
+            matched = (!(info.registerFormat() & DataFormatJS)) ? (info.gpr() == exclude2) :  (info.tagGPR() == exclude2 || info.payloadGPR() == exclude2);
+        else
+            matched = (!(info.registerFormat() & DataFormatJS)) ? (info.gpr() == exclude || info.gpr() == exclude2) :  (info.tagGPR() == exclude || info.tagGPR() == exclude2 || info.payloadGPR() == exclude || info.payloadGPR() == exclude2);
+        return matched;
     }
 #endif
 
