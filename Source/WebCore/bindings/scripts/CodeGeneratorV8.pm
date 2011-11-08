@@ -2476,6 +2476,16 @@ END
 
     GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType, $serializedAttribute);
 
+    if (IsSubType($dataNode, "ArrayBufferView") && not $interfaceName eq "ArrayBufferView") {
+        push(@implContent, <<END);
+    void ${nativeType}::neuterBinding(ScriptExecutionContext*) {
+        v8::Handle<v8::Value> bound = toV8(this);
+        v8::Handle<v8::Object> object(bound.As<v8::Object>());
+        object->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
+    }
+END
+    }
+
     push(@implContent, <<END);
 
 void ${className}::derefObject(void* object)

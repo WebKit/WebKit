@@ -74,7 +74,7 @@ public:
 
 protected:
     virtual void neuter(ScriptExecutionContext*);
-    virtual void neuterBinding(ScriptExecutionContext*);
+    void neuterBinding(ScriptExecutionContext*);
 
 private:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);

@@ -46,6 +46,9 @@ public:
     PassRefPtr<Uint8Array> subarray(int start) const;
     PassRefPtr<Uint8Array> subarray(int start, int end) const;
 
+protected:
+    void neuterBinding(ScriptExecutionContext*);
+
 private:
     Uint8Array(PassRefPtr<ArrayBuffer> buffer,
                            unsigned byteOffset,

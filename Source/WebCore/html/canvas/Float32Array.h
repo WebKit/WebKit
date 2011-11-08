@@ -60,6 +60,9 @@ public:
     PassRefPtr<Float32Array> subarray(int start) const;
     PassRefPtr<Float32Array> subarray(int start, int end) const;
 
+protected:
+    void neuterBinding(ScriptExecutionContext*);
+
 private:
     Float32Array(PassRefPtr<ArrayBuffer> buffer,
                     unsigned byteOffset,

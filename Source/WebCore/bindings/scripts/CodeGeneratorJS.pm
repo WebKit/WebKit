@@ -2216,6 +2216,14 @@ sub GenerateImplementation
         push(@implContent, ";\n}\n");
     }
 
+    if ($parentClassName eq "JSArrayBufferView") {
+        push(@implContent, <<END);
+    void ${implType}::neuterBinding(ScriptExecutionContext*) {
+    }
+END
+    }
+
+
     push(@implContent, "\n}\n");
 
     my $conditionalString = GenerateConditionalString($dataNode);

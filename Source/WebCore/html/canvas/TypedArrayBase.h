@@ -119,10 +119,7 @@ protected:
         neuterBinding(context);
     }
 
-    virtual void neuterBinding(ScriptExecutionContext*)
-    {
-        // FIXME https://bugs.webkit.org/show_bug.cgi?id=71534
-    }
+    virtual void neuterBinding(ScriptExecutionContext*) = 0;
 
     // We do not want to have to access this via a virtual function in subclasses,
     // which is why it is protected rather than private.

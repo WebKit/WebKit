@@ -242,9 +242,4 @@ void DataView::neuter(ScriptExecutionContext* context)
     neuterBinding(context);
 }
 
-void DataView::neuterBinding(ScriptExecutionContext*)
-{
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=71534 
-}
-
 }
