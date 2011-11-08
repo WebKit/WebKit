@@ -27,6 +27,11 @@
 #define TiledCoreAnimationDrawingArea_h
 
 #include "DrawingArea.h"
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CALayer;
+
+typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
 namespace WebKit {
 
@@ -45,6 +50,12 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 
+    // Message handlers.
+    virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
+
+    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
+
+    RetainPtr<CALayer> m_rootLayer;
 };
 
 } // namespace WebKit

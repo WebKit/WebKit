@@ -23,8 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TiledCoreAnimationDrawingAreaProxy.h"
+#import "config.h"
+#import "TiledCoreAnimationDrawingAreaProxy.h"
+
+#import "DrawingAreaMessages.h"
+#import "DrawingAreaProxyMessages.h"
+#import "LayerTreeContext.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -35,6 +43,7 @@ PassOwnPtr<TiledCoreAnimationDrawingAreaProxy> TiledCoreAnimationDrawingAreaProx
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy)
+    , m_isWaitingForDidUpdateGeometry(false)
 {
 }
 
@@ -49,7 +58,54 @@ void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 {
-    // FIXME: Implement.
+    if (!m_webPageProxy->isValid())
+        return;
+
+    // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
+    // haven't yet received the reply we'll just return early here.
+    if (m_isWaitingForDidUpdateGeometry)
+        return;
+
+    sendUpdateGeometry();
+
+    if (m_webPageProxy->process()->isLaunching())
+        return;
+
+    // The timeout, in seconds, we use when waiting for a DidUpdateGeometry message.
+    static const double didUpdateBackingStoreStateTimeout = 0.5;
+    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
+}
+
+void TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
+{
+    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+}
+
+void TiledCoreAnimationDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&)
+{
+    // This should never be called.
+    ASSERT_NOT_REACHED();
+}
+
+void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
+{
+    ASSERT(m_isWaitingForDidUpdateGeometry);
+
+    m_isWaitingForDidUpdateGeometry = false;
+
+    // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
+    // we need to resend the new size here.
+    if (m_lastSentSize != m_size)
+        sendUpdateGeometry();
+}
+
+void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
+{
+    ASSERT(!m_isWaitingForDidUpdateGeometry);
+
+    m_lastSentSize = m_size;
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size), m_webPageProxy->pageID());
+    m_isWaitingForDidUpdateGeometry = true;
 }
 
 } // namespace WebKit

@@ -1,3 +1,57 @@
+2011-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a basic layer hierarchy to the Core Animation drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=71838
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        Return early if we're using a tiled drawing area.
+
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        If we're using a tiled drawing area, make the WKView layer backed and set its layer
+        to a simple CALayer with a white background and set the view's content redraw policy
+        to never to avoid ever calling drawRect.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didUpdateGeometry):
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Add a new didUpdateGeometry message.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy):
+        Initialize m_isWaitingForDidUpdateGeometry.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sizeDidChange):
+        Send an UpdateGeometry message to the web process and wait for a reply.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode):
+        Tell the web page proxy to enter accelerated compositing mode.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::exitAcceleratedCompositingMode):
+        Assert that this function is never called.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        Send another UpdateGeometry message if needed.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        Add helper function to actually send the UpdateGeometry message.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateGeometry):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add UpdateGeometry message.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Create a red root layer and a remote layer client that hosts it.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Resize the root layer and tell the UI process that we've updated the geometry.
+
 2011-11-08  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10262225> Allow RenderView to have columns

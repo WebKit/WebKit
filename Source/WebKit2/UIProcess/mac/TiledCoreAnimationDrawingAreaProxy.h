@@ -42,6 +42,19 @@ private:
     // DrawingAreaProxy
     virtual void deviceScaleFactorDidChange() OVERRIDE;
     virtual void sizeDidChange() OVERRIDE;
+    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
+    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;
+
+    // Message handlers.
+    virtual void didUpdateGeometry() OVERRIDE;
+
+    void sendUpdateGeometry();
+
+    // Whether we're waiting for a DidUpdateGeometry message from the web process.
+    bool m_isWaitingForDidUpdateGeometry;
+
+    // The last size we sent to the web process.
+    WebCore::IntSize m_lastSentSize;
 };
 
 } // namespace WebKit

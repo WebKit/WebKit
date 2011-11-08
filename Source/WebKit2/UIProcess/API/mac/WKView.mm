@@ -122,6 +122,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
 - (void)_disableComplexTextInputIfNecessary;
+- (BOOL)_shouldUseTiledDrawingArea;
 @end
 
 @interface WKViewData : NSObject {
@@ -1910,6 +1911,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     _data->_page->endPrinting();
+
+    if ([self _shouldUseTiledDrawingArea]) {
+        // Nothing to do here.
+        return;
+    }
+
     CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
 
     if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
@@ -2053,14 +2060,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_resizeScrollOffset = NSZeroSize;
 }
 
-@end
-
-@implementation WKView (Internal)
-
 - (BOOL)_shouldUseTiledDrawingArea
 {
     return NO;
 }
+
+@end
+
+@implementation WKView (Internal)
 
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
@@ -2628,6 +2635,15 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_ignoringMouseDraggedEvents = NO;
 
     [self _registerDraggedTypes];
+
+    if ([self _shouldUseTiledDrawingArea]) {
+        CALayer *layer = [CALayer layer];
+        layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+        self.layer = layer;
+
+        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
+        self.wantsLayer = YES;
+    }
 
     WebContext::statistics().wkViewCount++;
 

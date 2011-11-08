@@ -23,8 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TiledCoreAnimationDrawingArea.h"
+#import "config.h"
+#import "TiledCoreAnimationDrawingArea.h"
+
+#import "DrawingAreaProxyMessages.h"
+#import "LayerTreeContext.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+#import <QuartzCore/QuartzCore.h>
+#import <WebKitSystemInterface.h>
+
+@interface CATransaction (Details)
++ (void)synchronize;
+@end
 
 using namespace WebCore;
 
@@ -38,6 +49,21 @@ PassOwnPtr<TiledCoreAnimationDrawingArea> TiledCoreAnimationDrawingArea::create(
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
 {
+    m_rootLayer = [CALayer layer];
+
+    m_rootLayer.get().frame = m_webPage->bounds();
+    m_rootLayer.get().opaque = YES;
+
+    // Give the root layer a background color so it's visible on screen.
+    m_rootLayer.get().backgroundColor = CGColorCreateGenericRGB(1, 0, 0, 1);
+
+    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
+    m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
+    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer.get());
+    
+    LayerTreeContext layerTreeContext;
+    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
@@ -62,6 +88,19 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer*)
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
 {
     // FIXME: Implement
+}
+
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
+{
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [m_rootLayer.get() setFrame:CGRectMake(0, 0, viewSize.width(), viewSize.height())];
+    [CATransaction commit];
+    
+    [CATransaction flush];
+    [CATransaction synchronize];
+
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
 } // namespace WebKit

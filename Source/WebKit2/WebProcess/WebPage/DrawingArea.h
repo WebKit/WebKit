@@ -102,6 +102,11 @@ private:
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
 
+#if PLATFORM(MAC)
+    // Used by TiledCoreAnimationDrawingArea.
+    virtual void updateGeometry(const WebCore::IntSize& viewSize) { }
+#endif
+
 #if USE(TILED_BACKING_STORE)
     virtual void setSize(const WebCore::IntSize& viewSize) { }
     virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float) { }

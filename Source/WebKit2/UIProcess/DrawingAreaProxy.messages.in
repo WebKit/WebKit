@@ -27,6 +27,12 @@ messages -> DrawingAreaProxy {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
+
+#if PLATFORM(MAC)
+    // Used by TiledCoreAnimationDrawingAreaProxy.
+    DidUpdateGeometry()
+#endif
+
 #if USE(TILED_BACKING_STORE)
     CreateTile(int tileID, WebKit::UpdateInfo updateInfo)
     UpdateTile(int tileID, WebKit::UpdateInfo updateInfo)
