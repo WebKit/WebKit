@@ -1,3 +1,18 @@
+2011-11-08  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Document.importNode's 'deep' argument should default to true.
+        https://bugs.webkit.org/show_bug.cgi?id=71190
+
+        Reviewed by Adam Barth.
+
+        As new specification says deep argument of importNode should be default to true.
+
+        Test: fast/dom/document-importNode-arguments.html
+
+        * dom/Document.h: Added supportive method.
+        (WebCore::Document::importNode):
+        * dom/Document.idl: Modified deep argument as optional.
+
 2011-11-08  Adam Klein  <adamk@chromium.org>
 
         WebKitMutationObserver.observe should raise a DOMException if passed invalid arguments

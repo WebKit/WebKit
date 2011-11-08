@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This page tests calling document.importNode.</p>
+<div id='console'></div>
+<script>
+var imported;
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var d = document.createElement("div");
+d.innerHTML = "<span>hello </span><span>world</span>";
+
+imported = document.importNode(d);
+shouldBe('imported.childNodes.length','2');
+shouldBeTrue("imported.textContent == 'hello world'");
+
+imported = document.importNode(d, true);
+shouldBe('imported.childNodes.length','2');
+shouldBeTrue("imported.textContent == 'hello world'");
+
+imported = document.importNode(d, false);
+shouldBe('imported.childNodes.length','0');
+shouldBeTrue("imported.textContent == ''");
+
+</script>
+</body>
+</html>

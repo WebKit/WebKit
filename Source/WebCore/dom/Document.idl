@@ -50,7 +50,7 @@ module core {
         // Introduced in DOM Level 2:
 
         [OldStyleObjC, ReturnsNew] Node importNode(in [Optional=CallWithDefaultValue] Node importedNode,
-                                                   in [Optional=CallWithDefaultValue] boolean deep)
+                                                   in [Optional] boolean deep)
             raises (DOMException);
         [OldStyleObjC, ReturnsNew] Element createElementNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
                                                            in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString qualifiedName)
