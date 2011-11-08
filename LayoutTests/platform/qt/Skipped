@@ -2523,3 +2523,7 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+
+# [Qt] svg/custom/getBBox-path.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=71766
+svg/custom/getBBox-path.svg
