@@ -103,14 +103,3 @@ haveQt(5): {
 CONFIG += include_webinspector
 
 *sh4*: CONFIG += disable_uitools
-
-# Help keep the build tree clean
-MOC_DIR = moc
-RCC_DIR = rcc
-
-!CONFIG(release, debug|release) {
-    OBJECTS_DIR = obj/debug
-} else { # Release
-    OBJECTS_DIR = obj/release
-    DEFINES *= NDEBUG
-}

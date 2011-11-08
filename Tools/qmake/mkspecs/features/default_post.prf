@@ -19,9 +19,18 @@ for(library, libraries) {
     }
 }
 
+# Help keep the build tree clean
+MOC_DIR = moc
+RCC_DIR = rcc
+
+!CONFIG(release, debug|release): OBJECTS_DIR = obj/debug
+else: OBJECTS_DIR = obj/release
+
 # General default build tweaks
 DEFINES += \
     BUILDING_QT__=1
+
+CONFIG(release, debug|release): DEFINES *= NDEBUG
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD

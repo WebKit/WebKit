@@ -1,5 +1,21 @@
 2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Don't set OBJECTS_DIR and DEFINES in default_pre
+
+        If a pro file needs to access the OBJECTS_DIR it should use the
+        form ${QMAKE_VAR_OBJECTS_DIR} to ensure the value is evaluated
+        after defaults_post has been processed.
+
+        Setting DEFINES in defaults_pre is also bad, as any DEFINES=foo on
+        the command line will override whatever we set in defaults_pre.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+
+2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Prevent duplicated sources in SOURCES/OBJECTIVE_SOURCES
 
         Reviewed by Simon Hausmann.

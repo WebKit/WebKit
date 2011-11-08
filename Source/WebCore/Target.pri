@@ -3787,7 +3787,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
             ANGLE_CFLAGS += -Wno-reorder
 
             angle_cxx.commands = $$QMAKE_CXX -c $(CXXFLAGS) $$ANGLE_CFLAGS $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
-            angle_cxx.output  = $$OBJECTS_DIR/${QMAKE_FILE_BASE}$$QMAKE_EXT_OBJ
+            angle_cxx.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$$QMAKE_EXT_OBJ
             anglc_cxx.dependency_type = TYPE_C
             angle_cxx.depends = $$ANGLE_HEADERS
             angle_cxx.input = ANGLE_SOURCES
