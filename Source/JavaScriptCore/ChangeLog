@@ -1,3 +1,19 @@
+2011-11-07  Ariya Hidayat  <ariya@sencha.com>
+
+        "use strict" can not contain escape sequences or line continuation
+        https://bugs.webkit.org/show_bug.cgi?id=71532
+
+        Reviewed by Darin Adler.
+
+        Store the actual literal length (before the escapes and line
+        continuation are encoded) while parsing the directive and use it
+        for the directive comparison.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::parseSourceElements):
+        (JSC::Parser::parseStatement):
+        * parser/Parser.h:
+
 2011-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG operationCreateThis slow path may get the wrong callee in case of inlining

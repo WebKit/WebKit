@@ -20,12 +20,23 @@ function shouldBeSyntaxError(str) {
     shouldThrow(str);
     shouldThrow("(function(){" + str + "})");
 }
+function testLineContinuation() {
+    "use stric\
+t";
+    return this;
+}
+function testEscapeSequence() {
+    "use\u0020strict";
+    return this;
+}
 
 shouldBe("testThis.call(null)", "null");
 shouldBe("testThis.call(1)", "1");
 shouldBe("testThis.call(true)", "true");
 shouldBe("testThis.call(false)", "false");
 shouldBe("testThis.call(undefined)", "undefined");
+shouldBeFalse("testLineContinuation.call(undefined) === undefined");
+shouldBeFalse("testEscapeSequence.call(undefined) === undefined");
 shouldBe("testThis.call('a string')", "'a string'");
 shouldBe("testThisDotAccess.call('a string')", "'a string'.length");
 shouldThrow("testThisDotAccess.call(null)");

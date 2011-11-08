@@ -8,6 +8,8 @@ PASS testThis.call(1) is 1
 PASS testThis.call(true) is true
 PASS testThis.call(false) is false
 PASS testThis.call(undefined) is undefined
+PASS testLineContinuation.call(undefined) === undefined is false
+PASS testEscapeSequence.call(undefined) === undefined is false
 PASS testThis.call('a string') is 'a string'
 PASS testThisDotAccess.call('a string') is 'a string'.length
 PASS testThisDotAccess.call(null) threw exception TypeError: 'null' is not an object (evaluating 'this.length').

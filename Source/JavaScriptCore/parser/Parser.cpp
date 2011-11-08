@@ -129,17 +129,20 @@ bool Parser::allowAutomaticSemicolon()
 
 template <Parser::SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser::parseSourceElements(TreeBuilder& context)
 {
+    const unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
     TreeSourceElements sourceElements = context.createSourceElements();
     bool seenNonDirective = false;
     const Identifier* directive = 0;
+    unsigned directiveLiteralLength = 0;
     unsigned startOffset = m_token.m_info.startOffset;
     unsigned oldLastLineNumber = m_lexer->lastLineNumber();
     unsigned oldLineNumber = m_lexer->lineNumber();
     bool hasSetStrict = false;
-    while (TreeStatement statement = parseStatement(context, directive)) {
+    while (TreeStatement statement = parseStatement(context, directive, &directiveLiteralLength)) {
         if (mode == CheckForStrictMode && !seenNonDirective) {
             if (directive) {
-                if (!hasSetStrict && m_globalData->propertyNames->useStrictIdentifier == *directive) {
+                // "use strict" must be the exact literal without escape sequences or line continuation.
+                if (!hasSetStrict && directiveLiteralLength == lengthOfUseStrictLiteral && m_globalData->propertyNames->useStrictIdentifier == *directive) {
                     setStrictMode();
                     hasSetStrict = true;
                     failIfFalse(isValidStrictMode());
@@ -648,7 +651,7 @@ template <class TreeBuilder> TreeStatement Parser::parseBlockStatement(TreeBuild
     return context.createBlockStatement(m_lexer->lastLineNumber(), subtree, start, m_lastLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseStatement(TreeBuilder& context, const Identifier*& directive)
+template <class TreeBuilder> TreeStatement Parser::parseStatement(TreeBuilder& context, const Identifier*& directive, unsigned* directiveLiteralLength)
 {
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
@@ -702,6 +705,8 @@ template <class TreeBuilder> TreeStatement Parser::parseStatement(TreeBuilder& c
         return parseExpressionOrLabelStatement(context);
     case STRING:
         directive = m_token.m_data.ident;
+        if (directiveLiteralLength)
+            *directiveLiteralLength = m_token.m_info.endOffset - m_token.m_info.startOffset;
         nonTrivialExpressionCount = m_nonTrivialExpressionCount;
     default:
         TreeStatement exprStatement = parseExpressionStatement(context);

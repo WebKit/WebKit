@@ -856,7 +856,7 @@ private:
     
     enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
     template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&);
-    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive);
+    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseVarDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseConstDeclaration(TreeBuilder&);
