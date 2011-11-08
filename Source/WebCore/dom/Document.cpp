@@ -2601,7 +2601,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
                 frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
 
                 DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to display document because display forbidden by X-Frame-Options.\n"));
-                frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+                addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
             }
         }
     } else if (equalIgnoringCase(equiv, "x-webkit-csp"))

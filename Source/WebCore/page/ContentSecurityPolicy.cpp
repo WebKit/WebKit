@@ -518,7 +518,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage) const
 {
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
-    m_scriptExecutionContext->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 
     if (m_reportURLs.isEmpty())
         return;
@@ -556,7 +556,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
 void ContentSecurityPolicy::logUnrecognizedDirective(const String& name) const
 {
     String message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
-    m_scriptExecutionContext->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 
 bool ContentSecurityPolicy::checkEval(CSPDirective* directive) const

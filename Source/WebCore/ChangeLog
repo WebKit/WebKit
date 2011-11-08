@@ -1,5 +1,42 @@
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
+        addMessage's last few arguments should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=70946
+
+        Reviewed by Darin Adler.
+
+        As requested by Darin Adler.  I wanted to call this method addMessage,
+        but the compiler was unhappy locating the overload on
+        ScriptExecutionContext when Document had an override too.  Changing the
+        name to addConsoleMessage made all the code happier.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addMessage):
+        * dom/ScriptExecutionContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterToken):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::logUnrecognizedDirective):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createLowPass2Filter):
+        (WebCore::AudioContext::createHighPass2Filter):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::reportUnsafeUsage):
+
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
         WebWorkers fail with document.domain set when accessing from subdomain
         https://bugs.webkit.org/show_bug.cgi?id=67978
 

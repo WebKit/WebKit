@@ -248,7 +248,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         setImage(0);
 
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin image load denied by Cross-Origin Resource Sharing policy."));
-        m_element->document()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String(), 0);
+        m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
 
         ASSERT(m_firedLoad);
         return;

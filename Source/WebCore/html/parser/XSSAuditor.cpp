@@ -284,8 +284,7 @@ void XSSAuditor::filterToken(HTMLToken& token)
     if (didBlockScript) {
         // FIXME: Consider using a more helpful console message.
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        // FIXME: We should add the real line number to the console.
-        m_parser->document()->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+        m_parser->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
 
         bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
         if (didBlockEntirePage)

@@ -385,7 +385,7 @@ PassRefPtr<LowPass2FilterNode> AudioContext::createLowPass2Filter()
     ASSERT(isMainThread());
     lazyInitialize();
     if (document())
-        document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createLowPass2Filter() is deprecated.  Use createBiquadFilter() instead.", 1, String(), 0);
+        document()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createLowPass2Filter() is deprecated.  Use createBiquadFilter() instead.");
         
     return LowPass2FilterNode::create(this, m_destinationNode->sampleRate());
 }
@@ -395,7 +395,7 @@ PassRefPtr<HighPass2FilterNode> AudioContext::createHighPass2Filter()
     ASSERT(isMainThread());
     lazyInitialize();
     if (document())
-        document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createHighPass2Filter() is deprecated.  Use createBiquadFilter() instead.", 1, String(), 0);
+        document()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createHighPass2Filter() is deprecated.  Use createBiquadFilter() instead.");
 
     return HighPass2FilterNode::create(this, m_destinationNode->sampleRate());
 }

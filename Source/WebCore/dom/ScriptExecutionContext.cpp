@@ -83,8 +83,9 @@ public:
     RefPtr<ScriptCallStack> m_callStack;
 };
 
-void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext *context)
+void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext* context)
 {
+    // FIXME: We should call addConsoleMessage instead, but that uses 1 as the fifth parameter instead of 0.
     context->addMessage(m_source, m_type, m_level, m_message, 0, String(), 0);
 }
 
@@ -325,6 +326,11 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
         logExceptionToConsole(e->m_errorMessage, e->m_lineNumber, e->m_sourceURL, e->m_callStack);
     }
     m_pendingExceptions.clear();
+}
+
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message)
+{
+    addMessage(source, type, level, message, 1, String(), 0);
 }
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL)
