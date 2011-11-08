@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-static const int kScaleAnimationDurationMillis = 400;
+static const int kScaleAnimationDurationMillis = 250;
 
 // Updating content properties cause the notify signals to be sent by the content item itself.
 // We manage these differently, as we do not want to act on them when we are the ones changing the content.
