@@ -2789,6 +2789,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/Credential.cpp \
 	Source/WebCore/platform/network/Credential.h \
+	Source/WebCore/platform/network/CredentialStorage.cpp \
 	Source/WebCore/platform/network/CredentialStorage.h \
 	Source/WebCore/platform/network/DNS.h \
 	Source/WebCore/platform/network/FormDataBuilder.cpp \
