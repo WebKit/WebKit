@@ -46,7 +46,7 @@ struct CSSGradientColorStop {
 
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    PassRefPtr<Image> image(RenderObject*, const IntSize&);
 
     void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
@@ -65,6 +65,9 @@ public:
     bool isRepeating() const { return m_repeating; }
 
     bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
+
+    bool isFixedSize() const { return false; }
+    IntSize fixedSize(const RenderObject*) const { return IntSize(); }
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, bool deprecatedType = false)

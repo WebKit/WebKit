@@ -1,3 +1,25 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        CSSImageGeneratorValue: Devirtualize image(), isFixedSize() and fixedSize().
+        <http://webkit.org/b/71824>
+
+        Reviewed by Darin Adler.
+
+        Redirect the calls to the appropriate subclass in CSSImageGeneratorValue.cpp.
+
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::isFixedSize):
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::isFixedSize):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::isFixedSize):
+        (WebCore::CSSGradientValue::fixedSize):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::isFixedSize):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        * css/CSSImageGeneratorValue.h:
+
 2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extension API][Chromium] injected extension API needs to return an object

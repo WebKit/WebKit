@@ -40,9 +40,9 @@ public:
 
     String customCssText() const;
 
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&);
-    virtual bool isFixedSize() const { return true; }
-    virtual IntSize fixedSize(const RenderObject*);
+    PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    bool isFixedSize() const { return true; }
+    IntSize fixedSize(const RenderObject*);
 
     void setName(const String& name) { m_name = name; }
 

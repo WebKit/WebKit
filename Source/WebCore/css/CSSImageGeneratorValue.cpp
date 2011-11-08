@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CSSImageGeneratorValue.h"
 
+#include "CSSCanvasValue.h"
+#include "CSSCrossfadeValue.h"
+#include "CSSGradientValue.h"
 #include "Image.h"
 #include "RenderObject.h"
 #include "StyleGeneratedImage.h"
@@ -114,6 +117,57 @@ StyleGeneratedImage* CSSImageGeneratorValue::generatedImage()
         m_image = StyleGeneratedImage::create(this, isFixedSize());
     }
     return m_image.get();
+}
+
+PassRefPtr<Image> CSSImageGeneratorValue::image(RenderObject* renderer, const IntSize& size)
+{
+    switch (classType()) {
+    case CanvasClass:
+        return static_cast<CSSCanvasValue*>(this)->image(renderer, size);
+    case CrossfadeClass:
+        return static_cast<CSSCrossfadeValue*>(this)->image(renderer, size);
+    case LinearGradientClass:
+        return static_cast<CSSLinearGradientValue*>(this)->image(renderer, size);
+    case RadialGradientClass:
+        return static_cast<CSSRadialGradientValue*>(this)->image(renderer, size);
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return 0;
+}
+
+bool CSSImageGeneratorValue::isFixedSize() const
+{
+    switch (classType()) {
+    case CanvasClass:
+        return static_cast<const CSSCanvasValue*>(this)->isFixedSize();
+    case CrossfadeClass:
+        return static_cast<const CSSCrossfadeValue*>(this)->isFixedSize();
+    case LinearGradientClass:
+        return static_cast<const CSSLinearGradientValue*>(this)->isFixedSize();
+    case RadialGradientClass:
+        return static_cast<const CSSRadialGradientValue*>(this)->isFixedSize();
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
+}
+
+IntSize CSSImageGeneratorValue::fixedSize(const RenderObject* renderer)
+{
+    switch (classType()) {
+    case CanvasClass:
+        return static_cast<CSSCanvasValue*>(this)->fixedSize(renderer);
+    case CrossfadeClass:
+        return static_cast<CSSCrossfadeValue*>(this)->fixedSize(renderer);
+    case LinearGradientClass:
+        return static_cast<CSSLinearGradientValue*>(this)->fixedSize(renderer);
+    case RadialGradientClass:
+        return static_cast<CSSRadialGradientValue*>(this)->fixedSize(renderer);
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return IntSize();
 }
 
 } // namespace WebCore

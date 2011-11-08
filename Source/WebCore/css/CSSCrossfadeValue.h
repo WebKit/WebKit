@@ -42,9 +42,9 @@ public:
 
     String customCssText() const;
 
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) OVERRIDE;
-    virtual bool isFixedSize() const OVERRIDE { return false; }
-    virtual IntSize fixedSize(const RenderObject*) OVERRIDE;
+    PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    bool isFixedSize() const { return false; }
+    IntSize fixedSize(const RenderObject*);
 
     void setPercentage(PassRefPtr<CSSPrimitiveValue> percentage) { m_percentage = percentage; }
 

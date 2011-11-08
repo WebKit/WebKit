@@ -56,12 +56,12 @@ public:
 
     void addClient(RenderObject*, const IntSize&);
     void removeClient(RenderObject*);
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) = 0;
+    PassRefPtr<Image> image(RenderObject*, const IntSize&);
 
     StyleGeneratedImage* generatedImage();
 
-    virtual bool isFixedSize() const { return false; }
-    virtual IntSize fixedSize(const RenderObject*) { return IntSize(); }
+    bool isFixedSize() const;
+    IntSize fixedSize(const RenderObject*);
 
 protected:
     CSSImageGeneratorValue(ClassType);
