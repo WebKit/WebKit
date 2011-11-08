@@ -192,6 +192,10 @@ contains(TEMPLATE, subdirs) {
     unset(OBJECTS_DIR)
 }
 
+# Remove duplicated sources
+SOURCES = $$unique(SOURCES)
+OBJECTIVE_SOURCES = $$unique(OBJECTIVE_SOURCES)
+
 # Someone might remove a header from the tree without touching
 # the corresponding project file, for example if the project
 # file never had the header in HEADERS. In that case we don't

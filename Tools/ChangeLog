@@ -1,3 +1,11 @@
+2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Prevent duplicated sources in SOURCES/OBJECTIVE_SOURCES
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2011-11-07  Zeno Albisser  <zeno.albisser@nokia.com>
 
         [Qt][WK2] MiniBrowser should use urlFromUserInput()
