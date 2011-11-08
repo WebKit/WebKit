@@ -1,3 +1,15 @@
+2011-11-07  Chris Fleizach  <cfleizach@apple.com>
+
+        REGRESSION(r99025-r99037): platform/mac/accessibility/select-element-selection-with-optgroups.html is asserting
+        https://bugs.webkit.org/show_bug.cgi?id=71421
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove an assert that was added by r99035. It was added based on a comment in the code, but not tested.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectOption):
+
 2011-11-07  Emil A Eklund  <eae@chromium.org>
 
         Revert platform and scrolling to ints

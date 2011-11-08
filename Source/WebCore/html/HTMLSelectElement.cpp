@@ -788,9 +788,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
 
     scrollToSelection();
 
-    if (!usesMenuList())
-        ASSERT(!(flags & DispatchChangeEvent));
-    else {
+    if (usesMenuList()) {
         m_isProcessingUserDrivenChange = flags & UserDriven;
         if (flags & DispatchChangeEvent)
             dispatchChangeEventForMenuList();
