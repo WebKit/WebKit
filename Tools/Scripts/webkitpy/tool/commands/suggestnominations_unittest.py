@@ -70,7 +70,7 @@ Source/WebKit/chromium:
 * WebKit.gyp:"""
 
     def test_basic(self):
-        expected_stdout = "COMMITTER AND REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
+        expected_stdout = "REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
         suggest_nominations = SuggestNominations()
         suggest_nominations._init_options(options=MockOptions(reviewer_minimum=80, committer_minimum=10, max_commit_age=9, show_commits=False, verbose=False))
         suggest_nominations._recent_commit_messages = lambda: [self.mock_non_committer_commit_message for _ in range(88)]

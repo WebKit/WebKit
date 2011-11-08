@@ -1,3 +1,10 @@
+2011-11-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed webkitpy test fix after r99512.
+
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py:
+        Xianzhu Wang is now a committer, so we can't nominate him as a committer anymore.
+
 2011-11-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Added myself as a committer.
