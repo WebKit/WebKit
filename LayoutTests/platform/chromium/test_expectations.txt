@@ -3929,3 +3929,13 @@ BUGWK71793 BUGCR83426 : svg/as-border-image/svg-as-border-image.html = IMAGE
 BUGWK71793 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
 BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-1.html = IMAGE
 BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-3.html = IMAGE
+
+BUGWK71830 : svg/zoom/page/zoom-svg-as-relative-image.html = IMAGE+TEXT
+BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
+
+BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
+BUGRICOW : fast/js/eval-cross-window.html = TEXT
+BUGRICOW : fast/js/regexp-caching.html = TEXT
+BUGRICOW : fast/js/toString-overrides.html = TEXT
+BUGRICOW : fast/js/toString-recursion.html = TEXT
+BUGRICOW : http/tests/security/xss-eval.html = TEXT
