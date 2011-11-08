@@ -244,7 +244,8 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
 #if PLATFORM(MAC) || PLATFORM(WIN)
 String DocumentWriter::deprecatedFrameEncoding() const
 {
-    if (m_frame->document()->url().isEmpty())
+    Document* document = m_frame->document();
+    if (!document || document->url().isEmpty())
         return m_encoding;
 
     if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
