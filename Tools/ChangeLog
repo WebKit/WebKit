@@ -1,3 +1,9 @@
+2011-11-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial fix after build system refactoring.
+
+        * Scripts/run-qtwebkit-tests: Fix path of QtWebProcess for QML tests.
+
 2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't set OBJECTS_DIR and DEFINES in default_pre
