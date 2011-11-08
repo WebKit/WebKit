@@ -228,7 +228,7 @@ WebInspector.TextPrompt.prototype = {
             break;
         case "Right":
         case "End":
-            if (this.isSuggestBoxVisible())
+            if (this.isSuggestBoxVisible() && this.isCaretAtEndOfPrompt())
                 handled = this._suggestBox.tabKeyPressed(event);
             else {
                 handled = this.acceptAutoComplete();
@@ -359,7 +359,7 @@ WebInspector.TextPrompt.prototype = {
             shouldExit = true;
         if (!auto && !isEmptyInput && !selectionRange.commonAncestorContainer.isDescendant(this._element))
             shouldExit = true;
-        if (auto && !this.isCaretAtEndOfPrompt() && !force)
+        if (auto && !this.isCaretAtEndOfPrompt() && !this._suggestBox && !force)
             shouldExit = true;
         if (shouldExit) {
             if (this.isSuggestBoxVisible())
