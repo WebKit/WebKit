@@ -1,3 +1,12 @@
+2011-11-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch back to 1+1 value profiling buckets, since it didn't help on arewefastyet,
+        but it appears to help on other benchmarks.
+
+        Rubber stamped by Oliver Hunt.
+
+        * bytecode/ValueProfile.h:
+
 2011-11-07  Ariya Hidayat  <ariya@sencha.com>
 
         "use strict" can not contain escape sequences or line continuation
