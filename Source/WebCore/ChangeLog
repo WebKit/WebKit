@@ -1,3 +1,25 @@
+2011-11-08  Adam Klein  <adamk@chromium.org>
+
+        WebKitMutationObserver.observe should raise a DOMException if passed invalid arguments
+        https://bugs.webkit.org/show_bug.cgi?id=71596
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds two cases where WebKitMutationObserver.observe throws an exception:
+          - When passed a null Node*.
+          - When passed options that don't make sense, e.g.,
+            'attributeOldValue' but not 'attributes'.
+
+        * bindings/js/JSWebKitMutationObserverCustom.cpp:
+        (WebCore::JSWebKitMutationObserver::observe):
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::observeCallback):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::validateOptions):
+        (WebCore::WebKitMutationObserver::observe):
+        * dom/WebKitMutationObserver.h:
+        * dom/WebKitMutationObserver.idl:
+
 2011-11-08  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: implement compound (array) key support

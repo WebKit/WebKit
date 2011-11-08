@@ -9,6 +9,11 @@ PASS observer.observe(undefined) threw exception TypeError: Not enough arguments
 PASS observer.observe(document.body) threw exception TypeError: Not enough arguments.
 PASS observer.observe(document.body, null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS observer.observe(document.body, undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS observer.observe(null, {attributes: true}) threw exception Error: NOT_FOUND_ERR: DOM Exception 8.
+PASS observer.observe(undefined, {attributes: true}) threw exception Error: NOT_FOUND_ERR: DOM Exception 8.
+PASS observer.observe(document.body, {subtree: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -93,7 +93,10 @@ JSValue JSWebKitMutationObserver::observe(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    impl()->observe(target, options);
+    ExceptionCode ec = 0;
+    impl()->observe(target, options, ec);
+    if (ec)
+        setDOMException(exec, ec);
     return jsUndefined();
 }
 

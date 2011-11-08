@@ -34,7 +34,8 @@ module core {
         CanBeConstructed,
         CustomConstructor
     ] WebKitMutationObserver {
-        [Custom] void observe(in Node target, in MutationObserverOptions options);
+        [Custom] void observe(in Node target, in MutationObserverOptions options)
+            raises(DOMException);
         void disconnect();
     };
 }

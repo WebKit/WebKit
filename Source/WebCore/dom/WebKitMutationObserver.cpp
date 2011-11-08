@@ -35,6 +35,7 @@
 #include "WebKitMutationObserver.h"
 
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
@@ -58,8 +59,28 @@ WebKitMutationObserver::~WebKitMutationObserver()
     ASSERT(m_registrations.isEmpty());
 }
 
-void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options)
+bool WebKitMutationObserver::validateOptions(MutationObserverOptions options)
 {
+    return (options & (Attributes | CharacterData | ChildList))
+        && ((options & Attributes) || !(options & AttributeOldValue))
+        // FIXME: Uncomment the line below once attributeFilter is supported.
+        // && ((options & Attributes) || !(options & AttributeFilter))
+        && ((options & CharacterData) || !(options & CharacterDataOldValue));
+}
+
+void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = NOT_FOUND_ERR;
+        return;
+    }
+
+    if (!validateOptions(options)) {
+        // FIXME: Revisit this once the spec specifies the exception type; SYNTAX_ERR may not be appropriate.
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     MutationObserverRegistration* registration = node->registerMutationObserver(this);
     registration->resetObservation(options);
 

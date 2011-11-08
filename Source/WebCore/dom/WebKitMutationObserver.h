@@ -33,6 +33,7 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include "ExceptionCode.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -75,7 +76,7 @@ public:
 
     ~WebKitMutationObserver();
 
-    void observe(Node*, MutationObserverOptions);
+    void observe(Node*, MutationObserverOptions, ExceptionCode&);
     void disconnect();
     void observationStarted(MutationObserverRegistration*);
     void observationEnded(MutationObserverRegistration*);
@@ -84,6 +85,8 @@ public:
 private:
     WebKitMutationObserver(PassRefPtr<MutationCallback>);
     void deliver();
+
+    static bool validateOptions(MutationObserverOptions);
 
     RefPtr<MutationCallback> m_callback;
     Vector<RefPtr<MutationRecord> > m_records;

@@ -103,7 +103,10 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
     if (optionsObject.get("characterDataOldValue", option) && option)
         options |= WebKitMutationObserver::CharacterDataOldValue;
 
-    imp->observe(target, options);
+    ExceptionCode ec = 0;
+    imp->observe(target, options, ec);
+    if (ec)
+        V8Proxy::setDOMException(ec);
     return v8::Handle<v8::Value>();
 }
 

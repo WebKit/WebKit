@@ -18,6 +18,13 @@ function runTest() {
     shouldThrow('observer.observe(document.body)');
     shouldThrow('observer.observe(document.body, null)');
     shouldThrow('observer.observe(document.body, undefined)');
+    shouldThrow('observer.observe(null, {attributes: true})');
+    shouldThrow('observer.observe(undefined, {attributes: true})');
+    shouldThrow('observer.observe(document.body, {subtree: true})');
+    shouldThrow('observer.observe(document.body, {childList: true, attributeOldValue: true})');
+    shouldThrow('observer.observe(document.body, {attributes: true, characterDataOldValue: true})');
+    // FIXME: Uncomment the below when attributeFilter is supported.
+    //shouldThrow('observer.observe(document.body, {characterData: true, attributeFilter: ["id"]})');
 }
 
 description('Test that WebKitMutationObserver.observe throws exceptions appropriately');
