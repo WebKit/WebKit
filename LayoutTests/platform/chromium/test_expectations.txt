@@ -3870,7 +3870,7 @@ BUGENNE GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
 BUGENNE GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
 BUGENNE GPU : compositing/scaling/tiled-layer-recursion.html = FAIL
 // Uncomment the above results for this when removing.
-BUGENNE GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = FAIL TIMEOUT
+BUGENNE GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = FAIL TIMEOUT
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
 // win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
