@@ -119,6 +119,8 @@ WebInspector.openResource = function(url, external) {}
 
 WebInspector.openRequestInNetworkPanel = function(request) {}
 
+WebInspector.evaluateInConsole = function(expression) {}
+
 var InjectedFakeWorker = function() {}
 
 WebInspector.queryParamsObject = {}

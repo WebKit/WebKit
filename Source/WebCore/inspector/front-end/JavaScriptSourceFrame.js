@@ -148,6 +148,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (selection.type !== "Range" || selection.isCollapsed)
             return;
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add to watch" : "Add to Watch"), this._delegate.addToWatch.bind(this._delegate, selection.toString()));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate in console" : "Evaluate in Console"), WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
     },
 
     afterTextChanged: function(oldRange, newRange)

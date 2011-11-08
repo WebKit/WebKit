@@ -1,3 +1,26 @@
+2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add "Evaluate in console" as a shortcut and context menu items to scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=71817
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.evaluate):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._evaluateSelectionInConsole):
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsSection.prototype.addRelatedKeys):
+        (WebInspector.ShortcutsSection.prototype.addAlternateKeys):
+        * inspector/front-end/externs.js:
+        (WebInspector.evaluateInConsole):
+        * inspector/front-end/inspector.js:
+        (WebInspector.evaluateInConsole):
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         CSSValue: Devirtualize cssText().

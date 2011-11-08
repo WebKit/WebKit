@@ -133,6 +133,9 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString("Scripts Panel"));
     this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));
+    var evaluateInConsoleShortcut = WebInspector.KeyboardShortcut.makeDescriptor("e", WebInspector.KeyboardShortcut.Modifiers.Shift | WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+    helpSection.addKey(evaluateInConsoleShortcut.name, WebInspector.UIString("Evaluate selection in console"));
+    this.registerShortcut(evaluateInConsoleShortcut.key, this._evaluateSelectionInConsole.bind(this));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -998,6 +1001,13 @@ WebInspector.ScriptsPanel.prototype = {
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
             WebInspector.inspectorView.element.addStyleClass("breakpoints-deactivated");
         }
+    },
+
+    _evaluateSelectionInConsole: function()
+    {
+        var selection = window.getSelection();
+        if (selection.type === "Range" && !selection.isCollapsed)
+            WebInspector.evaluateInConsole(selection.toString());
     },
 
     elementsToRestoreScrollPositionsFor: function()

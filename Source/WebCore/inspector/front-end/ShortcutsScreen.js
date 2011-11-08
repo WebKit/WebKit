@@ -120,12 +120,12 @@ WebInspector.ShortcutsSection.prototype = {
 
     addRelatedKeys: function(keys, description)
     {
-        this.addLine(this._renderSequence(keys,"/"), description);
+        this.addLine(this._renderSequence(keys, "/"), description);
     },
 
     addAlternateKeys: function(keys, description)
     {
-        this.addLine(this._renderSequence(keys,WebInspector.UIString("or")), description);
+        this.addLine(this._renderSequence(keys, WebInspector.UIString("or")), description);
     },
 
     addLine: function(htmlKey, description)

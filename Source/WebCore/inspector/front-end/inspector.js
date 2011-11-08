@@ -842,6 +842,12 @@ WebInspector.showProfileForURL = function(url)
     WebInspector.panels.profiles.showProfileForURL(url);
 }
 
+WebInspector.evaluateInConsole = function(expression)
+{
+    this.showConsole();
+    this.consoleView.evaluateUsingTextPrompt(expression);
+}
+
 WebInspector.addMainEventListeners = function(doc)
 {
     doc.addEventListener("keydown", this.documentKeyDown.bind(this), false);

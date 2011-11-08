@@ -608,6 +608,11 @@ WebInspector.ConsoleView.prototype = {
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), returnByValue, evalCallback);
     },
 
+    evaluateUsingTextPrompt: function(expression)
+    {
+        this._appendCommand(expression, this.prompt.text);
+    },
+
     _enterKeyPressed: function(event)
     {
         if (event.altKey || event.ctrlKey || event.shiftKey)
@@ -621,8 +626,12 @@ WebInspector.ConsoleView.prototype = {
         var str = this.prompt.text;
         if (!str.length)
             return;
+        this._appendCommand(str, "");
+    },
 
-        var commandMessage = new WebInspector.ConsoleCommand(str);
+    _appendCommand: function(text, newPromptText)
+    {
+        var commandMessage = new WebInspector.ConsoleCommand(text);
         WebInspector.console.interruptRepeatCount();
         this._appendConsoleMessage(commandMessage);
 
@@ -631,14 +640,14 @@ WebInspector.ConsoleView.prototype = {
             if (!result)
                 return;
 
-            this.prompt.pushHistoryItem(str);
-            this.prompt.text = "";
+            this.prompt.pushHistoryItem(text);
+            this.prompt.text = newPromptText;
 
             WebInspector.settings.consoleHistory.set(this.prompt.historyData.slice(-30));
 
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }
-        this.evalInInspectedWindow(str, "console", true, false, false, printResult.bind(this));
+        this.evalInInspectedWindow(text, "console", true, false, false, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },
