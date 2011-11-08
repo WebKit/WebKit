@@ -26,7 +26,6 @@ CONFIG += qtwebkit
 
 QT += network declarative widgets
 macx: QT += xml
-haveQt(5): QT += widgets
 
 RESOURCES += MiniBrowser.qrc
 
