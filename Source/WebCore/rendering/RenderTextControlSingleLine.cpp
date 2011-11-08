@@ -628,9 +628,9 @@ int RenderTextControlSingleLine::clientInsetRight() const
     return height() / 2;
 }
 
-LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
+int RenderTextControlSingleLine::clientPaddingLeft() const
 {
-    LayoutUnit padding = paddingLeft();
+    int padding = paddingLeft();
 
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0)
@@ -639,9 +639,9 @@ LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
     return padding;
 }
 
-LayoutUnit RenderTextControlSingleLine::clientPaddingRight() const
+int RenderTextControlSingleLine::clientPaddingRight() const
 {
-    LayoutUnit padding = paddingRight();
+    int padding = paddingRight();
 
     HTMLElement* cancelButton = cancelButtonElement();
     if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0)

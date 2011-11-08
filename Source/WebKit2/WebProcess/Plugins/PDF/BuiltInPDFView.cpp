@@ -606,7 +606,7 @@ bool BuiltInPDFView::isActive() const
 
 void BuiltInPDFView::invalidateScrollbarRect(Scrollbar* scrollbar, const LayoutRect& rect)
 {
-    LayoutRect dirtyRect = rect;
+    IntRect dirtyRect = rect;
     dirtyRect.moveBy(scrollbar->location());
     dirtyRect.moveBy(-pluginView()->location());
     controller()->invalidate(dirtyRect);
@@ -652,12 +652,12 @@ IntPoint BuiltInPDFView::maximumScrollPosition() const
     return maximumOffset;
 }
 
-LayoutUnit BuiltInPDFView::visibleHeight() const
+int BuiltInPDFView::visibleHeight() const
 {
     return m_pluginSize.height();
 }
 
-LayoutUnit BuiltInPDFView::visibleWidth() const
+int BuiltInPDFView::visibleWidth() const
 {
     return m_pluginSize.width();
 }

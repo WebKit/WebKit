@@ -502,13 +502,13 @@ int RenderMenuList::clientInsetRight() const
     return 0;
 }
 
-LayoutUnit RenderMenuList::clientPaddingLeft() const
+int RenderMenuList::clientPaddingLeft() const
 {
     return paddingLeft() + m_innerBlock->paddingLeft();
 }
 
 const int endOfLinePadding = 2;
-LayoutUnit RenderMenuList::clientPaddingRight() const
+int RenderMenuList::clientPaddingRight() const
 {
     if (style()->appearance() == MenulistPart || style()->appearance() == MenulistButtonPart) {
         // For these appearance values, the theme applies padding to leave room for the

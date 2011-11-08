@@ -126,8 +126,8 @@ private:
     virtual WebCore::IntPoint scrollPosition() const;
     virtual WebCore::IntPoint minimumScrollPosition() const;
     virtual WebCore::IntPoint maximumScrollPosition() const;
-    virtual WebCore::LayoutUnit visibleHeight() const;
-    virtual WebCore::LayoutUnit visibleWidth() const;
+    virtual int visibleHeight() const;
+    virtual int visibleWidth() const;
     virtual WebCore::IntSize contentsSize() const;
     virtual WebCore::Scrollbar* horizontalScrollbar() const  { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }

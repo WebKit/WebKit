@@ -33,7 +33,6 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#include "LayoutTypes.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
 
@@ -93,11 +92,11 @@ protected:
     friend class ::ScrollAnimatorNoneTest;
 
     struct PerAxisData {
-        PerAxisData(ScrollAnimatorNone* parent, float* currentPos, LayoutUnit visibleLength);
+        PerAxisData(ScrollAnimatorNone* parent, float* currentPos, int visibleLength);
         void reset();
         bool updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters*);
         bool animateScroll(double currentTime);
-        void updateVisibleLength(LayoutUnit visibleLength);
+        void updateVisibleLength(int visibleLength);
 
         static double curveAt(Curve, double t);
         static double attackCurve(Curve, double deltaT, double curveT, double startPos, double attackPos);
@@ -129,7 +128,7 @@ protected:
         double m_releaseTime;
         Curve m_releaseCurve;
 
-        LayoutUnit m_visibleLength;
+        int m_visibleLength;
     };
 
     // While zooming, scale, posX and posY need to stay tightly coupled, so use a separate

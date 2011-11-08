@@ -202,7 +202,7 @@ double ScrollAnimatorNone::PerAxisData::releaseArea(Curve curve, double startT, 
     return endValue - startValue;
 }
 
-ScrollAnimatorNone::PerAxisData::PerAxisData(ScrollAnimatorNone* parent, float* currentPosition, LayoutUnit visibleLength)
+ScrollAnimatorNone::PerAxisData::PerAxisData(ScrollAnimatorNone* parent, float* currentPosition, int visibleLength)
     : m_currentPosition(currentPosition)
     , m_visibleLength(visibleLength)
 {
@@ -366,7 +366,7 @@ bool ScrollAnimatorNone::PerAxisData::animateScroll(double currentTime)
     return true;
 }
 
-void ScrollAnimatorNone::PerAxisData::updateVisibleLength(LayoutUnit visibleLength)
+void ScrollAnimatorNone::PerAxisData::updateVisibleLength(int visibleLength)
 {
     m_visibleLength = visibleLength;
 }

@@ -146,8 +146,8 @@ public:
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     virtual IntRect visibleContentRect(bool includeScrollbars = false) const;
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
-    LayoutUnit visibleWidth() const { return visibleContentRect().width(); }
-    LayoutUnit visibleHeight() const { return visibleContentRect().height(); }
+    int visibleWidth() const { return visibleContentRect().width(); }
+    int visibleHeight() const { return visibleContentRect().height(); }
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
     // content size. Explicitly setting a layout size value will cause webkit to layout the contents using this size instead.
@@ -279,7 +279,7 @@ public:
 
     virtual bool isPointInScrollbarCorner(const IntPoint&);
     virtual bool scrollbarCornerPresent() const;
-    virtual LayoutRect scrollCornerRect() const;
+    virtual IntRect scrollCornerRect() const;
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;

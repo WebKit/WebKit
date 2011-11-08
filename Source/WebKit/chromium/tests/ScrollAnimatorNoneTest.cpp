@@ -64,8 +64,8 @@ public:
     MOCK_METHOD1(setScrollOffsetFromAnimation, void(const IntPoint&));
     MOCK_CONST_METHOD0(enclosingScrollableArea, ScrollableArea*());
 
-    virtual LayoutUnit visibleHeight() const { return 768; }
-    virtual LayoutUnit visibleWidth() const { return 1024; }
+    virtual int visibleHeight() const { return 768; }
+    virtual int visibleWidth() const { return 1024; }
 
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
     bool m_scrollAnimatorEnabled;

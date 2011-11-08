@@ -1,3 +1,32 @@
+2011-11-07  Emil A Eklund  <eae@chromium.org>
+
+        Revert platform and scrolling to ints
+        https://bugs.webkit.org/show_bug.cgi?id=71585
+
+        Reviewed by Eric Seidel.
+
+        Replace all uses of LayoutUnit and related types with ints in platform
+        and scrolling code.
+
+        No new tests.
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/PopupMenuClient.h:
+        * platform/ScrollAnimatorNone.cpp:
+        * platform/ScrollAnimatorNone.h:
+        * platform/ScrollView.cpp:
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-11-07  Kentaro Hara  <haraken@chromium.org>
 
         Fixed wrong test results of fast/js/custom-constructors.html

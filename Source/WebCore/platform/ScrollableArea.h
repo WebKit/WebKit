@@ -26,7 +26,6 @@
 #ifndef ScrollableArea_h
 #define ScrollableArea_h
 
-#include "LayoutTypes.h"
 #include "Scrollbar.h"
 #include <wtf/Vector.h>
 
@@ -92,7 +91,7 @@ public:
     virtual int scrollPosition(Scrollbar*) const = 0;
     void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
-    virtual LayoutRect scrollCornerRect() const = 0;
+    virtual IntRect scrollCornerRect() const = 0;
     void invalidateScrollCorner(const IntRect&);
     virtual void getTickmarks(Vector<IntRect>&) const { }
 
@@ -127,8 +126,8 @@ public:
     virtual IntPoint minimumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntPoint maximumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntRect visibleContentRect(bool /*includeScrollbars*/ = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
-    virtual LayoutUnit visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual LayoutUnit visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
+    virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
+    virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
     virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }

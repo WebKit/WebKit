@@ -259,8 +259,8 @@ public:
     const LayoutPoint& location() const { return m_topLeft; }
     void setLocation(LayoutUnit x, LayoutUnit y) { m_topLeft = LayoutPoint(x, y); }
 
-    const LayoutSize& size() const { return m_layerSize; }
-    void setSize(const LayoutSize& size) { m_layerSize = size; }
+    const IntSize& size() const { return m_layerSize; }
+    void setSize(const IntSize& size) { m_layerSize = size; }
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
@@ -279,9 +279,9 @@ public:
 
     LayoutSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
-    LayoutUnit scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
-    LayoutUnit scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
-    LayoutSize scrollOffset() const { return LayoutSize(scrollXOffset(), scrollYOffset()); }
+    int scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
+    int scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
+    IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
 
     void scrollToOffset(LayoutUnit, LayoutUnit, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToXOffset(LayoutUnit x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
@@ -592,42 +592,42 @@ private:
 
     bool shouldBeNormalFlowOnly() const; 
 
-    LayoutUnit scrollPosition(Scrollbar*) const;
+    int scrollPosition(Scrollbar*) const;
     
     // ScrollableArea interface
-    virtual void invalidateScrollbarRect(Scrollbar*, const LayoutRect&);
-    virtual void invalidateScrollCornerRect(const LayoutRect&);
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual void invalidateScrollCornerRect(const IntRect&);
     virtual bool isActive() const;
     virtual bool isScrollCornerVisible() const;
-    virtual LayoutRect scrollCornerRect() const;
-    virtual LayoutRect convertFromScrollbarToContainingView(const Scrollbar*, const LayoutRect&) const;
-    virtual LayoutRect convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutRect&) const;
-    virtual LayoutPoint convertFromScrollbarToContainingView(const Scrollbar*, const LayoutPoint&) const;
-    virtual LayoutPoint convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutPoint&) const;
-    virtual LayoutUnit scrollSize(ScrollbarOrientation) const;
-    virtual void setScrollOffset(const LayoutPoint&);
-    virtual LayoutPoint scrollPosition() const;
-    virtual LayoutPoint minimumScrollPosition() const;
-    virtual LayoutPoint maximumScrollPosition() const;
+    virtual IntRect scrollCornerRect() const;
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
+    virtual int scrollSize(ScrollbarOrientation) const;
+    virtual void setScrollOffset(const IntPoint&);
+    virtual IntPoint scrollPosition() const;
+    virtual IntPoint minimumScrollPosition() const;
+    virtual IntPoint maximumScrollPosition() const;
     virtual IntRect visibleContentRect(bool includeScrollbars) const;
-    virtual LayoutUnit visibleHeight() const;
-    virtual LayoutUnit visibleWidth() const;
-    virtual LayoutSize contentsSize() const;
-    virtual LayoutSize overhangAmount() const;
-    virtual LayoutPoint currentMousePosition() const;
-    virtual void didCompleteRubberBand(const LayoutSize&) const;
+    virtual int visibleHeight() const;
+    virtual int visibleWidth() const;
+    virtual IntSize contentsSize() const;
+    virtual IntSize overhangAmount() const;
+    virtual IntPoint currentMousePosition() const;
+    virtual void didCompleteRubberBand(const IntSize&) const;
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
 
     // Rectangle encompassing the scroll corner and resizer rect.
-    LayoutRect scrollCornerAndResizerRect() const;
+    IntRect scrollCornerAndResizerRect() const;
 
     virtual void disconnectFromPage() { m_scrollableAreaPage = 0; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
-    void scrollTo(LayoutUnit, LayoutUnit);
+    void scrollTo(int, int);
 
-    LayoutSize scrollbarOffset(const Scrollbar*) const;
+    IntSize scrollbarOffset(const Scrollbar*) const;
     
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
@@ -755,15 +755,15 @@ protected:
     LayoutPoint m_topLeft;
 
     // The layer's width/height
-    LayoutSize m_layerSize;
+    IntSize m_layerSize;
 
     // Our scroll offsets if the view is scrolled.
-    LayoutSize m_scrollOffset;
+    IntSize m_scrollOffset;
 
     LayoutSize m_scrollOverflow;
     
     // The width/height of our scrolled area.
-    LayoutSize m_scrollSize;
+    IntSize m_scrollSize;
 
     // For layers with overflow, we have a pair of scrollbars.
     RefPtr<Scrollbar> m_hBar;

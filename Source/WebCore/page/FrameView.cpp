@@ -1357,15 +1357,15 @@ void FrameView::removeFixedObject()
         updateCanBlitOnScrollRecursively();
 }
 
-LayoutUnit FrameView::scrollXForFixedPosition() const
+int FrameView::scrollXForFixedPosition() const
 {
-    LayoutUnit visibleContentWidth = visibleContentRect().width();
-    LayoutUnit maxX = contentsWidth() - visibleContentWidth;
+    int visibleContentWidth = visibleContentRect().width();
+    int maxX = contentsWidth() - visibleContentWidth;
 
     if (maxX == 0)
         return 0;
 
-    LayoutUnit x = scrollX();
+    int x = scrollX();
 
     if (!scrollOrigin().x()) {
         if (x < 0)
@@ -1392,15 +1392,15 @@ LayoutUnit FrameView::scrollXForFixedPosition() const
     return x * dragFactor / frameScaleFactor;
 }
 
-LayoutUnit FrameView::scrollYForFixedPosition() const
+int FrameView::scrollYForFixedPosition() const
 {
-    LayoutUnit visibleContentHeight = visibleContentRect().height();
+    int visibleContentHeight = visibleContentRect().height();
 
-    LayoutUnit maxY = contentsHeight() - visibleContentHeight;
+    int maxY = contentsHeight() - visibleContentHeight;
     if (maxY == 0)
         return 0;
 
-    LayoutUnit y = scrollY();
+    int y = scrollY();
 
     if (!scrollOrigin().y()) {
         if (y < 0)
@@ -1423,12 +1423,12 @@ LayoutUnit FrameView::scrollYForFixedPosition() const
     return y * dragFactor / frameScaleFactor;
 }
 
-LayoutSize FrameView::scrollOffsetForFixedPosition() const
+IntSize FrameView::scrollOffsetForFixedPosition() const
 {
-    return LayoutSize(scrollXForFixedPosition(), scrollYForFixedPosition());
+    return IntSize(scrollXForFixedPosition(), scrollYForFixedPosition());
 }
 
-LayoutPoint FrameView::currentMousePosition() const
+IntPoint FrameView::currentMousePosition() const
 {
     return m_frame ? m_frame->eventHandler()->currentMousePosition() : IntPoint();
 }
