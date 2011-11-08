@@ -211,9 +211,6 @@ public:
     // is scaled up, < 1.0 is scaled down.
     virtual float pageScaleFactor() const = 0;
 
-    // FIXME: Delete this once Chromium side has been updated.
-    virtual void scalePage(float scaleFactor, const WebPoint& origin) = 0;
-
     // Scales a page by a factor of scaleFactor and then sets a scroll position to (x, y).
     // setPageScaleFactor() magnifies and shrinks a page without affecting layout.
     // On the other hand, zooming affects layout of the page.

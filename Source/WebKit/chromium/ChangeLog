@@ -1,3 +1,19 @@
+2011-11-08  Fady Samuel  <fsamuel@chromium.org>
+
+        Delete WebViewimpl::scalePage
+        https://bugs.webkit.org/show_bug.cgi?id=71711
+
+        Reviewed by Darin Fisher.
+
+        Once this patch lands: http://codereview.chromium.org/8477033
+
+        WebViewImpl::scalePage will no longer be used in Chromium and
+        can safely be deleted.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
 2011-11-08  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: implement compound (array) key support

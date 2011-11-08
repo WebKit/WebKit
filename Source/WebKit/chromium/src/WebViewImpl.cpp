@@ -1847,11 +1847,6 @@ float WebViewImpl::pageScaleFactor() const
     return page()->pageScaleFactor();
 }
 
-void WebViewImpl::scalePage(float scaleFactor, const WebPoint& origin)
-{
-    setPageScaleFactor(scaleFactor, origin);
-}
-
 void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
 {
     if (!page())
