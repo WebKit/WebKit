@@ -11,7 +11,7 @@ Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 Trying remove
-Expecting exception from db.createObjectStore("some os")
+Expecting exception from db.deleteObjectStore("some os")
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 result = db.setVersion('version 1')
@@ -20,7 +20,7 @@ Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 Trying remove
-Expecting exception from db.createObjectStore("some os")
+Expecting exception from db.deleteObjectStore("some os")
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 Deleted all object stores.
@@ -36,7 +36,15 @@ Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 Trying remove
-Expecting exception from db.createObjectStore("some os")
+Expecting exception from db.deleteObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Trying create with store that already exists
+Expecting exception from db.createObjectStore('tmp')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Trying remove with store that already exists
+Expecting exception from db.deleteObjectStore('tmp')
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 PASS successfullyParsed is true

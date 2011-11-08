@@ -52,7 +52,8 @@ public:
     static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
     ~IDBDatabase();
 
-    void setSetVersionTransaction(IDBTransaction*);
+    void setVersionChangeTransaction(IDBTransaction*);
+    void clearVersionChangeTransaction(IDBTransaction*);
 
     // Implement the IDL
     String name() const { return m_backend->name(); }
@@ -101,7 +102,7 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
-    RefPtr<IDBTransaction> m_setVersionTransaction;
+    RefPtr<IDBTransaction> m_versionChangeTransaction;
 
     bool m_noNewTransactions;
     bool m_stopped;

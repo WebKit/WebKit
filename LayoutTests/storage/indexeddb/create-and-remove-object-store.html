@@ -35,7 +35,7 @@ function testCreateAndRemove()
     debug("Trying create");
     evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
     debug("Trying remove");
-    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException('db.deleteObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
 }
 
 function cleanDatabase()
@@ -56,6 +56,11 @@ function tryOnceMore()
     shouldBeUndefined("event.target.result");
 
     testCreateAndRemove();
+
+    debug("Trying create with store that already exists");
+    evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    debug("Trying remove with store that already exists");
+    evalAndExpectException("db.deleteObjectStore('tmp')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
 
     done();
 }

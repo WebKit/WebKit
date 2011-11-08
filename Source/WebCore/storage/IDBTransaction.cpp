@@ -41,7 +41,7 @@
 namespace WebCore {
 
 PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
-{ 
+{
     return adoptRef(new IDBTransaction(context, backend, db));
 }
 
@@ -121,11 +121,17 @@ void IDBTransaction::onAbort()
         request->abort();
     }
 
+    if (m_mode == IDBTransaction::VERSION_CHANGE)
+        m_database->clearVersionChangeTransaction(this);
+
     enqueueEvent(Event::create(eventNames().abortEvent, true, false));
 }
 
 void IDBTransaction::onComplete()
 {
+    if (m_mode == IDBTransaction::VERSION_CHANGE)
+        m_database->clearVersionChangeTransaction(this);
+
     enqueueEvent(Event::create(eventNames().completeEvent, false, false));
 }
 

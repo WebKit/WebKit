@@ -69,14 +69,21 @@ IDBDatabase::~IDBDatabase()
     m_databaseCallbacks->unregisterDatabase(this);
 }
 
-void IDBDatabase::setSetVersionTransaction(IDBTransaction* transaction)
+void IDBDatabase::setVersionChangeTransaction(IDBTransaction* transaction)
 {
-    m_setVersionTransaction = transaction;
+    ASSERT(!m_versionChangeTransaction);
+    m_versionChangeTransaction = transaction;
+}
+
+void IDBDatabase::clearVersionChangeTransaction(IDBTransaction* transaction)
+{
+    ASSERT_UNUSED(transaction, m_versionChangeTransaction == transaction);
+    m_versionChangeTransaction = 0;
 }
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const OptionsObject& options, ExceptionCode& ec)
 {
-    if (!m_setVersionTransaction) {
+    if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
@@ -92,22 +99,22 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     options.get("autoIncrement", autoIncrement);
     // FIXME: Look up evictable and pass that on as well.
 
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction->backend(), ec);
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_versionChangeTransaction->backend(), ec);
     if (!objectStore) {
         ASSERT(ec);
         return 0;
     }
-    return IDBObjectStore::create(objectStore.release(), m_setVersionTransaction.get());
+    return IDBObjectStore::create(objectStore.release(), m_versionChangeTransaction.get());
 }
 
 void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 {
-    if (!m_setVersionTransaction) {
+    if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
 
-    m_backend->deleteObjectStore(name, m_setVersionTransaction->backend(), ec);
+    m_backend->deleteObjectStore(name, m_versionChangeTransaction->backend(), ec);
 }
 
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
