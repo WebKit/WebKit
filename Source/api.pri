@@ -200,23 +200,9 @@ mac {
 
         CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
         FRAMEWORK_HEADERS.version = Versions
-        FRAMEWORK_HEADERS.files = $$dirname(headers.files)/QtWebKit
+        FRAMEWORK_HEADERS.files = $$files($$headers.files, false)
         FRAMEWORK_HEADERS.path = Headers
         QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
-
-        # No-op to satisfy the dependency for FRAMEWORK_HEADERS
-        module_include.target = $$dirname(headers.files)/QtWebKit
-        module_include.commands = $${MAKEFILE_NOOP_COMMAND}
-        contains(QMAKE_EXTRA_TARGETS, fwheader_generator): module_include.depends += fwheader_generator
-        QMAKE_EXTRA_TARGETS += module_include
-
-        # Qmake assumes that FRAMEWORK_HEADERS.files is a list of files, but we dont' know that
-        # until the forwarding headers have been generated, so we have to copy them manually.
-        copy_framework_headers.commands = $(COPY_DIR) $$headers.files $${DESTDIR}/$${TARGET}.framework/$${FRAMEWORK_HEADERS.path}/
-        contains(QMAKE_EXTRA_TARGETS, fwheader_generator): copy_framework_headers.depends += fwheader_generator
-        copy_framework_headers.depends += all
-        QMAKE_EXTRA_TARGETS += copy_framework_headers
-        DEFAULT_TARGETS += copy_framework_headers
     }
 
     QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"

@@ -1,3 +1,15 @@
+2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use qmake's builtin rules for copying framework headers on Mac OS
+
+        Now that we generate the forwarding headers eiher as part of QtWebKit.pro
+        (for Qt 4.8), or as part of the root project file (for Qt 5), we can assume
+        that the files are there and use $$files() to list the files to be copied.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/api.pri:
+
 2011-11-08  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Enable DFG JIT by default on X86 Linux and Mac platforms
