@@ -35,7 +35,7 @@ class CSSImageValue : public CSSPrimitiveValue {
 public:
     static PassRefPtr<CSSImageValue> create() { return adoptRef(new CSSImageValue); }
     static PassRefPtr<CSSImageValue> create(const String& url) { return adoptRef(new CSSImageValue(url)); }
-    virtual ~CSSImageValue();
+    ~CSSImageValue();
 
     StyleCachedImage* cachedImage(CachedResourceLoader*);
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.

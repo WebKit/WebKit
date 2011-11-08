@@ -65,7 +65,7 @@ public:
         return adoptRef(new WebKitCSSTransformValue(type));
     }
 
-    virtual ~WebKitCSSTransformValue();
+    ~WebKitCSSTransformValue() { }
 
     String customCssText() const;
 

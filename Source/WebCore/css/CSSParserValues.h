@@ -22,6 +22,7 @@
 #define CSSParserValues_h
 
 #include "CSSSelector.h"
+#include "CSSValueList.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

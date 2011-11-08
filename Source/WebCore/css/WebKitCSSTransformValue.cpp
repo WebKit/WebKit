@@ -38,10 +38,6 @@ WebKitCSSTransformValue::WebKitCSSTransformValue(TransformOperationType op)
 {
 }
 
-WebKitCSSTransformValue::~WebKitCSSTransformValue()
-{
-}
-
 String WebKitCSSTransformValue::customCssText() const
 {
     String result;

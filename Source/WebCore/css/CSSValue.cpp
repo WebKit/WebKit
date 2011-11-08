@@ -160,4 +160,108 @@ String CSSValue::cssText() const
     return String();
 }
 
+void CSSValue::destroy()
+{
+    switch (classType()) {
+    case AspectRatioClass:
+        delete static_cast<CSSAspectRatioValue*>(this);
+        return;
+    case BorderImageClass:
+        delete static_cast<CSSBorderImageValue*>(this);
+        return;
+    case BorderImageSliceClass:
+        delete static_cast<CSSBorderImageSliceValue*>(this);
+        return;
+    case CanvasClass:
+        delete static_cast<CSSCanvasValue*>(this);
+        return;
+    case CursorImageClass:
+        delete static_cast<CSSCursorImageValue*>(this);
+        return;
+    case FontClass:
+        delete static_cast<FontValue*>(this);
+        return;
+    case FontFaceSrcClass:
+        delete static_cast<CSSFontFaceSrcValue*>(this);
+        return;
+    case FontFamilyClass:
+        delete static_cast<FontFamilyValue*>(this);
+        return;
+    case FontFeatureClass:
+        delete static_cast<FontFeatureValue*>(this);
+        return;
+    case FunctionClass:
+        delete static_cast<CSSFunctionValue*>(this);
+        return;
+    case LinearGradientClass:
+        delete static_cast<CSSLinearGradientValue*>(this);
+        return;
+    case RadialGradientClass:
+        delete static_cast<CSSRadialGradientValue*>(this);
+        return;
+    case CrossfadeClass:
+        delete static_cast<CSSCrossfadeValue*>(this);
+        return;
+    case ImageClass:
+        delete static_cast<CSSImageValue*>(this);
+        return;
+    case InheritedClass:
+        delete static_cast<CSSInheritedValue*>(this);
+        return;
+    case InitialClass:
+    case ImplicitInitialClass:
+        delete static_cast<CSSInitialValue*>(this);
+        return;
+    case PrimitiveClass:
+        delete static_cast<CSSPrimitiveValue*>(this);
+        return;
+    case ReflectClass:
+        delete static_cast<CSSReflectValue*>(this);
+        return;
+    case ShadowClass:
+        delete static_cast<ShadowValue*>(this);
+        return;
+    case LinearTimingFunctionClass:
+        delete static_cast<CSSLinearTimingFunctionValue*>(this);
+        return;
+    case CubicBezierTimingFunctionClass:
+        delete static_cast<CSSCubicBezierTimingFunctionValue*>(this);
+        return;
+    case StepsTimingFunctionClass:
+        delete static_cast<CSSStepsTimingFunctionValue*>(this);
+        return;
+    case UnicodeRangeClass:
+        delete static_cast<CSSUnicodeRangeValue*>(this);
+        return;
+    case ValueListClass:
+        delete static_cast<CSSValueList*>(this);
+        return;
+    case WebKitCSSTransformClass:
+        delete static_cast<WebKitCSSTransformValue*>(this);
+        return;
+    case LineBoxContainClass:
+        delete static_cast<CSSLineBoxContainValue*>(this);
+        return;
+#if ENABLE(CSS3_FLEXBOX)
+    case FlexClass:
+        delete static_cast<CSSFlexValue*>(this);
+        return;
+#endif
+#if ENABLE(CSS_FILTERS)
+    case WebKitCSSFilterClass:
+        delete static_cast<WebKitCSSFilterValue*>(this);
+        return;
+#endif
+#if ENABLE(SVG)
+    case SVGColorClass:
+        delete static_cast<SVGColor*>(this);
+        return;
+    case SVGPaintClass:
+        delete static_cast<SVGPaint*>(this);
+        return;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+}
+
 }

@@ -40,10 +40,6 @@ WebKitCSSFilterValue::WebKitCSSFilterValue(FilterOperationType operationType)
 {
 }
 
-WebKitCSSFilterValue::~WebKitCSSFilterValue()
-{
-}
-
 String WebKitCSSFilterValue::customCssText() const
 {
     String result;

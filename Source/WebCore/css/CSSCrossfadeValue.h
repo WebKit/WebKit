@@ -38,7 +38,7 @@ class RenderObject;
 class CSSCrossfadeValue : public CSSImageGeneratorValue {
 public:
     static PassRefPtr<CSSCrossfadeValue> create(PassRefPtr<CSSImageValue> fromImage, PassRefPtr<CSSImageValue> toImage) { return adoptRef(new CSSCrossfadeValue(fromImage, toImage)); }
-    virtual ~CSSCrossfadeValue();
+    ~CSSCrossfadeValue() { }
 
     String customCssText() const;
 

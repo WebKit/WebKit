@@ -37,7 +37,7 @@ public:
         return adoptRef(new CSSCursorImageValue(url, hotSpot));
     }
 
-    virtual ~CSSCursorImageValue();
+    ~CSSCursorImageValue();
 
     IntPoint hotSpot() const { return m_hotSpot; }
 

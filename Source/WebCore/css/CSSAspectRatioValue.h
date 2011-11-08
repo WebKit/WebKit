@@ -41,7 +41,7 @@ public:
         return adoptRef(new CSSAspectRatioValue(numeratorValue, denominatorValue));
     }
 
-    virtual ~CSSAspectRatioValue();
+    ~CSSAspectRatioValue() { }
 
     String customCssText() const;
 

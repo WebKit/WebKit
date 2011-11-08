@@ -40,10 +40,6 @@ CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
         m_args = CSSValueList::createFromParserValueList(function->args.get());
 }
 
-CSSFunctionValue::~CSSFunctionValue()
-{
-}
-
 String CSSFunctionValue::customCssText() const
 {
     String result = m_name; // Includes the '('

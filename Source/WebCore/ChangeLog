@@ -1,3 +1,67 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        Devirtualize CSSValue.
+        <http://webkit.org/b/71666>
+
+        Reviewed by Antti Koivisto.
+
+        Make the CSSValue destructor non-virtual (along with all the subclasses.)
+        This removes the vtables, and the pointers thereto in each value instance,
+        shrinking each object by one CPU word (4 or 8 bytes.)
+
+        We use the same trick as CSSRule to implement destruction; providing our
+        own deref() instead of RefCounted's, and performing a statically typed
+        delete in a destroy() method called when the ref count reaches 0.
+
+        Also made all the empty subclass destructors inline.
+
+        * css/CSSAspectRatioValue.cpp:
+        * css/CSSAspectRatioValue.h:
+        (WebCore::CSSAspectRatioValue::~CSSAspectRatioValue):
+        * css/CSSBorderImageSliceValue.cpp:
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::~CSSBorderImageSliceValue):
+        * css/CSSBorderImageValue.cpp:
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::~CSSBorderImageValue):
+        * css/CSSCanvasValue.h:
+        * css/CSSCrossfadeValue.cpp:
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::~CSSCrossfadeValue):
+        * css/CSSCursorImageValue.h:
+        * css/CSSFlexValue.cpp:
+        * css/CSSFlexValue.h:
+        (WebCore::CSSFlexValue::~CSSFlexValue):
+        * css/CSSFontFaceSrcValue.cpp:
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::~CSSFontFaceSrcValue):
+        * css/CSSFunctionValue.cpp:
+        * css/CSSFunctionValue.h:
+        (WebCore::CSSFunctionValue::~CSSFunctionValue):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSImageValue.h:
+        * css/CSSMutableValue.h:
+        (WebCore::CSSMutableValue::~CSSMutableValue):
+        * css/CSSParserValues.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSUnicodeRangeValue.cpp:
+        * css/CSSUnicodeRangeValue.h:
+        (WebCore::CSSUnicodeRangeValue::~CSSUnicodeRangeValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::deref):
+        (WebCore::CSSValue::~CSSValue):
+        * css/CSSValueList.cpp:
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::~CSSValueList):
+        * css/WebKitCSSFilterValue.cpp:
+        * css/WebKitCSSFilterValue.h:
+        (WebCore::WebKitCSSFilterValue::~WebKitCSSFilterValue):
+        * css/WebKitCSSTransformValue.cpp:
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::WebKitCSSTransformValue::~WebKitCSSTransformValue):
+
 2011-11-08  Darin Adler  <darin@apple.com>
 
         Speculative fix for crashes seen in DocumentWriter::deprecatedFrameEncoding

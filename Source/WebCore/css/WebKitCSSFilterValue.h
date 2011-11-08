@@ -57,7 +57,7 @@ public:
         return adoptRef(new WebKitCSSFilterValue(type));
     }
 
-    virtual ~WebKitCSSFilterValue();
+    ~WebKitCSSFilterValue() { }
 
     String customCssText() const;
 

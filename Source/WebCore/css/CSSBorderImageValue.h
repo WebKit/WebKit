@@ -36,7 +36,7 @@ public:
     {
         return adoptRef(new CSSBorderImageValue(image, imageSlice, borderSlice, outset, repeat));
     }
-    virtual ~CSSBorderImageValue();
+    ~CSSBorderImageValue() { }
 
     String customCssText() const;
 

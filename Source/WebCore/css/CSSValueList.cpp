@@ -50,10 +50,6 @@ CSSValueList::CSSValueList(CSSParserValueList* list)
     }
 }
 
-CSSValueList::~CSSValueList()
-{
-}
-
 void CSSValueList::append(PassRefPtr<CSSValue> val)
 {
     m_values.append(val);

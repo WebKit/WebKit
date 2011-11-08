@@ -40,9 +40,16 @@ public:
         CSS_VALUE_LIST = 2,
         CSS_CUSTOM = 3,
         CSS_INITIAL = 4
+
     };
 
-    virtual ~CSSValue() { }
+    // Override RefCounted's deref() to ensure operator delete is called on
+    // the appropriate subclass type.
+    void deref()
+    {
+        if (derefBase())
+            destroy();
+    }
 
     Type cssValueType() const;
 
@@ -136,6 +143,11 @@ protected:
     {
     }
 
+    // NOTE: This class is non-virtual for memory and performance reasons.
+    // Don't go making it virtual again unless you know exactly what you're doing!
+
+    ~CSSValue() { }
+
 private:
     static bool isPrimitiveType(ClassType type)
     {
@@ -174,6 +186,8 @@ private:
     {
         return type == InitialClass || type == ImplicitInitialClass;
     }
+
+    void destroy();
 
     // FIXME: This class is currently a little bloated, but that will change.
     //        See <http://webkit.org/b/71666> for more information.

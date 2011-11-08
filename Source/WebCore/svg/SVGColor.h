@@ -71,11 +71,12 @@ public:
 
     String customCssText() const;
 
+    ~SVGColor() { }
+
 protected:
     friend class CSSComputedStyleDeclaration;
 
     SVGColor(ClassType, const SVGColorType&);
-    virtual ~SVGColor() { }
 
     void setColor(const Color& color) { m_color = color; }
     void setColorType(const SVGColorType& type) { m_colorType = type; }

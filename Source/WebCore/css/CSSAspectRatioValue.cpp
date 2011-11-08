@@ -33,10 +33,6 @@
 
 namespace WebCore {
 
-CSSAspectRatioValue::~CSSAspectRatioValue()
-{
-}
-
 String CSSAspectRatioValue::customCssText() const
 {
     StringBuilder result;

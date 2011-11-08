@@ -143,7 +143,7 @@ public:
         return adoptRef(quirkValue);
     }
 
-    virtual ~CSSPrimitiveValue();
+    ~CSSPrimitiveValue();
 
     void cleanup();
 

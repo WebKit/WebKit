@@ -40,7 +40,7 @@ public:
         return adoptRef(new CSSFunctionValue(function));
     }
 
-    virtual ~CSSFunctionValue();
+    ~CSSFunctionValue() { }
 
     String customCssText() const;
 

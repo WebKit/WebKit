@@ -44,7 +44,7 @@ public:
         return adoptRef(new CSSValueList(list));
     }
 
-    virtual ~CSSValueList();
+    ~CSSValueList() { }
 
     size_t length() const { return m_values.size(); }
     CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].get() : 0; }

@@ -30,10 +30,6 @@
 
 namespace WebCore {
 
-CSSUnicodeRangeValue::~CSSUnicodeRangeValue()
-{
-}
-
 String CSSUnicodeRangeValue::customCssText() const
 {
     String result;

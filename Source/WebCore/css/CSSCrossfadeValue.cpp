@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-CSSCrossfadeValue::~CSSCrossfadeValue()
-{
-
-}
-
 String CSSCrossfadeValue::customCssText() const
 {
     String result = "-webkit-cross-fade(";

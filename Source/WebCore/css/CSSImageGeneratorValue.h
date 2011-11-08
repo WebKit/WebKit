@@ -52,7 +52,7 @@ typedef HashMap<const RenderObject*, SizeAndCount> RenderObjectSizeCountMap;
 
 class CSSImageGeneratorValue : public CSSValue {
 public:
-    virtual ~CSSImageGeneratorValue();
+    ~CSSImageGeneratorValue();
 
     void addClient(RenderObject*, const IntSize&);
     void removeClient(RenderObject*);

@@ -38,10 +38,6 @@ CSSBorderImageSliceValue::CSSBorderImageSliceValue(PassRefPtr<CSSPrimitiveValue>
 {
 }
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue()
-{
-}
-
 String CSSBorderImageSliceValue::customCssText() const
 {
     // Dump the slices first.

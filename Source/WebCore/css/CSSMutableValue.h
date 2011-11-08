@@ -27,7 +27,7 @@ namespace WebCore {
 
 class CSSMutableValue : public CSSValue {
 public:
-    virtual ~CSSMutableValue() { }
+    ~CSSMutableValue() { }
 
     Node* node() const { return m_node; }
     void setNode(Node* node) { m_node = node; }

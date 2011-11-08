@@ -35,10 +35,6 @@
 
 namespace WebCore {
 
-CSSFlexValue::~CSSFlexValue()
-{
-}
-
 String CSSFlexValue::customCssText() const
 {
     StringBuilder result;
