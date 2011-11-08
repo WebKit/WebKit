@@ -1,3 +1,15 @@
+2011-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95720.
+        http://trac.webkit.org/changeset/95720
+        https://bugs.webkit.org/show_bug.cgi?id=71831
+
+        This has made the menulists on WebKit patch reviews much less
+        usable (Requested by mrobinson on #webkit).
+
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::menuPositionFunction):
+
 2011-11-08  Nico Weber  <thakis@chromium.org>
 
         [chromium] Remove 6 exit time destructors and 6 static initializers
