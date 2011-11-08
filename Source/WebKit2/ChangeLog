@@ -1,3 +1,16 @@
+2011-11-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        [WK2][GTK] Application cache directory is incorrectly set
+        https://bugs.webkit.org/show_bug.cgi?id=70680
+
+        Reviewed by Philippe Normand.
+
+        Correctly set application cache directory to be in current
+        user's default cache directory.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::applicationCacheDirectory):
+
 2011-11-07  Emil A Eklund  <eae@chromium.org>
 
         Revert platform and scrolling to ints

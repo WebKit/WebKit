@@ -29,13 +29,12 @@
 #include <WebCore/FileSystem.h>
 #include <wtf/gobject/GOwnPtr.h>
 
-#include "ApplicationCacheStorage.h"
-
 namespace WebKit {
 
 WTF::String WebContext::applicationCacheDirectory()
 {
-    return WebCore::cacheStorage().cacheDirectory();
+    GOwnPtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", NULL));
+    return WebCore::filenameToString(cacheDirectory.get());
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
