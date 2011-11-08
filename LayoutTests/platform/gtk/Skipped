@@ -358,6 +358,10 @@ fast/mutation
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 
+# layoutTestController.overridePreference("WebKit*FontMap"...) is not
+# supported.
+fast/text/international/locale-sensitive-fonts.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

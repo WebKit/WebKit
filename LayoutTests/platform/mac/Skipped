@@ -486,3 +486,5 @@ fast/canvas/webgl/uniform-location-length-limits.html
 # It needs a rebaseline
 fast/repaint/table-extra-bottom-grow.html
 
+# DRT doesn't support overridePreference("WebKit*FontMap"...)
+fast/text/international/locale-sensitive-fonts.html

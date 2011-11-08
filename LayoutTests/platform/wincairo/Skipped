@@ -1978,3 +1978,6 @@ editing/pasteboard/smart-paste-008.html
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+
+# DRT doesn't support overridePreference("WebKit*FontMap"...)
+fast/text/international/locale-sensitive-fonts.html

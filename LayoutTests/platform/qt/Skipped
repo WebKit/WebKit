@@ -712,6 +712,7 @@ java
 
 # Missing DRT ability to override 'standard' preferences.
 fast/dom/Window/timer-resume-on-navigation-back.html
+fast/text/international/locale-sensitive-fonts.html
 loader/go-back-to-different-window-size.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50236

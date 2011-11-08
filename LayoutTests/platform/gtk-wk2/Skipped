@@ -637,6 +637,7 @@ fast/forms/listbox-deselect-scroll.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # https://bugs.webkit.org/show_bug.cgi?id=42197
+fast/text/international/locale-sensitive-fonts.html
 platform/gtk/editing/selection/caret-mode-document-begin-end.html
 editing/selection/caret-mode-paragraph-keys-navigation.html
 

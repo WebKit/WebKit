@@ -3902,3 +3902,5 @@ BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 BUG_TONY MAC WIN : fast/layers/self-painting-outline.html = IMAGE
 BUG_TONY MAC WIN : fast/box-shadow/box-shadow-radius.html = IMAGE
 BUG_TONY MAC : fast/borders/outline-alpha-block.html = IMAGE
+
+BUGWK67019 : fast/text/international/locale-sensitive-fonts.html = MISSING FAIL
