@@ -531,6 +531,13 @@ TestSuite.prototype.testConsoleOnNavigateBack = function()
 };
 
 
+TestSuite.prototype.testReattachAfterCrash = function()
+{
+    this.evaluateInConsole_("1+1;", this.releaseControl.bind(this));
+    this.takeControl();
+};
+
+
 TestSuite.prototype.testSharedWorker = function()
 {
     function didEvaluateInConsole(resultText) {
