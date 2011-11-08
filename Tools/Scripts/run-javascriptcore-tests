@@ -51,6 +51,11 @@ my @testsToSkip = (
     "ecma/Date/15.9.2.2-6.js",
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
     "ecma_3/Date/15.9.5.7.js",
+    # These three fail on Linux in certain time zones, at certain times
+    # of the year (!): https://bugs.webkit.org/show_bug.cgi?id=71371
+    "ecma/Date/15.9.5.14.js",
+    "ecma/Date/15.9.5.31-1.js",
+    "ecma/Date/15.9.5.34-1.js",
 );
 
 my $jsDriverArgs = "-L " . join(" ", @testsToSkip);

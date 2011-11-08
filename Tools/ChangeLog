@@ -1,3 +1,12 @@
+2011-11-08  Andy Wingo  <wingo@igalia.com>
+
+        Skip some ECMAScript tests that fail on Linux in some time zones.
+        https://bugs.webkit.org/show_bug.cgi?id=71371
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-javascriptcore-tests: Skip some more tests.
+
 2011-11-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial fix after build system refactoring.
