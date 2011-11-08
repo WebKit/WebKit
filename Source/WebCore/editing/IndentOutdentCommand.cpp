@@ -94,24 +94,30 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
     Node* nodeToSplitTo;
     if (enclosingCell)
         nodeToSplitTo = enclosingCell;
-    else if (enclosingList(start.deprecatedNode()))
-        nodeToSplitTo = enclosingBlock(start.deprecatedNode());
+    else if (enclosingList(start.containerNode()))
+        nodeToSplitTo = enclosingBlock(start.containerNode());
     else
         nodeToSplitTo = editableRootForPosition(start);
 
     if (!nodeToSplitTo)
         return;
 
-    RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(start.deprecatedNode(), nodeToSplitTo);
+    RefPtr<Node> nodeAfterStart = start.computeNodeAfterPosition();
+    RefPtr<Node> outerBlock = (start.containerNode() == nodeToSplitTo) ? start.containerNode() : splitTreeToNode(start.containerNode(), nodeToSplitTo);
 
+    VisiblePosition startOfContents = start;
     if (!targetBlockquote) {
         // Create a new blockquote and insert it as a child of the root editable element. We accomplish
         // this by splitting all parents of the current paragraph up to that point.
         targetBlockquote = createBlockElement();
-        insertNodeBefore(targetBlockquote, outerBlock);
+        if (outerBlock == start.containerNode())
+            insertNodeAt(targetBlockquote, start);
+        else
+            insertNodeBefore(targetBlockquote, outerBlock);
+        startOfContents = positionAfterNode(targetBlockquote.get());
     }
 
-    moveParagraphWithClones(start, end, targetBlockquote.get(), outerBlock.get());
+    moveParagraphWithClones(startOfContents, end, targetBlockquote.get(), outerBlock.get());
 }
 
 void IndentOutdentCommand::outdentParagraph()

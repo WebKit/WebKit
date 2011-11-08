@@ -1,3 +1,23 @@
+2011-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Indent command can insert block quote in non editable content
+        https://bugs.webkit.org/show_bug.cgi?id=71754
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by IndentOutdentCommand's incorrectly using deprecatedNode to determine the outer block,
+        not updating the start after inserting the targetBlockquote, and cloneParagraphUnderNewElement's cloning
+        outerNode even if it was body. Fixed those bugs.
+
+        Test: editing/execCommand/indent-images.html
+              editing/execCommand/indent-images-2.html
+              editing/execCommand/indent-images-3.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+
 2011-11-08  Adam Klein  <adamk@chromium.org>
 
         Only walk up the tree in search of MutationObservers if one has been added

@@ -779,13 +779,21 @@ void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
 // Clone the paragraph between start and end under blockElement,
 // preserving the hierarchy up to outerNode. 
 
-void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Position& end, Node* outerNode, Element* blockElement)
+void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Position& end, Node* passedOuterNode, Element* blockElement)
 {
     // First we clone the outerNode
-    
-    RefPtr<Node> topNode = outerNode->cloneNode(isTableElement(outerNode));
-    appendNode(topNode, blockElement);
-    RefPtr<Node> lastNode = topNode;
+    RefPtr<Node> topNode;
+    RefPtr<Node> lastNode;
+    RefPtr<Node> outerNode = passedOuterNode;
+
+    if (outerNode == outerNode->rootEditableElement()) {
+        topNode = blockElement;
+        lastNode = blockElement;
+    } else {
+        topNode = outerNode->cloneNode(isTableElement(outerNode.get()));
+        appendNode(topNode, blockElement);
+        lastNode = topNode;
+    }
 
     if (start.deprecatedNode() != outerNode && lastNode->isElementNode()) {
         Vector<RefPtr<Node> > ancestors;
@@ -811,12 +819,12 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
         // If end is not a descendant of outerNode we need to
         // find the first common ancestor and adjust the insertion
         // point accordingly.
-        while (!end.deprecatedNode()->isDescendantOf(outerNode)) {
+        while (!end.deprecatedNode()->isDescendantOf(outerNode.get())) {
             outerNode = outerNode->parentNode();
             topNode = topNode->parentNode();
         }
 
-        for (Node* n = start.deprecatedNode()->traverseNextSibling(outerNode); n; n = n->traverseNextSibling(outerNode)) {
+        for (Node* n = start.deprecatedNode()->traverseNextSibling(outerNode.get()); n; n = n->traverseNextSibling(outerNode.get())) {
             if (n->parentNode() != start.deprecatedNode()->parentNode())
                 lastNode = topNode->lastChild();
 
