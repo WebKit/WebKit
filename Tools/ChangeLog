@@ -1,3 +1,19 @@
+2011-11-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] Disable C++ exceptions from DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=71834
+
+        Reviewed by Darin Adler.
+
+        DumpRenderTree Mac does not handle C++ exceptions. When such exception
+        happens, it tends to cause the AutoReleasePool stack to be corrupted,
+        which leads to crashes long after the exception was raised.
+
+        This patch disabled C++ exceptions in order to catch the problems where
+        they happen when a C++ exception is raised.
+
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+
 2011-11-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Moved myself to the reviewer list (yay!).
