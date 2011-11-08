@@ -490,7 +490,7 @@ module window {
         attribute HTMLAllCollectionConstructor HTMLAllCollection;
         attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
-        attribute [CustomGetter] HTMLImageElementConstructor Image; // Usable with new operator
+        attribute [JSCCustomGetter] HTMLImageElementConstructorConstructor Image; // Usable with new operator
         attribute [JSCCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
         attribute CanvasPatternConstructor CanvasPattern;

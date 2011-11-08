@@ -1,3 +1,23 @@
+2011-11-07  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [CustomGetter] IDL for window.Image of V8
+        https://bugs.webkit.org/show_bug.cgi?id=71739
+
+        Reviewed by Adam Barth.
+
+        Currently, window.Image uses a custom getter to get the template
+        of 'HTMLImageElementConstructor'. However, this getter does not need to
+        be custom and can use a default getter
+        'DOMWindowInternal::DOMWindowConstructorGetter'.
+
+        Tests: fast/js/custom-constructors.html
+               fast/dom/image-object.html
+               fast/dom/gc-image-element.html
+               fast/dom/Window/custom-constructors.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp: Removed a custom getter.
+        * page/DOMWindow.idl: Removed [CustomGetter] IDL from window.Image of V8. Renamed 'HTMLImageElementConstructor' to 'HTMLImageElementConstructorConstructor' in order to make window.Image use the template of (not 'HTMLImageElement' but) 'HTMLImageElementConstructor'. Note that CodeGenerator*.pm strips /Constructor$/ from the IDL type.
+
 2011-11-07  Chris Fleizach  <cfleizach@apple.com>
 
         REGRESSION(r99025-r99037): platform/mac/accessibility/select-element-selection-with-optgroups.html is asserting
