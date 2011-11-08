@@ -316,11 +316,11 @@ void webkitInit()
     // that may only be done by the main thread.
     atomicCanonicalTextEncodingName("UTF-8");
 
-    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
-    webkit_set_web_database_directory_path(databaseDirectory);
-    WebCore::cacheStorage().setCacheDirectory(databaseDirectory);
+    GOwnPtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    webkit_set_web_database_directory_path(databaseDirectory.get());
 
-    g_free(databaseDirectory);
+    GOwnPtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", NULL));
+    WebCore::cacheStorage().setCacheDirectory(cacheDirectory.get());
 
     PageGroup::setShouldTrackVisitedLinks(true);
 

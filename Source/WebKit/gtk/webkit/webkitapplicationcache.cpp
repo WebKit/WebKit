@@ -65,13 +65,13 @@ void webkit_application_cache_set_maximum_size(unsigned long long size)
 }
 
 /**
- * webkit_spplication_cache_get_database_directory_path:
+ * webkit_application_cache_get_database_directory_path:
  *
- * Returns the current path to the directory WebKit will write web application
- * cache databases. By default this path is set to $XDG_DATA_HOME/webkit/databases
- * with webkit_application_cache_set_database_directory_path
+ * Returns the path to the directory WebKit will write web application
+ * cache databases to. By default this path is set to
+ * $XDG_CACHE_HOME/webkitgtk/applications and cannot be modified.
  *
- * Returns: the current application cache database directory path
+ * Returns: the application cache database directory path
  *
  * Since: 1.3.13
  **/
