@@ -1,3 +1,9 @@
+2011-11-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99470.

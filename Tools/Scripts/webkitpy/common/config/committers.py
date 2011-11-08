@@ -117,7 +117,6 @@ contributors_who_are_not_committers = [
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),
     Contributor("Tom Zakrajsek", "tomz@codeaurora.org", "tomz"),
     Contributor("Wyatt Carss", ["wcarss@chromium.org", "wcarss@google.com"], "wcarss"),
-    Contributor("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com", "wangxianzhu@google.com"], "wangxianzhu"),
     Contributor("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
     Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
@@ -305,6 +304,7 @@ committers_unable_to_review = [
     Committer("Vsevolod Vlasov", "vsevik@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
     Committer("W. James MacLean", "wjmaclean@chromium.org", "wjmaclean"),
+    Committer("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com", "wangxianzhu@google.com"], "wangxianzhu"),
     Committer("Xiaomei Ji", "xji@chromium.org", "xji"),
     Committer("Yael Aharon", "yael.aharon@nokia.com", "yael"),
     Committer("Yaar Schnitman", ["yaar@chromium.org", "yaar@google.com"]),
