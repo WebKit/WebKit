@@ -225,7 +225,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 
     ScriptDebugListener::Script script;
     script.url = ustringToString(sourceProvider->url());
-    script.source = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    script.source = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
@@ -255,7 +255,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     String url = ustringToString(sourceProvider->url());
-    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    String data = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;

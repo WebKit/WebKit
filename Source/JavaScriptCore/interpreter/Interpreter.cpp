@@ -667,19 +667,19 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
         message =  makeUString(message, " (evaluating '", codeBlock->source()->getRange(expressionStart, expressionStop), "')");
     else {
         // No range information, so give a few characters of context
-        const UChar* data = codeBlock->source()->data();
+        const StringImpl* data = codeBlock->source()->data();
         int dataLength = codeBlock->source()->length();
         int start = expressionStart;
         int stop = expressionStart;
         // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
         // then strip whitespace.
-        while (start > 0 && (expressionStart - start < 20) && data[start - 1] != '\n')
+        while (start > 0 && (expressionStart - start < 20) && (*data)[start - 1] != '\n')
             start--;
-        while (start < (expressionStart - 1) && isStrWhiteSpace(data[start]))
+        while (start < (expressionStart - 1) && isStrWhiteSpace((*data)[start]))
             start++;
-        while (stop < dataLength && (stop - expressionStart < 20) && data[stop] != '\n')
+        while (stop < dataLength && (stop - expressionStart < 20) && (*data)[stop] != '\n')
             stop++;
-        while (stop > expressionStart && isStrWhiteSpace(data[stop - 1]))
+        while (stop > expressionStart && isStrWhiteSpace((*data)[stop - 1]))
             stop--;
         message = makeUString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
     }

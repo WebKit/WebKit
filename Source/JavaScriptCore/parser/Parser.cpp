@@ -40,7 +40,8 @@ using namespace std;
 
 namespace JSC {
 
-Parser::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode)
+template <typename LexerType>
+Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode)
     : m_globalData(globalData)
     , m_source(&source)
     , m_stack(globalData->stack())
@@ -57,7 +58,7 @@ Parser::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParam
     , m_lastIdentifier(0)
     , m_sourceElements(0)
 {
-    m_lexer = adoptPtr(new Lexer<UChar>(globalData));
+    m_lexer = adoptPtr(new LexerType(globalData));
     m_arena = m_globalData->parserArena;
     m_lexer->setCode(source, m_arena);
 
@@ -75,12 +76,13 @@ Parser::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParam
     m_lexer->setLastLineNumber(tokenLine());
 }
 
-Parser::~Parser()
+template <typename LexerType>
+Parser<LexerType>::~Parser()
 {
 }
 
-
-UString Parser::parseInner()
+template <typename LexerType>
+UString Parser<LexerType>::parseInner()
 {
     UString parseError = UString();
     
@@ -110,7 +112,8 @@ UString Parser::parseInner()
     return parseError;
 }
 
-void Parser::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
+template <typename LexerType>
+void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
                               ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants, IdentifierSet& capturedVars)
 {
     m_sourceElements = sourceElements;
@@ -122,12 +125,14 @@ void Parser::didFinishParsing(SourceElements* sourceElements, ParserArenaData<De
     m_numConstants = numConstants;
 }
 
-bool Parser::allowAutomaticSemicolon()
+template <typename LexerType>
+bool Parser<LexerType>::allowAutomaticSemicolon()
 {
     return match(CLOSEBRACE) || match(EOFTOK) || m_lexer->prevTerminator();
 }
 
-template <Parser::SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser::parseSourceElements(TreeBuilder& context)
+template <typename LexerType>
+template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceElements(TreeBuilder& context)
 {
     const unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
     TreeSourceElements sourceElements = context.createSourceElements();
@@ -164,7 +169,8 @@ template <Parser::SourceElementsMode mode, class TreeBuilder> TreeSourceElements
     return sourceElements;
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseVarDeclaration(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVarDeclaration(TreeBuilder& context)
 {
     ASSERT(match(VAR));
     int start = tokenLine();
@@ -180,7 +186,8 @@ template <class TreeBuilder> TreeStatement Parser::parseVarDeclaration(TreeBuild
     return context.createVarStatement(m_lexer->lastLineNumber(), varDecls, start, end);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseConstDeclaration(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseConstDeclaration(TreeBuilder& context)
 {
     ASSERT(match(CONSTTOKEN));
     int start = tokenLine();
@@ -192,7 +199,8 @@ template <class TreeBuilder> TreeStatement Parser::parseConstDeclaration(TreeBui
     return context.createConstStatement(m_lexer->lastLineNumber(), constDecls, start, end);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseDoWhileStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDoWhileStatement(TreeBuilder& context)
 {
     ASSERT(match(DO));
     int startLine = tokenLine();
@@ -213,7 +221,8 @@ template <class TreeBuilder> TreeStatement Parser::parseDoWhileStatement(TreeBui
     return context.createDoWhileStatement(m_lexer->lastLineNumber(), statement, expr, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseWhileStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatement(TreeBuilder& context)
 {
     ASSERT(match(WHILE));
     int startLine = tokenLine();
@@ -231,7 +240,8 @@ template <class TreeBuilder> TreeStatement Parser::parseWhileStatement(TreeBuild
     return context.createWhileStatement(m_lexer->lastLineNumber(), expr, statement, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseVarDeclarationList(TreeBuilder& context, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarationList(TreeBuilder& context, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd)
 {
     TreeExpression varDecls = 0;
     do {
@@ -267,7 +277,8 @@ template <class TreeBuilder> TreeExpression Parser::parseVarDeclarationList(Tree
     return varDecls;
 }
 
-template <class TreeBuilder> TreeConstDeclList Parser::parseConstDeclarationList(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeConstDeclList Parser<LexerType>::parseConstDeclarationList(TreeBuilder& context)
 {
     failIfTrue(strictMode());
     TreeConstDeclList constDecls = 0;
@@ -292,7 +303,8 @@ template <class TreeBuilder> TreeConstDeclList Parser::parseConstDeclarationList
     return constDecls;
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseForStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(TreeBuilder& context)
 {
     ASSERT(match(FOR));
     int startLine = tokenLine();
@@ -400,7 +412,8 @@ template <class TreeBuilder> TreeStatement Parser::parseForStatement(TreeBuilder
     return context.createForInLoop(m_lexer->lastLineNumber(), decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseBreakStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBreakStatement(TreeBuilder& context)
 {
     ASSERT(match(BREAK));
     int startCol = tokenStart();
@@ -423,7 +436,8 @@ template <class TreeBuilder> TreeStatement Parser::parseBreakStatement(TreeBuild
     return context.createBreakStatement(m_lexer->lastLineNumber(), ident, startCol, endCol, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseContinueStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseContinueStatement(TreeBuilder& context)
 {
     ASSERT(match(CONTINUE));
     int startCol = tokenStart();
@@ -448,7 +462,8 @@ template <class TreeBuilder> TreeStatement Parser::parseContinueStatement(TreeBu
     return context.createContinueStatement(m_lexer->lastLineNumber(), ident, startCol, endCol, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseReturnStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStatement(TreeBuilder& context)
 {
     ASSERT(match(RETURN));
     failIfFalse(currentScope()->isFunction());
@@ -473,7 +488,8 @@ template <class TreeBuilder> TreeStatement Parser::parseReturnStatement(TreeBuil
     return context.createReturnStatement(m_lexer->lastLineNumber(), expr, start, end, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseThrowStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseThrowStatement(TreeBuilder& context)
 {
     ASSERT(match(THROW));
     int eStart = tokenStart();
@@ -491,7 +507,8 @@ template <class TreeBuilder> TreeStatement Parser::parseThrowStatement(TreeBuild
     return context.createThrowStatement(m_lexer->lastLineNumber(), expr, eStart, eEnd, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseWithStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement(TreeBuilder& context)
 {
     ASSERT(match(WITH));
     failIfTrueWithMessage(strictMode(), "'with' statements are not valid in strict mode");
@@ -513,7 +530,8 @@ template <class TreeBuilder> TreeStatement Parser::parseWithStatement(TreeBuilde
     return context.createWithStatement(m_lexer->lastLineNumber(), expr, statement, start, end, startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseSwitchStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStatement(TreeBuilder& context)
 {
     ASSERT(match(SWITCH));
     int startLine = tokenLine();
@@ -540,7 +558,8 @@ template <class TreeBuilder> TreeStatement Parser::parseSwitchStatement(TreeBuil
     
 }
 
-template <class TreeBuilder> TreeClauseList Parser::parseSwitchClauses(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeClauseList Parser<LexerType>::parseSwitchClauses(TreeBuilder& context)
 {
     if (!match(CASE))
         return 0;
@@ -567,7 +586,8 @@ template <class TreeBuilder> TreeClauseList Parser::parseSwitchClauses(TreeBuild
     return clauseList;
 }
 
-template <class TreeBuilder> TreeClause Parser::parseSwitchDefaultClause(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeClause Parser<LexerType>::parseSwitchDefaultClause(TreeBuilder& context)
 {
     if (!match(DEFAULT))
         return 0;
@@ -578,7 +598,8 @@ template <class TreeBuilder> TreeClause Parser::parseSwitchDefaultClause(TreeBui
     return context.createClause(0, statements);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseTryStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(TreeBuilder& context)
 {
     ASSERT(match(TRY));
     TreeStatement tryBlock = 0;
@@ -623,7 +644,8 @@ template <class TreeBuilder> TreeStatement Parser::parseTryStatement(TreeBuilder
     return context.createTryStatement(m_lexer->lastLineNumber(), tryBlock, ident, catchHasEval, catchBlock, finallyBlock, firstLine, lastLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseDebuggerStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDebuggerStatement(TreeBuilder& context)
 {
     ASSERT(match(DEBUGGER));
     int startLine = tokenLine();
@@ -635,7 +657,8 @@ template <class TreeBuilder> TreeStatement Parser::parseDebuggerStatement(TreeBu
     return context.createDebugger(m_lexer->lastLineNumber(), startLine, endLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseBlockStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatement(TreeBuilder& context)
 {
     ASSERT(match(OPENBRACE));
     int start = tokenLine();
@@ -651,7 +674,8 @@ template <class TreeBuilder> TreeStatement Parser::parseBlockStatement(TreeBuild
     return context.createBlockStatement(m_lexer->lastLineNumber(), subtree, start, m_lastLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseStatement(TreeBuilder& context, const Identifier*& directive, unsigned* directiveLiteralLength)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(TreeBuilder& context, const Identifier*& directive, unsigned* directiveLiteralLength)
 {
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
@@ -716,7 +740,8 @@ template <class TreeBuilder> TreeStatement Parser::parseStatement(TreeBuilder& c
     }
 }
 
-template <class TreeBuilder> TreeFormalParameterList Parser::parseFormalParameters(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeFormalParameterList Parser<LexerType>::parseFormalParameters(TreeBuilder& context)
 {
     matchOrFail(IDENT);
     failIfFalseIfStrictWithNameAndMessage(declareParameter(m_token.m_data.ident), "Cannot declare a parameter named", m_token.m_data.ident->impl(), " in strict mode");
@@ -734,7 +759,8 @@ template <class TreeBuilder> TreeFormalParameterList Parser::parseFormalParamete
     return list;
 }
 
-template <class TreeBuilder> TreeFunctionBody Parser::parseFunctionBody(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBody(TreeBuilder& context)
 {
     if (match(CLOSEBRACE))
         return context.createFunctionBody(m_lexer->lastLineNumber(), strictMode());
@@ -745,7 +771,8 @@ template <class TreeBuilder> TreeFunctionBody Parser::parseFunctionBody(TreeBuil
     return context.createFunctionBody(m_lexer->lastLineNumber(), strictMode());
 }
 
-template <Parser::FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool Parser::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
+template <typename LexerType>
+template <FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
 {
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setIsFunction();
@@ -818,7 +845,8 @@ template <Parser::FunctionRequirements requirements, bool nameIsInContainingScop
     return true;
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseFunctionDeclaration(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context)
 {
     ASSERT(match(FUNCTION));
     next();
@@ -847,7 +875,8 @@ struct LabelInfo {
     int m_end;
 };
 
-template <class TreeBuilder> TreeStatement Parser::parseExpressionOrLabelStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrLabelStatement(TreeBuilder& context)
 {
     
     /* Expression and Label statements are ambiguous at LL(1), so we have a
@@ -909,7 +938,8 @@ template <class TreeBuilder> TreeStatement Parser::parseExpressionOrLabelStateme
     return statement;
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseExpressionStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionStatement(TreeBuilder& context)
 {
     int startLine = tokenLine();
     TreeExpression expression = parseExpression(context);
@@ -918,7 +948,8 @@ template <class TreeBuilder> TreeStatement Parser::parseExpressionStatement(Tree
     return context.createExprStatement(m_lexer->lastLineNumber(), expression, startLine, m_lastLine);
 }
 
-template <class TreeBuilder> TreeStatement Parser::parseIfStatement(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(TreeBuilder& context)
 {
     ASSERT(match(IF));
     
@@ -995,7 +1026,8 @@ template <class TreeBuilder> TreeStatement Parser::parseIfStatement(TreeBuilder&
     return context.createIfStatement(m_lexer->lastLineNumber(), condition, trueBlock, statementStack.last(), start, end);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(TreeBuilder& context)
 {
     failIfStackOverflow();
     TreeExpression node = parseAssignmentExpression(context);
@@ -1017,8 +1049,8 @@ template <class TreeBuilder> TreeExpression Parser::parseExpression(TreeBuilder&
     return commaNode;
 }
 
-
-template <typename TreeBuilder> TreeExpression Parser::parseAssignmentExpression(TreeBuilder& context)
+template <typename LexerType>
+template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context)
 {
     failIfStackOverflow();
     int start = tokenStart();
@@ -1079,7 +1111,8 @@ end:
     return lhs;
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseConditionalExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalExpression(TreeBuilder& context)
 {
     TreeExpression cond = parseBinaryExpression(context);
     failIfFalse(cond);
@@ -1101,14 +1134,16 @@ ALWAYS_INLINE static bool isUnaryOp(JSTokenType token)
     return token & UnaryOpTokenFlag;
 }
 
-int Parser::isBinaryOperator(JSTokenType token)
+template <typename LexerType>
+int Parser<LexerType>::isBinaryOperator(JSTokenType token)
 {
     if (m_allowsIn)
         return token & (BinaryOpTokenPrecedenceMask << BinaryOpTokenAllowsInPrecedenceAdditionalShift);
     return token & BinaryOpTokenPrecedenceMask;
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseBinaryExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpression(TreeBuilder& context)
 {
     
     int operandStackDepth = 0;
@@ -1152,8 +1187,8 @@ template <class TreeBuilder> TreeExpression Parser::parseBinaryExpression(TreeBu
     return context.popOperandStack(operandStackDepth);
 }
 
-
-template <bool complete, class TreeBuilder> TreeProperty Parser::parseProperty(TreeBuilder& context)
+template <typename LexerType>
+template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeBuilder& context)
 {
     bool wasIdent = false;
     switch (m_token.m_type) {
@@ -1205,7 +1240,8 @@ template <bool complete, class TreeBuilder> TreeProperty Parser::parseProperty(T
     }
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseObjectLiteral(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
     int startOffset = m_token.m_data.intValue;
     consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
@@ -1244,7 +1280,8 @@ template <class TreeBuilder> TreeExpression Parser::parseObjectLiteral(TreeBuild
     return context.createObjectLiteral(m_lexer->lastLineNumber(), propertyList);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseStrictObjectLiteral(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObjectLiteral(TreeBuilder& context)
 {
     consumeOrFail(OPENBRACE);
     
@@ -1288,7 +1325,8 @@ template <class TreeBuilder> TreeExpression Parser::parseStrictObjectLiteral(Tre
     return context.createObjectLiteral(m_lexer->lastLineNumber(), propertyList);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseArrayLiteral(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral(TreeBuilder& context)
 {
     consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings);
     
@@ -1330,7 +1368,8 @@ template <class TreeBuilder> TreeExpression Parser::parseArrayLiteral(TreeBuilde
     return context.createArray(m_lexer->lastLineNumber(), elementList);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parsePrimaryExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpression(TreeBuilder& context)
 {
     failIfStackOverflow();
     switch (m_token.m_type) {
@@ -1408,7 +1447,8 @@ template <class TreeBuilder> TreeExpression Parser::parsePrimaryExpression(TreeB
     }
 }
 
-template <class TreeBuilder> TreeArguments Parser::parseArguments(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context)
 {
     consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings);
     if (match(CLOSEPAREN)) {
@@ -1430,7 +1470,8 @@ template <class TreeBuilder> TreeArguments Parser::parseArguments(TreeBuilder& c
     return context.createArguments(argList);
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseMemberExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpression(TreeBuilder& context)
 {
     TreeExpression base = 0;
     int start = tokenStart();
@@ -1510,7 +1551,8 @@ endMemberExpression:
     return base;
 }
 
-template <class TreeBuilder> TreeExpression Parser::parseUnaryExpression(TreeBuilder& context)
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpression(TreeBuilder& context)
 {
     typename TreeBuilder::UnaryExprContext unaryExprContext(context);
     AllowInOverride allowInOverride(this);
@@ -1622,5 +1664,9 @@ template <class TreeBuilder> TreeExpression Parser::parseUnaryExpression(TreeBui
     }
     return expr;
 }
+
+// Instantiate the two flavors of Parser we need instead of putting most of this file in Parser.h
+template class Parser< Lexer<LChar> >;
+template class Parser< Lexer<UChar> >;
 
 } // namespace JSC

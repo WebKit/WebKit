@@ -72,7 +72,11 @@ namespace JSC {
         int firstLine() const { return m_firstLine; }
         int startOffset() const { return m_startChar; }
         int endOffset() const { return m_endChar; }
-        const UChar* data() const { return m_provider->data() + m_startChar; }
+        const UChar* data() const
+        {
+            ASSERT(m_provider->data());
+            return m_provider->data()->characters16() + m_startChar;
+        }
         int length() const { return m_endChar - m_startChar; }
         
         SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine);
@@ -91,8 +95,8 @@ namespace JSC {
 
     inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine)
     {
-        ASSERT(provider()->data()[openBrace] == '{');
-        ASSERT(provider()->data()[closeBrace] == '}');
+        ASSERT((*provider()->data())[openBrace] == '{');
+        ASSERT((*provider()->data())[closeBrace] == '}');
         return SourceCode(provider(), openBrace, closeBrace + 1, firstLine);
     }
 

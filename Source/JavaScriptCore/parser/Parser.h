@@ -45,7 +45,6 @@ class FunctionBodyNode;
 class FunctionParameters;
 class Identifier;
 class JSGlobalData;
-class Parser;
 class ProgramNode;
 class SourceCode;
 class UString;
@@ -86,6 +85,9 @@ class UString;
 #define TreePropertyList typename TreeBuilder::PropertyList
 
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
+
+enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
+enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
 
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
@@ -366,7 +368,7 @@ private:
     unsigned m_index;
 };
 
-
+template <typename LexerType>
 class Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
     WTF_MAKE_FAST_ALLOCATED;
@@ -854,7 +856,6 @@ private:
         return result;
     }
     
-    enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
     template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
@@ -893,7 +894,6 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd);
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
-    enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
     template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, int& openBrace, int& closeBrace, int& bodyStartLine);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
@@ -920,7 +920,7 @@ private:
     mutable const JSGlobalData* m_globalData;
     const SourceCode* m_source;
     ParserArena* m_arena;
-    OwnPtr< Lexer<UChar> > m_lexer;
+    OwnPtr<LexerType> m_lexer;
     
     StackBounds m_stack;
     bool m_error;
@@ -961,8 +961,9 @@ private:
     };
 };
 
+template <typename LexerType>
 template <class ParsedNode>
-PassRefPtr<ParsedNode> Parser::parse(JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, JSObject** exception)
+PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, JSObject** exception)
 {
     ASSERT(lexicalGlobalObject);
     ASSERT(exception && !*exception);
@@ -1030,9 +1031,16 @@ template <class ParsedNode>
 PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, Debugger* debugger, ExecState* execState, JSObject** exception)
 {
     SamplingRegion samplingRegion("Parsing");
-    Parser parser(globalData, source, parameters, strictness, parserMode);
+
+    ASSERT(source.provider()->data());
+
+    if (source.provider()->data()->is8Bit()) {
+        Parser< Lexer<LChar> > parser(globalData, source, parameters, strictness, parserMode);
+        return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
+    }
+    Parser< Lexer<UChar> > parser(globalData, source, parameters, strictness, parserMode);
     return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
 }
-} // namespace JSC
 
-#endif // Parser_h
+} // namespace 
+#endif

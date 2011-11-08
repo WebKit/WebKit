@@ -1,3 +1,21 @@
+2011-11-08  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize JSC::Parser class by Lexer type
+        https://bugs.webkit.org/show_bug.cgi?id=71761
+
+        Cleaned up SourceCode data() to return StringImpl* and eliminated
+        the recently added stringData() virtual method.
+
+        No tests added - refactored base class SourceCode and its subclasses.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::data):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::dispatchFailedToParseSource):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::data):
+
 2011-11-08  Xiaomei Ji  <xji@chromium.org>
 
         REGRESSION: rtl horizontal scrollbar / resize bug - Body shifts on resize when scrolled all the way to the left

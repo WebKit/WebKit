@@ -1,3 +1,16 @@
+2011-11-08  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize JSC::Parser class by Lexer type
+        https://bugs.webkit.org/show_bug.cgi?id=71761
+
+        Changed WKPCEvaluate() to use emptyString() when the source is
+        zero length.
+
+        Reviewed by Gavin Barraclough.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+
 2011-11-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71856

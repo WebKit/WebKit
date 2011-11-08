@@ -1,3 +1,80 @@
+2011-11-08  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize JSC::Parser class by Lexer type
+        https://bugs.webkit.org/show_bug.cgi?id=71761
+
+        Templatized Parser based on Lexer<T>. Moved two enums,
+        SourceElementsMode and FunctionRequirements out of Parser definition
+        to work around a clang compiler defect.
+
+        Cleaned up SourceCode data() to return StringImpl* and eliminated
+        the recently added stringData() virtual method.
+
+        To keep code in Parser.cpp and keep Parser.h small, the two flavors
+        of Parser are explicitly instantiated at the end of Parser.cpp.
+
+        Reviewed by Gavin Barraclough.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::appendSourceToError):
+        * parser/Lexer.cpp:
+        (JSC::::setCode):
+        (JSC::::sourceCode):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::~Parser):
+        (JSC::::parseInner):
+        (JSC::::didFinishParsing):
+        (JSC::::allowAutomaticSemicolon):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseConstDeclaration):
+        (JSC::::parseDoWhileStatement):
+        (JSC::::parseWhileStatement):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseConstDeclarationList):
+        (JSC::::parseForStatement):
+        (JSC::::parseBreakStatement):
+        (JSC::::parseContinueStatement):
+        (JSC::::parseReturnStatement):
+        (JSC::::parseThrowStatement):
+        (JSC::::parseWithStatement):
+        (JSC::::parseSwitchStatement):
+        (JSC::::parseSwitchClauses):
+        (JSC::::parseSwitchDefaultClause):
+        (JSC::::parseTryStatement):
+        (JSC::::parseDebuggerStatement):
+        (JSC::::parseBlockStatement):
+        (JSC::::parseStatement):
+        (JSC::::parseFormalParameters):
+        (JSC::::parseFunctionBody):
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::::parseExpressionOrLabelStatement):
+        (JSC::::parseExpressionStatement):
+        (JSC::::parseIfStatement):
+        (JSC::::parseExpression):
+        (JSC::::parseAssignmentExpression):
+        (JSC::::parseConditionalExpression):
+        (JSC::::isBinaryOperator):
+        (JSC::::parseBinaryExpression):
+        (JSC::::parseProperty):
+        (JSC::::parseObjectLiteral):
+        (JSC::::parseStrictObjectLiteral):
+        (JSC::::parseArrayLiteral):
+        (JSC::::parsePrimaryExpression):
+        (JSC::::parseArguments):
+        (JSC::::parseMemberExpression):
+        (JSC::::parseUnaryExpression):
+        * parser/Parser.h:
+        (JSC::::parse):
+        (JSC::parse):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::data):
+        (JSC::SourceCode::subExpression):
+        * parser/SourceProvider.h:
+        (JSC::UStringSourceProvider::data):
+
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
         DFG JIT calculation of OSR entry points is not THUMB2 safe
