@@ -1,3 +1,20 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Switch SVGImage cache to store ImageBuffers instead of whole SVGImages, including a DOM/Render tree
+        https://bugs.webkit.org/show_bug.cgi?id=71368
+
+        Reviewed by Zoltan Herczeg.
+
+        When determining whether the canvas would be tainted, we need access to the SVGImage, not its cached BitmapImage.
+        Otherwhise wrong assumptions are mode, leading to regressions.
+
+        Fixes http/tests/security/canvas-remote-read-svg-image.html and related tests on the bots.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin): Forgot to switch them back to use cachedImage->image().
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::isOriginClean): Ditto.
+
 2011-11-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Console should be scrolled to bottom when shown for the first time.
