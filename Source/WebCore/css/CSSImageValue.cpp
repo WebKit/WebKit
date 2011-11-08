@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSImageValue.h"
 
+#include "CSSCursorImageValue.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "MemoryCache.h"
@@ -66,6 +67,8 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
 
 StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 {
+    if (isCursorImageValue())
+        return static_cast<CSSCursorImageValue*>(this)->cachedImage(loader);
     return cachedImage(loader, getStringValue());
 }
 

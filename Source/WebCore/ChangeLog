@@ -1,3 +1,18 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        CSSImageValue: Devirtualize cachedImage(CachedResourceLoader*).
+        <http://webkit.org/b/71814>
+
+        Reviewed by Antti Koivisto.
+
+        Defer to CSSCursorImageValue (the only CSSImageValue subclass)
+        when appropriate in CSSImageValue::cachedImage(CachedResourceLoader*).
+
+        * css/CSSCursorImageValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImageValue.h:
+
 2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add "Evaluate in console" as a shortcut and context menu items to scripts panel
