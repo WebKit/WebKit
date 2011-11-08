@@ -1,3 +1,21 @@
+2011-11-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71856
+        WebKit should use new NSWindowDidChangeBackingPropertiesNotification instead of 
+        old NSWindowDidChangeResolutionNotification
+        -and corresponding-
+        <rdar://problem/10317253>
+
+        Reviewed by Tim Hatcher.
+
+        * WebView/WebView.mm:
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+
+        We have to check that the backing scale factor actually changed since this 
+        notification can also be used to signify other changes. 
+        (-[WebView _windowDidChangeBackingProperties:]):
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move DomainRelaxationForbidden scheme registry to SchemeRegistry

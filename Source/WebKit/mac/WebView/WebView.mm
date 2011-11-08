@@ -3223,8 +3223,9 @@ static bool needsWebViewInitThreadWorkaround()
     return _private->shouldCloseWithWindow;
 }
 
-// FIXME: Use an AppKit constant for this once one is available.
-static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidChangeResolutionNotification";
+// FIXME: Use AppKit constants for these when they are available.
+static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
+static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey"; 
 
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
@@ -3237,8 +3238,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
             name:WKWindowWillOrderOnScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:)
             name:WKWindowWillOrderOffScreenNotification() object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
-            name:windowDidChangeResolutionNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
+            name:windowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
             name:NSWindowDidChangeScreenNotification object:window];
     }
@@ -3257,7 +3258,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:windowDidChangeResolutionNotification object:window];
+            name:windowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidChangeScreenNotification object:window];
     }
@@ -3371,9 +3372,14 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         [self close];
 }
 
-- (void)_windowDidChangeResolution:(NSNotification *)notification
+- (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue]; 
+    CGFloat newBackingScaleFactor = [self _deviceScaleFactor];
+    if (oldBackingScaleFactor == newBackingScaleFactor) 
+        return; 
+
+    _private->page->setDeviceScaleFactor(newBackingScaleFactor);
 }
 
 - (void)setPreferences:(WebPreferences *)prefs

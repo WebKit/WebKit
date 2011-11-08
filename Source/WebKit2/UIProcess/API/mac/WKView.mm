@@ -1730,8 +1730,9 @@ static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     return ownsGrowBox;
 }
 
-// FIXME: Use an AppKit constant for this once one is available.
-static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidChangeResolutionNotification";
+// FIXME: Use AppKit constants for these when they are available.
+static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
+static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
 
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
@@ -1752,8 +1753,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
                                                      name:@"NSWindowDidOrderOffScreenNotification" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
                                                      name:@"_NSWindowDidBecomeVisible" object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
-                                                     name:windowDidChangeResolutionNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
+                                                     name:windowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
                                                      name:NSWindowDidChangeScreenNotification object:window];
     }
@@ -1773,7 +1774,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeResolutionNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeBackingPropertiesNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
 }
 
@@ -1882,9 +1883,14 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
-- (void)_windowDidChangeResolution:(NSNotification *)notification
+- (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue]; 
+    CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor]; 
+    if (oldBackingScaleFactor == newBackingScaleFactor) 
+        return; 
+
+    _data->_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
