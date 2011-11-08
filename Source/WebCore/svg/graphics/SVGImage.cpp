@@ -102,43 +102,9 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
-PassRefPtr<SVGImage> SVGImage::createWithDataAndSize(ImageObserver* observer, SharedBuffer* data, const IntSize& size, float zoom)
+void SVGImage::setContainerSize(const IntSize&)
 {
-    ASSERT(!size.isEmpty());
-
-    RefPtr<SVGImage> image = adoptRef(new SVGImage(0));
-    image->setData(data, true);
-    image->setContainerSize(size);
-    image->setContainerZoom(zoom);
-    image->setImageObserver(observer);
-    return image.release();
-}
-
-void SVGImage::setContainerZoom(float containerZoom)
-{
-    if (!m_page)
-        return;
-    Frame* frame = m_page->mainFrame();
-    frame->setPageZoomFactor(containerZoom);
-}
-
-void SVGImage::setContainerSize(const IntSize& containerSize)
-{
-    ASSERT(!containerSize.isEmpty());
-    ASSERT(!imageObserver());
-    
-    if (!m_page)
-        return;
-    Frame* frame = m_page->mainFrame();
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
-    if (!rootElement)
-        return;
-
-    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
-    if (!renderer)
-        return;
-    renderer->setContainerSize(containerSize);
-    frame->view()->resize(size());
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGImage::usesContainerSize() const
@@ -174,12 +140,62 @@ IntSize SVGImage::size() const
 
     // Assure that a container size is always given for a non-identity zoom level.
     ASSERT(renderer->style()->effectiveZoom() == 1);
-    IntSize size = enclosingIntRect(rootElement->currentViewBoxRect()).size();
+    IntSize size = enclosingIntRect(rootElement->currentViewBoxRect(SVGSVGElement::CalculateViewBoxInHostDocument)).size();
     if (!size.isEmpty())
         return size;
 
     // As last resort, use CSS default intrinsic size.
     return IntSize(300, 150);
+}
+
+void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, float zoom, ShouldClearBuffer shouldClear)
+{
+    // FIXME: This doesn't work correctly with animations. If an image contains animations, that say run for 2 seconds,
+    // and we currently have one <img> that displays us. If we open another document referencing the same SVGImage it
+    // will display the document at a time where animations already ran - even though it has its own ImageBuffer.
+    // We currently don't implement SVGSVGElement::setCurrentTime, and can NOT go back in time, once animations started.
+    // There's no way to fix this besides avoiding style/attribute mutations from SVGAnimationElement.
+    ASSERT(buffer);
+    ASSERT(!size.isEmpty());
+
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
+    if (!rootElement)
+        return;
+    RenderSVGRoot* renderer = toRenderSVGRoot(rootElement->renderer());
+    if (!renderer)
+        return;
+
+    // Draw image at requested size.
+    ImageObserver* observer = imageObserver();
+    ASSERT(observer);
+
+    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due this relayout.
+    setImageObserver(0);
+    renderer->setContainerSize(size);
+    frame->view()->resize(this->size());
+    if (zoom != 1)
+        frame->setPageZoomFactor(zoom);
+
+    // Eventually clear image buffer.
+    IntRect rect(IntPoint(), size);
+    if (shouldClear == ClearImageBuffer)
+        buffer->context()->clearRect(rect);
+
+    // Draw SVG on top of ImageBuffer.
+    draw(buffer->context(), rect, rect, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    // Reset container size & zoom to initial state. Otherwhise the size() of this
+    // image would return whatever last size was set by drawSVGToImageBuffer().
+    if (zoom != 1)
+        frame->setPageZoomFactor(1);
+
+    renderer->setContainerSize(IntSize());
+    frame->view()->resize(this->size());
+    if (frame->view()->needsLayout())
+        frame->view()->layout();
+
+    setImageObserver(observer); 
 }
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)

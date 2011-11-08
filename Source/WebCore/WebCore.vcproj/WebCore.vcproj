@@ -67101,6 +67101,14 @@
 				Name="graphics"
 				>
 				<File
+					RelativePath="..\svg\graphics\SVGImageCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGImageCache.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\graphics\SVGImage.cpp"
 					>
 				</File>

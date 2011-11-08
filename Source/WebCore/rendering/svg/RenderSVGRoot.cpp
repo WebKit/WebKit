@@ -117,7 +117,7 @@ void RenderSVGRoot::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-bool RenderSVGRoot::isEmbeddedThroughImageElement() const
+bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
 {
     if (!node())
         return false;

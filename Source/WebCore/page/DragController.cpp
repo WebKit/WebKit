@@ -653,8 +653,11 @@ static Image* getImage(Element* element)
 {
     ASSERT(element);
     CachedImage* cachedImage = getCachedImage(element);
+    // Don't use cachedImage->imageForRenderer() here as that may return BitmapImages for cached SVG Images.
+    // Users of getImage() want access to the SVGImage, in order to figure out the filename extensions,
+    // which would be empty when asking the cached BitmapImages.
     return (cachedImage && !cachedImage->errorOccurred()) ?
-        cachedImage->imageForRenderer(element->renderer()) : 0;
+        cachedImage->image() : 0;
 }
 
 static void prepareClipboardForImageDrag(Frame* source, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)

@@ -194,6 +194,8 @@
 		08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F0BFC11255C53C00075185 /* SVGTextMetrics.h */; };
 		08F2F0091213E61700DCEC48 /* RenderImageResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F2F0071213E61700DCEC48 /* RenderImageResource.cpp */; };
 		08F2F00A1213E61700DCEC48 /* RenderImageResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F2F0081213E61700DCEC48 /* RenderImageResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08F859D41463F9CD0067D933 /* SVGImageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F859D21463F9CD0067D933 /* SVGImageCache.cpp */; };
+		08F859D51463F9CD0067D933 /* SVGImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F859D31463F9CD0067D933 /* SVGImageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08FB17C113BC7E9100040086 /* SVGAttributeToPropertyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB17C013BC7E9100040086 /* SVGAttributeToPropertyMap.cpp */; };
 		08FB3F8413BC754C0099FC18 /* SVGAttributeToPropertyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB3F8313BC754C0099FC18 /* SVGAttributeToPropertyMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08FE0BC5127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FE0BC4127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7224,6 +7226,8 @@
 		08F0BFC11255C53C00075185 /* SVGTextMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetrics.h; sourceTree = "<group>"; };
 		08F2F0071213E61700DCEC48 /* RenderImageResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageResource.cpp; sourceTree = "<group>"; };
 		08F2F0081213E61700DCEC48 /* RenderImageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderImageResource.h; sourceTree = "<group>"; };
+		08F859D21463F9CD0067D933 /* SVGImageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageCache.cpp; sourceTree = "<group>"; };
+		08F859D31463F9CD0067D933 /* SVGImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageCache.h; sourceTree = "<group>"; };
 		08FB17C013BC7E9100040086 /* SVGAttributeToPropertyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAttributeToPropertyMap.cpp; sourceTree = "<group>"; };
 		08FB3F8313BC754C0099FC18 /* SVGAttributeToPropertyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAttributeToPropertyMap.h; sourceTree = "<group>"; };
 		08FE0BC4127E2AC1000C4FB5 /* SVGAnimatedPreserveAspectRatio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPreserveAspectRatio.h; sourceTree = "<group>"; };
@@ -19004,6 +19008,8 @@
 				B255989C0D00D8B800BB825C /* filters */,
 				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
+				08F859D21463F9CD0067D933 /* SVGImageCache.cpp */,
+				08F859D31463F9CD0067D933 /* SVGImageCache.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -24624,6 +24630,7 @@
 				07846343145B151A00A58DF1 /* JSTrackEvent.h in Headers */,
 				07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */,
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
+				08F859D51463F9CD0067D933 /* SVGImageCache.h in Headers */,
 				3169379C14609C6C00C01362 /* DragSession.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 				976F36EB14686225005E93B4 /* SecurityContext.h in Headers */,
@@ -27480,6 +27487,7 @@
 				07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */,
 				07689D6E145B52CC001CD132 /* JSTrackEventCustom.cpp in Sources */,
 				2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */,
+				08F859D41463F9CD0067D933 /* SVGImageCache.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,

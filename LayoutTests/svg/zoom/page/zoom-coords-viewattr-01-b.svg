@@ -122,6 +122,7 @@ fill='none' stroke='blue'/>">
     <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 
     <defs>
+        <!-- Note that the zooming won't have any visible effect except for stroke size changes, as width/height is 100% -->
         <script>var zoomCount = 2;</script>
         <script xlink:href="../resources/testPageZoom.js"/>
     </defs>

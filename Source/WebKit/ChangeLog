@@ -1,3 +1,12 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Switch SVGImage cache to store ImageBuffers instead of whole SVGImages, including a DOM/Render tree
+        https://bugs.webkit.org/show_bug.cgi?id=71368
+
+        Reviewed by Antti Koivisto.
+
+        * CMakeLists.txt: Add svg/graphics include, for SVGImageCache.h.
+
 2011-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Refactor and clean up the qmake build system

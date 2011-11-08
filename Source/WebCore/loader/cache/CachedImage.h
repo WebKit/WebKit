@@ -25,7 +25,7 @@
 
 #include "CachedResource.h"
 #include "CachedResourceClient.h"
-#include "ImageBySizeCache.h"
+#include "SVGImageCache.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Timer.h"
@@ -67,6 +67,7 @@ public:
     IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
+    void removeClientForRenderer(RenderObject*);
     virtual void didAddClient(CachedResourceClient*);
     
     virtual void allClientsRemoved();
@@ -94,7 +95,6 @@ public:
     virtual void changedInRect(const Image*, const IntRect&);
 
 private:
-    Image* lookupImageForSize(const IntSize&) const;
     Image* lookupOrCreateImageForRenderer(const RenderObject*);
 
     void createImage();
@@ -106,7 +106,9 @@ private:
     void checkShouldPaintBrokenImage();
 
     RefPtr<Image> m_image;
-    mutable ImageBySizeCache m_svgImageCache;
+#if ENABLE(SVG)
+    OwnPtr<SVGImageCache> m_svgImageCache;
+#endif
     Timer<CachedImage> m_decodedDataDeletionTimer;
     bool m_shouldPaintBrokenImage;
 };

@@ -1806,6 +1806,7 @@ IF (ENABLE_SVG)
         svg/animation/SMILTimeContainer.cpp
         svg/animation/SVGSMILElement.cpp
         svg/graphics/SVGImage.cpp
+        svg/graphics/SVGImageCache.cpp
         svg/graphics/filters/SVGFEImage.cpp
         svg/graphics/filters/SVGFilter.cpp
         svg/graphics/filters/SVGFilterBuilder.cpp

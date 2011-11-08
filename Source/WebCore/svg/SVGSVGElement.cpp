@@ -551,22 +551,32 @@ bool SVGSVGElement::isOutermostSVG() const
     return !parentNode()->isSVGElement();
 }
 
-FloatRect SVGSVGElement::currentViewBoxRect() const
+FloatRect SVGSVGElement::currentViewBoxRect(CalculateViewBoxMode mode) const
 {
+    // FIXME: The interaction of 'currentView' and embedding SVGs in other documents, is untested and unspecified.
     if (useCurrentView()) {
         if (SVGViewSpec* view = currentView()) // what if we should use it but it is not set?
             return view->viewBox();
         return FloatRect();
     }
 
-    // Synthesize a viewBox if we're embedded through a <img> element, if none is present.
+    bool isEmbeddedThroughSVGImage = renderer() && renderer()->isSVGRoot() ? toRenderSVGRoot(renderer())->isEmbeddedThroughSVGImage() : false;
+    bool hasFixedSize = width().unitType() != LengthTypePercentage && height().unitType() != LengthTypePercentage;
+
     FloatRect useViewBox = viewBox();
-    if (useViewBox.isEmpty() && width().unitType() != LengthTypePercentage && height().unitType() != LengthTypePercentage) {
-        if (RenderObject* renderer = this->renderer()) {
-            if (renderer->isSVGRoot() && toRenderSVGRoot(renderer)->isEmbeddedThroughImageElement())
-                useViewBox = FloatRect(0, 0, width().value(this), height().value(this));
-        }
+    if (useViewBox.isEmpty()) {
+        // If no viewBox is specified but non-relative width/height values, then we
+        // should always synthesize a viewBox if we're embedded through a SVGImage.
+        if (hasFixedSize && isEmbeddedThroughSVGImage)
+            return FloatRect(0, 0, width().value(this), height().value(this));
+        return FloatRect();
     }
+
+    // If a viewBox is specified and non-relative width/height values, then the host document only
+    // uses the width/height values to figure out the intrinsic size when embedding us, whereas the
+    // embedded document sees specified viewBox only.
+    if (hasFixedSize && mode == CalculateViewBoxInHostDocument)
+        return FloatRect(0, 0, width().value(this), height().value(this));
 
     return useViewBox;
 }

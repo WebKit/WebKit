@@ -72,8 +72,13 @@ public:
     void setUseCurrentView(bool currentView);
 
     SVGViewSpec* currentView() const;
-    FloatRect currentViewBoxRect() const;
 
+    enum CalculateViewBoxMode {
+        CalculateViewBoxInHostDocument,
+        CalculateViewBoxInCurrentDocument
+    };
+
+    FloatRect currentViewBoxRect(CalculateViewBoxMode = CalculateViewBoxInCurrentDocument) const;
     float currentScale() const;
     void setCurrentScale(float scale);
 

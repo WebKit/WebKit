@@ -1486,9 +1486,6 @@ BUGWK39966 LINUX : fast/repaint/table-cell-collapsed-border.html = IMAGE
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
-// Failing on the bots but not locally; need investigation
-BUGCR23560 MAC : svg/as-image/animated-svg-as-image.html = PASS IMAGE
-
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
@@ -3849,12 +3846,8 @@ BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
 BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 
-BUGWK71226 : svg/as-background-image/animated-svg-as-background.html = IMAGE
-BUGWK71226 : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK71226 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
-BUGWK71226 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
-BUGWK71226 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE+TEXT
-BUGWK71226 : fast/backgrounds/animated-svg-as-mask.html = IMAGE+TEXT IMAGE
+BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
+BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
 
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
 

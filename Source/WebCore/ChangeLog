@@ -1,3 +1,95 @@
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Switch SVGImage cache to store ImageBuffers instead of whole SVGImages, including a DOM/Render tree
+        https://bugs.webkit.org/show_bug.cgi?id=71368
+
+        Reviewed by Antti Koivisto.
+
+        Fix regressions/races introduced by r98852. SVGImage repainting didn't work under certain circumstances.
+        The problem was hard to reproduce on Mac ports, but easily visible on Chromium, when opening two files
+        that shared the same animated SVG image. The problem of sharing a single ImageObserver across multiple
+        instances of the same SVGImage, leads to nasty problems, that are timing dependant. changedInRect() calls
+        that should only by received in one document, are received in the other as well, due the shared nature
+        of CachedImage. To avoid these problems alltogether, a new approach is needed, that was initially suggested
+        by Antti.
+
+        Avoid creating multiple SVGImages and caching them for different sizes/zoom levels. Introduce SVGImageCache
+        which holds rendered versions of the SVGImage at certain sizes/zoom levels. It holds (ImageBuffer, Image) pairs
+        for each renderer, associated with a size and zoom level.
+
+        This is a major change to the cache as introduced some weeks ago. Instead of holding multiple SVGImages, each containing
+        a whole DOM/render tree, we now create bitmap images rendered at the requested sizes/zoom levels and cache them.
+
+        Revert ImageBySizeCache changes that were needed to make it usable wih SVGImage. Its now used only in CSSImageGeneratorValue and
+        thus the extra information that CSSImageGeneratorValue doesn't need can be removed again (desired/actual size differentations, and the zoom level).
+
+        Tests: svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
+               svg/as-image/animated-svg-as-image-same-image.html
+
+        * CMakeLists.txt: Add svg/graphics/SVGImageCache.* to build.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Copy headers from svg/graphics, as SVGImageCache is needed by CachedImage in SVG enabled builds.
+        * WebCore.xcodeproj/project.pbxproj: Add svg/graphics/SVGImageCache.* to build.
+        * css/CSSImageGeneratorValue.cpp: Remove zoom parameter from addClient/getImage, no need to pass 1 default values anymore.
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::getImage):
+        * loader/cache/CachedImage.cpp: Stop using ImageBySizeCache, and switch to the new SVGImageCache.
+        (WebCore::CachedImage::removeClientForRenderer):
+        (WebCore::CachedImage::lookupOrCreateImageForRenderer):
+        (WebCore::CachedImage::setContainerSizeForRenderer):
+        (WebCore::CachedImage::imageSizeForRenderer):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::createImage):
+        (WebCore::CachedImage::destroyDecodedData):
+        (WebCore::CachedImage::decodedSizeChanged):
+        (WebCore::CachedImage::didDraw):
+        (WebCore::CachedImage::shouldPauseAnimation):
+        (WebCore::CachedImage::animationAdvanced):
+        (WebCore::CachedImage::changedInRect):
+        * loader/cache/CachedImage.h:
+        * page/DragController.cpp: Stop using imageForRenderer(), as it may return cached BitmapImages, that don't carry a filename extension anymore, which is required here.
+        (WebCore::getImage):
+        * rendering/ImageBySizeCache.cpp: Revert changes to ImageBySizeCache, which were needed to make it usable for SVGImages. CSSImageGenerator doesn't need it.
+        (WebCore::ImageBySizeCache::addClient):
+        (WebCore::ImageBySizeCache::removeClient):
+        (WebCore::ImageBySizeCache::getImage):
+        * rendering/ImageBySizeCache.h: Ditto.
+        (WebCore::SizeAndCount::SizeAndCount):
+        * rendering/RenderImage.cpp: Stop using imageForRenderer(), use cachedImage()->image(), which is guaranteed to be a SVGImage for svg images, and not a cached bitmap copy.
+        (WebCore::RenderImage::embeddedContentBox):
+        * rendering/RenderReplaced.cpp: Simplify logic to figure out the intrinsic size - the special logic for the old SVGImage cache can go away now.
+        (WebCore::RenderReplaced::computeIntrinsicLogicalWidth):
+        (WebCore::RenderReplaced::computeIntrinsicLogicalHeight):
+        * rendering/style/StyleCachedImage.cpp: Call removeClientForRenderer(), which takes care of clearing SVGImageCache entries as well.
+        (WebCore::StyleCachedImage::removeClient): This change is needed, as we don't want to make removeClient() virtual in CachedResource.
+        * rendering/svg/RenderSVGRoot.cpp: Rename isEmbeddedThroughImageElement to isEmbeddedThroughSVGImage, as this is what it actually checks.
+        (WebCore::RenderSVGRoot::isEmbeddedThroughSVGImage):
+        * rendering/svg/RenderSVGRoot.h:
+        * svg/SVGSVGElement.cpp: Fix bug that's visible now with the SVGImageCache, which was already there before, but hard to trigger.
+        (WebCore::SVGSVGElement::currentViewBoxRect): The viewBox depends on who's asking for it: the host document or the embedded document? Take that into account.
+        * svg/SVGSVGElement.h:
+        * svg/graphics/SVGImage.cpp: Cleanup some code. Add new logic that draws a SVGImage into an ImageBuffer at a desired size & zoom.
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::size):
+        (WebCore::SVGImage::drawSVGToImageBuffer):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.cpp: Added. SVGImageCache caches Image/ImageBuffer pairs for each _renderer_ and size/zoom level. The ImageBySizeCache only cared about size.
+        (WebCore::SVGImageCache::SVGImageCache):
+        (WebCore::SVGImageCache::~SVGImageCache):
+        (WebCore::SVGImageCache::removeRendererFromCache):
+        (WebCore::SVGImageCache::setRequestedSizeAndZoom):
+        (WebCore::SVGImageCache::getRequestedSizeAndZoom):
+        (WebCore::SVGImageCache::imageContentChanged):
+        (WebCore::SVGImageCache::redrawTimerFired):
+        (WebCore::SVGImageCache::lookupOrCreateBitmapImageForRenderer):
+        * svg/graphics/SVGImageCache.h: Added.
+        (WebCore::SVGImageCache::create):
+        (WebCore::SVGImageCache::CachedSizeAndZoom::CachedSizeAndZoom):
+        (WebCore::SVGImageCache::CachedImageData::CachedImageData):
+
 2011-11-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: refactor shortcuts and settings screens

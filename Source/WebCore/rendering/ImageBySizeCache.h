@@ -31,41 +31,29 @@ namespace WebCore {
 class Image;
 class RenderObject;
 
-struct SizeZoomAndCount {
-    SizeZoomAndCount(IntSize newSize = IntSize(), float newZoom = 0, int newCount = 0)
-        : actualSize(newSize)
-        , requestedSize(newSize)
-        , actualZoom(newZoom)
-        , requestedZoom(newZoom)
+struct SizeAndCount {
+    SizeAndCount(IntSize newSize = IntSize(), int newCount = 0)
+        : size(newSize)
         , count(newCount)
     {
     }
 
-    IntSize actualSize;
-    IntSize requestedSize;
-    float actualZoom;
-    float requestedZoom;
+    IntSize size;
     int count;
 };
 
-typedef HashMap<const RenderObject*, SizeZoomAndCount> RenderObjectSizeCountMap;
+typedef HashMap<const RenderObject*, SizeAndCount> RenderObjectSizeCountMap;
 
 class ImageBySizeCache {
 public:
     ImageBySizeCache();
 
-    void addClient(const RenderObject*, const IntSize&, float zoom);
+    void addClient(const RenderObject*, const IntSize&);
     void removeClient(const RenderObject*);
 
-    Image* getImage(const RenderObject*, const IntSize&, float zoom);
-    void getRequestedSizeAndZoom(const RenderObject*, IntSize&, float& zoom);
-
+    Image* getImage(const RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
 
-    void clear();
-
-    Image* imageForSize(const IntSize&) const;
-    Image* imageForRenderer(const RenderObject*) const;
     const RenderObjectSizeCountMap& clients() const { return m_clients; }
 
 private:

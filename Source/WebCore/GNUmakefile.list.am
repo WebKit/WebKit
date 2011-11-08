@@ -3536,6 +3536,8 @@ webcore_sources += \
 	Source/WebCore/svg/graphics/filters/SVGFilterBuilder.h \
 	Source/WebCore/svg/graphics/filters/SVGFilter.cpp \
 	Source/WebCore/svg/graphics/filters/SVGFilter.h \
+	Source/WebCore/svg/graphics/SVGImageCache.cpp \
+	Source/WebCore/svg/graphics/SVGImageCache.h \
 	Source/WebCore/svg/graphics/SVGImage.cpp \
 	Source/WebCore/svg/graphics/SVGImage.h \
 	Source/WebCore/svg/LinearGradientAttributes.h \

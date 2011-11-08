@@ -200,10 +200,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
 
 int RenderReplaced::computeIntrinsicLogicalWidth(RenderBox* contentRenderer, bool includeMaxWidth) const
 {
-    if (m_hasIntrinsicSize) {
-        if (!contentRenderer || !contentRenderer->style()->logicalWidth().isFixed())
-            return computeReplacedLogicalWidthRespectingMinMaxWidth(calcAspectRatioLogicalWidth(), includeMaxWidth);
-    }
+    if (m_hasIntrinsicSize)
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(calcAspectRatioLogicalWidth(), includeMaxWidth);
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
     return contentRenderer->computeReplacedLogicalWidthRespectingMinMaxWidth(contentRenderer->computeReplacedLogicalWidthUsing(contentRenderer->style()->logicalWidth()), includeMaxWidth);
@@ -211,10 +209,8 @@ int RenderReplaced::computeIntrinsicLogicalWidth(RenderBox* contentRenderer, boo
 
 int RenderReplaced::computeIntrinsicLogicalHeight(RenderBox* contentRenderer) const
 {
-    if (m_hasIntrinsicSize) {
-        if (!contentRenderer || !contentRenderer->style()->logicalHeight().isFixed())
-            return computeReplacedLogicalHeightRespectingMinMaxHeight(calcAspectRatioLogicalHeight());
-    }
+    if (m_hasIntrinsicSize)
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(calcAspectRatioLogicalHeight());
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
     return contentRenderer->computeReplacedLogicalHeightRespectingMinMaxHeight(contentRenderer->computeReplacedLogicalHeightUsing(contentRenderer->style()->logicalHeight()));

@@ -6206,6 +6206,8 @@
             'svg/animation/SMILTimeContainer.cpp',
             'svg/animation/SMILTimeContainer.h',
             'svg/animation/SVGSMILElement.cpp',
+            'svg/graphics/SVGImageCache.cpp',
+            'svg/graphics/SVGImageCache.h',
             'svg/graphics/SVGImage.cpp',
             'svg/graphics/SVGImage.h',
             'svg/graphics/filters/SVGFEImage.cpp',

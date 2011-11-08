@@ -48,7 +48,7 @@ CSSImageGeneratorValue::~CSSImageGeneratorValue()
 void CSSImageGeneratorValue::addClient(RenderObject* renderer, const IntSize& size)
 {
     ref();
-    m_imageCache.addClient(renderer, size, 1);
+    m_imageCache.addClient(renderer, size);
 }
 
 void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
@@ -61,7 +61,7 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
 {
     // If renderer is the only client, make sure we don't delete this, if the size changes (as this will result in addClient/removeClient calls).
     RefPtr<CSSImageGeneratorValue> protect(this);
-    return m_imageCache.getImage(renderer, size, 1);
+    return m_imageCache.getImage(renderer, size);
 }
 
 void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> image)
