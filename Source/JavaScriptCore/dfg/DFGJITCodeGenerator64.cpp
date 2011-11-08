@@ -807,13 +807,7 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int16_t callToLoad = safeCast<int16_t>(m_jit.differenceBetween(functionCall, loadWithPatch));
-    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
-    
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToLoad, callToSlowCase, callToDone, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR), safeCast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, loadWithPatch, slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR), safeCast<int8_t>(scratchGPR)));
     
     if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg)
         unlock(scratchGPR);
@@ -860,13 +854,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex 
     done.link(&m_jit);
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int16_t callToStore = safeCast<int16_t>(m_jit.differenceBetween(functionCall, storeWithPatch));
-    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
-
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, JITCompiler::DataLabelCompact(storeWithPatch.label()), slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
 }
 
 void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)

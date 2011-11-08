@@ -881,14 +881,7 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg basePayloadGPR, GPRReg 
     
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int16_t callToTagLoad = safeCast<int16_t>(m_jit.differenceBetween(functionCall, tagLoadWithPatch));
-    int16_t callToPayloadLoad = safeCast<int16_t>(m_jit.differenceBetween(functionCall, payloadLoadWithPatch));
-    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
-    
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToTagLoad, callToPayloadLoad, callToSlowCase, callToDone, safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(resultTagGPR), safeCast<int8_t>(resultPayloadGPR), safeCast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, tagLoadWithPatch, payloadLoadWithPatch, slowCase, doneLabel, safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(resultTagGPR), safeCast<int8_t>(resultPayloadGPR), safeCast<int8_t>(scratchGPR)));
     
     return functionCall;
 }
@@ -932,14 +925,7 @@ void JITCodeGenerator::cachedPutById(GPRReg basePayloadGPR, GPRReg valueTagGPR, 
     done.link(&m_jit);
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int16_t callToTagStore = safeCast<int16_t>(m_jit.differenceBetween(functionCall, tagStoreWithPatch));
-    int16_t callToPayloadStore = safeCast<int16_t>(m_jit.differenceBetween(functionCall, payloadStoreWithPatch));
-    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
-
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToTagStore, callToPayloadStore, callToSlowCase, callToDone, safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(valueTagGPR), safeCast<int8_t>(valuePayloadGPR), safeCast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, JITCompiler::DataLabelCompact(tagStoreWithPatch.label()), JITCompiler::DataLabelCompact(payloadStoreWithPatch.label()), slowCase, doneLabel, safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(valueTagGPR), safeCast<int8_t>(valuePayloadGPR), safeCast<int8_t>(scratchGPR)));
 }
 
 void JITCodeGenerator::cachedGetMethod(GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)

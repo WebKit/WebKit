@@ -100,6 +100,51 @@ struct CallExceptionRecord {
     CodeOrigin m_codeOrigin;
 };
 
+struct PropertyAccessRecord {
+#if USE(JSVALUE64)
+    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+#elif USE(JSVALUE32_64)
+    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+#endif
+        : m_deltaCheckImmToCall(deltaCheckImmToCall)
+        , m_functionCall(functionCall)
+        , m_deltaCallToStructCheck(deltaCallToStructCheck)
+#if USE(JSVALUE64)
+        , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
+#elif USE(JSVALUE32_64)
+        , m_deltaCallToTagLoadOrStore(deltaCallToTagLoadOrStore)
+        , m_deltaCallToPayloadLoadOrStore(deltaCallToPayloadLoadOrStore)
+#endif
+        , m_deltaCallToSlowCase(deltaCallToSlowCase)
+        , m_deltaCallToDone(deltaCallToDone)
+        , m_baseGPR(baseGPR)
+#if USE(JSVALUE32_64)
+        , m_valueTagGPR(valueTagGPR)
+#endif
+        , m_valueGPR(valueGPR)
+        , m_scratchGPR(scratchGPR)
+    {
+    }
+
+    MacroAssembler::DataLabelPtr m_deltaCheckImmToCall;
+    MacroAssembler::Call m_functionCall;
+    MacroAssembler::Jump m_deltaCallToStructCheck;
+#if USE(JSVALUE64)
+    MacroAssembler::DataLabelCompact m_deltaCallToLoadOrStore;
+#elif USE(JSVALUE32_64)
+    MacroAssembler::DataLabelCompact m_deltaCallToTagLoadOrStore;
+    MacroAssembler::DataLabelCompact m_deltaCallToPayloadLoadOrStore;
+#endif
+    MacroAssembler::Label m_deltaCallToSlowCase;
+    MacroAssembler::Label m_deltaCallToDone;
+    int8_t m_baseGPR;
+#if USE(JSVALUE32_64)
+    int8_t m_valueTagGPR;
+#endif
+    int8_t m_valueGPR;
+    int8_t m_scratchGPR;
+};
+
 // === JITCompiler ===
 //
 // DFG::JITCompiler is responsible for generating JIT code from the dataflow graph.
@@ -202,17 +247,10 @@ public:
     void emitStoreDouble(NodeIndex, FPRReg value);
 #endif
 
-#if USE(JSVALUE64)
-    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+    void addPropertyAccess(const PropertyAccessRecord& record)
     {
-        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
+        m_propertyAccesses.append(record);
     }
-#elif USE(JSVALUE32_64)
-    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToTagLoadOrStore, int16_t deltaCallToPayloadLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
-    {
-        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToTagLoadOrStore, deltaCallToPayloadLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueTagGPR, valueGPR, scratchGPR));
-    }
-#endif
 
     void addMethodGet(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
     {
@@ -275,51 +313,6 @@ private:
     // JIT code map for OSR entrypoints.
     Label m_startOfCode;
 
-    struct PropertyAccessRecord {
-#if USE(JSVALUE64)
-        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
-#elif USE(JSVALUE32_64)
-        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToTagLoadOrStore, int16_t deltaCallToPayloadLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
-#endif
-            : m_functionCall(functionCall)
-            , m_deltaCheckImmToCall(deltaCheckImmToCall)
-            , m_deltaCallToStructCheck(deltaCallToStructCheck)
-#if USE(JSVALUE64)
-            , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
-#elif USE(JSVALUE32_64)
-            , m_deltaCallToTagLoadOrStore(deltaCallToTagLoadOrStore)
-            , m_deltaCallToPayloadLoadOrStore(deltaCallToPayloadLoadOrStore)
-#endif
-            , m_deltaCallToSlowCase(deltaCallToSlowCase)
-            , m_deltaCallToDone(deltaCallToDone)
-            , m_baseGPR(baseGPR)
-#if USE(JSVALUE32_64)
-            , m_valueTagGPR(valueTagGPR)
-#endif
-            , m_valueGPR(valueGPR)
-            , m_scratchGPR(scratchGPR)
-        {
-        }
-
-        JITCompiler::Call m_functionCall;
-        int16_t m_deltaCheckImmToCall;
-        int16_t m_deltaCallToStructCheck;
-#if USE(JSVALUE64)
-        int16_t m_deltaCallToLoadOrStore;
-#elif USE(JSVALUE32_64)
-        int16_t m_deltaCallToTagLoadOrStore;
-        int16_t m_deltaCallToPayloadLoadOrStore;
-#endif
-        int16_t m_deltaCallToSlowCase;
-        int16_t m_deltaCallToDone;
-        int8_t m_baseGPR;
-#if USE(JSVALUE32_64)
-        int8_t m_valueTagGPR;
-#endif
-        int8_t m_valueGPR;
-        int8_t m_scratchGPR;
-    };
-    
     struct MethodGetRecord {
         MethodGetRecord(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
             : m_slowCall(slowCall)

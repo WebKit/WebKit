@@ -135,6 +135,11 @@ public:
         return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)));
     }
 
+    CodeLocationLabel locationOf(Jump jump)
+    {
+        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_label)));
+    }
+
     CodeLocationLabel locationOf(Label label)
     {
         return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label)));

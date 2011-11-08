@@ -157,17 +157,18 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
-        info.callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
-        info.u.unset.deltaCheckImmToCall = m_propertyAccesses[i].m_deltaCheckImmToCall;
-        info.deltaCallToStructCheck = m_propertyAccesses[i].m_deltaCallToStructCheck;
+        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
+        info.callReturnLocation = callReturnLocation;
+        info.u.unset.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCheckImmToCall), callReturnLocation);
+        info.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToStructCheck));
 #if USE(JSVALUE64)
-        info.u.unset.deltaCallToLoadOrStore = m_propertyAccesses[i].m_deltaCallToLoadOrStore;
+        info.u.unset.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToLoadOrStore));
 #else
-        info.u.unset.deltaCallToTagLoadOrStore = m_propertyAccesses[i].m_deltaCallToTagLoadOrStore;
-        info.u.unset.deltaCallToPayloadLoadOrStore = m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore;
+        info.u.unset.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToTagLoadOrStore));
+        info.u.unset.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore));
 #endif
-        info.deltaCallToSlowCase = m_propertyAccesses[i].m_deltaCallToSlowCase;
-        info.deltaCallToDone = m_propertyAccesses[i].m_deltaCallToDone;
+        info.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToSlowCase));
+        info.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToDone));
         info.baseGPR = m_propertyAccesses[i].m_baseGPR;
 #if USE(JSVALUE64)
         info.valueGPR = m_propertyAccesses[i].m_valueGPR;
