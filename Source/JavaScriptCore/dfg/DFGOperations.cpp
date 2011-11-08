@@ -163,10 +163,8 @@ EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
-JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
+inline JSCell* createThis(ExecState* exec, JSCell* prototype, JSFunction* constructor)
 {
-    JSFunction* constructor = asFunction(exec->callee());
-    
 #if !ASSERT_DISABLED
     ConstructData constructData;
     ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
@@ -181,6 +179,16 @@ JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
         structure = constructor->scope()->globalObject->emptyObjectStructure();
     
     return constructEmptyObject(exec, structure);
+}
+
+JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
+{
+    return createThis(exec, prototype, asFunction(exec->callee()));
+}
+
+JSCell* DFG_OPERATION operationCreateThisInlined(ExecState* exec, JSCell* prototype, JSCell* constructor)
+{
+    return createThis(exec, prototype, static_cast<JSFunction*>(constructor));
 }
 
 JSCell* DFG_OPERATION operationNewObject(ExecState* exec)

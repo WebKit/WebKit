@@ -64,6 +64,7 @@ extern "C" {
 typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJA)(ExecState*, EncodedJSValue, JSArray*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
@@ -92,6 +93,7 @@ typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*);
 JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSCell* encodedOp1);
+JSCell* DFG_OPERATION operationCreateThisInlined(ExecState*, JSCell* encodedOp1, JSCell* constructor);
 EncodedJSValue DFG_OPERATION operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
 EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);

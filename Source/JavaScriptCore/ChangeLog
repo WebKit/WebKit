@@ -1,3 +1,22 @@
+2011-11-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG operationCreateThis slow path may get the wrong callee in case of inlining
+        https://bugs.webkit.org/show_bug.cgi?id=71647
+
+        Reviewed by Oliver Hunt.
+        
+        No new tests because I only saw this manifest itself when I had other bugs
+        leading to spurious slow path executions.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::putWithAttributes

@@ -1975,7 +1975,10 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        callOperation(operationCreateThis, resultGPR, protoGPR);
+        if (node.codeOrigin.inlineCallFrame)
+            callOperation(operationCreateThisInlined, resultGPR, protoGPR, node.codeOrigin.inlineCallFrame->callee.get());
+        else
+            callOperation(operationCreateThis, resultGPR, protoGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);
