@@ -138,7 +138,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     // 4) Find and return the destination machine code address.
     
-    void* result = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(codeBlock->getJITCode().start()) + entry->m_machineCodeOffset);
+    void* result = codeBlock->getJITCode().executableAddressAtOffset(entry->m_machineCodeOffset);
     
 #if ENABLE(JIT_VERBOSE_OSR)
     printf("    OSR returning machine code address %p.\n", result);

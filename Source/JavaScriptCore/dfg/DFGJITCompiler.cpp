@@ -756,7 +756,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         ASSERT(mapping);
         ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
         
-        void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlockForCaller->getJITCode().start()) + mapping->m_machineCodeOffset);
+        void* jumpTarget = baselineCodeBlockForCaller->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
 
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
@@ -786,7 +786,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
-    void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(baselineCodeBlock->getJITCode().start()) + mapping->m_machineCodeOffset);
+    void* jumpTarget = baselineCodeBlock->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
     
     ASSERT(GPRInfo::regT1 != GPRInfo::cachedResultRegister);
     

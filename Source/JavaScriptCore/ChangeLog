@@ -1,3 +1,24 @@
+2011-11-08  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT calculation of OSR entry points is not THUMB2 safe
+        https://bugs.webkit.org/show_bug.cgi?id=71852
+
+        Reviewed by Oliver Hunt.
+
+        Executable addresses are tagged with a low bit set to distinguish
+        between THUMB2 and traditional ARM.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGJITCompiler32_64.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * jit/JITCode.h:
+        (JSC::JITCode::executableAddressAtOffset):
+        (JSC::JITCode::start):
+        (JSC::JITCode::size):
+
 2011-11-08  Michael Saboff  <msaboff@apple.com>
 
         JSC::Parser::Parser leaks Lexer member

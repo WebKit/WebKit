@@ -87,6 +87,12 @@ namespace JSC {
             return m_ref.code();
         }
 
+        void* executableAddressAtOffset(size_t offset) const
+        {
+            ASSERT(offset < size());
+            return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
+        }
+
         // This function returns the offset in bytes of 'pointerIntoCode' into
         // this block of code.  The pointer provided must be a pointer into this
         // block of code.  It is ASSERTed that no codeblock >4gb in size.
@@ -104,12 +110,12 @@ namespace JSC {
             return globalData->exception ? jsNull() : result;
         }
 
-        void* start()
+        void* start() const
         {
             return m_ref.code().dataLocation();
         }
 
-        size_t size()
+        size_t size() const
         {
             ASSERT(m_ref.code().executableAddress());
             return m_ref.size();
