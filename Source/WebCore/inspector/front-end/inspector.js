@@ -150,20 +150,8 @@ var WebInspector = {
             this._hideSettingsScreen();
     },
 
-    _showShortcutsScreen: function()
-    {
-        this._hideSettingsScreen();
-        WebInspector.shortcutsScreen.show();
-    },
-
-    _hideShortcutsScreen: function()
-    {
-        WebInspector.shortcutsScreen.hide();
-    },
-
     _showSettingsScreen: function()
     {
-        this._hideShortcutsScreen();
         function onhide()
         {
             this._settingsButton.toggled = false;
@@ -178,11 +166,8 @@ var WebInspector = {
 
     _hideSettingsScreen: function()
     {
-        if (this._settingsScreen) {
+        if (this._settingsScreen)
             this._settingsScreen.hide();
-            this._settingsButton.toggled = false;
-            delete this._settingsScreen;
-        }
     },
 
     get attached()
@@ -335,6 +320,7 @@ WebInspector.doLoadedDone = function()
     if (WebInspector.socket)
         document.body.addStyleClass("remote");
 
+    WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
     this._registerShortcuts();
 
     // set order of some sections explicitly
@@ -577,7 +563,7 @@ WebInspector.documentKeyDown = function(event)
 
     if (event.keyIdentifier === "F1" ||
         (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode && !isInputElement || event.metaKey))) {
-        this._showShortcutsScreen();
+        WebInspector.shortcutsScreen.show();
         event.stopPropagation();
         event.preventDefault();
         return;

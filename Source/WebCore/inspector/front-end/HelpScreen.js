@@ -54,11 +54,17 @@ WebInspector.HelpScreen = function(title)
     ];
 }
 
+WebInspector.HelpScreen.visibleScreen_ = null;
+
 WebInspector.HelpScreen.prototype = {
     show: function(onHide)
     {
         if (this._isShown)
             return;
+
+        if (WebInspector.HelpScreen.visibleScreen_)
+            WebInspector.HelpScreen.visibleScreen_.hide();
+        WebInspector.HelpScreen.visibleScreen_ = this;
 
         document.body.appendChild(this._element);
         this._isShown = true;
@@ -75,6 +81,7 @@ WebInspector.HelpScreen.prototype = {
         this._isShown = false;
         document.body.removeChild(this._element);
         WebInspector.setCurrentFocusElement(this._previousFocusElement);
+        WebInspector.HelpScreen.visibleScreen_ = null;
         if (this._onHide) {
             this._onHide();
             delete this._onHide;

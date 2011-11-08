@@ -33,7 +33,9 @@
  */
 WebInspector.ShortcutsScreen = function()
 {
+    WebInspector.HelpScreen.call(this, WebInspector.UIString("Keyboard Shortcuts"));
     this._sections = {};
+    this._tableReady = false;
 }
 
 WebInspector.ShortcutsScreen.prototype = {
@@ -45,23 +47,18 @@ WebInspector.ShortcutsScreen.prototype = {
         return section;
     },
 
-    show: function()
+    show: function(onHide)
     {
-        if (!this._helpScreen) {
-            this._helpScreen = new WebInspector.HelpScreen(WebInspector.UIString("Keyboard Shortcuts"));
-            this._buildTable(this._helpScreen.contentElement, 2);
-        }
-        this._helpScreen.show();
-    },
-
-    hide: function()
-    {
-        if (this._helpScreen)
-            this._helpScreen.hide();
+        this._buildTable(this.contentElement, 2);
+        WebInspector.HelpScreen.prototype.show.call(this, onHide);
     },
 
     _buildTable: function(parent, nColumns)
     {
+        if (this._tableReady)
+            return;
+        this._tableReady = true;
+
         var height = 0;
         var orderedSections = [];
         for (var section in this._sections) {
@@ -95,7 +92,13 @@ WebInspector.ShortcutsScreen.prototype = {
     }
 }
 
-WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
+WebInspector.ShortcutsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
+
+/**
+ * We cannot initialize it here as localized strings are not loaded yet.
+ * @type {?WebInspector.ShortcutsScreen}
+ */
+WebInspector.shortcutsScreen = null;
 
 /**
  * @constructor

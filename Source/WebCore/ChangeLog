@@ -1,3 +1,23 @@
+2011-11-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: refactor shortcuts and settings screens
+        https://bugs.webkit.org/show_bug.cgi?id=71773
+
+        Keep pointer to the visible screen and hide it automatically when new one is going
+        to be displayed.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen.prototype.show):
+        (WebInspector.HelpScreen.prototype.hide):
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsScreen): ShortcutsScreen is now a descendant of HelpScreen.
+        (WebInspector.ShortcutsScreen.prototype.show):
+        * inspector/front-end/inspector.js:
+        (WebInspector._hideSettingsScreen):
+        (WebInspector.documentKeyDown):
+
 2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix Snow Leopard 32bit builds.
