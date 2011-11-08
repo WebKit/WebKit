@@ -62,6 +62,8 @@ module window {
 
         void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
 
+        void setPagination(in Document document, in DOMString mode, in long gap) raises(DOMException);
+
         boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
         DOMString suggestedValue(in Element inputElement) raises (DOMException);
         void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);

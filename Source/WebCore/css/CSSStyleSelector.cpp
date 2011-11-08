@@ -1163,6 +1163,16 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
             documentStyle->setDirection(docElementRenderer->style()->direction());
     }
 
+    if (frame) {
+        if (Page* page = frame->page()) {
+            const Page::Pagination& pagination = page->pagination();
+            if (pagination.mode != Page::Pagination::Unpaginated) {
+                documentStyle->setColumnAxis(pagination.mode == Page::Pagination::HorizontallyPaginated ? HorizontalColumnAxis : VerticalColumnAxis);
+                documentStyle->setColumnGap(pagination.gap);
+            }
+        }
+    }
+
     FontDescription fontDescription;
     fontDescription.setUsePrinterFont(document->printing());
     if (Settings* settings = document->settings()) {

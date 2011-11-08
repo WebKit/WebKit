@@ -665,6 +665,17 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     backForward()->markPagesForFullStyleRecalc();
 }
 
+void Page::setPagination(const Pagination& pagination)
+{
+    if (m_pagination.mode == pagination.mode && m_pagination.gap == pagination.gap)
+        return;
+
+    m_pagination = pagination;
+
+    setNeedsRecalcStyleInAllFrames();
+    backForward()->markPagesForFullStyleRecalc();
+}
+
 void Page::didMoveOnscreen()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {

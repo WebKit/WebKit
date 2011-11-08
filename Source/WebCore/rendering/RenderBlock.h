@@ -906,7 +906,9 @@ protected:
     bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta = 0) const;
 
     bool logicalWidthChangedInRegions() const;
-    
+
+    virtual bool requiresColumns(int desiredColumnCount) const;
+
 public:
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;

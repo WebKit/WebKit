@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderView.h"
 
+#include "ColumnInfo.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -171,6 +172,17 @@ void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Transfo
         getTransformFromContainer(0, LayoutSize(), t);
         transformState.applyTransform(t);
     }
+}
+
+bool RenderView::requiresColumns(int desiredColumnCount) const
+{
+    if (m_frameView) {
+        if (Frame* frame = m_frameView->frame()) {
+            if (Page* page = frame->page())
+                return frame == page->mainFrame() && page->pagination().mode != Page::Pagination::Unpaginated;
+        }
+    }
+    return RenderBlock::requiresColumns(desiredColumnCount);
 }
 
 void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -678,6 +690,18 @@ IntRect RenderView::unscaledDocumentRect() const
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
     return overflowRect;
+}
+
+LayoutRect RenderView::backgroundRect() const
+{
+    if (!hasColumns())
+        return unscaledDocumentRect();
+
+    ColumnInfo* columnInfo = this->columnInfo();
+    LayoutRect backgroundRect(0, 0, columnInfo->desiredColumnWidth(), columnInfo->columnHeight() * columnInfo->columnCount());
+    if (!isHorizontalWritingMode())
+        backgroundRect = backgroundRect.transposedRect();
+    return backgroundRect;
 }
 
 IntRect RenderView::documentRect() const

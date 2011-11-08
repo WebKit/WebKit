@@ -251,6 +251,22 @@ namespace WebCore {
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         void setDeviceScaleFactor(float);
 
+        struct Pagination {
+            enum Mode { Unpaginated, HorizontallyPaginated, VerticallyPaginated };
+
+            Pagination()
+                : mode(Unpaginated)
+                , gap(0)
+            {
+            };
+
+            Mode mode;
+            unsigned gap;
+        };
+
+        const Pagination& pagination() const { return m_pagination; }
+        void setPagination(const Pagination&);
+
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();
         void willMoveOffscreen();
@@ -381,6 +397,8 @@ namespace WebCore {
 
         float m_pageScaleFactor;
         float m_deviceScaleFactor;
+
+        Pagination m_pagination;
 
         bool m_javaScriptURLsAreAllowed;
 

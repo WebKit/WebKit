@@ -4506,12 +4506,17 @@ void RenderBlock::calcColumnWidth()
     setDesiredColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
 }
 
+bool RenderBlock::requiresColumns(int desiredColumnCount) const
+{
+    return firstChild()
+        && (desiredColumnCount != 1 || !style()->hasAutoColumnWidth() || !style()->hasInlineColumnAxis())
+        && !firstChild()->isAnonymousColumnsBlock()
+        && !firstChild()->isAnonymousColumnSpanBlock();
+}
+
 void RenderBlock::setDesiredColumnCountAndWidth(int count, LayoutUnit width)
 {
-    bool destroyColumns = !firstChild()
-                          || (count == 1 && style()->hasAutoColumnWidth() && style()->hasInlineColumnAxis())
-                          || firstChild()->isAnonymousColumnsBlock()
-                          || firstChild()->isAnonymousColumnSpanBlock();
+    bool destroyColumns = !requiresColumns(count);
     if (destroyColumns) {
         if (hasColumns()) {
             delete gColumnInfoMap->take(this);

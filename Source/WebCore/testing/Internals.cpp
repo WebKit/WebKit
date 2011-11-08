@@ -376,6 +376,30 @@ void Internals::setScrollViewPosition(Document* document, long x, long y, Except
     frameView->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdgeOldValue);
 }
 
+void Internals::setPagination(Document* document, const String& mode, int gap, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    Page::Pagination pagination;
+    if (mode == "Unpaginated")
+        pagination.mode = Page::Pagination::Unpaginated;
+    else if (mode == "HorizontallyPaginated")
+        pagination.mode = Page::Pagination::HorizontallyPaginated;
+    else if (mode == "VerticallyPaginated")
+        pagination.mode = Page::Pagination::VerticallyPaginated;
+    else {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    pagination.gap = gap;
+
+    document->page()->setPagination(pagination);
+}
+
 void Internals::reset(Document* document)
 {
     if (!document || !document->settings())
@@ -390,6 +414,9 @@ void Internals::reset(Document* document)
         document->settings()->setPasswordEchoEnabled(passwordEchoEnabledBackup);
         passwordEchoEnabledBackedUp = false;
     }
+
+    if (Page* page = document->page())
+        page->setPagination(Page::Pagination());
 }
 
 bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)

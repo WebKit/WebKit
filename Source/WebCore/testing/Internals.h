@@ -89,6 +89,8 @@ public:
 
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
 
+    void setPagination(Document*, const String& mode, int gap, ExceptionCode&);
+
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
     String suggestedValue(Element* inputElement, ExceptionCode&);
     void setSuggestedValue(Element* inputElement, const String&, ExceptionCode&);
