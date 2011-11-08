@@ -491,7 +491,7 @@ module window {
         attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
         attribute [CustomGetter] HTMLImageElementConstructor Image; // Usable with new operator
-        attribute [CustomGetter] HTMLOptionElementConstructor Option; // Usable with new operator
+        attribute [JSCCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
