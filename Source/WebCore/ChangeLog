@@ -1,3 +1,17 @@
+2011-11-08  Daniel Bates  <dbates@webkit.org>
+
+        Remove get() defined in CredentialStorageQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71829
+
+        Reviewed by Andreas Kling.
+
+        CredentialStorage::get() is implemented in CredentialStorage.cpp. And CredentialStorage.cpp
+        provides the base implementation for each platform. We shouldn't re-define
+        CredentialStorage::get() in CredentialStorageQt.cpp.
+
+        * Target.pri: Add files CredentialStorage.{cpp, h}.
+        * platform/network/qt/CredentialStorageQt.cpp:
+
 2011-11-08  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: reference cycle between IDBDatabase and IDBTransaction
