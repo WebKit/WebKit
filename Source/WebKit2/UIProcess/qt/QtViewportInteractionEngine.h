@@ -26,6 +26,7 @@
 #include <QScroller>
 #include "qwebkitglobal.h"
 #include <QtCore/QObject>
+#include <QtCore/QRectF>
 #include <QtCore/QVariant>
 #include <QtCore/QVariantAnimation>
 
@@ -65,6 +66,7 @@ public:
 
     void reset();
     void setConstraints(const Constraints&);
+    void setItemRectVisible(const QRectF&);
 
     void pagePositionRequest(const QPoint& pos);
 
@@ -91,9 +93,10 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
-    void contentViewportChanged();
-    void updateVisibleRect(QVariant visibleRectVariant);
+    void itemSizeChanged();
+
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
+    void scaleAnimationValueChanged(QVariant value) { setItemRectVisible(value.toRectF()); }
 
 private:
     qreal cssScaleFromItem(qreal);

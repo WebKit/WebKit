@@ -100,14 +100,14 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewp
     , m_pinchStartScale(1.f)
 {
     reset();
-    connect(m_content, SIGNAL(xChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(yChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(widthChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(heightChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(scaleChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
-    connect(m_scaleAnimation, SIGNAL(valueChanged(QVariant)), SLOT(updateVisibleRect(QVariant)), Qt::DirectConnection);
-    connect(m_scaleAnimation, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State))
-            , SLOT(scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), Qt::DirectConnection);
+
+    connect(m_content, SIGNAL(widthChanged()), this, SLOT(itemSizeChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(heightChanged()), this, SLOT(itemSizeChanged()), Qt::DirectConnection);
+
+    connect(m_scaleAnimation, SIGNAL(valueChanged(QVariant)),
+            SLOT(scaleAnimationValueChanged(QVariant)), Qt::DirectConnection);
+    connect(m_scaleAnimation, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)),
+            SLOT(scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), Qt::DirectConnection);
 }
 
 QtViewportInteractionEngine::~QtViewportInteractionEngine()
@@ -130,18 +130,17 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
     return innerBoundedCSSScale(cssScale);
 }
 
-void QtViewportInteractionEngine::updateVisibleRect(QVariant rect)
+void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 {
     ViewportUpdateGuard guard(this);
 
-    QRectF visibleRect = rect.toRectF();
-    qreal itemScale = m_viewport->width() / visibleRect.width();
+    qreal itemScale = m_viewport->width() / itemRect.width();
 
     m_content->setScale(itemScale);
 
     // We need to animate the content but the position represents the viewport hence we need to invert the position here.
     // To animate the position together with the scale we multiply the position with the current scale;
-    m_content->setPos(-visibleRect.topLeft() * itemScale);
+    m_content->setPos(- itemRect.topLeft() * itemScale);
 }
 
 void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
@@ -214,7 +213,7 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
 
     QRectF endVisibleContentRect(endPosition / endItemScale, m_viewport->boundingRect().size() / endItemScale);
 
-    updateVisibleRect(endVisibleContentRect);
+    setItemRectVisible(endVisibleContentRect);
 }
 
 QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScale) const
@@ -262,7 +261,7 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
         m_scaleAnimation->setEndValue(endVisibleContentRect);
         m_scaleAnimation->start();
     } else
-        updateVisibleRect(endVisibleContentRect);
+        setItemRectVisible(endVisibleContentRect);
 }
 
 void QtViewportInteractionEngine::reset()
@@ -411,8 +410,9 @@ void QtViewportInteractionEngine::pinchGestureEnded()
     ensureContentWithinViewportBoundary();
 }
 
-void QtViewportInteractionEngine::contentViewportChanged()
+void QtViewportInteractionEngine::itemSizeChanged()
 {
+    // FIXME: This needs to be done smarter. What happens if it resizes when we were interacting?
     if (m_pendingUpdates)
         return;
 
