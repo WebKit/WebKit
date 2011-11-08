@@ -60,6 +60,10 @@ bool RuntimeEnabledFeatures::isSpeechInputEnabled = true;
 bool RuntimeEnabledFeatures::isMediaStreamEnabled = true;
 #endif
 
+#if ENABLE(GAMEPAD)
+bool RuntimeEnabledFeatures::isGamepadEnabled = false;
+#endif
+
 #if ENABLE(XHR_RESPONSE_BLOB)
 bool RuntimeEnabledFeatures::isXHRResponseBlobEnabled = false;
 #endif

@@ -170,6 +170,11 @@ public:
     static bool webkitPeerConnectionEnabled() { return isMediaStreamEnabled; }
 #endif
 
+#if ENABLE(GAMEPAD)
+    static void setGamepadsEnabled(bool isEnabled) { isGamepadEnabled = isEnabled; }
+    static bool gamepadsEnabled() { return isGamepadEnabled; }
+#endif
+
 #if ENABLE(QUOTA)
     static bool quotaEnabled() { return isQuotaEnabled; }
     static void setQuotaEnabled(bool isEnabled) { isQuotaEnabled = isEnabled; }
@@ -216,6 +221,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     static bool isMediaStreamEnabled;
+#endif
+
+#if ENABLE(GAMEPAD)
+    static bool isGamepadEnabled;
 #endif
 
 #if ENABLE(QUOTA)
