@@ -1,3 +1,13 @@
+2011-11-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extension API][Chromium] injected extension API needs to return an object
+        https://bugs.webkit.org/show_bug.cgi?id=71822
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ExtensionAPI.js:
+        (buildExtensionAPIInjectedScript):
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         CSSImageValue: Devirtualize cachedImage(CachedResourceLoader*).

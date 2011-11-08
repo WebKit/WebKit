@@ -722,6 +722,7 @@ function buildExtensionAPIInjectedScript(platformAPI)
         defineCommonExtensionSymbols.toString() + ";" +
         injectedExtensionAPI.toString() + ";" +
         "injectedExtensionAPI(injectedScriptId);" +
-        (platformAPI || "") +
+        (platformAPI || "") + ";" +
+        "return {};" +
         "})";
 }
