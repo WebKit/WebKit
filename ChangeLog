@@ -1,3 +1,21 @@
+2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Ensure forwarding headers are generated before generating install rules
+
+        The install rule for headers depends on qmake being able to walk the list of
+        headers in the $build_root/include/QtWebKit directory, but this directory is
+        empty until we've generated the forwarding headers. So we need to make sure
+        the forwarding headers are generated _before_ we run qmake on the api project
+        file. This applies to Qt 4.8 only, as Qt 5 will run synqt as part of the
+        root project file (due to the sync.profile file).
+
+        https://bugs.webkit.org/show_bug.cgi?id=71697
+
+        Reviewed by Simon Hausmann.
+
+        * Source/QtWebKit.pro:
+        * Source/api.pri:
+
 2011-11-07  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Support requestAnimationFrame API
