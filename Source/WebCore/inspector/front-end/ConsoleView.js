@@ -360,6 +360,11 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
+        if (!prefix && !expressionString && !force) {
+            completionsReadyCallback([]);
+            return;
+        }
+
         if (!expressionString && WebInspector.debuggerPresentationModel.paused)
             WebInspector.debuggerPresentationModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
