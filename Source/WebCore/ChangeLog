@@ -1,5 +1,13 @@
 2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix build, by removing an unused variable.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::isOriginClean):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+
+2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Switch SVGImage cache to store ImageBuffers instead of whole SVGImages, including a DOM/Render tree
         https://bugs.webkit.org/show_bug.cgi?id=71368
 

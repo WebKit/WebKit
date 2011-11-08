@@ -85,7 +85,7 @@ using namespace HTMLNames;
 
 static const char* const defaultFont = "10px sans-serif";
 
-static bool isOriginClean(CachedImage* cachedImage, HTMLImageElement* image, SecurityOrigin* securityOrigin)
+static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrigin)
 {
     if (!cachedImage->image()->hasSingleSecurityOrigin())
         return false;
@@ -1739,7 +1739,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     if (!cachedImage || !image->cachedImage()->imageForRenderer(image->renderer()))
         return CanvasPattern::create(Image::nullImage(), repeatX, repeatY, true);
 
-    bool originClean = isOriginClean(cachedImage, image, canvas()->securityOrigin());
+    bool originClean = isOriginClean(cachedImage, canvas()->securityOrigin());
     return CanvasPattern::create(cachedImage->imageForRenderer(image->renderer()), repeatX, repeatY, originClean);
 }
 
