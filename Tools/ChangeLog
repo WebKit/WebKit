@@ -1,3 +1,9 @@
+2011-11-07  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-11-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed webkitpy test fix after r99512.
