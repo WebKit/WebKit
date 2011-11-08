@@ -62,4 +62,7 @@ BUGWK37623 : scrollbars/scrollbar-crash-on-refresh.html = PASS TEXT
 BUGWK22770 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = PASS TEXT
 BUGWK59937 : tables/mozilla_expected_failures/bugs/bug85016.html = PASS TEXT
 
+BUGWK71776 : fast/forms/password-placeholder-text-security.html = PASS TEXT
+BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
+
 // End of Flaky tests
