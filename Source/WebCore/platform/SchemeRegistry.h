@@ -59,6 +59,9 @@ public:
     static void registerURLSchemeAsEmptyDocument(const String&);
     static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
 
+    static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
+    static bool isDomainRelaxationForbiddenForURLScheme(const String&);
+
     // Such schemes should delegate to SecurityOrigin::canRequest for any URL
     // passed to SecurityOrigin::canDisplay.
     static bool canDisplayOnlyIfCanRequest(const String& scheme);

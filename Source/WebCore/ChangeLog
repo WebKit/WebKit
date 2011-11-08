@@ -1,3 +1,24 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move DomainRelaxationForbidden scheme registry to SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=71750
+
+        Reviewed by Eric Seidel.
+
+        As stated in the FIXME, scheme registries belong in SchemeRegistry, not
+        in SecurityOrigin.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain):
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemesForbiddenFromDomainRelaxation):
+        (WebCore::SchemeRegistry::setDomainRelaxationForbiddenForURLScheme):
+        (WebCore::SchemeRegistry::isDomainRelaxationForbiddenForURLScheme):
+        * platform/SchemeRegistry.h:
+
 2011-11-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10405215> REGRESSION (r98178): World of Warcraft Launcher crashes in FrameView::isOnActivePage()

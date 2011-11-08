@@ -175,32 +175,6 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_domain = newDomain.lower();
 }
 
-// FIXME: This should move to SchemeRegistry!
-static HashSet<String>& schemesForbiddenFromDomainRelaxation()
-{
-    DEFINE_STATIC_LOCAL(HashSet<String>, schemes, ());
-    return schemes;
-}
-
-void SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
-{
-    if (scheme.isEmpty())
-        return;
-
-    if (forbidden)
-        schemesForbiddenFromDomainRelaxation().add(scheme);
-    else
-        schemesForbiddenFromDomainRelaxation().remove(scheme);
-}
-
-bool SecurityOrigin::isDomainRelaxationForbiddenForURLScheme(const String& scheme)
-{
-    if (scheme.isEmpty())
-        return false;
-
-    return schemesForbiddenFromDomainRelaxation().contains(scheme);
-}
-
 bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 {
     if (m_universalAccess)

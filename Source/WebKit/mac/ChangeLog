@@ -1,3 +1,13 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move DomainRelaxationForbidden scheme registry to SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=71750
+
+        Reviewed by Eric Seidel.
+
+        * WebView/WebView.mm:
+        (+[WebView _setDomainRelaxationForbidden:forURLScheme:]):
+
 2011-11-07  Jessie Berlin  <jberlin@apple.com>
 
         Need a way to allow a scheme access to Local Storage and Databases while Private Browsing is

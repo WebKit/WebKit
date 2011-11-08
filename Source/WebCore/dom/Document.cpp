@@ -3597,7 +3597,7 @@ String Document::domain() const
 
 void Document::setDomain(const String& newDomain, ExceptionCode& ec)
 {
-    if (SecurityOrigin::isDomainRelaxationForbiddenForURLScheme(securityOrigin()->protocol())) {
+    if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin()->protocol())) {
         ec = SECURITY_ERR;
         return;
     }

@@ -265,7 +265,7 @@ void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
 {
-    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
 }
 
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)

@@ -86,6 +86,12 @@ static URLSchemesMap& emptyDocumentSchemes()
     return emptyDocumentSchemes;
 }
 
+static HashSet<String>& schemesForbiddenFromDomainRelaxation()
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, schemes, ());
+    return schemes;
+}
+
 static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
     DEFINE_STATIC_LOCAL(URLSchemesMap, canDisplayOnlyIfCanRequestSchemes, ());
@@ -196,6 +202,24 @@ bool SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
     if (scheme.isEmpty())
         return false;
     return emptyDocumentSchemes().contains(scheme);
+}
+
+void SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
+{
+    if (scheme.isEmpty())
+        return;
+
+    if (forbidden)
+        schemesForbiddenFromDomainRelaxation().add(scheme);
+    else
+        schemesForbiddenFromDomainRelaxation().remove(scheme);
+}
+
+bool SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return schemesForbiddenFromDomainRelaxation().contains(scheme);
 }
 
 bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)

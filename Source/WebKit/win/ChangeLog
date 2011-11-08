@@ -1,3 +1,13 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move DomainRelaxationForbidden scheme registry to SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=71750
+
+        Reviewed by Eric Seidel.
+
+        * WebView.cpp:
+        (WebView::setDomainRelaxationForbiddenForURLScheme):
+
 2011-11-07  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71490

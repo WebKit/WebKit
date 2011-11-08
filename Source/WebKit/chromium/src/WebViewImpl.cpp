@@ -94,6 +94,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
+#include "SchemeRegistry.h"
 #include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -2279,7 +2280,7 @@ bool WebViewImpl::isActive() const
 
 void WebViewImpl::setDomainRelaxationForbidden(bool forbidden, const WebString& scheme)
 {
-    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme));
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme));
 }
 
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,

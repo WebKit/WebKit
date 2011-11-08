@@ -2633,7 +2633,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme
 {
-    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
 }
 
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme

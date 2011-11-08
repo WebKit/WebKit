@@ -6548,7 +6548,7 @@ HRESULT WebView::geolocationDidFailWithError(IWebError* error)
 
 HRESULT WebView::setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme)
 {
-    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme, SysStringLen(scheme)));
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme, SysStringLen(scheme)));
     return S_OK;
 }
 
