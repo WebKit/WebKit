@@ -56,6 +56,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.messagesElement.className = "monospace";
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
     this.element.appendChild(this.messagesElement);
+    this._scrolledToBottom = true;
 
     this.promptElement = document.createElement("div");
     this.promptElement.id = "console-prompt";

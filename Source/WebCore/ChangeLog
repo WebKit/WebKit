@@ -1,3 +1,12 @@
+2011-11-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Console should be scrolled to bottom when shown for the first time.
+        https://bugs.webkit.org/show_bug.cgi?id=71781
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+
 2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Switch SVGImage cache to store ImageBuffers instead of whole SVGImages, including a DOM/Render tree
