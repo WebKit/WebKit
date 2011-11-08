@@ -1,3 +1,17 @@
+2011-11-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        [WK2][GTK] The default database & local storage directory names should note they exist for Gtk port's needs
+        https://bugs.webkit.org/show_bug.cgi?id=71837
+
+        Reviewed by Martin Robinson.
+
+        Ensure that directories for databases and local storage are in a 'webkitgtk'
+        directory in current user's data directory, noting they originate from the Gtk port.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+
 2011-11-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Workaround some problems in QML API tests

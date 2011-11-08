@@ -47,7 +47,7 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    GOwnPtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    GOwnPtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", NULL));
     return WebCore::filenameToString(databaseDirectory.get());
 }
 
@@ -59,7 +59,7 @@ String WebContext::platformDefaultIconDatabasePath() const
 
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
-    GOwnPtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkit", "localstorage", NULL));
+    GOwnPtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "localstorage", NULL));
     return WebCore::filenameToString(storageDirectory.get());
 }
 
