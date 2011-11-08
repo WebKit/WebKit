@@ -53,9 +53,11 @@ public:
     void unregister();
 
     bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType);
+    bool isSubtree() const { return m_options & WebKitMutationObserver::Subtree; }
 
     WebKitMutationObserver* observer() { return m_observer.get(); }
-    MutationRecordDeliveryOptions deliveryOptions() { return m_options & (WebKitMutationObserver::AttributeOldValue | WebKitMutationObserver::CharacterDataOldValue); }
+    MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (WebKitMutationObserver::AttributeOldValue | WebKitMutationObserver::CharacterDataOldValue); }
+    MutationObserverOptions mutationTypes() const { return m_options & WebKitMutationObserver::AllMutationTypes; }
 
 private:
     MutationObserverRegistration(PassRefPtr<WebKitMutationObserver>, Node*);

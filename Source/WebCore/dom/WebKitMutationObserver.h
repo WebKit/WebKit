@@ -55,7 +55,9 @@ public:
     enum MutationType {
         ChildList = 1 << 0,
         Attributes = 1 << 1,
-        CharacterData = 1 << 2
+        CharacterData = 1 << 2,
+
+        AllMutationTypes = ChildList | Attributes | CharacterData
     };
 
     enum ObservationFlags  {

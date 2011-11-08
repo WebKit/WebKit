@@ -46,6 +46,7 @@
 #include "Timer.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
+#include "WebKitMutationObserver.h"
 #include <wtf/Deque.h>
 #include <wtf/FixedArray.h>
 #include <wtf/OwnPtr.h>
@@ -776,6 +777,15 @@ public:
     void addListenerType(ListenerType listenerType) { m_listenerTypes = m_listenerTypes | listenerType; }
     void addListenerTypeIfNeeded(const AtomicString& eventType);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    bool hasSubtreeMutationObserverOfType(WebKitMutationObserver::MutationType type) const
+    {
+        return m_subtreeMutationObserverTypes & type;
+    }
+    bool hasSubtreeMutationObserver() const { return m_subtreeMutationObserverTypes; }
+    void addSubtreeMutationObserverTypes(MutationObserverOptions types) { m_subtreeMutationObserverTypes |= types; }
+#endif
+
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
     int nodeAbsIndex(Node*);
@@ -1237,6 +1247,10 @@ private:
     HashSet<Range*> m_ranges;
 
     unsigned short m_listenerTypes;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    MutationObserverOptions m_subtreeMutationObserverTypes;
+#endif
 
     RefPtr<StyleSheetList> m_styleSheets; // All of the stylesheets that are currently in effect for our media type and stylesheet set.
     

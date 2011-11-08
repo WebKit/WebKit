@@ -1,3 +1,40 @@
+2011-11-08  Adam Klein  <adamk@chromium.org>
+
+        Only walk up the tree in search of MutationObservers if one has been added
+        https://bugs.webkit.org/show_bug.cgi?id=71499
+
+        Reviewed by Ojan Vafai.
+
+        Analogous to m_listenerTypes, added an m_subtreeMutationObserverTypes field
+        to Document that keeps track of which observer types have been added.
+        This allows us to avoid doing any extra work if MutationObservers are
+        not attached to a document.
+
+        This could be improved upon to keep a count of each type, as removing
+        an observer currently has no effect on m_subtreeMutationObserverTypes.
+        But that would require a more complex implementation: one counter per
+        mutation type. And it would be easier to get wrong: if the counter
+        gets out of sync with the actual state of the DOM, we could start
+        dropping mutation notifications.
+
+        Test: fast/mutation/cross-document.html
+
+        * dom/Document.h:
+        (WebCore::Document::hasSubtreeMutationObserverOfType):
+        (WebCore::Document::hasSubtreeMutationObserver):
+        (WebCore::Document::addSubtreeMutationObserverTypes):
+        * dom/MutationObserverRegistration.h:
+        (WebCore::MutationObserverRegistration::isSubtree):
+        (WebCore::MutationObserverRegistration::deliveryOptions):
+        (WebCore::MutationObserverRegistration::mutationTypes):
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewOwnerDocument): Update mutationObserverTypes when a Node is moved to a new document.
+        (WebCore::Node::getRegisteredMutationObserversOfType): Exit early if it's known that no observers of |type| are registered.
+        (WebCore::Node::notifyMutationObserversNodeWillDetach): Exit early if it's known no subtree observers of any type are registered.
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe): Update mutationObserverTypes when an observation occurs.
+        * dom/WebKitMutationObserver.h: Add WebKitMutationObserver::AllMutationTypes to enum
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         Devirtualize CSSValue.

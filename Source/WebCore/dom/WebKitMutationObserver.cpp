@@ -34,6 +34,7 @@
 
 #include "WebKitMutationObserver.h"
 
+#include "Document.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
@@ -61,6 +62,9 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
 {
     MutationObserverRegistration* registration = node->registerMutationObserver(this);
     registration->resetObservation(options);
+
+    if (registration->isSubtree())
+        node->document()->addSubtreeMutationObserverTypes(registration->mutationTypes());
 }
 
 void WebKitMutationObserver::disconnect()

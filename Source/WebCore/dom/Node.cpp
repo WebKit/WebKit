@@ -2544,6 +2544,24 @@ void Node::didMoveToNewOwnerDocument()
 {
     ASSERT(!didMoveToNewOwnerDocumentWasCalled);
     setDidMoveToNewOwnerDocumentWasCalled(true);
+
+    // FIXME: Event listener types for this node should be set on the new owner document here.
+
+#if ENABLE(MUTATION_OBSERVERS)
+    if (Vector<OwnPtr<MutationObserverRegistration> >* registry = mutationObserverRegistry()) {
+        for (size_t i = 0; i < registry->size(); ++i) {
+            if (registry->at(i)->isSubtree())
+                document()->addSubtreeMutationObserverTypes(registry->at(i)->mutationTypes());
+        }
+    }
+
+    if (HashSet<MutationObserverRegistration*>* transientRegistry = transientMutationObserverRegistry()) {
+        for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter) {
+            if ((*iter)->isSubtree())
+                document()->addSubtreeMutationObserverTypes((*iter)->mutationTypes());
+        }
+    }
+#endif
 }
 
 #if ENABLE(SVG)
@@ -2734,7 +2752,12 @@ void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, 
 
 void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, WebKitMutationObserver::MutationType type)
 {
-    for (Node* node = this; node; node = node->parentNode())
+    collectMatchingObserversForMutation(observers, this, type);
+
+    if (!document()->hasSubtreeMutationObserverOfType(type))
+        return;
+
+    for (Node* node = parentNode(); node; node = node->parentNode())
         collectMatchingObserversForMutation(observers, node, type);
 }
 
@@ -2785,6 +2808,9 @@ void Node::unregisterTransientMutationObserver(MutationObserverRegistration* reg
 
 void Node::notifyMutationObserversNodeWillDetach()
 {
+    if (!document()->hasSubtreeMutationObserver())
+        return;
+
     for (Node* node = parentNode(); node; node = node->parentNode()) {
         if (Vector<OwnPtr<MutationObserverRegistration> >* registry = node->mutationObserverRegistry()) {
             const size_t size = registry->size();
