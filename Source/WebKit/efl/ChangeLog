@@ -1,3 +1,16 @@
+2011-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Need to replace api's object parameter with proper name.
+        https://bugs.webkit.org/show_bug.cgi?id=71553
+
+        Fix wrong parameter names in tiled backing store functions and ewk_view_xxx files.
+
+        Reviewed by Filip Pizlo.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        * ewk/ewk_view_single.cpp:
+        * ewk/ewk_view_tiled.cpp:
+
 2011-11-07  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Emit the "frame,created" signal earlier.

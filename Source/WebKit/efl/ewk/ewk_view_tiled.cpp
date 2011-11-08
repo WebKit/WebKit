@@ -38,7 +38,7 @@ static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* tile, const Ein
     return ewk_view_paint_contents(priv, tile->cairo, &rect);
 }
 
-static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* ewkTile)
+static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* ewkView)
 {
     Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
     ewk_view_layout_if_needed_recursive(priv);
@@ -56,7 +56,7 @@ static Evas_Object* _ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data*
 }
 
 static void
-_ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* ewkTile, void* eventInfo)
+_ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* ewkView, void* eventInfo)
 {
     Evas_Coord* size = static_cast<Evas_Coord*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -65,13 +65,13 @@ _ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* ewkTile, void*
         (smartData->backing_store, size[0], size[1]);
 }
 
-static void _ewk_view_tiled_smart_add(Evas_Object* ewkTile)
+static void _ewk_view_tiled_smart_add(Evas_Object* ewkView)
 {
     Ewk_View_Smart_Data* sd;
 
-    _parent_sc.sc.add(ewkTile);
+    _parent_sc.sc.add(ewkView);
 
-    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkTile));
+    sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView));
     if (!sd)
         return;
 
@@ -168,22 +168,22 @@ static Eina_Bool _ewk_view_tiled_smart_contents_resize(Ewk_View_Smart_Data* smar
 
 static Eina_Bool _ewk_view_tiled_smart_zoom_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
 {
-    Evas_Coord x, y, w, h;
-    Eina_Bool r;
-    r = ewk_tiled_backing_store_zoom_set(smartData->backing_store,
+    Evas_Coord x, y, width, height;
+    Eina_Bool result;
+    result = ewk_tiled_backing_store_zoom_set(smartData->backing_store,
                                          &zoom, centerX, centerY, &x, &y);
-    if (!r)
-        return r;
+    if (!result)
+        return result;
     ewk_tiled_backing_store_disabled_update_set(smartData->backing_store, true);
-    r = _parent_sc.zoom_set(smartData, zoom, centerX, centerY);
+    result = _parent_sc.zoom_set(smartData, zoom, centerX, centerY);
     ewk_frame_scroll_set(smartData->main_frame, -x, -y);
-    ewk_frame_scroll_size_get(smartData->main_frame, &w, &h);
-    ewk_tiled_backing_store_fix_offsets(smartData->backing_store, w, h);
+    ewk_frame_scroll_size_get(smartData->main_frame, &width, &height);
+    ewk_tiled_backing_store_fix_offsets(smartData->backing_store, width, height);
     ewk_view_scrolls_process(smartData);
     evas_object_smart_calculate(smartData->backing_store);
     evas_object_smart_calculate(smartData->self);
     ewk_tiled_backing_store_disabled_update_set(smartData->backing_store, false);
-    return r;
+    return result;
 }
 
 static Eina_Bool _ewk_view_tiled_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
@@ -273,16 +273,16 @@ Evas_Object* ewk_view_tiled_add(Evas* canvas)
     return evas_object_smart_add(canvas, _ewk_view_tiled_smart_class_new());
 }
 
-Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* ewkTile)
+Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* ewkView)
 {
-    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkTile);
+    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkView);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd, 0);
     return ewk_tiled_backing_store_tile_unused_cache_get(sd->backing_store);
 }
 
-void ewk_view_tiled_unused_cache_set(Evas_Object* ewkTile, Ewk_Tile_Unused_Cache* cache)
+void ewk_view_tiled_unused_cache_set(Evas_Object* ewkView, Ewk_Tile_Unused_Cache* cache)
 {
-    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkTile);
+    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(ewkView);
     EINA_SAFETY_ON_NULL_RETURN(sd);
     ewk_tiled_backing_store_tile_unused_cache_set(sd->backing_store, cache);
 }

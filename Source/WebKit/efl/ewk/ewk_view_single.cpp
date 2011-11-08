@@ -37,13 +37,13 @@ static void _ewk_view_single_on_del(void* data, Evas* eventType, Evas_Object* ca
     evas_object_del(clip);
 }
 
-static void _ewk_view_single_smart_add(Evas_Object* ewkSingle)
+static void _ewk_view_single_smart_add(Evas_Object* ewkView)
 {
     Ewk_View_Smart_Data* smartData;
 
-    _parent_sc.sc.add(ewkSingle);
+    _parent_sc.sc.add(ewkView);
 
-    smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
+    smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView));
     if (!smartData)
         return;
 
@@ -63,10 +63,10 @@ static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data
     return bs;
 }
 
-static void _ewk_view_single_smart_resize(Evas_Object* ewkSingle, Evas_Coord width, Evas_Coord height)
+static void _ewk_view_single_smart_resize(Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
 {
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkSingle));
-    _parent_sc.sc.resize(ewkSingle, width, height);
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(ewkView));
+    _parent_sc.sc.resize(ewkView, width, height);
 
     if (!smartData)
         return;
@@ -359,38 +359,38 @@ static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* sma
 
 static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* smartData)
 {
-    Ewk_View_Paint_Context* ctxt;
+    Ewk_View_Paint_Context* context;
     Evas_Coord ow, oh;
     void* pixels;
-    Eina_Rectangle* r;
+    Eina_Rectangle* rect;
     const Eina_Rectangle* pr;
     const Eina_Rectangle* pr_end;
     Eina_Tiler* tiler;
-    Eina_Iterator* itr;
+    Eina_Iterator* iterator;
     cairo_status_t status;
     cairo_surface_t* surface;
     cairo_format_t format;
     cairo_t* cairo;
     size_t count;
-    Eina_Bool ret = true;
+    Eina_Bool result = true;
 
     if (smartData->animated_zoom.zoom.current < 0.00001) {
         Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
-        Evas_Coord w, h, cw, ch;
+        Evas_Coord width, height, centerWidth, centerHeight;
         // reset effects of zoom_weak_set()
         evas_object_image_fill_set
             (smartData->backing_store, 0, 0, smartData->view.w, smartData->view.h);
         evas_object_move(clip, smartData->view.x, smartData->view.y);
 
-        w = smartData->view.w;
-        h = smartData->view.h;
+        width = smartData->view.w;
+        height = smartData->view.h;
 
-        ewk_frame_contents_size_get(smartData->main_frame, &cw, &ch);
-        if (w > cw)
-            w = cw;
-        if (h > ch)
-            h = ch;
-        evas_object_resize(clip, w, h);
+        ewk_frame_contents_size_get(smartData->main_frame, &centerWidth, &centerHeight);
+        if (width > centerWidth)
+            width = centerWidth;
+        if (height > centerHeight)
+            height = centerHeight;
+        evas_object_resize(clip, width, height);
     }
 
     pixels = evas_object_image_data_get(smartData->backing_store, 1);
@@ -403,7 +403,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create surface from data %dx%d: %s",
             ow, oh, cairo_status_to_string(status));
-        ret = false;
+        result = false;
         goto error_cairo_surface;
     }
     cairo = cairo_create(surface);
@@ -411,21 +411,21 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create cairo from surface %dx%d: %s",
             ow, oh, cairo_status_to_string(status));
-        ret = false;
+        result = false;
         goto error_cairo;
     }
 
-    ctxt = ewk_view_paint_context_new(smartData->_priv, cairo);
-    if (!ctxt) {
+    context = ewk_view_paint_context_new(smartData->_priv, cairo);
+    if (!context) {
         ERR("could not create paint context");
-        ret = false;
+        result = false;
         goto error_paint_context;
     }
 
     tiler = eina_tiler_new(ow, oh);
     if (!tiler) {
         ERR("could not create tiler %dx%d", ow, oh);
-        ret = false;
+        result = false;
         goto error_tiler;
     }
 
@@ -436,40 +436,40 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     for (; pr < pr_end; pr++)
         eina_tiler_rect_add(tiler, pr);
 
-    itr = eina_tiler_iterator_new(tiler);
-    if (!itr) {
+    iterator = eina_tiler_iterator_new(tiler);
+    if (!iterator) {
         ERR("could not get iterator for tiler");
-        ret = false;
+        result = false;
         goto error_iterator;
     }
 
     int sx, sy;
     ewk_frame_scroll_pos_get(smartData->main_frame, &sx, &sy);
 
-    EINA_ITERATOR_FOREACH(itr, r) {
+    EINA_ITERATOR_FOREACH(iterator, rect) {
         Eina_Rectangle scrolled_rect = {
-            r->x + sx, r->y + sy,
-            r->w, r->h
+            rect->x + sx, rect->y + sy,
+            rect->w, rect->h
         };
 
-        ewk_view_paint_context_save(ctxt);
+        ewk_view_paint_context_save(context);
 
         if ((sx) || (sy))
-            ewk_view_paint_context_translate(ctxt, -sx, -sy);
+            ewk_view_paint_context_translate(context, -sx, -sy);
 
-        ewk_view_paint_context_clip(ctxt, &scrolled_rect);
-        ewk_view_paint_context_paint_contents(ctxt, &scrolled_rect);
+        ewk_view_paint_context_clip(context, &scrolled_rect);
+        ewk_view_paint_context_paint_contents(context, &scrolled_rect);
 
-        ewk_view_paint_context_restore(ctxt);
+        ewk_view_paint_context_restore(context);
         evas_object_image_data_update_add
-            (smartData->backing_store, r->x, r->y, r->w, r->h);
+            (smartData->backing_store, rect->x, rect->y, rect->w, rect->h);
     }
-    eina_iterator_free(itr);
+    eina_iterator_free(iterator);
 
 error_iterator:
     eina_tiler_free(tiler);
 error_tiler:
-    ewk_view_paint_context_free(ctxt);
+    ewk_view_paint_context_free(context);
 error_paint_context:
     cairo_destroy(cairo);
 error_cairo:
@@ -477,7 +477,7 @@ error_cairo:
 error_cairo_surface:
     evas_object_image_data_set(smartData->backing_store, pixels); /* dec refcount */
 
-    return ret;
+    return result;
 }
 
 static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
