@@ -47,8 +47,6 @@ public:
     static void removeEventListener(ScriptGCEventListener*);
     static void getHeapSize(size_t&, size_t&, size_t&);
 private:
-    typedef Vector<ScriptGCEventListener*> GCEventListeners;
-    static GCEventListeners s_eventListeners;
     static double s_startTime;
     static size_t s_usedHeapSize;
  

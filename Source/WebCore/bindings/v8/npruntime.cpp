@@ -356,67 +356,75 @@ typedef WTF::HashMap<NPObject*, NPObject*> NPObjectMap;
 typedef WTF::HashMap<NPObject*, NPObjectSet*> NPRootObjectMap;
 
 // A map of live NPObjects with pointers to their Roots.
-NPObjectMap liveObjectMap;
+static NPObjectMap& liveObjectMap()
+{
+    DEFINE_STATIC_LOCAL(NPObjectMap, objectMap, ());
+    return objectMap;
+}
 
 // A map of the root objects and the list of NPObjects
 // associated with that object.
-NPRootObjectMap rootObjectMap;
+static NPRootObjectMap& rootObjectMap()
+{
+    DEFINE_STATIC_LOCAL(NPRootObjectMap, objectMap, ());
+    return objectMap;
+}
 
 void _NPN_RegisterObject(NPObject* npObject, NPObject* owner)
 {
     ASSERT(npObject);
 
     // Check if already registered.
-    if (liveObjectMap.find(npObject) != liveObjectMap.end())
+    if (liveObjectMap().find(npObject) != liveObjectMap().end())
         return;
 
     if (!owner) {
         // Registering a new owner object.
-        ASSERT(rootObjectMap.find(npObject) == rootObjectMap.end());
-        rootObjectMap.set(npObject, new NPObjectSet());
+        ASSERT(rootObjectMap().find(npObject) == rootObjectMap().end());
+        rootObjectMap().set(npObject, new NPObjectSet());
     } else {
         // Always associate this object with it's top-most parent.
         // Since we always flatten, we only have to look up one level.
-        NPObjectMap::iterator ownerEntry = liveObjectMap.find(owner);
+        NPObjectMap::iterator ownerEntry = liveObjectMap().find(owner);
         NPObject* parent = 0;
-        if (liveObjectMap.end() != ownerEntry)
+        if (liveObjectMap().end() != ownerEntry)
             parent = ownerEntry->second;
 
         if (parent)
             owner = parent;
-        ASSERT(rootObjectMap.find(npObject) == rootObjectMap.end());
-        if (rootObjectMap.find(owner) != rootObjectMap.end())
-            rootObjectMap.get(owner)->add(npObject);
+        ASSERT(rootObjectMap().find(npObject) == rootObjectMap().end());
+        if (rootObjectMap().find(owner) != rootObjectMap().end())
+            rootObjectMap().get(owner)->add(npObject);
     }
 
-    ASSERT(liveObjectMap.find(npObject) == liveObjectMap.end());
-    liveObjectMap.set(npObject, owner);
+    ASSERT(liveObjectMap().find(npObject) == liveObjectMap().end());
+    liveObjectMap().set(npObject, owner);
 }
 
 void _NPN_UnregisterObject(NPObject* npObject)
 {
     ASSERT(npObject);
-    ASSERT(liveObjectMap.find(npObject) != liveObjectMap.end());
+    ASSERT(liveObjectMap().find(npObject) != liveObjectMap().end());
 
     NPObject* owner = 0;
-    if (liveObjectMap.find(npObject) != liveObjectMap.end())
-        owner = liveObjectMap.find(npObject)->second;
+    if (liveObjectMap().find(npObject) != liveObjectMap().end())
+        owner = liveObjectMap().find(npObject)->second;
 
     if (!owner) {
         // Unregistering a owner object; also unregister it's descendants.
-        ASSERT(rootObjectMap.find(npObject) != rootObjectMap.end());
-        NPObjectSet* set = rootObjectMap.get(npObject);
+        ASSERT(rootObjectMap().find(npObject) != rootObjectMap().end());
+        NPObjectSet* set = rootObjectMap().get(npObject);
         while (set->size() > 0) {
 #ifndef NDEBUG
             int size = set->size();
 #endif
             NPObject* sub_object = *(set->begin());
             // The sub-object should not be a owner!
-            ASSERT(rootObjectMap.find(sub_object) == rootObjectMap.end());
+            ASSERT(rootObjectMap().find(sub_object) == rootObjectMap().end());
 
             // First, unregister the object.
             set->remove(sub_object);
-            liveObjectMap.remove(sub_object);
+            liveObjectMap().remove(sub_object);
 
             // Script objects hold a refernce to their DOMWindow*, which is going away if
             // we're unregistering the associated owner NPObject. Clear it out.
@@ -431,23 +439,23 @@ void _NPN_UnregisterObject(NPObject* npObject)
             ASSERT(set->size() < size);
         }
         delete set;
-        rootObjectMap.remove(npObject);
+        rootObjectMap().remove(npObject);
     } else {
-        NPRootObjectMap::iterator ownerEntry = rootObjectMap.find(owner);
-        if (ownerEntry != rootObjectMap.end()) {
+        NPRootObjectMap::iterator ownerEntry = rootObjectMap().find(owner);
+        if (ownerEntry != rootObjectMap().end()) {
             NPObjectSet* list = ownerEntry->second;
             ASSERT(list->find(npObject) != list->end());
             list->remove(npObject);
         }
     }
 
-    liveObjectMap.remove(npObject);
+    liveObjectMap().remove(npObject);
     forgetV8ObjectForNPObject(npObject);
 }
 
 bool _NPN_IsAlive(NPObject* npObject)
 {
-    return liveObjectMap.find(npObject) != liveObjectMap.end();
+    return liveObjectMap().find(npObject) != liveObjectMap().end();
 }
 
 }  // extern "C"

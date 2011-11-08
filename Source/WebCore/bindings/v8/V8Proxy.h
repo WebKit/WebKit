@@ -274,7 +274,7 @@ namespace WebCore {
         static void registerExtensionWithV8(v8::Extension*);
         static bool registeredExtensionWithV8(v8::Extension*);
 
-        static const V8Extensions& extensions() { return m_extensions; }
+        static const V8Extensions& extensions();
 
         // Report an unsafe attempt to access the given frame on the console.
         static void reportUnsafeAccessTo(Frame* target);

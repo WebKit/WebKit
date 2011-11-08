@@ -76,8 +76,11 @@
 
 namespace WebCore {
 
-// Static list of registered extensions
-V8Extensions V8Proxy::m_extensions;
+static V8Extensions& staticExtensionsList()
+{
+    DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
+    return extensions;
+}
 
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
                               v8::Handle<v8::ObjectTemplate> proto, 
@@ -750,8 +753,9 @@ void V8Proxy::registerExtensionWithV8(v8::Extension* extension)
 
 bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
 {
-    for (size_t i = 0; i < m_extensions.size(); ++i) {
-        if (m_extensions[i] == extension)
+    const V8Extensions& registeredExtensions = extensions();
+    for (size_t i = 0; i < registeredExtensions.size(); ++i) {
+        if (registeredExtensions[i] == extension)
             return true;
     }
 
@@ -761,7 +765,12 @@ bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
 void V8Proxy::registerExtension(v8::Extension* extension)
 {
     registerExtensionWithV8(extension);
-    m_extensions.append(extension);
+    staticExtensionsList().append(extension);
+}
+
+const V8Extensions& V8Proxy::extensions()
+{
+    return staticExtensionsList();
 }
 
 bool V8Proxy::setContextDebugId(int debugId)

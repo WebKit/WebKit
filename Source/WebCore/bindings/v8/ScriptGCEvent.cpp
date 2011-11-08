@@ -39,28 +39,34 @@
 
 namespace WebCore {
 
-ScriptGCEvent::GCEventListeners ScriptGCEvent::s_eventListeners;
+typedef Vector<ScriptGCEventListener*> GCEventListeners;
+static GCEventListeners& eventListeners()
+{
+    DEFINE_STATIC_LOCAL(GCEventListeners, listeners, ());
+    return listeners;
+}
+
 double ScriptGCEvent::s_startTime = 0.0;
 size_t ScriptGCEvent::s_usedHeapSize = 0;
 
 void ScriptGCEvent::addEventListener(ScriptGCEventListener* eventListener)
 {
     ASSERT(eventListener);
-    if (s_eventListeners.isEmpty()) {
+    if (eventListeners().isEmpty()) {
         v8::V8::AddGCPrologueCallback(ScriptGCEvent::gcPrologueCallback);
         v8::V8::AddGCEpilogueCallback(ScriptGCEvent::gcEpilogueCallback);
     }
-    s_eventListeners.append(eventListener);
+    eventListeners().append(eventListener);
 }
 
 void ScriptGCEvent::removeEventListener(ScriptGCEventListener* eventListener)
 {
     ASSERT(eventListener);
-    ASSERT(!s_eventListeners.isEmpty());
-    size_t i = s_eventListeners.find(eventListener);
+    ASSERT(!eventListeners().isEmpty());
+    size_t i = eventListeners().find(eventListener);
     ASSERT(i != notFound);
-    s_eventListeners.remove(i);
-    if (s_eventListeners.isEmpty()) {
+    eventListeners().remove(i);
+    if (eventListeners().isEmpty()) {
         v8::V8::RemoveGCPrologueCallback(ScriptGCEvent::gcPrologueCallback);
         v8::V8::RemoveGCEpilogueCallback(ScriptGCEvent::gcEpilogueCallback);
     }
@@ -92,7 +98,7 @@ void ScriptGCEvent::gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flag
 {
     double endTime = WTF::currentTimeMS();
     size_t collectedBytes = s_usedHeapSize - getUsedHeapSize();
-    GCEventListeners listeners(s_eventListeners);
+    GCEventListeners listeners(eventListeners());
     for (GCEventListeners::iterator i = listeners.begin(); i != listeners.end(); ++i)
         (*i)->didGC(s_startTime, endTime, collectedBytes);
 }

@@ -1,3 +1,43 @@
+2011-11-08  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Remove 6 exit time destructors and 6 static initializers
+        https://bugs.webkit.org/show_bug.cgi?id=71760
+
+        Reviewed by Nate Chapin.
+
+        Do this by moving global statics into function-local statics, and using
+        DEFINE_LOCAL_STATIC to leak them. Since this code is accessed on a single
+        thread, this is a safe change to make.
+
+        No behavior change, so no new tests.
+
+        * bindings/v8/ScriptGCEvent.cpp:
+        (WebCore::sEventListeners):
+        (WebCore::ScriptGCEvent::addEventListener):
+        (WebCore::ScriptGCEvent::removeEventListener):
+        (WebCore::ScriptGCEvent::gcEpilogueCallback):
+        * bindings/v8/ScriptGCEvent.h:
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::staticTemplateMap):
+        (WebCore::weakTemplateCallback):
+        (WebCore::npObjectGetProperty):
+        (WebCore::staticNPObjectMap):
+        (WebCore::weakNPObjectCallback):
+        (WebCore::createV8ObjectForNPObject):
+        (WebCore::forgetV8ObjectForNPObject):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::staticExtensionsList):
+        (WebCore::V8Proxy::registeredExtensionWithV8):
+        (WebCore::V8Proxy::registerExtension):
+        (WebCore::V8Proxy::extensions):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/npruntime.cpp:
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::pluginCache):
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        (WebCore::getPluginMimeTypeFromExtension):
+
 2011-11-08  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Start using the onSuccessWithContinuation() callback
