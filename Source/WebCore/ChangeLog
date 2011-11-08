@@ -1,3 +1,17 @@
+2011-11-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 99508
+
+    2011-11-07  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10405215> REGRESSION (r98178): World of Warcraft Launcher crashes in FrameView::isOnActivePage()
+            https://bugs.webkit.org/show_bug.cgi?id=71743
+
+            Reviewed by Beth Dakin.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::isOnActivePage): Added a check for a null m_frame.
+
 2011-10-31  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98936
