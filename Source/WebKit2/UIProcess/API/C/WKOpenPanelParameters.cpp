@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKOpenPanelParameters.h"
 
+#include "ImmutableArray.h"
 #include "WKAPICast.h"
 #include "WebOpenPanelParameters.h"
 
@@ -39,4 +40,9 @@ WKTypeID WKOpenPanelParametersGetTypeID()
 bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parametersRef)
 {
     return toImpl(parametersRef)->allowMultipleFiles();
+}
+
+WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef parametersRef)
+{
+    return toAPI(toImpl(parametersRef)->acceptMIMETypes().leakRef());
 }

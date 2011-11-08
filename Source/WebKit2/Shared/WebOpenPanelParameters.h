@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class ImmutableArray;
+
 class WebOpenPanelParameters : public APIObject {
 public:
     static const Type APIType = TypeOpenPanelParameters;
@@ -41,6 +43,7 @@ public:
     ~WebOpenPanelParameters();
 
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; } 
+    PassRefPtr<ImmutableArray> acceptMIMETypes() const;
     Vector<String> selectedFileNames() const { return m_settings.selectedFiles; }
 
 private:

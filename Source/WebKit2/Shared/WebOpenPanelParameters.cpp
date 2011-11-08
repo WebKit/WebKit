@@ -26,6 +26,10 @@
 #include "config.h"
 #include "WebOpenPanelParameters.h"
 
+#include "ImmutableArray.h"
+#include "WebString.h"
+#include <wtf/Vector.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -42,6 +46,18 @@ WebOpenPanelParameters::WebOpenPanelParameters(const FileChooserSettings& settin
 
 WebOpenPanelParameters::~WebOpenPanelParameters()
 {
+}
+
+PassRefPtr<ImmutableArray> WebOpenPanelParameters::acceptMIMETypes() const
+{
+    size_t size = m_settings.acceptMIMETypes.size();
+
+    Vector<RefPtr<APIObject> > vector;
+    vector.reserveInitialCapacity(size);
+    
+    for (size_t i = 0; i < size; ++i)
+        vector.uncheckedAppend(WebString::create(m_settings.acceptMIMETypes[i]));
+    return ImmutableArray::adopt(vector);
 }
 
 } // namespace WebCore
