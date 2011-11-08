@@ -3539,6 +3539,7 @@ BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notin
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
+BUGWK66908 DEBUG : svg/custom/svg-fonts-segmented.xhtml = PASS IMAGE+TEXT
 
 BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
 
@@ -3897,10 +3898,5 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
-
-// Needs to be rebaselined after r99454.
-BUG_TONY MAC WIN : fast/layers/self-painting-outline.html = IMAGE
-BUG_TONY MAC WIN : fast/box-shadow/box-shadow-radius.html = IMAGE
-BUG_TONY MAC : fast/borders/outline-alpha-block.html = IMAGE
 
 BUGWK67019 : fast/text/international/locale-sensitive-fonts.html = MISSING FAIL
