@@ -37,7 +37,7 @@ public:
         return adoptRef(new FontValue);
     }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> variant;

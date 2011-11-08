@@ -44,7 +44,7 @@ CSSFunctionValue::~CSSFunctionValue()
 {
 }
 
-String CSSFunctionValue::cssText() const
+String CSSFunctionValue::customCssText() const
 {
     String result = m_name; // Includes the '('
     if (m_args)

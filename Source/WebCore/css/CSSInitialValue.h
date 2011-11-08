@@ -39,7 +39,7 @@ public:
         return explicitValue;
     }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
 private:
     CSSInitialValue(bool implicit)

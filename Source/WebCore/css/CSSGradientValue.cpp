@@ -437,7 +437,7 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
-String CSSLinearGradientValue::cssText() const
+String CSSLinearGradientValue::customCssText() const
 {
     String result;
     if (m_deprecatedType) {
@@ -579,7 +579,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
     return gradient.release();
 }
 
-String CSSRadialGradientValue::cssText() const
+String CSSRadialGradientValue::customCssText() const
 {
     String result;
 

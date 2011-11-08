@@ -62,7 +62,7 @@ public:
     void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
 #endif
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 

@@ -123,14 +123,14 @@ void SVGPaint::setPaint(unsigned short paintType, const String& uri, const Strin
     setNeedsStyleRecalc();
 }
 
-String SVGPaint::cssText() const
+String SVGPaint::customCssText() const
 {
     switch (m_paintType) {
     case SVG_PAINTTYPE_UNKNOWN:
     case SVG_PAINTTYPE_RGBCOLOR:
     case SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR:
     case SVG_PAINTTYPE_CURRENTCOLOR:
-        return SVGColor::cssText();
+        return SVGColor::customCssText();
     case SVG_PAINTTYPE_NONE:
         return "none";
     case SVG_PAINTTYPE_URI_NONE:
@@ -138,7 +138,7 @@ String SVGPaint::cssText() const
     case SVG_PAINTTYPE_URI_CURRENTCOLOR:
     case SVG_PAINTTYPE_URI_RGBCOLOR:
     case SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR: {
-        String color = SVGColor::cssText();
+        String color = SVGColor::customCssText();
         if (color.isEmpty())
             return m_uri;
         return m_uri + ' ' + color;

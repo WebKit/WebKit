@@ -69,12 +69,13 @@ public:
     void setRGBColorICCColor(const String& rgbColor, const String& iccColor, ExceptionCode&);
     void setColor(unsigned short colorType, const String& rgbColor, const String& iccColor, ExceptionCode&);
 
+    String customCssText() const;
+
 protected:
     friend class CSSComputedStyleDeclaration;
 
     SVGColor(ClassType, const SVGColorType&);
     virtual ~SVGColor() { }
-    virtual String cssText() const;
 
     void setColor(const Color& color) { m_color = color; }
     void setColorType(const SVGColorType& type) { m_colorType = type; }

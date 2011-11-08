@@ -46,7 +46,7 @@ public:
         return adoptRef(new CSSLineBoxContainValue(value));
     }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     LineBoxContain value() const { return m_value; }
 

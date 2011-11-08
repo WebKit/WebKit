@@ -42,7 +42,7 @@ public:
     }
     virtual ~CSSBorderImageSliceValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     Quad* slices() { return m_slices ? m_slices->getQuadValue() : 0; }
 

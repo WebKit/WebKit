@@ -39,7 +39,7 @@ CSSFlexValue::~CSSFlexValue()
 {
 }
 
-String CSSFlexValue::cssText() const
+String CSSFlexValue::customCssText() const
 {
     StringBuilder result;
     result.append("-webkit-flex(");

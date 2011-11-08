@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-String CSSInitialValue::cssText() const
+String CSSInitialValue::customCssText() const
 {
     return "initial";
 }

@@ -45,7 +45,7 @@ public:
 
     virtual ~CSSFlexValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     float positiveFlex() { return m_positiveFlex; }
     float negativeFlex() { return m_negativeFlex; }

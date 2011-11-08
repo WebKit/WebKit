@@ -59,7 +59,7 @@ public:
 
     virtual ~WebKitCSSFilterValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     FilterOperationType operationType() const { return m_type; }
 

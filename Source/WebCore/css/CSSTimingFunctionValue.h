@@ -33,8 +33,6 @@ namespace WebCore {
 
 class CSSTimingFunctionValue : public CSSValue {
 public:
-    virtual String cssText() const = 0;
-
     bool isLinearTimingFunctionValue() const { return classType() == LinearTimingFunctionClass; }
     bool isCubicBezierTimingFunctionValue() const { return classType() == CubicBezierTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return classType() == StepsTimingFunctionClass; }
@@ -53,13 +51,13 @@ public:
         return adoptRef(new CSSLinearTimingFunctionValue);
     }
 
+    String customCssText() const;
+
 private:
     CSSLinearTimingFunctionValue()
         : CSSTimingFunctionValue(LinearTimingFunctionClass)
     {
     }
-
-    virtual String cssText() const;
 };
 
 class CSSCubicBezierTimingFunctionValue : public CSSTimingFunctionValue {
@@ -68,6 +66,8 @@ public:
     {
         return adoptRef(new CSSCubicBezierTimingFunctionValue(x1, y1, x2, y2));
     }
+
+    String customCssText() const;
 
     double x1() const { return m_x1; }
     double y1() const { return m_y1; }
@@ -83,8 +83,6 @@ private:
         , m_y2(y2)
     {
     }
-
-    virtual String cssText() const;
 
     double m_x1;
     double m_y1;
@@ -102,6 +100,8 @@ public:
     int numberOfSteps() const { return m_steps; }
     bool stepAtStart() const { return m_stepAtStart; }
 
+    String customCssText() const;
+
 private:
     CSSStepsTimingFunctionValue(int steps, bool stepAtStart)
         : CSSTimingFunctionValue(StepsTimingFunctionClass)
@@ -109,8 +109,6 @@ private:
         , m_stepAtStart(stepAtStart)
     {
     }
-
-    virtual String cssText() const;
 
     int m_steps;
     bool m_stepAtStart;

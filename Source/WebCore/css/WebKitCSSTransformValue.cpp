@@ -42,7 +42,7 @@ WebKitCSSTransformValue::~WebKitCSSTransformValue()
 {
 }
 
-String WebKitCSSTransformValue::cssText() const
+String WebKitCSSTransformValue::customCssText() const
 {
     String result;
     switch (m_type) {
@@ -113,7 +113,7 @@ String WebKitCSSTransformValue::cssText() const
             break;
     }
 
-    result += CSSValueList::cssText();
+    result += CSSValueList::customCssText();
 
     result += ")";
     return result;

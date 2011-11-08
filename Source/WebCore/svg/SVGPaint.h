@@ -93,6 +93,8 @@ public:
 
     bool matchesTargetURI(const String& referenceId);
 
+    String customCssText() const;
+
 private:
     friend class CSSComputedStyleDeclaration;
 
@@ -105,8 +107,6 @@ private:
 
 private:
     SVGPaint(const SVGPaintType&, const String& uri = String());
-
-    virtual String cssText() const;
 
     SVGPaintType m_paintType;
     String m_uri;

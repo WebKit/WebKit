@@ -27,11 +27,34 @@
 #include "config.h"
 #include "CSSValue.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSBorderImageValue.h"
+#include "CSSBorderImageSliceValue.h"
+#include "CSSCanvasValue.h"
+#include "CSSCrossfadeValue.h"
+#include "CSSCursorImageValue.h"
+#include "CSSFlexValue.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFunctionValue.h"
+#include "CSSGradientValue.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageValue.h"
+#include "CSSInheritedValue.h"
+#include "CSSInitialValue.h"
+#include "CSSLineBoxContainValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
+#include "CSSTimingFunctionValue.h"
+#include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
+#include "FontValue.h"
+#include "FontFamilyValue.h"
+#include "FontFeatureValue.h"
+#include "ShadowValue.h"
+#include "SVGColor.h"
+#include "SVGPaint.h"
+#include "WebKitCSSFilterValue.h"
+#include "WebKitCSSTransformValue.h"
 
 namespace WebCore {
 
@@ -60,6 +83,81 @@ void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSh
         static_cast<CSSFontFaceSrcValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (classType() == ReflectClass)
         static_cast<CSSReflectValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
+}
+
+String CSSValue::cssText() const
+{
+    switch (classType()) {
+    case AspectRatioClass:
+        return static_cast<const CSSAspectRatioValue*>(this)->customCssText();
+    case BorderImageClass:
+        return static_cast<const CSSBorderImageValue*>(this)->customCssText();
+    case BorderImageSliceClass:
+        return static_cast<const CSSBorderImageSliceValue*>(this)->customCssText();
+    case CanvasClass:
+        return static_cast<const CSSCanvasValue*>(this)->customCssText();
+    case CursorImageClass:
+        return static_cast<const CSSCursorImageValue*>(this)->customCssText();
+    case FontClass:
+        return static_cast<const FontValue*>(this)->customCssText();
+    case FontFaceSrcClass:
+        return static_cast<const CSSFontFaceSrcValue*>(this)->customCssText();
+    case FontFamilyClass:
+        return static_cast<const FontFamilyValue*>(this)->customCssText();
+    case FontFeatureClass:
+        return static_cast<const FontFeatureValue*>(this)->customCssText();
+    case FunctionClass:
+        return static_cast<const CSSFunctionValue*>(this)->customCssText();
+    case LinearGradientClass:
+        return static_cast<const CSSLinearGradientValue*>(this)->customCssText();
+    case RadialGradientClass:
+        return static_cast<const CSSRadialGradientValue*>(this)->customCssText();
+    case CrossfadeClass:
+        return static_cast<const CSSCrossfadeValue*>(this)->customCssText();
+    case ImageClass:
+        return static_cast<const CSSImageValue*>(this)->customCssText();
+    case InheritedClass:
+        return static_cast<const CSSInheritedValue*>(this)->customCssText();
+    case InitialClass:
+    case ImplicitInitialClass:
+        return static_cast<const CSSInitialValue*>(this)->customCssText();
+    case PrimitiveClass:
+        return static_cast<const CSSPrimitiveValue*>(this)->customCssText();
+    case ReflectClass:
+        return static_cast<const CSSReflectValue*>(this)->customCssText();
+    case ShadowClass:
+        return static_cast<const ShadowValue*>(this)->customCssText();
+    case LinearTimingFunctionClass:
+        return static_cast<const CSSLinearTimingFunctionValue*>(this)->customCssText();
+    case CubicBezierTimingFunctionClass:
+        return static_cast<const CSSCubicBezierTimingFunctionValue*>(this)->customCssText();
+    case StepsTimingFunctionClass:
+        return static_cast<const CSSStepsTimingFunctionValue*>(this)->customCssText();
+    case UnicodeRangeClass:
+        return static_cast<const CSSUnicodeRangeValue*>(this)->customCssText();
+    case ValueListClass:
+        return static_cast<const CSSValueList*>(this)->customCssText();
+    case WebKitCSSTransformClass:
+        return static_cast<const WebKitCSSTransformValue*>(this)->customCssText();
+    case LineBoxContainClass:
+        return static_cast<const CSSLineBoxContainValue*>(this)->customCssText();
+#if ENABLE(CSS3_FLEXBOX)
+    case FlexClass:
+        return static_cast<const CSSFlexValue*>(this)->customCssText();
+#endif
+#if ENABLE(CSS_FILTERS)
+    case WebKitCSSFilterClass:
+        return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
+#endif
+#if ENABLE(SVG)
+    case SVGColorClass:
+        return static_cast<const SVGColor*>(this)->customCssText();
+    case SVGPaintClass:
+        return static_cast<const SVGPaint*>(this)->customCssText();
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 }

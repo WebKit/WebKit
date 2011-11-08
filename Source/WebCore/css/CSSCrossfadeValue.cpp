@@ -33,7 +33,7 @@ CSSCrossfadeValue::~CSSCrossfadeValue()
 
 }
 
-String CSSCrossfadeValue::cssText() const
+String CSSCrossfadeValue::customCssText() const
 {
     String result = "-webkit-cross-fade(";
     result += m_fromImage->cssText() + ", ";

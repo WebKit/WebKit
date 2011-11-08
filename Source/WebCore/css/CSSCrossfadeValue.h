@@ -40,7 +40,7 @@ public:
     static PassRefPtr<CSSCrossfadeValue> create(PassRefPtr<CSSImageValue> fromImage, PassRefPtr<CSSImageValue> toImage) { return adoptRef(new CSSCrossfadeValue(fromImage, toImage)); }
     virtual ~CSSCrossfadeValue();
 
-    virtual String cssText() const OVERRIDE;
+    String customCssText() const;
 
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) OVERRIDE;
     virtual bool isFixedSize() const OVERRIDE { return false; }

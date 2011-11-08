@@ -98,7 +98,7 @@ PassRefPtr<CSSValueList> CSSValueList::copy()
     return newList;
 }
 
-String CSSValueList::cssText() const
+String CSSValueList::customCssText() const
 {
     String result = "";
 

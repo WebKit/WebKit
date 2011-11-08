@@ -56,7 +56,7 @@ public:
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 

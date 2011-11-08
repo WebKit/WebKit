@@ -38,7 +38,7 @@ public:
     static PassRefPtr<CSSCanvasValue> create() { return adoptRef(new CSSCanvasValue); }
     virtual ~CSSCanvasValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&);
     virtual bool isFixedSize() const { return true; }

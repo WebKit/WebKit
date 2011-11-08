@@ -37,7 +37,7 @@ CSSCanvasValue::~CSSCanvasValue()
         m_element->removeObserver(&m_canvasObserver);
 }
 
-String CSSCanvasValue::cssText() const
+String CSSCanvasValue::customCssText() const
 {
     String result = "-webkit-canvas(";
     result += m_name  + ")";

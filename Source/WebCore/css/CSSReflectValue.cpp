@@ -33,7 +33,7 @@ using namespace std;
 
 namespace WebCore {
 
-String CSSReflectValue::cssText() const
+String CSSReflectValue::customCssText() const
 {
     String result;
     switch (m_direction) {

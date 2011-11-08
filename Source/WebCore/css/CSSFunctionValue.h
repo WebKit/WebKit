@@ -42,7 +42,7 @@ public:
 
     virtual ~CSSFunctionValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
 private:
     explicit CSSFunctionValue(CSSParserFunction*);

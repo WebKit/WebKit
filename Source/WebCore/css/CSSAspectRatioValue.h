@@ -43,7 +43,7 @@ public:
 
     virtual ~CSSAspectRatioValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     float numeratorValue() const { return m_numeratorValue; }
     float denominatorValue() const { return m_denominatorValue; }

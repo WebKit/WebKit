@@ -42,7 +42,7 @@ CSSBorderImageSliceValue::~CSSBorderImageSliceValue()
 {
 }
 
-String CSSBorderImageSliceValue::cssText() const
+String CSSBorderImageSliceValue::customCssText() const
 {
     // Dump the slices first.
     String text = m_slices->cssText();

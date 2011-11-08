@@ -46,7 +46,7 @@ public:
 
     Type cssValueType() const;
 
-    virtual String cssText() const = 0;
+    String cssText() const;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
     bool isMutableValue() const { return m_isMutable; }

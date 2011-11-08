@@ -64,7 +64,7 @@ void FontFamilyValue::appendSpaceSeparated(const UChar* characters, unsigned len
     m_familyName.append(characters, length);
 }
 
-String FontFamilyValue::cssText() const
+String FontFamilyValue::customCssText() const
 {
     return quoteCSSStringIfNeeded(m_familyName);
 }

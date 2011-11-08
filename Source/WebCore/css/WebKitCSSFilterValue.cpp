@@ -44,7 +44,7 @@ WebKitCSSFilterValue::~WebKitCSSFilterValue()
 {
 }
 
-String WebKitCSSFilterValue::cssText() const
+String WebKitCSSFilterValue::customCssText() const
 {
     String result;
     switch (m_type) {
@@ -85,7 +85,7 @@ String WebKitCSSFilterValue::cssText() const
         break;
     }
 
-    return result + CSSValueList::cssText() + ")";
+    return result + CSSValueList::customCssText() + ")";
 }
 
 }

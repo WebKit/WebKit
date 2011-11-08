@@ -37,7 +37,7 @@ CSSAspectRatioValue::~CSSAspectRatioValue()
 {
 }
 
-String CSSAspectRatioValue::cssText() const
+String CSSAspectRatioValue::customCssText() const
 {
     StringBuilder result;
     result.append(String::number(m_numeratorValue));

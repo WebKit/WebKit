@@ -38,7 +38,7 @@ public:
     }
     virtual ~CSSBorderImageValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     CSSValue* imageValue() const { return m_image.get(); }
 

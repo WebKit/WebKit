@@ -708,7 +708,7 @@ static String formatNumber(double number)
     return String::adopt(buffer);
 }
 
-String CSSPrimitiveValue::cssText() const
+String CSSPrimitiveValue::customCssText() const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
     // name if it was specified) - check what spec says about this

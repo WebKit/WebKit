@@ -136,7 +136,7 @@ void SVGColor::setColor(unsigned short colorType, const String& rgbColor, const 
         setRGBColor(rgbColor, ec);
 }
 
-String SVGColor::cssText() const
+String SVGColor::customCssText() const
 {
     switch (m_colorType) {
     case SVG_COLORTYPE_UNKNOWN:

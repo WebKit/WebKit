@@ -33,7 +33,7 @@ public:
         return adoptRef(new CSSInheritedValue);
     }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
 private:
     CSSInheritedValue()

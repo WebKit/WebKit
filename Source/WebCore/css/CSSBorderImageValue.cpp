@@ -41,7 +41,7 @@ CSSBorderImageValue::~CSSBorderImageValue()
 {
 }
 
-String CSSBorderImageValue::cssText() const
+String CSSBorderImageValue::customCssText() const
 {
     // Image first.
     String text;

@@ -106,7 +106,7 @@ public:
 
     void setAngle(PassRefPtr<CSSPrimitiveValue> val) { m_angle = val; }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     // Create the gradient for a given size.
     PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
@@ -127,7 +127,7 @@ public:
         return adoptRef(new CSSRadialGradientValue(repeat, deprecatedType));
     }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
     void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }

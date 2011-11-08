@@ -67,7 +67,7 @@ public:
 
     virtual ~WebKitCSSTransformValue();
 
-    virtual String cssText() const;
+    String customCssText() const;
 
     TransformOperationType operationType() const { return m_type; }
 

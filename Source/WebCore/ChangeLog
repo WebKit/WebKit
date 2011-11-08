@@ -1,3 +1,100 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: Devirtualize cssText().
+        <http://webkit.org/b/71813>
+
+        Reviewed by Antti Koivisto.
+
+        Rename all subclass implementations to customCssText() and add
+        a CSSValue::cssText() that defers to the appropriate subclass
+        based on the type info.
+
+        The rename is both for clarity, and to ensure that calling
+        cssText() will always end up in the correct method.
+
+        * css/CSSAspectRatioValue.cpp:
+        (WebCore::CSSAspectRatioValue::customCssText):
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::customCssText):
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::customCssText):
+        * css/CSSBorderImageValue.h:
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::customCssText):
+        * css/CSSCanvasValue.h:
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::customCssText):
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFlexValue.cpp:
+        (WebCore::CSSFlexValue::customCssText):
+        * css/CSSFlexValue.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::customCssText):
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::customCssText):
+        * css/CSSFunctionValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::customCssText):
+        (WebCore::CSSRadialGradientValue::customCssText):
+        * css/CSSGradientValue.h:
+        * css/CSSInheritedValue.cpp:
+        (WebCore::CSSInheritedValue::customCssText):
+        * css/CSSInheritedValue.h:
+        * css/CSSInitialValue.cpp:
+        (WebCore::CSSInitialValue::customCssText):
+        * css/CSSInitialValue.h:
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::customCssText):
+        * css/CSSLineBoxContainValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::customCssText):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::customCssText):
+        * css/CSSReflectValue.h:
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::customCssText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::customCssText):
+        (WebCore::CSSStepsTimingFunctionValue::customCssText):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSLinearTimingFunctionValue::CSSLinearTimingFunctionValue):
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::customCssText):
+        * css/CSSUnicodeRangeValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        * css/CSSValue.h:
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCssText):
+        * css/CSSValueList.h:
+        * css/FontFamilyValue.cpp:
+        (WebCore::FontFamilyValue::customCssText):
+        * css/FontFamilyValue.h:
+        * css/FontFeatureValue.cpp:
+        (WebCore::FontFeatureValue::customCssText):
+        * css/FontFeatureValue.h:
+        * css/FontValue.cpp:
+        (WebCore::FontValue::customCssText):
+        * css/FontValue.h:
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::customCssText):
+        * css/ShadowValue.h:
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::customCssText):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::customCssText):
+        * css/WebKitCSSTransformValue.h:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::customCssText):
+        * svg/SVGColor.h:
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::customCssText):
+        * svg/SVGPaint.h:
+
 2011-11-08  Gavin Peters  <gavinp@chromium.org>
 
         Fix width of m_type in CachedResource

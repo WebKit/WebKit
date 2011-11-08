@@ -44,7 +44,7 @@ public:
     UChar32 from() const { return m_from; }
     UChar32 to() const { return m_to; }
 
-    virtual String cssText() const;
+    String customCssText() const;
 
 private:
     CSSUnicodeRangeValue(UChar32 from, UChar32 to)
