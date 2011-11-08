@@ -1,3 +1,15 @@
+2011-11-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add JavaScript keywords to the autocomplete.
+        https://bugs.webkit.org/show_bug.cgi?id=71782
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertyNames):
+        (WebInspector.ConsoleView.prototype._completions):
+        (WebInspector.ConsoleView.prototype._reportCompletions):
+
 2011-11-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Introduce SVGLengthContext, to allow to resolve relative units to arbitary viewports

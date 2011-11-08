@@ -428,11 +428,11 @@ WebInspector.ConsoleView.prototype = {
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
             }
-            this._reportCompletions(completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
+            this._reportCompletions(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, Object.keys(propertyNames));
         }
     },
 
-    _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, prefix, properties) {
+    _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, properties) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
                 var quoteUsed = "'";
@@ -441,6 +441,13 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var results = [];
+
+        if (!expressionString) {
+            const keywords = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in",
+                              "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with"];
+            properties = properties.concat(keywords);
+        }
+
         properties.sort();
 
         for (var i = 0; i < properties.length; ++i) {
