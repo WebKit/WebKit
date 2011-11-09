@@ -1,3 +1,59 @@
+2011-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99647.
+        http://trac.webkit.org/changeset/99647
+        https://bugs.webkit.org/show_bug.cgi?id=71876
+
+        It broke jsc and layout tests on all bot (Requested by
+        Ossy_night on #webkit).
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+        (JSC::MacroAssemblerARM::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARM::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARM::supportsDoubleBitops):
+        (JSC::MacroAssemblerARM::andnotDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPoint):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARMv7::supportsDoubleBitops):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::andnotDouble):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPoint):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerMIPS::supportsDoubleBitops):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPoint):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerSH4::supportsDoubleBitops):
+        (JSC::MacroAssemblerSH4::andnotDouble):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86::supportsDoubleBitops):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::andnotDouble):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86_64::supportsDoubleBitops):
+        * assembler/X86Assembler.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/ThunkGenerators.cpp:
+        (JSC::absThunkGenerator):
+        * runtime/JSGlobalData.cpp:
+
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
         Better abstract 'abs' operation through the MacroAssembler.

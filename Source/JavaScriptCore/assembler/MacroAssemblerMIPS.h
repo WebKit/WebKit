@@ -471,7 +471,7 @@ public:
         m_assembler.sqrtd(dst, src);
     }
     
-    void absDouble(FPRegisterID, FPRegisterID)
+    void andnotDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }
@@ -834,7 +834,7 @@ public:
 
     // Floating-point operations:
 
-    static bool supportsFloatingPoint()
+    bool supportsFloatingPoint() const
     {
 #if WTF_MIPS_DOUBLE_FLOAT
         return true;
@@ -843,7 +843,7 @@ public:
 #endif
     }
 
-    static bool supportsFloatingPointTruncate()
+    bool supportsFloatingPointTruncate() const
     {
 #if WTF_MIPS_DOUBLE_FLOAT && WTF_MIPS_ISA_AT_LEAST(2)
         return true;
@@ -852,7 +852,7 @@ public:
 #endif
     }
 
-    static bool supportsFloatingPointSqrt()
+    bool supportsFloatingPointSqrt() const
     {
 #if WTF_MIPS_DOUBLE_FLOAT && WTF_MIPS_ISA_AT_LEAST(2)
         return true;
@@ -860,7 +860,7 @@ public:
         return false;
 #endif
     }
-    static bool supportsFloatingPointAbs() { return false; }
+    bool supportsDoubleBitops() const { return false; }
 
     // Stack manipulation operations:
     //

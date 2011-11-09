@@ -780,21 +780,21 @@ public:
     }
 
     // Floating point operators
-    static bool supportsFloatingPoint()
+    bool supportsFloatingPoint() const
     {
         return s_isVFPPresent;
     }
 
-    static bool supportsFloatingPointTruncate()
+    bool supportsFloatingPointTruncate() const
     {
         return false;
     }
 
-    static bool supportsFloatingPointSqrt()
+    bool supportsFloatingPointSqrt() const
     {
         return s_isVFPPresent;
     }
-    static bool supportsFloatingPointAbs() { return false; }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -862,7 +862,7 @@ public:
         m_assembler.vsqrt_f64_r(dest, src);
     }
     
-    void absDouble(FPRegisterID, FPRegisterID)
+    void andnotDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }

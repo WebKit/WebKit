@@ -1141,15 +1141,10 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         // We don't care about the this argument. If we don't have a first
         // argument then make this JSConstant(NaN).
         int absArg = firstArg + 1;
-        if (absArg > lastArg) {
+        if (absArg > lastArg)
             set(resultOperand, constantNaN());
-            return true;
-        }
-
-        if (!MacroAssembler::supportsFloatingPointAbs())
-            return false;
-
-        set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(absArg)));
+        else
+            set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(absArg)));
         return true;
     }
         
@@ -1167,9 +1162,6 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             set(resultOperand, constantNaN());
             return true;
         }
-        
-        if (!MacroAssembler::supportsFloatingPointSqrt())
-            return false;
         
         set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
         return true;

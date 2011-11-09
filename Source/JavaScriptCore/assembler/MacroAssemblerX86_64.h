@@ -105,13 +105,6 @@ public:
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 
-    void absDouble(FPRegisterID src, FPRegisterID dst)
-    {
-        moveDouble(src, dst);
-        move(TrustedImmPtr(&s_maskSignBit), scratchRegister);
-        m_assembler.andpd_mr(0, scratchRegister, dst);
-    }
-
     void store32(TrustedImm32 imm, void* address)
     {
         move(TrustedImmPtr(address), scratchRegister);
@@ -468,11 +461,11 @@ public:
         return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister, address.base, TimesOne), mask);
     }
 
-    static bool supportsFloatingPoint() { return true; }
+    bool supportsFloatingPoint() const { return true; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
-    static bool supportsFloatingPointTruncate() { return true; }
-    static bool supportsFloatingPointSqrt() { return true; }
-    static bool supportsFloatingPointAbs() { return true; }
+    bool supportsFloatingPointTruncate() const { return true; }
+    bool supportsFloatingPointSqrt() const { return true; }
+    bool supportsDoubleBitops() const { return true; }
 
 private:
     friend class LinkBuffer;

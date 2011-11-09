@@ -564,7 +564,7 @@ public:
 
     // Floating-point operations:
 
-    static bool supportsFloatingPoint() { return true; }
+    bool supportsFloatingPoint() const { return true; }
     // On x86(_64) the MacroAssembler provides an interface to truncate a double to an integer.
     // If a value is not representable as an integer, and possibly for some values that are,
     // (on x86 INT_MIN, since this is indistinguishable from results for out-of-range/NaN input)
@@ -576,13 +576,13 @@ public:
     // generic, or decide that the MacroAssembler cannot practically be used to abstracted these
     // operations, and make clients go directly to the m_assembler to plant truncation instructions.
     // In short, FIXME:.
-    static bool supportsFloatingPointTruncate() { return false; }
+    bool supportsFloatingPointTruncate() const { return false; }
 
-    static bool supportsFloatingPointSqrt()
+    bool supportsFloatingPointSqrt() const
     {
         return false;
     }
-    static bool supportsFloatingPointAbs() { return false; }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -663,7 +663,7 @@ public:
         ASSERT_NOT_REACHED();
     }
     
-    void absDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
+    void andnotDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
     {
         ASSERT_NOT_REACHED();
     }
