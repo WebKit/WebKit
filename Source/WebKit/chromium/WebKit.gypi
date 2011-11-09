@@ -88,6 +88,8 @@
             'tests/WebCompositorImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebLayerTest.cpp',
+            'tests/WebPageNewSerializerTest.cpp',
+            'tests/WebPageSerializerTest.cpp',
             'tests/WebURLRequestTest.cpp',
             'tests/WebViewTest.cpp',
         ],

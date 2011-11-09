@@ -1,3 +1,21 @@
+2011-11-08  Jay Civelli  <jcivelli@chromium.org>
+
+        Fixes and reenables the WebPageSerializer tests.
+        https://bugs.webkit.org/show_bug.cgi?id=71874
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gypi:
+        * tests/WebPageNewSerializerTest.cpp:
+        (WebKit::TestWebFrameClient::~TestWebFrameClient):
+        (WebKit::WebPageNewSerializeTest::SetUp):
+        (WebKit::WebPageNewSerializeTest::resourceVectorContains):
+        (WebKit::TEST_F):
+        * tests/WebPageSerializerTest.cpp:
+        (WebKit::WebPageSerializerTest::WebPageSerializerTest):
+        (WebKit::WebPageSerializerTest::webVectorContains):
+        (WebKit::TEST_F):
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp

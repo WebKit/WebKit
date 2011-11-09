@@ -52,7 +52,7 @@ class TestWebFrameClient : public WebFrameClient {
 
 class WebPageSerializerTest : public testing::Test {
 public:
-    WebPageSerializerTest() : m_webView(0), m_supportedSchemes(3U)
+    WebPageSerializerTest() : m_webView(0), m_supportedSchemes(static_cast<size_t>(3))
     {
         m_supportedSchemes[0] = "http";
         m_supportedSchemes[1] = "https";
@@ -94,7 +94,7 @@ protected:
         webkit_support::ServeAsynchronousMockedRequests();
     }
 
-    static bool webVectorContains(const WebVector<WebURL>& vector, char* url)
+    static bool webVectorContains(const WebVector<WebURL>& vector, const char* url)
     {
         return vector.contains(WebURL(GURL(url)));
     }
@@ -124,13 +124,13 @@ TEST_F(WebPageSerializerTest, HTMLNodes)
     WebVector<WebURL> frames;
     WebVector<WebURL> resources;
     ASSERT_TRUE(WebPageSerializer::retrieveAllResources(
-        m_webView, m_supportedSchemes, &resources, &frames));    
+        m_webView, m_supportedSchemes, &resources, &frames));
 
     // Tests that all resources from the frame have been retrieved.
-    EXPECT_EQ(1, frames.size()); // There should be no duplicates.
+    EXPECT_EQ(1U, frames.size()); // There should be no duplicates.
     EXPECT_TRUE(webVectorContains(frames, "http://www.test.com"));
 
-    EXPECT_EQ(14, resources.size()); // There should be no duplicates.
+    EXPECT_EQ(14U, resources.size()); // There should be no duplicates.
     EXPECT_TRUE(webVectorContains(resources, "http://www.example.com/beautifull.css"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/awesome.js"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/bodyBackground.jpg"));
@@ -170,16 +170,16 @@ TEST_F(WebPageSerializerTest, MultipleFrames)
     WebVector<WebURL> frames;
     WebVector<WebURL> resources;
     ASSERT_TRUE(WebPageSerializer::retrieveAllResources(
-        m_webView, m_supportedSchemes, &resources, &frames));    
+        m_webView, m_supportedSchemes, &resources, &frames));
 
     // Tests that all resources from the frame have been retrieved.
-    EXPECT_EQ(4, frames.size()); // There should be no duplicates.
+    EXPECT_EQ(4U, frames.size()); // There should be no duplicates.
     EXPECT_TRUE(webVectorContains(frames, "http://www.test.com"));
     EXPECT_TRUE(webVectorContains(frames, "http://www.test.com/simple_iframe.html"));
     EXPECT_TRUE(webVectorContains(frames, "http://www.test.com/object_iframe.html"));
     EXPECT_TRUE(webVectorContains(frames, "http://www.test.com/embed_iframe.html"));
 
-    EXPECT_EQ(5, resources.size()); // There should be no duplicates.
+    EXPECT_EQ(5U, resources.size()); // There should be no duplicates.
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/awesome.png"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/innerFrame.png"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/flash.swf"));

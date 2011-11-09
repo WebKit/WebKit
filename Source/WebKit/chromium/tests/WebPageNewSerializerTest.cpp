@@ -51,9 +51,7 @@ namespace {
 
 class TestWebFrameClient : public WebFrameClient {
 public:
-    TestWebFrameClient() : m_scriptEnabled(false) { }
-    virtual bool allowScript(WebFrame*, bool /* enabledPerSettings */) { return m_scriptEnabled; }
-    bool m_scriptEnabled;
+    virtual ~TestWebFrameClient() { }
 };
 
 class WebPageNewSerializeTest : public testing::Test {
@@ -72,10 +70,11 @@ protected:
         // Create and initialize the WebView.
         m_webView = WebView::create(0);
 
-        // We want the images to load.
+        // We want the images to load and JavaScript to be on.
         WebSettings* settings = m_webView->settings();
         settings->setImagesEnabled(true);
         settings->setLoadsImagesAutomatically(true);
+        settings->setJavaScriptEnabled(true);
 
         m_webView->initializeMainFrame(&m_webFrameClient);
     }
@@ -112,22 +111,12 @@ protected:
         webkit_support::ServeAsynchronousMockedRequests();
     }
 
-    void enableJS()
-    {
-        m_webFrameClient.m_scriptEnabled = true;
-    }
-
-    void runOnLoad()
-    {
-        m_webView->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8("onLoad()")));
-    }
-
     const WebString& htmlMimeType() const { return m_htmlMimeType; }
     const WebString& xhtmlMimeType() const { return m_xhtmlMimeType; }
     const WebString& cssMimeType() const { return m_cssMimeType; }
     const WebString& pngMimeType() const { return m_pngMimeType; }
-    
-    static bool resourceVectorContains(const WebVector<WebPageSerializer::Resource>& resources, char* url, char* mimeType)
+
+    static bool resourceVectorContains(const WebVector<WebPageSerializer::Resource>& resources, const char* url, const char* mimeType)
     {
         WebURL webURL = WebURL(GURL(url));
         for (size_t i = 0; i < resources.size(); ++i) {
@@ -137,7 +126,7 @@ protected:
         }
         return false;
     }
-    
+
     WebView* m_webView;
 
 private:
@@ -149,8 +138,7 @@ private:
 };
 
 // Tests that a page with resources and sub-frame is reported with all its resources.
-// FIXME: reenable these tests once the Chromium part of the test_webkit_client have landed.
-TEST_F(WebPageNewSerializeTest, DISABLED_PageWithFrames)
+TEST_F(WebPageNewSerializeTest, PageWithFrames)
 {
     // Register the mocked frames.
     WebURL topFrameURL = GURL("http://www.test.com");
@@ -166,14 +154,14 @@ TEST_F(WebPageNewSerializeTest, DISABLED_PageWithFrames)
     WebVector<WebPageSerializer::Resource> resources;
     WebPageSerializer::serialize(m_webView, &resources);
     ASSERT_FALSE(resources.isEmpty());
-    
+
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
     EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
-    EXPECT_EQ(6, resources.size()); // There should be no duplicates.
+    EXPECT_EQ(6U, resources.size()); // There should be no duplicates.
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/red_background.png", "image/png"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/green_background.png", "image/png"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/blue_background.png", "image/png"));
@@ -184,7 +172,7 @@ TEST_F(WebPageNewSerializeTest, DISABLED_PageWithFrames)
 // Test that when serializing a page, all CSS resources are reported, including url()'s
 // and imports and links. Note that we don't test the resources contents, we only make sure
 // they are all reported with the right mime type and that they contain some data.
-TEST_F(WebPageNewSerializeTest, DISABLED_CSSResources)
+TEST_F(WebPageNewSerializeTest, CSSResources)
 {
     // Register the mocked frame and load it.
     WebURL topFrameURL = GURL("http://www.test.com");
@@ -201,21 +189,19 @@ TEST_F(WebPageNewSerializeTest, DISABLED_CSSResources)
     registerMockedURLLoad(GURL("http://www.test.com/ul-dot.png"), WebString::fromUTF8("ul-dot.png"), pngMimeType());
     registerMockedURLLoad(GURL("http://www.test.com/ol-dot.png"), WebString::fromUTF8("ol-dot.png"), pngMimeType());
 
-    enableJS();
     loadURLInTopFrame(topFrameURL);
-    runOnLoad();
 
     WebVector<WebPageSerializer::Resource> resources;
     WebPageSerializer::serialize(m_webView, &resources);
     ASSERT_FALSE(resources.isEmpty());
-    
+
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
     EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
-    EXPECT_EQ(12, resources.size()); // There should be no duplicates.
+    EXPECT_EQ(12U, resources.size()); // There should be no duplicates.
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/link_styles.css", "text/css"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/import_styles.css", "text/css"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/import_style_from_link.css", "text/css"));
@@ -230,7 +216,7 @@ TEST_F(WebPageNewSerializeTest, DISABLED_CSSResources)
 }
 
 // Tests that when serializing a page with blank frames these are reported with their resources.
-TEST_F(WebPageNewSerializeTest, DISABLED_BlankFrames)
+TEST_F(WebPageNewSerializeTest, BlankFrames)
 {
     // Register the mocked frame and load it.
     WebURL topFrameURL = GURL("http://www.test.com");
@@ -239,21 +225,19 @@ TEST_F(WebPageNewSerializeTest, DISABLED_BlankFrames)
     registerMockedURLLoad(GURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), pngMimeType());
     registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
 
-    enableJS();
     loadURLInTopFrame(topFrameURL);
-    runOnLoad();
 
     WebVector<WebPageSerializer::Resource> resources;
     WebPageSerializer::serialize(m_webView, &resources);
     ASSERT_FALSE(resources.isEmpty());
-    
+
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
     EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
-    EXPECT_EQ(7, resources.size()); // There should be no duplicates.
+    EXPECT_EQ(7U, resources.size()); // There should be no duplicates.
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/red_background.png", "image/png"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/orange_background.png", "image/png"));
     EXPECT_TRUE(resourceVectorContains(resources, "http://www.test.com/blue_background.png", "image/png"));
@@ -263,7 +247,7 @@ TEST_F(WebPageNewSerializeTest, DISABLED_BlankFrames)
     EXPECT_TRUE(resourceVectorContains(resources, "wyciwyg://frame/2", "text/html"));
 }
 
-TEST_F(WebPageNewSerializeTest, DISABLED_SerializeXMLHasRightDeclaration)
+TEST_F(WebPageNewSerializeTest, SerializeXMLHasRightDeclaration)
 {
     WebURL topFrameURL = GURL("http://www.test.com/simple.xhtml");
     registerMockedURLLoad(topFrameURL, WebString::fromUTF8("simple.xhtml"), xhtmlMimeType());
@@ -273,9 +257,9 @@ TEST_F(WebPageNewSerializeTest, DISABLED_SerializeXMLHasRightDeclaration)
     WebVector<WebPageSerializer::Resource> resources;
     WebPageSerializer::serialize(m_webView, &resources);
     ASSERT_FALSE(resources.isEmpty());
-    
+
     // We expect only one resource, the XML.
-    ASSERT_EQ(1, resources.size());
+    ASSERT_EQ(1U, resources.size());
     std::string xml = resources[0].data;
 
     // We should have one and only one instance of the XML declaration.
