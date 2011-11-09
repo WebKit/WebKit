@@ -692,7 +692,7 @@ IntRect RenderView::unscaledDocumentRect() const
     return overflowRect;
 }
 
-LayoutRect RenderView::backgroundRect() const
+LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
 {
     if (!hasColumns())
         return unscaledDocumentRect();
@@ -701,6 +701,8 @@ LayoutRect RenderView::backgroundRect() const
     LayoutRect backgroundRect(0, 0, columnInfo->desiredColumnWidth(), columnInfo->columnHeight() * columnInfo->columnCount());
     if (!isHorizontalWritingMode())
         backgroundRect = backgroundRect.transposedRect();
+    backgroundRenderer->flipForWritingMode(backgroundRect);
+
     return backgroundRect;
 }
 

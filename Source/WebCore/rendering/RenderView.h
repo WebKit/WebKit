@@ -167,7 +167,7 @@ public:
 #endif
 
     IntRect unscaledDocumentRect() const;
-    LayoutRect backgroundRect() const;
+    LayoutRect backgroundRect(RenderBox* backgroundRenderer) const;
 
     IntRect documentRect() const;
 

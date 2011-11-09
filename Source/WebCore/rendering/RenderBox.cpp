@@ -872,10 +872,7 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
         }
     }
 
-    RenderView* view = this->view();
-    LayoutRect backgroundRect = view->backgroundRect();
-    flipForWritingMode(backgroundRect);
-    paintFillLayers(paintInfo, bgColor, bgLayer, backgroundRect, BackgroundBleedNone, CompositeSourceOver, bodyObject);
+    paintFillLayers(paintInfo, bgColor, bgLayer, view()->backgroundRect(this), BackgroundBleedNone, CompositeSourceOver, bodyObject);
 }
 
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext* context) const
