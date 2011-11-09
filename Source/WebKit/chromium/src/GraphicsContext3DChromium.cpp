@@ -826,17 +826,20 @@ String mapExtensionName(const String& name)
 
 void GraphicsContext3DPrivate::initializeExtensions()
 {
+    if (m_initializedAvailableExtensions)
+        return;
+
+    m_initializedAvailableExtensions = true;
     bool success = makeContextCurrent();
     ASSERT(success);
-    if (success && !m_initializedAvailableExtensions) {
-        String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
-        splitStringHelper(extensionsString, m_enabledExtensions);
+    if (!success)
+        return;
 
-        String requestableExtensionsString = m_impl->getRequestableExtensionsCHROMIUM();
-        splitStringHelper(requestableExtensionsString, m_requestableExtensions);
+    String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
+    splitStringHelper(extensionsString, m_enabledExtensions);
 
-        m_initializedAvailableExtensions = true;
-    }
+    String requestableExtensionsString = m_impl->getRequestableExtensionsCHROMIUM();
+    splitStringHelper(requestableExtensionsString, m_requestableExtensions);
 }
 
 

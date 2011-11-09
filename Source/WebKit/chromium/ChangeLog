@@ -1,3 +1,13 @@
+2011-11-08  Nat Duca  <nduca@chromium.org>
+
+        [chromium] When GC3DPrivate::initializExtensions fails, dont keep retrying
+        https://bugs.webkit.org/show_bug.cgi?id=71637
+
+        Reviewed by Kenneth Russell.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::initializeExtensions):
+
 2011-11-08  Adam Klein  <adamk@chromium.org>
 
         Use a typedef for ExceptionCode in all header files instead of including ExceptionCode.h
