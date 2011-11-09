@@ -800,7 +800,7 @@ void AbstractState::dump(FILE* out)
             first = false;
         else
             fprintf(out, " ");
-        fprintf(out, "@%lu:", i + m_block->begin);
+        fprintf(out, "@%lu:", static_cast<unsigned long>(i + m_block->begin));
         m_nodes[i].dump(out);
     }
 }

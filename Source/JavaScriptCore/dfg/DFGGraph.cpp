@@ -209,7 +209,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         else
             printf("%sid%u", hasPrinted ? ", " : "", storageAccessData.identifierNumber);
         
-        printf(", %lu", storageAccessData.offset);
+        printf(", %lu", static_cast<unsigned long>(storageAccessData.offset));
         hasPrinted = true;
     }
     ASSERT(node.hasVariableAccessData() == node.hasLocal());

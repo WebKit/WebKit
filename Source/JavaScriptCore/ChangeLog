@@ -1,3 +1,14 @@
+2011-11-09  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Buildfix for 32bit debug mode.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2011-11-09  Andy Wingo  <wingo@igalia.com>
 
         Enable the DFG JIT on X86-64 Linux platforms
