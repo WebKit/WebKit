@@ -1,3 +1,15 @@
+2011-11-08  Philip Rogers  <pdr@google.com>
+
+        fix REGRESSION: SVG feColorMatrix causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=71287
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/filters/feColorMatrix-invalid-animation.svg
+
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+
 2011-11-08  Scott Graham  <scottmg@chromium.org>
 
         Add support for arrays of numbers to IDL bindings code generator

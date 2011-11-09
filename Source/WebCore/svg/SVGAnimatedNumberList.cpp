@@ -92,7 +92,10 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
             animatedNumberList = toNumberList;
         return;
     }
-    
+
+    if (itemsCount != animatedNumberList.size())
+        animatedNumberList.resize(itemsCount);
+
     for (unsigned i = 0; i < itemsCount; ++i)
         SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedNumberList[i], fromNumberList[i], toNumberList[i]);
 }
