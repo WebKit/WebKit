@@ -1,3 +1,15 @@
+2011-11-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: discard injected scripts upon front-end disconnect.
+        https://bugs.webkit.org/show_bug.cgi?id=71823
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector-enabled/injected-script-discard.html
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::clearFrontend):
+
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
         CSS: Remove empty value and rule destructors.

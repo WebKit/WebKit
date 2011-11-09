@@ -130,6 +130,7 @@ void InspectorAgent::clearFrontend()
     m_pendingEvaluateTestCommands.clear();
     m_frontend = 0;
     m_didCommitLoadFired = false;
+    m_injectedScriptManager->discardInjectedScripts();
 }
 
 void InspectorAgent::didCommitLoad()
