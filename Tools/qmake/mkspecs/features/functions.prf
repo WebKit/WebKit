@@ -224,3 +224,32 @@ defineTest(prependEach) {
 
     return(true)
 }
+
+defineTest(linkStaticLibrary) {
+    unset(path)
+    unset(target)
+
+    path = $$1
+    target = $$2
+
+    LIBS = -l$$target
+
+    win32-msvc*|wince*|win32-icc {
+        LIBS = -L$$path $$LIBS
+        POST_TARGETDEPS += $${path}$${QMAKE_DIR_SEP}$${target}.lib
+    } else {
+        QMAKE_LIBDIR = $$path $$QMAKE_LIBDIR
+        POST_TARGETDEPS += $${path}$${QMAKE_DIR_SEP}lib$${target}.a
+    }
+
+    # The following line is to prevent qmake from adding jscore to libQtWebKit's prl dependencies.
+    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit
+    # statically in applications (which isn't used often because, among other things, of licensing obstacles).
+    CONFIG -= explicitlib
+    CONFIG -= staticlib
+
+    export(LIBS)
+    export(QMAKE_LIBDIR)
+    export(POST_TARGETDEPS)
+    export(CONFIG)
+}

@@ -1,5 +1,16 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Centralize duplicated code for linking the static libs
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/functions.prf:
+        * qmake/mkspecs/features/javascriptcore.prf:
+        * qmake/mkspecs/features/webcore.prf:
+        * qmake/mkspecs/features/webkit2.prf:
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Build system cleanup
         https://bugs.webkit.org/show_bug.cgi?id=71815
 
