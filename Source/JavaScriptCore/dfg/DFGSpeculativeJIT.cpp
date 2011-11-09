@@ -731,7 +731,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         GPRReg scratchReg = scratch.gpr();
         m_jit.move(valueOp.gpr(), scratchReg);
         MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::BelowOrEqual, scratchReg, TrustedImm32(0xff));
-        MacroAssembler::Jump tooBig = m_jit.branch32(MacroAssembler::GreaterThan, scratchReg, TrustedImm32(0xff));
+        m_jit.branch32(MacroAssembler::GreaterThan, scratchReg, TrustedImm32(0xff));
         m_jit.xorPtr(scratchReg, scratchReg);
         MacroAssembler::Jump clamped = m_jit.jump();
         m_jit.move(TrustedImm32(255), scratchReg);
@@ -749,7 +749,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         value.adopt(result);
         valueGPR = gpr;
     }
-    ASSERT(valueGPR != property);
+    ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
     GPRTemporary storage(this);
     GPRReg storageReg = storage.gpr();

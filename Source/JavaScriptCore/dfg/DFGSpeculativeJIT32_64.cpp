@@ -1505,7 +1505,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Code to handle put beyond array bounds.
         silentSpillAllRegisters(scratchReg);
-        JITCompiler::Call functionCall = callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueTagReg, valuePayloadReg);
+        callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueTagReg, valuePayloadReg);
         silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 
@@ -2493,7 +2493,7 @@ void SpeculativeJIT::compile(Node& node)
 
         structuresNotMatch.link(&m_jit);
         silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-        JITCompiler::Call functionCall = callOperation(operationResolveGlobal, resultTagGPR, resultPayloadGPR, resolveInfoGPR, &m_jit.codeBlock()->identifier(data.identifierNumber));
+        callOperation(operationResolveGlobal, resultTagGPR, resultPayloadGPR, resolveInfoGPR, &m_jit.codeBlock()->identifier(data.identifierNumber));
         silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
 
         wasFast.link(&m_jit);

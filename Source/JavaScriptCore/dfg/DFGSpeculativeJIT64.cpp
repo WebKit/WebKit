@@ -1549,7 +1549,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Code to handle put beyond array bounds.
         silentSpillAllRegisters(scratchReg);
-        JITCompiler::Call functionCall = callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueReg);
+        callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueReg);
         silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 
@@ -2468,7 +2468,7 @@ void SpeculativeJIT::compile(Node& node)
         JITCompiler::Jump structuresMatch = m_jit.branchPtr(JITCompiler::Equal, resultGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
 
         silentSpillAllRegisters(resultGPR);
-        JITCompiler::Call functionCall = callOperation(operationResolveGlobal, resultGPR, resolveInfoGPR, &m_jit.codeBlock()->identifier(data.identifierNumber));
+        callOperation(operationResolveGlobal, resultGPR, resolveInfoGPR, &m_jit.codeBlock()->identifier(data.identifierNumber));
         silentFillAllRegisters(resultGPR);
 
         JITCompiler::Jump wasSlow = m_jit.jump();
