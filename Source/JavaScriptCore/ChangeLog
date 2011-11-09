@@ -1,3 +1,45 @@
+2011-11-09  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71873
+
+        Reviewed by Geoff Garen.
+
+        Incrementally re-landing these changes, trying to determine what went wrong.
+        (The whole patch failed tests on the build bot but worked locally.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+        (JSC::MacroAssemblerARM::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARM::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARM::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPoint):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::supportsFloatingPoint):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPoint):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointAbs):
+        * jit/ThunkGenerators.cpp:
+        (JSC::absThunkGenerator):
+
 2011-11-08  Darin Adler  <darin@apple.com>
 
         Add code path in HashTable for emptyValueIsZero that does not require copying the empty value
