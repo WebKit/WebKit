@@ -1,3 +1,9 @@
+2011-11-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Take another stab at fixing the GTK+ build.
+
+        * Source/autotools/symbols.filter: The symbols.filter file was missing a semicolon.
+
 2011-11-08  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the GTK build after <http://trac.webkit.org/changeset/99613>
