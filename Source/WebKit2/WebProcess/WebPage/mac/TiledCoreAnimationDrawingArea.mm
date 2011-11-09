@@ -51,7 +51,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 {
     m_rootLayer = [CALayer layer];
 
-    m_rootLayer.get().frame = m_webPage->bounds();
+    m_rootLayer.get().frame = (CGRect)m_webPage->bounds();
     m_rootLayer.get().opaque = YES;
 
     // Give the root layer a background color so it's visible on screen.
