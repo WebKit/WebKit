@@ -504,6 +504,7 @@
             'css/CSSWrapShapes.h',
             'css/Pair.h',
             'css/WebKitCSSFilterValue.h',
+            'css/WebKitCSSShaderValue.h',
             'css/WebKitCSSTransformValue.h',
             'editing/ApplyBlockElementCommand.h',
             'editing/CompositeEditCommand.h',

@@ -727,6 +727,13 @@ static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderS
             filterValue->append(primitiveValueCache->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM: {
+            // FIXME: Implement custom shader function.
+            // https://bugs.webkit.org/show_bug.cgi?id=71396
+            break;
+        }
+#endif
         default:
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::UnknownFilterOperation);
             break;

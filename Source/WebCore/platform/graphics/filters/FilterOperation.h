@@ -53,6 +53,9 @@ public:
         BLUR,
         SHARPEN,
         DROP_SHADOW,
+#if ENABLE(CSS_SHADERS)
+        CUSTOM,
+#endif
         NONE
     };
 

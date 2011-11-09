@@ -1565,6 +1565,7 @@ HEADERS += \
     css/WebKitCSSKeyframeRule.h \
     css/WebKitCSSKeyframesRule.h \
     css/WebKitCSSMatrix.h \
+    css/WebKitCSSShaderValue.h \
     css/WebKitCSSTransformValue.h \
     dom/ActiveDOMObject.h \
     dom/Attr.h \

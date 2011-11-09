@@ -54,6 +54,7 @@
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSFilterValue.h"
+#include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
 
 namespace WebCore {
@@ -148,6 +149,10 @@ String CSSValue::cssText() const
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
+#if ENABLE(CSS_SHADERS)
+    case WebKitCSSShaderClass:
+        return static_cast<const WebKitCSSShaderValue*>(this)->customCssText();
+#endif
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
@@ -251,6 +256,11 @@ void CSSValue::destroy()
     case WebKitCSSFilterClass:
         delete static_cast<WebKitCSSFilterValue*>(this);
         return;
+#if ENABLE(CSS_SHADERS)
+    case WebKitCSSShaderClass:
+        delete static_cast<WebKitCSSShaderValue*>(this);
+        return;
+#endif
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:

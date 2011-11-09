@@ -81,7 +81,10 @@ public:
 #endif
 #if ENABLE(CSS_FILTERS)
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
+#if ENABLE(CSS_SHADERS)
+    bool isWebKitCSSShaderValue() const { return m_classType == WebKitCSSShaderClass; }
 #endif
+#endif // ENABLE(CSS_FILTERS)
 #if ENABLE(SVG)
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
@@ -124,7 +127,10 @@ protected:
 #endif
 #if ENABLE(CSS_FILTERS)
         WebKitCSSFilterClass,
+#if ENABLE(CSS_SHADERS)
+        WebKitCSSShaderClass,
 #endif
+#endif // ENABLE(CSS_FILTERS)
 #if ENABLE(SVG)
         SVGColorClass,
         SVGPaintClass,

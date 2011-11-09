@@ -847,3 +847,15 @@ evenodd
 // -webkit-region-overflow
 // auto
 break
+
+#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
+// -webkit-filter
+#if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
+// values for the custom() function
+// border-box
+// padding-box
+// content-box
+filter-box
+detached
+#endif // CSS_SHADERS
+#endif // CSS_FILTERS

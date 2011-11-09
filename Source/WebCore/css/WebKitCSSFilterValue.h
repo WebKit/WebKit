@@ -50,7 +50,12 @@ public:
         BlurFilterOperation,
         SharpenFilterOperation,
         DropShadowFilterOperation
+#if ENABLE(CSS_SHADERS)
+        , CustomFilterOperation
+#endif
     };
+
+    static bool typeUsesSpaceSeparator(FilterOperationType);
 
     static PassRefPtr<WebKitCSSFilterValue> create(FilterOperationType type)
     {

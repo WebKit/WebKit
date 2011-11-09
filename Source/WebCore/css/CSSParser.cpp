@@ -81,6 +81,9 @@
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
+#if ENABLE(CSS_SHADERS)
+#include "WebKitCSSShaderValue.h"
+#endif
 #include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
@@ -6496,7 +6499,152 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
         filterType = WebKitCSSFilterValue::SharpenFilterOperation;
         maximumArgumentCount = 3;
     }
+#if ENABLE(CSS_SHADERS)
+    else if (equalIgnoringCase(name, "custom("))
+        filterType = WebKitCSSFilterValue::CustomFilterOperation;
+#endif
 }
+
+#if ENABLE(CSS_SHADERS)
+static bool acceptCommaOperator(CSSParserValueList* argsList)
+{
+    if (CSSParserValue* arg = argsList->current()) {
+        if (arg->unit != CSSParserValue::Operator || arg->iValue != ',')
+            return false;
+        argsList->next();
+    }
+    return true;
+}
+
+PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* value)
+{
+    CSSParserValueList* argsList = value->function->args.get();
+    if (!argsList)
+        return 0;
+
+    RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);
+
+    // Custom filter syntax:
+    //
+    // vertexShader:    <uri> | none
+    // fragmentShader:  <uri> | none
+    //
+    // box: filter-box | border-box | padding-box | content-box
+    // vertexMesh:  +<integer>{1,2}[wsp<box>][wsp'detached']
+    //
+    // param-value: true|false[wsp+true|false]{0-3} |
+    //              <number>[wsp+<number>]{0-3} |
+    //              <array> |
+    //              <transform> |
+    //              <texture(<uri>)>
+    // array: 'array('<number>[wsp<number>]*')'
+    // css-3d-transform: <transform-function>;[<transform-function>]*
+    // transform:   <css-3d-transform> | <mat>
+    // mat:         'mat2('<number>(,<number>){3}')' | 
+    //              'mat3('<number>(,<number>){8}')' | 
+    //              'mat4('<number>(,<number>){15}')' )
+    // param-def:   <param-name>wsp<param-value>
+    // param-name:  <ident>
+    // params:      [<param-def>[,<param-def>*]]
+    //
+    // custom(<vertex-shader>[wsp<fragment-shader>][,<vertex-mesh>][,<params>])
+    
+    // 1. Parse the shader URLs: <vertex-shader>[wsp<fragment-shader>]
+    RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
+    bool hadAtLeastOneCustomShader = false;
+    CSSParserValue* arg;
+    while ((arg = argsList->current())) {
+        RefPtr<CSSValue> value;
+        if (arg->id == CSSValueNone)
+            value = primitiveValueCache()->createIdentifierValue(CSSValueNone);
+        else if (arg->unit == CSSPrimitiveValue::CSS_URI) {
+            KURL shaderURL = m_styleSheet ? m_styleSheet->completeURL(arg->string) : KURL();
+            value = WebKitCSSShaderValue::create(shaderURL.string());
+            hadAtLeastOneCustomShader = true;
+        }
+        if (!value)
+            break;
+        shadersList->append(value.release());
+        argsList->next();
+    }
+
+    if (!shadersList->length() || !hadAtLeastOneCustomShader || shadersList->length() > 2 || !acceptCommaOperator(argsList))
+        return 0;
+        
+    filterValue->append(shadersList.release());
+    
+    // 2. Parse the mesh size <vertex-mesh>
+    RefPtr<CSSValueList> meshSizeList = CSSValueList::createSpaceSeparated();
+    
+    while ((arg = argsList->current())) {
+        if (!validUnit(arg, FInteger | FNonNeg, true))
+            break;
+        meshSizeList->append(primitiveValueCache()->createValue(clampToInteger(arg->fValue), CSSPrimitiveValue::CSS_NUMBER));
+        argsList->next();
+    }
+    
+    if (meshSizeList->length() > 2)
+        return 0;
+    
+    if ((arg = argsList->current()) && (arg->id == CSSValueBorderBox || arg->id == CSSValuePaddingBox
+        || arg->id == CSSValueContentBox || arg->id == CSSValueFilterBox)) {
+        meshSizeList->append(primitiveValueCache()->createIdentifierValue(arg->id));
+        argsList->next();
+    }
+    
+    if ((arg = argsList->current()) && arg->id == CSSValueDetached) {
+        meshSizeList->append(primitiveValueCache()->createIdentifierValue(arg->id));
+        argsList->next();
+    }
+    
+    if (meshSizeList->length()) {
+        if (!acceptCommaOperator(argsList))
+            return 0;
+        filterValue->append(meshSizeList.release());
+    }
+    
+    // 3. Parser the parameters.
+    RefPtr<CSSValueList> paramList = CSSValueList::createCommaSeparated();
+    
+    while ((arg = argsList->current())) {
+        if (arg->id || arg->unit != CSSPrimitiveValue::CSS_IDENT)
+            break;
+
+        RefPtr<CSSValueList> parameter = CSSValueList::createSpaceSeparated();
+        parameter->append(createPrimitiveStringValue(arg));
+        argsList->next();
+
+        if (!(arg = argsList->current()))
+            return 0;
+
+        // TODO: Implement other parameters types parsing.
+        // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
+        // 3d-transforms: https://bugs.webkit.org/show_bug.cgi?id=71443
+        // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
+        RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
+        while ((arg = argsList->current())) {
+            // If we hit a comma it means we finished this parameter's values.
+            if (arg->unit == CSSParserValue::Operator && arg->iValue == ',')
+                break;
+            if (!validUnit(arg, FNumber, true))
+                return 0;
+            paramValueList->append(primitiveValueCache()->createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
+            argsList->next();
+        }
+        if (!paramValueList->length() || paramValueList->length() > 4)
+            return 0;
+        parameter->append(paramValueList.release());
+        paramList->append(parameter.release());
+        if (!acceptCommaOperator(argsList))
+            return 0;
+    }
+    
+    if (paramList->length())
+        filterValue->append(paramList.release());
+    
+    return filterValue;
+}
+#endif
 
 bool CSSParser::isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned argumentCount)
 {
@@ -6572,6 +6720,16 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 
             if (filterType == WebKitCSSFilterValue::UnknownFilterOperation)
                 return 0;
+
+#if ENABLE(CSS_SHADERS)
+            if (filterType == WebKitCSSFilterValue::CustomFilterOperation) {
+                RefPtr<WebKitCSSFilterValue> filterValue = parseCustomFilter(value);
+                if (!filterValue)
+                    return 0;
+                list->append(filterValue.release());
+                continue;
+            }
+#endif
 
             CSSParserValueList* args = value->function->args.get();
             if (!args || args->size() > maximumArgumentCount)

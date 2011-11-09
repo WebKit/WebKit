@@ -32965,6 +32965,10 @@
 				RelativePath="..\css\WebKitCSSTransformValue.h"
 				>
 			</File>
+			<File
+				RelativePath="..\css\WebKitCSSShaderValue.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="rendering"

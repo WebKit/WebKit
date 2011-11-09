@@ -1116,6 +1116,7 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSKeyframesRule.h \
 	Source/WebCore/css/WebKitCSSMatrix.cpp \
 	Source/WebCore/css/WebKitCSSMatrix.h \
+	Source/WebCore/css/WebKitCSSShaderValue.h \
 	Source/WebCore/css/WebKitCSSTransformValue.cpp \
 	Source/WebCore/css/WebKitCSSTransformValue.h \
 	Source/WebCore/dom/ActiveDOMObject.cpp \

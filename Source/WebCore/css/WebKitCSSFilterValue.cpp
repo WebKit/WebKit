@@ -35,9 +35,18 @@
 namespace WebCore {
 
 WebKitCSSFilterValue::WebKitCSSFilterValue(FilterOperationType operationType)
-    : CSSValueList(WebKitCSSFilterClass, true)
+    : CSSValueList(WebKitCSSFilterClass, typeUsesSpaceSeparator(operationType))
     , m_type(operationType)
 {
+}
+
+bool WebKitCSSFilterValue::typeUsesSpaceSeparator(FilterOperationType operationType)
+{
+#if ENABLE(CSS_SHADERS)
+    return operationType != CustomFilterOperation;
+#else
+    return true;
+#endif
 }
 
 String WebKitCSSFilterValue::customCssText() const
@@ -77,6 +86,11 @@ String WebKitCSSFilterValue::customCssText() const
     case DropShadowFilterOperation:
         result = "drop-shadow(";
         break;
+#if ENABLE(CSS_SHADERS)
+    case CustomFilterOperation:
+        result = "custom(";
+        break;
+#endif
     default:
         break;
     }

@@ -1,3 +1,50 @@
+2011-11-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Part 1] Parse the custom() function in -webkit-filter
+        https://bugs.webkit.org/show_bug.cgi?id=71441
+
+        Added code that parses the custom() function. There's no code
+        for the CSSStyleSelector yet, so the only way to test this was to
+        check the "styleSheets" rules.
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/filters/custom-filter-property-parsing-invalid.html
+               css3/filters/custom-filter-property-parsing.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedFilter):
+        * css/CSSParser.cpp:
+        (WebCore::filterInfoForName):
+        (WebCore::acceptCommaOperator):
+        (WebCore::CSSParser::parseCustomFilter):
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::filterOperationForType):
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isWebKitCSSShaderValue):
+        * css/CSSValueKeywords.in:
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::WebKitCSSFilterValue):
+        (WebCore::WebKitCSSFilterValue::typeUsesSpaceSeparator):
+        (WebCore::WebKitCSSFilterValue::customCssText):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSShaderValue.h: Added.
+        (WebCore::WebKitCSSShaderValue::create):
+        (WebCore::WebKitCSSShaderValue::WebKitCSSShaderValue):
+        * platform/graphics/filters/FilterOperation.h:
+
 2011-11-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: exception in remote front-end load handler due to undefined reference to workerManager

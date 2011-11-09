@@ -5392,6 +5392,10 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
         return FilterOperation::SHARPEN;
     case WebKitCSSFilterValue::DropShadowFilterOperation:
         return FilterOperation::DROP_SHADOW;
+#if ENABLE(CSS_SHADERS)
+    case WebKitCSSFilterValue::CustomFilterOperation:
+        return FilterOperation::CUSTOM;
+#endif
     case WebKitCSSFilterValue::UnknownFilterOperation:
         return FilterOperation::NONE;
     }
@@ -5414,6 +5418,14 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
 
         WebKitCSSFilterValue* filterValue = static_cast<WebKitCSSFilterValue*>(i.value());
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
+
+#if ENABLE(CSS_SHADERS)
+        if (operationType == FilterOperation::CUSTOM) {
+            // FIXME: Implement the filter operation for the custom shader.
+            // https://bugs.webkit.org/show_bug.cgi?id=71446
+            continue;
+        }
+#endif
 
         bool haveNonPrimitiveValue = false;
         for (unsigned j = 0; j < filterValue->length(); ++j) {
