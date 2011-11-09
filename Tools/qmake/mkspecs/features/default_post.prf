@@ -63,11 +63,6 @@ CONFIG -= warn_on
 contains(JAVASCRIPTCORE_JIT, yes): DEFINES+=ENABLE_JIT=1
 contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
 
-disable_uitools {
-    DEFINES *= QT_NO_UITOOLS
-    CONFIG -= uitools
-}
-
 # Template configurations
 contains(TEMPLATE, derived) {
     # A (mostly) no-op template

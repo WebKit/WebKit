@@ -103,5 +103,3 @@ haveQt(5): {
 
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
-
-*sh4*: CONFIG += disable_uitools

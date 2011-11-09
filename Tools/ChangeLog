@@ -1,5 +1,17 @@
 2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Detect presence of QtUiTools and enable it only when available
+
+        The disable_uitools option was a workaround for missing detection.
+
+        Reviewed by Simon Hausmann.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+
+2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Don't override config for the build_pass of debug_and_release
 
         Qmake will parse the profile once for each configuration (debug and

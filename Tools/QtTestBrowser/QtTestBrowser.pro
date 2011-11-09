@@ -30,11 +30,16 @@ HEADERS += \
     fpstimer.h \
     cookiejar.h
 
-greaterThan(QT_MAJOR_VERSION, 4):isEmpty(QT.uitools.name) {
-    message("QtUiTools library not found. QWidget plugin loading will be disabled")
-    DEFINES += QT_NO_UITOOLS
+haveQt(5) {
+    !isEmpty(QT.uitools.name): CONFIG += uitools
 } else {
-    CONFIG += uitools
+    libraryName = $$fromfile($$[QT_INSTALL_LIBS]/libQtUiTools.prl, QMAKE_PRL_TARGET)
+    !isEmpty(libraryName):exists($$[QT_INSTALL_LIBS]/$$libraryName): CONFIG += uitools
+}
+
+!CONFIG(uitools) {
+    message("QtUiTools library not found. QWidget plugin loading will be disabled")
+    DEFINES *= QT_NO_UITOOLS
 }
 
 load(webcore)
