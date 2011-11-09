@@ -1,3 +1,9 @@
+2011-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+
 2011-11-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed build fix.
