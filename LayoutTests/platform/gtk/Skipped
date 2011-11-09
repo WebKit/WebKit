@@ -358,9 +358,6 @@ css3/filters
 # MutationObservers are net yet enabled. http://webkit.org/b/68729
 fast/mutation
 
-# HiDPI tests require test infrastructure enhancements
-fast/hidpi
-
 # layoutTestController.overridePreference("WebKit*FontMap"...) is not
 # supported.
 fast/text/international/locale-sensitive-fonts.html
