@@ -110,10 +110,7 @@ contains(QT_CONFIG, opengl):!win32-* {
 !contains(DEFINES, ENABLE_WEB_TIMING=.): DEFINES += ENABLE_WEB_TIMING=1
 
 # XSLT support with QtXmlPatterns
-!contains(DEFINES, ENABLE_XSLT=.) {
-    contains(QT_CONFIG, xmlpatterns):DEFINES += ENABLE_XSLT=1
-    else:DEFINES += ENABLE_XSLT=0
-}
+!contains(DEFINES, ENABLE_XSLT=.):DEFINES += ENABLE_XSLT=0
 
 # This is experimental and only works on Linux so far.
 contains(DEFINES, WTF_USE_LIBXML2=1) {

@@ -1,5 +1,15 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Prospective build fix for Win32/Mac with xmlpatterns
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf: Disable XSLT support initially.
+        We default to XSLT support if qxmlpatterns is available. However qxmlpatterns
+        is not up to the task of full XSLT support, so we should disable it.
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Enable exports and constructor functions in static libs
 
         Reviewed by Tor Arne Vestbø.
