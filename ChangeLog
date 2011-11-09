@@ -1,3 +1,15 @@
+2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Only copy framework headers once when debug_and_release is enabled
+
+        Otherwise we might end up in a race condition where we try to symlink
+        the headers directory in the makefile for debug and release at the same
+        time.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2011-11-08  Martin Robinson  <mrobinson@igalia.com>
 
         Take another stab at fixing the GTK+ build.

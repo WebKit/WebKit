@@ -199,10 +199,14 @@ mac {
         }
 
         CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
-        FRAMEWORK_HEADERS.version = Versions
-        FRAMEWORK_HEADERS.files = $$files($$headers.files, false)
-        FRAMEWORK_HEADERS.path = Headers
-        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+
+        # For debug_and_release configs, only copy headers in release
+        !debug_and_release|if(build_pass:CONFIG(release, debug|release)) {
+            FRAMEWORK_HEADERS.version = Versions
+            FRAMEWORK_HEADERS.files = $$files($$headers.files, false)
+            FRAMEWORK_HEADERS.path = Headers
+            QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+        }
     }
 
     QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
