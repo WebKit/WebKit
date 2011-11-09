@@ -48,6 +48,11 @@ void WebMediaStreamDescriptor::reset()
     m_private.reset();
 }
 
+WebString WebMediaStreamDescriptor::label() const
+{
+    return m_private->label();
+}
+
 WebMediaStreamDescriptor& WebMediaStreamDescriptor::operator=(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
 {
     m_private = mediaStreamDescriptor;

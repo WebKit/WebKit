@@ -1,3 +1,15 @@
+2011-11-09  Henrik Grunell  <grunell@chromium.org>
+
+        Adding missing implementation of WebMediaStreamDescriptor::label().
+
+        [Chromium] Missing WebMediaStreamDescriptor::label() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=71657
+
+        Reviewed by Adam Barth.
+
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::label):
+
 2011-11-09  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium: Add plumbing to enable dragging dev tools via the empty space on the toolbar.
