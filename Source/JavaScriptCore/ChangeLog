@@ -1,3 +1,9 @@
+2011-11-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fix for GTK.
+
+        * GNUmakefile.list.am:
+
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix.
