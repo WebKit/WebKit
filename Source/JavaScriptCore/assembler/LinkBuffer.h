@@ -168,6 +168,11 @@ public:
         return MacroAssembler::getLinkerCallReturnOffset(call);
     }
 
+    uint32_t offsetOf(Label label)
+    {
+        return applyOffset(label.m_label).m_offset;
+    }
+
     // Upon completion of all patching either 'finalizeCode()' or 'finalizeCodeAddendum()' should be called
     // once to complete generation of the code.  'finalizeCode()' is suited to situations
     // where the executable pool must also be retained, the lighter-weight 'finalizeCodeAddendum()' is

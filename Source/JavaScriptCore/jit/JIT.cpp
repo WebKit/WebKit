@@ -218,13 +218,8 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
-#if ENABLE(DFG_JIT)
-        if (m_canBeOptimized)
-            m_jitCodeMapEncoder.append(m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
-#endif
-        
 #if ENABLE(JIT_VERBOSE)
-        printf("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
+        printf("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -436,7 +431,7 @@ void JIT::privateCompileSlowCases()
 #endif
 
 #if ENABLE(JIT_VERBOSE)
-        printf("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
+        printf("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -535,9 +530,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
 #if ENABLE(VALUE_PROFILER)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
-#endif
-#if ENABLE(DFG_JIT) || ENABLE(JIT_VERBOSE)
-    m_startOfCode = label();
 #endif
     
     // Just add a little bit of randomness to the codegen
@@ -699,8 +691,14 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     }
 
 #if ENABLE(DFG_JIT)
-    if (m_canBeOptimized)
-        m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
+    if (m_canBeOptimized) {
+        CompactJITCodeMap::Encoder jitCodeMapEncoder;
+        for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
+            if (m_labels[bytecodeOffset].isSet())
+                jitCodeMapEncoder.append(bytecodeOffset, patchBuffer.offsetOf(m_labels[bytecodeOffset]));
+        }
+        m_codeBlock->setJITCodeMap(jitCodeMapEncoder.finish());
+    }
 #endif
 
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)

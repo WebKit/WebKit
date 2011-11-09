@@ -55,8 +55,6 @@ void JITCompiler::linkOSRExits(SpeculativeJIT& speculative)
 
 void JITCompiler::compileEntry()
 {
-    m_startOfCode = label();
-    
     // This code currently matches the old JIT. In the function header we need to
     // pop the return address (since we do not allow any recursion on the machine
     // stack), and perform a fast register file check.
@@ -68,7 +66,7 @@ void JITCompiler::compileEntry()
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
 }
 
-void JITCompiler::compileBody()
+void JITCompiler::compileBody(SpeculativeJIT& speculative)
 {
     // We generate the speculative code path, followed by OSR exit code to return
     // to the old JIT code if speculations fail.
@@ -80,8 +78,6 @@ void JITCompiler::compileBody()
     
     addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 
-    Label speculativePathBegin = label();
-    SpeculativeJIT speculative(*this);
     bool compiledSpeculative = speculative.compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 
@@ -208,10 +204,12 @@ void JITCompiler::compile(JITCode& entry)
     // Preserve the return address to the callframe.
     compileEntry();
     // Generate the body of the program.
-    compileBody();
+    SpeculativeJIT speculative(*this);
+    compileBody(speculative);
     // Link
     LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
+    speculative.linkOSREntries(linkBuffer);
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
@@ -235,7 +233,8 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
 
     // === Function body code generation ===
-    compileBody();
+    SpeculativeJIT speculative(*this);
+    compileBody(speculative);
 
     // === Function footer code generation ===
     //
@@ -270,6 +269,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // === Link ===
     LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
+    speculative.linkOSREntries(linkBuffer);
     
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.
     linkBuffer.link(callRegisterFileCheck, cti_register_file_check);

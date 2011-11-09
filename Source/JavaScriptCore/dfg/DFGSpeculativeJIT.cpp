@@ -224,9 +224,6 @@ void SpeculativeJIT::compile(BasicBlock& block)
         return;
     }
 
-    if (block.isOSRTarget)
-        m_jit.noticeOSREntry(block);
-
     m_blockHeads[m_block] = m_jit.label();
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
@@ -408,6 +405,15 @@ bool SpeculativeJIT::compile()
         compile(*m_jit.graph().m_blocks[m_block]);
     linkBranches();
     return true;
+}
+
+void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
+{
+    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
+        BasicBlock& block = *m_jit.graph().m_blocks[blockIndex];
+        if (block.isOSRTarget)
+            m_jit.noticeOSREntry(block, m_blockHeads[blockIndex], linkBuffer);
+    }
 }
 
 ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)

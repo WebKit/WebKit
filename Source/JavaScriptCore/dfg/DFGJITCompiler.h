@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <assembler/LinkBuffer.h>
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
 #include <dfg/DFGAssemblyHelpers.h>
@@ -262,10 +263,10 @@ public:
         m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, codeOrigin));
     }
     
-    void noticeOSREntry(BasicBlock& basicBlock)
+    void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
     {
 #if DFG_ENABLE(OSR_ENTRY)
-        OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
+        OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
         
         entry->m_expectedValues = basicBlock.valuesAtHead;
         
@@ -282,6 +283,8 @@ public:
         }
 #else
         UNUSED_PARAM(basicBlock);
+        UNUSED_PARAM(blockHead);
+        UNUSED_PARAM(linkBuffer);
 #endif
     }
 
@@ -296,7 +299,7 @@ public:
 private:
     // Internal implementation to compile.
     void compileEntry();
-    void compileBody();
+    void compileBody(SpeculativeJIT&);
     void link(LinkBuffer&);
 
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
@@ -310,9 +313,6 @@ private:
     Vector<CallLinkRecord> m_calls;
     Vector<CallExceptionRecord> m_exceptionChecks;
     
-    // JIT code map for OSR entrypoints.
-    Label m_startOfCode;
-
     struct MethodGetRecord {
         MethodGetRecord(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
             : m_slowCall(slowCall)

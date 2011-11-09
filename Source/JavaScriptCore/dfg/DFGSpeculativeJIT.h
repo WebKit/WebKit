@@ -131,6 +131,7 @@ public:
     SpeculativeJIT(JITCompiler&);
 
     bool compile();
+    void linkOSREntries(LinkBuffer&);
 
     // Retrieve the list of bail-outs from the speculative path,
     // and additional recovery information.
