@@ -1,3 +1,16 @@
+2011-11-09  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [TextureMapper] Clean up TextureMapperAnimation constructor
+        https://bugs.webkit.org/show_bug.cgi?id=71892
+
+        Remove copyAnimationValue and copyTimingFunction static functions. KeyframeList has
+        a copy constructor and it does not need anymore these copy functions.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+
 2011-11-09  Alexandru Chiculita  <achicu@adobe.com>
 
         [Part 1] Parse the custom() function in -webkit-filter

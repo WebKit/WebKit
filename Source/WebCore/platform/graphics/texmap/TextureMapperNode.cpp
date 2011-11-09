@@ -1032,50 +1032,9 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
         sortByZOrder(m_children, 0, m_children.size());
 }
 
-static PassRefPtr<TimingFunction> copyTimingFunction(const TimingFunction* tfunc)
-{
-    if (!tfunc)
-        return 0;
-
-    if (tfunc->isLinearTimingFunction())
-        return LinearTimingFunction::create();
-
-    if (tfunc->isCubicBezierTimingFunction()) {
-        const CubicBezierTimingFunction* btfunc = static_cast<const CubicBezierTimingFunction*>(tfunc);
-        return CubicBezierTimingFunction::create(btfunc->x1(), btfunc->y1(), btfunc->x2(), btfunc->y2());
-    }
-
-    if (tfunc->isStepsTimingFunction()) {
-        const StepsTimingFunction* stfunc = static_cast<const StepsTimingFunction*>(tfunc);
-        return StepsTimingFunction::create(stfunc->numberOfSteps(), stfunc->stepAtStart());
-    }
-
-    return 0;
-}
-
-static const AnimationValue* copyAnimationValue(AnimatedPropertyID property, const AnimationValue* value)
-{
-    switch (property) {
-    case AnimatedPropertyWebkitTransform: {
-        const TransformAnimationValue* transformValue = static_cast<const TransformAnimationValue*>(value);
-        return new TransformAnimationValue(transformValue->keyTime(), transformValue->value(), copyTimingFunction(transformValue->timingFunction()));
-    }
-    case AnimatedPropertyOpacity: {
-        const FloatAnimationValue* floatValue = static_cast<const FloatAnimationValue*>(value);
-        return new FloatAnimationValue(floatValue->keyTime(), floatValue->value(), copyTimingFunction(floatValue->timingFunction()));
-    }
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    return 0;
-}
-
 TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& values)
-    : keyframes(values.property())
+    : keyframes(values)
 {
-    for (size_t i = 0; i < values.size(); ++i)
-        keyframes.insert(copyAnimationValue(values.property(), values.at(i)));
 }
 
 }
