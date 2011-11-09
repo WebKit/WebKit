@@ -1,3 +1,15 @@
+2011-11-09  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Removed unused variable
+        https://bugs.webkit.org/show_bug.cgi?id=71877
+
+        Reviewed by Andreas Kling.
+
+        Removed unused rect variable declaration and renamed rect1 variable to rect.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_smart_calculate):
+
 2011-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Need to replace api's object parameter with proper name.

@@ -1340,11 +1340,6 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
     }
 
     if (!priv->render.suspend && priv->changed.model) {
-        Eina_Rectangle rect;
-        rect.x = 0;
-        rect.y = 0;
-        rect.w = priv->model.width;
-        rect.h = priv->model.height;
         _ewk_tiled_backing_store_fill_renderers(priv);
         ewk_tile_matrix_resize(priv->model.matrix,
                                priv->model.current.columns,
@@ -1355,9 +1350,9 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
 
         /* Make sure we do not miss any important repaint by
          * repainting the whole viewport */
-        const Eina_Rectangle rect1 =
+        const Eina_Rectangle rect =
         { 0, 0, priv->model.width, priv->model.height };
-        ewk_tile_matrix_update(priv->model.matrix, &rect1,
+        ewk_tile_matrix_update(priv->model.matrix, &rect,
                                priv->view.tile.zoom);
     }
 
