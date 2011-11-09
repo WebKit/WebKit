@@ -88,9 +88,9 @@ bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecSta
     return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, static_cast<JSTestNamedConstructorConstructor*>(cell), propertyName, slot);
 }
 
-bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, this, propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, static_cast<JSTestNamedConstructorConstructor*>(object), propertyName, descriptor);
 }
 
 /* Hash table for prototype */
@@ -145,10 +145,11 @@ bool JSTestNamedConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, c
     return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
 
-bool JSTestNamedConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestNamedConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    return getStaticValueDescriptor<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, this, propertyName, descriptor);
+    JSTestNamedConstructor* thisObject = static_cast<JSTestNamedConstructor*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    return getStaticValueDescriptor<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, descriptor);
 }
 
 JSValue jsTestNamedConstructorConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
