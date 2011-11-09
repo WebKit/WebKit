@@ -1,3 +1,21 @@
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
+        Shrink HTMLCollection.
+        <http://webkit.org/b/71928>
+
+        Reviewed by Darin Adler.
+
+        Rearrange the members of HTMLCollection, effectively shrinking
+        it by 16 bytes on 64-bit. This reduces memory consumption
+        by 531 kB when loading the full HTML5 spec.
+
+        On 32-bit it shrinks by 8 bytes, saving 265 kB.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::type):
+
 2011-11-09  Kentaro Hara  <haraken@chromium.org>
 
         Remove redundant [CanBeConstructed] IDLs

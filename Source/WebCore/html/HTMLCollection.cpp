@@ -38,19 +38,19 @@ using namespace HTMLNames;
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type)
     : m_idsDone(false)
-    , m_base(base)
-    , m_type(type)
-    , m_info(m_base->isDocumentNode() ? static_cast<Document*>(m_base.get())->collectionInfo(type) : 0)
     , m_ownsInfo(false)
+    , m_type(type)
+    , m_base(base)
+    , m_info(m_base->isDocumentNode() ? static_cast<Document*>(m_base.get())->collectionInfo(type) : 0)
 {
 }
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type, CollectionCache* info)
     : m_idsDone(false)
-    , m_base(base)
-    , m_type(type)
-    , m_info(info)
     , m_ownsInfo(false)
+    , m_type(type)
+    , m_base(base)
+    , m_info(info)
 {
 }
 
