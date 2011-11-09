@@ -1,3 +1,16 @@
+2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't override config for the build_pass of debug_and_release
+
+        Qmake will parse the profile once for each configuration (debug and
+        release), with the build_pass option set. In that situation we don't
+        want to override what qmake is setting explicitly, otherwise the
+        debug-step will end up hitting all the release-scopes.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unbreak the Qt build (copy & paste mistake - oops)
