@@ -177,7 +177,9 @@ fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html 
 fast/box-sizing/percentage-height.html 
 fast/canvas/DrawImageSinglePixelStretch.html 
-fast/canvas/canvas-bg.html 
+fast/canvas/canvas-bg.html
+fast/canvas/canvas-composite-canvas.html
+fast/canvas/canvas-composite-image.html
 fast/canvas/canvas-drawImage-incomplete.html 
 fast/canvas/canvas-fillPath-shadow.html 
 fast/canvas/canvas-size-change-after-layout.html 
@@ -236,7 +238,7 @@ fast/dom/navigator-cookieEnabled-no-crash.html
 fast/dom/onerror-img.html
 fast/dom/outerText.html 
 fast/dom/prototype-inheritance-2.html 
-fast/dom/row-inner-text.html 
+fast/dom/row-inner-text.html
 fast/dom/scroll-reveal-left-overflow.html 
 fast/dom/scroll-reveal-top-overflow.html 
 fast/dom/vertical-scrollbar-in-rtl.html 
@@ -437,6 +439,7 @@ scrollbars
 security/block-test-no-port.html
 
 sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T6.html
+sputnik/Implementation_Diagnostics
 
 svg/W3C-I18N
 svg/W3C-SVG-1.1-SE
@@ -1737,6 +1740,7 @@ fast/dom/nodesFromRect-inner-documents.html
 plugins/iframe-shims.html
 
 # Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50234
@@ -1914,47 +1918,14 @@ webaudio/
 # MutationObservers are net yet enabled. http://webkit.org/b/68729
 fast/mutation
 
-# Tests for <track>.  Feature is not yet functional.
+# The win port has no support for <track>
 # https://bugs.webkit.org/show_bug.cgi?id=43668
-media/track/track-mutable.html
-media/track/track-text-track-cue-list.html
-media/track/track-text-track.html
-media/track/track-webvtt-tc000-empty.html
-media/track/track-webvtt-tc001-utf8.html
-media/track/track-webvtt-tc002-bom.html
-media/track/track-webvtt-tc003-newlines.html
-media/track/track-webvtt-tc004-magic-header.html
-media/track/track-webvtt-tc005-header-comment.html
-media/track/track-webvtt-tc006-cue-identifiers.html
-media/track/track-webvtt-tc007-cue-no-id.html
-media/track/track-webvtt-tc008-timings-no-hours.html
-media/track/track-webvtt-tc009-timings-hour.html
-media/track/track-webvtt-tc010-no-timings.html
-media/track/track-webvtt-tc011-blank-lines.html
-media/track/track-webvtt-tc012-out-of-order.html
-media/track/track-webvtt-tc013-settings.html
-media/track/track-webvtt-tc014-alignment.html
-media/track/track-webvtt-tc015-positioning.html
-media/track/track-webvtt-tc016-align-positioning.html
-media/track/track-webvtt-tc017-line-position.html
-media/track/track-webvtt-tc018-align-text-line-position.html
-media/track/track-webvtt-tc019-cue-size.html
-media/track/track-webvtt-tc020-cue-size-align.html
-media/track/track-webvtt-tc021-valign.html
-media/track/track-webvtt-tc022-entities.html
-media/track/track-webvtt-tc023-markup.html
-media/track/track-webvtt-tc024-timestamp.html
-media/track/track-webvtt-tc025-class-markup.html
-media/track/track-webvtt-tc026-voice.html
-media/track/track-webvtt-tc027-empty-cue.html
-media/track/track-webvtt-tc028-unsupported-markup.html
+media/track
+fast/events/constructors/track-event-constructor.html
 
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
-
-# Microdata DOM API is not yet enabled.
-fast/dom/MicroData
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
@@ -1962,22 +1933,29 @@ css3/font-feature-settings-rendering.html
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html
 
-# editing/selection/caret-at-bidi-boundary.html timing out on Windows since it was added
-# https://bugs.webkit.org/show_bug.cgi?id=66551
-editing/selection/caret-at-bidi-boundary.html
-
 # Need DRT change: https://bugs.webkit.org/show_bug.cgi?id=66620
 editing/spelling/spelling-insert-html.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=66773
 http/tests/loading/progress-finished-callback.html
 
-# REGRESSION(r96870): editing/pasteboard/smart-paste-008.html fails on non-Mac
-# https://bugs.webkit.org/show_bug.cgi?id=69587
-editing/pasteboard/smart-paste-008.html 
+# Microdata DOM API is not yet enabled.
+fast/dom/MicroData
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+
+# Skip because this platform does not support a paging mouse wheel event
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
 # DRT doesn't support overridePreference("WebKit*FontMap"...)
 fast/text/international/locale-sensitive-fonts.html
