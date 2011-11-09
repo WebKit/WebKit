@@ -17,12 +17,6 @@ DESTDIR = $$WEBKIT2_DESTDIR
 
 QT += declarative
 
-WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2= \
-    $$PWD/../WebKit/qt/WebCoreSupport/QtWebComboBox.h
-
-WEBKIT1_SOURCES_SHARED_WITH_WEBKIT2 = \
-    $$PWD/../WebKit/qt/WebCoreSupport/QtWebComboBox.cpp
-
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
@@ -338,8 +332,7 @@ HEADERS += \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
     WebProcess/qt/QtBuiltinBundlePage.h \
-    $$WEBKIT2_GENERATED_HEADERS \
-    $$WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2
+    $$WEBKIT2_GENERATED_HEADERS
 
 SOURCES += \
     Platform/CoreIPC/ArgumentCoders.cpp \
@@ -606,10 +599,8 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/QtBuiltinBundle.cpp \
     WebProcess/qt/QtBuiltinBundlePage.cpp \
-    WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
-    $$WEBKIT2_GENERATED_SOURCES \
-    $$WEBKIT1_SOURCES_SHARED_WITH_WEBKIT2
+    $$WEBKIT2_GENERATED_SOURCES
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=0) {
     DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED

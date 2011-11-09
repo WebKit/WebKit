@@ -1,3 +1,14 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=71815
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri: Removed CodeGenHSL.cpp from the angle build. In the angle build the back-end has to
+        be either GLSL or HSL, it can't be both. Make a choice for GLSL as that's what it seems to be used for
+        at the moment.
+
 2011-11-09  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

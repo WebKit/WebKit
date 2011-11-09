@@ -189,14 +189,5 @@ SOURCES += \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp
 
-linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
-    !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
-        DEFINES += ENABLE_GLIB_SUPPORT=1
-        PKGCONFIG += glib-2.0 gio-2.0
-
-        HEADERS += wtf/gobject/GOwnPtr.h
-    }
-}
-
 unix: SOURCES += wtf/OSAllocatorPosix.cpp
 win*|wince*: SOURCES += wtf/OSAllocatorWin.cpp

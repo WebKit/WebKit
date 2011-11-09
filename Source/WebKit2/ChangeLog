@@ -1,3 +1,15 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=71815
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri: Removed duplicated sources that are compiled also into QtWebKit.so through api.pri.
+        * UIProcess/qt/WebGeolocationProviderQt.cpp: Include the moc file here, as it should only be compiled
+        if geolocation is enabled.
+        * UIProcess/qt/WebGeolocationProviderQt.h: Provide ENABLE(GEOLOCATION) guards around class definition.
+
 2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QApplication with QGuiApplication

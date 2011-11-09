@@ -67,6 +67,13 @@ wince* {
     INCLUDEPATH += $$JAVASCRIPTCORE_SOURCE_DIR/os-win32
 }
 
+linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
+    !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
+        DEFINES += ENABLE_GLIB_SUPPORT=1
+        PKGCONFIG += glib-2.0 gio-2.0
+    }
+}
+
 config_step {
     pathToJavaScriptCoreOutput = $$buildDirForSource(Source/JavaScriptCore)/$$JAVASCRIPTCORE_DESTDIR
 

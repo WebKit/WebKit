@@ -1,3 +1,15 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=71815
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKitTestRunner/InjectedBundle/Target.pri: We don't need to link against the webkit2
+        static library.
+        * qmake/mkspecs/features/javascriptcore.prf: The wtf sources pull in a glib dependency
+        (ownPtr functions for glib types). Propagate that to everyone using javascriptcore.
+
 2011-11-08  Hayato Ito  <hayato@chromium.org>
 
         [NRWT] Make single_test_runner aware of reference filename of test_input.

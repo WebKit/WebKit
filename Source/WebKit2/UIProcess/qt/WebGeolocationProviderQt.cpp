@@ -114,4 +114,6 @@ void WebGeolocationProviderQt::stopUpdating() const
         m_source->stopUpdates();
 }
 
+#include "moc_WebGeoLocationProviderQt.cpp"
+
 #endif // ENABLE(GEOLOCATION)

@@ -3741,7 +3741,6 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
         ANGLE_SOURCES += \
             $$ANGLE_DIR/src/compiler/CodeGenGLSL.cpp \
-            $$ANGLE_DIR/src/compiler/CodeGenHLSL.cpp \
             $$ANGLE_DIR/src/compiler/Compiler.cpp \
             $$ANGLE_DIR/src/compiler/debug.cpp \
             $$ANGLE_DIR/src/compiler/ForLoopUnroll.cpp \
