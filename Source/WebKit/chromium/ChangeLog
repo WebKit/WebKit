@@ -1,3 +1,16 @@
+2011-11-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Fix crash by handling case when AccessibilityObject::lineForPosition
+        returns -1.
+        https://bugs.webkit.org/show_bug.cgi?id=71561
+
+        Adds layout test: platform/chromium/accessibility/insertion-point-line-number-on-password-crashes.html
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::lineBreaks):
+
 2011-11-09  Jay Civelli  <jcivelli@chromium.org>
 
         Fix MHTML generation to use the QuotedPrintable encoding for text resources.

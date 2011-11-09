@@ -1,3 +1,13 @@
+2011-11-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        [Chromium] Implement AccessibilityUIElement::insertionPointLineNumberGetterCallback
+        https://bugs.webkit.org/show_bug.cgi?id=71561
+
+        Reviewed by Dimitri Glazkov.
+
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::insertionPointLineNumberGetterCallback):
+
 2011-11-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Implement dumpProgressFinishedCallback() for Mac layoutTestController

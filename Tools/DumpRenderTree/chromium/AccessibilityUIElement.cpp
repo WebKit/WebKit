@@ -453,8 +453,13 @@ void AccessibilityUIElement::childrenCountGetterCallback(CppVariant* result)
 
 void AccessibilityUIElement::insertionPointLineNumberGetterCallback(CppVariant* result)
 {
-    // FIXME: Implement this.
-    result->set(0);
+    WebVector<int> lineBreaks;
+    accessibilityObject().lineBreaks(lineBreaks);
+    int cursor = accessibilityObject().selectionEnd();
+    int line = 0;
+    while (line < static_cast<int>(lineBreaks.size()) && lineBreaks[line] <= cursor)
+        line++;
+    result->set(line);
 }
 
 void AccessibilityUIElement::selectedTextRangeGetterCallback(CppVariant* result)

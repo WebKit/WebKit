@@ -771,7 +771,7 @@ bool WebAccessibilityObject::lineBreaks(WebVector<int>& result) const
 
     VisiblePosition pos = m_private->visiblePositionForIndex(textLength);
     int lineBreakCount = m_private->lineForPosition(pos);
-    if (!lineBreakCount)
+    if (lineBreakCount <= 0)
         return false;
 
     WebVector<int> lineBreaks(static_cast<size_t>(lineBreakCount));
