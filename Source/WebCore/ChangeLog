@@ -1,3 +1,9 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unreviewed, adding missing files to the build.
+
+        * Target.pri: Add ContentTypeParser.cpp/h
+
 2011-11-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] remove a bunch of methods from JavaScriptSourceFrameDelegate

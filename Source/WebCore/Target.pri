@@ -1107,6 +1107,7 @@ SOURCES += \
     platform/network/BlobResourceHandle.cpp \
     platform/network/Credential.cpp \
     platform/network/CredentialStorage.cpp \
+    platform/network/ContentTypeParser.cpp \
     platform/network/FormData.cpp \
     platform/network/FormDataBuilder.cpp \
     platform/network/HTTPHeaderMap.cpp \
@@ -2184,6 +2185,7 @@ HEADERS += \
     platform/network/CookieStorage.h \
     platform/network/Credential.h \
     platform/network/CredentialStorage.h \
+    platform/network/ContentTypeParser.h \
     platform/network/FormDataBuilder.h \
     platform/network/FormData.h \
     platform/network/HTTPHeaderMap.h \
