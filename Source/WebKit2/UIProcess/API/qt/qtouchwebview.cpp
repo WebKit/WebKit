@@ -76,9 +76,11 @@ void QTouchWebViewPrivate::updateViewportSize()
         return;
 
     WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
+
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
     wkPage->setViewportSize(viewportSize);
+
     updateViewportConstraints();
     _q_viewportUpdated();
 }
@@ -99,7 +101,9 @@ void QTouchWebViewPrivate::updateViewportConstraints()
     wkPrefs->setDeviceWidth(480);
     wkPrefs->setDeviceHeight(720);
 
-    WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
+    int minimumLayoutFallbackWidth = qMax<int>(wkPrefs->layoutFallbackWidth(), availableSize.width());
+
+    WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, minimumLayoutFallbackWidth, wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
     WebCore::restrictMinimumScaleFactorToViewportSize(attr, availableSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
 

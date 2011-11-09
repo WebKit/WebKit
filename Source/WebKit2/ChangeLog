@@ -1,3 +1,23 @@
+2011-11-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WebKit2] Prepare viewport meta handling for desktop usage
+        https://bugs.webkit.org/show_bug.cgi?id=71907
+
+        Reviewed by Simon Hausmann.
+
+        This is only used by Qt so far. Now we don't always layout pages
+        without the viewport meta tag, using 980 as the layout width, but
+        instead we use that value (it is a setting) as a minimum value, or
+        else we use the viewport width.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportSize):
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewportSize):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r99701.

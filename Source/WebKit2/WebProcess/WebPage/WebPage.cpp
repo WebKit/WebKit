@@ -749,7 +749,10 @@ void WebPage::setViewportSize(const IntSize& size)
 
     // Recalculate the recommended layout size, when the available size (device pixel) changes.
     Settings* settings = m_page->settings();
-    IntSize targetLayoutSize = computeViewportAttributes(m_page->viewportArguments(), settings->layoutFallbackWidth(), settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), size).layoutSize;
+
+    int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), size.width());
+
+    IntSize targetLayoutSize = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), size).layoutSize;
     setResizesToContentsUsingLayoutSize(targetLayoutSize);
 }
 

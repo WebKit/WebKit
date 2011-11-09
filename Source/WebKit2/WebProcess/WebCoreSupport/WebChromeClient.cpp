@@ -751,7 +751,9 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
         Page* page = m_page->corePage();
         Settings* settings = page->settings();
 
-        IntSize targetLayoutSize = computeViewportAttributes(page->viewportArguments(), settings->layoutFallbackWidth(), settings->deviceWidth(), settings->deviceHeight(),
+        int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_page->viewportSize().width());
+
+        IntSize targetLayoutSize = computeViewportAttributes(page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(),
             settings->deviceDPI(), m_page->viewportSize()).layoutSize;
         m_page->setResizesToContentsUsingLayoutSize(targetLayoutSize);
     }
