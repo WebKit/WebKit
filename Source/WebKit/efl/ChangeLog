@@ -1,3 +1,16 @@
+2011-11-09  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Remove unnecessary casts when creating the WebCoreSupport objects in ewk_view.
+        https://bugs.webkit.org/show_bug.cgi?id=71891
+
+        Reviewed by Antonio Gomes.
+
+        This is C++ code, there is no need to cast the new objects to their
+        parents when creating them.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2011-11-09  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Removed unused variable
