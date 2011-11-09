@@ -1,3 +1,25 @@
+2011-11-09  Kentaro Hara  <haraken@chromium.org>
+
+        Generate the HTMLOptionElement constructor using [NamedConstructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=71925
+
+        Reviewed by Adam Barth.
+
+        This patch removes a custom constructor of HTMLOptionElement,
+        and generates it using [NamedConstructor] IDL.
+
+        Tests: fast/js/custom-constructors.html
+               fast/forms/option-index.html
+               fast/forms/add-and-remove-option.html
+               fast/dom/dom-add-optionelement.html
+
+        * Target.pri: Removed V8HTMLOptionElementConstructor.{h,cpp}
+        * WebCore.gypi: Ditto.
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp: Removed.
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.h: Removed.
+        * html/HTMLOptionElement.idl: Added [NamedConstructor] IDL.
+        * page/DOMWindow.idl: Removed [V8CustomConstructor] IDL.
+
 2011-11-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableSection::splitColumn

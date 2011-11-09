@@ -21,7 +21,9 @@
 module html {
 
     interface [
-        GenerateNativeConverter
+        GenerateNativeConverter,
+        NamedConstructor=Option(in [Optional=CallWithNullValue] DOMString data, in [Optional=CallWithNullValue] DOMString value, in [Optional=CallWithDefaultValue] boolean defaultSelected, in [Optional=CallWithDefaultValue] boolean selected),
+        ConstructorRaisesException
     ] HTMLOptionElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [Reflect=selected] boolean defaultSelected;
