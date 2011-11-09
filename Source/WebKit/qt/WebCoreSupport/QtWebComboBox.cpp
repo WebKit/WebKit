@@ -25,7 +25,7 @@
 #ifndef QT_NO_COMBOBOX
 
 #include <QAbstractItemView>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QtGui/QMouseEvent>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ void QtWebComboBox::showPopupAtCursorPosition()
 {
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
-    QApplication::sendEvent(this, &event);
+    QCoreApplication::sendEvent(this, &event);
 }
 
 bool QtWebComboBox::eventFilter(QObject* watched, QEvent* event)

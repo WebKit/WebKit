@@ -1,3 +1,34 @@
+2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of QApplication with QGuiApplication
+        https://bugs.webkit.org/show_bug.cgi?id=71794
+
+        Reviewed by Andreas Kling.
+
+        * Target.pri: Add compat include dir when compiling with Qt 4.
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::closeEvent): Replace use of QApplication with QGuiApplication.
+        (FullScreenVideoWindow::hideCursor): Ditto.
+        (FullScreenVideoWindow::showCursor): Ditto.
+        * platform/graphics/qt/TileQt.cpp: Remove unnecessary inclusion of QApplication.
+        * platform/qt/ClipboardQt.cpp: Replace use of QApplication with QGuiApplication.
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::writePlainText):
+        * platform/qt/PasteboardQt.cpp: Ditto.
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Mac Build fix part 2: Oops, use the correct wtf/ prefix for the WTF include.

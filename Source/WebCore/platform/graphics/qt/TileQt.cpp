@@ -25,7 +25,6 @@
 #include "GraphicsContext.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
-#include <QApplication>
 #include <QObject>
 #include <QPainter>
 #include <QRegion>

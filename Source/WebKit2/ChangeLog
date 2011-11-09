@@ -1,3 +1,18 @@
+2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of QApplication with QGuiApplication
+        https://bugs.webkit.org/show_bug.cgi?id=71794
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp: Remove unnecessary QApplication inclusion.
+        * Platform/qt/RunLoopQt.cpp: Replace QApplication include with QCoreApplication.
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp: Ditto.
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp: Remove unnecessary QApplication inclusion.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::handleMousePressEvent): Replace QApplication usage with QStyleHints.
+        (QtWebPageProxy::handleMouseDoubleClickEvent): Ditto.
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp

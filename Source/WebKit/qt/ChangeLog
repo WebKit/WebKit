@@ -1,3 +1,14 @@
+2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of QApplication with QGuiApplication
+        https://bugs.webkit.org/show_bug.cgi?id=71794
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/QtWebComboBox.cpp:
+        (WebCore::QtWebComboBox::showPopupAtCursorPosition): Replace use of QApplication
+        with QCoreApplication.
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp

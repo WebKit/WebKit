@@ -23,7 +23,7 @@
 #include "HTMLVideoElement.h"
 #include "PlatformVideoWindowPrivate.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QPalette>
@@ -61,7 +61,7 @@ void FullScreenVideoWindow::closeEvent(QCloseEvent*)
     setMouseTracking(false);
     releaseMouse();
 #ifndef QT_NO_CURSOR
-    QApplication::restoreOverrideCursor();
+    QGuiApplication::restoreOverrideCursor();
 #endif
 }
 
@@ -105,14 +105,14 @@ void FullScreenVideoWindow::showFullScreen()
 void FullScreenVideoWindow::hideCursor()
 {
 #ifndef QT_NO_CURSOR
-    QApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
+    QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
 #endif
 }
 
 void FullScreenVideoWindow::showCursor()
 {
 #ifndef QT_NO_CURSOR
-    QApplication::restoreOverrideCursor();
+    QGuiApplication::restoreOverrideCursor();
     m_cursorTimer.start(gHideMouseCursorDelay);
 #endif
 }

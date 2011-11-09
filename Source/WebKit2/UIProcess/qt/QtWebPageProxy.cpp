@@ -51,10 +51,11 @@
 #include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
-#include <QApplication>
+#include <QGuiApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QJSEngine>
 #include <QMimeData>
+#include <QStyleHints>
 #include <QTouchEvent>
 #include <QUndoStack>
 #include <QtDebug>
@@ -235,7 +236,7 @@ bool QtWebPageProxy::handleMouseMoveEvent(QMouseEvent* ev)
 
 bool QtWebPageProxy::handleMousePressEvent(QMouseEvent* ev)
 {
-    if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < QApplication::startDragDistance()) {
+    if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < qApp->styleHints()->startDragDistance()) {
         m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/3));
         return ev->isAccepted();
     }
@@ -254,7 +255,7 @@ bool QtWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount=*/2));
 
-    m_tripleClickTimer.start(QApplication::doubleClickInterval(), this);
+    m_tripleClickTimer.start(qApp->styleHints()->mouseDoubleClickInterval(), this);
     m_tripleClick = ev->localPos().toPoint();
     return ev->isAccepted();
 }
