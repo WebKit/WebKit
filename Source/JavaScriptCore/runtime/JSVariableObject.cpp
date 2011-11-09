@@ -29,6 +29,9 @@
 #include "config.h"
 #include "JSVariableObject.h"
 
+#include "JSActivation.h"
+#include "JSGlobalObject.h"
+#include "JSStaticScopeObject.h"
 #include "PropertyNameArray.h"
 #include "PropertyDescriptor.h"
 
@@ -72,6 +75,23 @@ bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDe
 void JSVariableObject::putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
 {
     ASSERT_NOT_REACHED();
+}
+
+bool JSVariableObject::isDynamicScope(bool& requiresDynamicChecks) const
+{
+    switch (structure()->typeInfo().type()) {
+    case GlobalObjectType:
+        return static_cast<const JSGlobalObject*>(this)->isDynamicScope(requiresDynamicChecks);
+    case ActivationObjectType:
+        return static_cast<const JSActivation*>(this)->isDynamicScope(requiresDynamicChecks);
+    case StaticScopeObjectType:
+        return static_cast<const JSStaticScopeObject*>(this)->isDynamicScope(requiresDynamicChecks);
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return false;
 }
 
 } // namespace JSC

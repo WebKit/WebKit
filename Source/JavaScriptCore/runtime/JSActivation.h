@@ -108,6 +108,12 @@ namespace JSC {
         return asActivation(jsValue());
     }
 
+    inline bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
+    {
+        requiresDynamicChecks = m_requiresDynamicChecks;
+        return false;
+    }
+
 } // namespace JSC
 
 #endif // JSActivation_h

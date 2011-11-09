@@ -55,7 +55,7 @@ namespace JSC {
         static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         
-        virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
+        bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         WriteBarrier<Unknown>& registerAt(int index) const { return m_registers[index]; }
 

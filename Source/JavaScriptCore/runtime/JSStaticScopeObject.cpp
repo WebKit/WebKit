@@ -82,11 +82,6 @@ void JSStaticScopeObject::putWithAttributes(JSObject* object, ExecState* exec, c
     ASSERT_NOT_REACHED();
 }
 
-bool JSStaticScopeObject::isDynamicScope(bool&) const
-{
-    return false;
-}
-
 bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, const Identifier& propertyName, PropertySlot& slot)
 {
     return static_cast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);

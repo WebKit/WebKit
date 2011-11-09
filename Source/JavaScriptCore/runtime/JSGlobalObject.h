@@ -273,7 +273,7 @@ namespace JSC {
 
         virtual bool allowsAccessFrom(const JSGlobalObject*) const { return true; }
 
-        virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
+        bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }
         bool evalEnabled() { return m_evalEnabled; }
@@ -472,6 +472,11 @@ namespace JSC {
         JSGlobalObject*& m_dynamicGlobalObjectSlot;
         JSGlobalObject* m_savedDynamicGlobalObject;
     };
+
+    inline bool JSGlobalObject::isDynamicScope(bool&) const
+    {
+        return true;
+    }
 
 } // namespace JSC
 

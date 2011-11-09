@@ -49,7 +49,7 @@ namespace JSC{
 
         static void putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(StaticScopeObjectType, StructureFlags), &s_info); }
 
         static const ClassInfo s_info;
 
@@ -71,6 +71,11 @@ namespace JSC{
         SymbolTable m_symbolTable;
         WriteBarrier<Unknown> m_registerStore;
     };
+
+    inline bool JSStaticScopeObject::isDynamicScope(bool&) const
+    {
+        return false;
+    }
 
 }
 

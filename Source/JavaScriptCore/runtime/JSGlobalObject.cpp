@@ -395,11 +395,6 @@ ExecState* JSGlobalObject::globalExec()
     return CallFrame::create(m_globalCallFrame + RegisterFile::CallFrameHeaderSize);
 }
 
-bool JSGlobalObject::isDynamicScope(bool&) const
-{
-    return true;
-}
-
 void JSGlobalObject::resizeRegisters(size_t newSize)
 {
     // Previous duplicate symbols may have created spare capacity in m_registerArray.

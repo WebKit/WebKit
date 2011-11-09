@@ -49,6 +49,7 @@ enum JSType {
     VariableObjectType  = 16,
     GlobalObjectType    = 17,
     ActivationObjectType = 18,
+    StaticScopeObjectType = 19,
 };
 
 } // namespace JSC

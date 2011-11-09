@@ -209,12 +209,6 @@ JSObject* JSActivation::toThisObject(JSCell*, ExecState* exec)
     return exec->globalThisValue();
 }
 
-bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
-{
-    requiresDynamicChecks = m_requiresDynamicChecks;
-    return false;
-}
-
 JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identifier&)
 {
     JSActivation* activation = asActivation(slotBase);

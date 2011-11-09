@@ -1,5 +1,28 @@
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        De-virtualize JSVariableObject::isDynamicScope
+        https://bugs.webkit.org/show_bug.cgi?id=71933
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h: Inlined and de-virtualized isDynamicScope
+        (JSC::JSActivation::isDynamicScope):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h: Inlined and de-virtualized isDynamicScope
+        (JSC::JSGlobalObject::isDynamicScope):
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h: Inlined and de-virtualized isDynamicScope
+        (JSC::JSStaticScopeObject::createStructure): Changed createStructure to use new JSType
+        (JSC::JSStaticScopeObject::isDynamicScope):
+        * runtime/JSType.h: Added new type for JSStaticScopeObject
+        * runtime/JSVariableObject.cpp: De-virtualized and added an implementation that checks the 
+        object's type and calls the corresponding implementation.
+        (JSC::JSVariableObject::isDynamicScope):
+        * runtime/JSVariableObject.h:
+
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         De-virtualize JSGlobalObject::hasOwnPropertyForWrite
         https://bugs.webkit.org/show_bug.cgi?id=71934
 
