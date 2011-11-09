@@ -207,4 +207,10 @@ bool JSCell::defineOwnProperty(JSObject*, ExecState*, const Identifier&, Propert
     return false;
 }
 
+bool JSCell::getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace JSC

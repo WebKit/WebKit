@@ -67,9 +67,9 @@ bool ErrorPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ide
     return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), static_cast<ErrorPrototype*>(cell), propertyName, slot);
 }
 
-bool ErrorPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool ErrorPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), static_cast<ErrorPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

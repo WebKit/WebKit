@@ -96,9 +96,9 @@ bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), propertyName, slot);
 }
 
-bool RegExpObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, descriptor);
+    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(object), propertyName, descriptor);
 }
 
 JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, const Identifier&)

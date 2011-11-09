@@ -251,51 +251,52 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    if (isHostFunction())
-        return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    JSFunction* thisObject = static_cast<JSFunction*>(object);
+    if (thisObject->isHostFunction())
+        return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
     
     if (propertyName == exec->propertyNames().prototype) {
         PropertySlot slot;
-        methodTable()->getOwnPropertySlot(this, exec, propertyName, slot);
-        return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
     }
     
     if (propertyName == exec->propertyNames().arguments) {
-        if (jsExecutable()->isStrictMode()) {
-            bool result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        if (thisObject->jsExecutable()->isStrictMode()) {
+            bool result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
             if (!result) {
-                initializeGetterSetterProperty(exec, propertyName, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
-                result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
                 ASSERT(result);
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(jsNumber(thisObject->jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
     if (propertyName == exec->propertyNames().caller) {
-        if (jsExecutable()->isStrictMode()) {
-            bool result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        if (thisObject->jsExecutable()->isStrictMode()) {
+            bool result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
             if (!result) {
-                initializeGetterSetterProperty(exec, propertyName, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
-                result = Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+                thisObject->initializeGetterSetterProperty(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Getter | Setter);
+                result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
                 ASSERT(result);
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
-    return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

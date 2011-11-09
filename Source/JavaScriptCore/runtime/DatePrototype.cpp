@@ -448,9 +448,9 @@ bool DatePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Iden
     return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(cell), propertyName, slot);
 }
 
-bool DatePrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool DatePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(object), propertyName, descriptor);
 }
 
 // Functions

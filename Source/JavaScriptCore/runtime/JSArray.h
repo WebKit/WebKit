@@ -96,7 +96,7 @@ namespace JSC {
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         static JS_EXPORTDATA const ClassInfo s_info;

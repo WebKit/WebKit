@@ -212,7 +212,7 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(JSCell*, ExecState*, const Identi
     return true;
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor& descriptor)
+bool ObjcFallbackObjectImp::getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor& descriptor)
 {
     // keep the prototype from getting called instead of just returning false
     descriptor.setUndefined();

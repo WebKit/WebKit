@@ -267,16 +267,17 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
     // Never allow cross-domain getOwnPropertyDescriptor
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
 
     const HashEntry* entry;
     
     // We don't want any properties other than "close" and "closed" on a closed window.
-    if (!impl()->frame()) {
+    if (!thisObject->impl()->frame()) {
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
         entry = s_info.propHashTable(exec)->entry(exec, propertyName);
@@ -287,7 +288,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
         entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
             PropertySlot slot;
-            slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+            slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
         }
@@ -298,7 +299,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
     entry = JSDOMWindow::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         PropertySlot slot;
-        slot.setCustom(this, entry->propertyGetter());
+        slot.setCustom(thisObject, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
@@ -308,35 +309,35 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (impl()->frame()->tree()->child(identifierToAtomicString(propertyName))) {
+    if (thisObject->impl()->frame()->tree()->child(identifierToAtomicString(propertyName))) {
         PropertySlot slot;
-        slot.setCustom(this, childFrameGetter);
+        slot.setCustom(thisObject, childFrameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
     
     bool ok;
     unsigned i = propertyName.toArrayIndex(ok);
-    if (ok && i < impl()->frame()->tree()->childCount()) {
+    if (ok && i < thisObject->impl()->frame()->tree()->childCount()) {
         PropertySlot slot;
-        slot.setCustomIndex(this, i, indexGetter);
+        slot.setCustomIndex(thisObject, i, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
-    Document* document = impl()->frame()->document();
+    Document* document = thisObject->impl()->frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
         if (atomicPropertyName && (static_cast<HTMLDocument*>(document)->hasNamedItem(atomicPropertyName) || document->hasElementWithId(atomicPropertyName))) {
             PropertySlot slot;
-            slot.setCustom(this, namedItemGetter);
+            slot.setCustom(thisObject, namedItemGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
         }
     }
     
-    return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

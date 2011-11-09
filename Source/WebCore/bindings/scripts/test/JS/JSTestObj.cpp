@@ -197,9 +197,9 @@ bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, con
     return getStaticValueSlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(cell), propertyName, slot);
 }
 
-bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestObjConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, this, propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
@@ -304,9 +304,10 @@ bool JSTestObjPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const
     return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
-bool JSTestObjPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestObjPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, descriptor);
+    JSTestObjPrototype* thisObject = static_cast<JSTestObjPrototype*>(object);
+    return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, descriptor);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObj", &JSDOMWrapper::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
@@ -335,10 +336,11 @@ bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifi
     return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
 }
 
-bool JSTestObj::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestObj::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    return getStaticValueDescriptor<JSTestObj, Base>(exec, &JSTestObjTable, this, propertyName, descriptor);
+    JSTestObj* thisObject = static_cast<JSTestObj*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    return getStaticValueDescriptor<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, descriptor);
 }
 
 JSValue jsTestObjReadOnlyIntAttr(ExecState* exec, JSValue slotBase, const Identifier&)

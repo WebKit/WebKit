@@ -150,9 +150,9 @@ bool StringPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Id
     return getStaticFunctionSlot<StringObject>(exec, ExecState::stringTable(exec), static_cast<StringPrototype*>(cell), propertyName, slot);
 }
 
-bool StringPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<StringObject>(exec, ExecState::stringTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<StringObject>(exec, ExecState::stringTable(exec), static_cast<StringPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------

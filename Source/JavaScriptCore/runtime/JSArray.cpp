@@ -291,21 +291,22 @@ bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    JSArray* thisObject = static_cast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(length()), DontDelete | DontEnum);
+        descriptor.setDescriptor(jsNumber(thisObject->length()), DontDelete | DontEnum);
         return true;
     }
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
     
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
         if (i >= storage->m_length)
             return false;
-        if (i < m_vectorLength) {
+        if (i < thisObject->m_vectorLength) {
             WriteBarrier<Unknown>& value = storage->m_vector[i];
             if (value) {
                 descriptor.setDescriptor(value.get(), 0);
@@ -321,7 +322,7 @@ bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& proper
             }
         }
     }
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 // ECMA 15.4.5.1

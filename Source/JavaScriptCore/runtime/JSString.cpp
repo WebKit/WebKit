@@ -240,16 +240,6 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& pr
     return false;
 }
 
-bool JSString::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    if (getStringPropertyDescriptor(exec, propertyName, descriptor))
-        return true;
-    if (propertyName != exec->propertyNames().underscoreProto)
-        return false;
-    descriptor.setDescriptor(exec->lexicalGlobalObject()->stringPrototype(), DontEnum);
-    return true;
-}
-
 bool JSString::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     JSString* thisObject = static_cast<JSString*>(cell);

@@ -285,7 +285,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
         
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
  
         PropertySlot slot;
         if (entry->attributes() & Function) {
@@ -326,7 +326,7 @@ namespace JSC {
     template <class ParentImp>
     inline bool getStaticFunctionDescriptor(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertyDescriptor& descriptor)
     {
-        if (static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        if (ParentImp::getOwnPropertyDescriptor(static_cast<ParentImp*>(thisObj), exec, propertyName, descriptor))
             return true;
         
         const HashEntry* entry = table->entry(exec, propertyName);
@@ -368,7 +368,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
         
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
         
         ASSERT(!(entry->attributes() & Function));
         PropertySlot slot;

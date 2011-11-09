@@ -603,9 +603,9 @@ bool JSONObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
     return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(cell), propertyName, slot);
 }
 
-bool JSONObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSONObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(object), propertyName, descriptor);
 }
 
 class Walker {

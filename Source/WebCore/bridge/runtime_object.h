@@ -46,7 +46,7 @@ public:
     virtual ~RuntimeObject();
 
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);

@@ -50,6 +50,10 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 {
 }
 
+void RuntimeMethod::vtableAnchor()
+{
+}
+
 void RuntimeMethod::finishCreation(JSGlobalData& globalData, const Identifier& ident)
 {
     Base::finishCreation(globalData, ident);
@@ -80,16 +84,17 @@ bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Iden
     return InternalFunction::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor &descriptor)
+bool RuntimeMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor &descriptor)
 {
+    RuntimeMethod* thisObject = static_cast<RuntimeMethod*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
     
-    return InternalFunction::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return InternalFunction::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)

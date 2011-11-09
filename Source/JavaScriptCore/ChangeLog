@@ -1,3 +1,118 @@
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=71523
+
+        Reviewed by Sam Weinig.
+
+        Added getOwnPropertyDescriptor to the MethodTable, changed all of the 
+        virtual versions of getOwnPropertyDescriptor to static ones, and 
+        changed all of the call sites to the corresponding lookup in the MethodTable.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyDescriptor):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertyDescriptor):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getOwnPropertyDescriptor):
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertyDescriptor):
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertyDescriptor):
+        * runtime/BooleanPrototype.h:
+        * runtime/ClassInfo.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertyDescriptor):
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertyDescriptor):
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertyDescriptor):
+        * runtime/ErrorPrototype.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertyDescriptor):
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertyDescriptor):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertyDescriptor):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertyDescriptor):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertyDescriptor):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::vtableAnchor):
+        (JSC::JSObject::propertyIsEnumerable):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::JSObject::getPropertyDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp: Removed getOwnPropertyDescriptor, since this seems to be a relic from a 
+        bygone era when getOwnPropertyDescriptor was rooted in JSCell rather than JSObject.  There were 
+        no call sites for this version of getOwnPropertyDescriptor in the entire project.
+        * runtime/JSString.h:
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticFunctionDescriptor):
+        (JSC::getStaticValueDescriptor):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertyDescriptor):
+        * runtime/MathObject.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertyDescriptor):
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertyDescriptor):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::getOwnPropertyDescriptor):
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertyDescriptor):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertyDescriptor):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertyDescriptor):
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertyDescriptor):
+        * runtime/RegExpPrototype.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getOwnPropertyDescriptor):
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::vtableAnchor): Added to prevent a weak vtable.
+        (JSC::StringObject::getOwnPropertyDescriptor):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertyDescriptor):
+        * runtime/StringPrototype.h:
+
 2011-11-09  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71873

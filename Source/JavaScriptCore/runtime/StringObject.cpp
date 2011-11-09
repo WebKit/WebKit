@@ -34,6 +34,10 @@ StringObject::StringObject(JSGlobalData& globalData, Structure* structure)
 {
 }
 
+void StringObject::vtableAnchor()
+{
+}
+
 void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
 {
     Base::finishCreation(globalData);
@@ -57,11 +61,12 @@ bool StringObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsi
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-bool StringObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    if (internalValue()->getStringPropertyDescriptor(exec, propertyName, descriptor))
+    StringObject* thisObject = static_cast<StringObject*>(object);
+    if (thisObject->internalValue()->getStringPropertyDescriptor(exec, propertyName, descriptor))
         return true;    
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

@@ -273,10 +273,11 @@ bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
     return false;
 }
 
-bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject) {
+    JSNPObject* thisObject = static_cast<JSNPObject*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
         return false;
     }
@@ -284,17 +285,17 @@ bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
 
     // First, check if the NPObject has a property with this name.
-    if (m_npObject->_class->hasProperty && m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
+    if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot;
-        slot.setCustom(this, propertyGetter);
+        slot.setCustom(thisObject, propertyGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
-    if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
+    if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot;
-        slot.setCustom(this, methodGetter);
+        slot.setCustom(thisObject, methodGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
         return true;
     }

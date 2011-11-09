@@ -90,9 +90,9 @@ bool DateConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Id
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), static_cast<DateConstructor*>(cell), propertyName, slot);
 }
 
-bool DateConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool DateConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::dateConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::dateConstructorTable(exec), static_cast<DateConstructor*>(object), propertyName, descriptor);
 }
 
 // ECMA 15.9.3

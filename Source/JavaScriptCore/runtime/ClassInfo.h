@@ -89,6 +89,9 @@ namespace JSC {
 
         typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool);
         DefineOwnPropertyFunctionPtr defineOwnProperty;
+
+        typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
     };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -130,6 +133,7 @@ struct MemberCheck##member { \
         &ClassName::hasInstance, \
         &ClassName::putWithAttributes, \
         &ClassName::defineOwnProperty, \
+        &ClassName::getOwnPropertyDescriptor, \
     }, \
     sizeof(ClassName)
 

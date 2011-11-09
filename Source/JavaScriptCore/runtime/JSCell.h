@@ -150,6 +150,7 @@ namespace JSC {
         static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
         static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
         static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
     private:
         WriteBarrier<Structure> m_structure;

@@ -68,9 +68,9 @@ bool ArrayConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const I
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), static_cast<ArrayConstructor*>(cell), propertyName, slot);
 }
 
-bool ArrayConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool ArrayConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), static_cast<ArrayConstructor*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

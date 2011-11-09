@@ -72,9 +72,9 @@ bool RegExpPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Id
     return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), static_cast<RegExpPrototype*>(cell), propertyName, slot);
 }
 
-bool RegExpPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RegExpPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), static_cast<RegExpPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

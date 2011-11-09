@@ -76,6 +76,10 @@ void JSObject::finalize(JSCell* cell)
     delete [] static_cast<JSObject*>(cell)->m_propertyStorage.get();
 }
 
+void JSObject::vtableAnchor()
+{
+}
+
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = static_cast<JSObject*>(cell);
@@ -455,7 +459,7 @@ bool JSObject::hasInstance(JSObject*, ExecState* exec, JSValue value, JSValue pr
 bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
 {
     PropertyDescriptor descriptor;
-    if (!const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+    if (!const_cast<JSObject*>(this)->methodTable()->getOwnPropertyDescriptor(const_cast<JSObject*>(this), exec, propertyName, descriptor))
         return false;
     return descriptor.enumerable();
 }
@@ -646,14 +650,14 @@ void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize,
     m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
-bool JSObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     unsigned attributes = 0;
     JSCell* cell = 0;
-    size_t offset = structure()->get(exec->globalData(), propertyName, attributes, cell);
+    size_t offset = object->structure()->get(exec->globalData(), propertyName, attributes, cell);
     if (offset == WTF::notFound)
         return false;
-    descriptor.setDescriptor(getDirectOffset(offset), attributes);
+    descriptor.setDescriptor(object->getDirectOffset(offset), attributes);
     return true;
 }
 
@@ -661,7 +665,7 @@ bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& property
 {
     JSObject* object = this;
     while (true) {
-        if (object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        if (object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, descriptor))
             return true;
         JSValue prototype = object->prototype();
         if (!prototype.isObject())
@@ -708,7 +712,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
 {
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
-    if (!object->getOwnPropertyDescriptor(exec, propertyName, current)) {
+    if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, current)) {
         // unless extensions are prevented!
         if (!object->isExtensible()) {
             if (throwException)

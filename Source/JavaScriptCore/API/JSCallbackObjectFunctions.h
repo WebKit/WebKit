@@ -184,10 +184,11 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
     PropertySlot slot;
-    if (methodTable()->getOwnPropertySlot(this, exec, propertyName, slot)) {
+    if (thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
         // Ideally we should return an access descriptor, but returning a value descriptor is better than nothing.
         JSValue value = slot.getValue(exec, propertyName);
         if (!exec->hadException())
@@ -199,7 +200,7 @@ bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(ExecState* exec, const I
         return true;
     }
 
-    return Parent::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return Parent::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 template <class Parent>

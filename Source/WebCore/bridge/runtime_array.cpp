@@ -99,11 +99,12 @@ bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -111,15 +112,15 @@ bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        if (index < getLength()) {
+        if (index < thisObject->getLength()) {
             PropertySlot slot;
-            slot.setCustomIndex(this, index, indexGetter);
+            slot.setCustomIndex(thisObject, index, indexGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
             return true;
         }
     }
     
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 bool RuntimeArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState *exec, unsigned index, PropertySlot& slot)

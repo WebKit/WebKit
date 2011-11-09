@@ -96,9 +96,10 @@ bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const I
     return thisObject->window()->methodTable()->getOwnPropertySlot(thisObject->window(), exec, propertyName, slot);
 }
 
-bool JSDOMWindowShell::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSDOMWindowShell::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return window()->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    return thisObject->window()->methodTable()->getOwnPropertyDescriptor(thisObject->window(), exec, propertyName, descriptor);
 }
 
 void JSDOMWindowShell::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

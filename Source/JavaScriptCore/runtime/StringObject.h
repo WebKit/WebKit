@@ -30,6 +30,8 @@ namespace JSC {
     public:
         typedef JSWrapperObject Base;
 
+        virtual void vtableAnchor();
+
         static StringObject* create(ExecState* exec, Structure* structure)
         {
             JSString* string = jsEmptyString(exec);
@@ -47,7 +49,7 @@ namespace JSC {
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 

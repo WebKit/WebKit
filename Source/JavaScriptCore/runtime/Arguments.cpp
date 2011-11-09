@@ -215,35 +215,36 @@ bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifi
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    Arguments* thisObject = static_cast<Arguments*>(object);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
-        if (i < d->numParameters) {
-            descriptor.setDescriptor(d->registers[d->firstParameterIndex + i].get(), None);
+    if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        if (i < thisObject->d->numParameters) {
+            descriptor.setDescriptor(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get(), None);
         } else
-            descriptor.setDescriptor(d->extraArguments[i - d->numParameters].get(), None);
+            descriptor.setDescriptor(thisObject->d->extraArguments[i - thisObject->d->numParameters].get(), None);
         return true;
     }
     
-    if (propertyName == exec->propertyNames().length && LIKELY(!d->overrodeLength)) {
-        descriptor.setDescriptor(jsNumber(d->numArguments), DontEnum);
+    if (propertyName == exec->propertyNames().length && LIKELY(!thisObject->d->overrodeLength)) {
+        descriptor.setDescriptor(jsNumber(thisObject->d->numArguments), DontEnum);
         return true;
     }
     
-    if (propertyName == exec->propertyNames().callee && LIKELY(!d->overrodeCallee)) {
-        if (!d->isStrictMode) {
-            descriptor.setDescriptor(d->callee.get(), DontEnum);
+    if (propertyName == exec->propertyNames().callee && LIKELY(!thisObject->d->overrodeCallee)) {
+        if (!thisObject->d->isStrictMode) {
+            descriptor.setDescriptor(thisObject->d->callee.get(), DontEnum);
             return true;
         }
-        createStrictModeCalleeIfNecessary(exec);
+        thisObject->createStrictModeCalleeIfNecessary(exec);
     }
 
-    if (propertyName == exec->propertyNames().caller && d->isStrictMode)
-        createStrictModeCallerIfNecessary(exec);
+    if (propertyName == exec->propertyNames().caller && thisObject->d->isStrictMode)
+        thisObject->createStrictModeCallerIfNecessary(exec);
     
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

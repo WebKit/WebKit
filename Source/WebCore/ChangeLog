@@ -1,3 +1,67 @@
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=71523
+
+        Reviewed by Sam Weinig.
+
+        No new tests.
+
+        Added getOwnPropertyDescriptor to the MethodTable, changed all of the 
+        virtual versions of getOwnPropertyDescriptor to static ones, and 
+        changed all of the call sites to the corresponding lookup in the MethodTable.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getOwnPropertyDescriptor):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::getOwnPropertyDescriptorDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestInterface::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestMediaQueryListListenerPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestObjPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestObj::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getOwnPropertyDescriptor):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::getOwnPropertyDescriptor):
+        (JSC::Bindings::QtRuntimeConnectionMethod::getOwnPropertyDescriptor):
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::vtableAnchor): Added to prevent a weak vtable.
+        (JSC::RuntimeMethod::getOwnPropertyDescriptor):
+        * bridge/runtime_method.h: Changed getOwnPropertyDescriptor from private to protected to allow 
+        subclasses to use it in their MethodTables.
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertyDescriptor):
+        * bridge/runtime_object.h:
+
 2011-11-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r93614): Content remains despite parent element being scrolled off page using javascript.

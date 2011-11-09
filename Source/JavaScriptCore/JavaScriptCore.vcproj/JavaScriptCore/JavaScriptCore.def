@@ -190,10 +190,9 @@ EXPORTS
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
-    ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
-    ?getOwnPropertyDescriptor@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
-    ?getOwnPropertyDescriptor@JSString@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
-    ?getOwnPropertyDescriptor@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
+    ?getOwnPropertyDescriptor@JSByteArray@JSC@@SA_NPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
+    ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@SA_NPAVJSObject@2@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
+    ?getOwnPropertyDescriptor@JSObject@JSC@@SA_NPAV12@PAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyNames@JSByteArray@JSC@@SAXPAVJSObject@2@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@JSObject@JSC@@SAXPAV12@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getOwnPropertyNames@JSVariableObject@JSC@@SAXPAVJSObject@2@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
@@ -352,6 +351,7 @@ EXPORTS
     ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
+    ?vtableAnchor@JSObject@JSC@@UAEXXZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ

@@ -440,11 +440,12 @@ bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ide
     return thisObject->symbolTableGet(propertyName, slot);
 }
 
-bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    if (getStaticFunctionDescriptor<JSVariableObject>(exec, ExecState::globalObjectTable(exec), this, propertyName, descriptor))
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    if (getStaticFunctionDescriptor<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, descriptor))
         return true;
-    return symbolTableGet(propertyName, descriptor);
+    return thisObject->symbolTableGet(propertyName, descriptor);
 }
 
 void JSGlobalObject::clearRareData(JSCell* cell)

@@ -88,9 +88,9 @@ bool NumberPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Id
     return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(cell), propertyName, slot);
 }
 
-bool NumberPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool NumberPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

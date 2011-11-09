@@ -66,15 +66,16 @@ bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSByteArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSByteArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    JSByteArray* thisObject = static_cast<JSByteArray*>(object);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
-    if (ok && canAccessIndex(index)) {
-        descriptor.setDescriptor(getIndex(exec, index), DontDelete);
+    if (ok && thisObject->canAccessIndex(index)) {
+        descriptor.setDescriptor(thisObject->getIndex(exec, index), DontDelete);
         return true;
     }
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 bool JSByteArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)

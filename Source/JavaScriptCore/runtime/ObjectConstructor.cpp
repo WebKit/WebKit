@@ -94,9 +94,9 @@ bool ObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const 
     return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), static_cast<ObjectConstructor*>(cell), propertyName, slot);
 }
 
-bool ObjectConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool ObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), static_cast<ObjectConstructor*>(object), propertyName, descriptor);
 }
 
 // ECMA 15.2.2
@@ -152,7 +152,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
         return JSValue::encode(jsNull());
     JSObject* object = asObject(exec->argument(0));
     PropertyDescriptor descriptor;
-    if (!object->getOwnPropertyDescriptor(exec, Identifier(exec, propertyName), descriptor))
+    if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, Identifier(exec, propertyName), descriptor))
         return JSValue::encode(jsUndefined());
     if (exec->hadException())
         return JSValue::encode(jsUndefined());

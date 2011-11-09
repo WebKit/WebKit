@@ -64,9 +64,9 @@ bool StringConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const 
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), static_cast<StringConstructor*>(cell), propertyName, slot);
 }
 
-bool StringConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), static_cast<StringConstructor*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------
