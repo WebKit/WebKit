@@ -1,4 +1,4 @@
-This test fuzzes the length list parser with semi-random attribute values and dumps the results of any values that parse successfully.
+This test fuzzes the color parser with semi-random attribute values and dumps the results of any values that parse successfully.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
