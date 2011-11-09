@@ -986,7 +986,20 @@ WebCore::ResourceError FrameLoaderClientQt::pluginWillHandleLoadError(const WebC
 
 bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError& error)
 {
-    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange) || (error.errorCode() == WebKitErrorPluginWillHandleLoad));
+    DEFINE_STATIC_LOCAL(const ResourceError, cancelledError, (this->cancelledError(ResourceRequest())));
+    DEFINE_STATIC_LOCAL(const ResourceError, pluginWillHandleLoadError, (this->pluginWillHandleLoadError(ResourceResponse())));
+    DEFINE_STATIC_LOCAL(const ResourceError, errorInterruptedForPolicyChange, (this->interruptedForPolicyChangeError(ResourceRequest())));
+
+    if (error.errorCode() == cancelledError.errorCode() && error.domain() == cancelledError.domain())
+        return false;
+
+    if (error.errorCode() == errorInterruptedForPolicyChange.errorCode() && error.domain() == errorInterruptedForPolicyChange.domain())
+        return false;
+
+    if (error.errorCode() == pluginWillHandleLoadError.errorCode() && error.domain() == pluginWillHandleLoadError.domain())
+        return false;
+
+    return true;
 }
 
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)

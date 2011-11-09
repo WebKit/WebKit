@@ -2454,13 +2454,6 @@ inspector/extensions/extensions-console.html
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 fast/backgrounds/size/contain-and-cover-zoomed.html
 
-# new bug revealed by r99071
-# https://bugs.webkit.org/show_bug.cgi?id=62108
-fast/overflow/overflow-height-float-not-removed-crash.html
-fast/overflow/overflow-height-float-not-removed-crash3.html
-fast/css/acid2-pixel.html
-fast/css/acid2.html
-
 # REGRESSION(r99195)
 # https://bugs.webkit.org/show_bug.cgi?id=70609
 fast/viewport/viewport-83.html

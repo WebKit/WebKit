@@ -1,3 +1,15 @@
+2011-11-09  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        [Qt] 4 Layout test fail due to network error constant values clash with WebkitError enum values in FrameloaderclientQt
+        https://bugs.webkit.org/show_bug.cgi?id=71554
+
+        Reviewed by Simon Hausmann.
+
+        We should check the error domain when checking the error code in shouldFallBack()
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::shouldFallBack): added error domain check
+
 2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QApplication with QGuiApplication
