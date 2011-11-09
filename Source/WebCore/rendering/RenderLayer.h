@@ -468,7 +468,15 @@ public:
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     LayoutRect repaintRect() const { return m_repaintRect; }
     LayoutRect repaintRectIncludingDescendants() const;
-    void updateLayerPositionsAfterScroll(bool fixed = false);
+
+    enum UpdateLayerPositionsAfterScrollFlag {
+        NoFlag = 0,
+        HasSeenFixedPositionedAncestor = 1 << 0,
+        HasSeenAncestorWithOverflowClip = 1 << 1
+    };
+
+    typedef unsigned UpdateLayerPositionsAfterScrollFlags;
+    void updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrollFlags = NoFlag);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
     LayoutUnit staticInlinePosition() const { return m_staticInlinePosition; }
@@ -736,6 +744,11 @@ protected:
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;
+
+    // This is an optimization added for <table>.
+    // Currently cells do not need to update their repaint rectangles when scrolling. This also
+    // saves a lot of time when scrolling on a table.
+    bool m_canSkipRepaintRectsUpdateOnScroll : 1;
 
     RenderBoxModelObject* m_renderer;
 

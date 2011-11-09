@@ -156,6 +156,7 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_mustOverlapCompositedLayers(false)
 #endif
     , m_containsDirtyOverlayScrollbars(false)
+    , m_canSkipRepaintRectsUpdateOnScroll(renderer->isTableCell())
     , m_renderer(renderer)
     , m_parent(0)
     , m_previous(0)
@@ -423,7 +424,7 @@ void RenderLayer::clearRepaintRects()
     m_outlineBox = IntRect();
 }
 
-void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
+void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrollFlags flags)
 {
     ASSERT(!m_visibleContentStatusDirty);
 
@@ -435,19 +436,26 @@ void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
 
     updateLayerPosition();
 
-    if (fixed || renderer()->style()->position() == FixedPosition) {
+    if ((flags & HasSeenFixedPositionedAncestor) || renderer()->style()->position() == FixedPosition) {
         // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
         computeRepaintRects();
-        fixed = true;
+        flags |= HasSeenFixedPositionedAncestor;
     } else if (renderer()->hasTransform() && !renderer()->isRenderView()) {
         // Transforms act as fixed position containers, so nothing inside a
         // transformed element can be fixed relative to the viewport if the
         // transformed element is not fixed itself or child of a fixed element.
         return;
+    } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
+        // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
+        // intersects it with our ancestor overflow clip that may have moved.
+        computeRepaintRects();
     }
 
+    if (renderer()->hasOverflowClip())
+        flags |= HasSeenAncestorWithOverflowClip;
+
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositionsAfterScroll(fixed);
+        child->updateLayerPositionsAfterScroll(flags);
 
     // We don't update our reflection as scrolling is a translation which does not change the size()
     // of an object, thus RenderReplica will still repaint itself properly as the layer position was
