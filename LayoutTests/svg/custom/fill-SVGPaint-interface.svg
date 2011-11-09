@@ -16,8 +16,7 @@
             log("SVGPaint css property is not reported as of type SVGPaint");
             return;
         }
-        var fill = rect.getPresentationAttribute('fill');
-        fill.setRGBColor("green");
+        rect.setAttribute('fill', 'green');
     }
     ]]>
 </script>

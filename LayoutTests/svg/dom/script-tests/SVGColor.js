@@ -50,26 +50,26 @@ shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,0,0)', '
 
 debug("");
 debug("Test using setColor() and SVG_COLORTYPE_RGBCOLOR_ICCCOLOR");
-shouldBeUndefined("stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)')");
-shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR");
+shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)')");
+shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
 // FIXME: No support for ICC colors.
-checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR", 77, 0, 77);
-shouldBeEqualToString("stopElement.style.stopColor", "#4d004d");
-shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(77, 0, 77)");
+checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
+shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");
 debug("Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR");
-shouldBeUndefined("stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)')");
-shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
-checkStopColor("SVGColor.SVG_COLORTYPE_CURRENTCOLOR", 0, 0, 0);
-shouldBeEqualToString("stopElement.style.stopColor", "currentColor");
-shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(0, 128, 0)");
+shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)')");
+shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
+checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
+shouldBeEqualToString("stopElement.style.stopColor", "#ff0000");
+shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 debug("");
 debug("Test using setColor() and SVG_COLORTYPE_RGBCOLOR");
-shouldBeUndefined("stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)')");
+shouldThrow("stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)')");
 shouldBe("stopColor.colorType", "SVGColor.SVG_COLORTYPE_RGBCOLOR");
-checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 0, 77, 0);
-shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(0, 77, 0)");
+checkStopColor("SVGColor.SVG_COLORTYPE_RGBCOLOR", 255, 0, 0);
+shouldBeEqualToString("document.defaultView.getComputedStyle(stopElement).stopColor", "rgb(255, 0, 0)");
 
 successfullyParsed = true;

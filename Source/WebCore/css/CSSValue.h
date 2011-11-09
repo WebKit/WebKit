@@ -56,7 +56,6 @@ public:
     String cssText() const;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
-    bool isMutableValue() const { return m_isMutable; }
     bool isPrimitiveValue() const { return m_isPrimitive; }
     bool isValueList() const { return m_isList; }
     bool isInitialValue() const { return m_isInitial; }
@@ -145,7 +144,6 @@ protected:
         , m_isQuirkValue(false)
         , m_classType(classType)
         , m_isPrimitive(isPrimitiveType(classType))
-        , m_isMutable(isMutableType(classType))
         , m_isList(isListType(classType))
         , m_isInitial(isInitialType(classType))
         , m_isInherited(isInheritedType(classType))
@@ -175,17 +173,6 @@ private:
             || type == WebKitCSSTransformClass;
     }
 
-    static bool isMutableType(ClassType type)
-    {
-#if ENABLE(SVG)
-        return type == SVGColorClass
-            || type == SVGPaintClass;
-#else
-        UNUSED_PARAM(type);
-        return false;
-#endif
-    }
-
     static bool isInheritedType(ClassType type)
     {
         return type == InheritedClass;
@@ -208,7 +195,6 @@ protected:
 private:
     unsigned m_classType : 5; // ClassType
     bool m_isPrimitive : 1;
-    bool m_isMutable : 1;
     bool m_isList : 1;
     bool m_isInitial : 1;
     bool m_isInherited : 1;

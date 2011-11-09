@@ -17,12 +17,12 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Try invalid arguments for setPaint()
-PASS fillPaint.setPaint(null, null, null, null) threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, svgElement, '', ''); threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS fillPaint.setPaint(null, null, null, null) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, svgElement, '', ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, '', '') threw exception TypeError: Not enough arguments.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR + 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE - 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI + 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR + 1, '', '', ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE - 1, '', '', ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI + 1, '', '', ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS fillPaint.setPaint() threw exception TypeError: Not enough arguments.
 PASS fillPaint.setPaint(fillPaint) threw exception TypeError: Not enough arguments.
 
@@ -36,17 +36,17 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_UNKNOWN
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, 'url(#foo)', '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', 'rgb(0,128,128)', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, 'url(#foo)', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', 'rgb(0,128,128)', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, '', '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_UNKKNOWN, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 
 Test using setPaint() and SVG_PAINTTYPE_NONE - a
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', '') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Reset style to initial value
 PASS (fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
@@ -55,10 +55,10 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_NONE - b
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', '', '') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Reset style to initial value
 PASS (fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
@@ -67,10 +67,10 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_NONE - c
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', 'rgb(0,128,128)', '') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', 'rgb(0,128,128)', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Reset style to initial value
 PASS (fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
@@ -79,10 +79,10 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_NONE - d
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, '', '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Reset style to initial value
 PASS (fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
@@ -91,39 +91,39 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_NONE - e
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_URI - a
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_URI - b
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', 'rgb(0,128,128)', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', 'rgb(0,128,128)', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_URI - c
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_NONE
-PASS rectElement.style.fill is "none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "none"
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, '', '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_URI - d
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#test)', '', '') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI
-PASS fillPaint.uri is "url(#test)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_UNKNOWN
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#test)', '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
 PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
 PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "url(#test)"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#test)"
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Reset style to initial value
 PASS (fillPaint = rectElement.style.getPropertyCSSValue('fill')).toString() is "[object SVGPaint]"
@@ -132,112 +132,112 @@ PASS rectElement.style.fill is "#008000"
 PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setPaint() and SVG_PAINTTYPE_URI - e
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI
-PASS fillPaint.uri is "url(#foo)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_UNKNOWN
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "url(#foo)"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#foo)"
-
-Test using setPaint() and SVG_PAINTTYPE_URI_NONE
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_NONE, 'url(#test)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI_NONE
-PASS fillPaint.uri is "url(#test)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_UNKNOWN
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "url(#test) none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#test) none"
-
-Test using setPaint() and SVG_PAINTTYPE_URI_CURRENTCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_CURRENTCOLOR, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI_CURRENTCOLOR
-PASS fillPaint.uri is "url(#foo)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "url(#foo) currentColor"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#foo) #00ff00"
-
-Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR, 'url(#test)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR
-PASS fillPaint.uri is "url(#test)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS rectElement.style.fill is "url(#test) #4d004d"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#test) #4d004d"
-
-Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR, 'url(#foo)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR
-PASS fillPaint.uri is "url(#foo)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS rectElement.style.fill is "url(#foo) #4d004d"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#foo) #4d004d"
-
-Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR, 'url(#test)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR
-PASS fillPaint.uri is ""
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS rectElement.style.fill is "#4d004d"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "#4d004d"
-
-Test using setPaint() and SVG_PAINTTYPE_CURRENTCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR, 'url(#foo)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
-PASS fillPaint.uri is ""
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
-PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
-PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "currentColor"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "#00ff00"
-
-Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, 'url(#test)', 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
 PASS fillPaint.uri is ""
 PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
 PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
 PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "#004d00"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "#004d00"
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_URI_NONE
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_NONE, 'url(#test)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_URI_CURRENTCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_CURRENTCOLOR, 'url(#foo)', 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR, 'url(#test)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR, 'url(#foo)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR, 'url(#test)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_CURRENTCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR, 'url(#foo)', 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
+
+Test using setPaint() and SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, 'url(#test)', 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
+PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 
 Test using setUri()
 PASS fillPaint.setUri('url(#foobar)'); is undefined.
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_URI_NONE
-PASS fillPaint.uri is "url(#foobar)"
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_UNKNOWN
+PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_RGBCOLOR
+PASS fillPaint.uri is ""
+PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (fillColor = fillPaint.rgbColor).toString() is "[object RGBColor]"
 PASS fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
 PASS fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rectElement.style.fill is "url(#foobar) none"
-PASS document.defaultView.getComputedStyle(rectElement).fill is "url(#foobar) none"
+PASS rectElement.style.fill is "#008000"
+PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 PASS successfullyParsed is true
 
 TEST COMPLETE

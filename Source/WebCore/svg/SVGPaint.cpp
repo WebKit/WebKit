@@ -60,67 +60,15 @@ SVGPaint::SVGPaint(const SVGPaintType& paintType, const String& uri)
 {
 }
 
-void SVGPaint::setUri(const String& uri)
+void SVGPaint::setUri(const String&)
 {
-    // Spec: Sets the paintType to SVG_PAINTTYPE_URI_NONE and sets uri to the specified value.
-    m_uri = uri;
-    m_paintType = SVG_PAINTTYPE_URI_NONE;
-    setColor(Color());
-    setColorType(colorTypeForPaintType(m_paintType));
-    setNeedsStyleRecalc();
+    // The whole SVGPaint interface is deprecated in SVG 1.1 (2nd edition).
+    // The setters are the most problematic part so we remove the support for those first.
 }
 
-void SVGPaint::setPaint(unsigned short paintType, const String& uri, const String& rgbColor, const String& iccColor, ExceptionCode& ec)
+void SVGPaint::setPaint(unsigned short, const String&, const String&, const String&, ExceptionCode& ec)
 {
-    if ((paintType > SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR && paintType < SVG_PAINTTYPE_NONE) || paintType > SVG_PAINTTYPE_URI) {
-        ec = SVGException::SVG_WRONG_TYPE_ERR;
-        return;
-    }
-
-    bool requiresURI = false;
-
-    SVGPaintType type = static_cast<SVGPaintType>(paintType);
-    switch (type) {
-    case SVG_PAINTTYPE_UNKNOWN:
-        // Spec: It is invalid to attempt to define a new value of this type or to attempt to switch an existing value to this type.
-        ec = SVGException::SVG_INVALID_VALUE_ERR;
-        return;
-    case SVG_PAINTTYPE_RGBCOLOR:
-    case SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR:
-    case SVG_PAINTTYPE_NONE:
-    case SVG_PAINTTYPE_CURRENTCOLOR:
-        break;
-    case SVG_PAINTTYPE_URI_NONE:
-    case SVG_PAINTTYPE_URI_CURRENTCOLOR:
-    case SVG_PAINTTYPE_URI_RGBCOLOR:
-    case SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
-    case SVG_PAINTTYPE_URI:
-        requiresURI = true;
-        break;
-    };
-
-    // Spec: If paintType requires a URI, then uri must be non-null; otherwise, uri must be null.
-    if (requiresURI && uri.isEmpty()) { 
-        ec = SVGException::SVG_INVALID_VALUE_ERR;
-        return;
-    }
-
-    SVGColor::SVGColorType colorType = colorTypeForPaintType(type);
-    if (colorType == SVGColor::SVG_COLORTYPE_UNKNOWN) {
-        // The standard setColor() code path used in the else branch
-        // raises an exception when attempting to switch to an unknown color type.
-        // Here we explicitely want to reset to Color() and an unknown type, so force it.
-        setColorType(colorType);
-        setColor(Color());
-    } else {
-        setColor(colorType, rgbColor, iccColor, ec);
-        if (ec)
-            return;
-    }
-
-    m_paintType = type;
-    m_uri = requiresURI ? uri : String();
-    setNeedsStyleRecalc();
+    ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
 String SVGPaint::customCssText() const
@@ -149,27 +97,6 @@ String SVGPaint::customCssText() const
 
     ASSERT_NOT_REACHED();
     return String();
-}
-
-bool SVGPaint::matchesTargetURI(const String& referenceId)
-{
-    switch (m_paintType) {
-    case SVG_PAINTTYPE_UNKNOWN:
-    case SVG_PAINTTYPE_RGBCOLOR:
-    case SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR:
-    case SVG_PAINTTYPE_CURRENTCOLOR:
-    case SVG_PAINTTYPE_NONE:
-        return false;
-    case SVG_PAINTTYPE_URI_NONE:
-    case SVG_PAINTTYPE_URI_CURRENTCOLOR:
-    case SVG_PAINTTYPE_URI_RGBCOLOR:
-    case SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
-    case SVG_PAINTTYPE_URI:
-        return referenceId == SVGURIReference::fragmentIdentifierFromIRIString(m_uri, node() ? node()->document() : 0);
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 }

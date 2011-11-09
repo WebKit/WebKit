@@ -1,3 +1,0 @@
-This test tests that getting a CSSValue using getPresentationAttribute and then changing that value does not influence other presentation attributes that share that value. See Bug 18512.
-Passed
-

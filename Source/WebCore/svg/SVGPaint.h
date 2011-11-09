@@ -91,8 +91,6 @@ public:
     void setUri(const String&);
     void setPaint(unsigned short paintType, const String& uri, const String& rgbColor, const String& iccColor, ExceptionCode&);
 
-    bool matchesTargetURI(const String& referenceId);
-
     String customCssText() const;
 
 private:

@@ -23,7 +23,7 @@
 #define SVGColor_h
 
 #if ENABLE(SVG)
-#include "CSSMutableValue.h"
+#include "CSSValue.h"
 #include "Color.h"
 #include <wtf/PassRefPtr.h>
 
@@ -31,7 +31,7 @@ namespace WebCore {
 
 class RGBColor;
 
-class SVGColor : public CSSMutableValue {
+class SVGColor : public CSSValue {
 public:
     enum SVGColorType {
         SVG_COLORTYPE_UNKNOWN = 0,

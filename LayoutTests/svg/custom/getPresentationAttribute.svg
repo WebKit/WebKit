@@ -24,8 +24,7 @@
             log("There should be no border-top PA");
             return;
         }
-        var fill = rect.getPresentationAttribute('fill');
-        fill.setRGBColor("green");
+        rect.setAttribute("fill", "green");
     }
     ]]>
 </script>

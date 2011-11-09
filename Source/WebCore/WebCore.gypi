@@ -490,7 +490,6 @@
             'css/CSSImageValue.h',
             'css/CSSLineBoxContainValue.h',
             'css/CSSMutableStyleDeclaration.h',
-            'css/CSSMutableValue.h',
             'css/CSSParserValues.h',
             'css/CSSPrimitiveValue.h',
             'css/CSSProperty.h',

@@ -15,10 +15,10 @@ PASS stopElement.style.stopColor is "#ff0000"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Try invalid arguments for setColor()
-PASS stopColor.setColor(null, null, null) threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, svgElement, ''); threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR + 1, '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS stopColor.setColor(null, null, null) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, svgElement, ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR + 1, '', ''); threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS stopColor.setColor() threw exception TypeError: Not enough arguments.
 PASS stopColor.setColor(stopColor) threw exception TypeError: Not enough arguments.
 
@@ -29,42 +29,42 @@ PASS stopElement.style.stopColor is "#ff0000"
 PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_UNKNOWN
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,128,128)', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,128,128)', '') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, '', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_UNKKNOWN, 'rgb(0,0,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
-PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
+PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
-PASS stopElement.style.stopColor is "#4d004d"
-PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(77, 0, 77)"
+PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS stopElement.style.stopColor is "#ff0000"
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_CURRENTCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
-PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
-PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR, 'rgb(77,0,77)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
+PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS stopElement.style.stopColor is "currentColor"
-PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(0, 128, 0)"
+PASS stopElement.style.stopColor is "#ff0000"
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 
 Test using setColor() and SVG_COLORTYPE_RGBCOLOR
-PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') is undefined.
+PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, 'rgb(0,77,0)', 'icc-color(myRGB, 0, 1, 2)') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS stopColor.colorType is SVGColor.SVG_COLORTYPE_RGBCOLOR
 PASS (rgbColor = stopColor.rgbColor).toString() is "[object RGBColor]"
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 77
+PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(0, 77, 0)"
+PASS document.defaultView.getComputedStyle(stopElement).stopColor is "rgb(255, 0, 0)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

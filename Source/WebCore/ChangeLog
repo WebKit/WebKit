@@ -1,3 +1,37 @@
+2011-11-09  Antti Koivisto  <antti@apple.com>
+
+        Eliminate CSSMutableValue
+        https://bugs.webkit.org/show_bug.cgi?id=71811
+
+        Reviewed by Darin Adler, Andreas Kling and Nikolas Zimmerman.
+
+        Remove the implementations of setter functions in SVGColor and SVGPaint. These interfaces are
+        deprecated in SVG 1.1 (2nd edition) and are not really used by anybody. This allows
+        removal of CSSMutableValue and the associated (rather broken) code.
+        
+        The setters now throw NO_MODIFICATION_ALLOWED_ERR. 
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration):
+        * css/CSSMutableValue.h: Removed.
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::CSSValue):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::setRGBColorICCColor):
+        (WebCore::SVGColor::setColor):
+        * svg/SVGColor.h:
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::setUri):
+        (WebCore::SVGPaint::setPaint):
+        * svg/SVGPaint.h:
+
 2011-11-09  Kentaro Hara  <haraken@chromium.org>
 
         Generate the HTMLOptionElement constructor using [NamedConstructor] IDL

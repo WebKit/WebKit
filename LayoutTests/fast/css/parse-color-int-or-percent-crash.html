@@ -8,14 +8,8 @@
             stopElement.style.stopColor = "blue";
 
             var colorString = "rgb(00000000000000000000";
-            var e;
-            try {
-                stopElement.style.getPropertyCSSValue("stop-color").setRGBColor(colorString);
-            } catch (err) {
-                e = err;
-            }
-            
-            document.body.innerHTML = (e && e.SVG_INVALID_VALUE_ERR == 1) ? "PASS" : "FAIL";
+            stopElement.style.setProperty("stop-color", colorString);
+            document.body.innerHTML = stopElement.style.stopColor == "#0000ff" ? "PASS" : "FAIL";
         </script>
     </body>
 </html>
