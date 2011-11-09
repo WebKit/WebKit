@@ -1001,6 +1001,7 @@ SOURCES += \
     page/PrintContext.cpp \
     page/Screen.cpp \
     page/SecurityOrigin.cpp \
+    page/SecurityPolicy.cpp \
     page/Settings.cpp \
     page/SpatialNavigation.cpp \
     page/SuspendableTimer.cpp \

@@ -1,3 +1,17 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71755
+
+        Reviewed by Eric Seidel.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::whiteListAccessFromOrigin):
+        (DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin):
+        (DumpRenderTreeSupportQt::resetOriginAccessWhiteLists):
+
 2011-11-08  Luiz Agostini  <luiz.agostini@palm.com>
 
         [Qt] Removing qwebkitglobal.h inclusion from qwebkitplatformplugin.h

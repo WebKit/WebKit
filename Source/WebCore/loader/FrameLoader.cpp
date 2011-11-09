@@ -90,6 +90,7 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "SegmentedString.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -1136,7 +1137,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
     else
         referrer = m_outgoingReferrer;
 
-    if (SecurityOrigin::shouldHideReferrer(url, referrer) || referrerPolicy == NoReferrer)
+    if (SecurityPolicy::shouldHideReferrer(url, referrer) || referrerPolicy == NoReferrer)
         referrer = String();
     
     FrameLoadType loadType;
@@ -2586,7 +2587,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
 unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     String referrer = m_outgoingReferrer;
-    if (SecurityOrigin::shouldHideReferrer(request.url(), referrer))
+    if (SecurityPolicy::shouldHideReferrer(request.url(), referrer))
         referrer = String();
     
     ResourceRequest initialRequest = request;

@@ -71,6 +71,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
@@ -464,17 +465,17 @@ void DumpRenderTreeSupportQt::resumeActiveDOMObjects(QWebFrame* frame)
 
 void DumpRenderTreeSupportQt::whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityPolicy::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void DumpRenderTreeSupportQt::resetOriginAccessWhiteLists()
 {
-    SecurityOrigin::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessWhitelists();
 }
 
 void DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)

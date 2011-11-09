@@ -56,6 +56,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "WebKitDOMRangePrivate.h"
@@ -667,12 +668,12 @@ void DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(WebKitWebView* webVie
 
 void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityPolicy::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists()
 {
-    SecurityOrigin::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessWhitelists();
 }
 
 void DumpRenderTreeSupportGtk::gcCollectJavascriptObjects()

@@ -41,6 +41,7 @@
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
@@ -59,7 +60,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
     request.setTargetType(ResourceRequest::TargetIsImage);
 #endif
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
-    if (!SecurityOrigin::shouldHideReferrer(request.url(), frame->loader()->outgoingReferrer()))
+    if (!SecurityPolicy::shouldHideReferrer(request.url(), frame->loader()->outgoingReferrer()))
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
@@ -86,7 +87,7 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     RefPtr<SecurityOrigin> pingOrigin = SecurityOrigin::create(pingURL);
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin->toString());
     request.setHTTPHeaderField("Ping-To", destinationURL);
-    if (!SecurityOrigin::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer())) {
+    if (!SecurityPolicy::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer())) {
       request.setHTTPHeaderField("Ping-From", frame->document()->url());
       if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get()))
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
@@ -109,7 +110,7 @@ void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& 
     request.setHTTPBody(report);
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
 
-    if (!SecurityOrigin::shouldHideReferrer(reportURL, frame->loader()->outgoingReferrer()))
+    if (!SecurityPolicy::shouldHideReferrer(reportURL, frame->loader()->outgoingReferrer()))
         request.setHTTPReferrer(frame->loader()->outgoingReferrer());
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 

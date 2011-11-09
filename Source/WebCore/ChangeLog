@@ -1,3 +1,38 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71755
+
+        Reviewed by Eric Seidel.
+
+        The SecurityOrigin class should be focused on representing a web
+        security origin rather than being a dumping ground for all
+        security-related state.  This patch moves a bunch of static "policy"
+        state into its own SecurityPolicy class.
+
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::reportContentSecurityPolicyViolation):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::canDisplay):
+        (WebCore::SecurityOrigin::grantLoadLocalResources):
+        * page/SecurityOrigin.h:
+
 2011-11-08  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         Default <select multiple> expands up to 10 items instead of showing 4.

@@ -34,6 +34,7 @@
 #include "FrameLoader.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 
 #include "WebString.h"
 #include "WebURL.h"
@@ -68,7 +69,7 @@ void WebSecurityPolicy::addOriginAccessWhitelistEntry(
     const WebString& destinationHost,
     bool allowDestinationSubdomains)
 {
-    SecurityOrigin::addOriginAccessWhitelistEntry(
+    SecurityPolicy::addOriginAccessWhitelistEntry(
         *SecurityOrigin::create(sourceOrigin), destinationProtocol,
         destinationHost, allowDestinationSubdomains);
 }
@@ -79,19 +80,19 @@ void WebSecurityPolicy::removeOriginAccessWhitelistEntry(
     const WebString& destinationHost,
     bool allowDestinationSubdomains)
 {
-    SecurityOrigin::removeOriginAccessWhitelistEntry(
+    SecurityPolicy::removeOriginAccessWhitelistEntry(
         *SecurityOrigin::create(sourceOrigin), destinationProtocol,
         destinationHost, allowDestinationSubdomains);
 }
 
 void WebSecurityPolicy::resetOriginAccessWhitelists()
 {
-    SecurityOrigin::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessWhitelists();
 }
 
 bool WebSecurityPolicy::shouldHideReferrer(const WebURL& url, const WebString& referrer)
 {
-    return SecurityOrigin::shouldHideReferrer(url, referrer);
+    return SecurityPolicy::shouldHideReferrer(url, referrer);
 }
 
 void WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs(const WebString& scheme)

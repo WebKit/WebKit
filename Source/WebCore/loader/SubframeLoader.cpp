@@ -47,6 +47,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -261,7 +262,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     if (!ownerElement->document()->contentSecurityPolicy()->allowChildFrameFromSource(url))
         return 0;
 
-    bool hideReferrer = SecurityOrigin::shouldHideReferrer(url, referrer);
+    bool hideReferrer = SecurityPolicy::shouldHideReferrer(url, referrer);
     RefPtr<Frame> frame = m_frame->loader()->client()->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer, allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {

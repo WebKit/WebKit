@@ -129,6 +129,7 @@
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/SystemInfo.h>
@@ -6355,19 +6356,19 @@ HRESULT WebView::invalidateBackingStore(const RECT* rect)
 
 HRESULT WebView::addOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
-    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
+    SecurityPolicy::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
     return S_OK;
 }
 
 HRESULT WebView::removeOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
-    SecurityOrigin::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
     return S_OK;
 }
 
 HRESULT WebView::resetOriginAccessWhitelists()
 {
-    SecurityOrigin::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessWhitelists();
     return S_OK;
 }
  

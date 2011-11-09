@@ -53,6 +53,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/OwnArrayPtr.h>
@@ -171,17 +172,17 @@ void InjectedBundle::setAuthorAndUserStylesEnabled(WebPageGroupProxy* pageGroup,
 
 void InjectedBundle::addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityPolicy::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void InjectedBundle::removeOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
 {
-    SecurityOrigin::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 void InjectedBundle::resetOriginAccessWhitelists()
 {
-    SecurityOrigin::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessWhitelists();
 }
 
 void InjectedBundle::clearAllDatabases()

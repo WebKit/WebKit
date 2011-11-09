@@ -173,30 +173,12 @@ public:
     // (and whether it was set) but considering the host. It is used for postMessage.
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
-    static bool shouldHideReferrer(const KURL&, const String& referrer);
-
-    enum LocalLoadPolicy {
-        AllowLocalLoadsForAll, // No restriction on local loads.
-        AllowLocalLoadsForLocalAndSubstituteData,
-        AllowLocalLoadsForLocalOnly,
-    };
-    static void setLocalLoadPolicy(LocalLoadPolicy);
-    static bool restrictAccessToLocal();
-    static bool allowSubstituteDataAccessToLocal();
-
-    static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    static void resetOriginAccessWhitelists();
-
 private:
     explicit SecurityOrigin(const KURL&, bool forceUnique);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin*) const;
-
-    bool isAccessWhiteListed(const SecurityOrigin*) const;
-    bool isAccessToURLWhiteListed(const KURL&) const;
 
     String m_protocol;
     String m_host;

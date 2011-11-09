@@ -25430,6 +25430,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\SecurityPolicy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SecurityPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Settings.cpp"
 				>
 			</File>

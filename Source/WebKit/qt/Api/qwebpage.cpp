@@ -105,6 +105,7 @@
 #include "SchemeRegistry.h"
 #include "Scrollbar.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #if defined Q_OS_WIN32
 #include "SystemInfo.h"
@@ -330,7 +331,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::InitializeLoggingChannelsIfNecessary();
     ScriptController::initializeThreading();
     WTF::initializeMainThread();
-    WebCore::SecurityOrigin::setLocalLoadPolicy(WebCore::SecurityOrigin::AllowLocalLoadsForLocalAndSubstituteData);
+    WebCore::SecurityPolicy::setLocalLoadPolicy(WebCore::SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
 
     PlatformStrategiesQt::initialize();
 

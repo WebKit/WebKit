@@ -44,6 +44,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/ResourceLoadScheduler.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKitSystemInterface.h>
@@ -170,8 +171,8 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     setPlugin(plugin);
     
     streams().add(&m_stream, plugin);
-        
-    if (SecurityOrigin::shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
+    
+    if (SecurityPolicy::shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
 }
 

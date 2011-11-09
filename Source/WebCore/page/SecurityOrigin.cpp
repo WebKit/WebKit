@@ -33,25 +33,15 @@
 #include "Document.h"
 #include "FileSystem.h"
 #include "KURL.h"
-#include "OriginAccessEntry.h"
 #include "SchemeRegistry.h"
+#include "SecurityPolicy.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static SecurityOrigin::LocalLoadPolicy localLoadPolicy = SecurityOrigin::AllowLocalLoadsForLocalOnly;
 const int MaxAllowedPort = 65535;
-
-typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
-typedef HashMap<String, OriginAccessWhiteList*> OriginAccessMap;
-
-static OriginAccessMap& originAccessMap()
-{
-    DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
-    return originAccessMap;
-}
 
 static bool schemeRequiresAuthority(const String& scheme)
 {
@@ -251,7 +241,7 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (isSameSchemeHostPort(targetOrigin.get()))
         return true;
 
-    if (isAccessWhiteListed(targetOrigin.get()))
+    if (SecurityPolicy::isAccessWhiteListed(this, targetOrigin.get()))
         return true;
 
     return false;
@@ -289,23 +279,6 @@ bool SecurityOrigin::canReceiveDragData(const SecurityOrigin* dragInitiator) con
     return canAccess(dragInitiator);  
 }
 
-bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) const
-{
-    if (OriginAccessWhiteList* list = originAccessMap().get(toString())) {
-        for (size_t i = 0; i < list->size();  ++i) {
-           if (list->at(i).matchesOrigin(*targetOrigin))
-               return true;
-       }
-    }
-    return false;
-}
-
-bool SecurityOrigin::isAccessToURLWhiteListed(const KURL& url) const
-{
-    RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-    return isAccessWhiteListed(targetOrigin.get());
-}
-
 // This is a hack to allow keep navigation to http/https feeds working. To remove this
 // we need to introduce new API akin to registerURLSchemeAsLocal, that registers a
 // protocols navigation policy.
@@ -337,10 +310,10 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
         return canRequest(url);
 
     if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
-        return m_protocol == protocol || isAccessToURLWhiteListed(url);
+        return m_protocol == protocol || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
-    if (restrictAccessToLocal() && SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
-        return canLoadLocalResources() || isAccessToURLWhiteListed(url);
+    if (SecurityPolicy::restrictAccessToLocal() && SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
+        return canLoadLocalResources() || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
     return true;
 }
@@ -352,7 +325,7 @@ void SecurityOrigin::grantLoadLocalResources()
     // in a SecurityOrigin is a security hazard because the documents without
     // the privilege can obtain the privilege by injecting script into the
     // documents that have been granted the privilege.
-    ASSERT(allowSubstituteDataAccessToLocal());
+    ASSERT(SecurityPolicy::allowSubstituteDataAccessToLocal());
     m_canLoadLocalResources = true;
 }
 
@@ -499,88 +472,6 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
         return false;
 
     return true;
-}
-
-bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)
-{
-    bool referrerIsSecureURL = protocolIs(referrer, "https");
-    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
-
-    if (!referrerIsWebURL)
-        return true;
-
-    if (!referrerIsSecureURL)
-        return false;
-
-    bool URLIsSecureURL = url.protocolIs("https");
-
-    return !URLIsSecureURL;
-}
-
-void SecurityOrigin::setLocalLoadPolicy(LocalLoadPolicy policy)
-{
-    localLoadPolicy = policy;
-}
-
-bool SecurityOrigin::restrictAccessToLocal()
-{
-    return localLoadPolicy != SecurityOrigin::AllowLocalLoadsForAll;
-}
-
-bool SecurityOrigin::allowSubstituteDataAccessToLocal()
-{
-    return localLoadPolicy != SecurityOrigin::AllowLocalLoadsForLocalOnly;
-}
-
-void SecurityOrigin::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
-{
-    ASSERT(isMainThread());
-    ASSERT(!sourceOrigin.isEmpty());
-    if (sourceOrigin.isEmpty())
-        return;
-
-    String sourceString = sourceOrigin.toString();
-    pair<OriginAccessMap::iterator, bool> result = originAccessMap().add(sourceString, 0);
-    if (result.second)
-        result.first->second = new OriginAccessWhiteList;
-
-    OriginAccessWhiteList* list = result.first->second;
-    list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
-}
-
-void SecurityOrigin::removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
-{
-    ASSERT(isMainThread());
-    ASSERT(!sourceOrigin.isEmpty());
-    if (sourceOrigin.isEmpty())
-        return;
-
-    String sourceString = sourceOrigin.toString();
-    OriginAccessMap& map = originAccessMap();
-    OriginAccessMap::iterator it = map.find(sourceString);
-    if (it == map.end())
-        return;
-
-    OriginAccessWhiteList* list = it->second;
-    size_t index = list->find(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
-    if (index == notFound)
-        return;
-
-    list->remove(index);
-
-    if (!list->isEmpty())
-        return;
-
-    map.remove(it);
-    delete list;
-}
-
-void SecurityOrigin::resetOriginAccessWhitelists()
-{
-    ASSERT(isMainThread());
-    OriginAccessMap& map = originAccessMap();
-    deleteAllValues(map);
-    map.clear();
 }
 
 } // namespace WebCore

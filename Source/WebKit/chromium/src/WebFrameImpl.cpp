@@ -129,6 +129,7 @@
 #include "ScriptValue.h"
 #include "ScrollTypes.h"
 #include "ScrollbarTheme.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SkiaUtils.h"
 #include "SubstituteData.h"
@@ -1065,14 +1066,14 @@ bool WebFrameImpl::isViewSourceModeEnabled() const
     return false;
 }
 
-void WebFrameImpl::setReferrerForRequest(
-    WebURLRequest& request, const WebURL& referrerURL) {
+void WebFrameImpl::setReferrerForRequest(WebURLRequest& request, const WebURL& referrerURL)
+{
     String referrer;
     if (referrerURL.isEmpty())
         referrer = m_frame->loader()->outgoingReferrer();
     else
         referrer = referrerURL.spec().utf16();
-    if (SecurityOrigin::shouldHideReferrer(request.url(), referrer))
+    if (SecurityPolicy::shouldHideReferrer(request.url(), referrer))
         return;
     request.setHTTPHeaderField(WebString::fromUTF8("Referer"), referrer);
 }

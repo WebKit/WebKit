@@ -1,3 +1,20 @@
+2011-11-07  Adam Barth  <abarth@webkit.org>
+
+        Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=71755
+
+        Reviewed by Eric Seidel.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView _addOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _removeOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _resetOriginAccessWhitelists]):
+
 2011-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move NSRange / DOMRange functions back to WebFrameInternal

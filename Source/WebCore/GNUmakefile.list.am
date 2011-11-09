@@ -2408,6 +2408,8 @@ webcore_sources += \
 	Source/WebCore/page/SecurityOrigin.cpp \
 	Source/WebCore/page/SecurityOrigin.h \
 	Source/WebCore/page/SecurityOriginHash.h \
+	Source/WebCore/page/SecurityPolicy.cpp \
+	Source/WebCore/page/SecurityPolicy.h \
 	Source/WebCore/page/Settings.cpp \
 	Source/WebCore/page/Settings.h \
 	Source/WebCore/page/SpatialNavigation.cpp \

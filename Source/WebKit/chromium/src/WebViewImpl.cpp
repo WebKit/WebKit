@@ -97,6 +97,7 @@
 #include "SchemeRegistry.h"
 #include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SpeechInputClientImpl.h"
 #include "TextIterator.h"
@@ -290,7 +291,7 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
 
     // Restrict the access to the local file system
     // (see WebView.mm WebView::_commonInitializationWithFrameName).
-    SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalOnly);
+    SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForLocalOnly);
 }
 
 void WebViewImpl::setAutofillClient(WebAutofillClient* autofillClient)

@@ -35,6 +35,7 @@
 #include "FrameLoader.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -85,7 +86,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
-    if (SecurityOrigin::shouldHideReferrer(request.url(), outgoingReferrer))
+    if (SecurityPolicy::shouldHideReferrer(request.url(), outgoingReferrer))
         newRequest.clearHTTPReferrer();
     else if (!request.httpReferrer())
         newRequest.setHTTPReferrer(outgoingReferrer);

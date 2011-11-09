@@ -130,6 +130,7 @@
 #include "ScriptEventListener.h"
 #include "ScriptRunner.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -4410,7 +4411,7 @@ void Document::initSecurityContext()
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
     ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
-    if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
+    if (SecurityPolicy::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
         // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further

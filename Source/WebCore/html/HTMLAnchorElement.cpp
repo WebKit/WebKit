@@ -39,6 +39,7 @@
 #include "RenderImage.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -511,7 +512,7 @@ void HTMLAnchorElement::handleClick(Event* event)
 
         if (!hasRel(RelationNoReferrer)) {
             String referrer = frame->loader()->outgoingReferrer();
-            if (!referrer.isEmpty() && !SecurityOrigin::shouldHideReferrer(kurl, referrer))
+            if (!referrer.isEmpty() && !SecurityPolicy::shouldHideReferrer(kurl, referrer))
                 request.setHTTPReferrer(referrer);
             frame->loader()->addExtraFieldsToMainResourceRequest(request);
         }
