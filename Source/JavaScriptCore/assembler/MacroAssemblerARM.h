@@ -862,7 +862,7 @@ public:
         m_assembler.vsqrt_f64_r(dest, src);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }

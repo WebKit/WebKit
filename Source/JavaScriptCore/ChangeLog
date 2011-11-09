@@ -1,3 +1,31 @@
+2011-11-09  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71873
+
+        Reviewed by Geoff Garen.
+
+        Incrementally re-landing these changes, trying to determine what went wrong.
+        (The whole patch failed tests on the build bot but worked locally.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::absDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::absDouble):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::absDouble):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::absDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::absDouble):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/ThunkGenerators.cpp:
+        (JSC::absThunkGenerator):
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getOwnPropertyDescriptor

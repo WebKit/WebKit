@@ -225,7 +225,6 @@ MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
-static const double negativeZeroConstant = -0.0;
 static const double oneConstant = 1.0;
 static const double negativeHalfConstant = -0.5;
     
@@ -288,9 +287,8 @@ MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     // Shame about the double int conversion here.
-    jit.loadDouble(&negativeZeroConstant, SpecializedThunkJIT::fpRegT1);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.andnotDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+    jit.absDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }

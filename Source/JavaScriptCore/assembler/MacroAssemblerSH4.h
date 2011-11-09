@@ -1129,7 +1129,7 @@ public:
         m_assembler.dsqrt(dest);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }

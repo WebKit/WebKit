@@ -105,6 +105,14 @@ public:
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 
+    void absDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(src != dst);
+        static const double negativeZeroConstant = -0.0;
+        loadDouble(&negativeZeroConstant, dst);
+        m_assembler.andnpd_rr(src, dst);
+    }
+
     void store32(TrustedImm32 imm, void* address)
     {
         move(TrustedImmPtr(address), scratchRegister);

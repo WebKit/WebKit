@@ -663,7 +663,7 @@ public:
         ASSERT_NOT_REACHED();
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
+    void absDouble(FPRegisterID, FPRegisterID) NO_RETURN_DUE_TO_ASSERT
     {
         ASSERT_NOT_REACHED();
     }

@@ -1258,10 +1258,7 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateDoubleOperand op1(this, node.child1());
         FPRTemporary result(this);
         
-        static const double negativeZeroConstant = -0.0;
-        
-        m_jit.loadDouble(&negativeZeroConstant, result.fpr());
-        m_jit.andnotDouble(op1.fpr(), result.fpr());
+        m_jit.absDouble(op1.fpr(), result.fpr());
         doubleResult(result.fpr(), m_compileIndex);
         break;
     }

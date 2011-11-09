@@ -471,7 +471,7 @@ public:
         m_assembler.sqrtd(dst, src);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }
