@@ -1,3 +1,17 @@
+2011-11-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        svg failures after r99561
+        https://bugs.webkit.org/show_bug.cgi?id=71830
+
+        Reviewed by Antti Koivisto.
+
+        Fix regressions in svg/zoom/page/relative-sized-document-scrollbars.svg and svg/zoom/page/zoom-svg-as-relative-image.html.
+        Fix merging problem in r99561, bug 71780. It moved several methods from SVGLength to SVGLengthContext, and unfortunately
+        the SVGLength changes part of r98852, bug 47156, got reverted again, making these two tests fail.
+
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport):
+
 2011-11-09  Rakesh KN  <rakesh.kn@motorola.com>
 
         Select multiple options with mouse drag in Select element.
