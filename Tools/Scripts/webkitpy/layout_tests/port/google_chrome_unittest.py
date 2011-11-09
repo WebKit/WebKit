@@ -28,7 +28,6 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.system.executive_mock import MockExecutive
 
 
@@ -47,7 +46,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
 
     def _verify_baseline_path(self, expected_path, port_name):
-        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, filesystem=MockFileSystem(), executive=MockExecutive(), user=MockUser())
+        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, host=MockHost())
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, port._filesystem.basename(path))
 
@@ -59,20 +58,19 @@ class GetGoogleChromePortTest(unittest.TestCase):
         host = MockHost()
         chromium_port = host.port_factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
-        fs = MockFileSystem()
-        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, filesystem=fs, executive=MockExecutive(), user=MockUser())
+        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, host=host)
 
         expected_chromium_overrides = '// chromium overrides\n'
         expected_chrome_overrides = '// chrome overrides\n'
-        chromium_path = fs.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations.txt')
-        chrome_path = fs.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations_chrome.txt')
+        chromium_path = host.filesystem.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations.txt')
+        chrome_path = host.filesystem.join(chromium_base, 'webkit', 'tools', 'layout_tests', 'test_expectations_chrome.txt')
 
-        fs.files[chromium_path] = expected_chromium_overrides
-        fs.files[chrome_path] = None
+        host.filesystem.files[chromium_path] = expected_chromium_overrides
+        host.filesystem.files[chrome_path] = None
         actual_chrome_overrides = port.test_expectations_overrides()
         self.assertEqual(expected_chromium_overrides, actual_chrome_overrides)
 
-        fs.files[chrome_path] = expected_chrome_overrides
+        host.filesystem.files[chrome_path] = expected_chrome_overrides
         actual_chrome_overrides = port.test_expectations_overrides()
         self.assertEqual(actual_chrome_overrides, expected_chromium_overrides + expected_chrome_overrides)
 

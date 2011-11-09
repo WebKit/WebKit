@@ -74,8 +74,8 @@ class WinPort(ApplePort):
             version_tuple = tuple(map(int, match_object.groups()))
             return self._version_string_from_windows_version_tuple(version_tuple)
 
-    def __init__(self, **kwargs):
-        ApplePort.__init__(self, **kwargs)
+    def __init__(self, host, **kwargs):
+        ApplePort.__init__(self, host, **kwargs)
         self._operating_system = 'win'
 
     def compare_text(self, expected_text, actual_text):

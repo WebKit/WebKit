@@ -33,7 +33,7 @@ import unittest
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port.win import WinPort
@@ -70,9 +70,7 @@ class WinPortTest(port_testcase.PortTestCase):
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = WinPort(os_version_string=version,
             options=MockOptions(webkit_test_runner=use_webkit2),
-            filesystem=MockFileSystem(),
-            user=MockUser(),
-            executive=MockExecutive())
+            host=MockHost())
         absolute_search_paths = map(port._webkit_baseline_path, expected_search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
@@ -88,7 +86,7 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['win-wk2', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'bogus', use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
-        port = WinPort(port_name=port_name, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        port = WinPort(port_name=port_name, host=MockHost())
         self.assertEquals(port.version(), expected_version)
 
     def test_versions(self):

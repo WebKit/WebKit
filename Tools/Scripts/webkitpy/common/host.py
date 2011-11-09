@@ -60,6 +60,7 @@ class Host(object):
         # FIXME: Unfortunately Port objects are currently the central-dispatch objects of the NRWT world.
         # In order to instantiate a port correctly, we have to pass it at least an executive, user, scm, and filesystem
         # so for now we just pass along the whole Host object.
+        # FIXME: PortFactory doesn't belong on this Host object if Port is going to have a Host (circular dependency).
         self.port_factory = PortFactory(self)
 
     def _initialize_scm(self, patch_directories=None):

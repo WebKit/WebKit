@@ -32,8 +32,6 @@
 import re
 import sys
 
-from .test import unit_test_filesystem
-
 from webkitpy.layout_tests.port import builders
 
 
@@ -75,7 +73,7 @@ class PortFactory(object):
             dictionary[key] = default
         return dictionary[key]
 
-    def _get_kwargs(self, **kwargs):
+    def _get_kwargs(self, host=None, **kwargs):
         port_to_use = self._port_name_from_arguments_and_options(**kwargs)
 
         if port_to_use.startswith('test'):
@@ -84,6 +82,7 @@ class PortFactory(object):
             # FIXME: This is a hack to override the "default" filesystem
             # provided to the port.  The unit_test_filesystem has an extra
             # _tests attribute which a bunch of unittests depend on.
+            from .test import unit_test_filesystem
             self._set_default_overriding_none(kwargs, 'filesystem', unit_test_filesystem())
         elif port_to_use.startswith('dryrun'):
             import dryrun
@@ -124,15 +123,8 @@ class PortFactory(object):
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
 
-        # Make sure that any Ports created by this factory inherit
-        # the executive/user/filesystem from the provided host.
-        # FIXME: Eventually NRWT will use a Host object and Port will no longer store these pointers.
-        if self._host:
-            self._set_default_overriding_none(kwargs, 'executive', self._host.executive)
-            self._set_default_overriding_none(kwargs, 'user', self._host.user)
-            self._set_default_overriding_none(kwargs, 'filesystem', self._host.filesystem)
-
-        return maker(**kwargs)
+        host = host or self._host
+        return maker(host, **kwargs)
 
     def all_port_names(self):
         """Return a list of all valid, fully-specified, "real" port names.

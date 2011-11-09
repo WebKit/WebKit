@@ -48,15 +48,15 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def make_port(self, options=mock_options):
         if sys.platform == 'win32':
             # We use this because the 'win' port doesn't work yet.
-            return mock_drt.MockDRTPort(port_name='mock-chromium-win', options=options)
-        return mock_drt.MockDRTPort(options=options)
+            return mock_drt.MockDRTPort(MockHost(), port_name='mock-chromium-win', options=options)
+        return mock_drt.MockDRTPort(MockHost(), options=options)
 
     def test_default_worker_model(self):
         # only overridding the default test; we don't care about this one.
         pass
 
     def test_port_name_in_constructor(self):
-        self.assertTrue(mock_drt.MockDRTPort(port_name='mock-test'))
+        self.assertTrue(mock_drt.MockDRTPort(MockHost(), port_name='mock-test'))
 
     def test_check_sys_deps(self):
         pass
@@ -105,8 +105,8 @@ class MockDRTTest(unittest.TestCase):
             return ['--pixel-tests', '-']
         return ['-']
 
-    def make_drt(self, options, args, filesystem, stdin, stdout, stderr):
-        return mock_drt.MockDRT(options, args, filesystem, stdin, stdout, stderr)
+    def make_drt(self, options, args, host, stdin, stdout, stderr):
+        return mock_drt.MockDRT(options, args, host, stdin, stdout, stderr)
 
     def make_input_output(self, port, test_name, pixel_tests,
                           expected_checksum, drt_output, drt_input=None):
@@ -140,8 +140,8 @@ class MockDRTTest(unittest.TestCase):
     def assertTest(self, test_name, pixel_tests, expected_checksum=None, drt_output=None, filesystem=None):
         port_name = 'test'
         host = MockHost()
-        filesystem = filesystem or test.unit_test_filesystem()
-        port = host.port_factory.get(port_name, filesystem=filesystem)
+        host.filesystem = filesystem or test.unit_test_filesystem()
+        port = host.port_factory.get(port_name)
         drt_input, drt_output = self.make_input_output(port, test_name,
             pixel_tests, expected_checksum, drt_output)
 
@@ -151,7 +151,7 @@ class MockDRTTest(unittest.TestCase):
         stderr = newstringio.StringIO()
         options, args = mock_drt.parse_options(args)
 
-        drt = self.make_drt(options, args, filesystem, stdin, stdout, stderr)
+        drt = self.make_drt(options, args, host, stdin, stdout, stderr)
         res = drt.run()
 
         self.assertEqual(res, 0)
@@ -162,16 +162,17 @@ class MockDRTTest(unittest.TestCase):
         self.assertEqual(stderr.getvalue(), '')
 
     def test_main(self):
-        filesystem = test.unit_test_filesystem()
+        host = MockHost()
+        host.filesystem = test.unit_test_filesystem()
         stdin = newstringio.StringIO()
         stdout = newstringio.StringIO()
         stderr = newstringio.StringIO()
         res = mock_drt.main(['--platform', 'test'] + self.extra_args(False),
-                            filesystem, stdin, stdout, stderr)
+                            host, stdin, stdout, stderr)
         self.assertEqual(res, 0)
         self.assertEqual(stdout.getvalue(), '')
         self.assertEqual(stderr.getvalue(), '')
-        self.assertEqual(filesystem.written_files, {})
+        self.assertEqual(host.filesystem.written_files, {})
 
     def test_pixeltest_passes(self):
         # This also tests that we handle HTTP: test URLs properly.
@@ -204,7 +205,7 @@ class MockChromiumDRTTest(MockDRTTest):
             return ['--pixel-tests=/tmp/png_result0.png']
         return []
 
-    def make_drt(self, options, args, filesystem, stdin, stdout, stderr):
+    def make_drt(self, options, args, host, stdin, stdout, stderr):
         options.chromium = True
 
         # We have to set these by hand because --platform test won't trigger
@@ -212,7 +213,7 @@ class MockChromiumDRTTest(MockDRTTest):
         options.pixel_path = '/tmp/png_result0.png'
         options.pixel_tests = True
 
-        return mock_drt.MockChromiumDRT(options, args, filesystem, stdin, stdout, stderr)
+        return mock_drt.MockChromiumDRT(options, args, host, stdin, stdout, stderr)
 
     def input_line(self, port, test_name, checksum=None):
         url = port.test_to_uri(test_name)

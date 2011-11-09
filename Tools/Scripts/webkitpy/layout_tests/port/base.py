@@ -47,11 +47,9 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.common import system
 from webkitpy.common.system import logutils
 from webkitpy.common.system import path
-from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.system.user import User
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
@@ -67,7 +65,7 @@ _log = logutils.get_logger(__file__)
 class DummyOptions(object):
     """Fake implementation of optparse.Values. Cloned from webkitpy.tool.mocktool.MockOptions."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         # The caller can set option values using keyword arguments. We don't
         # set any values by default because we don't know how this
         # object will be used. Generally speaking unit tests should
@@ -88,7 +86,8 @@ class Port(object):
 
     ALL_BUILD_TYPES = ('debug', 'release')
 
-    def __init__(self, port_name=None, options=None,
+    def __init__(self, host,
+                 port_name=None, options=None,
                  executive=None,
                  user=None,
                  filesystem=None,
@@ -107,9 +106,12 @@ class Port(object):
         # options defined on it.
         self.options = options or DummyOptions()
 
-        self.executive = executive or Executive()
-        self.user = user or User()
-        self.filesystem = filesystem or system.filesystem.FileSystem()
+        self.host = host
+
+        # FIXME: Remove thes accessors once all callers have moved to using self.host.
+        self.executive = executive or self.host.executive
+        self.user = user or self.host.user
+        self.filesystem = filesystem or self.host.filesystem
         self.config = config or port_config.Config(self.executive, self.filesystem)
 
         # FIXME: Remove all of the old "protected" versions when we can.

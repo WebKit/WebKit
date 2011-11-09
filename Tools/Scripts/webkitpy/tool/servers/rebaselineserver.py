@@ -31,6 +31,7 @@ import os
 import os.path
 import BaseHTTPServer
 
+from webkitpy.common.host import Host  # FIXME: This should not be needed!
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
@@ -164,7 +165,8 @@ def get_test_baselines(test_file, test_config):
     # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
     class AllPlatformsPort(WebKitPort):
         def __init__(self):
-            WebKitPort.__init__(self, filesystem=test_config.filesystem)
+            # FIXME: This should get the Host from the test_config to be mockable!
+            WebKitPort.__init__(self, Host(), filesystem=test_config.filesystem)
             self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):

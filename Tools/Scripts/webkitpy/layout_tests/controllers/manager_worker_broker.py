@@ -52,7 +52,7 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.common.host import Host  # FIXME: This should not be needed!
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
 
@@ -252,8 +252,10 @@ if multiprocessing:
 
         def run(self):
             options = self._options
-            # FIXME: This should get the PortFactory from the Host.
-            port_obj = PortFactory().get(self._platform_name, options)
+            # FIXME: This should get the Host from the owner of this object
+            # so this function can be properly mocked!
+            host = Host()
+            port_obj = host.port_factory.get(self._platform_name, options)
 
             # The unix multiprocessing implementation clones the
             # log handler configuration into the child processes,

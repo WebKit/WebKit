@@ -34,14 +34,9 @@ ports and changes the Driver binary to "MockDRT".
 
 import base64
 import logging
-import optparse
-import os
 import sys
 
-from webkitpy.common.system import filesystem
-
-from webkitpy.layout_tests.port import base
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.common.host import Host
 from webkitpy.tool.mocktool import MockOptions
 
 
@@ -51,12 +46,12 @@ _log = logging.getLogger(__name__)
 class MockDRTPort(object):
     """MockPort implementation of the Port interface."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, host, **kwargs):
         prefix = 'mock-'
         if 'port_name' in kwargs:
             kwargs['port_name'] = kwargs['port_name'][len(prefix):]
-        # FIXME: This should get the PortFactory from a Host object.
-        self.__delegate = PortFactory().get(**kwargs)
+        self._host = host
+        self.__delegate = host.port_factory.get(**kwargs)
         self.__real_name = prefix + self.__delegate.name()
 
     def real_name(self):
@@ -76,7 +71,7 @@ class MockDRTPort(object):
         return driver.cmd_line()
 
     def _path_to_driver(self):
-        return os.path.abspath(__file__)
+        return self._host.filesystem.abspath(__file__)
 
     def create_driver(self, worker_number):
         # We need to create a driver object as the delegate would, but
@@ -88,8 +83,8 @@ class MockDRTPort(object):
         def overriding_cmd_line():
             cmd = self.__original_driver_cmd_line()
             index = cmd.index(self.__delegate._path_to_driver())
-            cmd[index:index + 1] = [sys.executable, self._path_to_driver(),
-                                    '--platform', self.name()]
+            # FIXME: Why does this need to use sys.executable (instead of something mockable)?
+            cmd[index:index + 1] = [sys.executable, self._path_to_driver(), '--platform', self.name()]
             return cmd
 
         delegated_driver = self.__delegate.create_driver(worker_number)
@@ -122,14 +117,14 @@ class MockDRTPort(object):
         pass
 
 
-def main(argv, fs, stdin, stdout, stderr):
+def main(argv, host, stdin, stdout, stderr):
     """Run the tests."""
 
     options, args = parse_options(argv)
     if options.chromium:
-        drt = MockChromiumDRT(options, args, fs, stdin, stdout, stderr)
+        drt = MockChromiumDRT(options, args, host, stdin, stdout, stderr)
     else:
-        drt = MockDRT(options, args, fs, stdin, stdout, stderr)
+        drt = MockDRT(options, args, host, stdin, stdout, stderr)
     return drt.run()
 
 
@@ -174,10 +169,10 @@ class _DRTInput(object):
 
 
 class MockDRT(object):
-    def __init__(self, options, args, filesystem, stdin, stdout, stderr):
+    def __init__(self, options, args, host, stdin, stdout, stderr):
         self._options = options
         self._args = args
-        self._filesystem = filesystem
+        self._host = host
         self._stdout = stdout
         self._stdin = stdin
         self._stderr = stderr
@@ -185,8 +180,7 @@ class MockDRT(object):
         port_name = None
         if options.platform:
             port_name = options.platform
-        # FIXME: This should get the PortFactory from a Host object.
-        self._port = PortFactory().get(port_name, options=options, filesystem=filesystem)
+        self._port = self._host.port_factory.get(port_name, options=options)
 
     def run(self):
         while True:
@@ -270,7 +264,7 @@ class MockChromiumDRT(MockDRT):
         self._stdout.write("#URL:%s\n" % test_input.uri)
         if self._options.pixel_tests and test_input.checksum:
             self._stdout.write("#MD5:%s\n" % actual_checksum)
-            self._filesystem.write_binary_file(self._options.pixel_path,
+            self._host.filesystem.write_binary_file(self._options.pixel_path,
                                                actual_image)
         self._stdout.write(actual_text)
 
@@ -283,5 +277,6 @@ class MockChromiumDRT(MockDRT):
 
 
 if __name__ == '__main__':
-    fs = filesystem.FileSystem()
-    sys.exit(main(sys.argv[1:], fs, sys.stdin, sys.stdout, sys.stderr))
+    # FIXME: Why is this using a real Host object instead of MockHost?
+    host = Host()
+    sys.exit(main(sys.argv[1:], host, sys.stdin, sys.stdout, sys.stderr))

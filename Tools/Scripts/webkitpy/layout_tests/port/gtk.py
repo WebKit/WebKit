@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
 """WebKit Gtk implementation of the Port interface."""
 
 import logging
@@ -34,36 +36,37 @@ import signal
 import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port import base, builders, server_process, webkit
+from webkitpy.layout_tests.port.server_process import ServerProcess
+from webkitpy.layout_tests.port.webkit import WebKitDriver, WebKitPort
 
 
 _log = logging.getLogger(__name__)
 
 
-class GtkDriver(webkit.WebKitDriver):
+class GtkDriver(WebKitDriver):
     def start(self):
         display_id = self._worker_number + 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
-        devnull = open(os.devnull, 'w')
-        self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
-        devnull.close()
+        with open(os.devnull, 'w') as devnull:
+            self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % (display_id)
-        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
+        self._server_process = ServerProcess(self._port, server_name, self.cmd_line(), environment)
 
     def stop(self):
-        webkit.WebKitDriver.stop(self)
+        WebKitDriver.stop(self)
+        # FIXME: This should use Executive.kill_process
         os.kill(self._xvfb_process.pid, signal.SIGTERM)
         self._xvfb_process.wait()
 
 
-class GtkPort(webkit.WebKitPort):
+class GtkPort(WebKitPort):
     port_name = "gtk"
 
-    def __init__(self, **kwargs):
-        webkit.WebKitPort.__init__(self, **kwargs)
+    def __init__(self, host, **kwargs):
+        WebKitPort.__init__(self, host, **kwargs)
         self._version = self.port_name
 
     def _port_flag_for_scripts(self):
@@ -73,7 +76,7 @@ class GtkPort(webkit.WebKitPort):
         return GtkDriver(self, worker_number)
 
     def setup_environ_for_server(self, server_name=None):
-        environment = webkit.WebKitPort.setup_environ_for_server(self, server_name)
+        environment = WebKitPort.setup_environ_for_server(self, server_name)
         environment['GTK_MODULES'] = 'gail'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')

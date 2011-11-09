@@ -37,7 +37,6 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
 
 
 # FIXME: Other unit tests probably want this class.

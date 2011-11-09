@@ -47,7 +47,6 @@ from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.host_mock import MockHost
 
 
@@ -188,7 +187,7 @@ class ManagerTest(unittest.TestCase):
 
         options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
         host = MockHost()
-        port = host.port_factory.get(port_name=options.platform, options=options, user=MockUser(), executive=MockExecutive())
+        port = host.port_factory.get(port_name=options.platform, options=options)
         run_webkit_tests._set_up_derived_options(port, options)
         printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO(), configure_logging=True)
         manager = LockCheckingManager(port, options, printer)

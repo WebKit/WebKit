@@ -29,6 +29,7 @@
 import unittest
 
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import chromium_mac
 from webkitpy.layout_tests.port import port_testcase
@@ -36,21 +37,21 @@ from webkitpy.layout_tests.port import port_testcase
 
 class ChromiumMacPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
+        # FIXME: This platform check should be removed!
         if platform != 'darwin':
             return None
         return chromium_mac.ChromiumMacPort
 
     def test_check_wdiff(self):
-        port = chromium_mac.ChromiumMacPort()
+        port = chromium_mac.ChromiumMacPort(MockHost())
         self.assertTrue(port.check_wdiff())
 
     def assert_name(self, port_name, os_version_string, expected):
-        port = chromium_mac.ChromiumMacPort(port_name=port_name,
-                                            os_version_string=os_version_string)
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name=port_name, os_version_string=os_version_string)
         self.assertEquals(expected, port.name())
 
     def test_versions(self):
-        port = chromium_mac.ChromiumMacPort()
+        port = chromium_mac.ChromiumMacPort(MockHost())
         self.assertTrue(port.name() in ('chromium-cg-mac-leopard', 'chromium-cg-mac-snowleopard', 'chromium-cg-mac-lion', 'chromium-cg-mac-future'))
 
         self.assert_name(None, '10.5.3', 'chromium-cg-mac-leopard')
@@ -75,22 +76,22 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
         self.assertRaises(AssertionError, self.assert_name, None, '10.4.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
     def test_baseline_path(self):
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-leopard')
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name='chromium-mac-leopard')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-leopard'))
 
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-snowleopard')
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name='chromium-mac-snowleopard')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-snowleopard'))
 
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-lion')
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name='chromium-mac-lion')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
     def test_graphics_type(self):
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-cg-mac')
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name='chromium-cg-mac')
         self.assertEquals('cpu-cg', port.graphics_type())
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac')
+        port = chromium_mac.ChromiumMacPort(MockHost(), port_name='chromium-mac')
         self.assertEquals('cpu', port.graphics_type())
         # For now, Mac defaults to cpu-cg graphics type.
-        port = chromium_mac.ChromiumMacPort()
+        port = chromium_mac.ChromiumMacPort(MockHost())
         self.assertEquals('cpu-cg', port.graphics_type())
 
 

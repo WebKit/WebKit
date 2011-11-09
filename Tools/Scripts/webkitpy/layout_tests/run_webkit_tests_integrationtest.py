@@ -61,7 +61,6 @@ SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win3
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
-from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
@@ -146,7 +145,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         extra_args = ['passes', 'failures'] + extra_args
     options, parsed_args = parse_args(extra_args, tests_included=True)
 
-    user = MockUser()
+    host = MockHost()
 
     test_batches = []
 
@@ -179,7 +178,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         def create_driver(self, worker_number):
             return RecordingTestDriver(self, worker_number)
 
-    recording_port = RecordingTestPort(options=options, user=user, filesystem=filesystem)
+    recording_port = RecordingTestPort(options=options, host=host, filesystem=filesystem)
     run_and_capture(recording_port, options, parsed_args)
 
     if flatten_batches:
@@ -467,7 +466,7 @@ class MainTest(unittest.TestCase):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
         options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
-        test_port = CustomExitCodePort(options=options, user=MockUser())
+        test_port = CustomExitCodePort(options=options)
         res, out, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
@@ -639,7 +638,7 @@ class MainTest(unittest.TestCase):
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
-            test_port = ImageDiffTestPort(options=options, user=MockUser())
+            test_port = ImageDiffTestPort(options=options)
             res = passing_run(args, port_obj=test_port, tests_included=True)
             self.assertTrue(res)
             return test_port

@@ -57,15 +57,14 @@ from webkitpy.layout_tests.port import Driver, DriverOutput, factory
 class DryRunPort(object):
     """DryRun implementation of the Port interface."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, host, **kwargs):
         pfx = 'dryrun-'
         if 'port_name' in kwargs:
             if kwargs['port_name'].startswith(pfx):
                 kwargs['port_name'] = kwargs['port_name'][len(pfx):]
             else:
                 kwargs['port_name'] = None
-        # FIXME: This should get the PortFactory from a Host object.
-        self.__delegate = factory.PortFactory().get(**kwargs)
+        self.__delegate = host.port_factory.get(**kwargs)
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

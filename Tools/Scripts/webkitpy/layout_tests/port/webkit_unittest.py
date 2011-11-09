@@ -27,32 +27,26 @@
 
 import unittest
 
+from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
 from webkitpy.layout_tests.port import port_testcase
-
+from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
-
 
 
 class TestWebKitPort(WebKitPort):
     port_name = "testwebkitport"
 
     def __init__(self, symbols_string=None, feature_list=None,
-                 expectations_file=None, skips_file=None,
-                 executive=None, filesystem=None, user=None,
+                 expectations_file=None, skips_file=None, host=None,
                  **kwargs):
         self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
         self.feature_list = feature_list  # Passing [] disables all runtime-detectable features.
-        executive = executive or MockExecutive(should_log=False)
-        filesystem = filesystem or MockFileSystem()
-        user = user or MockUser()
-        WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
+        host = host or MockHost()
+        WebKitPort.__init__(self, host=host, **kwargs)
 
     def all_test_configurations(self):
         return [TestConfiguration.from_port(self)]
@@ -74,13 +68,13 @@ class WebKitPortUnitTests(unittest.TestCase):
     def test_default_options(self):
         # The WebKit ports override new-run-webkit-test default options.
         options = MockOptions(pixel_tests=None, time_out_ms=None)
-        port = WebKitPort(options=options)
+        port = WebKitPort(MockHost(), options=options)
         self.assertEquals(port._options.pixel_tests, False)
         self.assertEquals(port._options.time_out_ms, 35000)
 
         # Note that we don't override options if specified by the user.
         options = MockOptions(pixel_tests=True, time_out_ms=6000)
-        port = WebKitPort(options=options)
+        port = WebKitPort(MockHost(), options=options)
         self.assertEquals(port._options.pixel_tests, True)
         self.assertEquals(port._options.time_out_ms, 6000)
 
@@ -124,7 +118,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
         self.assertEqual(result_directories, expected_directories)
 
     def test_runtime_feature_list(self):
-        port = WebKitPort(executive=MockExecutive())
+        port = WebKitPort(MockHost())
         port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
         # runtime_features_list returns None when its results are meaningless (it couldn't run DRT or parse the output, etc.)
         self.assertEquals(port._runtime_feature_list(), None)

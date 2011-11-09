@@ -35,8 +35,7 @@ import time
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.common.system.user_mock import MockUser
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
@@ -277,15 +276,14 @@ class TestPort(Port):
             dictionary[key] = default
         return dictionary[key]
 
-    def __init__(self, port_name=None, **kwargs):
+    def __init__(self, host=None, port_name=None, **kwargs):
         if not port_name or port_name == 'test':
             port_name = 'test-mac-leopard'
 
-        self._set_default_overriding_none(kwargs, 'user', MockUser())
-        self._set_default_overriding_none(kwargs, 'executive', MockExecutive())
+        host = host or MockHost()
         filesystem = self._set_default_overriding_none(kwargs, 'filesystem', unit_test_filesystem())
 
-        Port.__init__(self, port_name=port_name, **kwargs)
+        Port.__init__(self, host, port_name=port_name, **kwargs)
         self._results_directory = None
 
         assert filesystem._tests

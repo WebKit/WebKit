@@ -88,8 +88,8 @@ class ChromiumPort(Port):
         'linux': ['lucid'],
     }
 
-    def __init__(self, **kwargs):
-        Port.__init__(self, **kwargs)
+    def __init__(self, host, **kwargs):
+        Port.__init__(self, host, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
         self._version = 'xp'
         self._chromium_base_dir = None

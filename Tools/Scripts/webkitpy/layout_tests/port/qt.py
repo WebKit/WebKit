@@ -59,8 +59,8 @@ class QtPort(WebKitPort):
         return None
 
     # sys_platform exists only for unit testing.
-    def __init__(self, sys_platform=None, **kwargs):
-        WebKitPort.__init__(self, **kwargs)
+    def __init__(self, host, sys_platform=None, **kwargs):
+        WebKitPort.__init__(self, host, **kwargs)
         self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
         self._version = self._operating_system
 

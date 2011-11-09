@@ -35,7 +35,7 @@ from webkitpy.layout_tests.port.qt import QtPort
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 
 
 class QtPortTest(port_testcase.PortTestCase):
@@ -48,8 +48,7 @@ class QtPortTest(port_testcase.PortTestCase):
         # we fix that, this method will need a re-write.
         port = QtPort(sys_platform=sys_platform,
             options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'),
-            filesystem=MockFileSystem(),
-            user=MockUser(),
+            host=MockHost(),
             executive=MockExecutive2(self._qt_version(qt_version)))
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)

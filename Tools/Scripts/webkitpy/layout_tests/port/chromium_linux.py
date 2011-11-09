@@ -27,10 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Chromium Linux implementation of the Port interface."""
-
 import logging
-
 import chromium
 
 
@@ -58,9 +55,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         ],
     }
 
-    def __init__(self, port_name=None, **kwargs):
+    def __init__(self, host, port_name=None, **kwargs):
         port_name = port_name or 'chromium-linux'
-        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
+        chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
         # We re-set the port name once the base object is fully initialized
         # in order to be able to find the DRT binary properly.
         if port_name.endswith('-linux'):

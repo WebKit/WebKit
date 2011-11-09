@@ -41,7 +41,8 @@ def _test_expectations_overrides(port, super):
     chromium_overrides = chromium_overrides or ''
     return chromium_overrides + port._filesystem.read_text_file(overrides_path)
 
-def GetGoogleChromePort(**kwargs):
+
+def GetGoogleChromePort(host, **kwargs):
     """Some tests have slightly different results when compiled as Google
     Chrome vs Chromium.  In those cases, we prepend an additional directory to
     to the baseline paths."""
@@ -54,69 +55,57 @@ def GetGoogleChromePort(**kwargs):
 
         class GoogleChromeLinux32Port(chromium_linux.ChromiumLinuxPort):
             def baseline_search_path(self):
-                paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(
-                    self)
-                paths.insert(0, self._webkit_baseline_path(
-                    'google-chrome-linux32'))
+                paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(self)
+                paths.insert(0, self._webkit_baseline_path('google-chrome-linux32'))
                 return paths
 
             def test_expectations_overrides(self):
-                return _test_expectations_overrides(self,
-                    chromium_linux.ChromiumLinuxPort)
+                return _test_expectations_overrides(self, chromium_linux.ChromiumLinuxPort)
 
             def architecture(self):
                 return 'x86'
 
-        return GoogleChromeLinux32Port(port_name='chromium-linux-x86', **kwargs)
+        return GoogleChromeLinux32Port(host, port_name='chromium-linux-x86', **kwargs)
     elif port_name == 'google-chrome-linux64':
         import chromium_linux
 
         class GoogleChromeLinux64Port(chromium_linux.ChromiumLinuxPort):
             def baseline_search_path(self):
-                paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(
-                    self)
-                paths.insert(0, self._webkit_baseline_path(
-                    'google-chrome-linux64'))
+                paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(self)
+                paths.insert(0, self._webkit_baseline_path('google-chrome-linux64'))
                 return paths
 
             def test_expectations_overrides(self):
-                return _test_expectations_overrides(self,
-                    chromium_linux.ChromiumLinuxPort)
+                return _test_expectations_overrides(self, chromium_linux.ChromiumLinuxPort)
 
             def architecture(self):
                 return 'x86_64'
 
-        return GoogleChromeLinux64Port(port_name='chromium-linux-x86_64', **kwargs)
+        return GoogleChromeLinux64Port(host, port_name='chromium-linux-x86_64', **kwargs)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
 
         class GoogleChromeMacPort(chromium_mac.ChromiumMacPort):
             def baseline_search_path(self):
-                paths = chromium_mac.ChromiumMacPort.baseline_search_path(
-                    self)
-                paths.insert(0, self._webkit_baseline_path(
-                    'google-chrome-mac'))
+                paths = chromium_mac.ChromiumMacPort.baseline_search_path(self)
+                paths.insert(0, self._webkit_baseline_path('google-chrome-mac'))
                 return paths
 
             def test_expectations_overrides(self):
-                return _test_expectations_overrides(self,
-                    chromium_mac.ChromiumMacPort)
+                return _test_expectations_overrides(self, chromium_mac.ChromiumMacPort)
 
-        return GoogleChromeMacPort(**kwargs)
+        return GoogleChromeMacPort(host, **kwargs)
     elif port_name.startswith('google-chrome-win'):
         import chromium_win
 
         class GoogleChromeWinPort(chromium_win.ChromiumWinPort):
             def baseline_search_path(self):
-                paths = chromium_win.ChromiumWinPort.baseline_search_path(
-                    self)
-                paths.insert(0, self._webkit_baseline_path(
-                    'google-chrome-win'))
+                paths = chromium_win.ChromiumWinPort.baseline_search_path(self)
+                paths.insert(0, self._webkit_baseline_path('google-chrome-win'))
                 return paths
 
             def test_expectations_overrides(self):
-                return _test_expectations_overrides(self,
-                    chromium_win.ChromiumWinPort)
+                return _test_expectations_overrides(self, chromium_win.ChromiumWinPort)
 
-        return GoogleChromeWinPort(**kwargs)
+        return GoogleChromeWinPort(host, **kwargs)
     raise NotImplementedError('unsupported port: %s' % port_name)

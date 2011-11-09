@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.common.system import executive_mock
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import chromium_linux
 from webkitpy.layout_tests.port import port_testcase
@@ -43,14 +43,12 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
 
     def assert_architecture(self, port_name=None, file_output=None,
                             expected_architecture=None):
-        filesystem = filesystem_mock.MockFileSystem()
-        filesystem.exists = lambda x: 'DumpRenderTree' in x
-        executive = None
+        host = MockHost()
+        host.filesystem.exists = lambda x: 'DumpRenderTree' in x
         if file_output:
-            executive = executive_mock.MockExecutive2(file_output)
+            host.executive = executive_mock.MockExecutive2(file_output)
 
-        port = chromium_linux.ChromiumLinuxPort(port_name=port_name,
-            executive=executive, filesystem=filesystem)
+        port = chromium_linux.ChromiumLinuxPort(host, port_name=port_name)
         self.assertEquals(port.architecture(), expected_architecture)
         if expected_architecture == 'x86':
             self.assertTrue(port.baseline_path().endswith('chromium-linux-x86'))
@@ -73,31 +71,24 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
     def test_check_illegal_port_names(self):
         # FIXME: Check that, for now, these are illegal port names.
         # Eventually we should be able to do the right thing here.
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort,
-                          port_name='chromium-x86-linux')
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort,
-                          port_name='chromium-linux-x86-gpu')
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockHost(), port_name='chromium-x86-linux')
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockHost(), port_name='chromium-linux-x86-gpu')
 
     def test_determine_architecture_fails(self):
         # Test that we default to 'x86' if the driver doesn't exist.
-        filesystem = filesystem_mock.MockFileSystem()
-        port = chromium_linux.ChromiumLinuxPort(filesystem=filesystem)
+        port = chromium_linux.ChromiumLinuxPort(MockHost())
         self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we default to 'x86' on an unknown architecture.
-        filesystem = filesystem_mock.MockFileSystem()
-        filesystem.exists = lambda x: True
-        executive = executive_mock.MockExecutive2('win32')
-        port = chromium_linux.ChromiumLinuxPort(filesystem=filesystem,
-                                                executive=executive)
+        host = MockHost()
+        host.filesystem.exists = lambda x: True
+        host.executive = executive_mock.MockExecutive2('win32')
+        port = chromium_linux.ChromiumLinuxPort(host)
         self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we raise errors if something weird happens.
-        filesystem = filesystem_mock.MockFileSystem()
-        filesystem.exists = lambda x: True
-        executive = executive_mock.MockExecutive2(exception=AssertionError)
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort,
-                          filesystem=filesystem, executive=executive)
+        host.executive = executive_mock.MockExecutive2(exception=AssertionError)
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, host)
 
 
 if __name__ == '__main__':

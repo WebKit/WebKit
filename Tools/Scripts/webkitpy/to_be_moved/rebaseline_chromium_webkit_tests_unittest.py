@@ -40,7 +40,6 @@ from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
 
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
-from webkitpy.common.system.user_mock import MockUser
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.port.test import unit_test_filesystem

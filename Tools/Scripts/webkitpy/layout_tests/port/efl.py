@@ -31,24 +31,24 @@ import signal
 import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port import base, builders, server_process, webkit
+from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
 _log = logging.getLogger(__name__)
 
 
-class EflPort(webkit.WebKitPort):
+class EflPort(WebKitPort):
     port_name = "efl"
 
-    def __init__(self, **kwargs):
-        webkit.WebKitPort.__init__(self, **kwargs)
+    def __init__(self, host, **kwargs):
+        WebKitPort.__init__(self, host, **kwargs)
         self._version = self.port_name
 
     def _port_flag_for_scripts(self):
         return "--efl"
 
     def setup_environ_for_server(self, server_name=None):
-        return webkit.WebKitPort.setup_environ_for_server(self, server_name)
+        return WebKitPort.setup_environ_for_server(self, server_name)
 
     def _generate_all_test_configurations(self):
         return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu') for build_type in self.ALL_BUILD_TYPES]

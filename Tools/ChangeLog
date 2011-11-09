@@ -1,3 +1,69 @@
+2011-11-09  Eric Seidel  <eric@webkit.org>
+
+        Make the Port object have a Host
+        https://bugs.webkit.org/show_bug.cgi?id=71961
+
+        Reviewed by Adam Barth.
+
+        This has been a long time coming.
+        Now that Port has a Host object, it's very easy
+        to write unittests which use a properly mocked Port.
+        Soon we will remove the executive, filesystem and user
+        members of Port and get everything through the Host.
+
+        Note how in many callsites we're actually removing
+        explicit mocks, since we're now always going to get the
+        correct Executive/User/FileSystem from the
+        Host and callsites don't need to be careful to pass each one.
+
+        This is prep-work for adding a new Environment member to
+        Host and needing to be able to access the Environment
+        member from Port functions w/o needing to pass an Environment
+        object (or appropriate Mock) every place we create a Port object.
+        Now that we have a single Host object to reach out through, its
+        simple to add additional functionality (like Environment) while
+        keeping our unittests properly mocked.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+
 2011-11-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] Implement AccessibilityUIElement::insertionPointLineNumberGetterCallback

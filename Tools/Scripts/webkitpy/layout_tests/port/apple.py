@@ -56,9 +56,9 @@ class ApplePort(WebKitPort):
         # instead of the individual port constructors.
         return port_name[len(self.port_name + '-'):]
 
-    def __init__(self, port_name=None, os_version_string=None, **kwargs):
+    def __init__(self, host, port_name=None, os_version_string=None, **kwargs):
         port_name = port_name or self.port_name
-        WebKitPort.__init__(self, port_name=port_name, **kwargs)
+        WebKitPort.__init__(self, host, port_name=port_name, **kwargs)
 
         # FIXME: This sort of parsing belongs in factory.py!
         if port_name == '%s-wk2' % self.port_name:

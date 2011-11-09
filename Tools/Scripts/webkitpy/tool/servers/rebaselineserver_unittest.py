@@ -34,12 +34,14 @@ except ImportError:
     # python 2.5 compatibility
     import webkitpy.thirdparty.simplejson as json
 
+
+from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.net import resultsjsonparser_unittest
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
-from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.tool.servers import rebaselineserver
 
 
@@ -299,7 +301,7 @@ def get_test_config(test_files=[], result_files=[]):
     # We could grab this from port.layout_tests_dir(), but instantiating a fully mocked port is a pain.
     layout_tests_directory = "/mock-checkout/LayoutTests"
     results_directory = '/WebKitBuild/Debug/layout-test-results'
-    mock_filesystem = filesystem_mock.MockFileSystem()
+    mock_filesystem = MockFileSystem()
     for file in test_files:
         file_path = mock_filesystem.join(layout_tests_directory, file)
         mock_filesystem.files[file_path] = ''
@@ -310,8 +312,7 @@ def get_test_config(test_files=[], result_files=[]):
     class TestMacPort(WebKitPort):
         port_name = "mac"
         def __init__(self):
-            # FIXME: This should use MockExecutive and MockUser as well.
-            WebKitPort.__init__(self, filesystem=mock_filesystem)
+            WebKitPort.__init__(self, filesystem=mock_filesystem, host=MockHost())
 
     return TestConfig(
         TestMacPort(),

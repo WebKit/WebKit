@@ -46,7 +46,7 @@ from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
+from webkitpy.common.host_mock import MockHost
 mock_options = MockOptions(configuration='Release')
 
 
@@ -68,7 +68,7 @@ class PortTestCase(unittest.TestCase):
         if not maker:
             return None
 
-        return maker(options=options, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        return maker(options=options, host=MockHost())
 
     def test_default_worker_model(self):
         port = self.make_port()

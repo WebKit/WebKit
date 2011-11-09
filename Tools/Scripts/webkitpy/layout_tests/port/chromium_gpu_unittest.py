@@ -58,16 +58,18 @@ class ChromiumGpuTest(unittest.TestCase):
         self.assert_port_works('chromium-gpu-win', 'chromium-gpu', 'cygwin')
 
     def assert_port_works(self, port_name, input_name=None, platform=None):
+        host = MockHost()
+        host.filesystem = FileSystem()  # FIXME: This test should not use a real filesystem!
+
         # test that we got the right port
         mock_options = MockOptions(accelerated_compositing=None,
                                             accelerated_2d_canvas=None,
                                             builder_name='foo',
                                             child_processes=None)
         if input_name and platform:
-            port = chromium_gpu.get(platform=platform, port_name=input_name,
-                                    options=mock_options)
+            port = chromium_gpu.get(host, platform=platform, port_name=input_name, options=mock_options)
         else:
-            port = chromium_gpu.get(port_name=port_name, options=mock_options)
+            port = chromium_gpu.get(host, port_name=port_name, options=mock_options)
         self.assertTrue(port._options.accelerated_compositing)
         self.assertTrue(port._options.accelerated_2d_canvas)
         self.assertTrue(port._options.experimental_fully_parallel)

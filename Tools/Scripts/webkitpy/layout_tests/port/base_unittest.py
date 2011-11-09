@@ -39,8 +39,7 @@ from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.user_mock import MockUser
-
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 
@@ -50,9 +49,7 @@ import config_mock
 
 class PortTest(unittest.TestCase):
     def make_port(self, *args, **kwargs):
-        kwargs.setdefault('filesystem', MockFileSystem())
-        kwargs.setdefault('user', MockUser())
-        kwargs.setdefault('executive', MockExecutive())
+        kwargs.setdefault('host', MockHost())
         return Port(*args, **kwargs)
 
     def test_format_wdiff_output_as_html(self):
@@ -284,7 +281,7 @@ class VirtualTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, method, *args, **kwargs)
 
     def test_virtual_methods(self):
-        port = Port()
+        port = Port(MockHost())
         self.assertVirtual(port.baseline_path)
         self.assertVirtual(port.baseline_search_path)
         self.assertVirtual(port.check_build, None)
