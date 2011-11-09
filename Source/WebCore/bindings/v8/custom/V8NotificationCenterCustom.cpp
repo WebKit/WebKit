@@ -33,6 +33,7 @@
 #if ENABLE(NOTIFICATIONS)
 #include "V8NotificationCenter.h"
 
+#include "ExceptionCode.h"
 #include "NotImplemented.h"
 #include "Notification.h"
 #include "NotificationCenter.h"

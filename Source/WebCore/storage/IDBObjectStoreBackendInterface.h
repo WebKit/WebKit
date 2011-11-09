@@ -26,7 +26,6 @@
 #ifndef IDBObjectStoreBackendInterface_h
 #define IDBObjectStoreBackendInterface_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Threading.h>
 
@@ -41,6 +40,8 @@ class IDBKey;
 class IDBKeyRange;
 class IDBTransactionBackendInterface;
 class SerializedScriptValue;
+
+typedef int ExceptionCode;
 
 class IDBObjectStoreBackendInterface : public ThreadSafeRefCounted<IDBObjectStoreBackendInterface> {
 public:

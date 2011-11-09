@@ -26,13 +26,14 @@
 #define ClassList_h
 
 #include "DOMTokenList.h"
-#include "ExceptionCode.h"
 #include "SpaceSplitString.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class Element;
+
+typedef int ExceptionCode;
 
 class ClassList : public DOMTokenList {
 public:

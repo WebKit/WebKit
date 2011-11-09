@@ -35,7 +35,6 @@
 
 #include "DOMFileSystemSync.h"
 #include "EntryBase.h"
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,6 +43,8 @@ namespace WebCore {
 
 class DirectoryEntrySync;
 class Metadata;
+
+typedef int ExceptionCode;
 
 class EntrySync : public EntryBase {
 public:

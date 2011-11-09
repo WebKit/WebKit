@@ -1,3 +1,89 @@
+2011-11-08  Adam Klein  <adamk@chromium.org>
+
+        Use a typedef for ExceptionCode in all header files instead of including ExceptionCode.h
+        https://bugs.webkit.org/show_bug.cgi?id=71845
+
+        Reviewed by Adam Barth.
+
+        Some headers in WebCore include ExceptionCode.h to get the ExceptionCode typedef,
+        while others provide the typedef themselves. Per Darin, the latter is preferred,
+        so this patch updates all references, and fixes up .cpp files that
+        need the include in order to access the enum.
+
+        * bindings/js/JSSVGLengthCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): #include ExceptionCode.h when needed for SVG.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation): #include ExceptionCode.h when needed for SVG.
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        * css/WebKitCSSMatrix.h:
+        * fileapi/DirectoryReaderSync.h:
+        * fileapi/EntrySync.h:
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderSync.h:
+        * fileapi/SyncCallbackHelper.h:
+        * html/ClassList.h:
+        * html/DOMSettableTokenList.h:
+        * html/DOMTokenList.cpp:
+        * html/DOMTokenList.h:
+        * html/TextTrack.cpp:
+        * html/TextTrack.h:
+        * html/TimeRanges.cpp:
+        * html/TimeRanges.h:
+        * html/canvas/ArrayBuffer.cpp:
+        * html/canvas/ArrayBuffer.h:
+        * html/canvas/ArrayBufferView.cpp:
+        * html/canvas/ArrayBufferView.h:
+        * html/canvas/DataView.cpp:
+        * html/canvas/DataView.h:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * mediastream/MediaStreamFrameController.cpp:
+        * mediastream/MediaStreamFrameController.h:
+        * notifications/Notification.h:
+        * notifications/NotificationCenter.h:
+        * storage/AbstractDatabase.cpp:
+        * storage/AbstractDatabase.h:
+        * storage/Database.h:
+        * storage/DatabaseSync.h:
+        * storage/DatabaseTask.h:
+        * storage/IDBCursor.h:
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBFactory.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBKeyRange.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBRequest.h:
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/SQLResultSet.cpp:
+        * storage/SQLResultSet.h:
+        * storage/SQLStatementSync.h:
+        * storage/SQLTransaction.cpp:
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionSync.h:
+        * svg/ElementTimeControl.h:
+        * svg/SVGAngle.cpp:
+        * svg/SVGAngle.h:
+        * svg/SVGLength.cpp:
+        * svg/SVGLength.h:
+        * svg/SVGLengthContext.cpp:
+        * svg/SVGLengthContext.h:
+        * svg/SVGLocatable.h:
+        * svg/SVGMatrix.h:
+        * svg/SVGPreserveAspectRatio.cpp:
+        * svg/SVGPreserveAspectRatio.h:
+        * testing/Internals.h:
+        * webaudio/AudioContext.cpp:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/SharedWorkerRepository.h:
+
 2011-11-08  Kentaro Hara  <haraken@chromium.org>
 
         CodeGeneratorV8.pm can generate a NamedConstructor

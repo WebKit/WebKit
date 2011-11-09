@@ -33,7 +33,6 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
-#include "ExceptionCode.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +46,8 @@ class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
 class Node;
+
+typedef int ExceptionCode;
 
 typedef unsigned char MutationObserverOptions;
 typedef unsigned char MutationRecordDeliveryOptions;

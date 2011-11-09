@@ -27,6 +27,7 @@
 
 #include "TimeRanges.h"
 
+#include "ExceptionCode.h"
 #include <math.h>
 
 using namespace WebCore;

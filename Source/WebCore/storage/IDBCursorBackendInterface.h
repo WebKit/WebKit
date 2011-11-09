@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
@@ -40,6 +39,8 @@ class IDBCallbacks;
 class IDBKey;
 class IDBRequest;
 class SerializedScriptValue;
+
+typedef int ExceptionCode;
 
 class IDBCursorBackendInterface : public ThreadSafeRefCounted<IDBCursorBackendInterface> {
 public:

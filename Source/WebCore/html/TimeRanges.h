@@ -26,14 +26,14 @@
 #ifndef TimeRanges_h
 #define TimeRanges_h
 
-#include "ExceptionCode.h"
-
 #include <algorithm>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:

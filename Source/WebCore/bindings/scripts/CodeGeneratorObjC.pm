@@ -1390,6 +1390,7 @@ sub GenerateImplementation
                 }
 
                 if ($svgPropertyType) {
+                    $implIncludes{"ExceptionCode.h"} = 1;
                     $getterContentHead = "$getterExpressionPrefix";
                     push(@implContent, "    if (IMPL->role() == WebCore::AnimValRole) {\n");
                     push(@implContent, "        WebCore::raiseOnDOMError(WebCore::NO_MODIFICATION_ALLOWED_ERR);\n");
@@ -1559,6 +1560,7 @@ sub GenerateImplementation
                 my $implGetter = GetObjCTypeGetter($paramName, $idlType);
                 my $idlTypeWithNamespace = GetSVGTypeWithNamespace($idlType);
 
+                $implIncludes{"ExceptionCode.h"} = 1;
                 push(@functionContent, "    $idlTypeWithNamespace* ${paramName}Core = $implGetter;\n");
                 push(@functionContent, "    if (!${paramName}Core) {\n");
                 push(@functionContent, "        WebCore::ExceptionCode ec = WebCore::TYPE_MISMATCH_ERR;\n");
@@ -1577,6 +1579,7 @@ sub GenerateImplementation
             my $content = $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
 
             if ($svgPropertyType) {
+                $implIncludes{"ExceptionCode.h"} = 1;
                 push(@functionContent, "    if (IMPL->role() == WebCore::AnimValRole) {\n");
                 push(@functionContent, "        WebCore::raiseOnDOMError(WebCore::NO_MODIFICATION_ALLOWED_ERR);\n");
                 if ($returnType eq "void") {

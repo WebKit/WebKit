@@ -29,7 +29,6 @@
 #define IDBFactory_h
 
 #include "DOMStringList.h"
-#include "ExceptionCode.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBRequest.h"
 #include "PlatformString.h"
@@ -46,6 +45,8 @@ class IDBKeyRange;
 class IDBFactoryBackendInterface;
 class IDBVersionChangeRequest;
 class ScriptExecutionContext;
+
+typedef int ExceptionCode;
 
 class IDBFactory : public RefCounted<IDBFactory> {
 public:
@@ -73,4 +74,3 @@ private:
 #endif
 
 #endif // IDBFactory_h
-

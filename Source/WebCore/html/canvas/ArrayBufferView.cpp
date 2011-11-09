@@ -27,6 +27,7 @@
 #include "ArrayBufferView.h"
 
 #include "ArrayBuffer.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 

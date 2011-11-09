@@ -34,7 +34,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #ifndef NDEBUG
@@ -48,6 +47,8 @@ class SQLTransactionSync;
 class SQLTransactionSyncCallback;
 class ScriptExecutionContext;
 class SecurityOrigin;
+
+typedef int ExceptionCode;
 
 // Instances of this class should be created and used only on the worker's context thread.
 class DatabaseSync : public AbstractDatabase {

@@ -31,7 +31,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "SQLTransaction.h"
 #include <wtf/OwnPtr.h>
@@ -41,6 +40,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 // Can be used to wait until DatabaseTask is completed.
 // Has to be passed into DatabaseTask::create to be associated with the task.

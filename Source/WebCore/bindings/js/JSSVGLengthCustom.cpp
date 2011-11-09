@@ -22,9 +22,10 @@
 #if ENABLE(SVG)
 #include "JSSVGLength.h"
 
-#include <runtime/Error.h>
+#include "ExceptionCode.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGException.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

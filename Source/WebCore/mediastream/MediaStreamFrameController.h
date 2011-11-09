@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ExceptionCode.h"
 #include "MediaStreamClient.h"
 #include "MediaStreamSource.h"
 #include "NavigatorUserMediaError.h"
@@ -45,6 +44,8 @@ class NavigatorUserMediaSuccessCallback;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
+
+typedef int ExceptionCode;
 
 class MediaStreamFrameController {
     WTF_MAKE_NONCOPYABLE(MediaStreamFrameController);

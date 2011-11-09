@@ -28,7 +28,6 @@
 #ifndef IDBFactoryBackendInterface_h
 #define IDBFactoryBackendInterface_h
 
-#include "ExceptionCode.h"
 #include "IDBCallbacks.h"
 #include "PlatformString.h"
 #include <wtf/Threading.h>
@@ -41,6 +40,8 @@ namespace WebCore {
 class Frame;
 class IDBDatabase;
 class SecurityOrigin;
+
+typedef int ExceptionCode;
 
 // This class is shared by IDBFactory (async) and IDBFactorySync (sync).
 // This is implemented by IDBFactoryBackendImpl and optionally others (in order to proxy

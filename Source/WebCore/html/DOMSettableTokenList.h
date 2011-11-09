@@ -26,13 +26,14 @@
 #define DOMSettableTokenList_h
 
 #include "DOMTokenList.h"
-#include "ExceptionCode.h"
 #include "SpaceSplitString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class DOMSettableTokenList : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
     WTF_MAKE_FAST_ALLOCATED;

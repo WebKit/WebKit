@@ -26,6 +26,7 @@
 #include "SVGLengthContext.h"
 
 #include "CSSHelper.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "RenderPart.h"
 #include "RenderView.h"

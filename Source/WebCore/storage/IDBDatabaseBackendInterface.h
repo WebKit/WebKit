@@ -26,7 +26,6 @@
 #ifndef IDBDatabaseBackendInterface_h
 #define IDBDatabaseBackendInterface_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
@@ -41,6 +40,8 @@ class IDBCallbacks;
 class IDBDatabaseCallbacks;
 class IDBObjectStoreBackendInterface;
 class IDBTransactionBackendInterface;
+
+typedef int ExceptionCode;
 
 // This class is shared by IDBDatabase (async) and IDBDatabaseSync (sync).
 // This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy

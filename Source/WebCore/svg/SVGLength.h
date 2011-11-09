@@ -31,6 +31,8 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class QualifiedName;
 
+typedef int ExceptionCode;
+
 enum SVGLengthNegativeValuesMode {
     AllowNegativeLengths,
     ForbidNegativeLengths

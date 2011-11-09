@@ -26,13 +26,14 @@
 #ifndef WebKitCSSMatrix_h
 #define WebKitCSSMatrix_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "TransformationMatrix.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class WebKitCSSMatrix : public RefCounted<WebKitCSSMatrix> {
 public:

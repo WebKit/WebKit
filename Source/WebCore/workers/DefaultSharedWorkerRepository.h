@@ -33,7 +33,6 @@
 
 #if ENABLE(SHARED_WORKERS)
 
-#include "ExceptionCode.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -51,6 +50,8 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerProxy;
+
+    typedef int ExceptionCode;
 
     // Platform-specific implementation of the SharedWorkerRepository static interface.
     class DefaultSharedWorkerRepository {

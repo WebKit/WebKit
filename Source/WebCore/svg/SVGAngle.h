@@ -23,10 +23,11 @@
 #define SVGAngle_h
 
 #if ENABLE(SVG)
-#include "ExceptionCode.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class SVGAngle {
 public:

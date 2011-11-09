@@ -26,7 +26,6 @@
 #ifndef IDBIndexBackendInterface_h
 #define IDBIndexBackendInterface_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -39,6 +38,8 @@ class IDBCallbacks;
 class IDBKey;
 class IDBKeyRange;
 class IDBTransactionBackendInterface;
+
+typedef int ExceptionCode;
 
 class IDBIndexBackendInterface : public ThreadSafeRefCounted<IDBIndexBackendInterface> {
 public:

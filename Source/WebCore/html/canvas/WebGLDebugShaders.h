@@ -26,13 +26,14 @@
 #ifndef WebGLDebugShaders_h
 #define WebGLDebugShaders_h
 
-#include "ExceptionCode.h"
 #include "WebGLExtension.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class WebGLShader;
+
+typedef int ExceptionCode;
 
 class WebGLDebugShaders : public WebGLExtension {
 public:

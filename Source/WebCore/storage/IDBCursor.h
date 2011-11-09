@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ExceptionCode.h"
 #include "IDBKey.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,6 +42,8 @@ class IDBRequest;
 class IDBTransaction;
 class ScriptExecutionContext;
 class SerializedScriptValue;
+
+typedef int ExceptionCode;
 
 class IDBCursor : public RefCounted<IDBCursor> {
 public:

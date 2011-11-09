@@ -27,10 +27,11 @@
 #define DataView_h
 
 #include "ArrayBufferView.h"
-#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class DataView : public ArrayBufferView {
 public:

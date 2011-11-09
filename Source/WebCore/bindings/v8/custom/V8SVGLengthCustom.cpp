@@ -33,6 +33,7 @@
 #if ENABLE(SVG)
 #include "V8SVGLength.h"
 
+#include "ExceptionCode.h"
 #include "SVGPropertyTearOff.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"

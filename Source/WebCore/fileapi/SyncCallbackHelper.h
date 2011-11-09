@@ -38,7 +38,6 @@
 #include "EntryArraySync.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
-#include "ExceptionCode.h"
 #include "FileEntry.h"
 #include "FileError.h"
 #include "FileException.h"
@@ -55,6 +54,8 @@ class DirectoryEntrySync;
 class EntryArraySync;
 class EntrySync;
 class FileEntrySync;
+
+typedef int ExceptionCode;
 
 // A helper template for FileSystemSync implementation.
 template <typename SuccessCallback, typename ObserverType, typename CallbackArg, typename ResultType>

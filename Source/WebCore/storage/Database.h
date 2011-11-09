@@ -32,7 +32,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 
 #include <wtf/Deque.h>
@@ -49,6 +48,8 @@ class SQLTransactionClient;
 class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class VoidCallback;
+
+typedef int ExceptionCode;
 
 class Database : public AbstractDatabase {
 public:

@@ -33,6 +33,7 @@
 
 #include "DatabaseAuthorizer.h"
 #include "DatabaseTracker.h"
+#include "ExceptionCode.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"

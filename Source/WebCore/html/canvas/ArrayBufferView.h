@@ -27,7 +27,6 @@
 #define ArrayBufferView_h
 
 #include "ArrayBuffer.h"
-#include "ExceptionCode.h"
 
 #include <algorithm>
 #include <limits.h>
@@ -36,6 +35,8 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
   public:

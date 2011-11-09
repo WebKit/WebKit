@@ -26,7 +26,6 @@
 #ifndef IDBTransactionBackendInterface_h
 #define IDBTransactionBackendInterface_h
 
-#include "ExceptionCode.h"
 #include "IDBCallbacks.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
@@ -39,6 +38,8 @@ namespace WebCore {
 class IDBCursorBackendImpl;
 class IDBObjectStoreBackendInterface;
 class IDBTransactionCallbacks;
+
+typedef int ExceptionCode;
 
 // This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
 // This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy

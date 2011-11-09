@@ -34,6 +34,7 @@
 #include "CheckedInt.h"
 #include "Console.h"
 #include "DOMWindow.h"
+#include "ExceptionCode.h"
 #include "Extensions3D.h"
 #include "Frame.h"
 #include "FrameView.h"

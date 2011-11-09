@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
+#include "ExceptionCode.h"
 
 #include <wtf/RefPtr.h>
 

@@ -26,7 +26,6 @@
 #ifndef OESVertexArrayObject_h
 #define OESVertexArrayObject_h
 
-#include "ExceptionCode.h"
 #include "GraphicsTypes3D.h"
 #include "WebGLExtension.h"
 #include "WebGLVertexArrayObjectOES.h"
@@ -37,6 +36,8 @@ namespace WebCore {
 
 class WebGLRenderingContext;
 class WebGLVertexArrayObjectOES;
+
+typedef int ExceptionCode;
 
 class OESVertexArrayObject : public WebGLExtension {
 public:

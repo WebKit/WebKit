@@ -37,13 +37,14 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 
 namespace WebCore {
 
 class IDBTransaction;
+
+typedef int ExceptionCode;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:

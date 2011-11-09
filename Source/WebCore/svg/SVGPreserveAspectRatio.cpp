@@ -25,6 +25,7 @@
 #include "SVGPreserveAspectRatio.h"
 
 #include "AffineTransform.h"
+#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/WTFString.h>

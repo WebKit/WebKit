@@ -27,7 +27,6 @@
 #define WebGLRenderingContext_h
 
 #include "CanvasRenderingContext.h"
-#include "ExceptionCode.h"
 #include "Float32Array.h"
 #include "GraphicsContext3D.h"
 #include "Int32Array.h"
@@ -63,6 +62,8 @@ class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
 class WebKitLoseContext;
+
+typedef int ExceptionCode;
 
 class WebGLRenderingContext : public CanvasRenderingContext {
 public:

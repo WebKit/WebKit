@@ -21,7 +21,6 @@
 #define SVGLengthContext_h
 
 #if ENABLE(SVG)
-#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "SVGUnitTypes.h"
 
@@ -29,6 +28,8 @@ namespace WebCore {
 
 class SVGElement;
 class SVGLength;
+
+typedef int ExceptionCode;
 
 enum SVGLengthType {
     LengthTypeUnknown = 0,

@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ExceptionCode.h"
 #include "TrackBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,6 +38,8 @@ namespace WebCore {
 class TextTrack;
 class TextTrackCue;
 class TextTrackCueList;
+
+typedef int ExceptionCode;
 
 class TextTrackClient {
 public:

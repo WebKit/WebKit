@@ -33,7 +33,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +46,8 @@ class SQLTransactionClient;
 class SQLTransactionSyncCallback;
 class SQLValue;
 class SQLiteTransaction;
+
+typedef int ExceptionCode;
 
 // Instances of this class should be created and used only on the worker's context thread.
 class SQLTransactionSync : public RefCounted<SQLTransactionSync> {

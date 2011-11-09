@@ -28,13 +28,14 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ExceptionCode.h"
 #include "IDBKey.h"
 #include "OptionsObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
 
 class IDBKeyRange : public ThreadSafeRefCounted<IDBKeyRange> {
 public:

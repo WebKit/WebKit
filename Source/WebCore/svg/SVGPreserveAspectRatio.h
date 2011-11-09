@@ -22,13 +22,14 @@
 #define SVGPreserveAspectRatio_h
 
 #if ENABLE(SVG)
-#include "ExceptionCode.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
 class AffineTransform;
 class FloatRect;
+
+typedef int ExceptionCode;
 
 class SVGPreserveAspectRatio {
 public:

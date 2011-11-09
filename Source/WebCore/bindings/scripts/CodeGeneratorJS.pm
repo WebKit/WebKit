@@ -1862,6 +1862,7 @@ sub GenerateImplementation
                                     push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    }\n");
+                                    $implIncludes{"ExceptionCode.h"} = 1;
                                 }
                                 push(@implContent, "    $svgPropertyOrListPropertyType& podImp = imp->propertyReference();\n");
                                 if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
@@ -2007,6 +2008,7 @@ sub GenerateImplementation
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    $svgPropertyType& podImp = imp->propertyReference();\n");
+                    $implIncludes{"ExceptionCode.h"} = 1;
                 }
 
                 GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);

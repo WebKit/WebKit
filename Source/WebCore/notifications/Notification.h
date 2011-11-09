@@ -35,7 +35,6 @@
 #include "ActiveDOMObject.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
 #include "KURL.h"
 #include "NotificationContents.h"
 #include "SharedBuffer.h"
@@ -55,6 +54,8 @@ namespace WebCore {
     class ResourceResponse;
     class ScriptExecutionContext;
     class ThreadableLoader;
+
+    typedef int ExceptionCode;
 
     class Notification : public RefCounted<Notification>, public ActiveDOMObject, public ThreadableLoaderClient, public EventTarget {
         WTF_MAKE_FAST_ALLOCATED;

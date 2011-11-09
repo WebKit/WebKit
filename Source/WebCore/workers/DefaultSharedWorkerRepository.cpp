@@ -37,6 +37,7 @@
 #include "ActiveDOMObject.h"
 #include "CrossThreadTask.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"

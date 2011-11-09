@@ -33,7 +33,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
@@ -43,6 +42,8 @@ namespace WebCore {
 
 class DatabaseSync;
 class SQLResultSet;
+
+typedef int ExceptionCode;
 
 class SQLStatementSync {
 public:

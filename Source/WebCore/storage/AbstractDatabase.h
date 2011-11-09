@@ -31,7 +31,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
@@ -45,6 +44,8 @@ namespace WebCore {
 class DatabaseAuthorizer;
 class ScriptExecutionContext;
 class SecurityOrigin;
+
+typedef int ExceptionCode;
 
 class AbstractDatabase : public ThreadSafeRefCounted<AbstractDatabase> {
 public:

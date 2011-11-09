@@ -36,6 +36,7 @@
 
 #include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannel.h"

@@ -25,13 +25,14 @@
 #ifndef DOMTokenList_h
 #define DOMTokenList_h
 
-#include "ExceptionCode.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Element;
+
+typedef int ExceptionCode;
 
 class DOMTokenList {
     WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;

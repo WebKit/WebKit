@@ -31,6 +31,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
 static unsigned const MaxErrorCode = 2;

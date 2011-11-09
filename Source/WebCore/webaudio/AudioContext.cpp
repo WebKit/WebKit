@@ -46,6 +46,7 @@
 #include "DelayNode.h"
 #include "Document.h"
 #include "DynamicsCompressorNode.h"
+#include "ExceptionCode.h"
 #include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"

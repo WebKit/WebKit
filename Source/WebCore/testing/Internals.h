@@ -26,7 +26,6 @@
 #ifndef Internals_h
 #define Internals_h
 
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,6 +38,8 @@ class Document;
 class Element;
 class Node;
 class Range;
+
+typedef int ExceptionCode;
 
 class Internals : public RefCounted<Internals> {
 public:

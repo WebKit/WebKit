@@ -34,6 +34,7 @@
 
 #include "TextTrack.h"
 
+#include "ExceptionCode.h"
 #include "TextTrackCueList.h"
 #include "TrackBase.h"
 

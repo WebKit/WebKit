@@ -26,7 +26,6 @@
 #ifndef ArrayBuffer_h
 #define ArrayBuffer_h
 
-#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -35,6 +34,8 @@ namespace WebCore {
 class ArrayBuffer;
 class ArrayBufferView;
 class ScriptExecutionContext;
+
+typedef int ExceptionCode;
 
 class ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);

@@ -30,7 +30,6 @@
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBObjectStore.h"
@@ -46,6 +45,8 @@ namespace WebCore {
 
 class IDBVersionChangeRequest;
 class ScriptExecutionContext;
+
+typedef int ExceptionCode;
 
 class IDBDatabase : public RefCounted<IDBDatabase>, public EventTarget, public ActiveDOMObject {
 public:

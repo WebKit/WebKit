@@ -29,8 +29,6 @@
 
 #if ENABLE(SVG)
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 class ElementTimeControl {

@@ -34,7 +34,6 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "DirectoryReaderBase.h"
-#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,6 +41,8 @@
 namespace WebCore {
 
 class EntryArraySync;
+
+typedef int ExceptionCode;
 
 class DirectoryReaderSync : public DirectoryReaderBase {
 public:

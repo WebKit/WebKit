@@ -34,6 +34,7 @@
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseThread.h"
+#include "ExceptionCode.h"
 #include "Logging.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"

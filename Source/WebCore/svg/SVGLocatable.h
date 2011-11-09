@@ -24,12 +24,13 @@
 
 #if ENABLE(SVG)
 #include "AffineTransform.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
 
 class FloatRect;
 class SVGElement;
+
+typedef int ExceptionCode;
 
 class SVGLocatable {
 public:

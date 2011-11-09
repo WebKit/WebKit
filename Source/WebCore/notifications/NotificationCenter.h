@@ -31,6 +31,7 @@
 #ifndef NotificationCenter_h
 #define NotificationCenter_h
 
+#include "ExceptionCode.h"
 #include "Notification.h"
 #include "NotificationContents.h"
 #include "ScriptExecutionContext.h"
