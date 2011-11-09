@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] ProgressEvent : Event {
         readonly attribute boolean lengthComputable;

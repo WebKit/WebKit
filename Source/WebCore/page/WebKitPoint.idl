@@ -26,9 +26,8 @@
 module window {
 
     interface [
-        CanBeConstructed,
         CustomConstructor,
-        ConstructorParameters=2,
+        ConstructorParameters=2
     ] WebKitPoint {
         attribute float x;
         attribute float y;

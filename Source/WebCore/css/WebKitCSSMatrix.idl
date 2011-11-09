@@ -27,7 +27,6 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        CanBeConstructed,
         ConstructorParameters=1,
         Constructor(in [Optional=CallWithNullValue] DOMString cssValue),
         ConstructorRaisesException,

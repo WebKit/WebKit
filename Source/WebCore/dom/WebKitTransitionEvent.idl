@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] WebKitTransitionEvent : Event {
     readonly attribute DOMString          propertyName;

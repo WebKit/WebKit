@@ -30,7 +30,6 @@ module threads {
     interface [
         Conditional=WORKERS,
         ActiveDOMObject,
-        CanBeConstructed,
         JSCustomConstructor,
         ConstructorParameters=1,
         Constructor(in DOMString scriptUrl),

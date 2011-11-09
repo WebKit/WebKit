@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] PageTransitionEvent : Event {
         readonly attribute boolean persisted;

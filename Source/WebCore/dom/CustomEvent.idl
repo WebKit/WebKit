@@ -28,7 +28,6 @@ module events {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Introduced in DOM Level 3:
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] CustomEvent : Event {
 

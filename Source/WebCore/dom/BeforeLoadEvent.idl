@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] BeforeLoadEvent : Event {
         readonly attribute DOMString url;

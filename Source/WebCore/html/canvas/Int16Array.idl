@@ -25,7 +25,6 @@
 
 module html {
     interface [
-        CanBeConstructed,
         CustomConstructor,
         HasNumericIndexGetter,
         HasCustomIndexSetter,

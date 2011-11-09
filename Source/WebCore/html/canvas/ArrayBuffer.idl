@@ -27,7 +27,6 @@ module html {
 
     interface [
         GenerateIsReachable=Impl,
-        CanBeConstructed,
         CustomConstructor,
         NoStaticTables
     ] ArrayBuffer {

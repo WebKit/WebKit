@@ -31,7 +31,6 @@
 module core {
     interface [
         Conditional=MUTATION_OBSERVERS,
-        CanBeConstructed,
         CustomConstructor
     ] WebKitMutationObserver {
         [Custom] void observe(in Node target, in MutationObserverOptions options)

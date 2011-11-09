@@ -29,7 +29,6 @@ module events {
 
     interface [
         NoStaticTables,
-        CanBeConstructed,
         CustomConstructor
     ] MessageEvent : Event {
         readonly attribute DOMString origin;

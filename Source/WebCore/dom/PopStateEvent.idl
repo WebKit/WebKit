@@ -28,8 +28,7 @@ module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     interface [
-        CanBeConstructed,
-        CustomConstructor,
+        CustomConstructor
     ] PopStateEvent : Event {
         readonly attribute [CustomGetter] DOMObject state;
     };

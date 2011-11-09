@@ -30,7 +30,6 @@ module xml {
 
     interface [
         ActiveDOMObject,
-        CanBeConstructed,
         Constructor,
         CallWith=ScriptExecutionContext,
         V8CustomConstructor,

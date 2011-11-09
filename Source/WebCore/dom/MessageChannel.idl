@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         Constructor,
         CallWith=ScriptExecutionContext,
         V8CustomConstructor,

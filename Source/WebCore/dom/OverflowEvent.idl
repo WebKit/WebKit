@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;

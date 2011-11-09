@@ -2379,7 +2379,7 @@ END
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 END
 
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructer"}) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
         push(@implContent, <<END);
     desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END

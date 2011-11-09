@@ -27,7 +27,6 @@ module webaudio {
     interface [
         Conditional=WEB_AUDIO,
         ActiveDOMObject,
-        CanBeConstructed,
         CustomConstructor,
         CustomMarkFunction,
 #if defined(V8_BINDING) && V8_BINDING

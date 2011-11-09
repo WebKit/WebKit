@@ -1516,6 +1516,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
         TestObjAttrs, WTF_ARRAY_LENGTH(TestObjAttrs),
         TestObjCallbacks, WTF_ARRAY_LENGTH(TestObjCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
+    desc->SetCallHandler(V8TestObj::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     UNUSED_PARAM(instance); // In some cases, it will not be used.

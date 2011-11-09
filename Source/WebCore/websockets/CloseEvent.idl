@@ -32,7 +32,6 @@ module events {
 
     interface [
         NoStaticTables,
-        CanBeConstructed,
         CustomConstructor
     ] CloseEvent : Event {
         readonly attribute boolean wasClean;

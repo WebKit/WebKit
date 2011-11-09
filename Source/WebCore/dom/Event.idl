@@ -23,7 +23,6 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         CustomToJS,
-        CanBeConstructed,
         CustomConstructor,
         NoStaticTables,
         Polymorphic

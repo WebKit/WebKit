@@ -27,7 +27,6 @@ module p2p {
     interface [
         Conditional=MEDIA_STREAM,
         ActiveDOMObject,
-        CanBeConstructed,
         ConstructorParameters=2,
         Constructor(in DOMString serverConfiguration, in [Callback=FunctionOnly] SignalingCallback signalingCallback),
         CallWith=ScriptExecutionContext,

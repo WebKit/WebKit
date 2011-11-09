@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        CanBeConstructed,
         CustomConstructor
     ] WebKitAnimationEvent : Event {
      readonly attribute DOMString          animationName;
