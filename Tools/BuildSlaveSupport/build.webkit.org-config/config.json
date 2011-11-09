@@ -89,9 +89,9 @@
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-8"]
                     },
-                    { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
-                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-1", "apple-macpro-3", "test-slave"]
+                    { "name": "Lion Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
+                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-3"]
                     },
                     { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
