@@ -1,3 +1,23 @@
+2011-11-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: crash when accessing selectedTab in a tab list
+        https://bugs.webkit.org/show_bug.cgi?id=70938
+
+        Reviewed by Beth Dakin.
+
+        There were a few methods accessing m_children directly without first validating that those elements
+        needed to be updated (because the layout changed). Changing those to call children() ensures
+        that they will have the correct children.
+
+        Test: platform/mac/accessibility/selected-tab-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isChecked):
+        (WebCore::AccessibilityRenderObject::selectedRadioButton):
+        (WebCore::AccessibilityRenderObject::selectedTabItem):
+        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
+        (WebCore::AccessibilityRenderObject::tabChildren):
+
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
         Shrink HTMLCollection.

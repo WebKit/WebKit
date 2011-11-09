@@ -105,6 +105,7 @@ public:
     // Attributes - platform-independent implementations
     JSStringRef stringAttributeValue(JSStringRef attribute);
     double numberAttributeValue(JSStringRef attribute);
+    AccessibilityUIElement uiElementAttributeValue(JSStringRef attribute);    
     bool boolAttributeValue(JSStringRef attribute);
     bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);

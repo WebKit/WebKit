@@ -628,11 +628,13 @@ bool AccessibilityRenderObject::isNativeCheckboxOrRadio() const
 bool AccessibilityRenderObject::isChecked() const
 {
     ASSERT(m_renderer);
-    if (!m_renderer->node())
+    
+    Node* node = this->node();
+    if (!node)
         return false;
 
     // First test for native checkedness semantics
-    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
+    HTMLInputElement* inputElement = node->toInputElement();
     if (inputElement)
         return inputElement->shouldAppearChecked();
 
@@ -775,10 +777,12 @@ AccessibilityObject* AccessibilityRenderObject::selectedRadioButton()
     if (!isRadioGroup())
         return 0;
     
+    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+
     // Find the child radio button that is selected (ie. the intValue == 1).
-    int count = m_children.size();
-    for (int i = 0; i < count; ++i) {
-        AccessibilityObject* object = m_children[i].get();
+    size_t size = children.size();
+    for (size_t i = 0; i < size; ++i) {
+        AccessibilityObject* object = children[i].get();
         if (object->roleValue() == RadioButtonRole && object->checkboxOrRadioValue() == ButtonStateOn)
             return object;
     }
@@ -794,9 +798,11 @@ AccessibilityObject* AccessibilityRenderObject::selectedTabItem()
     AccessibilityObject::AccessibilityChildrenVector tabs;
     tabChildren(tabs);
     
-    int count = tabs.size();
-    for (int i = 0; i < count; ++i) {
-        AccessibilityObject* object = m_children[i].get();
+    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    
+    size_t size = tabs.size();
+    for (size_t i = 0; i < size; ++i) {
+        AccessibilityObject* object = children[i].get();
         if (object->isTabItem() && object->isChecked())
             return object;
     }
@@ -3661,10 +3667,11 @@ void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildren
     if (!hasChildren())
         addChildren();
     
-    unsigned length = m_children.size();
-    for (unsigned i = 0; i < length; i++) {
-        if (!m_children[i]->isOffScreen())
-            result.append(m_children[i]);
+    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    size_t size = children.size();
+    for (size_t i = 0; i < size; i++) {
+        if (!children[i]->isOffScreen())
+            result.append(children[i]);
     }
 }
 
@@ -3684,10 +3691,11 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(roleValue() == TabListRole);
     
-    unsigned length = m_children.size();
-    for (unsigned i = 0; i < length; ++i) {
-        if (m_children[i]->isTabItem())
-            result.append(m_children[i]);
+    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    size_t size = children.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (children[i]->isTabItem())
+            result.append(children[i]);
     }
 }
     

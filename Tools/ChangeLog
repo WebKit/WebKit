@@ -1,3 +1,20 @@
+2011-11-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: crash when accessing selectedTab in a tab list
+        https://bugs.webkit.org/show_bug.cgi?id=70938
+
+        Reviewed by Beth Dakin.
+
+        Add the ability to retrieve an element through an arbitrary attribute.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementAttributeValueCallback):
+        (AccessibilityUIElement::uiElementAttributeValue):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementAttributeValue):
+
 2011-11-09  Andy Wingo  <wingo@igalia.com>
 
         Add webkitdirs.pm:getArchitecture implementation for GTK

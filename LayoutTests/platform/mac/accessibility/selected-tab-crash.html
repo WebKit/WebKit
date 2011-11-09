@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="tablist" tabindex="0" id="tablist">
+<div role="tab" aria-checked="true" id="selectedtab">tab 1</div>
+<div role="tab">tab 2</div>
+<div role="tab">tab 3</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a tablists children are updated, we will not crash accessing an old object.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("tablist").focus();
+        var tablist = accessibilityController.focusedElement;
+
+        // Iterate all the children so we have a cache of them.
+        tablist.attributesOfChildren();
+
+        // Retrieve and verify we have the right selected child.
+        var selectedTab = tablist.uiElementAttributeValue("AXValue");
+
+        // Delete the selected child.
+        document.getElementById("tablist").removeChild(document.getElementById("selectedtab"));
+
+        // Retrieve the tab. We should not crash here!
+        var selectedTab = tablist.uiElementAttributeValue("AXValue");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
