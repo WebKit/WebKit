@@ -21,7 +21,7 @@
 module xpath {
 
     interface [
-        CanBeConstructed
+        Constructor
     ] XMLSerializer {
         DOMString serializeToString(in [Optional=CallWithDefaultValue] Node node)
             raises(DOMException);

@@ -31,7 +31,7 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
-        CanBeConstructed,
+        Constructor,
         NoStaticTables
     ] WebKitFlags {
         attribute boolean create;

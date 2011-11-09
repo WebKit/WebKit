@@ -31,7 +31,7 @@
 module html {
     interface [
         Conditional=BLOB,
-        CanBeConstructed,
+        Constructor,
         NoStaticTables
     ] FileReaderSync {
         [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)

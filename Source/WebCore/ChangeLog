@@ -1,3 +1,24 @@
+2011-11-09  Kentaro Hara  <haraken@chromium.org>
+
+        Replace [CanBeConstructed] IDL with [Constructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=71927
+
+        Reviewed by Adam Barth.
+
+        With respect to the IDL files that have [CanBeConstructed]
+        but do not have [Constructor] nor [CustomConstructor],
+        [CanBeConstructed] is now equivalent to [Constructor].
+        Thus, this patch replaces [CanBeConstructed] with [Constructor].
+
+        No tests. No change in behavior.
+
+        * fileapi/FileReaderSync.idl: As I described above.
+        * fileapi/WebKitBlobBuilder.idl: Ditto.
+        * fileapi/WebKitFlags.idl: Ditto.
+        * xml/DOMParser.idl: Ditto.
+        * xml/XMLSerializer.idl: Ditto.
+        * xml/XPathEvaluator.idl: Ditto.
+
 2011-11-09  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Separate image encoding from dataURL construction

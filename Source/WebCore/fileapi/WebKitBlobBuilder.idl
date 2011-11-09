@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        CanBeConstructed,
+        Constructor,
         GenerateNativeConverter,
         NoStaticTables
     ] WebKitBlobBuilder {

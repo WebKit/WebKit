@@ -19,7 +19,7 @@
 
 module xpath {
     interface [
-        CanBeConstructed,
+        Constructor
     ] XPathEvaluator {
         XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
                                          in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
