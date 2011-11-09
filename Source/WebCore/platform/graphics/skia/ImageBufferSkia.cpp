@@ -361,46 +361,56 @@ void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& so
 }
 
 template <typename T>
-static String ImageToDataURL(T& source, const String& mimeType, const double* quality)
+static bool encodeImage(T& source, const String& mimeType, const double* quality, Vector<char>* output)
 {
-    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+    Vector<unsigned char>* encodedImage = reinterpret_cast<Vector<unsigned char>*>(output);
 
-    Vector<unsigned char> encodedImage;
     if (mimeType == "image/jpeg") {
         int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
         if (quality && *quality >= 0.0 && *quality <= 1.0)
             compressionQuality = static_cast<int>(*quality * 100 + 0.5);
-        if (!JPEGImageEncoder::encode(source, compressionQuality, &encodedImage))
-            return "data:,";
+        if (!JPEGImageEncoder::encode(source, compressionQuality, encodedImage))
+            return false;
 #if USE(WEBP)
     } else if (mimeType == "image/webp") {
         int compressionQuality = WEBPImageEncoder::DefaultCompressionQuality;
         if (quality && *quality >= 0.0 && *quality <= 1.0)
             compressionQuality = static_cast<int>(*quality * 100 + 0.5);
-        if (!WEBPImageEncoder::encode(source, compressionQuality, &encodedImage))
-            return "data:,";
+        if (!WEBPImageEncoder::encode(source, compressionQuality, encodedImage))
+            return false;
 #endif
     } else {
-        if (!PNGImageEncoder::encode(source, &encodedImage))
-            return "data:,";
+        if (!PNGImageEncoder::encode(source, encodedImage))
+            return false;
         ASSERT(mimeType == "image/png");
     }
 
-    Vector<char> base64Data;
-    base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
+    return true;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    Vector<char> encodedImage, base64Data;
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
-    return ImageToDataURL(device->accessBitmap(false), mimeType, quality);
+    if (!encodeImage(device->accessBitmap(false), mimeType, quality, &encodedImage))
+        return "data:,";
+
+    base64Encode(encodedImage, base64Data);
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 
-String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
+String ImageDataToDataURL(const ImageData& imageData, const String& mimeType, const double* quality)
 {
-    return ImageToDataURL(source, mimeType, quality);
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    Vector<char> encodedImage, base64Data;
+    if (!encodeImage(imageData, mimeType, quality, &encodedImage))
+        return "data:,";
+
+    base64Encode(encodedImage, base64Data);
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 
 } // namespace WebCore

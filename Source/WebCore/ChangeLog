@@ -1,3 +1,22 @@
+2011-11-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Separate image encoding from dataURL construction
+        https://bugs.webkit.org/show_bug.cgi?id=71846
+
+        Reviewed by Adam Barth.
+
+        Remove the implicit assumption that a dataURL is the only desired output format of the
+        the image encoding phase.
+
+        No new tests, refactoring only, covered by existing canvas tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::encodeImage):  Output the encoded image to a Vector.
+        (WebCore::ImageBuffer::toDataURL):  Format the dataURL encoding of the mimeType encoded
+        image Vector here.  Move the mimeType encoding debug check here to better align this
+        code with the CG (CoreGraphics) ImageBuffer.cpp implementation.
+        (WebCore::ImageDataToDataURL): ditto.
+
 2011-11-09  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium: Fix bad rubber-band overhang shadows being drawn in the presence of custom scrollbar css.
