@@ -1,3 +1,10 @@
+2011-11-08  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the GTK build after <http://trac.webkit.org/changeset/99613>
+        (https://bugs.webkit.org/show_bug.cgi?id=71840)
+
+        * Source/autotools/symbols.filter: Add symbol _ZN7WebCore4Page13setPaginationERKNS0_10PaginationE.
+
 2011-11-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use qmake's builtin rules for copying framework headers on Mac OS
