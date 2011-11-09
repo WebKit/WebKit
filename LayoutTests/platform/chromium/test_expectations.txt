@@ -3953,3 +3953,5 @@ BUGRICOW : fast/js/toString-recursion.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
 BUGXJI : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT MISSING
+
+BUGWK71880 DEBUG : fast/forms/select-clientheight-large-size.html = TIMEOUT
