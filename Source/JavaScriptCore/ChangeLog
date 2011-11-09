@@ -1,5 +1,18 @@
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Move duplicates of SYMBOL_STRING* macros to the single location
+        https://bugs.webkit.org/show_bug.cgi?id=71456
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        * wtf/InlineASM.h: Added.
+            - Moved asm related macros.
+
+2011-11-08  Gavin Barraclough  <barraclough@apple.com>
+
         Move code to handle 8bit regs from X86Assembler to MacroAssembler
         https://bugs.webkit.org/show_bug.cgi?id=71867
 

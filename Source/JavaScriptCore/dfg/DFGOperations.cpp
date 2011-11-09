@@ -30,25 +30,11 @@
 
 #include "CodeBlock.h"
 #include "DFGRepatch.h"
+#include "InlineASM.h"
 #include "Interpreter.h"
 #include "JSByteArray.h"
 #include "JSGlobalData.h"
 #include "Operations.h"
-
-
-#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
-#define SYMBOL_STRING(name) "_" #name
-#else
-#define SYMBOL_STRING(name) #name
-#endif
-
-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
-#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
-#elif CPU(X86) && COMPILER(MINGW)
-#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
-#else
-#define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
-#endif
 
 #if CPU(X86_64)
 

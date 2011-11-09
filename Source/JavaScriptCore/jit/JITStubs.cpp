@@ -41,6 +41,7 @@
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "Heap.h"
+#include "InlineASM.h"
 #include "JIT.h"
 #include "JSActivation.h"
 #include "JSArray.h"
@@ -67,44 +68,6 @@
 using namespace std;
 
 namespace JSC {
-
-#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
-#define SYMBOL_STRING(name) "_" #name
-#else
-#define SYMBOL_STRING(name) #name
-#endif
-
-#if OS(IOS)
-#define THUMB_FUNC_PARAM(name) SYMBOL_STRING(name)
-#else
-#define THUMB_FUNC_PARAM(name)
-#endif
-
-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
-#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
-#elif CPU(X86) && COMPILER(MINGW)
-#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
-#else
-#define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
-#endif
-
-#if OS(DARWIN)
-    // Mach-O platform
-#define HIDE_SYMBOL(name) ".private_extern _" #name
-#elif OS(AIX)
-    // IBM's own file format
-#define HIDE_SYMBOL(name) ".lglobl " #name
-#elif   OS(LINUX)               \
-     || OS(FREEBSD)             \
-     || OS(OPENBSD)             \
-     || OS(SOLARIS)             \
-     || (OS(HPUX) && CPU(IA64)) \
-     || OS(NETBSD)
-    // ELF platform
-#define HIDE_SYMBOL(name) ".hidden " #name
-#else
-#define HIDE_SYMBOL(name)
-#endif
 
 #if USE(JSVALUE32_64)
 

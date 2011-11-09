@@ -1120,6 +1120,7 @@
 		868BFA16117CF19900B908B1 /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WTFString.h; path = text/WTFString.h; sourceTree = "<group>"; };
 		868BFA5F117D048200B908B1 /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		8690231412092D5C00630AF9 /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
+		8699AA60146A0E2B00E23A73 /* InlineASM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineASM.h; sourceTree = "<group>"; };
 		869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTranscendentalFunction.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
@@ -1868,11 +1869,6 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				0F2E5BF5146357D2003EB2EB /* Spectrum.h */,
-				0FD52AAC1430359D0026DC9F /* UnionFind.h */,
-				0F636D9F142D27D200B2E66A /* PackedIntVector.h */,
-				0F16D724142C39A200CF784A /* BitVector.cpp */,
-				0FD82F491428069200179C94 /* BitVector.h */,
 				C22C524813FAF6EF00B7DC0D /* dtoa */,
 				06D358A00DAAD9C4003B174E /* mac */,
 				8656573E115BE35200291F40 /* text */,
@@ -1885,6 +1881,8 @@
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
 				BC5F7BBB11823B590052C02C /* Atomics.h */,
 				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
+				0F16D724142C39A200CF784A /* BitVector.cpp */,
+				0FD82F491428069200179C94 /* BitVector.h */,
 				DD377CBB12072C18006A2517 /* Bitmap.h */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
 				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
@@ -1927,6 +1925,7 @@
 				65DFC92E08EA173A00F7300B /* HashTable.h */,
 				65DFC92F08EA173A00F7300B /* HashTraits.h */,
 				7186A6E813100B57004479E1 /* HexNumber.h */,
+				8699AA60146A0E2B00E23A73 /* InlineASM.h */,
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				E1EE79270D6C964500FEA3BA /* Locker.h */,
@@ -1953,6 +1952,7 @@
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */,
+				0F636D9F142D27D200B2E66A /* PackedIntVector.h */,
 				8627E5EA11F1281900A313B5 /* PageAllocation.h */,
 				14FFF98A12BFFF7500795BB8 /* PageAllocationAligned.cpp */,
 				14FFF98B12BFFF7500795BB8 /* PageAllocationAligned.h */,
@@ -1986,6 +1986,7 @@
 				76FB9F0E12E851860051A2EB /* SHA1.h */,
 				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
 				0BF28A2811A33DC300638F84 /* SizeLimits.cpp */,
+				0F2E5BF5146357D2003EB2EB /* Spectrum.h */,
 				86D87DA512BC4B14008E73A1 /* StackBounds.cpp */,
 				86D87DA612BC4B14008E73A1 /* StackBounds.h */,
 				868BFA5F117D048200B908B1 /* StaticConstructors.h */,
@@ -2008,6 +2009,7 @@
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
+				0FD52AAC1430359D0026DC9F /* UnionFind.h */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				E17FF770112131D200076A19 /* ValueCheck.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
