@@ -835,6 +835,10 @@ fast/loader/stateobjects/state-url-sets-links-visited.html
 # https://bugs.webkit.org/show_bug.cgi?id=59192
 http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
 
+# [WK2] failures in http/tests/security/contentSecurityPolicy
+# https://bugs.webkit.org/show_bug.cgi?id=71896
+http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
+
 # WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
 # https://bugs.webkit.org/show_bug.cgi?id=63458
 fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html
