@@ -26,47 +26,13 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
-
-/* DFG_ENABLE() - turn on a specific features in the DFG JIT */
-#define DFG_ENABLE(DFG_FEATURE) (defined DFG_ENABLE_##DFG_FEATURE && DFG_ENABLE_##DFG_FEATURE)
-
-// Emit various logging information for debugging, including dumping the dataflow graphs.
-#define DFG_ENABLE_DEBUG_VERBOSE 0
-// Emit dumps during propagation, in addition to just after.
-#define DFG_ENABLE_DEBUG_PROPAGATION_VERBOSE 0
-// Emit logging for OSR exit value recoveries at every node, not just nodes that
-// actually has speculation checks.
-#define DFG_ENABLE_VERBOSE_VALUE_RECOVERIES 0
-// Enable generation of dynamic checks into the instruction stream.
-#if !ASSERT_DISABLED
-#define DFG_ENABLE_JIT_ASSERT 1
-#else
-#define DFG_ENABLE_JIT_ASSERT 0
-#endif
-// Consistency check contents compiler data structures.
-#define DFG_ENABLE_CONSISTENCY_CHECK 0
-// Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
-#define DFG_ENABLE_JIT_BREAK_ON_EVERY_FUNCTION 0
-// Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
-#define DFG_ENABLE_JIT_BREAK_ON_EVERY_BLOCK 0
-// Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
-#define DFG_ENABLE_JIT_BREAK_ON_EVERY_NODE 0
-// Emit a breakpoint into the speculation failure code.
-#define DFG_ENABLE_JIT_BREAK_ON_SPECULATION_FAILURE 0
-// Log every speculation failure.
-#define DFG_ENABLE_VERBOSE_SPECULATION_FAILURE 0
-// Disable the DFG JIT without having to touch Platform.h
-#define DFG_DEBUG_LOCAL_DISBALE 0
-// Enable OSR entry from baseline JIT.
-#define DFG_ENABLE_OSR_ENTRY ENABLE(DFG_JIT)
-// Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
-#define DFG_ENABLE_SUCCESS_STATS 0
-// Used to enable conditionally supported opcodes that currently result in performance regressions.
-#define DFG_ENABLE_RESTRICTIONS 1
 
 #include "CodeBlock.h"
 #include "CodeOrigin.h"
+#include "DFGCommon.h"
 #include "DFGOperands.h"
 #include "DFGVariableAccessData.h"
 #include "JSValue.h"
@@ -76,17 +42,6 @@
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
-
-// Type for a reference to another node in the graph.
-typedef uint32_t NodeIndex;
-static const NodeIndex NoNode = UINT_MAX;
-
-typedef uint32_t BlockIndex;
-static const BlockIndex NoBlock = UINT_MAX;
-
-struct NodeIndexTraits {
-    static NodeIndex defaultValue() { return NoNode; }
-};
 
 struct StructureTransitionData {
     Structure* previousStructure;

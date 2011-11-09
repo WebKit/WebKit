@@ -30,6 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
 #include "DFGGPRInfo.h"
 #include "MacroAssembler.h"
 #include "ValueProfile.h"
