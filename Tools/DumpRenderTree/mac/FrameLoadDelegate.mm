@@ -33,6 +33,7 @@
 #import "AccessibilityController.h"
 #import "AppleScriptController.h"
 #import "EventSendingController.h"
+#import "Foundation/NSNotification.h"
 #import "GCController.h"
 #import "LayoutTestController.h"
 #import "NavigationController.h"
@@ -106,12 +107,14 @@
     if ((self = [super init])) {
         gcController = new GCController;
         accessibilityController = new AccessibilityController;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(webViewProgressFinishedNotification:) name:WebViewProgressFinishedNotification object:nil];
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     delete gcController;
     delete accessibilityController;
     [super dealloc];
@@ -409,6 +412,12 @@
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf ("didDetectXSS\n");
+}
+
+- (void)webViewProgressFinishedNotification:(NSNotification *)notification
+{
+    if (!done && gLayoutTestController->dumpProgressFinishedCallback())
+        printf ("postProgressFinishedNotification\n");
 }
 
 @end
