@@ -17,8 +17,10 @@ function reopenWebInspector(objectId)
 {
     window.objectId = unescape(objectId);
     layoutTestController.closeWebInspector();
-    layoutTestController.showWebInspector();
-    runTest();
+    setTimeout(function() {
+      layoutTestController.showWebInspector();
+      runTest();
+    }, 0);
 }
 
 function test()
