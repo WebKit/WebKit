@@ -349,6 +349,15 @@ namespace WebCore {
 
     v8::Handle<v8::Value> v8StringOrFalse(const String& str);
 
+    template <class T> v8::Handle<v8::Value> v8NumberArray(const Vector<T>& values)
+    {
+        size_t size = values.size();
+        v8::Local<v8::Array> result = v8::Array::New(size);
+        for (size_t i = 0; i < size; ++i)
+            result->Set(i, v8::Number::New(values[i]));
+        return result;
+    }
+
     double toWebCoreDate(v8::Handle<v8::Value> object);
 
     v8::Handle<v8::Value> v8DateOrNull(double value);
@@ -378,6 +387,22 @@ namespace WebCore {
     v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
 
     String int32ToWebCoreString(int value);
+
+    template <class T> Vector<T> v8NumberArrayToVector(v8::Handle<v8::Value> value)
+    {
+        v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
+        if (!v8Value->IsArray())
+            return Vector<T>();
+
+        Vector<T> result;
+        v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
+        size_t length = v8Array->Length();
+        for (size_t i = 0; i < length; ++i) {
+            v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Integer::New(i));
+            result.append(static_cast<T>(indexedValue->NumberValue()));
+        }
+        return result;
+    }
 
     PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value>);
 

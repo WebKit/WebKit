@@ -172,6 +172,12 @@ module test {
         attribute [EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
 #endif
 
+
+#if defined(TESTING_V8)
+        attribute float[]                   floatArray;
+        attribute double[]                  doubleArray;
+#endif
+
         // ObjectiveC reserved words.
         readonly attribute long      description;
         attribute long               id;

@@ -46,6 +46,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(Condition1)
 #include "V8TestObjectA.h"
@@ -639,6 +640,38 @@ static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Loca
     TestObj* imp = V8TestObj::toNative(info.Holder());
     int v = toInt32(value);
     imp->setEnabledAtRuntimeAttr2(v);
+    return;
+}
+
+static v8::Handle<v8::Value> floatArrayAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.floatArray._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8NumberArray(imp->floatArray());
+}
+
+static void floatArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.floatArray._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<float> v = v8NumberArrayToVector<float>(value);
+    imp->setFloatArray(v);
+    return;
+}
+
+static v8::Handle<v8::Value> doubleArrayAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.doubleArray._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8NumberArray(imp->doubleArray());
+}
+
+static void doubleArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.doubleArray._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<double> v = v8NumberArrayToVector<double>(value);
+    imp->setDoubleArray(v);
     return;
 }
 
@@ -1375,6 +1408,10 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"cachedAttribute1", TestObjInternal::cachedAttribute1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'cachedAttribute2' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
     {"cachedAttribute2", TestObjInternal::cachedAttribute2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'floatArray' (Type: 'attribute' ExtAttr: '')
+    {"floatArray", TestObjInternal::floatArrayAttrGetter, TestObjInternal::floatArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'doubleArray' (Type: 'attribute' ExtAttr: '')
+    {"doubleArray", TestObjInternal::doubleArrayAttrGetter, TestObjInternal::doubleArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')
     {"description", TestObjInternal::descriptionAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'id' (Type: 'attribute' ExtAttr: '')
