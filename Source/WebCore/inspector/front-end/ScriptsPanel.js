@@ -1175,47 +1175,12 @@ WebInspector.SourceFrameDelegateForScriptsPanel = function(scriptsPanel, uiSourc
 }
 
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
-    requestContent: function(callback)
-    {
-        this._uiSourceCode.requestContent(callback);
-    },
-
     setBreakpoint: function(lineNumber, condition, enabled)
     {
         this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
 
         if (!this._scriptsPanel.breakpointsActivated)
             this._scriptsPanel._toggleBreakpointsClicked();
-    },
-
-    updateBreakpoint: function(lineNumber, condition, enabled)
-    {
-        this._model.updateBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
-    },
-
-    removeBreakpoint: function(lineNumber)
-    {
-        this._model.removeBreakpoint(this._uiSourceCode, lineNumber);
-    },
-
-    findBreakpoint: function(lineNumber)
-    {
-        return this._model.findBreakpoint(this._uiSourceCode, lineNumber);
-    },
-
-    continueToLine: function(lineNumber)
-    {
-        this._model.continueToLine(this._uiSourceCode, lineNumber);
-    },
-
-    canEditScriptSource: function()
-    {
-        return this._model.canEditScriptSource(this._uiSourceCode);
-    },
-
-    setScriptSource: function(text, callback)
-    {
-        this._model.setScriptSource(this._uiSourceCode, text, callback);
     },
 
     setScriptSourceIsBeingEdited: function(inEditMode)

@@ -48,6 +48,7 @@ WebInspector.JavaScriptSourceFrame = function(delegate, model, uiSourceCode)
     this.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._onTextViewerContentLoaded, this);
 
     this._model = model;
+    this._uiSourceCode = uiSourceCode; 
     this._popoverObjectGroup = "popover";
     this._breakpoints = {};
 }
@@ -63,12 +64,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     // SourceFrame overrides
     requestContent: function(callback)
     {
-        this._delegate.requestContent(callback);
+        this._uiSourceCode.requestContent(callback);
     },
 
     canEditSource: function()
     {
-        return this._delegate.canEditScriptSource();
+        return this._model.canEditScriptSource(this._uiSourceCode);
     },
 
     suggestedFileName: function()
@@ -78,7 +79,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     editContent: function(newContent, callback)
     {
-        this._delegate.setScriptSource(newContent, callback);
+        this._model.setScriptSource(this._uiSourceCode, newContent, callback);
     },
 
     _onContentChanged: function()
@@ -99,9 +100,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     populateLineGutterContextMenu: function(lineNumber, contextMenu)
     {
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._model.continueToLine.bind(this._model, this._uiSourceCode, lineNumber));
 
-        var breakpoint = this._delegate.findBreakpoint(lineNumber);
+        var breakpoint = this._model.findBreakpoint(this._uiSourceCode, lineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add breakpoint" : "Add Breakpoint"), this._delegate.setBreakpoint.bind(this._delegate, lineNumber, "", true));
@@ -120,20 +121,21 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add conditional breakpoint…" : "Add Conditional Breakpoint…"), addConditionalBreakpoint.bind(this));
         } else {
             // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove breakpoint" : "Remove Breakpoint"), this._delegate.removeBreakpoint.bind(this._delegate, lineNumber));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove breakpoint" : "Remove Breakpoint"), this._model.removeBreakpoint.bind(this._model, this._uiSourceCode, lineNumber));
+
             function editBreakpointCondition()
             {
                 function didEditBreakpointCondition(committed, condition)
                 {
                     if (committed)
-                        this._delegate.updateBreakpoint(lineNumber, condition, breakpoint.enabled);
+                        this._model.updateBreakpoint(this._uiSourceCode, lineNumber, condition, breakpoint.enabled);
                 }
                 this._editBreakpointCondition(lineNumber, breakpoint.condition, didEditBreakpointCondition.bind(this));
             }
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit breakpoint…" : "Edit Breakpoint…"), editBreakpointCondition.bind(this));
             function setBreakpointEnabled(enabled)
             {
-                this._delegate.updateBreakpoint(lineNumber, breakpoint.condition, enabled);
+                this._model.updateBreakpoint(this._uiSourceCode, lineNumber, breakpoint.condition, enabled);
             }
             if (breakpoint.enabled)
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Disable breakpoint" : "Disable Breakpoint"), setBreakpointEnabled.bind(this, false));
@@ -231,7 +233,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         for (var lineNumber in this._javaScriptSourceFrameState.breakpoints)
-            this._delegate.removeBreakpoint(Number(lineNumber));
+            this._model.removeBreakpoint(this._uiSourceCode, Number(lineNumber));
 
         for (var lineNumber in newBreakpoints) {
             var breakpoint = newBreakpoints[lineNumber];
@@ -364,12 +366,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         var lineNumber = target.lineNumber;
 
-        var breakpoint = this._delegate.findBreakpoint(lineNumber);
+        var breakpoint = this._model.findBreakpoint(this._uiSourceCode, lineNumber);
         if (breakpoint) {
             if (event.shiftKey)
-                this._delegate.updateBreakpoint(lineNumber, breakpoint.condition, !breakpoint.enabled);
+                this._model.updateBreakpoint(this._uiSourceCode, lineNumber, breakpoint.condition, !breakpoint.enabled);
             else
-                this._delegate.removeBreakpoint(lineNumber);
+                this._model.removeBreakpoint(this._uiSourceCode, lineNumber);
         } else
             this._delegate.setBreakpoint(lineNumber, "", true);
         event.preventDefault();
@@ -473,24 +475,7 @@ WebInspector.JavaScriptSourceFrameDelegate = function()
 }
 
 WebInspector.JavaScriptSourceFrameDelegate.prototype = {
-    requestContent: function(callback) { },
-
     setBreakpoint: function(lineNumber, condition, enabled) { },
-
-    removeBreakpoint: function(lineNumber) { },
-
-    updateBreakpoint: function(lineNumber, condition, enabled) { },
-
-    /**
-     * @return {?WebInspector.Breakpoint}
-     */
-    findBreakpoint: function(lineNumber) { },
-
-    continueToLine: function(lineNumber) { },
-
-    canEditScriptSource: function() { return false; },
-
-    setScriptSource: function(text, callback) { },
 
     setScriptSourceIsBeingEdited: function(inEditMode) { },
 

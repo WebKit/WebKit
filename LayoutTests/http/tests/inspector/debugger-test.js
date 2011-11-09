@@ -180,7 +180,7 @@ InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabl
 
 InspectorTest.removeBreakpoint = function(sourceFrame, lineNumber)
 {
-    sourceFrame._delegate.removeBreakpoint(lineNumber);
+    sourceFrame._model.removeBreakpoint(sourceFrame._uiSourceCode, lineNumber);
 };
 
 

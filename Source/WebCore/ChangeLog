@@ -1,3 +1,22 @@
+2011-11-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] remove a bunch of methods from JavaScriptSourceFrameDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=71826
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.requestContent):
+        (WebInspector.JavaScriptSourceFrame.prototype.canEditSource):
+        (WebInspector.JavaScriptSourceFrame.prototype.editContent):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu.else.editBreakpointCondition.didEditBreakpointCondition):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu.else):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.JavaScriptSourceFrame.prototype.didEditContent):
+        (WebInspector.JavaScriptSourceFrame.prototype._onMouseDown):
+        * inspector/front-end/ScriptsPanel.js:
+
 2011-11-09  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: annotate inspector front-end javascript so that it compiled again.
