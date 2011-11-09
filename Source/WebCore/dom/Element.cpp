@@ -470,7 +470,7 @@ int Element::scrollHeight()
     return 0;
 }
 
-LayoutRect Element::boundsInWindowSpace()
+LayoutRect Element::boundsInRootViewSpace()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -501,7 +501,7 @@ LayoutRect Element::boundsInWindowSpace()
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].enclosingBoundingBox());
 
-    result = view->contentsToWindow(result);
+    result = view->contentsToRootView(result);
     return result;
 }
 

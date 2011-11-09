@@ -169,8 +169,7 @@ public:
     virtual int scrollWidth();
     virtual int scrollHeight();
 
-    // Note that the 'window space' has a flipped coordinate system on some platforms.
-    LayoutRect boundsInWindowSpace();
+    LayoutRect boundsInRootViewSpace();
 
     PassRefPtr<ClientRectList> getClientRects();
     PassRefPtr<ClientRect> getBoundingClientRect();

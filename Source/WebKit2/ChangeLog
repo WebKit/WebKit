@@ -1,3 +1,14 @@
+2011-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Element::boundsInWindowSpace should be Element::boundsInRootViewSpace
+        https://bugs.webkit.org/show_bug.cgi?id=71955
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::elementBounds):
+        Call Element::boundsInRootViewSpace.
+
 2011-11-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         WebGraphicsLayer behaves wrongly when no contentsScale is set.
