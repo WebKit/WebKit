@@ -1,3 +1,23 @@
+2011-11-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: ResourcesPanel should support adding subtitle to any BaseStorageTreeElement.
+        https://bugs.webkit.org/show_bug.cgi?id=71848
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.BaseStorageTreeElement.prototype.onattach):
+        (WebInspector.BaseStorageTreeElement.prototype.get displayName):
+        (WebInspector.BaseStorageTreeElement.prototype._updateDisplayName):
+        (WebInspector.BaseStorageTreeElement.prototype._updateTitle):
+        (WebInspector.BaseStorageTreeElement.prototype._updateSubtitle):
+        (WebInspector.BaseStorageTreeElement.prototype.set titleText):
+        (WebInspector.BaseStorageTreeElement.prototype.get subtitleText):
+        (WebInspector.BaseStorageTreeElement.prototype.set subtitleText):
+        (WebInspector.FrameTreeElement.prototype.frameNavigated):
+        (WebInspector.FrameTreeElement.prototype.get itemURL):
+        (WebInspector.FrameTreeElement.prototype.onselect):
+
 2011-11-08  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: crash upon InspectorValue serialization that has 0 value / array entry.

@@ -866,8 +866,53 @@ WebInspector.BaseStorageTreeElement.prototype = {
 
         this.titleElement = document.createElement("div");
         this.titleElement.className = "base-storage-tree-element-title";
-        this.titleElement.textContent = this._titleText;
+        this._titleTextNode = document.createTextNode("");
+        this.titleElement.appendChild(this._titleTextNode);
+        this._updateTitle();
+        this._updateSubtitle();
         this.listItemElement.appendChild(this.titleElement);
+    },
+
+    get displayName()
+    {
+        return this._displayName;
+    },
+
+    _updateDisplayName: function()
+    {
+        this._displayName = this._titleText || "";
+        if (this._subtitleText)
+            this._displayName += " (" + this._subtitleText + ")";
+    },
+
+    _updateTitle: function()
+    {
+        this._updateDisplayName();
+        
+        if (!this.titleElement)
+            return;
+
+        this._titleTextNode.textContent = this._titleText || "";
+    },
+
+    _updateSubtitle: function()
+    {
+        this._updateDisplayName();
+        
+        if (!this.titleElement)
+            return;
+
+        if (this._subtitleText) {
+            if (!this._subtitleElement) {
+                this._subtitleElement = document.createElement("span");
+                this._subtitleElement.className = "base-storage-tree-element-subtitle";
+                this.titleElement.appendChild(this._subtitleElement);
+            }
+            this._subtitleElement.textContent = "(" + this._subtitleText + ")";
+        } else if (this._subtitleElement) {
+            this.titleElement.removeChild(this._subtitleElement);
+            delete this._subtitleElement;
+        }
     },
 
     onselect: function()
@@ -891,8 +936,18 @@ WebInspector.BaseStorageTreeElement.prototype = {
     set titleText(titleText)
     {
         this._titleText = titleText;
-        if (this.titleElement)
-            this.titleElement.textContent = this._titleText;
+        this._updateTitle();
+    },
+
+    get subtitleText()
+    {
+        return this._subtitleText;
+    },
+
+    set subtitleText(subtitleText)
+    {
+        this._subtitleText = subtitleText;
+        this._updateSubtitle();
     },
 
     get searchMatchesCount()
@@ -975,9 +1030,8 @@ WebInspector.FrameTreeElement.prototype = {
         this.removeChildren();
         this._frameId = frame.id;
 
-        var title = frame.name;
-        var subtitle = WebInspector.Resource.displayName(frame.url);
-        this.setTitles(title, subtitle);
+        this.titleText = frame.name;
+        this.subtitleText = WebInspector.Resource.displayName(frame.url);
 
         this._categoryElements = {};
         this._treeElementForResource = {};
@@ -987,51 +1041,16 @@ WebInspector.FrameTreeElement.prototype = {
 
     get itemURL()
     {
-        return "frame://" + encodeURI(this._displayName);
-    },
-
-    onattach: function()
-    {
-        WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
-        if (this._titleToSetOnAttach || this._subtitleToSetOnAttach) {
-            this.setTitles(this._titleToSetOnAttach, this._subtitleToSetOnAttach);
-            delete this._titleToSetOnAttach;
-            delete this._subtitleToSetOnAttach;
-        }
+        return "frame://" + encodeURI(this.displayName);
     },
 
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel.showCategoryView(this._displayName);
+        this._storagePanel.showCategoryView(this.displayName);
 
         this.listItemElement.removeStyleClass("hovered");
         DOMAgent.hideHighlight();
-    },
-
-    get displayName()
-    {
-        return this._displayName;
-    },
-
-    setTitles: function(title, subtitle)
-    {
-        this._displayName = title || "";
-        if (subtitle)
-            this._displayName += " (" + subtitle + ")";
-
-        if (this.parent) {
-            this.titleElement.textContent = title || "";
-            if (subtitle) {
-                var subtitleElement = document.createElement("span");
-                subtitleElement.className = "base-storage-tree-element-subtitle";
-                subtitleElement.textContent = "(" + subtitle + ")";
-                this.titleElement.appendChild(subtitleElement);
-            }
-        } else {
-            this._titleToSetOnAttach = title;
-            this._subtitleToSetOnAttach = subtitle;
-        }
     },
 
     set hovered(hovered)
