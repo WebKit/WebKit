@@ -1,3 +1,19 @@
+2011-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Use contentsToRootView/rootViewToContents when converting between frame coordinate systems
+        https://bugs.webkit.org/show_bug.cgi?id=71947
+
+        Reviewed by Sam Weinig.
+
+        This gets rid of a few calls to contentsToWindow and windowToContents.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doSystemDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getOwnPropertyDescriptor

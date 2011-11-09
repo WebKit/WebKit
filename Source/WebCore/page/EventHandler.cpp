@@ -975,8 +975,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
             FrameView* resultView = resultFrame->view();
             FrameView* mainView = mainFrame->view();
             if (resultView && mainView) {
-                LayoutPoint windowPoint = resultView->contentsToWindow(result.point());
-                LayoutPoint mainFramePoint = mainView->windowToContents(windowPoint);
+                LayoutPoint mainFramePoint = mainView->rootViewToContents(resultView->contentsToRootView(result.point()));
                 result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping, testScrollbars, hitType, padding);
             }
         }

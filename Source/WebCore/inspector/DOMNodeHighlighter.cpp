@@ -144,7 +144,7 @@ void drawHighlightForSVGRenderer(GraphicsContext& context, const Vector<FloatQua
 
 inline LayoutSize frameToMainFrameOffset(Frame* frame)
 {
-    LayoutPoint mainFramePoint = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(LayoutPoint()));
+    LayoutPoint mainFramePoint = frame->page()->mainFrame()->view()->rootViewToContents(frame->view()->contentsToRootView(LayoutPoint()));
     return toLayoutSize(mainFramePoint);
 }
 
