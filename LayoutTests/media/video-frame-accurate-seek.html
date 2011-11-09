@@ -4,7 +4,7 @@
         <script src="media-file.js"></script>
         <script src="video-paint-test.js"></script>
     </head>
-    <body onload="setSrcByTagName('video', findMediaFile('video', 'content/test-25fps')); init()">
+    <body onload="setSrcByTagName('video', findMediaFile('video', 'content/test-25fps')); initAndSeeked()">
         <p>Test that setting currentTime is frame-accurate. The three videos below should be showing frames 12, 13, and 14.</p>
         <video oncanplaythrough='event.target.currentTime=(12/25)'></video>
         <video oncanplaythrough='event.target.currentTime=(13/25)'></video>
