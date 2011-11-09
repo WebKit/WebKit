@@ -1,3 +1,15 @@
+2011-11-08  Chris Evans  <cevans@google.com>
+
+        Crash accessing font fact rule parent
+        https://bugs.webkit.org/show_bug.cgi?id=71860
+
+        Reviewed by Adam Barth.
+
+        Test: fast/css/css-fontface-rule-crash.html
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::~CSSFontFaceRule): tell our child rule when we are going away.
+
 2011-11-08  Adam Klein  <adamk@chromium.org>
 
         Use a typedef for ExceptionCode in all header files instead of including ExceptionCode.h
