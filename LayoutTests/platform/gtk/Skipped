@@ -157,6 +157,7 @@ plugins/js-from-destroy.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=71454
 fast/css/webkit-mask-crash-fieldset-legend.html
+fast/css/webkit-mask-crash-table.html
 
 ###############################################################################
 # EXPECTED FAILURES
