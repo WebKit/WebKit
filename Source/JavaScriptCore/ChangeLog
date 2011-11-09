@@ -1,3 +1,14 @@
+2011-11-09  Andy Wingo  <wingo@igalia.com>
+
+        Enable the DFG JIT on X86-64 Linux platforms
+        https://bugs.webkit.org/show_bug.cgi?id=71373
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Platform.h (ENABLE_DFG_JIT): Enable the DFG JIT on the
+        x86-64 GNU/Linux platform.
+        * CMakeListsEfl.txt: Add JSValue64 implementations to EFL build.
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineOwnProperty
