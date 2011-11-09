@@ -1,5 +1,14 @@
 2011-11-09  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][DRT] window internals object is not reset after each test
+        https://bugs.webkit.org/show_bug.cgi?id=71890
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/symbols.filter: Revert un-needed symbol.
+
+2011-11-09  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, attempt to fix GTK 32-bits Release build after r99691.
 
         * Source/autotools/symbols.filter: Add the missing symbol for resetInternalsObject.

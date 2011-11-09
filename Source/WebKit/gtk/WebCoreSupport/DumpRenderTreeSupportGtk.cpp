@@ -59,7 +59,6 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "TextIterator.h"
-#include "WebCoreTestSupport.h"
 #include "WebKitDOMRangePrivate.h"
 #include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
@@ -890,19 +889,4 @@ int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKi
 #else
     return 0;
 #endif
-}
-
-void DumpRenderTreeSupportGtk::resetInternalsObject(WebKitWebFrame* frame)
-{
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return;
-
-    JSLock lock(SilenceAssertionsOnly);
-
-    JSGlobalContextRef globalContext = webkit_web_frame_get_global_context(frame);
-    ExecState* exec = toJS(globalContext);
-
-    JSContextRef context = toRef(exec);
-    WebCoreTestSupport::resetInternalsObject(context);
 }

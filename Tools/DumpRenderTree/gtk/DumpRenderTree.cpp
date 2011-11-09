@@ -723,7 +723,7 @@ static void runTest(const string& testPathOrURL)
         webViewList = 0;
     }
 
-    DumpRenderTreeSupportGtk::resetInternalsObject(mainFrame);
+    WebCoreTestSupport::resetInternalsObject(webkit_web_frame_get_global_context(mainFrame));
 
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");

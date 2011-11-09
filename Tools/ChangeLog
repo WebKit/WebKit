@@ -1,3 +1,16 @@
+2011-11-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][DRT] window internals object is not reset after each test
+        https://bugs.webkit.org/show_bug.cgi?id=71890
+
+        Reviewed by Martin Robinson.
+
+        Call WebCoreTestSupport::resetInternalsObject without going
+        through DumpRenderTreeSupport.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+
 2011-11-09  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

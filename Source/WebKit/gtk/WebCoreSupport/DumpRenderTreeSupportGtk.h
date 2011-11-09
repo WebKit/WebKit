@@ -126,8 +126,6 @@ public:
     static void setMockGeolocationError(WebKitWebView*, int errorCode, const gchar* errorMessage);
     static int numberOfPendingGeolocationPermissionRequests(WebKitWebView*);
 
-    static void resetInternalsObject(WebKitWebFrame*);
-
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;
