@@ -1,3 +1,11 @@
+2011-11-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::makeJSAccessibilityUIElement):
+        A bad merge added this check that is making the bots sad.
+
 2011-11-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: crash when accessing selectedTab in a tab list
