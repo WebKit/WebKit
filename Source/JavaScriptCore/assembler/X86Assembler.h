@@ -1095,24 +1095,6 @@ public:
     
     void movb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
-#if CPU(X86)
-        // On 32-bit x86 we can only set the first 4 registers;
-        // esp..edi are mapped to the 'h' registers!
-        if (src >= 4) {
-            RegisterID originalSrc = src;
-            xchgl_rr(src, X86Registers::eax);
-            if (base == X86Registers::eax)
-                base = src;
-            else if (index == X86Registers::eax)
-                index = src;
-            src = X86Registers::eax;
-            
-            m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
-
-            xchgl_rr(originalSrc, X86Registers::eax);
-            return;
-        }
-#endif
         m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
     }
 

@@ -1,3 +1,22 @@
+2011-11-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Move code to handle 8bit regs from X86Assembler to MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=71867
+
+        Reviewed by Oliver Hunt.
+
+        This code is fine, but is in the wrong place really. X86 assembler should
+        basically just format up exactly the instruction you request - not expand
+        out to a set of instructions (that is what the macro assembler layer is
+        for!). For other 8-bit ops, on X86 we don't guard against clients accessing
+        the XH registers.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movb_rm):
+            - moved some code.
+
 2011-11-08  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for GTK.
