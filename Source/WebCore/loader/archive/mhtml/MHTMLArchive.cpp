@@ -178,7 +178,14 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page, bool useBin
         stringBuilder.append("Content-Type: ");
         stringBuilder.append(resource.mimeType);
 
-        const char* contentEncoding = useBinaryEncoding ? binary : base64;
+        const char* contentEncoding = 0;
+        if (useBinaryEncoding)
+            contentEncoding = binary;
+        else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType))
+            contentEncoding = quotedPrintable;
+        else
+            contentEncoding = base64;
+
         stringBuilder.append("\r\nContent-Transfer-Encoding: ");
         stringBuilder.append(contentEncoding);
         stringBuilder.append("\r\nContent-Location: ");

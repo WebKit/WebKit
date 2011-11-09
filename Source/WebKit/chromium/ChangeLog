@@ -1,3 +1,17 @@
+2011-11-09  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix MHTML generation to use the QuotedPrintable encoding for text resources.
+        This was regressed when we added binary encoding support.
+        https://bugs.webkit.org/show_bug.cgi?id=71857
+
+        Reviewed by Adam Barth.
+
+        * tests/WebPageNewSerializerTest.cpp:
+        (WebKit::LineReader::LineReader):
+        (WebKit::LineReader::getNextLine):
+        (WebKit::WebPageNewSerializeTest::setUpCSSTestPage):
+        (WebKit::TEST_F):
+
 2011-11-09  Henrik Grunell  <grunell@chromium.org>
 
         Adding missing implementation of WebMediaStreamDescriptor::label().

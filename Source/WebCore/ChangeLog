@@ -1,3 +1,14 @@
+2011-11-09  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix MHTML generation to use the QuotedPrintable encoding for text resources.
+        This was regressed when we added binary encoding support.
+        https://bugs.webkit.org/show_bug.cgi?id=71857
+
+        Reviewed by Adam Barth.
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+
 2011-11-09  Kentaro Hara  <haraken@chromium.org>
 
         Replace [CanBeConstructed] IDL with [Constructor] IDL

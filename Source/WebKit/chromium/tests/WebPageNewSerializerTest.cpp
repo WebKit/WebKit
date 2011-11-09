@@ -49,6 +49,31 @@ using namespace WebKit;
 
 namespace {
 
+class LineReader {
+public:
+    LineReader(const std::string& text) : m_text(text), m_index(0) { }
+    bool getNextLine(std::string* line)
+    {
+        line->clear();
+        if (m_index >= m_text.length())
+            return false;
+
+        size_t endOfLineIndex = m_text.find("\r\n", m_index);
+        if (endOfLineIndex == std::string::npos) {
+            *line = m_text.substr(m_index);
+            m_index = m_text.length();
+        } else {
+            *line = m_text.substr(m_index, endOfLineIndex - m_index);
+            m_index = endOfLineIndex + 2;
+        }
+        return true;
+    }
+
+private:
+    std::string m_text;
+    size_t m_index;
+};
+
 class TestWebFrameClient : public WebFrameClient {
 public:
     virtual ~TestWebFrameClient() { }
@@ -95,6 +120,24 @@ protected:
         filePath.append("/Source/WebKit/chromium/tests/data/pageserializer/");
         filePath.append(fileName.utf8());
         webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
+    }
+
+    WebURL setUpCSSTestPage()
+    {
+        WebURL topFrameURL = GURL("http://www.test.com");
+        registerMockedURLLoad(topFrameURL, WebString::fromUTF8("css_test_page.html"), htmlMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/link_styles.css"), WebString::fromUTF8("link_styles.css"), cssMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/import_style_from_link.css"), WebString::fromUTF8("import_style_from_link.css"), cssMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/import_styles.css"), WebString::fromUTF8("import_styles.css"), cssMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/yellow_background.png"), WebString::fromUTF8("yellow_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/purple_background.png"), WebString::fromUTF8("purple_background.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/ul-dot.png"), WebString::fromUTF8("ul-dot.png"), pngMimeType());
+        registerMockedURLLoad(GURL("http://www.test.com/ol-dot.png"), WebString::fromUTF8("ol-dot.png"), pngMimeType());
+        return topFrameURL;
     }
 
     void loadURLInTopFrame(const GURL& url)
@@ -175,20 +218,7 @@ TEST_F(WebPageNewSerializeTest, PageWithFrames)
 TEST_F(WebPageNewSerializeTest, CSSResources)
 {
     // Register the mocked frame and load it.
-    WebURL topFrameURL = GURL("http://www.test.com");
-    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("css_test_page.html"), htmlMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/link_styles.css"), WebString::fromUTF8("link_styles.css"), cssMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/import_style_from_link.css"), WebString::fromUTF8("import_style_from_link.css"), cssMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/import_styles.css"), WebString::fromUTF8("import_styles.css"), cssMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/yellow_background.png"), WebString::fromUTF8("yellow_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/purple_background.png"), WebString::fromUTF8("purple_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/ul-dot.png"), WebString::fromUTF8("ul-dot.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/ol-dot.png"), WebString::fromUTF8("ol-dot.png"), pngMimeType());
-
+    WebURL topFrameURL = setUpCSSTestPage();
     loadURLInTopFrame(topFrameURL);
 
     WebVector<WebPageSerializer::Resource> resources;
@@ -268,6 +298,45 @@ TEST_F(WebPageNewSerializeTest, SerializeXMLHasRightDeclaration)
 
     pos = xml.find("<?xml version=", pos + 1);
     ASSERT_TRUE(pos == std::string::npos);
+}
+
+TEST_F(WebPageNewSerializeTest, TestMHTMLEncoding)
+{
+    // Load a page with some CSS and some images.
+    WebURL topFrameURL = setUpCSSTestPage();
+    loadURLInTopFrame(topFrameURL);
+
+    WebCString mhtmlData = WebPageSerializer::serializeToMHTML(m_webView);
+    ASSERT_FALSE(mhtmlData.isEmpty());
+
+    // Read the MHTML data line per line and do some pseudo-parsing to make sure the right encoding is used for the different sections.
+    LineReader lineReader(mhtmlData);
+    int sectionCheckedCount = 0;
+    const char* expectedEncoding = 0;
+    std::string line;
+    while (lineReader.getNextLine(&line)) {
+        if (!line.find("Content-Type:")) {
+            ASSERT_FALSE(expectedEncoding);
+            if (line.find("multipart/related;") != std::string::npos) {
+                // Skip this one, it's part of the MHTML header.
+                continue;
+            }
+            if (line.find("text/") != std::string::npos)
+                expectedEncoding = "quoted-printable";
+            else if (line.find("image/") != std::string::npos)
+                expectedEncoding = "base64";
+            else
+                FAIL() << "Unexpected Content-Type: " << line;
+            continue;
+        }
+        if (!line.find("Content-Transfer-Encoding:")) {
+           ASSERT_TRUE(expectedEncoding);
+           EXPECT_TRUE(line.find(expectedEncoding) != std::string::npos);
+           expectedEncoding = 0;
+           sectionCheckedCount++;
+        }
+    }
+    EXPECT_EQ(12, sectionCheckedCount);
 }
 
 }
