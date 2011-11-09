@@ -244,6 +244,10 @@ WebInspector.DedicatedWorkerMessageForwarder.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.HelpScreen}
+ */
 WebInspector.WorkerTerminatedScreen = function()
 {
     WebInspector.HelpScreen.call(this, WebInspector.UIString("Inspected worker terminated"));

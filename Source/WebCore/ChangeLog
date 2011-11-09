@@ -1,3 +1,10 @@
+2011-11-09  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: annotate inspector front-end javascript so that it compiled again.
+
+        * inspector/front-end/ShortcutsScreen.js:
+        * inspector/front-end/WorkerManager.js:
+
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
         Unreviewed build fix after r99711. (Signed/unsigned compare.)

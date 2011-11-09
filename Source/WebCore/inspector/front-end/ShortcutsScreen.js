@@ -30,6 +30,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.HelpScreen}
  */
 WebInspector.ShortcutsScreen = function()
 {
