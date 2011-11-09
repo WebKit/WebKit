@@ -9,12 +9,7 @@ TEMPLATE = app
 TARGET = DumpRenderTree
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
-haveQt(5):isEmpty(QT.uitools.name) {
-    message("QtUiTools library not found. QWidget plugin loading will be disabled")
-    DEFINES += QT_NO_UITOOLS
-} else {
-    CONFIG += uitools
-}
+CONFIG += uitools
 
 load(javascriptcore)
 load(webcore)

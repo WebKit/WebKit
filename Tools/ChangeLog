@@ -1,3 +1,17 @@
+2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Disable use of QtUiTools if the library/module is not found
+
+        We rely on the lookup order of prf files to inject our own uitools.prf
+        that will verify that QtUiTools is in fact present before allowing the
+        CONFIG += uitools to have any effect.
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * qmake/mkspecs/features/uitools.prf: Added.
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r99701.
