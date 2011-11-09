@@ -2071,8 +2071,6 @@ private:
             return m_buffer.executableCopy(globalData);
         }
 
-        void rewindToLabel(AssemblerLabel rewindTo) { m_buffer.rewindToLabel(rewindTo); }
-
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 #endif
