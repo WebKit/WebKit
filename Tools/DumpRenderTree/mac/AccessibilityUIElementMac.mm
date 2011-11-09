@@ -480,7 +480,7 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     return 0;
 }
 
-AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute)
+AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id uiElement = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];

@@ -1,5 +1,12 @@
 2011-11-09  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementAttributeValue):
+
+2011-11-09  Beth Dakin  <bdakin@apple.com>
+
         Speculative build fix.
 
         * DumpRenderTree/AccessibilityUIElement.h:
