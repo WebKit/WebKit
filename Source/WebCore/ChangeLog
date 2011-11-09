@@ -1,5 +1,11 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Mac Build fix part 2: Oops, use the correct wtf/ prefix for the WTF include.
+
+        * page/SecurityPolicy.cpp:
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Prospective build fix for Windows: Include MainThread.h for ASSERT(isMainThread())
         to compile.
 
