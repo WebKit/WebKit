@@ -1,3 +1,40 @@
+2011-11-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTableSection::splitColumn
+        https://bugs.webkit.org/show_bug.cgi?id=70171
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/table/crash-splitColumn-2.html
+               fast/table/crash-splitColumn-3.html
+               fast/table/crash-splitColumn.html
+
+        The old code would not take into account the fact that each RenderTableSection
+        can set its m_needsCellRecalc flag independently of the rest.
+
+        This means that you cannot assume that you can always split or append columns to
+        all the sections. Our approach is to skip sections needing cell recalc in several
+        parts of the code as they will be properly reset to the table's representations
+        during a cell recalc.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::appendColumn):
+        Skip sections needing cell recalc as they will be properly updated later.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        Ignore a section needing cell recalc as addCell will be called after sync'ing
+        the internal column representation in recalcCells.
+
+        (WebCore::RenderTableSection::recalcCells):
+        Clear the flag at the beginning of the function to activate the previous functions.
+        Added a comment as to why this is fine.
+
+        (WebCore::RenderTableSection::appendColumn):
+        Added an ASSERT. If we need cell recalc, we should NEVER update m_grid outside
+        of recalcCells().
+
 2011-11-09  Arko Saha  <arko@motorola.com>
 
         Microdata: fast/dom/MicroData/itemid-attribute-test.html assertion failure in Element::getURLAttribute().
