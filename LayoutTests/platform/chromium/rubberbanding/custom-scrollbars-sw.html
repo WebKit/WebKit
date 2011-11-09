@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Test rubber banding overhang drawing with custom scrollbars</title>
+    <style>
+        html {
+            overflow: scroll;
+        }
+        ::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+        }
+        ::-webkit-scrollbar-track-piece,
+        ::-webkit-scrollbar-corner {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+<div style="height:30px; background-color:black; width:100%"></div>
+<div id="info">This test requires DRT.</div>
+<script>
+    if (window.internals) {
+        document.getElementById('info').style.visibility = "hidden";
+        internals.setScrollViewPosition(document, -50, 50);
+    }
+</script>
+</body>
+</html>

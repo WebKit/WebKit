@@ -1,3 +1,20 @@
+2011-11-09  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium: Fix bad rubber-band overhang shadows being drawn in the presence of custom scrollbar css.
+        https://bugs.webkit.org/show_bug.cgi?id=71719
+
+        This was caused by the overhang calculation logic not being consistent when subtracting the scrollbar sizes from the overhang areas. This resulted in for e.g. a horizontal overhang that didn't overlap with the scrollbar while the vertical overhang overlapped with it. This fix makes the logic consistent so that the overhang areas do not overlap with the scrollbars (when scrollbars are opaque).
+
+        Reviewed by Beth Dakin.
+
+        Tests: platform/chromium/rubberbanding/custom-scrollbars-ne.html
+               platform/chromium/rubberbanding/custom-scrollbars-nw.html
+               platform/chromium/rubberbanding/custom-scrollbars-se.html
+               platform/chromium/rubberbanding/custom-scrollbars-sw.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+
 2011-11-09  Ken Buchanan  <kenrb@chromium.org>
 
         Indentation error in RenderObject::container

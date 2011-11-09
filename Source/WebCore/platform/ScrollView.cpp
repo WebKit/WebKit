@@ -1083,17 +1083,19 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     if (physicalScrollY < 0) {
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setHeight(-physicalScrollY);
+        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - verticalScrollbarWidth);
     } else if (contentsHeight() && physicalScrollY > contentsHeight() - visibleHeight()) {
         int height = physicalScrollY - (contentsHeight() - visibleHeight());
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setY(frameRect().maxY() - height - horizontalScrollbarHeight);
         horizontalOverhangRect.setHeight(height);
+        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - verticalScrollbarWidth);
     }
 
     int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
     if (physicalScrollX < 0) {
         verticalOverhangRect.setWidth(-physicalScrollX);
-        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - horizontalScrollbarHeight);
         verticalOverhangRect.setX(frameRect().x());
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
@@ -1102,7 +1104,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     } else if (contentsWidth() && physicalScrollX > contentsWidth() - visibleWidth()) {
         int width = physicalScrollX - (contentsWidth() - visibleWidth());
         verticalOverhangRect.setWidth(width);
-        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - horizontalScrollbarHeight);
         verticalOverhangRect.setX(frameRect().maxX() - width - verticalScrollbarWidth);
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
