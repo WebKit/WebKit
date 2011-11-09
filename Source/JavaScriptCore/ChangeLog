@@ -1,5 +1,11 @@
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Errrk, failed to commit this in last change.
+
+        * assembler/X86Assembler.h:
+
+2011-11-08  Gavin Barraclough  <barraclough@apple.com>
+
         Remove an unused method.
 
         Rubber stamped by Geoff Garen.

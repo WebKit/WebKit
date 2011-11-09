@@ -1721,8 +1721,6 @@ public:
         return m_formatter.executableCopy(globalData);
     }
 
-    void rewindToLabel(AssemblerLabel rewindTo) { m_formatter.rewindToLabel(rewindTo); }
-
 #ifndef NDEBUG
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 #endif
