@@ -133,8 +133,11 @@ protected:
 
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
-    CSSValue(ClassType classType)
-        : m_classType(classType)
+    explicit CSSValue(ClassType classType)
+        : m_primitiveUnitType(0)
+        , m_hasCachedCSSText(false)
+        , m_isQuirkValue(false)
+        , m_classType(classType)
         , m_isPrimitive(isPrimitiveType(classType))
         , m_isMutable(isMutableType(classType))
         , m_isList(isListType(classType))
@@ -189,8 +192,14 @@ private:
 
     void destroy();
 
-    // FIXME: This class is currently a little bloated, but that will change.
-    //        See <http://webkit.org/b/71666> for more information.
+protected:
+    // These bits are only used by CSSPrimitiveValue but kept here
+    // to maximize struct packing.
+    signed m_primitiveUnitType : 8; // CSSPrimitiveValue::UnitTypes
+    mutable unsigned m_hasCachedCSSText : 1;
+    unsigned m_isQuirkValue : 1;
+
+private:
     unsigned m_classType : 5; // ClassType
     bool m_isPrimitive : 1;
     bool m_isMutable : 1;

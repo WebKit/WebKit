@@ -52,7 +52,6 @@ template<typename T, T max, T min> inline T roundForImpreciseConversion(double v
 
 class CSSPrimitiveValue : public CSSValue {
 public:
-    static const int UnitTypesBits = 8;
     enum UnitTypes {
         CSS_UNKNOWN = 0,
         CSS_NUMBER = 1,
@@ -120,7 +119,7 @@ public:
     static bool isUnitTypeLength(int type) { return (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) ||
                                                     type == CSSPrimitiveValue::CSS_REMS; }
 
-    bool isLength() const { return isUnitTypeLength(m_type); }
+    bool isLength() const { return isUnitTypeLength(m_primitiveUnitType); }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int identifier) { return adoptRef(new CSSPrimitiveValue(identifier)); }
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }
@@ -147,7 +146,7 @@ public:
 
     void cleanup();
 
-    unsigned short primitiveType() const { return m_type; }
+    unsigned short primitiveType() const { return m_primitiveUnitType; }
 
     /*
      * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get
@@ -162,7 +161,7 @@ public:
     template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
 
     // use with care!!!
-    void setPrimitiveType(unsigned short type) { m_type = type; }
+    void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
 
     double getDoubleValue(unsigned short unitType, ExceptionCode&) const;
     double getDoubleValue(unsigned short unitType) const;
@@ -186,23 +185,23 @@ public:
     String getStringValue() const;
 
     Counter* getCounterValue(ExceptionCode&) const;
-    Counter* getCounterValue() const { return m_type != CSS_COUNTER ? 0 : m_value.counter; }
+    Counter* getCounterValue() const { return m_primitiveUnitType != CSS_COUNTER ? 0 : m_value.counter; }
 
     Rect* getRectValue(ExceptionCode&) const;
-    Rect* getRectValue() const { return m_type != CSS_RECT ? 0 : m_value.rect; }
+    Rect* getRectValue() const { return m_primitiveUnitType != CSS_RECT ? 0 : m_value.rect; }
 
     Quad* getQuadValue(ExceptionCode&) const;
-    Quad* getQuadValue() const { return m_type != CSS_QUAD ? 0 : m_value.quad; }
+    Quad* getQuadValue() const { return m_primitiveUnitType != CSS_QUAD ? 0 : m_value.quad; }
 
     PassRefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
-    RGBA32 getRGBA32Value() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
+    RGBA32 getRGBA32Value() const { return m_primitiveUnitType != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
     Pair* getPairValue(ExceptionCode&) const;
-    Pair* getPairValue() const { return m_type != CSS_PAIR ? 0 : m_value.pair; }
+    Pair* getPairValue() const { return m_primitiveUnitType != CSS_PAIR ? 0 : m_value.pair; }
 
-    DashboardRegion* getDashboardRegionValue() const { return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
+    DashboardRegion* getDashboardRegionValue() const { return m_primitiveUnitType != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 
-    CSSWrapShape* getShapeValue() const { return m_type != CSS_SHAPE ? 0 : m_value.shape; }
+    CSSWrapShape* getShapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? 0 : m_value.shape; }
 
     int getIdent() const;
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
@@ -260,9 +259,6 @@ private:
 
     double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize);
 
-    signed m_type : UnitTypesBits;
-    mutable unsigned m_hasCachedCSSText : 1;
-    unsigned m_isQuirkValue : 1;
     union {
         int ident;
         double num;

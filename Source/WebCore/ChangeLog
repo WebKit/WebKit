@@ -1,3 +1,57 @@
+2011-11-08  Andreas Kling  <kling@webkit.org>
+
+        Move CSSPrimitiveValue bitfields up into CSSValue.
+        <http://webkit.org/b/71835>
+
+        Reviewed by Darin Adler.
+
+        Move m_type (and rename it to m_primitiveUnitType),
+        m_hasCachedCSSText and m_isQuirkValue from CSSPrimitiveValue
+        up into CSSValue to share the space.
+
+        This, together with the devirtualization of CSSValue that
+        happened on <http://webkit.org/b/71666>, reduces the size
+        of CSSPrimitiveValue by one CPU word.
+
+        More specifically, we go from 16 to 12 bytes on 32-bit,
+        and from 24 to 16 bytes on 64-bit.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getDoubleValueInternal):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::getCounterValue):
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::getQuadValue):
+        (WebCore::CSSPrimitiveValue::getRGBColorValue):
+        (WebCore::CSSPrimitiveValue::getPairValue):
+        (WebCore::CSSPrimitiveValue::getIdent):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isLength):
+        (WebCore::CSSPrimitiveValue::primitiveType):
+        (WebCore::CSSPrimitiveValue::setPrimitiveType):
+        (WebCore::CSSPrimitiveValue::getCounterValue):
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::getQuadValue):
+        (WebCore::CSSPrimitiveValue::getRGBA32Value):
+        (WebCore::CSSPrimitiveValue::getPairValue):
+        (WebCore::CSSPrimitiveValue::getDashboardRegionValue):
+        (WebCore::CSSPrimitiveValue::getShapeValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator short):
+        (WebCore::CSSPrimitiveValue::operator unsigned short):
+        (WebCore::CSSPrimitiveValue::operator int):
+        (WebCore::CSSPrimitiveValue::operator unsigned):
+        (WebCore::CSSPrimitiveValue::operator float):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::CSSValue):
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::defineOwnProperty
