@@ -201,9 +201,9 @@ private:
 protected:
     // These bits are only used by CSSPrimitiveValue but kept here
     // to maximize struct packing.
-    signed m_primitiveUnitType : 8; // CSSPrimitiveValue::UnitTypes
-    mutable unsigned m_hasCachedCSSText : 1;
-    unsigned m_isQuirkValue : 1;
+    unsigned m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
+    mutable bool m_hasCachedCSSText : 1;
+    bool m_isQuirkValue : 1;
 
 private:
     unsigned m_classType : 5; // ClassType

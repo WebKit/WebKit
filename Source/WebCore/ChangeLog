@@ -1,3 +1,17 @@
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
+        CSSPrimitiveValue: Fix up bitfield member types.
+        <http://webkit.org/b/71751>
+
+        Reviewed by Antti Koivisto.
+
+        The primitive unit type doesn't need to be a signed value,
+        and by making it unsigned, we can shave one bit off of it.
+        Furthermore, m_hasCachedCSSText and m_isQuirkValue should be
+        bool, not unsigned.
+
+        * css/CSSValue.h:
+
 2011-11-09  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: discard injected scripts upon front-end disconnect.
