@@ -306,13 +306,12 @@ WebInspector.loaded = function()
         }
         return;
     }
-    WebInspector.WorkerManager.loaded();
     WebInspector.doLoadedDone();
-    WebInspector.WorkerManager.loadCompleted();
 }
 
 WebInspector.doLoadedDone = function()
 {
+    WebInspector.WorkerManager.loaded();
     InspectorFrontendHost.loaded();
 
     WebInspector.installPortStyles();
@@ -387,6 +386,7 @@ WebInspector.doLoadedDone = function()
     WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
+    WebInspector.WorkerManager.loadCompleted();
 }
 
 WebInspector.addPanel = function(panel)

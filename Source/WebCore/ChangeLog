@@ -1,3 +1,16 @@
+2011-11-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: exception in remote front-end load handler due to undefined reference to workerManager
+        https://bugs.webkit.org/show_bug.cgi?id=71889
+
+        Move calls to WorkerManager load handlers into doLoadedDone method which is
+        called in case of remote front-end too.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2011-11-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract ApplicationCacheModel from ApplicationCacheItemsView.
