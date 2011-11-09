@@ -1,3 +1,18 @@
+2011-11-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Provisionally change StylesSidebarPane section DOM layout to allow media queries
+        https://bugs.webkit.org/show_bug.cgi?id=71902
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
         CSSPrimitiveValue: Fix up bitfield member types.

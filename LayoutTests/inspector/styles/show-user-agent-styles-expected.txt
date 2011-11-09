@@ -7,13 +7,16 @@ I'm also red.
 
 Running: testShowUserAgentStyles
 WebInspector.settings.showUserAgentStyles = true
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 
 ======== Matched CSS Rules ========
-[expanded] h1 { (show-user-agent-styles.html:5)
+[expanded] 
+h1  { (show-user-agent-styles.html:5)
 background-color: red;
 
-[expanded] h1 { (user agent stylesheet)
+[expanded] 
+h1  { (user agent stylesheet)
 display: block;
 font-size: 2em;
 -webkit-margin-before: 0.67em;
@@ -26,10 +29,12 @@ font-weight: bold;
 
 Running: testShowUserAgentStyles
 WebInspector.settings.showUserAgentStyles = false
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 
 ======== Matched CSS Rules ========
-[expanded] h1 { (show-user-agent-styles.html:5)
+[expanded] 
+h1  { (show-user-agent-styles.html:5)
 background-color: red;
 
 

@@ -837,15 +837,16 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     WebInspector.PropertiesSection.call(this, "");
     this.element.className = "styles-section monospace" + (isFirstSection ? " first-styles-section" : "");
 
+    var selectorContainer = document.createElement("div");
     this._selectorElement = document.createElement("span");
     this._selectorElement.textContent = styleRule.selectorText;
-    this.titleElement.appendChild(this._selectorElement);
+    selectorContainer.appendChild(this._selectorElement);
     if (Preferences.debugMode)
         this._selectorElement.addEventListener("click", this._debugShowStyle.bind(this), false);
 
     var openBrace = document.createElement("span");
     openBrace.textContent = " {";
-    this.titleElement.appendChild(openBrace);
+    selectorContainer.appendChild(openBrace);
 
     var closeBrace = document.createElement("div");
     closeBrace.textContent = "}";
@@ -879,9 +880,12 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
         return link;
     }
 
+    this._selectorRefElement = document.createElement("div");
+    this._selectorRefElement.className = "subtitle";
+
     var subtitle = "";
     if (this.styleRule.sourceURL)
-        this.subtitleElement.appendChild(linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine));
+        this._selectorRefElement.appendChild(linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine));
     else if (isUserAgent)
         subtitle = WebInspector.UIString("user agent stylesheet");
     else if (isUser)
@@ -889,16 +893,19 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     else if (isViaInspector)
         subtitle = WebInspector.UIString("via inspector");
     else if (this.rule && this.rule.sourceURL)
-        this.subtitleElement.appendChild(linkifyUncopyable(this.rule.sourceURL, this.rule.sourceLine));
+        this._selectorRefElement.appendChild(linkifyUncopyable(this.rule.sourceURL, this.rule.sourceLine));
+
+    this.identifier = styleRule.selectorText;
+    if (subtitle) {
+        this._selectorRefElement.textContent = subtitle;
+        this.identifier += ":" + subtitle;
+    }
+
+    selectorContainer.appendChild(this._selectorRefElement);
+    this.titleElement.appendChild(selectorContainer);
 
     if (isInherited)
         this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not compted style.
-    if (subtitle)
-        this.subtitle = subtitle;
-
-    this.identifier = styleRule.selectorText;
-    if (this.subtitle)
-        this.identifier += ":" + this.subtitle;
 
     if (!this.editable)
         this.element.addStyleClass("read-only");
@@ -1206,7 +1213,7 @@ WebInspector.StylePropertiesSection.prototype = {
             this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
 
             var oldIdentifier = this.identifier;
-            this.identifier = newRule.selectorText + ":" + this.subtitleElement.textContent;
+            this.identifier = newRule.selectorText + ":" + this._selectorRefElement.textContent;
 
             this.pane.update();
 
@@ -1309,7 +1316,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                     var selectorText = section.styleRule.selectorText;
                     var value = property.value;
                     var title = "<span style='color: gray'>" + selectorText + "</span> - " + value;
-                    var subtitle = " <span style='float:right'>" + section.subtitleElement.innerHTML + "</span>";
+                    var subtitle = " <span style='float:right'>" + section._selectorRefElement.innerHTML + "</span>";
                     var childElement = new TreeElement(null, null, false);
                     childElement.titleHTML = title + subtitle;
                     treeElement.appendChild(childElement);
@@ -1370,7 +1377,7 @@ WebInspector.BlankStylePropertiesSection.prototype = {
                 this.element.addStyleClass("no-affect");
             }
 
-            this.subtitleElement.textContent = WebInspector.UIString("via inspector");
+            this._selectorRefElement.textContent = WebInspector.UIString("via inspector");
             this.expand();
             if (this.element.parentElement) // Might have been detached already.
                 this._moveEditorFromSelector(moveDirection);

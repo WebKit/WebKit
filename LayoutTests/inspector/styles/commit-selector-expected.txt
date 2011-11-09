@@ -2,23 +2,28 @@ Tests that renaming a selector updates element styles. Bug 70018.
 
 Text
 === Before selector modification ===
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 color: red;
 
 ======== Matched CSS Rules ========
-[expanded] #inspected { (commit-selector.html:4)
+[expanded] 
+#inspected  { (commit-selector.html:4)
 /-- overloaded --/ color: green;
 
-[expanded] div { (user agent stylesheet)
+[expanded] 
+div  { (user agent stylesheet)
 display: block;
 
 
 === After selector modification ===
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 color: red;
 
 ======== Matched CSS Rules ========
-[expanded] div { (user agent stylesheet)
+[expanded] 
+div  { (user agent stylesheet)
 display: block;
 
 

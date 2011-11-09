@@ -124,7 +124,17 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
                 continue;
             if (section.element.previousSibling && section.element.previousSibling.className === "sidebar-separator")
                 InspectorTest.addResult("======== " + section.element.previousSibling.textContent + " ========");
-            InspectorTest.addResult((section.expanded ? "[expanded] " : "[collapsed] ") + section.titleElement.textContent + " (" + section.subtitleAsTextForTest + ")");
+            InspectorTest.addResult(section.expanded ? "[expanded] " : "[collapsed] ");
+            var chainEntries = section.titleElement.children;
+            for (var j = 0; j < chainEntries.length; ++j) {
+                var chainEntry = chainEntries[j];
+                var entryLine = chainEntry.children[0].textContent;
+                if (chainEntry.children[2])
+                    entryLine += " " + chainEntry.children[1].textContent;
+                if (chainEntry.children.length > 1)
+                    entryLine += " (" + chainEntry.lastChild.textContent + ")";
+                InspectorTest.addResult(entryLine);
+            }
             section.expand();
             InspectorTest.dumpStyleTreeOutline(section.propertiesTreeOutline, omitLonghands ? 1 : 2);
             InspectorTest.addResult("");

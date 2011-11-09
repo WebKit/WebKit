@@ -1,7 +1,7 @@
 Tests that computed styles expand and allow tracing to style rules.
 
 ==== Computed style for ID1 ====
-[expanded]  ()
+[expanded] 
 background-attachment: scroll;
     #id1 - initial styles-computed-trace.html:23
 background-clip: border-box;
@@ -23,11 +23,12 @@ font-family: Courier;
 text-decoration: underline;
     div - underline styles-computed-trace.html:9
 
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 
 
 ==== Computed style for ID2 ====
-[expanded]  ()
+[expanded] 
 background-color: blue;
     #id2 - blue styles-computed-trace.html:27
 display: block;
@@ -41,14 +42,17 @@ text-decoration: underline;
     /-- overloaded --/ #id2 - invalidvalue styles-computed-trace.html:27
     div - underline styles-computed-trace.html:9
 
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 
 
 ==== Style for ID3 ====
-[expanded] element.style { ()
+[expanded] 
+element.style  { ()
 
 ======== Matched CSS Rules ========
-[expanded] button[hidden] { ()
+[expanded] 
+button[hidden]  { ()
 display: none;
 
 
