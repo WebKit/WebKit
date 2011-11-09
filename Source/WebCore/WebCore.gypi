@@ -6274,6 +6274,7 @@
             'inspector/front-end/inspector.html',
             'inspector/front-end/AdvancedSearchController.js',
             'inspector/front-end/ApplicationCacheItemsView.js',
+            'inspector/front-end/ApplicationCacheModel.js',
             'inspector/front-end/AuditCategories.js',
             'inspector/front-end/AuditFormatters.js',
             'inspector/front-end/AuditLauncherView.js',

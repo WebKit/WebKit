@@ -68573,6 +68573,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ApplicationCacheModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\AuditCategories.js"
 					>
 				</File>

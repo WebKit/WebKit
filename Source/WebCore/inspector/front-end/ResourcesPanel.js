@@ -108,7 +108,14 @@ WebInspector.ResourcesPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        this._populateResourceTree();
+        if (!this._initialized) {
+            this._populateResourceTree();
+            this._initializeApplicationCacheModel();
+
+            this._initDefaultSelection();
+            
+            this._initialized = true;
+        }
     },
 
     _onLoadEventFired: function()
@@ -118,7 +125,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _initDefaultSelection: function()
     {
-        if (!this._treeElementForFrameId)
+        if (!this._initialized)
             return;
 
         var itemURL = WebInspector.settings.resourcesLastSelectedItem.get();
@@ -137,6 +144,9 @@ WebInspector.ResourcesPanel.prototype = {
 
     reset: function()
     {
+        this.resourcesListTreeElement.removeChildren();
+        this._treeElementForFrameId = {};
+
         this._origins = {};
         this._domains = {};
         for (var i = 0; i < this._databases.length; ++i) {
@@ -177,16 +187,13 @@ WebInspector.ResourcesPanel.prototype = {
 
     _populateResourceTree: function()
     {
-        if (this._treeElementForFrameId)
-            return;
-
         this._treeElementForFrameId = {};
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetResourcesTree, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this.reset, this);
 
         function populateFrame(frameId)
         {
@@ -201,8 +208,6 @@ WebInspector.ResourcesPanel.prototype = {
                 this._resourceAdded({data:resources[i]});
         }
         populateFrame.call(this, "");
-
-        this._initDefaultSelection();
     },
 
     _frameAdded: function(event)
@@ -257,13 +262,6 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
             frameTreeElement.frameNavigated(event.data.frame);
-    },
-
-    _resetResourcesTree: function()
-    {
-        this.resourcesListTreeElement.removeChildren();
-        this._treeElementForFrameId = {};
-        this.reset();
     },
 
     _cachedResourcesLoaded: function()
@@ -486,7 +484,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var view = this._applicationCacheView;
         if (!view) {
-            view = new WebInspector.ApplicationCacheItemsView(treeElement, appcacheDomain);
+            view = new WebInspector.ApplicationCacheItemsView(this._applicationCacheModel, treeElement, appcacheDomain);
             this._applicationCacheView = view;
         }
 
@@ -568,6 +566,11 @@ WebInspector.ResourcesPanel.prototype = {
             domStorage._domStorageView.update();
     },
 
+    _initializeApplicationCacheModel: function()
+    {
+        this._applicationCacheModel = new WebInspector.ApplicationCacheModel();
+    },
+    
     updateApplicationCacheStatus: function(status)
     {
         this._cachedApplicationCacheViewStatus = status;

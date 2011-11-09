@@ -27,9 +27,11 @@
  * @constructor
  * @extends {WebInspector.View}
  */
-WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
+WebInspector.ApplicationCacheItemsView = function(model, treeElement, appcacheDomain)
 {
     WebInspector.View.call(this);
+    
+    this._model = model;
 
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
@@ -149,7 +151,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     _update: function()
     {
-        WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync(this._updateCallback.bind(this));
+        this._model.getApplicationCachesAsync(this._updateCallback.bind(this));
     },
 
     _updateCallback: function(applicationCaches)
@@ -274,37 +276,3 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 }
 
 WebInspector.ApplicationCacheItemsView.prototype.__proto__ = WebInspector.View.prototype;
-
-/**
- * @constructor
- * @implements {ApplicationCacheAgent.Dispatcher}
- */
-WebInspector.ApplicationCacheDispatcher = function()
-{
-}
-
-WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(callback)
-{
-    function mycallback(error, applicationCaches)
-    {
-        // FIXME: Currently, this list only returns a single application cache.
-        if (!error && applicationCaches)
-            callback(applicationCaches);
-    }
-
-    ApplicationCacheAgent.getApplicationCaches(mycallback);
-}
-
-WebInspector.ApplicationCacheDispatcher.prototype = {
-    updateApplicationCacheStatus: function(status)
-    {
-        WebInspector.panels.resources.updateApplicationCacheStatus(status);
-    },
-
-    updateNetworkState: function(isNowOnline)
-    {
-        WebInspector.panels.resources.updateNetworkState(isNowOnline);
-    }
-}
-
-InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheDispatcher());

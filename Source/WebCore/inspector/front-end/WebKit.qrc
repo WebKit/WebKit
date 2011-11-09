@@ -3,6 +3,7 @@
     <file>inspector.html</file>
     <file>AdvancedSearchController.js</file>
     <file>ApplicationCacheItemsView.js</file>
+    <file>ApplicationCacheModel.js</file>
     <file>AuditCategories.js</file>
     <file>AuditFormatters.js</file>
     <file>AuditLauncherView.js</file>
