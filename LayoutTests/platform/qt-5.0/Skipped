@@ -6968,3 +6968,10 @@ fast/multicol/flipped-blocks-hit-test.html
 # nrwt pixel test crash
 # https://bugs.webkit.org/show_bug.cgi?id=71688
 editing/pasteboard/data-transfer-items-image-png.html
+
+# [Qt] failures in http/tests/security/contentSecurityPolicy with Qt5
+# https://bugs.webkit.org/show_bug.cgi?id=71906
+http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
+http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
+http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
+http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html
