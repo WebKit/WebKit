@@ -530,11 +530,6 @@ public:
         return reinterpret_cast<ptrdiff_t>(b.executableAddress()) - reinterpret_cast<ptrdiff_t>(a.executableAddress());
     }
 
-    // Temporary interface; likely to be removed, since may be hard to port to all architectures.
-#if CPU(X86) || CPU(X86_64)
-    void rewindToLabel(Label rewindTo) { m_assembler.rewindToLabel(rewindTo.m_label); }
-#endif
-
     void beginUninterruptedSequence() { }
     void endUninterruptedSequence() { }
 

@@ -146,11 +146,6 @@ namespace JSC {
             return result.release();
         }
 
-        void rewindToLabel(AssemblerLabel label)
-        {
-            m_index = label.m_offset;
-        }
-
 #ifndef NDEBUG
         unsigned debugOffset() { return m_index; }
 #endif
