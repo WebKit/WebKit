@@ -1969,7 +1969,7 @@ BUGUKAI SKIP MAC WIN : fast/text/international/bold-bengali.html = FAIL
 BUGCR42875 SKIP WONTFIX : sputnik = TEXT
 
 // Need rebaseline
-BUGWK70765 WIN : fast/forms/listbox-clip.html = TEXT
+BUGWK70765 WIN : fast/forms/listbox-clip.html = IMAGE+TEXT
 
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
