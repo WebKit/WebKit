@@ -232,7 +232,7 @@ defineTest(linkStaticLibrary) {
     path = $$1
     target = $$2
 
-    LIBS = -l$$target
+    LIBS = -l$$target $$LIBS
 
     win32-msvc*|wince*|win32-icc {
         LIBS = -L$$path $$LIBS

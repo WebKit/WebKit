@@ -1,5 +1,11 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unbreak the Qt build (copy & paste mistake - oops)
+
+        * qmake/mkspecs/features/functions.prf:
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Centralize duplicated code for linking the static libs
 
         Reviewed by Tor Arne Vestbø.
