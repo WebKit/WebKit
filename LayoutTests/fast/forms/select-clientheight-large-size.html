@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>HTMLSelectElement multiple attribute test when no size is specified</p>
+<div id="console"></div>
+
+<select multiple id="select1" >
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+</select>
+
+<select multiple id="select2" ></select>
+
+<script>
+
+    function AddItem(Text,Value) {
+        var opt = document.createElement("option");
+        document.getElementById("select2").options.add(opt);
+
+        opt.text = Text;
+        opt.value = Value;
+
+    }
+
+    function getElemById(elemId) {
+        return document.getElementById(elemId);
+    }
+
+    function clientHeight(elemId) {
+        var element = getElemById(elemId);
+        return element.clientHeight;
+    }
+
+    function multipleOfElement(elemId, multiple) {
+        var element = getElemById(elemId);
+        var value = element.clientHeight * multiple + (multiple - 1);
+        return value;
+    }
+
+    var select = document.getElementById("select2");
+    
+    // Add large number of options
+    for (i=0 ; i<= 10000 ;i++)
+        AddItem(i, i);
+
+    shouldBe("clientHeight('select2')", "clientHeight('select1')");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '4'); clientHeight('select2') == clientHeight('select1')");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '5'); clientHeight('select2') > clientHeight('select1')");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '8'); clientHeight('select2') == multipleOfElement('select1', 2)");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '12'); clientHeight('select2') == multipleOfElement('select1', 3)");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '16'); clientHeight('select2') == multipleOfElement('select1', 4)");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '400'); clientHeight('select2') == multipleOfElement('select1', 100)");
+    shouldBeTrue("getElemById('select2').setAttribute('size', '4000'); clientHeight('select2') == multipleOfElement('select1', 1000)");
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

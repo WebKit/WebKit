@@ -1968,6 +1968,9 @@ BUGUKAI SKIP MAC WIN : fast/text/international/bold-bengali.html = FAIL
 // They should be moved to the JavaScriptCore test suite.
 BUGCR42875 SKIP WONTFIX : sputnik = TEXT
 
+// Need rebaseline
+BUGWK70765 : fast/forms/listbox-clip.html = TEXT
+
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 // WebKit roll 58791:58807

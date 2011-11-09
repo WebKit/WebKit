@@ -1,0 +1,14 @@
+HTMLSelectElement multiple attribute test when no size is specified
+
+PASS clientHeight('select2') is clientHeight('select1')
+PASS getElemById('select2').setAttribute('size', '4'); clientHeight('select2') == clientHeight('select1') is true
+PASS getElemById('select2').setAttribute('size', '5'); clientHeight('select2') > clientHeight('select1') is true
+PASS getElemById('select2').setAttribute('size', '8'); clientHeight('select2') == multipleOfElement('select1', 2) is true
+PASS getElemById('select2').setAttribute('size', '12'); clientHeight('select2') == multipleOfElement('select1', 3) is true
+PASS getElemById('select2').setAttribute('size', '16'); clientHeight('select2') == multipleOfElement('select1', 4) is true
+PASS getElemById('select2').setAttribute('size', '400'); clientHeight('select2') == multipleOfElement('select1', 100) is true
+PASS getElemById('select2').setAttribute('size', '4000'); clientHeight('select2') == multipleOfElement('select1', 1000) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

@@ -8,4 +8,7 @@ BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
 // Need rebaseline
+BUGWK70765 : fast/forms/listbox-clip.html = TEXT
+
+// Need rebaseline
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT

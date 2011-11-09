@@ -1,3 +1,16 @@
+2011-11-08  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        Default <select multiple> expands up to 10 items instead of showing 4.
+        https://bugs.webkit.org/show_bug.cgi?id=70765
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/forms/select-clientheight-large-size.html
+               fast/forms/select-clientheight-with-multiple-attr.html
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::size):
+
 2011-11-08  Chris Evans  <cevans@google.com>
 
         Crash accessing font fact rule parent

@@ -70,8 +70,12 @@ const int rowSpacing = 1;
 
 const int optionsSpacingHorizontal = 2;
 
+// The minSize constant was originally defined to render scrollbars correctly.
+// This might vary for different platforms.
 const int minSize = 4;
-const int maxDefaultSize = 10;
+
+// Default size when the multiple attribute is present but size attribute is absent.
+const int defaultSize = 4;
 
 // FIXME: This hardcoded baselineAdjustment is what we used to do for the old
 // widget, but I'm not sure this is right for the new control.
@@ -216,7 +220,8 @@ int RenderListBox::size() const
     int specifiedSize = toHTMLSelectElement(node())->size();
     if (specifiedSize > 1)
         return max(minSize, specifiedSize);
-    return min(max(minSize, numItems()), maxDefaultSize);
+
+    return defaultSize;
 }
 
 int RenderListBox::numVisibleItems() const
