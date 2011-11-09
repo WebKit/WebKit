@@ -308,6 +308,19 @@ sub GenerateHeader
         }
     }
     push(@headerContent, "\nclass FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
+
+    my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
+    if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
+        push(@headerContent, <<END);
+
+class V8${nativeType}Constructor {
+public:
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate();
+    static WrapperTypeInfo info;
+};
+END
+    }
+
     push(@headerContent, "\nclass $className {\n");
     push(@headerContent, "public:\n");
 
@@ -330,7 +343,6 @@ sub GenerateHeader
         push(@headerContent, "false;\n");
     }
 
-    my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectParameter = IsDOMNodeType($interfaceName) ? ", bool forceNewObject = false" : "";
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
@@ -1594,6 +1606,141 @@ END
     push(@implContent, "\n");
 }
 
+sub GenerateNamedConstructorCallback
+{
+    my $function = shift;
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    my $raisesExceptions = @{$function->raisesExceptions};
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        $raisesExceptions = 1;
+    }
+    if (!$raisesExceptions) {
+        foreach my $parameter (@{$function->parameters}) {
+            if ((!$parameter->extendedAttributes->{"Callback"} and TypeCanFailConversion($parameter)) or $parameter->extendedAttributes->{"IsIndex"}) {
+                $raisesExceptions = 1;
+            }
+        }
+    }
+
+    my @beforeArgumentList;
+    my @afterArgumentList;
+
+    if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        push(@implContent, <<END);
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0 };
+
+END
+    } else {
+        push(@implContent, <<END);
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0 };
+
+END
+    }
+
+    push(@implContent, <<END);
+static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${implClassName}.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    if (!frame)
+        return throwError("${implClassName} constructor associated frame is unavailable", V8Proxy::ReferenceError);
+
+    Document* document = frame->document();
+
+    // Make sure the document is added to the DOM Node map. Otherwise, the ${implClassName} instance
+    // may end up being the only node in the map and get garbage-collected prematurely.
+    toV8(document);
+
+END
+
+    push(@implContent, GenerateArgumentsCountCheck($function, $dataNode));
+
+    if ($raisesExceptions) {
+        AddToImplIncludes("ExceptionCode.h");
+        push(@implContent, "\n");
+        push(@implContent, "    ExceptionCode ec = 0;\n");
+    }
+
+    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    push(@implContent, $parameterCheckString);
+
+    push(@beforeArgumentList, "document");
+
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        push(@afterArgumentList, "ec");
+    }
+
+    my @argumentList;
+    my $index = 0;
+    foreach my $parameter (@{$function->parameters}) {
+        last if $index eq $paramIndex;
+        push(@argumentList, $parameter->name);
+        $index++;
+    }
+
+    my $argumentString = join(", ", @beforeArgumentList, @argumentList, @afterArgumentList);
+    push(@implContent, "\n");
+    push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::createForJSConstructor(${argumentString});\n");
+
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        push(@implContent, "    if (ec)\n");
+        push(@implContent, "        goto fail;\n");
+    }
+
+    my $DOMObject = "DOMObject";
+    # A DOMObject that is an ActiveDOMObject and also a DOMNode should be treated as an ActiveDOMObject.
+    if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        $DOMObject = "ActiveDOMObject";
+    } elsif (IsNodeSubType($dataNode)) {
+        $DOMObject = "DOMNode";
+    }
+    push(@implContent, <<END);
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &V8${implClassName}Constructor::info, obj.get());
+    obj->ref();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
+END
+
+    if ($raisesExceptions) {
+        push(@implContent, "  fail:\n");
+        push(@implContent, "    return throwError(ec);\n");
+    }
+
+    push(@implContent, "}\n");
+
+    push(@implContent, <<END);
+
+v8::Persistent<v8::FunctionTemplate> V8${implClassName}Constructor::GetTemplate()
+{
+    static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
+    if (!cachedTemplate.IsEmpty())
+        return cachedTemplate;
+
+    v8::HandleScope scope;
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8${implClassName}ConstructorCallback);
+
+    v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
+    instance->SetInternalFieldCount(V8${implClassName}::internalFieldCount);
+    result->SetClassName(v8::String::New("${implClassName}"));
+    result->Inherit(V8${implClassName}::GetTemplate());
+
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    return cachedTemplate;
+}
+
+END
+}
+
 sub GenerateBatchedAttributeData
 {
     my $dataNode = shift;
@@ -1670,7 +1817,12 @@ sub GenerateSingleBatchedAttribute
     if ($attribute->signature->type =~ /Constructor$/) {
         my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
         $constructorType =~ s/Constructor$//;
-        AddToImplIncludes("V8${constructorType}.h", $attribute->signature->extendedAttributes->{"Conditional"});
+        # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
+        # We do not generate the header file for NamedConstructor of class XXXX,
+        # since we generate the NamedConstructor declaration into the header file of class XXXX.
+        if ($constructorType !~ /Constructor$/ || $attribute->signature->extendedAttributes->{"V8CustomConstructor"} || $attribute->signature->extendedAttributes->{"CustomConstructor"}) {
+            AddToImplIncludes("V8${constructorType}.h", $attribute->signature->extendedAttributes->{"Conditional"});
+        }
         if ($customAccessor) {
             $getter = "V8${customAccessor}AccessorGetter";
         } else {
@@ -2151,6 +2303,8 @@ v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& arg
 }
 
 END
+    } elsif ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif ($dataNode->extendedAttributes->{"CanBeConstructed"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     }

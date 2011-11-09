@@ -490,8 +490,8 @@ module window {
         attribute HTMLAllCollectionConstructor HTMLAllCollection;
         attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
-        attribute [JSCCustomGetter] HTMLImageElementConstructorConstructor Image; // Usable with new operator
-        attribute [JSCCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
+        attribute [JSCCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
+        attribute [JSCCustomGetter, CustomConstructor] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
@@ -627,7 +627,7 @@ module window {
 
         attribute StorageConstructor Storage;
 
-        attribute [JSCCustomGetter, Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+        attribute [JSCCustomGetter, CustomConstructor, Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;

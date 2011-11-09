@@ -151,17 +151,41 @@ sub parseExtendedAttributes
         $str =~ s/^\s*([\w\d]+)//;
 
         if ($str =~ /^\s*=/) {
-            # Parse '=' value | '=' value ','
             $str =~ s/^\s*=//;
-            if ($str =~ /^\s*([^,]*),?/) {
-                $attrs{$name} = $1;
-                $attrs{$name} =~ s/^(.*?)\s*$/$1/;
-                $str =~ s/^\s*([^,]*),?//;
+            if ($name eq "NamedConstructor") {
+                # Parse '=' name '(' arguments ')' ','?
+                if ($str =~ /^\s*([\w\d]+)/) {
+                    # For now ignore the name, since the name is managed by DOMWindow.idl.
+                    $str =~ s/^\s*([\w\d]+)//;
+                }
+                if ($str =~ /^\s*\(/) {
+                    # Parse '(' arguments ')' ','?
+                    $str =~ s/^\s*\(//;
+                    if ($str =~ /^([^)]*)\),?/) {
+                        $attrs{$name} = $1;
+                        $attrs{$name} =~ s/^(.*?)\s*$/$1/;
+                        $str =~ s/^([^)]*)\),?//;
+                    } else {
+                        die("Invalid extended attribute: '$str'\n");
+                    }
+                } elsif ($str =~ /^\s*,?/) {
+                    $attrs{$name} = "";
+                    $str =~ s/^\s*,?//;
+                } else {
+                    die("Invalid extended attribute: '$str'\n");
+                }
             } else {
-                die("Invalid extended attribute: '$str'\n");
+                # Parse '=' value ','?
+                if ($str =~ /^\s*([^,]*),?/) {
+                    $attrs{$name} = $1;
+                    $attrs{$name} =~ s/^(.*?)\s*$/$1/;
+                    $str =~ s/^\s*([^,]*),?//;
+                } else {
+                    die("Invalid extended attribute: '$str'\n");
+                }
             }
         } elsif ($str =~ /^\s*\(/) {
-            # Parse '(' arguments ')' | '(' arguments ')' ','
+            # Parse '(' arguments ')' ','?
             $str =~ s/^\s*\(//;
             if ($str =~ /^([^)]*)\),?/) {
                 $attrs{$name} = $1;
@@ -258,6 +282,14 @@ sub ParseInterface
             $newDataNode->signature->extendedAttributes($extendedAttributes);
             parseParameters($newDataNode, $extendedAttributes->{"Constructor"});
             $extendedAttributes->{"Constructor"} = 1;
+            $dataNode->constructor($newDataNode);
+        } elsif (defined $extendedAttributes->{"NamedConstructor"}) {
+            my $newDataNode = new domFunction();
+            $newDataNode->signature(new domSignature());
+            $newDataNode->signature->name("NamedConstructor");
+            $newDataNode->signature->extendedAttributes($extendedAttributes);
+            parseParameters($newDataNode, $extendedAttributes->{"NamedConstructor"});
+            $extendedAttributes->{"NamedConstructor"} = 1;
             $dataNode->constructor($newDataNode);
         }
         $dataNode->extendedAttributes($extendedAttributes);

@@ -1,3 +1,100 @@
+2011-11-08  Kentaro Hara  <haraken@chromium.org>
+
+        CodeGeneratorV8.pm can generate a NamedConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=71756
+
+        Reviewed by Adam Barth.
+
+        - IDLParser.pm can parse [NamedConstructor] IDL.
+        - CodeGeneratorV8.pm can generate a NamedConstructor
+        and a template getter for the NamedConstructor.
+        - Added a new binding test named TestNamedConstructor.idl.
+
+        Tests: WebCore/bindings/scripts/test/TestNamedConstructor.idl
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader): Generates a header for a NamedConstructor.
+        (GenerateNamedConstructorCallback): Generates the NamedConstructor and a template getter for the NamedConstructor.
+        (GenerateSingleBatchedAttribute): If an IDL type is "XXXXConstructorConstructor", then we do not add a header file of XXXXConstructor, because the XXXXConstructor declaration is written in the header file of class XXXX.
+        * bindings/scripts/IDLParser.pm:
+        (parseExtendedAttributes): Parses 'NamedConstructor' '=' name '(' parameters ')' ','?
+        (ParseInterface): Creates the signature of a NamedConstructor.
+        * bindings/scripts/test/TestNamedConstructor.idl: Added a new test for the [NamedConstructor] IDL.
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.cpp: Added a run-binding-test result of TestNamedConstructor.idl.
+        (WebDOMTestNamedConstructor::WebDOMTestNamedConstructorPrivate::WebDOMTestNamedConstructorPrivate):
+        (WebDOMTestNamedConstructor::WebDOMTestNamedConstructor):
+        (WebDOMTestNamedConstructor::operator=):
+        (WebDOMTestNamedConstructor::impl):
+        (WebDOMTestNamedConstructor::~WebDOMTestNamedConstructor):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp: Ditto.
+        (WebKit::kit):
+        (WebKit::core):
+        (webkit_dom_test_named_constructor_finalize):
+        (webkit_dom_test_named_constructor_set_property):
+        (webkit_dom_test_named_constructor_get_property):
+        (webkit_dom_test_named_constructor_constructed):
+        (webkit_dom_test_named_constructor_class_init):
+        (webkit_dom_test_named_constructor_init):
+        (WebKit::wrapTestNamedConstructor):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructorPrivate.h: Ditto.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Ditto.
+        (WebCore::JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor):
+        (WebCore::JSTestNamedConstructorConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructorConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNamedConstructorConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestNamedConstructorPrototype::self):
+        (WebCore::JSTestNamedConstructor::JSTestNamedConstructor):
+        (WebCore::JSTestNamedConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructor::createPrototype):
+        (WebCore::JSTestNamedConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNamedConstructor::getOwnPropertyDescriptor):
+        (WebCore::jsTestNamedConstructorConstructor):
+        (WebCore::JSTestNamedConstructor::getConstructor):
+        (WebCore::isObservable):
+        (WebCore::JSTestNamedConstructorOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestNamedConstructorOwner::finalize):
+        (WebCore::toJS):
+        (WebCore::toTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h: Ditto.
+        (WebCore::JSTestNamedConstructor::create):
+        (WebCore::JSTestNamedConstructor::createStructure):
+        (WebCore::JSTestNamedConstructor::impl):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::JSTestNamedConstructorPrototype::create):
+        (WebCore::JSTestNamedConstructorPrototype::createStructure):
+        (WebCore::JSTestNamedConstructorPrototype::JSTestNamedConstructorPrototype):
+        (WebCore::JSTestNamedConstructorConstructor::create):
+        (WebCore::JSTestNamedConstructorConstructor::createStructure):
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructor.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructor.mm: Ditto.
+        (-[DOMTestNamedConstructor dealloc]):
+        (-[DOMTestNamedConstructor finalize]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructorInternal.h: Ditto.
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp: Ditto.
+        (WebCore::TestNamedConstructorInternal::V8_USE):
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        (WebCore::V8TestNamedConstructorConstructor::GetTemplate):
+        (WebCore::ConfigureV8TestNamedConstructorTemplate):
+        (WebCore::V8TestNamedConstructor::GetRawTemplate):
+        (WebCore::V8TestNamedConstructor::GetTemplate):
+        (WebCore::V8TestNamedConstructor::HasInstance):
+        (WebCore::V8TestNamedConstructor::toActiveDOMObject):
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        (WebCore::V8TestNamedConstructor::derefObject):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h: Ditto.
+        (WebCore::V8TestNamedConstructor::toNative):
+        (WebCore::V8TestNamedConstructor::existingWrapper):
+        (WebCore::V8TestNamedConstructor::wrap):
+        (WebCore::toV8):
+        * page/DOMWindow.idl: Added [CustomConstructor] IDL to HTMLAudioElement, HTMLImageElement and HTMLOptionElement.
+
 2011-11-08  Philip Rogers  <pdr@google.com>
 
         fix REGRESSION: SVG feColorMatrix causes crash
