@@ -10,8 +10,8 @@
                     { "name": "apple-xserve-9", "platform": "mac-snowleopard" },	
                     { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-2", "platform": "mac-snowleopard" },
-                    { "name": "apple-macpro-3", "platform": "mac-lion" },
 
+                    { "name": "apple-macpro-3", "platform": "mac-lion" },
                     { "name": "apple-macpro-4", "platform": "mac-lion" },
                     { "name": "apple-macpro-5", "platform": "mac-lion" },	
                     { "name": "apple-macpro-6", "platform": "mac-lion" },
