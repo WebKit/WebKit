@@ -77,13 +77,13 @@ protected:
     StyleSheet(CSSRule* parentRule, const String& href, const KURL& finalURL);
 
 private:
+    bool m_disabled;
     CSSRule* m_parentRule;
     Node* m_parentNode;
     String m_originalURL;
     KURL m_finalURL;
     String m_strTitle;
     RefPtr<MediaList> m_media;
-    bool m_disabled;
 };
 
 } // namespace

@@ -29,20 +29,20 @@
 namespace WebCore {
 
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
-    : m_parentRule(0)
+    : m_disabled(false)
+    , m_parentRule(0)
     , m_parentNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
-    , m_disabled(false)
 {
 }
 
 StyleSheet::StyleSheet(CSSRule* parentRule, const String& originalURL, const KURL& finalURL)
-    : m_parentRule(parentRule)
+    : m_disabled(false)
+    , m_parentRule(parentRule)
     , m_parentNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
-    , m_disabled(false)
 {
 }
 

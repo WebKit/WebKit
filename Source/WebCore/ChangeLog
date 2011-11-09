@@ -1,5 +1,19 @@
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
+        Shrink StyleSheet on 64-bit.
+        <http://webkit.org/b/71923>
+
+        Reviewed by Darin Adler.
+
+        Move m_disabled to the top so it folds into the padding at
+        the end of RefCounted on 64-bit, shrinking StyleSheet by 8 bytes.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        * css/StyleSheet.h:
+
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
         StyleSheet: Devirtualize styleSheetChanged().
         <http://webkit.org/b/71913>
 
