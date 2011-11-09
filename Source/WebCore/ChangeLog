@@ -1,3 +1,10 @@
+2011-11-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * WebCore.exp.in: Export the right symbol names.
+        * WebCore.xcodeproj/project.pbxproj: Make the header file available outside of WebCore.
+
 2011-11-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QApplication with QGuiApplication
