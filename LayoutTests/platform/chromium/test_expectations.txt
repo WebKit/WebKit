@@ -3948,5 +3948,4 @@ BUGRICOW : fast/js/toString-overrides.html = TEXT
 BUGRICOW : fast/js/toString-recursion.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
-// Need rebaseline.
-BUGXJI WIN LINUX : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT MISSING
+BUGXJI : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT MISSING
