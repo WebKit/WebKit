@@ -1,3 +1,12 @@
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSGlobalObject::hasOwnPropertyForWrite
+        https://bugs.webkit.org/show_bug.cgi?id=71934
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSGlobalObject.h: Removed the virtual-ness of hasOwnPropertyForWrite since nobody overrides it.
+
 2011-11-09  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71873

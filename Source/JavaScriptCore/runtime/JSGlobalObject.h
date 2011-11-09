@@ -184,7 +184,7 @@ namespace JSC {
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
-        virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
+        bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
         static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
         static void putWithAttributes(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
