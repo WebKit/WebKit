@@ -424,11 +424,6 @@ public:
         m_assembler.sqrtsd_rr(src, dst);
     }
 
-    void andnotDouble(FPRegisterID src, FPRegisterID dst)
-    {
-        m_assembler.andnpd_rr(src, dst);
-    }
-
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
@@ -1266,6 +1261,9 @@ public:
     }
 
 protected:
+    // A 64-bit mask with all bits set other than the sign bit (used in abs).
+    static const uint64_t s_maskSignBit;
+
     X86Assembler::Condition x86Condition(RelationalCondition cond)
     {
         return static_cast<X86Assembler::Condition>(cond);

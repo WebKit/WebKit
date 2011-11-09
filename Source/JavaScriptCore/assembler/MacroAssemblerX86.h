@@ -34,11 +34,6 @@ namespace JSC {
 
 class MacroAssemblerX86 : public MacroAssemblerX86Common {
 public:
-    MacroAssemblerX86()
-        : m_isSSE2Present(isSSE2Present())
-    {
-    }
-
     static const Scale ScalePtr = TimesFour;
 
     using MacroAssemblerX86Common::add32;
@@ -111,6 +106,12 @@ public:
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
     {
         m_assembler.cvtsi2sd_mr(src.m_ptr, dest);
+    }
+
+    void absDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        moveDouble(src, dst);
+        m_assembler.andpd_mr(&s_maskSignBit, dst);
     }
 
     void store32(TrustedImm32 imm, void* address)
@@ -189,15 +190,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    bool supportsFloatingPoint() const { return m_isSSE2Present; }
+    static bool supportsFloatingPoint() { return isSSE2Present(); }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
-    bool supportsFloatingPointTruncate() const { return m_isSSE2Present; }
-    bool supportsFloatingPointSqrt() const { return m_isSSE2Present; }
-    bool supportsDoubleBitops() const { return m_isSSE2Present; }
+    static bool supportsFloatingPointTruncate() { return isSSE2Present(); }
+    static bool supportsFloatingPointSqrt() { return isSSE2Present(); }
+    static bool supportsFloatingPointAbs() { return isSSE2Present(); }
 
 private:
-    const bool m_isSSE2Present;
-
     friend class LinkBuffer;
     friend class RepatchBuffer;
 

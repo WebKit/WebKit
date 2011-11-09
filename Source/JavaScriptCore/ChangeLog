@@ -1,5 +1,85 @@
 2011-11-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Better abstract 'abs' operation through the MacroAssembler.
+        https://bugs.webkit.org/show_bug.cgi?id=71873
+
+        Reviewed by Geoff Garen.
+
+        Currently the x86 specific instruction sequence to perform a double abs
+        is duplicated throughout the JITs / thunk generators.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+        (JSC::MacroAssemblerARM::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARM::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARM::supportsFloatingPointAbs):
+        (JSC::MacroAssemblerARM::absDouble):
+            - Renamed supportsFloatingPointAbs, make these methods static so that
+              we can check the JIT's capabilites before we begin compilation.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPoint):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointAbs):
+            - Renamed supportsFloatingPointAbs, make these methods static so that
+              we can check the JIT's capabilites before we begin compilation.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::absDouble):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPoint):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointAbs):
+            - Renamed supportsFloatingPointAbs, make these methods static so that
+              we can check the JIT's capabilites before we begin compilation.
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPoint):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointAbs):
+        (JSC::MacroAssemblerSH4::absDouble):
+            - Renamed supportsFloatingPointAbs, make these methods static so that
+              we can check the JIT's capabilites before we begin compilation.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::absDouble):
+        (JSC::MacroAssemblerX86::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86::supportsFloatingPointAbs):
+            - Made supports* methods static so that we can check the JIT's
+              capabilites before we begin compilation. Added absDouble.
+        * assembler/MacroAssemblerX86Common.h:
+            - Removed andnotDouble, added s_maskSignBit.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::absDouble):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointAbs):
+            - Made supports* methods static so that we can check the JIT's
+              capabilites before we begin compilation. Added absDouble.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::andpd_rr):
+        (JSC::X86Assembler::andpd_mr):
+            - Added support for andpd instruction.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+            - Added checks for supportsFloatingPointAbs, supportsFloatingPointSqrt.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Switched to use doubleAbs, we can now also reuse the operand register for the result.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Switched to use doubleAbs, we can now also reuse the operand register for the result.
+        * jit/ThunkGenerators.cpp:
+            - Switched to use doubleAbs.
+        (JSC::absThunkGenerator):
+        * runtime/JSGlobalData.cpp:
+            - Declared MacroAssemblerX86Common::s_maskSignBit here.
+              This is a little ugly, but it doesn't seem worth adding a whole extra .cpp
+              to the compile for just one constant.
+
+2011-11-08  Gavin Barraclough  <barraclough@apple.com>
+
         Move duplicates of SYMBOL_STRING* macros to the single location
         https://bugs.webkit.org/show_bug.cgi?id=71456
 

@@ -786,10 +786,10 @@ public:
 
      // Floating-point operations
 
-    bool supportsFloatingPoint() const { return true; }
-    bool supportsFloatingPointTruncate() const { return true; }
-    bool supportsFloatingPointSqrt() const { return true; }
-    bool supportsDoubleBitops() const { return false; }
+    static bool supportsFloatingPoint() { return true; }
+    static bool supportsFloatingPointTruncate() { return true; }
+    static bool supportsFloatingPointSqrt() { return true; }
+    static bool supportsFloatingPointAbs() { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -1129,7 +1129,7 @@ public:
         m_assembler.dsqrt(dest);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }

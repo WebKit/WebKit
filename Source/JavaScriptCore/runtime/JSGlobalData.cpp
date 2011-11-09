@@ -88,6 +88,10 @@ inline void Recompiler::operator()(JSCell* cell)
 
 namespace JSC {
 
+#if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
+const uint64_t MacroAssemblerX86Common::s_maskSignBit = 0x7FFFFFFFFFFFFFFFull;
+#endif
+
 extern JSC_CONST_HASHTABLE HashTable arrayConstructorTable;
 extern JSC_CONST_HASHTABLE HashTable arrayPrototypeTable;
 extern JSC_CONST_HASHTABLE HashTable booleanPrototypeTable;

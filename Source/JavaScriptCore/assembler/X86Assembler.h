@@ -173,6 +173,7 @@ private:
         OP2_SUBSD_VsdWsd    = 0x5C,
         OP2_DIVSD_VsdWsd    = 0x5E,
         OP2_SQRTSD_VsdWsd   = 0x51,
+        OP2_ANDPD_VpdWpd    = 0x54,
         OP2_ANDNPD_VpdWpd   = 0x55,
         OP2_XORPD_VpdWpd    = 0x57,
         OP2_MOVD_VdEd       = 0x6E,
@@ -1566,6 +1567,26 @@ public:
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_ANDNPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }
+
+    void andpd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_ANDPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void andpd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_ANDPD_VpdWpd, (RegisterID)dst, base, offset);
+    }
+
+#if CPU(X86)
+    void andpd_mr(const void* address, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_ANDPD_VpdWpd, (RegisterID)dst, address);
+    }
+#endif
 
     void sqrtsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {

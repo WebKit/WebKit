@@ -277,7 +277,7 @@ MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
 MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
 {
     SpecializedThunkJIT jit(1, globalData);
-    if (!jit.supportsDoubleBitops())
+    if (!jit.supportsFloatingPointAbs())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
@@ -288,9 +288,8 @@ MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     // Shame about the double int conversion here.
-    jit.loadDouble(&negativeZeroConstant, SpecializedThunkJIT::fpRegT1);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.andnotDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+    jit.absDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
