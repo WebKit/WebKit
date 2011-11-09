@@ -239,26 +239,39 @@ sub determineConfiguration
 sub determineArchitecture
 {
     return if defined $architecture;
-    # make sure $architecture is defined for non-apple-mac builds
+    # make sure $architecture is defined in all cases
     $architecture = "";
-    return unless isAppleMacWebKit();
 
     determineBaseProductDir();
-    if (open ARCHITECTURE, "$baseProductDir/Architecture") {
-        $architecture = <ARCHITECTURE>;
-        close ARCHITECTURE;
-    }
-    if ($architecture) {
-        chomp $architecture;
-    } else {
-        if (isLeopard()) {
-            $architecture = `arch`;
+
+    if (isGtk()) {
+        determineConfigurationProductDir();
+        my $host_triple = `grep -E '^host = ' $configurationProductDir/GNUmakefile`;
+        if ($host_triple =~ m/^host = ([^-]+)-/) {
+            # We have a configured build tree; use it.
+            $architecture = $1;
         } else {
-            my $supports64Bit = `sysctl -n hw.optional.x86_64`;
-            chomp $supports64Bit;
-            $architecture = $supports64Bit ? 'x86_64' : `arch`;
+            # Fall back to output of `arch', if it is present.
+            $architecture = `arch`;
+            chomp $architecture;
         }
-        chomp $architecture;
+    } elsif (isAppleMacWebKit()) {
+        if (open ARCHITECTURE, "$baseProductDir/Architecture") {
+            $architecture = <ARCHITECTURE>;
+            close ARCHITECTURE;
+        }
+        if ($architecture) {
+            chomp $architecture;
+        } else {
+            if (isLeopard()) {
+                $architecture = `arch`;
+            } else {
+                my $supports64Bit = `sysctl -n hw.optional.x86_64`;
+                chomp $supports64Bit;
+                $architecture = $supports64Bit ? 'x86_64' : `arch`;
+            }
+            chomp $architecture;
+        }
     }
 }
 

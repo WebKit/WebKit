@@ -1,3 +1,15 @@
+2011-11-09  Andy Wingo  <wingo@igalia.com>
+
+        Add webkitdirs.pm:getArchitecture implementation for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=71370
+
+        Reviewed by Xan Lopez.
+
+        * Scripts/webkitdirs.pm (determineArchitecture): Add an
+        implementation for ports using autotools, so that a vanilla
+        `run-javascriptcore-tests --gtk' invocation doesn't pass --32-bit
+        to build-jsc on x86-64 machines.
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r99707.
