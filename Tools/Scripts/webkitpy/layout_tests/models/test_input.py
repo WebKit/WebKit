@@ -32,14 +32,23 @@
 class TestInput:
     """Groups information about a test for easy passing of data."""
 
-    def __init__(self, test_name, timeout):
+    # To save footprints since most TestInput instances don't have to have these fields.
+    ref_file = None
+    is_mismatch_reftest = None
+
+    def __init__(self, test_name, timeout, ref_file=None, is_mismatch_reftest=False):
         """Holds the input parameters for a test.
         Args:
           test: name of test (not an absolute path!)
           timeout: Timeout in msecs the driver should use while running the test
+          ref_file: name of reference_filename (not an absolute path!)
+          is_mismatch_test: true when the test is a mismatch reftest.
           """
         self.test_name = test_name
         self.timeout = timeout
+        if ref_file:
+            self.ref_file = ref_file
+            self.is_mismatch_reftest = is_mismatch_reftest
 
     def __repr__(self):
         return "TestInput('%s', %d)" % (self.test_name, self.timeout)

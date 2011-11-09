@@ -61,6 +61,12 @@ class SingleTestRunner:
         self._reference_filename = None
 
         fs = port._filesystem
+        if test_input.ref_file:
+            self._is_reftest = True
+            self._reference_filename = fs.join(self._port.layout_tests_dir(), test_input.ref_file)
+            self._is_mismatch_reftest = test_input.is_mismatch_reftest
+            return
+
         reftest_expected_filename = port.reftest_expected_filename(self._test_name)
         if fs.exists(reftest_expected_filename):
             self._is_reftest = True
@@ -304,7 +310,7 @@ class SingleTestRunner:
 
         if self._is_mismatch_reftest:
             if driver_output1.image_hash == driver_output2.image_hash:
-                failures.append(test_failures.FailureReftestMismatchDidNotOccur())
+                failures.append(test_failures.FailureReftestMismatchDidNotOccur(self._reference_filename))
         elif driver_output1.image_hash != driver_output2.image_hash:
-            failures.append(test_failures.FailureReftestMismatch())
+            failures.append(test_failures.FailureReftestMismatch(self._reference_filename))
         return TestResult(self._test_name, failures, total_test_time, has_stderr)

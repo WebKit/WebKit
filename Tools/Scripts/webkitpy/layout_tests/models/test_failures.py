@@ -186,6 +186,9 @@ class FailureImageHashIncorrect(TestFailure):
 class FailureReftestMismatch(TestFailure):
     """The result didn't match the reference rendering."""
 
+    def __init__(self, reference_filename=None):
+        self.reference_filename = reference_filename
+
     @staticmethod
     def message():
         return "Mismatch with reference"
@@ -193,6 +196,9 @@ class FailureReftestMismatch(TestFailure):
 
 class FailureReftestMismatchDidNotOccur(TestFailure):
     """Unexpected match between the result and the reference rendering."""
+
+    def __init__(self, reference_filename=None):
+        self.reference_filename = reference_filename
 
     @staticmethod
     def message():

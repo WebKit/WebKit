@@ -1,3 +1,22 @@
+2011-11-08  Hayato Ito  <hayato@chromium.org>
+
+        [NRWT] Make single_test_runner aware of reference filename of test_input.
+        https://bugs.webkit.org/show_bug.cgi?id=71567
+
+        Reviewed by Ryosuke Niwa.
+
+        Make single_test_runner honor a reference filename of given test_input so that
+        we can use any file as reference html, instead of depending on implicit naming convention.
+        The typical use case is to support w3c reftests.
+
+        No tests since no functional changes until there is a client.
+        Test should be easily written with future clients.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+
 2011-11-08  Lucas Forschler  <lforschler@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71839

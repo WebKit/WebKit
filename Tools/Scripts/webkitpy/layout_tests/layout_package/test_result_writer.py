@@ -73,10 +73,10 @@ def write_test_result(port, test_name, driver_output,
             image_diff = port.diff_image(driver_output.image, expected_driver_output.image)[0]
             if image_diff:
                 writer.write_image_diff_files(image_diff)
-            writer.copy_file(port.reftest_expected_filename(test_name), '-expected.html')
+            writer.copy_file(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)
-            writer.copy_file(port.reftest_expected_mismatch_filename(test_name), '-expected-mismatch.html')
+            writer.copy_file(failure.reference_filename)
         else:
             assert isinstance(failure, (test_failures.FailureTimeout,))
 
@@ -264,9 +264,9 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
         # FIXME: This seems like a text file, not a binary file.
         self._port._filesystem.write_binary_file(diffs_html_filename, html)
 
-    def copy_file(self, src_filepath, dst_extension):
+    def copy_file(self, src_filepath):
         fs = self._port._filesystem
         assert fs.exists(src_filepath), 'src_filepath: %s' % src_filepath
-        dst_filename = self.output_filename(dst_extension)
+        dst_filepath = fs.join(self._root_output_dir, self._port.relative_test_filename(src_filepath))
         self._make_output_directory()
-        fs.copyfile(src_filepath, dst_filename)
+        fs.copyfile(src_filepath, dst_filepath)
