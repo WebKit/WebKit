@@ -30,6 +30,7 @@
 #include "SecurityPolicy.h"
 
 #include "KURL.h"
+#include "MainThread.h"
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
 #include <wtf/text/StringHash.h>
