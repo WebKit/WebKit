@@ -299,7 +299,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
         return JSValue::encode(jsNull());
     ASSERT((descriptor.attributes() & (Getter | Setter)) || (!descriptor.isAccessorDescriptor()));
     ASSERT(!exec->hadException());
-    O->defineOwnProperty(exec, Identifier(exec, propertyName), descriptor, true);
+    O->methodTable()->defineOwnProperty(O, exec, Identifier(exec, propertyName), descriptor, true);
     return JSValue::encode(O);
 }
 
@@ -330,7 +330,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
         }
     }
     for (size_t i = 0; i < numProperties; i++) {
-        object->defineOwnProperty(exec, propertyNames[i], descriptors[i], true);
+        object->methodTable()->defineOwnProperty(object, exec, propertyNames[i], descriptors[i], true);
         if (exec->hadException())
             return jsNull();
     }

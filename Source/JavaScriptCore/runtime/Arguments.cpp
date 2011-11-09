@@ -168,7 +168,7 @@ void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
     PropertyDescriptor descriptor;
     JSValue thrower = createTypeErrorFunction(exec, "Unable to access caller of strict mode function");
     descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
-    defineOwnProperty(exec, exec->propertyNames().caller, descriptor, false);
+    methodTable()->defineOwnProperty(this, exec, exec->propertyNames().caller, descriptor, false);
 }
 
 void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
@@ -180,7 +180,7 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     PropertyDescriptor descriptor;
     JSValue thrower = createTypeErrorFunction(exec, "Unable to access callee of strict mode function");
     descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
-    defineOwnProperty(exec, exec->propertyNames().callee, descriptor, false);
+    methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
 }
 
 bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

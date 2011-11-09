@@ -37,6 +37,7 @@ namespace JSC {
 
     class JSGlobalObject;
     class Structure;
+    class PropertyDescriptor;
     class PropertyNameArray;
 
     enum EnumerationMode {
@@ -148,6 +149,7 @@ namespace JSC {
         static UString className(const JSObject*);
         static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
         static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
     private:
         WriteBarrier<Structure> m_structure;

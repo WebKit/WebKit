@@ -409,12 +409,13 @@ void JSDOMWindow::defineSetter(JSObject* object, ExecState* exec, const Identifi
     Base::defineSetter(thisObject, exec, propertyName, setterFunction, attributes);
 }
 
-bool JSDOMWindow::defineOwnProperty(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
-    if (!allowsAccessFrom(exec))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
-    return Base::defineOwnProperty(exec, propertyName, descriptor, shouldThrow);
+    return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
 // Custom Attributes

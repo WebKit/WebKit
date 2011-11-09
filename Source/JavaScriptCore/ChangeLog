@@ -1,3 +1,30 @@
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSObject::defineOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=71429
+
+        Reviewed by Geoffrey Garen.
+
+        Added defineOwnProperty to the MethodTable, changed all the virtual 
+        implementations of defineOwnProperty to static ones, and replaced 
+        all call sites with corresponding lookups in the MethodTable.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defineOwnProperty):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorDefineProperty):
+        (JSC::defineProperties):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build system cleanup

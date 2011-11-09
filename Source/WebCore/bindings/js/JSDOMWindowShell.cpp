@@ -113,9 +113,10 @@ void JSDOMWindowShell::putWithAttributes(JSObject* object, ExecState* exec, cons
     thisObject->window()->putWithAttributes(thisObject->window(), exec, propertyName, value, attributes);
 }
 
-bool JSDOMWindowShell::defineOwnProperty(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSDOMWindowShell::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    return window()->defineOwnProperty(exec, propertyName, descriptor, shouldThrow);
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(object);
+    return thisObject->window()->methodTable()->defineOwnProperty(thisObject->window(), exec, propertyName, descriptor, shouldThrow);
 }
 
 bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

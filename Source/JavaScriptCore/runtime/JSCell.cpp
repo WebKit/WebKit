@@ -201,4 +201,10 @@ void JSCell::putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue
     ASSERT_NOT_REACHED();
 }
 
+bool JSCell::defineOwnProperty(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace JSC

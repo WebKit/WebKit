@@ -704,20 +704,20 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
     return !exec->hadException();
 }
 
-bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
-    if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
+    if (!object->getOwnPropertyDescriptor(exec, propertyName, current)) {
         // unless extensions are prevented!
-        if (!isExtensible()) {
+        if (!object->isExtensible()) {
             if (throwException)
                 throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
             return false;
         }
         PropertyDescriptor oldDescriptor;
         oldDescriptor.setValue(jsUndefined());
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
     }
 
     if (descriptor.isEmpty())
@@ -743,8 +743,8 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     // A generic descriptor is simply changing the attributes of an existing property
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
-            methodTable()->deleteProperty(this, exec, propertyName);
-            putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+            object->methodTable()->deleteProperty(object, exec, propertyName);
+            putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
         }
         return true;
     }
@@ -756,8 +756,8 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
                 throwError(exec, createTypeError(exec, "Attempting to change access mechanism for an unconfigurable property."));
             return false;
         }
-        methodTable()->deleteProperty(this, exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        object->methodTable()->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the value and attributes of an existing property
@@ -779,13 +779,13 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             if (!descriptor.value())
                 return true;
             PutPropertySlot slot;
-            methodTable()->put(this, exec, propertyName, descriptor.value(), slot);
+            object->methodTable()->put(object, exec, propertyName, descriptor.value(), slot);
             if (exec->hadException())
                 return false;
             return true;
         }
-        methodTable()->deleteProperty(this, exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        object->methodTable()->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the accessor functions of an existing accessor property
@@ -802,7 +802,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             return false;
         }
     }
-    JSValue accessor = getDirect(exec->globalData(), propertyName);
+    JSValue accessor = object->getDirect(exec->globalData(), propertyName);
     if (!accessor)
         return false;
     GetterSetter* getterSetter = asGetterSetter(accessor);
@@ -813,13 +813,13 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             getterSetter->setGetter(exec->globalData(), asObject(descriptor.getter()));
         return true;
     }
-    methodTable()->deleteProperty(this, exec, propertyName);
+    object->methodTable()->deleteProperty(object, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
     if (descriptor.setter())
         attrs |= Setter;
     if (descriptor.getter())
         attrs |= Getter;
-    putDirect(exec->globalData(), propertyName, getterSetter, attrs);
+    object->putDirect(exec->globalData(), propertyName, getterSetter, attrs);
     return true;
 }
 
