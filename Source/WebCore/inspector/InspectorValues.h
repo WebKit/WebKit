@@ -267,18 +267,21 @@ inline void InspectorObject::setString(const String& name, const String& value)
 
 inline void InspectorObject::setValue(const String& name, PassRefPtr<InspectorValue> value)
 {
+    ASSERT(value);
     if (m_data.set(name, value).second)
         m_order.append(name);
 }
 
 inline void InspectorObject::setObject(const String& name, PassRefPtr<InspectorObject> value)
 {
+    ASSERT(value);
     if (m_data.set(name, value).second)
         m_order.append(name);
 }
 
 inline void InspectorObject::setArray(const String& name, PassRefPtr<InspectorArray> value)
 {
+    ASSERT(value);
     if (m_data.set(name, value).second)
         m_order.append(name);
 }
@@ -300,16 +303,19 @@ inline void InspectorArray::pushString(const String& value)
 
 inline void InspectorArray::pushValue(PassRefPtr<InspectorValue> value)
 {
+    ASSERT(value);
     m_data.append(value);
 }
 
 inline void InspectorArray::pushObject(PassRefPtr<InspectorObject> value)
 {
+    ASSERT(value);
     m_data.append(value);
 }
 
 inline void InspectorArray::pushArray(PassRefPtr<InspectorArray> value)
 {
+    ASSERT(value);
     m_data.append(value);
 }
 

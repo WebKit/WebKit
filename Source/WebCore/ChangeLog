@@ -1,3 +1,22 @@
+2011-11-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: crash upon InspectorValue serialization that has 0 value / array entry.
+        https://bugs.webkit.org/show_bug.cgi?id=71806
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/elements/resolve-alien-node.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::resolveNode):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorObject::setValue):
+        (WebCore::InspectorObject::setObject):
+        (WebCore::InspectorObject::setArray):
+        (WebCore::InspectorArray::pushValue):
+        (WebCore::InspectorArray::pushObject):
+        (WebCore::InspectorArray::pushArray):
+
 2011-11-08  Andreas Kling  <kling@webkit.org>
 
         Move CSSPrimitiveValue bitfields up into CSSValue.

@@ -615,7 +615,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementI
     ExceptionCode ec = 0;
     element->setAttribute(name, value, ec);
     if (ec)
-        *errorString = "Internal error: could not set attribute value.";
+        *errorString = "Internal error: could not set attribute value";
 }
 
 void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elementId, const String& text, const String* const name)
@@ -627,19 +627,19 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     ExceptionCode ec = 0;
     RefPtr<Element> parsedElement = element->document()->createElement("span", ec);
     if (ec) {
-        *errorString = "Internal error: could not set attribute value.";
+        *errorString = "Internal error: could not set attribute value";
         return;
     }
 
     toHTMLElement(parsedElement.get())->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
-        *errorString = "Could not parse value as attributes.";
+        *errorString = "Could not parse value as attributes";
         return;
     }
 
     Node* child = parsedElement->firstChild();
     if (!child) {
-        *errorString = "Could not parse value as attributes.";
+        *errorString = "Could not parse value as attributes";
         return;
     }
 
@@ -647,7 +647,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     if (!attrMap && name) {
         element->removeAttribute(*name, ec);
         if (ec)
-            *errorString = "Could not remove attribute.";
+            *errorString = "Could not remove attribute";
         return;
     }
 
@@ -659,7 +659,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
         element->setAttribute(attribute->name(), attribute->value(), ec);
         if (ec) {
-            *errorString = "Internal error: could not set attribute value.";
+            *errorString = "Internal error: could not set attribute value";
             return;
         }
     }
@@ -667,7 +667,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     if (!foundOriginalAttribute && name) {
         element->removeAttribute(*name, ec);
         if (ec)
-            *errorString = "Could not remove attribute.";
+            *errorString = "Could not remove attribute";
         return;
     }
 }
@@ -1161,7 +1161,7 @@ void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElement
         if (!anchorNode)
             return;
         if (anchorNode->parentNode() != targetElement) {
-            *error = "Anchor node must be child of the target element.";
+            *error = "Anchor node must be child of the target element";
             return;
         }
     }
@@ -1169,7 +1169,7 @@ void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElement
     ExceptionCode ec = 0;
     bool success = targetElement->insertBefore(node, anchorNode, ec);
     if (ec || !success) {
-        *error = "Could not drop node.";
+        *error = "Could not drop node";
         return;
     }
     *newNodeId = pushNodePathToFrontend(node);
@@ -1180,10 +1180,15 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String
     String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
     if (!node) {
-        *error = "No node with given id found.";
+        *error = "No node with given id found";
         return;
     }
-    *result = resolveNode(node, objectGroupName);
+    RefPtr<InspectorObject> object = resolveNode(node, objectGroupName);
+    if (!object) {
+        *error = "Node with given id does not belong to the document";
+        return;
+    }
+    *result = object;
 }
 
 void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>* result)

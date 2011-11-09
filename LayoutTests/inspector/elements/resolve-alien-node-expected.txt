@@ -1,0 +1,4 @@
+Tests that resolveNode from alien document does not crash. https://bugs.webkit.org/show_bug.cgi?id=71806.
+
+Alien node should resolve to null: null
+
