@@ -1,3 +1,27 @@
+2011-11-08  Darin Adler  <darin@apple.com>
+
+        Add code path in HashTable for emptyValueIsZero that does not require copying the empty value
+        https://bugs.webkit.org/show_bug.cgi?id=71875
+
+        Reviewed by Anders Carlsson.
+
+        This is a step along the path of making OwnPtr work as HashMap value types.
+
+        * wtf/Alignment.h: Moved the AlignedBufferChar and AlignedBuffer types from Vector.h here.
+        Also fixed include style. To include other WTF headers inside WTF, we use "" includes.
+        I did not change the code to fix style checker complaints.
+
+        * wtf/HashTable.h: Added includes as needed and fixed include style.
+        (WTF::doubleHash): Removed the uneeeded and inappropriate "static" in this function, which
+        gave it internal linkage for no good reason.
+        (WTF::HashTable::checkKey): Made this use AlignedBuffer for the deleted value check to avoid
+        construction/destruction problems instead of doing the trick where we construct and destroy
+        an empty value twice. It's cleaner and simpler and avoids copying the empty value.
+        (WTF::HashTable::initializeBucket): Specialized initializeBucket to use memset when the
+        empty value is zero rather than copying an empty value.
+
+        * wtf/Vector.h: Moved the AlignedBufferChar and AlignedBuffer types into Alignment.h.
+
 2011-11-09  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Buildfix for 32bit debug mode.

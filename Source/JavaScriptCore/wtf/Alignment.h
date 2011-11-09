@@ -21,7 +21,10 @@
 #ifndef WTF_Alignment_h
 #define WTF_Alignment_h
 
-#include <wtf/Platform.h>
+#include "Platform.h"
+#include <algorithm>
+
+namespace WTF {
 
 #if COMPILER(GCC) || COMPILER(MINGW) || COMPILER(RVCT) || COMPILER(WINSCW) || COMPILER(GCCE)
     #define WTF_ALIGN_OF(type) __alignof__(type)
@@ -32,5 +35,29 @@
 #else
     #error WTF_ALIGN macros need alignment control.
 #endif
+
+#if COMPILER(GCC) && !COMPILER(INTEL) && (((__GNUC__ * 100) + __GNUC_MINOR__) >= 303)
+    typedef char __attribute__((__may_alias__)) AlignedBufferChar; 
+#else
+    typedef char AlignedBufferChar; 
+#endif
+
+    template<size_t size, size_t alignment> struct AlignedBuffer;
+    template<size_t size> struct AlignedBuffer<size, 1> { AlignedBufferChar buffer[size]; };
+    template<size_t size> struct AlignedBuffer<size, 2> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 2);  };
+    template<size_t size> struct AlignedBuffer<size, 4> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 4);  };
+    template<size_t size> struct AlignedBuffer<size, 8> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 8);  };
+    template<size_t size> struct AlignedBuffer<size, 16> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 16); };
+    template<size_t size> struct AlignedBuffer<size, 32> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 32); };
+    template<size_t size> struct AlignedBuffer<size, 64> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 64); };
+
+    template <size_t size, size_t alignment>
+    void swap(AlignedBuffer<size, alignment>& a, AlignedBuffer<size, alignment>& b)
+    {
+        for (size_t i = 0; i < size; ++i)
+            std::swap(a.buffer[i], b.buffer[i]);
+    }
+
+}
 
 #endif // WTF_Alignment_h
