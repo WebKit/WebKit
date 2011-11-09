@@ -1,5 +1,14 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed, rolling out r99701.
+        http://trac.webkit.org/changeset/99701
+
+        Breaks Qt mac build
+
+        * qmake/mkspecs/features/functions.prf:
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Prospective build fix for Win32/Mac with xmlpatterns
 
         Reviewed by Tor Arne Vestbø.

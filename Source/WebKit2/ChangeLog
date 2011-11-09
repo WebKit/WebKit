@@ -1,5 +1,16 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed, rolling out r99701.
+        http://trac.webkit.org/changeset/99701
+
+        Breaks Qt mac build
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (initResources):
+        (WebKit::WebPage::platformInitialize):
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Enable exports and constructor functions in static libs
 
         Reviewed by Tor Arne Vestbø.
