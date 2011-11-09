@@ -38,7 +38,7 @@ public:
     virtual ~StyleSheet();
 
     bool disabled() const { return m_disabled; }
-    void setDisabled(bool disabled) { m_disabled = disabled; styleSheetChanged(); }
+    void setDisabled(bool);
 
     Node* ownerNode() const { return m_parentNode; }
     void clearOwnerNode() { m_parentNode = 0; }
@@ -63,7 +63,6 @@ public:
 
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
-    virtual void styleSheetChanged() { }
 
     virtual KURL completeURL(const String& url) const;
     virtual bool parseString(const String&, bool strict = true) = 0;

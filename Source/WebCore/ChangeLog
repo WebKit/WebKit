@@ -1,3 +1,19 @@
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
+        StyleSheet: Devirtualize styleSheetChanged().
+        <http://webkit.org/b/71913>
+
+        Reviewed by Antti Koivisto.
+
+        Since this mechanism is only used by CSSStyleSheet, move it there.
+        Out-of-lined StyleSheet::setDisabled() so we can do a type check
+        before invoking it from there.
+
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::setDisabled):
+        * css/StyleSheet.h:
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unreviewed, adding missing files to the build.

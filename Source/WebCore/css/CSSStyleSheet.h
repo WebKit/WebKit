@@ -84,7 +84,7 @@ public:
     void addNamespace(CSSParser*, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
-    virtual void styleSheetChanged();
+    void styleSheetChanged();
 
     virtual bool parseString(const String&, bool strict = true);
 

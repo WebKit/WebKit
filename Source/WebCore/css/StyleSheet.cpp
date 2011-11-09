@@ -91,4 +91,11 @@ KURL StyleSheet::completeURL(const String& url) const
     return KURL(baseURL(), url);
 }
 
+void StyleSheet::setDisabled(bool disabled)
+{
+     m_disabled = disabled;
+     if (isCSSStyleSheet())
+         static_cast<CSSStyleSheet*>(this)->styleSheetChanged();
+}
+
 }
