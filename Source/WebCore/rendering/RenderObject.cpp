@@ -2168,8 +2168,8 @@ RenderObject* RenderObject::container(RenderBoxModelObject* repaintContainer, bo
             if (repaintContainerSkipped && o == repaintContainer)
                 *repaintContainerSkipped = true;
 #if ENABLE(SVG)
-                if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
-                    break;
+            if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
+                break;
 #endif
             o = o->parent();
         }
