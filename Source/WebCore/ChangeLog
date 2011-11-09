@@ -1,3 +1,17 @@
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
+        CSS: Remove redudant WTF_MAKE_FAST_ALLOCATED macros.
+        <http://webkit.org/b/71897>
+
+        Reviewed by Antti Koivisto.
+
+        Everything that inherits from RefCounted<T> is already fast-allocated,
+        so we don't need this in subclasses.
+
+        * css/CSSImageValue.h:
+        * css/CSSImportRule.h:
+        * css/WebKitCSSShaderValue.h:
+
 2011-11-09  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [TextureMapper] Clean up TextureMapperAnimation constructor

@@ -37,10 +37,9 @@
 namespace WebCore {
 
 class WebKitCSSShaderValue : public CSSPrimitiveValue {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<WebKitCSSShaderValue> create(const String& url) { return adoptRef(new WebKitCSSShaderValue(url)); }
-    
+
 private:
     WebKitCSSShaderValue(const String& url)
         : CSSPrimitiveValue(WebKitCSSShaderClass, url, CSS_URI)
