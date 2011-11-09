@@ -92,9 +92,10 @@ SOURCES += \
     dfg/DFGJITCodeGenerator32_64.cpp \
     dfg/DFGJITCodeGenerator64.cpp \
     dfg/DFGJITCompiler.cpp \
-    dfg/DFGJITCompiler32_64.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
+    dfg/DFGOSRExitCompiler64.cpp \
+    dfg/DFGOSRExitCompiler32_64.cpp \
     dfg/DFGPropagator.cpp \
     dfg/DFGRepatch.cpp \
     dfg/DFGSpeculativeJIT.cpp \

@@ -51,6 +51,7 @@ namespace JSC {
         class JITCompiler;
         class JITCodeGenerator;
         class JSValueSource;
+        class OSRExitCompiler;
         class SpeculativeJIT;
     }
 #endif
@@ -114,6 +115,7 @@ namespace JSC {
         friend class DFG::JITCompiler;
         friend class DFG::JITCodeGenerator;
         friend class DFG::JSValueSource;
+        friend class DFG::OSRExitCompiler;
         friend class DFG::SpeculativeJIT;
 #endif
 

@@ -31,9 +31,9 @@ LIST(APPEND JavaScriptCore_SOURCES
     dfg/DFGJITCodeGenerator.cpp
     dfg/DFGJITCodeGenerator32_64.cpp
     dfg/DFGJITCompiler.cpp
-    dfg/DFGJITCompiler32_64.cpp
     dfg/DFGOperations.cpp
     dfg/DFGOSREntry.cpp
+    dfg/DFGOSRExitCompiler32_64.cpp
     dfg/DFGPropagator.cpp
     dfg/DFGRepatch.cpp
     dfg/DFGSpeculativeJIT.cpp
