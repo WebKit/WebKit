@@ -1894,6 +1894,21 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
         return;
 
     frame->view()->setUseFixedLayout(enable);
+
+#if USE(ACCELERATED_COMPOSITING)
+    // Also notify the base layer, which RenderLayerCompositor does not see.
+    if (m_nonCompositedContentHost) {
+        m_nonCompositedContentHost->topLevelRootLayer()->deviceOrPageScaleFactorChanged();
+        updateLayerTreeViewport();
+    }
+#endif
+}
+
+void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    m_layerTreeHost->setPageScaleFactorLimits(minPageScale, maxPageScale);
+#endif
 }
 
 WebSize WebViewImpl::fixedLayoutSize() const
@@ -2702,12 +2717,30 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
     layout();
 }
 
-void WebViewImpl::applyScrollDelta(const IntSize& scrollDelta)
+void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float scaleFactor)
 {
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-    mainFrameImpl()->frameView()->scrollBy(scrollDelta);
+    float oldScale = pageScaleFactor();
+    if (!oldScale)
+        oldScale = 1.0f;
+
+    if (!scaleFactor || oldScale == scaleFactor)
+        mainFrameImpl()->frameView()->scrollBy(scrollDelta);
+    else {
+        // The page scale changed, so apply a scale and scroll in a single
+        // operation. The old scroll offset (and passed-in delta) are
+        // in the old coordinate space, so we first need to multiply them
+        // by the page scale delta.
+        WebSize scrollOffset = mainFrame()->scrollOffset();
+        scrollOffset.width += scrollDelta.width();
+        scrollOffset.height += scrollDelta.height();
+        float scaleDelta = scaleFactor / oldScale;
+        WebPoint scaledScrollOffset(scrollOffset.width * scaleDelta,
+                                    scrollOffset.height * scaleDelta);
+        setPageScaleFactor(scaleFactor, scaledScrollOffset);
+    }
 }
 
 void WebViewImpl::didCommitAndDrawFrame(int frameNumber)
@@ -2742,15 +2775,16 @@ void WebViewImpl::scheduleComposite()
 
 void WebViewImpl::updateLayerTreeViewport()
 {
-    if (!page())
+    if (!page() || !m_nonCompositedContentHost || !m_layerTreeHost)
         return;
 
     FrameView* view = page()->mainFrame()->view();
     IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll);
+    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor());
     m_layerTreeHost->setViewport(visibleRect.size());
+    m_layerTreeHost->setPageScale(pageScaleFactor());
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()

@@ -1,3 +1,61 @@
+2011-11-09  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Add draw-time scale delta to compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=71595
+
+        Reviewed by James Robinson.
+
+        There are two magnify values:
+        1. The WebKit-side pageScale value corresponding to the resolution of
+           the painted content.
+        2. The Impl-side-only scaleDelta value representing the additional
+           degree of current magnification, applied as a draw transform.  WebKit
+           is never explicitly aware of this value and the only way to change it
+           currently is via pinch events (and in the future, double-tap/etc
+           events).  At the end of a pinch zoom, we multiply pageScale *
+           scaleDelta and tell WebKit to use it as the new pageScale.
+
+        Scroll offsets and max-extents are maintained in pageScale space.
+        When the scale changes, we need to take care to convert them to the
+        new scale and avoid getting them clamped to the extents at the wrong
+        scale.
+
+        I removed maxScrollPosition on the non-impl side because it makes no
+        sense to precompute it in the presence of an impl-side zoom.  Replaced
+        with a simple 'bool m_scrollable'.
+
+        zoomAnimatorTransform is not used because it currently isn't in the
+        branch, and mostly doesn't behave the way we want anyway (it does most
+        things in WebKit thread).  We will need to unify these later.
+
+        Also introduce deviceOrPageScaleFactorChanged() call which invalidates
+        layers.
+
+        * public/WebLayerTreeViewClient.h:
+        * public/WebView.h:
+        * src/WebCompositorImpl.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::applyScrollAndScale):
+        * src/WebLayerTreeViewImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enableFixedLayoutMode):
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::CCLayerTreeHostImplTest::expectContains):
+        (WebKit::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::applyScrollAndScale):
+        (WTF::MockLayerTreeHostClient::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestScrollSimple::beginTest):
+        (WTF::CCLayerTreeHostTestScrollSimple::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollSimple::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::applyScrollAndScale):
+
 2011-11-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         Fix crash by handling case when AccessibilityObject::lineForPosition

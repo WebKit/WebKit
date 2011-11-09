@@ -56,6 +56,9 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_settings(settings)
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
+    , m_pageScale(1)
+    , m_minPageScale(1)
+    , m_maxPageScale(1)
 {
     CCMainThread::initialize();
     ASSERT(CCProxy::isMainThread());
@@ -130,6 +133,8 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
+    hostImpl->setPageScale(pageScale());
+    hostImpl->setPageScaleFactorLimits(m_minPageScale, m_maxPageScale);
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -221,6 +226,25 @@ void CCLayerTreeHost::setNeedsRedraw()
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
+    setNeedsCommit();
+}
+
+void CCLayerTreeHost::setPageScale(float pageScale)
+{
+    if (pageScale == m_pageScale)
+        return;
+
+    m_pageScale = pageScale;
+    setNeedsCommit();
+}
+
+void CCLayerTreeHost::setPageScaleFactorLimits(float minScale, float maxScale)
+{
+    if (minScale == m_minPageScale && maxScale == m_maxPageScale)
+        return;
+
+    m_minPageScale = minScale;
+    m_maxPageScale = maxScale;
     setNeedsCommit();
 }
 
@@ -437,15 +461,15 @@ void CCLayerTreeHost::clearPendingUpdate()
     m_updateList.clear();
 }
 
-void CCLayerTreeHost::applyScrollDeltas(const CCScrollUpdateSet& info)
+void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
 {
     // FIXME: pushing scroll offsets to non-root layers not implemented
-    if (!info.size())
+    if (!info.scrolls.size())
         return;
 
-    ASSERT(info.size() == 1);
-    IntSize scrollDelta = info[0].scrollDelta;
-    m_client->applyScrollDelta(scrollDelta);
+    ASSERT(info.scrolls.size() == 1);
+    IntSize scrollDelta = info.scrolls[0].scrollDelta;
+    m_client->applyScrollAndScale(scrollDelta, info.pageScale);
 }
 
 void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)

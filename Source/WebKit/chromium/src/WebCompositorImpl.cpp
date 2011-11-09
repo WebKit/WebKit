@@ -133,4 +133,3 @@ int WebCompositorImpl::identifier() const
 }
 
 }
-

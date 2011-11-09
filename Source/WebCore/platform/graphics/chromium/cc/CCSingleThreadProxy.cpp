@@ -166,8 +166,8 @@ void CCSingleThreadProxy::doCommit()
 #if !ASSERT_DISABLED
         // In the single-threaded case, the scroll deltas should never be
         // touched on the impl layer tree.
-        OwnPtr<CCScrollUpdateSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
-        ASSERT(!scrollInfo->size());
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+        ASSERT(!scrollInfo->scrolls.size());
 #endif
     }
     m_layerTreeHost->commitComplete();

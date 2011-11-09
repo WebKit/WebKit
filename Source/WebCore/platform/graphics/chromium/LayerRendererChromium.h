@@ -98,6 +98,8 @@ public:
 
     void viewportChanged();
 
+    void setPageMagnifyTransform(const TransformationMatrix& pageMagnifyMatrix) { m_pageMagnifyMatrix = pageMagnifyMatrix; }
+
     void drawLayers();
 
     // waits for rendering to finish
@@ -195,6 +197,7 @@ private:
 
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_windowMatrix;
+    TransformationMatrix m_pageMagnifyMatrix;
 
     CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;

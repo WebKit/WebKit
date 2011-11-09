@@ -57,7 +57,7 @@ public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
-    virtual void applyScrollDelta(const IntSize&) { }
+    virtual void applyScrollAndScale(const IntSize&, float) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -153,9 +153,9 @@ public:
     {
     }
 
-    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
     {
-        m_testHooks->applyScrollDelta(scrollDelta);
+        m_testHooks->applyScrollAndScale(scrollDelta, scale);
     }
 
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
@@ -624,7 +624,7 @@ public:
 
     virtual void beginTest()
     {
-        m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
+        m_layerTreeHost->rootLayer()->setScrollable(true);
         m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
         postSetNeedsCommitToMainThread();
     }
@@ -647,6 +647,8 @@ public:
         CCLayerImpl* root = impl->rootLayer();
         EXPECT_EQ(root->scrollDelta(), IntSize());
 
+        root->setScrollable(true);
+        root->setMaxScrollPosition(IntSize(100, 100));
         root->scrollBy(m_scrollAmount);
 
         if (impl->frameNumber() == 1) {
@@ -660,7 +662,7 @@ public:
         }
     }
 
-    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
     {
         IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
         m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
@@ -694,7 +696,7 @@ public:
 
     virtual void beginTest()
     {
-        m_layerTreeHost->rootLayer()->setMaxScrollPosition(IntSize(100, 100));
+        m_layerTreeHost->rootLayer()->setScrollable(true);
         m_layerTreeHost->rootLayer()->setScrollPosition(m_initialScroll);
         postSetNeedsCommitToMainThread();
     }
@@ -713,6 +715,8 @@ public:
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
     {
         CCLayerImpl* root = impl->rootLayer();
+        root->setScrollable(true);
+        root->setMaxScrollPosition(IntSize(100, 100));
 
         if (impl->frameNumber() == 1) {
             EXPECT_EQ(root->scrollDelta(), IntSize());
@@ -735,7 +739,7 @@ public:
         }
     }
 
-    virtual void applyScrollDelta(const IntSize& scrollDelta)
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
     {
         IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
         m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);

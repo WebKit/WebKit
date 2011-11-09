@@ -37,9 +37,11 @@ public:
     // so that layers can be updated at the given frame time.
     virtual void animateAndLayout(double frameBeginTime) = 0;
 
-    // Applies a scroll delta to the root layer. This is triggered by events
-    // sent to the compositor thread through the WebCompositor interface.
-    virtual void applyScrollDelta(const WebSize&) = 0;
+    // Applies a scroll delta to the root layer, which is bundled with a page
+    // scale factor that may apply a CSS transform on the whole document (used
+    // for mobile-device pinch zooming). This is triggered by events sent to the
+    // compositor thread through the WebCompositor interface.
+    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) = 0;
 
     // Creates a 3D context suitable for the compositing. This may be called
     // more than once if the context gets lost.

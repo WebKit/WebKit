@@ -131,12 +131,10 @@ public:
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
 
-    const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
-    void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
+    bool scrollable() const { return m_scrollable; }
+    void setScrollable(bool scrollable) { m_scrollable = true;  setNeedsCommit(); }
 
     IntSize scrollDelta() const { return IntSize(); }
-
-    bool scrollable() const { return !maxScrollPosition().isZero(); }
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
@@ -164,6 +162,7 @@ public:
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
+    virtual void pageScaleChanged() { m_pageScaleDirty = true; }
     virtual void protectVisibleTileTextures() { }
 
     // These exist just for debugging (via drawDebugBorder()).
@@ -252,7 +251,7 @@ private:
     IntSize m_bounds;
     IntRect m_visibleLayerRect;
     IntPoint m_scrollPosition;
-    IntSize m_maxScrollPosition;
+    bool m_scrollable;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
@@ -283,6 +282,8 @@ private:
     IntRect m_drawableContentRect;
 
     String m_name;
+
+    bool m_pageScaleDirty;
 };
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*);

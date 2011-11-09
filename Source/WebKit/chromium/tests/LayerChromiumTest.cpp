@@ -646,6 +646,7 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setOpaque(false));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setPosition(FloatPoint(4.0f, 9.0f)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setSublayerTransform(TransformationMatrix()));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setScrollable(true));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setDoubleSided(false));
 

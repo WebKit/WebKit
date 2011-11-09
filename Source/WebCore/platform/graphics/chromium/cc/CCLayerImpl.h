@@ -158,7 +158,9 @@ public:
     void setScrollDelta(const IntSize&);
 
     void scrollBy(const IntSize& scroll);
-    bool scrollable() const { return !maxScrollPosition().isZero(); }
+
+    bool scrollable() const { return m_scrollable; }
+    void setScrollable(bool scrollable) { m_scrollable = scrollable; }
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
@@ -216,7 +218,7 @@ private:
     IntSize m_bounds;
     IntSize m_contentBounds;
     IntPoint m_scrollPosition;
-    IntSize m_maxScrollPosition;
+    bool m_scrollable;
     Color m_backgroundColor;
 
     // Whether the "back" of this layer should draw.
@@ -239,6 +241,7 @@ private:
     bool m_drawsContent;
 
     IntSize m_scrollDelta;
+    IntSize m_maxScrollPosition;
 
     // Properties owned exclusively by this CCLayerImpl.
     // Debugging.

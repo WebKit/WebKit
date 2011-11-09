@@ -50,6 +50,11 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_settings(settings)
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
+    , m_pageScale(1)
+    , m_scaleDelta(1)
+    , m_minPageScale(0)
+    , m_maxPageScale(0)
+    , m_pinchGestureActive(false)
 {
     ASSERT(CCProxy::isImplThread());
 }
@@ -68,6 +73,9 @@ void CCLayerTreeHostImpl::beginCommit()
 
 void CCLayerTreeHostImpl::commitComplete()
 {
+    // Recompute max scroll position; must be after layer content bounds are
+    // updated.
+    updateMaxScrollPosition();
 }
 
 GraphicsContext3D* CCLayerTreeHostImpl::context()
@@ -128,7 +136,7 @@ static CCLayerImpl* findScrollLayer(CCLayerImpl* layer)
     if (!layer)
         return 0;
 
-    if (!layer->maxScrollPosition().isZero())
+    if (layer->scrollable())
         return layer;
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
@@ -180,10 +188,82 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
 
 void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
 {
-    bool changed = viewportSize != m_viewportSize;
+    if (viewportSize == m_viewportSize)
+        return;
+
     m_viewportSize = viewportSize;
-    if (changed)
-        m_layerRenderer->viewportChanged();
+    updateMaxScrollPosition();
+    m_layerRenderer->viewportChanged();
+}
+
+void CCLayerTreeHostImpl::setPageScale(float pageScale)
+{
+    if (!pageScale || pageScale == m_pageScale)
+        return;
+
+    // Maintain constant the product of m_pageScale * m_scaleDelta.
+    float scaleChange = pageScale / m_pageScale;
+    float oldMagnifyScale = m_pageScale * m_scaleDelta;
+    m_pageScale = pageScale;
+
+    setScaleDelta(oldMagnifyScale / pageScale);
+
+    // We also need to convert impl-side scroll deltas to pageScale space.
+    if (m_scrollLayerImpl && m_scrollLayerImpl->scrollable()) {
+        IntSize scrollDelta = m_scrollLayerImpl->scrollDelta();
+        scrollDelta.scale(scaleChange);
+        m_scrollLayerImpl->setScrollDelta(scrollDelta);
+    }
+}
+
+void CCLayerTreeHostImpl::setScaleDelta(float delta)
+{
+    // Clamp to the current min/max limits.
+    float finalMagnifyScale = m_pageScale * delta;
+    if (m_minPageScale && finalMagnifyScale < m_minPageScale)
+        delta = m_minPageScale / m_pageScale;
+    else if (m_maxPageScale && finalMagnifyScale > m_maxPageScale)
+        delta = m_maxPageScale / m_pageScale;
+
+    if (delta == m_scaleDelta)
+        return;
+
+    m_scaleDelta = delta;
+
+    updateMaxScrollPosition();
+
+    TransformationMatrix deltaMatrix;
+    deltaMatrix.scale(m_scaleDelta);
+    m_layerRenderer->setPageMagnifyTransform(deltaMatrix);
+}
+
+void CCLayerTreeHostImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
+{
+    m_minPageScale = minPageScale;
+    m_maxPageScale = maxPageScale;
+
+    // This will clamp m_scaleDelta and apply side effects if clamped.
+    setScaleDelta(m_scaleDelta);
+}
+
+void CCLayerTreeHostImpl::updateMaxScrollPosition()
+{
+    if (!m_scrollLayerImpl || !m_scrollLayerImpl->children().size())
+        return;
+
+    FloatSize viewBounds = m_viewportSize;
+    viewBounds.scale(1 / m_scaleDelta);
+
+    // TODO(aelias): Hardcoding the first child here is weird. Think of
+    // a cleaner way to get the contentBounds on the Impl side.
+    IntSize maxScroll = m_scrollLayerImpl->children()[0]->contentBounds() - expandedIntSize(viewBounds);
+    // The viewport may be larger than the contents in some cases, such as
+    // having a vertical scrollbar but no horizontal overflow.
+    maxScroll.clampNegativeToZero();
+
+    m_scrollLayerImpl->setMaxScrollPosition(maxScroll);
+
+    // TODO(aelias): Also update sublayers.
 }
 
 void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& zoom)
@@ -207,20 +287,61 @@ bool CCLayerTreeHostImpl::haveWheelEventHandlers()
     return m_haveWheelEventHandlers;
 }
 
-PassOwnPtr<CCScrollUpdateSet> CCLayerTreeHostImpl::processScrollDeltas()
+void CCLayerTreeHostImpl::pinchGestureBegin()
 {
-    OwnPtr<CCScrollUpdateSet> scrollInfo = adoptPtr(new CCScrollUpdateSet());
-    // FIXME: track scrolls from layers other than the root
-    if (m_scrollLayerImpl && !m_scrollLayerImpl->scrollDelta().isZero()) {
-        CCLayerTreeHostCommon::ScrollUpdateInfo info;
-        info.layerId = m_scrollLayerImpl->id();
-        info.scrollDelta = m_scrollLayerImpl->scrollDelta();
-        scrollInfo->append(info);
+    m_pinchGestureActive = true;
+}
 
-        m_scrollLayerImpl->setScrollPosition(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
-        m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
-        m_scrollLayerImpl->setScrollDelta(IntSize());
+void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
+                                             const IntPoint& anchor)
+{
+    TRACE_EVENT("CCLayerTreeHostImpl::pinchGestureUpdate", this, 0);
+
+    if (magnifyDelta == 1.0)
+        return;
+    if (!m_scrollLayerImpl)
+        return;
+
+    // Keep the center-of-pinch anchor specified by (x, y) in a stable
+    // position over the course of the magnify.
+    FloatPoint prevScaleAnchor(anchor.x() / m_scaleDelta, anchor.y() / m_scaleDelta);
+    setScaleDelta(m_scaleDelta * magnifyDelta);
+    FloatPoint newScaleAnchor(anchor.x() / m_scaleDelta, anchor.y() / m_scaleDelta);
+
+    FloatSize move = prevScaleAnchor - newScaleAnchor;
+
+    scrollRootLayer(roundedIntSize(move));
+
+    m_client->setNeedsRedrawOnImplThread();
+}
+
+void CCLayerTreeHostImpl::pinchGestureEnd()
+{
+    m_pinchGestureActive = false;
+
+    m_client->setNeedsCommitOnImplThread();
+}
+
+PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
+{
+    OwnPtr<CCScrollAndScaleSet> scrollInfo = adoptPtr(new CCScrollAndScaleSet());
+    bool didMove = m_scrollLayerImpl && (!m_scrollLayerImpl->scrollDelta().isZero() || m_scaleDelta != 1.0f);
+    if (!didMove || m_pinchGestureActive) {
+        scrollInfo->pageScale = m_pageScale;
+        return scrollInfo.release();
     }
+
+    // FIXME: track scrolls from layers other than the root
+    scrollInfo->pageScale = m_pageScale * m_scaleDelta;
+    CCLayerTreeHostCommon::ScrollUpdateInfo scroll;
+    scroll.layerId = m_scrollLayerImpl->id();
+    scroll.scrollDelta = m_scrollLayerImpl->scrollDelta();
+    scrollInfo->scrolls.append(scroll);
+
+    m_scrollLayerImpl->setScrollPosition(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
+    m_scrollLayerImpl->setScrollDelta(IntSize());
+
     return scrollInfo.release();
 }
 

@@ -54,7 +54,7 @@ class TextureManager;
 class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
-    virtual void applyScrollDelta(const IntSize&) = 0;
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
     virtual void didCommitAndDrawFrame(int frameNumber) = 0;
@@ -158,6 +158,12 @@ public:
     void setViewport(const IntSize& viewportSize);
 
     const IntSize& viewportSize() const { return m_viewportSize; }
+
+    void setPageScale(float);
+    float pageScale() const { return m_pageScale; }
+
+    void setPageScaleFactorLimits(float minScale, float maxScale);
+
     TextureManager* contentsTextureManager() const;
 
     bool visible() const { return m_visible; }
@@ -168,7 +174,7 @@ public:
     void updateLayers();
 
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
-    void applyScrollDeltas(const CCScrollUpdateSet&);
+    void applyScrollAndScale(const CCScrollAndScaleSet&);
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
 
@@ -209,6 +215,9 @@ private:
     bool m_haveWheelEventHandlers;
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
+
+    float m_pageScale;
+    float m_minPageScale, m_maxPageScale;
 };
 
 }

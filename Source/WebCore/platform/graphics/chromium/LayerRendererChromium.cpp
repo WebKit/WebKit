@@ -361,9 +361,14 @@ void LayerRendererChromium::drawLayersInternal()
     m_defaultRenderSurface = rootDrawLayer->renderSurface();
     m_defaultRenderSurface->clearLayerList();
 
+    TransformationMatrix magnifyMatrix(m_pageMagnifyMatrix);
+    // TODO(aelias): These two transformations are redundant; unify zoomAnimator
+    // and impl-thread side matrix.
+    magnifyMatrix.multiply(m_zoomAnimatorTransform);
+
     {
         TRACE_EVENT("LayerRendererChromium::drawLayersInternal::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootDrawLayer, rootDrawLayer, m_zoomAnimatorTransform, m_zoomAnimatorTransform, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_capabilities.maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootDrawLayer, rootDrawLayer, magnifyMatrix, magnifyMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_capabilities.maxTextureSize);
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.

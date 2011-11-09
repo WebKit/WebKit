@@ -159,6 +159,7 @@ public:
                                    double maximumZoomLevel);
     virtual float pageScaleFactor() const;
     virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin);
+    virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
     virtual float deviceScaleFactor() const;
     virtual void setDeviceScaleFactor(float);
     virtual bool isFixedLayoutModeEnabled() const;
@@ -220,7 +221,7 @@ public:
 
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
-    virtual void applyScrollDelta(const WebCore::IntSize&);
+    virtual void applyScrollAndScale(const WebCore::IntSize&, float);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
     virtual void didCommitAndDrawFrame(int frameNumber);
     virtual void didRecreateGraphicsContext(bool success);

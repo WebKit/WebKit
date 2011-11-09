@@ -207,6 +207,11 @@ public:
     WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
     WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
+    // PageScaleFactor will be force-clamped between minPageScale and maxPageScale
+    // (and these values will persist until setPageScaleFactorLimits is called
+    // again).
+    virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale) = 0;
+
     // Gets the scale factor of the page, where 1.0 is the normal size, > 1.0
     // is scaled up, < 1.0 is scaled down.
     virtual float pageScaleFactor() const = 0;

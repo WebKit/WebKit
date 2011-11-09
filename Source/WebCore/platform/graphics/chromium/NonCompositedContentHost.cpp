@@ -74,7 +74,7 @@ void NonCompositedContentHost::setScrollLayer(GraphicsLayer* layer)
     ASSERT(scrollLayer());
 }
 
-void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)
+void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition, float pageScale)
 {
     if (!scrollLayer())
         return;
@@ -83,16 +83,16 @@ void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const In
 
     m_viewportSize = viewportSize;
     scrollLayer()->setScrollPosition(scrollPosition);
-    IntSize maxScroll = contentsSize - viewportSize;
-    // The viewport may be larger than the contents in some cases, such as
-    // having a vertical scrollbar but no horizontal overflow.
-    maxScroll.clampNegativeToZero();
-
-    scrollLayer()->setMaxScrollPosition(maxScroll);
+    // Due to the possibility of pinch zoom, the noncomposited layer is always
+    // assumed to be scrollable.
+    scrollLayer()->setScrollable(true);
     m_graphicsLayer->setSize(contentsSize);
 
     if (visibleRectChanged)
         m_graphicsLayer->setNeedsDisplay();
+
+    if (m_graphicsLayer->pageScaleFactor() != pageScale)
+        m_graphicsLayer->deviceOrPageScaleFactorChanged();
 }
 
 LayerChromium* NonCompositedContentHost::scrollLayer()

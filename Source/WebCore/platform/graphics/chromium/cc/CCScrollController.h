@@ -36,6 +36,9 @@ class CCScrollController {
 public:
     virtual void scrollRootLayer(const IntSize&) = 0;
     virtual bool haveWheelEventHandlers() = 0;
+    virtual void pinchGestureBegin() = 0;
+    virtual void pinchGestureUpdate(float magnifyDelta, const IntPoint& anchor) = 0;
+    virtual void pinchGestureEnd() = 0;
 
 protected:
     CCScrollController() { }

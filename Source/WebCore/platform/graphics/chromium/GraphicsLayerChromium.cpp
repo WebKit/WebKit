@@ -670,6 +670,12 @@ void GraphicsLayerChromium::updateOpacityOnLayer()
     primaryLayer()->setOpacity(m_opacity);
 }
 
+void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
+{
+    if (m_layer)
+        m_layer->pageScaleChanged();
+}
+
 bool GraphicsLayerChromium::drawsContent() const
 {
     return GraphicsLayer::drawsContent();

@@ -341,11 +341,11 @@ PassOwnPtr<CCMainThread::Task> CCThreadProxy::createBeginFrameAndCommitTaskOnImp
     // numbers below the last executed one.
     int thisTaskSequenceNumber = m_numBeginFrameAndCommitsIssuedOnImplThread;
     m_numBeginFrameAndCommitsIssuedOnImplThread++;
-    OwnPtr<CCScrollUpdateSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+    OwnPtr<CCScrollAndScaleSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
     return createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, thisTaskSequenceNumber, frameBeginTime, scrollInfo.release());
 }
 
-void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet> scrollInfo)
+void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet> scrollInfo)
 {
     TRACE_EVENT("CCThreadProxy::beginFrameAndCommit", this, 0);
     ASSERT(isMainThread());
@@ -353,7 +353,7 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
         return;
 
     // Scroll deltas need to be applied even if the commit will be dropped.
-    m_layerTreeHost->applyScrollDeltas(*scrollInfo.get());
+    m_layerTreeHost->applyScrollAndScale(*scrollInfo.get());
 
     // Drop beginFrameAndCommit calls that occur out of sequence. See createBeginFrameAndCommitTaskOnImplThread for
     // an explanation of how out-of-sequence beginFrameAndCommit tasks can occur.

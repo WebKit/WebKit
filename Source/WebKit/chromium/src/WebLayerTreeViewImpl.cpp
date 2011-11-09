@@ -65,10 +65,10 @@ void WebLayerTreeViewImpl::animateAndLayout(double frameBeginTime)
         m_client->animateAndLayout(frameBeginTime);
 }
 
-void WebLayerTreeViewImpl::applyScrollDelta(const WebCore::IntSize& delta)
+void WebLayerTreeViewImpl::applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale)
 {
     if (m_client)
-        m_client->applyScrollDelta(WebSize(delta));
+        m_client->applyScrollAndScale(WebSize(scrollDelta), pageScale);
 }
 
 PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createLayerTreeHostContext3D()

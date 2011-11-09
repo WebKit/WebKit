@@ -55,8 +55,9 @@ public:
     void invalidateRect(const IntRect&);
     void setBackgroundColor(const Color&);
     void setScrollLayer(GraphicsLayer*);
-    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
+    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition, float pageScale);
     void protectVisibleTileTextures();
+    GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
 private:
     explicit NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint);

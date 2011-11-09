@@ -51,7 +51,10 @@ public:
     };
 };
 
-typedef Vector<CCLayerTreeHostCommon::ScrollUpdateInfo> CCScrollUpdateSet;
+struct CCScrollAndScaleSet {
+    Vector<CCLayerTreeHostCommon::ScrollUpdateInfo> scrolls;
+    float pageScale;
+};
 
 template<typename LayerType>
 IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(LayerType* layer)

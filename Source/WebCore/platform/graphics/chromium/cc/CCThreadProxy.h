@@ -81,7 +81,7 @@ private:
     explicit CCThreadProxy(CCLayerTreeHost*);
 
     // Called on CCMainThread
-    void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollUpdateSet>);
+    void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
     void didCommitAndDrawFrame(int frameNumber);
 
     // Called on CCThread

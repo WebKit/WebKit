@@ -58,6 +58,7 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     : m_delegate(delegate)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
+    , m_scrollable(false)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
@@ -72,6 +73,7 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
+    , m_pageScaleDirty(false)
 {
 }
 
@@ -210,10 +212,12 @@ void LayerChromium::setBounds(const IntSize& size)
 
     m_bounds = size;
 
-    if (firstResize)
+    if (firstResize || m_pageScaleDirty)
         setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
     else
         setNeedsCommit();
+
+    m_pageScaleDirty = false;
 }
 
 const LayerChromium* LayerChromium::rootLayer() const
@@ -287,7 +291,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDrawsContent(drawsContent());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
-    layer->setMaxScrollPosition(m_maxScrollPosition);
+    layer->setScrollable(m_scrollable);
     layer->setName(m_name);
     layer->setOpaque(m_opaque);
     layer->setOpacity(m_opacity);

@@ -100,6 +100,7 @@ public:
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
     virtual void notifySyncRequired();
 
+    virtual void deviceOrPageScaleFactorChanged();
 private:
     void updateOpacityOnLayer();
 
