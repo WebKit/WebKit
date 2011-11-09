@@ -1,3 +1,19 @@
+2011-11-09  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium: Add plumbing to enable dragging dev tools via the empty space on the toolbar.
+        https://bugs.webkit.org/show_bug.cgi?id=71842
+
+        These are the only WebKit-side changes needed. The rest will be done on the Chromium side.
+
+        Chromium bug: http://crbug.com/44350
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::moveWindowBy):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::moveWindowBy):
+
 2011-11-08  Jay Civelli  <jcivelli@chromium.org>
 
         Fixes and reenables the WebPageSerializer tests.

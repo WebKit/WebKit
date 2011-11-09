@@ -40,6 +40,7 @@
 #include "V8Proxy.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
+#include "WebFloatPoint.h"
 #include "WebString.h"
 
 using namespace WebCore;
@@ -81,6 +82,7 @@ void InspectorFrontendClientImpl::frontendLoaded()
 
 void InspectorFrontendClientImpl::moveWindowBy(float x, float y)
 {
+    m_client->moveWindowBy(WebFloatPoint(x, y));
 }
 
 String InspectorFrontendClientImpl::localizedStringsURL()
