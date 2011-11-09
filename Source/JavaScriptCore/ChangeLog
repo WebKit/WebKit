@@ -1,3 +1,15 @@
+2011-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99678.
+        http://trac.webkit.org/changeset/99678
+        https://bugs.webkit.org/show_bug.cgi?id=71882
+
+        broke the build with -Werror=unused-but-set-variable
+        (Requested by tronical_ on #webkit).
+
+        * CMakeListsEfl.txt:
+        * wtf/Platform.h:
+
 2011-11-09  Andy Wingo  <wingo@igalia.com>
 
         Enable the DFG JIT on X86-64 Linux platforms

@@ -29,7 +29,6 @@ LIST(APPEND JavaScriptCore_SOURCES
     dfg/DFGDriver.cpp
     dfg/DFGGraph.cpp
     dfg/DFGJITCodeGenerator.cpp
-    dfg/DFGJITCodeGenerator64.cpp
     dfg/DFGJITCodeGenerator32_64.cpp
     dfg/DFGJITCompiler.cpp
     dfg/DFGOperations.cpp
@@ -38,6 +37,5 @@ LIST(APPEND JavaScriptCore_SOURCES
     dfg/DFGPropagator.cpp
     dfg/DFGRepatch.cpp
     dfg/DFGSpeculativeJIT.cpp
-    dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGSpeculativeJIT32_64.cpp
 )
