@@ -232,7 +232,18 @@ defineTest(linkStaticLibrary) {
     path = $$1
     target = $$2
 
-    LIBS = -l$$target $$LIBS
+    mac {
+        wholeArchivePreFlag = -Wl,-all_load
+        wholeArchivePostFlag = -Wl,-noall_load
+    } else:win32-msvc*|wince*|win32-icc {
+        wholeArchivePreFlag = /OPT:REF
+        wholeArchivePostFlag =
+    } else {
+        wholeArchivePreFlag = -Wl,-whole-archive
+        wholeArchivePostFlag = -Wl,-no-whole-archive
+    }
+
+    LIBS = $$wholeArchivePreFlag -l$$target $$wholeArchivePostFlag $$LIBS
 
     win32-msvc*|wince*|win32-icc {
         LIBS = -L$$path $$LIBS

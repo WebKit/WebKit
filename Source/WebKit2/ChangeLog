@@ -1,5 +1,15 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Enable exports and constructor functions in static libs
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformInitialize): Remove unnecessary manual Qt resource
+        initialization.
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix geolocation enabled build.
 
         Reviewed by Tor Arne Vestbø.

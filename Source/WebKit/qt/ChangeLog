@@ -1,3 +1,13 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Enable exports and constructor functions in static libs
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate): Remove unnecessary manual Qt resource
+        initialization.
+
 2011-11-09  Deepak Sherveghar  <bpwv64@motorola.com>
 
         [Qt] 4 Layout test fail due to network error constant values clash with WebkitError enum values in FrameloaderclientQt
