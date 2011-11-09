@@ -1,0 +1,25 @@
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+
+<svg>
+    <foreignObject>
+        <div style="position: absolute;">
+            <div id="div1"></div>
+            <div id="div2" style="overflow:hidden; width:100px; height:100px;">x</div>
+        </div>
+    </foreignObject>
+</svg>
+<script>
+function RemoveNode(n) { n.parentNode.removeChild(n) }
+    window.onload = function() {
+        document.body.offsetTop; // Force layout.
+        RemoveNode(document.getElementById('div1'));
+        document.body.offsetTop; // Force layout.
+        RemoveNode(document.getElementById('div2'));
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+}
+</script>
+<body>
+    PASS
+</body>
+

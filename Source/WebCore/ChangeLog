@@ -1,3 +1,25 @@
+2011-11-09  Ken Buchanan  <kenrb@chromium.org>
+
+        SVG foreignObject wrong container
+        https://bugs.webkit.org/show_bug.cgi?id=64780
+
+        Reviewed by Simon Fraser.
+
+        Resubmitting a patch originally by scottmg@chromium.org.
+        In determining where to add to m_positionedObjects during a repaint,
+        containingBlock is used, which adds the absolute positioned object to
+        the containing foreignObject. But, when the contained object is
+        dirtied, container() was used to dirty up the tree, which skipped over
+        the foreignObject causing the wrong parent to needsLayout(). This fix
+        makes container() and containingBlock() handle svg foreignObject's in
+        the same way.
+
+        This patch will cause svg/overflow/overflow-on-foreignObject.svg to
+        require rebaselined results on qt and gtk ports.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::container):
+
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
         Shrink StyleSheet on 64-bit.
