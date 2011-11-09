@@ -2186,8 +2186,6 @@
             'bindings/v8/custom/V8Float64ArrayCustom.cpp',
             'bindings/v8/custom/V8GeolocationCustom.cpp',
             'bindings/v8/custom/V8HTMLAllCollectionCustom.cpp',
-            'bindings/v8/custom/V8HTMLAudioElementConstructor.cpp',
-            'bindings/v8/custom/V8HTMLAudioElementConstructor.h',
             'bindings/v8/custom/V8HTMLCanvasElementCustom.cpp',
             'bindings/v8/custom/V8HTMLCollectionCustom.cpp',
             'bindings/v8/custom/V8HTMLDocumentCustom.cpp',

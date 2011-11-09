@@ -1,3 +1,27 @@
+2011-11-09  Kentaro Hara  <haraken@chromium.org>
+
+        Generate the HTMLAudioElement constructor using [NamedConstructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=71924
+
+        Reviewed by Adam Barth.
+
+        This patch removes a custom constructor of HTMLAudioElement
+        and generates it using [NamedConstructor] IDL.
+
+        Tests:  fast/js/custom-constructors.html
+                media/audio-constructor.html
+                media/audio-constructor-src.html
+                media/audio-constructor-preload.html
+                media/audio-controls-do-not-fade-out.html
+                media/audio-controls-rendering.html
+
+        * Target.pri: Removed V8HTMLAudioElementConstructor.{h,cpp}
+        * WebCore.gypi: Ditto.
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp: Removed.
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.h: Removed.
+        * html/HTMLAudioElement.idl: Added [NamedConstructor] IDL.
+        * page/DOMWindow.idl: Removed [V8CustomConstructor] IDL.
+
 2011-11-09  Antti Koivisto  <antti@apple.com>
 
         Eliminate CSSMutableValue

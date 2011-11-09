@@ -182,11 +182,6 @@ v8 {
         bindings/v8/custom/V8FileReaderCustom.cpp \
         bindings/v8/custom/V8HTMLAllCollectionCustom.cpp
 
-    contains(DEFINES, ENABLE_VIDEO=1) {
-        SOURCES += \
-            bindings/v8/custom/V8HTMLAudioElementConstructor.cpp
-    }
-
     SOURCES += \
         bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \
         bindings/v8/custom/V8HTMLCollectionCustom.cpp \
@@ -1349,7 +1344,6 @@ v8 {
     HEADERS += \
         bindings/v8/custom/V8CustomVoidCallback.h \
         bindings/v8/custom/V8CustomXPathNSResolver.h \
-        bindings/v8/custom/V8HTMLAudioElementConstructor.h \
         bindings/v8/custom/V8HTMLImageElementConstructor.h \
         bindings/v8/custom/V8HTMLSelectElementCustom.h \
         bindings/v8/custom/V8MessagePortCustom.h \
