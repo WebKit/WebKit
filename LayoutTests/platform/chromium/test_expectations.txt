@@ -3291,9 +3291,6 @@ BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
 BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 
-// After r87526, these all have extra scrollbars where the platform/mac expectations do not.
-BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE+TEXT
-
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
