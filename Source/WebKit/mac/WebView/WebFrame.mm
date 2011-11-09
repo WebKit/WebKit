@@ -688,6 +688,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return TextIterator::rangeFromLocationAndLength(_private->coreFrame->selection()->rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
 
+- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
+{
+    return kit([self _convertToDOMRange:nsrange].get());
+}
+
+- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
+{
+    return [self _convertToNSRange:core(range)];
+}
+
 - (DOMRange *)_markDOMRange
 {
     return kit(_private->coreFrame->editor()->mark().toNormalizedRange().get());
@@ -901,16 +911,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RefPtr<Range> domRange = [self _convertToDOMRange:range];
     if (domRange)
         _private->coreFrame->selection()->setSelection(VisibleSelection(domRange.get(), SEL_DEFAULT_AFFINITY));
-}
-
-- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
-{
-    return kit([self _convertToDOMRange:nsrange].get());
-}
-
-- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
-{
-    return [self _convertToNSRange:core(range)];
 }
 
 - (BOOL)_isDisplayingStandaloneImage

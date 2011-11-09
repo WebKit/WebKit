@@ -130,6 +130,9 @@ WebView *getWebView(WebFrame *webFrame);
 - (NSString *)_selectedString;
 - (NSString *)_stringForRange:(DOMRange *)range;
 
+- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)range;
+- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range;
+
 - (NSString *)_markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
 
 - (NSRect)_caretRectAtPosition:(const WebCore::Position&)pos affinity:(NSSelectionAffinity)affinity;
