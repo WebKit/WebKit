@@ -1,3 +1,16 @@
+2011-11-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][DRT] window internals object is not reset after each test
+        https://bugs.webkit.org/show_bug.cgi?id=71890
+
+        Reviewed by Xan Lopez.
+
+        DRTSupport infrastructure to reset the Internals object, like in Qt.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::resetInternalsObject):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp
