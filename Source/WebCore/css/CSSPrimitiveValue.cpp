@@ -530,7 +530,7 @@ bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, doub
 {
     if (!isValidCSSUnitTypeForDoubleConversion(static_cast<UnitTypes>(m_primitiveUnitType)) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
         return false;
-    if (requestedUnitType == m_primitiveUnitType || requestedUnitType == CSS_DIMENSION) {
+    if (requestedUnitType == static_cast<UnitTypes>(m_primitiveUnitType) || requestedUnitType == CSS_DIMENSION) {
         *result = m_value.num;
         return true;
     }
