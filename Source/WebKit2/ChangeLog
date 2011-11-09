@@ -1,5 +1,16 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Fix geolocation enabled build.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Add QT += location to get the right module includes.
+        * UIProcess/qt/WebGeolocationProviderQt.cpp: Include the moc file with the right name (GeoLocation -> Geolocation)
+        * UIProcess/qt/WebGeolocationProviderQt.h: Removed the ENABLE(GEOLOCATION) guards, otherwise moc doesn't generate
+        code, because it can't interpret the ENABLE() macro.
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Build system cleanup
         https://bugs.webkit.org/show_bug.cgi?id=71815
 

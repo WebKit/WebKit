@@ -612,3 +612,5 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
     SOURCES += \
         Shared/qt/NativeWebTouchEventQt.cpp
 }
+
+contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location

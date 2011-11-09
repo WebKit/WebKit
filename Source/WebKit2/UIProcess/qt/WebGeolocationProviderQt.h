@@ -29,8 +29,6 @@
 class QGeoPositionInfoSource;
 class QGeoPositionInfo;
 
-#if ENABLE(GEOLOCATION)
-
 class WebGeolocationProviderQt : public QObject {
     Q_OBJECT
 public:
@@ -54,7 +52,5 @@ private:
     WKRetainPtr<WKGeolocationPositionRef> m_lastPosition;
     mutable QGeoPositionInfoSource* m_source;
 };
-
-#endif
 
 #endif /* WebGeolocationProviderQt_h */
