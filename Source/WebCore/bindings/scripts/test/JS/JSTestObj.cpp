@@ -202,6 +202,19 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
     return getStaticValueDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, this, propertyName, descriptor);
 }
 
+EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
+{
+    JSTestObjConstructor* jsConstructor = static_cast<JSTestObjConstructor*>(exec->callee());
+    RefPtr<TestObj> object = TestObj::create();
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+}
+
+ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
+    constructData.native.function = constructJSTestObj;
+    return ConstructTypeHost;
+}
+
 /* Hash table for prototype */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator

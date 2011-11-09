@@ -1489,6 +1489,24 @@ COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrong
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDontCheckEnums);
 
+v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    RefPtr<TestObj> obj = TestObj::create();
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
+    obj->ref();
+    V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
+}
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();

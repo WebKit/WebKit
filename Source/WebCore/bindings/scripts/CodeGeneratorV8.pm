@@ -2305,7 +2305,7 @@ v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& arg
 END
     } elsif ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
-    } elsif ($dataNode->extendedAttributes->{"CanBeConstructed"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+    } elsif (($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"}) && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     }
 

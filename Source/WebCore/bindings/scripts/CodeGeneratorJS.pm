@@ -3188,7 +3188,7 @@ sub GenerateConstructorDeclaration
     my $dataNode = shift;
 
     my $constructorClassName = "${className}Constructor";
-    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"};
+    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"};
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
@@ -3266,7 +3266,7 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, this, propertyName, descriptor);\n");
     push(@$outputArray, "}\n\n");
 
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"}) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) {
         if (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
