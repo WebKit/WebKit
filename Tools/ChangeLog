@@ -1,3 +1,13 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed, rolling out r99707.
+        http://trac.webkit.org/changeset/99707
+
+        Re-enable until we can disable it together with tests in one
+        shot.
+
+        * qmake/mkspecs/features/features.prf:
+
 2011-11-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Disable use of QtUiTools if the library/module is not found
