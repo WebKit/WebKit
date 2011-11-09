@@ -1292,7 +1292,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const
 {
-    return (attr->name() == srcAttr || attr->name() == formactionAttr);
+    return attr->name() == srcAttr || attr->name() == formactionAttr || HTMLTextFormControlElement::isURLAttribute(attr);
 }
 
 String HTMLInputElement::defaultValue() const

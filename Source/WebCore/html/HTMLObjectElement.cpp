@@ -384,7 +384,7 @@ void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange
 
 bool HTMLObjectElement::isURLAttribute(Attribute *attr) const
 {
-    return (attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().string()[0] != '#'));
+    return attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().string()[0] != '#') || HTMLPlugInImageElement::isURLAttribute(attr);
 }
 
 const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const

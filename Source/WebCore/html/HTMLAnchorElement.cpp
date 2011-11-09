@@ -238,7 +238,7 @@ void HTMLAnchorElement::accessKeyAction(bool sendToAnyElement)
 
 bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const
 {
-    return attr->name() == hrefAttr;
+    return attr->name() == hrefAttr || HTMLElement::isURLAttribute(attr);
 }
 
 bool HTMLAnchorElement::canStartSelection() const

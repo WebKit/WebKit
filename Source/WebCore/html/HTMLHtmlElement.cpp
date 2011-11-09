@@ -53,7 +53,7 @@ PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName
 
 bool HTMLHtmlElement::isURLAttribute(Attribute* attribute) const
 {
-    return attribute->name() == manifestAttr;
+    return attribute->name() == manifestAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 void HTMLHtmlElement::insertedByParser()

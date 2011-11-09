@@ -1,3 +1,64 @@
+2011-11-09  Arko Saha  <arko@motorola.com>
+
+        Microdata: fast/dom/MicroData/itemid-attribute-test.html assertion failure in Element::getURLAttribute().
+        https://bugs.webkit.org/show_bug.cgi?id=71510
+
+        Reviewed by Darin Adler.
+
+        Override isURLAttribute() for HTMLElement and return true if attribute is itemidAttr.
+        All the classes derived from HTMLElement overrides this function should return true if attribute is itemidAttr.
+        Removed HTMLIFrameElement::isURLAttribute() method as HTMLFrameElementBase already takes care of it.
+
+        Test: fast/dom/MicroData/itemid-attribute-test-001.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isURLAttribute):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::isURLAttribute):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::isURLAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::isURLAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isURLAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::isURLAttribute):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::isURLAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAttribute):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::isURLAttribute):
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isURLAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isURLAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::isURLAttribute):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isURLAttribute):
+        * html/HTMLModElement.cpp:
+        (WebCore::HTMLModElement::isURLAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isURLAttribute):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLAttribute):
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::isURLAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::isURLAttribute):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::isURLAttribute):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::isURLAttribute):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::isURLAttribute):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::isURLAttribute):
+
 2011-11-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: crash when accessing selectedTab in a tab list

@@ -189,7 +189,7 @@ void HTMLBodyElement::insertedIntoDocument()
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
 {
-    return attr->name() == backgroundAttr;
+    return attr->name() == backgroundAttr || HTMLElement::isURLAttribute(attr);
 }
 
 bool HTMLBodyElement::supportsFocus() const

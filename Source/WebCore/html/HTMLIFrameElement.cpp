@@ -122,11 +122,6 @@ void HTMLIFrameElement::removedFromDocument()
     HTMLFrameElementBase::removedFromDocument();
 }
 
-bool HTMLIFrameElement::isURLAttribute(Attribute* attr) const
-{
-    return attr->name() == srcAttr;
-}
-
 #if ENABLE(MICRODATA)
 String HTMLIFrameElement::itemValueText() const
 {

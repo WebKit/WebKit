@@ -73,7 +73,7 @@ bool HTMLParamElement::isURLAttribute(Attribute* attr) const
                 return true;
         }
     }
-    return false;
+    return HTMLElement::isURLAttribute(attr);
 }
 
 void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

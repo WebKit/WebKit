@@ -49,7 +49,7 @@ PassRefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tag
 
 bool HTMLScriptElement::isURLAttribute(Attribute* attr) const
 {
-    return attr->name() == srcAttr;
+    return attr->name() == srcAttr || HTMLElement::isURLAttribute(attr);
 }
 
 void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

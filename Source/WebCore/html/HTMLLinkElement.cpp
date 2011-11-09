@@ -370,7 +370,7 @@ void HTMLLinkElement::startLoadingDynamicSheet()
 
 bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
 {
-    return attr->name() == hrefAttr;
+    return attr->name() == hrefAttr || HTMLElement::isURLAttribute(attr);
 }
 
 KURL HTMLLinkElement::href() const

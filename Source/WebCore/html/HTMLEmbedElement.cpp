@@ -262,7 +262,7 @@ void HTMLEmbedElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
 bool HTMLEmbedElement::isURLAttribute(Attribute* attr) const
 {
-    return attr->name() == srcAttr;
+    return attr->name() == srcAttr || HTMLPlugInImageElement::isURLAttribute(attr);
 }
 
 const QualifiedName& HTMLEmbedElement::imageSourceAttributeName() const

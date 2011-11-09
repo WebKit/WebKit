@@ -497,7 +497,7 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 
 bool HTMLFormElement::isURLAttribute(Attribute* attr) const
 {
-    return attr->name() == actionAttr;
+    return attr->name() == actionAttr || HTMLElement::isURLAttribute(attr);
 }
 
 void HTMLFormElement::registerImgElement(HTMLImageElement* e)

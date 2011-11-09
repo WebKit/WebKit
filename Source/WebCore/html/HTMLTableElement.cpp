@@ -640,7 +640,7 @@ void HTMLTableElement::attach()
 
 bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 {
-    return attr->name() == backgroundAttr;
+    return attr->name() == backgroundAttr || HTMLElement::isURLAttribute(attr);
 }
 
 PassRefPtr<HTMLCollection> HTMLTableElement::rows()

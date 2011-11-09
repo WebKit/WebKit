@@ -64,7 +64,7 @@ void HTMLBaseElement::removedFromDocument()
 
 bool HTMLBaseElement::isURLAttribute(Attribute* attribute) const
 {
-    return attribute->name() == hrefAttr;
+    return attribute->name() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 String HTMLBaseElement::target() const

@@ -313,7 +313,8 @@ bool HTMLImageElement::isURLAttribute(Attribute* attr) const
     return attr->name() == srcAttr
         || attr->name() == lowsrcAttr
         || attr->name() == longdescAttr
-        || (attr->name() == usemapAttr && attr->value().string()[0] != '#');
+        || (attr->name() == usemapAttr && attr->value().string()[0] != '#')
+        || HTMLElement::isURLAttribute(attr);
 }
 
 const AtomicString& HTMLImageElement::alt() const

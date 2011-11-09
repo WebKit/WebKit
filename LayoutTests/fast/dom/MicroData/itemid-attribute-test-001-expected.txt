@@ -1,0 +1,124 @@
+Test for bug: https://bugs.webkit.org/show_bug.cgi?id=71510. Assertion failure in Element::getURLAttribute() while retriving itemid of a Microdata item.
+
+Created element of type: a
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: href, value: http://www.webkit.org/
+PASS createElement('a', {itemid: 'http://example.com/foo', href: 'http://www.webkit.org/'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: audio
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: test.mp3
+PASS createElement('audio', {itemid: 'http://example.com/foo', src: 'test.mp3'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: base
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: href, value: http://www.webkit.org/
+PASS createElement('base', {itemid: 'http://example.com/foo', href: 'http://www.webkit.org/'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: blockquote
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('blockquote', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: body
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('body', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: button
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: type, value: button
+PASS createElement('button', {itemid: 'http://example.com/foo', type: 'button'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: del
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('del', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: div
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('div', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: embed
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: test.swf
+PASS createElement('embed', {itemid: 'http://example.com/foo', src: 'test.swf'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: form
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('form', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: frame
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: test.html
+PASS createElement('frame', {itemid: 'http://example.com/foo', src: 'test.html'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: html
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('html', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: iframe
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: test.html
+PASS createElement('iframe', {itemid: 'http://example.com/foo', src: 'test.html'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: img
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: image.png
+PASS createElement('img', {itemid: 'http://example.com/foo', src: 'image.png'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: input
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: type, value: button
+PASS createElement('input', {itemid: 'http://example.com/foo', type: 'button'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: ins
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('ins', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: link
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: type, value: text/css
+Set attribute: href, value: test.css
+PASS createElement('link', {itemid: 'http://example.com/foo', type: 'text/css', href: 'test.css'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: object
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: data, value: test.swf
+PASS createElement('object', {itemid: 'http://example.com/foo', data: 'test.swf'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: param
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: name, value: my_param
+PASS createElement('param', {itemid: 'http://example.com/foo', name: 'my_param'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: q
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('q', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: source
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: type, value: audio/mpeg
+Set attribute: src, value: test.mp3
+PASS createElement('source', {itemid: 'http://example.com/foo', type: 'audio/mpeg', src: 'test.mp3'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: table
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('table', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: td
+Set attribute: itemid, value: http://example.com/foo
+PASS createElement('td', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: track
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: type, value: audio/mpeg
+Set attribute: src, value: test.vtt
+PASS createElement('track', {itemid: 'http://example.com/foo', type: 'audio/mpeg', src: 'test.vtt'}).itemId == 'http://example.com/foo'; is true
+
+Created element of type: video
+Set attribute: itemid, value: http://example.com/foo
+Set attribute: src, value: test.mp4
+PASS createElement('video', {itemid: 'http://example.com/foo', src: 'test.mp4'}).itemId == 'http://example.com/foo'; is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

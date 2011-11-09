@@ -131,7 +131,7 @@ void HTMLTableCellElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleD
 
 bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const
 {
-    return attr->name() == backgroundAttr;
+    return attr->name() == backgroundAttr || HTMLTablePartElement::isURLAttribute(attr);
 }
 
 String HTMLTableCellElement::abbr() const

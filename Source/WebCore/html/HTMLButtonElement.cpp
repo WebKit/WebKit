@@ -171,7 +171,7 @@ void HTMLButtonElement::accessKeyAction(bool sendToAnyElement)
 
 bool HTMLButtonElement::isURLAttribute(Attribute* attr) const
 {
-    return attr->name() == formactionAttr;
+    return attr->name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attr);
 }
 
 String HTMLButtonElement::value() const

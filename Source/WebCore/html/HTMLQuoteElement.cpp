@@ -51,7 +51,7 @@ void HTMLQuoteElement::insertedIntoDocument()
 
 bool HTMLQuoteElement::isURLAttribute(Attribute* attribute) const
 {
-    return attribute->name() == citeAttr;
+    return attribute->name() == citeAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 }

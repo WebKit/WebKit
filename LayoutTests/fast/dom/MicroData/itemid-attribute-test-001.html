@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Test for bug: https://bugs.webkit.org/show_bug.cgi?id=71510. Assertion failure in Element::getURLAttribute() while retriving itemid of a Microdata item.</p>
+<div id="console"></div>
+<script>
+shouldBeTrue("createElement('a', {itemid: 'http://example.com/foo', href: 'http://www.webkit.org/'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('audio', {itemid: 'http://example.com/foo', src: 'test.mp3'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('base', {itemid: 'http://example.com/foo', href: 'http://www.webkit.org/'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('blockquote', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('body', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('button', {itemid: 'http://example.com/foo', type: 'button'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('del', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('div', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('embed', {itemid: 'http://example.com/foo', src: 'test.swf'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('form', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('frame', {itemid: 'http://example.com/foo', src: 'test.html'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('html', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('iframe', {itemid: 'http://example.com/foo', src: 'test.html'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('img', {itemid: 'http://example.com/foo', src: 'image.png'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('input', {itemid: 'http://example.com/foo', type: 'button'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('ins', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('link', {itemid: 'http://example.com/foo', type: 'text/css', href: 'test.css'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('object', {itemid: 'http://example.com/foo', data: 'test.swf'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('param', {itemid: 'http://example.com/foo', name: 'my_param'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('q', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('source', {itemid: 'http://example.com/foo', type: 'audio/mpeg', src: 'test.mp3'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('table', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('td', {itemid: 'http://example.com/foo'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('track', {itemid: 'http://example.com/foo', type: 'audio/mpeg', src: 'test.vtt'}).itemId == 'http://example.com/foo';");
+debug('');
+shouldBeTrue("createElement('video', {itemid: 'http://example.com/foo', src: 'test.mp4'}).itemId == 'http://example.com/foo';");
+debug('');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

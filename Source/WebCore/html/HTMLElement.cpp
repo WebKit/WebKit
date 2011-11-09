@@ -994,6 +994,16 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
     }
 }
 
+bool HTMLElement::isURLAttribute(Attribute* attribute) const
+{
+#if ENABLE(MICRODATA)
+    return attribute->name() == itemidAttr;
+#else
+    UNUSED_PARAM(attribute);
+    return false;
+#endif
+}
+
 #if ENABLE(MICRODATA)
 PassRefPtr<DOMSettableTokenList> HTMLElement::itemProp() const
 {
