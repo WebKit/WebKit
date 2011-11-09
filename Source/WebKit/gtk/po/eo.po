@@ -1,0 +1,1419 @@
+# Esperanto translation for webkit.
+# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# This file is distributed under the same license as the webkit package.
+# Michael MORONI < >, 2011.
+# Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
+"POT-Creation-Date: 2010-12-27 15:26+0000\n"
+"PO-Revision-Date: 2011-09-24 19:23+0200\n"
+"Last-Translator: Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>\n"
+"Language-Team: Esperanto <ubuntu-l10n-eo@lists.launchpad.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: eo\n"
+"X-Launchpad-Export-Date: 2011-09-24 17:20+0000\n"
+"X-Generator: Launchpad (build 14012)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: ../WebCoreSupport/ChromeClientGtk.cpp:589
+msgid "Upload File"
+msgstr "Alŝuti dosieron"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:63
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:194
+msgid "Input _Methods"
+msgstr "Enigaj _metodoj"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRM _Left-to-right mark"
+msgstr "MDM Ma_ldekste-dekstrena marko"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLM _Right-to-left mark"
+msgstr "DMM Dekst_re-maldekstrena marko"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRE Left-to-right _embedding"
+msgstr "MDE Maldekstre-dekstrena _enprofundigo"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Dekstre-_maldekstrena enprofundigo"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "LRO Left-to-right _override"
+msgstr "LRO Maldekstre-dekstrena superreg_o"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Dekstre-maldekstrena _superrego"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "PDF _Pop directional formatting"
+msgstr "PDF _Puldirekta formatado"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWS _Zero width space"
+msgstr "NLS _Nullarĝa spaco"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:88
+msgid "ZWJ Zero width _joiner"
+msgstr "NLK Nullarĝa _kunigilo"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:89
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ Nullarĝa _nekunigilo"
+
+#: ../WebCoreSupport/ContextMenuClientGtk.cpp:111
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:189
+msgid "_Insert Unicode Control Character"
+msgstr "Enmetu un_ikodan stirsignon"
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1180
+msgid "Load request cancelled"
+msgstr ""
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1186
+msgid "Not allowed to use restricted network port"
+msgstr ""
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1192
+msgid "URL cannot be shown"
+msgstr ""
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1198
+msgid "Frame load was interrupted"
+msgstr ""
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1204
+msgid "Content with the specified MIME type cannot be shown"
+msgstr ""
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1210
+msgid "File does not exist"
+msgstr "La dosiero ne ekzistas"
+
+#: ../WebCoreSupport/FrameLoaderClientGtk.cpp:1216
+msgid "Plugin will handle load"
+msgstr ""
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:385
+msgid "Play"
+msgstr "Ludi"
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:387
+msgid "Pause"
+msgstr "Paŭzigi"
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:533
+msgid "Play / Pause"
+msgstr "Ludi / paŭzigi"
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:533
+msgid "Play or pause the media"
+msgstr ""
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:541
+msgid "Time:"
+msgstr "Horo:"
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:565
+msgid "Exit Fullscreen"
+msgstr "Forlasi tutekranan reĝimon"
+
+#: ../WebCoreSupport/FullscreenVideoController.cpp:565
+msgid "Exit from fullscreen mode"
+msgstr "Forlasi la tutekranan reĝimon"
+
+#: ../webkit/webkitdownload.cpp:273
+msgid "Network Request"
+msgstr "Reta peto"
+
+#: ../webkit/webkitdownload.cpp:274
+msgid "The network request for the URI that should be downloaded"
+msgstr "La reta peto por la elŝutenda URI"
+
+#: ../webkit/webkitdownload.cpp:288
+msgid "Network Response"
+msgstr "Reta respondo"
+
+#: ../webkit/webkitdownload.cpp:289
+msgid "The network response for the URI that should be downloaded"
+msgstr "La reta respondo por la elŝutenda URI"
+
+#: ../webkit/webkitdownload.cpp:303
+msgid "Destination URI"
+msgstr "Cela URI"
+
+#: ../webkit/webkitdownload.cpp:304
+msgid "The destination URI where to save the file"
+msgstr "La cela URI kie konservi la dosieron"
+
+#: ../webkit/webkitdownload.cpp:318
+msgid "Suggested Filename"
+msgstr "Konsilita dosieronomo"
+
+#: ../webkit/webkitdownload.cpp:319
+msgid "The filename suggested as default when saving"
+msgstr "La konsilita dosiernomo kiel defaŭlta kiam konservanta"
+
+#: ../webkit/webkitdownload.cpp:336
+msgid "Progress"
+msgstr "Progreso"
+
+#: ../webkit/webkitdownload.cpp:337
+msgid "Determines the current progress of the download"
+msgstr "Difinas la aktualkan progreson de la elŝuto"
+
+#: ../webkit/webkitdownload.cpp:350
+msgid "Status"
+msgstr "Stato"
+
+#: ../webkit/webkitdownload.cpp:351
+msgid "Determines the current status of the download"
+msgstr "Difinas la aktualan staton de la elŝuto"
+
+#: ../webkit/webkitdownload.cpp:366
+msgid "Current Size"
+msgstr "Aktuala grando"
+
+#: ../webkit/webkitdownload.cpp:367
+msgid "The length of the data already downloaded"
+msgstr "Grando de la datumoj jam elŝutataj"
+
+#: ../webkit/webkitdownload.cpp:381
+msgid "Total Size"
+msgstr "Tuta grando"
+
+#: ../webkit/webkitdownload.cpp:382
+msgid "The total size of the file"
+msgstr "La tuta grando de la dosiero"
+
+#: ../webkit/webkitdownload.cpp:534
+msgid "User cancelled the download"
+msgstr "Uzanto nuligis la elŝuton"
+
+#: ../webkit/webkithittestresult.cpp:156
+msgid "Context"
+msgstr "Kunteksto"
+
+#: ../webkit/webkithittestresult.cpp:157
+msgid "Flags indicating the kind of target that received the event."
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:171
+msgid "Link URI"
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:172
+msgid "The URI to which the target that received the event points, if any."
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:185
+msgid "Image URI"
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:186
+msgid ""
+"The URI of the image that is part of the target that received the event, if "
+"any."
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:199
+msgid "Media URI"
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:200
+msgid ""
+"The URI of the media that is part of the target that received the event, if "
+"any."
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:221
+msgid "Inner node"
+msgstr ""
+
+#: ../webkit/webkithittestresult.cpp:222
+msgid "The inner DOM node associated with the hit test result."
+msgstr ""
+
+#: ../webkit/webkitnetworkrequest.cpp:134
+#: ../webkit/webkitnetworkresponse.cpp:134 ../webkit/webkitwebframe.cpp:323
+#: ../webkit/webkitwebhistoryitem.cpp:176 ../webkit/webkitwebresource.cpp:126
+#: ../webkit/webkitwebview.cpp:2997
+msgid "URI"
+msgstr "URI"
+
+#: ../webkit/webkitnetworkrequest.cpp:135
+msgid "The URI to which the request will be made."
+msgstr ""
+
+#: ../webkit/webkitnetworkrequest.cpp:148
+#: ../webkit/webkitnetworkresponse.cpp:148
+msgid "Message"
+msgstr ""
+
+#: ../webkit/webkitnetworkrequest.cpp:149
+msgid "The SoupMessage that backs the request."
+msgstr ""
+
+#: ../webkit/webkitnetworkresponse.cpp:135
+msgid "The URI to which the response will be made."
+msgstr ""
+
+#: ../webkit/webkitnetworkresponse.cpp:149
+msgid "The SoupMessage that backs the response."
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:150
+msgid "Protocol"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:151
+msgid "The protocol of the security origin"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:164
+msgid "Host"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:165
+msgid "The host of the security origin"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:178
+msgid "Port"
+msgstr "Pordo"
+
+#: ../webkit/webkitsecurityorigin.cpp:179
+msgid "The port of the security origin"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:192
+msgid "Web Database Usage"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:193
+msgid "The cumulative size of all web databases in the security origin"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:205
+msgid "Web Database Quota"
+msgstr ""
+
+#: ../webkit/webkitsecurityorigin.cpp:206
+msgid "The web database quota of the security origin in bytes"
+msgstr ""
+
+#: ../webkit/webkitsoupauthdialog.c:264
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "La retejo %s petas uzantnomon kaj pasvorton"
+
+#: ../webkit/webkitsoupauthdialog.c:294
+msgid "Server message:"
+msgstr "Mesaĝo de la servilo:"
+
+#: ../webkit/webkitsoupauthdialog.c:307
+msgid "Username:"
+msgstr "Uzantonomo:"
+
+#: ../webkit/webkitsoupauthdialog.c:309
+msgid "Password:"
+msgstr "Pasvorto:"
+
+#: ../webkit/webkitsoupauthdialog.c:318
+msgid "_Remember password"
+msgstr "Memo_ri pasvorton"
+
+#: ../webkit/webkitwebdatabase.cpp:173
+msgid "Security Origin"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:174
+msgid "The security origin of the database"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:187 ../webkit/webkitwebframe.cpp:309
+msgid "Name"
+msgstr "Nomo"
+
+#: ../webkit/webkitwebdatabase.cpp:188
+msgid "The name of the Web Database database"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:201
+msgid "Display Name"
+msgstr "Montri nomon"
+
+#: ../webkit/webkitwebdatabase.cpp:202
+msgid "The display name of the Web Storage database"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:215
+msgid "Expected Size"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:216
+msgid "The expected size of the Web Database database"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:228
+msgid "Size"
+msgstr "Grando"
+
+#: ../webkit/webkitwebdatabase.cpp:229
+msgid "The current size of the Web Database database"
+msgstr ""
+
+#: ../webkit/webkitwebdatabase.cpp:241
+msgid "Filename"
+msgstr "Dosiernomo"
+
+#: ../webkit/webkitwebdatabase.cpp:242
+msgid "The absolute filename of the Web Storage database"
+msgstr ""
+
+#: ../webkit/webkitwebframe.cpp:310
+msgid "The name of the frame"
+msgstr "La nomo de la kadro"
+
+#: ../webkit/webkitwebframe.cpp:316 ../webkit/webkitwebhistoryitem.cpp:144
+#: ../webkit/webkitwebview.cpp:2983
+msgid "Title"
+msgstr "Titolo"
+
+#: ../webkit/webkitwebframe.cpp:317
+msgid "The document title of the frame"
+msgstr "La dokumenttitolo de la kadro"
+
+#: ../webkit/webkitwebframe.cpp:324
+msgid "The current URI of the contents displayed by the frame"
+msgstr "La aktuala URI de la enhavo montrata de la kadro"
+
+#: ../webkit/webkitwebframe.cpp:355
+msgid "Horizontal Scrollbar Policy"
+msgstr ""
+
+#: ../webkit/webkitwebframe.cpp:356
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr ""
+
+#: ../webkit/webkitwebframe.cpp:373
+msgid "Vertical Scrollbar Policy"
+msgstr ""
+
+#: ../webkit/webkitwebframe.cpp:374
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr ""
+
+#: ../webkit/webkitwebhistoryitem.cpp:145
+msgid "The title of the history item"
+msgstr "La titolo de la kronologiero"
+
+#: ../webkit/webkitwebhistoryitem.cpp:160
+msgid "Alternate Title"
+msgstr "Alia titolo"
+
+#: ../webkit/webkitwebhistoryitem.cpp:161
+msgid "The alternate title of the history item"
+msgstr "La alia titolo de la kronologiero"
+
+#: ../webkit/webkitwebhistoryitem.cpp:177
+msgid "The URI of the history item"
+msgstr "La URI de la kronologiero"
+
+#: ../webkit/webkitwebhistoryitem.cpp:192
+#: ../webkit/webkitwebnavigationaction.cpp:171
+msgid "Original URI"
+msgstr "Origina URI"
+
+#: ../webkit/webkitwebhistoryitem.cpp:193
+msgid "The original URI of the history item"
+msgstr "La origina URI de la kronologiero"
+
+#: ../webkit/webkitwebhistoryitem.cpp:208
+msgid "Last visited Time"
+msgstr ""
+
+#: ../webkit/webkitwebhistoryitem.cpp:209
+msgid "The time at which the history item was last visited"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:270
+msgid "Web View"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:271
+msgid "The Web View that renders the Web Inspector itself"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:284
+msgid "Inspected URI"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:285
+msgid "The URI that is currently being inspected"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:301
+msgid "Enable JavaScript profiling"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:302
+msgid "Profile the executed JavaScript."
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:317
+msgid "Enable Timeline profiling"
+msgstr ""
+
+#: ../webkit/webkitwebinspector.cpp:318
+msgid "Profile the WebCore instrumentation."
+msgstr ""
+
+#: ../webkit/webkitwebnavigationaction.cpp:156
+msgid "Reason"
+msgstr "Kialo"
+
+#: ../webkit/webkitwebnavigationaction.cpp:157
+msgid "The reason why this navigation is occurring"
+msgstr ""
+
+#: ../webkit/webkitwebnavigationaction.cpp:172
+msgid "The URI that was requested as the target for the navigation"
+msgstr ""
+
+#: ../webkit/webkitwebnavigationaction.cpp:186
+msgid "Button"
+msgstr "Butono"
+
+#: ../webkit/webkitwebnavigationaction.cpp:187
+msgid "The button used to click"
+msgstr "La butono uzata por alklaki"
+
+#: ../webkit/webkitwebnavigationaction.cpp:202
+msgid "Modifier state"
+msgstr "Stata modifilo"
+
+#: ../webkit/webkitwebnavigationaction.cpp:203
+msgid "A bitmask representing the state of the modifier keys"
+msgstr ""
+
+#: ../webkit/webkitwebnavigationaction.cpp:218
+msgid "Target frame"
+msgstr "Celnomo"
+
+#: ../webkit/webkitwebnavigationaction.cpp:219
+msgid "The target frame for the navigation"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:127
+msgid "The uri of the resource"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:141
+msgid "MIME Type"
+msgstr "MIME-tipo"
+
+#: ../webkit/webkitwebresource.cpp:142
+msgid "The MIME type of the resource"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:156 ../webkit/webkitwebview.cpp:3132
+msgid "Encoding"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:157
+msgid "The text encoding name of the resource"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:172
+msgid "Frame Name"
+msgstr ""
+
+#: ../webkit/webkitwebresource.cpp:173
+msgid "The frame name of the resource"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:252
+msgid "Default Encoding"
+msgstr "Defaŭlta kodado"
+
+#: ../webkit/webkitwebsettings.cpp:253
+msgid "The default encoding used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:261
+msgid "Cursive Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:262
+msgid "The default Cursive font family used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:270
+msgid "Default Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:271
+msgid "The default font family used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:279
+msgid "Fantasy Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:280
+msgid "The default Fantasy font family used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:288
+msgid "Monospace Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:289
+msgid "The default font family used to display monospace text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:297
+msgid "Sans Serif Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:298
+msgid "The default Sans Serif font family used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:306
+msgid "Serif Font Family"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:307
+msgid "The default Serif font family used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:315
+msgid "Default Font Size"
+msgstr "Defaŭlta tipargrando"
+
+#: ../webkit/webkitwebsettings.cpp:316
+msgid "The default font size used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:324
+msgid "Default Monospace Font Size"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:325
+msgid "The default font size used to display monospace text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:333
+msgid "Minimum Font Size"
+msgstr "Minimuma tipargrando"
+
+#: ../webkit/webkitwebsettings.cpp:334
+msgid "The minimum font size used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:342
+msgid "Minimum Logical Font Size"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:343
+msgid "The minimum logical font size used to display text."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:362
+msgid "Enforce 96 DPI"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:363
+msgid "Enforce a resolution of 96 DPI"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:371
+msgid "Auto Load Images"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:372
+msgid "Load images automatically."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:380
+msgid "Auto Shrink Images"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:381
+msgid "Automatically shrink standalone images to fit."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:389
+msgid "Print Backgrounds"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:390
+msgid "Whether background images should be printed."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:398
+msgid "Enable Scripts"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:399
+msgid "Enable embedded scripting languages."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:407
+msgid "Enable Plugins"
+msgstr "Enŝalti kromprogramojn"
+
+#: ../webkit/webkitwebsettings.cpp:408
+msgid "Enable embedded plugin objects."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:416
+msgid "Resizable Text Areas"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:417
+msgid "Whether text areas are resizable."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:424
+msgid "User Stylesheet URI"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:425
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:440
+msgid "Zoom Stepping Value"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:441
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:459
+msgid "Enable Developer Extras"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:460
+msgid "Enables special extensions that help developers"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:480
+msgid "Enable Private Browsing"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:481
+msgid "Enables private browsing mode"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:496
+msgid "Enable Spell Checking"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:497
+msgid "Enables spell checking while typing"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:520
+msgid "Languages to use for spell checking"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:521
+msgid "Comma separated list of languages to use for spell checking"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:535
+msgid "Enable Caret Browsing"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:536
+msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:551
+msgid "Enable HTML5 Database"
+msgstr "Enŝalti HTML5-datumbazon"
+
+#: ../webkit/webkitwebsettings.cpp:552
+msgid "Whether to enable HTML5 database support"
+msgstr "Ĉu enŝalti la subtenon por la HTML5-datumbazo?"
+
+#: ../webkit/webkitwebsettings.cpp:567
+msgid "Enable HTML5 Local Storage"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:568
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:582
+msgid "Enable XSS Auditor"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:583
+msgid "Whether to enable the XSS auditor"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:601
+msgid "Enable Spatial Navigation"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:602
+msgid "Whether to enable Spatial Navigation"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:620
+msgid "Enable Frame Flattening"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:621
+msgid "Whether to enable Frame Flattening"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:638
+msgid "User Agent"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:639
+msgid "The User-Agent string used by WebKitGtk"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:654
+msgid "JavaScript can open windows automatically"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:655
+msgid "Whether JavaScript can open windows automatically"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:669
+msgid "JavaScript can access Clipboard"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:670
+msgid "Whether JavaScript can access Clipboard"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:686
+msgid "Enable offline web application cache"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:687
+msgid "Whether to enable offline web application cache"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:715
+msgid "Editing behavior"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:716
+msgid "The behavior mode to use in editing mode"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:732
+msgid "Enable universal access from file URIs"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:733
+msgid "Whether to allow universal access from file URIs"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:748
+msgid "Enable DOM paste"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:749
+msgid "Whether to enable DOM paste"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:767
+msgid "Tab key cycles through elements"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:768
+msgid "Whether the tab key cycles through elements on the page."
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:788
+msgid "Enable Default Context Menu"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:789
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:809
+msgid "Enable Site Specific Quirks"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:810
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:832
+msgid "Enable page cache"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:833
+msgid "Whether the page cache should be used"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:853
+msgid "Auto Resize Window"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:854
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:886
+msgid "Enable Java Applet"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:887
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:901
+msgid "Enable Hyperlink Auditing"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:902
+msgid "Whether <a ping> should be able to send pings"
+msgstr ""
+
+#: ../webkit/webkitwebsettings.cpp:910
+msgid "Enable Fullscreen"
+msgstr "Enŝalti tutekranan reĝimon"
+
+#: ../webkit/webkitwebsettings.cpp:911
+msgid "Whether the Mozilla style API should be enabled."
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:2984
+msgid "Returns the @web_view's document title"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:2998
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3011
+msgid "Copy target list"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3012
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3025
+msgid "Paste target list"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3026
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3032
+msgid "Settings"
+msgstr "Agordoj"
+
+#: ../webkit/webkitwebview.cpp:3033
+msgid "An associated WebKitWebSettings instance"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3046
+msgid "Web Inspector"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3047
+msgid "The associated WebKitWebInspector instance"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3060
+msgid "Viewport Attributes"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3061
+msgid "The associated WebKitViewportAttributes instance"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3081
+msgid "Editable"
+msgstr "Redakteble"
+
+#: ../webkit/webkitwebview.cpp:3082
+msgid "Whether content can be modified by the user"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3088
+msgid "Transparent"
+msgstr "Travideble"
+
+#: ../webkit/webkitwebview.cpp:3089
+msgid "Whether content has a transparent background"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3102
+msgid "Zoom level"
+msgstr "Zomnivelo"
+
+#: ../webkit/webkitwebview.cpp:3103
+msgid "The level of zoom of the content"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3118
+msgid "Full content zoom"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3119
+msgid "Whether the full content is scaled when zooming"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3133
+msgid "The default encoding of the web view"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3146
+msgid "Custom Encoding"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3147
+msgid "The custom encoding of the web view"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3199
+msgid "Icon URI"
+msgstr ""
+
+#: ../webkit/webkitwebview.cpp:3200
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
+msgid "Submit"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "Reset"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Tiu ĉi estas serĉebla indekso. Entajpu serĉvortojn: "
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
+msgid "Choose File"
+msgstr "Elekti dosieron"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
+msgid "(None)"
+msgstr "(Neniu)"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
+msgid "Open Link in New _Window"
+msgstr "Malfermi la ligilon en nova _fenestro"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
+msgid "_Download Linked File"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
+msgid "Copy Link Loc_ation"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
+msgid "Open _Image in New Window"
+msgstr "Malfermi la _bildon en nova fenestro"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
+msgid "Sa_ve Image As"
+msgstr "Konser_vi bildon kiel"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
+msgid "Cop_y Image"
+msgstr "Kop_ii bildon"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:116
+msgid "Open _Video in New Window"
+msgstr "Malfermi la _videon en nova fenestro"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:121
+msgid "Open _Audio in New Window"
+msgstr "Malfermi la _sondosieron en nova fenestro"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:126
+msgid "Cop_y Video Link Location"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:131
+msgid "Cop_y Audio Link Location"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:136
+msgid "_Toggle Media Controls"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:141
+msgid "Toggle Media _Loop Playback"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:146
+msgid "Switch Video to _Fullscreen"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:151
+msgid "_Play"
+msgstr "_Ludi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:156
+msgid "_Pause"
+msgstr "_Paŭzo"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:161
+msgid "_Mute"
+msgstr "_Silentigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+msgid "Open _Frame in New Window"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:217
+msgid "_Reload"
+msgstr "_Reŝargi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:234
+msgid "No Guesses Found"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:239
+msgid "_Ignore Spelling"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:244
+msgid "_Learn Spelling"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:249
+msgid "_Search the Web"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:254
+msgid "_Look Up in Dictionary"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:259
+msgid "_Open Link"
+msgstr "Malfermi la ligil_on"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:264
+msgid "Ignore _Grammar"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:269
+msgid "Spelling and _Grammar"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:274
+msgid "_Show Spelling and Grammar"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:274
+msgid "_Hide Spelling and Grammar"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:279
+msgid "_Check Document Now"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:284
+msgid "Check Spelling While _Typing"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:289
+msgid "Check _Grammar With Spelling"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:294
+msgid "_Font"
+msgstr "_Tiparo"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:317
+msgid "_Outline"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:322
+msgid "Inspect _Element"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:327
+msgid "No recent searches"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:332
+msgid "Recent searches"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:337
+msgid "_Clear recent searches"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:342
+msgid "term"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "definition"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:352
+msgid "press"
+msgstr "premi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:357
+msgid "select"
+msgstr "elekti"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:362
+msgid "activate"
+msgstr "aktivigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:367
+msgid "uncheck"
+msgstr "malaktivigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:372
+msgid "check"
+msgstr "kontroli"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
+msgid "jump"
+msgstr "salti"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:392
+msgid "Missing Plug-in"
+msgstr "Mankanta kromprogramo"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:398
+msgid "Plug-in Failure"
+msgstr ""
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:404
+msgid " files"
+msgstr " dosieroj"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
+msgid "Unknown"
+msgstr "Nekonate"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:414
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
+msgid "Loading..."
+msgstr "Ŝargante..."
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:431
+msgid "Live Broadcast"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:437
+msgid "audio element controller"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:439
+msgid "video element controller"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:441
+msgid "mute"
+msgstr "silentigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:443
+msgid "unmute"
+msgstr "malsilentigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:445
+msgid "play"
+msgstr "ludi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:447
+msgid "pause"
+msgstr "paŭzigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:449
+msgid "movie time"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:451
+msgid "timeline slider thumb"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:453
+msgid "back 30 seconds"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:455
+msgid "return to realtime"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:457
+msgid "elapsed time"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:459
+msgid "remaining time"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
+msgid "status"
+msgstr "stato"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:463
+msgid "fullscreen"
+msgstr "tutekranigi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:465
+msgid "fast forward"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:467
+msgid "fast reverse"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:469
+msgid "show closed captions"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:471
+msgid "hide closed captions"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:480
+msgid "audio element playback controls and status display"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:482
+msgid "video element playback controls and status display"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:484
+msgid "mute audio tracks"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:486
+msgid "unmute audio tracks"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:488
+msgid "begin playback"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:490
+msgid "pause playback"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:492
+msgid "movie time scrubber"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:494
+msgid "movie time scrubber thumb"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:496
+msgid "seek movie back 30 seconds"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:498
+msgid "return streaming movie to real time"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:500
+msgid "current movie time in seconds"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
+msgid "number of seconds of movie remaining"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:504
+msgid "current movie status"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:506
+msgid "seek quickly back"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:508
+msgid "seek quickly forward"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:510
+msgid "Play movie in fullscreen mode"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
+msgid "start displaying closed captions"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:514
+msgid "stop displaying closed captions"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:523
+msgid "indefinite time"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:553
+msgid "value missing"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:589
+msgid "type mismatch"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:612
+msgid "pattern mismatch"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:617
+msgid "too long"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:622
+msgid "range underflow"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:627
+msgid "range overflow"
+msgstr ""
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:632
+msgid "step mismatch"
+msgstr ""
+
+#~ msgid "Details"
+#~ msgstr "Detaloj"
+
+#~ msgid "Copy Image _Address"
+#~ msgstr "Kopii bild_adreson"
