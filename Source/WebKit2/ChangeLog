@@ -1,3 +1,18 @@
+2011-11-09  Alexis Menard  <alexis.menard@openbossa.org>
+
+        WebGraphicsLayer behaves wrongly when no contentsScale is set.
+        https://bugs.webkit.org/show_bug.cgi?id=71959
+
+        Reviewed by Noam Rosenthal.
+
+        The contentsScale needs to get a default value just like
+        TiledBackingStore in case no value is explicitely set.
+
+        It is covered by existing tests.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSObject::getOwnPropertyDescriptor

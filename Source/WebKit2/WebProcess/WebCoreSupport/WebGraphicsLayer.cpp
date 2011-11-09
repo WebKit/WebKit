@@ -80,6 +80,7 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
 #if USE(TILED_BACKING_STORE)
     , m_layerTreeTileClient(0)
     , m_mainBackingStore(adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this))))
+    , m_contentsScale(1.f)
 #endif
 {
     m_mainBackingStore->setContentsScale(1.0);
