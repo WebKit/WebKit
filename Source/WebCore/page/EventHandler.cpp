@@ -557,8 +557,15 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         return false;
 
     Node* targetNode = EventHandler::targetNode(event);
-    if (event.event().button() != LeftButton || !targetNode || !targetNode->renderer())
+    if (event.event().button() != LeftButton || !targetNode)
         return false;
+
+    RenderObject* renderer = targetNode->renderer();
+    if (!renderer) {
+        renderer = targetNode->parentNode() ? targetNode->parentNode()->renderer() : 0;
+        if (!renderer || !renderer->isListBox())
+            return false;
+    }
 
 #if PLATFORM(MAC) // FIXME: Why does this assertion fire on other platforms?
     ASSERT(m_mouseDownMayStartSelect || m_mouseDownMayStartAutoscroll);
@@ -568,7 +575,6 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
 
     if (m_mouseDownMayStartAutoscroll && !m_panScrollInProgress) {            
         // Find a renderer that can autoscroll.
-        RenderObject* renderer = targetNode->renderer();
         while (renderer && !canAutoscroll(renderer)) {
             if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
                 renderer = renderer->document()->ownerElement()->renderer();
