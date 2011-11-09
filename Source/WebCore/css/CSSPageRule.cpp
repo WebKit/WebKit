@@ -32,10 +32,6 @@ CSSPageRule::CSSPageRule(CSSStyleSheet* parent, int sourceLine)
 {
 }
 
-CSSPageRule::~CSSPageRule()
-{
-}
-
 String CSSPageRule::pageSelectorText() const
 {
     String text = "@page";

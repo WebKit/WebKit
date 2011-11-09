@@ -1,5 +1,30 @@
 2011-11-09  Andreas Kling  <kling@webkit.org>
 
+        CSS: Remove empty value and rule destructors.
+        <http://webkit.org/b/71901>
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::create):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        * css/CSSCharsetRule.cpp:
+        * css/CSSCharsetRule.h:
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFlexValue.h:
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFunctionValue.h:
+        * css/CSSPageRule.cpp:
+        * css/CSSPageRule.h:
+        * css/CSSUnicodeRangeValue.h:
+        * css/CSSValueList.h:
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSTransformValue.h:
+
+2011-11-09  Andreas Kling  <kling@webkit.org>
+
         CSS: Remove redudant WTF_MAKE_FAST_ALLOCATED macros.
         <http://webkit.org/b/71897>
 

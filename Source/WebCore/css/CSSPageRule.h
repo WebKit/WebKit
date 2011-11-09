@@ -39,8 +39,6 @@ public:
         return adoptRef(new CSSPageRule(parent, sourceLine));
     }
 
-    ~CSSPageRule();
-
     String pageSelectorText() const;
 
 private:

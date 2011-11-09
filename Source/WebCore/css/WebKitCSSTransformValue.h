@@ -65,8 +65,6 @@ public:
         return adoptRef(new WebKitCSSTransformValue(type));
     }
 
-    ~WebKitCSSTransformValue() { }
-
     String customCssText() const;
 
     TransformOperationType operationType() const { return m_type; }

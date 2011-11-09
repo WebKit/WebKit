@@ -40,7 +40,6 @@ public:
     {
         return adoptRef(new CSSBorderImageSliceValue(slices, fill));
     }
-    ~CSSBorderImageSliceValue() { }
 
     String customCssText() const;
 

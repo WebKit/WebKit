@@ -43,8 +43,6 @@ public:
         return adoptRef(new CSSFlexValue(positiveFlex, negativeFlex, preferredSize));
     }
 
-    ~CSSFlexValue() { }
-
     String customCssText() const;
 
     float positiveFlex() { return m_positiveFlex; }

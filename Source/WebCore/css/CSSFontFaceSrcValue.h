@@ -45,8 +45,6 @@ public:
         return adoptRef(new CSSFontFaceSrcValue(resource, true));
     }
 
-    ~CSSFontFaceSrcValue() { }
-
     const String& resource() const { return m_resource; }
     const String& format() const { return m_format; }
     bool isLocal() const { return m_isLocal; }

@@ -29,10 +29,6 @@ CSSCharsetRule::CSSCharsetRule(CSSStyleSheet* parent, const String& encoding)
 {
 }
 
-CSSCharsetRule::~CSSCharsetRule()
-{
-}
-
 String CSSCharsetRule::cssText() const
 {
     return "@charset \"" + m_encoding + "\";";

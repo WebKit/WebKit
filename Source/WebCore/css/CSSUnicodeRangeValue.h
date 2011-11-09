@@ -39,8 +39,6 @@ public:
         return adoptRef(new CSSUnicodeRangeValue(from, to));
     }
 
-    ~CSSUnicodeRangeValue() { }
-
     UChar32 from() const { return m_from; }
     UChar32 to() const { return m_to; }
 
