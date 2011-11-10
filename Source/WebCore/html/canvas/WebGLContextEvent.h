@@ -42,8 +42,6 @@ public:
     }
     virtual ~WebGLContextEvent();
 
-    void initEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage);
-
     const String& statusMessage() const { return m_statusMessage; }
 
     virtual const AtomicString& interfaceName() const;

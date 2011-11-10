@@ -28,9 +28,5 @@ module html {
         Conditional=WEBGL,
     ] WebGLContextEvent : Event {
         readonly attribute DOMString statusMessage;
-        [StrictTypeChecking] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg,
-                                            in [Optional=CallWithDefaultValue] boolean canBubbleArg,
-                                            in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                                            in [Optional=CallWithDefaultValue] DOMString statusMessageArg);
     };
 }

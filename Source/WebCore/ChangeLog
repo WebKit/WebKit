@@ -1,3 +1,21 @@
+2011-11-09  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove WebGLContextEvent.initEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71720
+
+        Reviewed by Adam Barth.
+
+        The WebGL spec calls this method initWebGLContextEvent, but it may
+        adopt a constructor instead. Deleting the initEvent method for now
+        since it is definitely wrong and we don't want people to come to
+        depend on it.
+
+        No new tests--removing untested code.
+
+        * html/canvas/WebGLContextEvent.cpp:
+        * html/canvas/WebGLContextEvent.h:
+        * html/canvas/WebGLContextEvent.idl:
+
 2011-11-09  Anders Carlsson  <andersca@apple.com>
 
         Element::boundsInWindowSpace should be Element::boundsInRootViewSpace

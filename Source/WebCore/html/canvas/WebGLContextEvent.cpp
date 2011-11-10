@@ -44,15 +44,6 @@ WebGLContextEvent::~WebGLContextEvent()
 {
 }
 
-void WebGLContextEvent::initEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage)
-{
-    if (dispatched())
-        return;
-
-    Event::initEvent(type, canBubble, cancelable);
-    m_statusMessage = statusMessage;
-}
-
 const AtomicString& WebGLContextEvent::interfaceName() const
 {
     return eventNames().interfaceForWebGLContextEvent;
