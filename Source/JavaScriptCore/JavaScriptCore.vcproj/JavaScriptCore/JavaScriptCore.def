@@ -225,7 +225,6 @@ EXPORTS
     ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
-    ?isDynamicScope@JSGlobalObject@JSC@@UBE_NAA_N@Z
     ?isHostFunctionNonInline@JSFunction@JSC@@ABE_NXZ
     ?isMainThread@WTF@@YA_NXZ
     ?isReachableFromOpaqueRoots@WeakHandleOwner@JSC@@UAE_NV?$Handle@W4Unknown@JSC@@@2@PAXAAVSlotVisitor@2@@Z

@@ -1,5 +1,14 @@
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fixing build breakage
+
+        Unreviewed build fix
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         De-virtualize JSVariableObject::isDynamicScope
         https://bugs.webkit.org/show_bug.cgi?id=71933
 
