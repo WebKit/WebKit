@@ -3867,8 +3867,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
-BUGWK67019 : fast/text/international/locale-sensitive-fonts.html = MISSING FAIL
-
 // SVG failures after r99539.
 BUGWK71793 : css2.1/20110323/background-intrinsic-004.htm = IMAGE
 BUGWK71793 : css2.1/20110323/background-intrinsic-005.htm = IMAGE

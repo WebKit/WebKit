@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76
+    RenderBody {BODY} at (8,8) size 784x60
+      RenderBlock {DIV} at (0,0) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 340x20
+            text run at (0,0) width 340: "this is ahem font"
+        RenderBlock {DIV} at (0,20) size 784x20
+          RenderText {#text} at (0,0) size 340x20
+            text run at (0,0) width 340: "this is ahem font"
+        RenderBlock {DIV} at (0,40) size 784x20
+          RenderText {#text} at (0,0) size 340x20
+            text run at (0,0) width 340: "this is ahem font"
