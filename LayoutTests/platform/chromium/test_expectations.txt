@@ -3747,7 +3747,7 @@ BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-lineWidth-intact-after-strokeRect.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = PASS CRASH
 BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = PASS CRASH
+BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT CRASH
 
 BUGV8_1768 : fast/js/delete-syntax.html = TEXT
 
@@ -3892,3 +3892,5 @@ BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = CRASH
 
 BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
+
+BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
