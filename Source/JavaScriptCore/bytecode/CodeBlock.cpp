@@ -1407,6 +1407,58 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
+CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
+    : m_globalObject(other.m_globalObject)
+    , m_heap(other.m_heap)
+    , m_numCalleeRegisters(other.m_numCalleeRegisters)
+    , m_numVars(other.m_numVars)
+    , m_numCapturedVars(other.m_numCapturedVars)
+    , m_numParameters(other.m_numParameters)
+    , m_isConstructor(other.m_isConstructor)
+    , m_shouldDiscardBytecode(false)
+    , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
+    , m_globalData(other.m_globalData)
+    , m_instructions(other.m_instructions)
+    , m_instructionCount(other.m_instructionCount)
+    , m_thisRegister(other.m_thisRegister)
+    , m_argumentsRegister(other.m_argumentsRegister)
+    , m_activationRegister(other.m_activationRegister)
+    , m_needsFullScopeChain(other.m_needsFullScopeChain)
+    , m_usesEval(other.m_usesEval)
+    , m_isNumericCompareFunction(other.m_isNumericCompareFunction)
+    , m_isStrictMode(other.m_isStrictMode)
+    , m_codeType(other.m_codeType)
+    , m_source(other.m_source)
+    , m_sourceOffset(other.m_sourceOffset)
+    , m_globalResolveInfos(other.m_globalResolveInfos)
+    , m_jumpTargets(other.m_jumpTargets)
+    , m_loopTargets(other.m_loopTargets)
+    , m_identifiers(other.m_identifiers)
+    , m_constantRegisters(other.m_constantRegisters)
+    , m_functionDecls(other.m_functionDecls)
+    , m_functionExprs(other.m_functionExprs)
+    , m_symbolTable(symTab)
+    , m_speculativeSuccessCounter(0)
+    , m_speculativeFailCounter(0)
+    , m_optimizationDelayCounter(0)
+    , m_reoptimizationRetryCounter(0)
+{
+    optimizeAfterWarmUp();
+    
+    if (other.m_rareData) {
+        createRareDataIfNecessary();
+        
+        m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
+        m_rareData->m_regexps = other.m_rareData->m_regexps;
+        m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
+        m_rareData->m_immediateSwitchJumpTables = other.m_rareData->m_immediateSwitchJumpTables;
+        m_rareData->m_characterSwitchJumpTables = other.m_rareData->m_characterSwitchJumpTables;
+        m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
+        m_rareData->m_expressionInfo = other.m_rareData->m_expressionInfo;
+        m_rareData->m_lineInfo = other.m_rareData->m_lineInfo;
+    }
+}
+
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
@@ -1414,6 +1466,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_numVars(0)
     , m_numParameters(0)
     , m_isConstructor(isConstructor)
+    , m_shouldDiscardBytecode(false)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
     , m_globalData(0)
     , m_instructions(adoptRef(new Instructions))
@@ -1594,6 +1647,13 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #if ENABLE(VALUE_PROFILER)
     for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
         valueProfile(profileIndex)->computeUpdatedPrediction();
+#endif
+    
+#if ENABLE(JIT) && !ENABLE(OPCODE_SAMPLING)
+    // Kill off some bytecode. We can't do it here because we don't want to accidentally
+    // call into malloc while in stop-the-world GC mode.
+    if (hasInstructions() && m_shouldDiscardBytecode)
+        visitor.addUnconditionalFinalizer(this);
 #endif
 }
 
@@ -1821,7 +1881,7 @@ inline void replaceExistingEntries(Vector<T>& target, Vector<T>& source)
         target[i] = source[i];
 }
 
-void CodeBlock::copyDataFrom(CodeBlock* alternative)
+void CodeBlock::copyPostParseDataFrom(CodeBlock* alternative)
 {
     if (!alternative)
         return;
@@ -1833,9 +1893,9 @@ void CodeBlock::copyDataFrom(CodeBlock* alternative)
         replaceExistingEntries(m_rareData->m_constantBuffers, alternative->m_rareData->m_constantBuffers);
 }
 
-void CodeBlock::copyDataFromAlternative()
+void CodeBlock::copyPostParseDataFromAlternative()
 {
-    copyDataFrom(m_alternative.get());
+    copyPostParseDataFrom(m_alternative.get());
 }
 
 #if ENABLE(JIT)
@@ -1916,6 +1976,15 @@ void FunctionCodeBlock::jettison(JSGlobalData& globalData)
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(globalData, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 #endif
+
+void CodeBlock::finalizeUnconditionally()
+{
+#if ENABLE(OPCODE_SAMPLING) || !ENABLE(JIT)
+    ASSERT_NOT_REACHED();
+#endif
+    ASSERT(m_shouldDiscardBytecode);
+    discardBytecode();
+}
 
 #if ENABLE(VALUE_PROFILER)
 bool CodeBlock::shouldOptimizeNow()

@@ -58,6 +58,7 @@ public:
     void drainFromShared(SharedDrainMode);
 
     void harvestWeakReferences();
+    void finalizeUnconditionalFinalizers();
         
 private:
     void donateSlow();

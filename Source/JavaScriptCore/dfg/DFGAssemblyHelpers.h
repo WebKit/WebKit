@@ -237,6 +237,13 @@ public:
         return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
     }
     
+    bool strictModeFor(CodeOrigin codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return codeBlock()->isStrictMode();
+        return codeOrigin.inlineCallFrame->callee->jsExecutable()->isStrictMode();
+    }
+    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         if (codeOrigin.inlineCallFrame) {

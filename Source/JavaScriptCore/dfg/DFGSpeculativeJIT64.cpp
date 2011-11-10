@@ -1506,7 +1506,7 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg arg3GPR = arg3.gpr();
             flushRegisters();
             
-            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+            callOperation(m_jit.strictModeFor(node.codeOrigin) ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
             
             noResult(m_compileIndex);
             break;

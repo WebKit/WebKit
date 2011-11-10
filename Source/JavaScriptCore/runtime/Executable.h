@@ -478,6 +478,8 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
         
+        FunctionCodeBlock* codeBlockWithBytecodeFor(CodeSpecializationKind);
+        
         PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
@@ -586,9 +588,9 @@ namespace JSC {
             return generatedBytecodeForConstruct();
         }
 
-        CodeBlock* baselineCodeBlockFor(CodeSpecializationKind);
+        FunctionCodeBlock* baselineCodeBlockFor(CodeSpecializationKind);
         
-        CodeBlock* profiledCodeBlockFor(CodeSpecializationKind kind)
+        FunctionCodeBlock* profiledCodeBlockFor(CodeSpecializationKind kind)
         {
             return baselineCodeBlockFor(kind);
         }

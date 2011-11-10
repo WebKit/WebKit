@@ -236,7 +236,6 @@ MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     , m_sharedMarkStack(m_segmentAllocator)
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
-    , m_firstWeakReferenceHarvester(0)
 {
 #if ENABLE(PARALLEL_GC)
     for (unsigned i = 1; i < Heuristics::numberOfGCMarkers; ++i) {
@@ -450,13 +449,14 @@ void MarkStack::mergeOpaqueRoots()
 
 void SlotVisitor::harvestWeakReferences()
 {
-    while (m_shared.m_firstWeakReferenceHarvester) {
-        WeakReferenceHarvester* current = m_shared.m_firstWeakReferenceHarvester;
-        WeakReferenceHarvester* next = reinterpret_cast<WeakReferenceHarvester*>(current->m_nextAndFlag & ~1);
-        current->m_nextAndFlag = 0;
-        m_shared.m_firstWeakReferenceHarvester = next;
-        current->visitWeakReferences(*this);
-    }
+    while (m_shared.m_weakReferenceHarvesters.hasNext())
+        m_shared.m_weakReferenceHarvesters.removeNext()->visitWeakReferences(*this);
+}
+
+void SlotVisitor::finalizeUnconditionalFinalizers()
+{
+    while (m_shared.m_unconditionalFinalizers.hasNext())
+        m_shared.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
 }
 
 #if ENABLE(GC_VALIDATION)

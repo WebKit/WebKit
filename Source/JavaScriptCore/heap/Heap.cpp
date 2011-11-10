@@ -530,6 +530,11 @@ void Heap::harvestWeakReferences()
     m_slotVisitor.harvestWeakReferences();
 }
 
+void Heap::finalizeUnconditionalFinalizers()
+{
+    m_slotVisitor.finalizeUnconditionalFinalizers();
+}
+
 inline RegisterFile& Heap::registerFile()
 {
     return m_globalData->interpreter->registerFile();
@@ -694,6 +699,12 @@ void Heap::markRoots(bool fullGC)
         } while (lastOpaqueRootCount != visitor.opaqueRootCount());
     }
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
+
+    {
+        GCPHASE(HarvestWeakReferences);
+        harvestWeakReferences();
+    }
+
     visitor.reset();
     m_sharedData.reset();
 
@@ -781,14 +792,18 @@ void Heap::collect(SweepToggle sweepToggle)
     }
 
     markRoots(fullGC);
-
+    
     {
-        GCPHASE(HarvestWeakReferences);
-        harvestWeakReferences();
+        GCPHASE(FinalizeUnconditionalFinalizers);
+        finalizeUnconditionalFinalizers();
+    }
+        
+    {
+        GCPHASE(FinalizeWeakHandles);
         m_handleHeap.finalizeWeakHandles();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
-
+    
     JAVASCRIPTCORE_GC_MARKED();
 
     {

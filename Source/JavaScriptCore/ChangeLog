@@ -1,3 +1,113 @@
+2011-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not reparse code that was just parsed
+        https://bugs.webkit.org/show_bug.cgi?id=71977
+
+        Reviewed by Geoff Garen.
+        
+        The instruction stream of a code block is now kept around until
+        the next GC. When doing either an optimizing compilation of an
+        executable, or inlining of an executable, we now try to find the
+        already preexisting bytecode. If we find it, we don't have to parse.
+        If we don't find it, we parse as before. Inlining takes the extra
+        step of caching code blocks, so if the same executable gets inlined
+        multiple times into the same caller, then we parse it at most once
+        even if prior to inlining that executable did not have any code
+        blocks with an instruction stream.
+        
+        Also fixed a silly bug where the strict mode for various operations
+        was being determined by looking at the machine code block rather
+        than the inlinee.
+
+        To enable the delete-on-next-GC policy, I introduced the notion
+        of an ultra weak finalizer, which anyone can register during
+        tracing. This is thread-safe (for parallel GC) and
+        stop-the-world-safe (so calls to free() are postponed until the
+        world is resumed). This required reusing some facilities previously
+        created for WeakReferenceHarvester, so I created a common utility
+        class. I also retweaked the handling of WeakReferenceHarvesters,
+        since they should be executed during stop-the-world since in the
+        future we may want to allow them to call drain().
+        
+        2% win on SunSpider. 2% win on V8, when run in my harness. Neutral
+        elsewhere.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::copyPostParseDataFrom):
+        (JSC::CodeBlock::copyPostParseDataFromAlternative):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::canProduceCopyWithBytecode):
+        (JSC::CodeBlock::discardBytecodeLater):
+        (JSC::CodeBlock::handleBytecodeDiscardingOpportunity):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::BytecodeDestructionBlocker::BytecodeDestructionBlocker):
+        (JSC::BytecodeDestructionBlocker::~BytecodeDestructionBlocker):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::strictModeFor):
+        * dfg/DFGByteCodeCache.h: Added.
+        (JSC::DFG::CodeBlockKey::CodeBlockKey):
+        (JSC::DFG::CodeBlockKey::operator==):
+        (JSC::DFG::CodeBlockKey::hash):
+        (JSC::DFG::CodeBlockKey::executable):
+        (JSC::DFG::CodeBlockKey::kind):
+        (JSC::DFG::CodeBlockKey::isHashTableDeletedValue):
+        (JSC::DFG::CodeBlockKeyHash::hash):
+        (JSC::DFG::CodeBlockKeyHash::equal):
+        (JSC::DFG::ByteCodeCache::ByteCodeCache):
+        (JSC::DFG::ByteCodeCache::~ByteCodeCache):
+        (JSC::DFG::ByteCodeCache::get):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionally):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * heap/ListableHandler.h: Added.
+        (JSC::ListableHandler::ListableHandler):
+        (JSC::ListableHandler::~ListableHandler):
+        (JSC::ListableHandler::List::List):
+        (JSC::ListableHandler::List::addNotThreadSafe):
+        (JSC::ListableHandler::List::addThreadSafe):
+        (JSC::ListableHandler::List::hasNext):
+        (JSC::ListableHandler::List::removeNext):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        (JSC::SlotVisitor::finalizeUnconditionally):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::addWeakReferenceHarvester):
+        (JSC::MarkStack::addUnconditionalFinalizer):
+        * heap/SlotVisitor.h:
+        * heap/UnconditionalFinalizer.h: Added.
+        (JSC::UnconditionalFinalizer::~UnconditionalFinalizer):
+        * heap/WeakReferenceHarvester.h:
+        (JSC::WeakReferenceHarvester::WeakReferenceHarvester):
+        (JSC::WeakReferenceHarvester::~WeakReferenceHarvester):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::codeBlockWithBytecodeFor):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::profiledCodeBlockFor):
+
 2011-11-10  Gavin Barraclough  <barraclough@apple.com>
 
         Add ARMv7 register info for the DFG JIT

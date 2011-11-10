@@ -155,6 +155,7 @@ namespace JSC {
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
+        void finalizeUnconditionalFinalizers();
         
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);

@@ -20,7 +20,7 @@
 #ifndef WeakReferenceHarvester_h
 #define WeakReferenceHarvester_h
 
-#include <stdint.h>
+#include "ListableHandler.h"
 
 namespace JSC {
 
@@ -28,24 +28,16 @@ class MarkStack;
 class MarkStackSharedData;
 class SlotVisitor;
 
-class WeakReferenceHarvester {
+class WeakReferenceHarvester : public ListableHandler<WeakReferenceHarvester> {
 public:
     virtual void visitWeakReferences(SlotVisitor&) = 0;
     
 protected:
     WeakReferenceHarvester()
-        : m_nextAndFlag(0)
     {
     }
     
     virtual ~WeakReferenceHarvester() { }
-
-private:
-    friend class MarkStack;
-    friend class MarkStackSharedData;
-    friend class SlotVisitor;
-    
-    uintptr_t m_nextAndFlag;
 };
 
 } // namespace JSC

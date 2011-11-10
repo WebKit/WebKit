@@ -45,6 +45,7 @@
 #include "PredictionTracker.h"
 #include "RegExpObject.h"
 #include "UString.h"
+#include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -236,10 +237,14 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock {
+    class CodeBlock : public UnconditionalFinalizer {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
+    public:
+        enum CopyParsedBlockTag { CopyParsedBlock };
     protected:
+        CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable*);
+        
         CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable*, bool isConstructor, PassOwnPtr<CodeBlock> alternative);
 
         WriteBarrier<JSGlobalObject> m_globalObject;
@@ -265,6 +270,8 @@ namespace JSC {
             return result;
         }
 #endif
+        
+        bool canProduceCopyWithBytecode() { return hasInstructions(); }
 
         void visitAggregate(SlotVisitor&);
 
@@ -443,7 +450,18 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_instructions->m_instructions; }
         const Vector<Instruction>& instructions() const { return m_instructions->m_instructions; }
         void discardBytecode() { m_instructions.clear(); }
-
+        void discardBytecodeLater()
+        {
+            m_shouldDiscardBytecode = true;
+        }
+        void handleBytecodeDiscardingOpportunity()
+        {
+            if (!!alternative())
+                discardBytecode();
+            else
+                discardBytecodeLater();
+        }
+        
 #ifndef NDEBUG
         bool usesOpcode(OpcodeID);
 #endif
@@ -808,8 +826,8 @@ namespace JSC {
 
         void shrinkToFit();
         
-        void copyDataFrom(CodeBlock* alternative);
-        void copyDataFromAlternative();
+        void copyPostParseDataFrom(CodeBlock* alternative);
+        void copyPostParseDataFromAlternative();
         
         // Functions for controlling when tiered compilation kicks in. This
         // controls both when the optimizing compiler is invoked and when OSR
@@ -996,6 +1014,12 @@ namespace JSC {
         int m_numParameters;
         bool m_isConstructor;
 
+        // This is public because otherwise we would have many friends.
+        bool m_shouldDiscardBytecode;
+
+    protected:
+        virtual void finalizeUnconditionally();
+        
     private:
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
@@ -1014,7 +1038,7 @@ namespace JSC {
             if (!m_rareData)
                 m_rareData = adoptPtr(new RareData);
         }
-
+        
         WriteBarrier<ScriptExecutable> m_ownerExecutable;
         JSGlobalData* m_globalData;
 
@@ -1129,6 +1153,12 @@ namespace JSC {
 
     class GlobalCodeBlock : public CodeBlock {
     protected:
+        GlobalCodeBlock(CopyParsedBlockTag, GlobalCodeBlock& other)
+            : CodeBlock(CopyParsedBlock, other, &m_unsharedSymbolTable)
+            , m_unsharedSymbolTable(other.m_unsharedSymbolTable)
+        {
+        }
+        
         GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
             : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false, alternative)
         {
@@ -1140,6 +1170,11 @@ namespace JSC {
 
     class ProgramCodeBlock : public GlobalCodeBlock {
     public:
+        ProgramCodeBlock(CopyParsedBlockTag, ProgramCodeBlock& other)
+            : GlobalCodeBlock(CopyParsedBlock, other)
+        {
+        }
+
         ProgramCodeBlock(ProgramExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, PassOwnPtr<CodeBlock> alternative)
             : GlobalCodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, 0, alternative)
         {
@@ -1156,6 +1191,13 @@ namespace JSC {
 
     class EvalCodeBlock : public GlobalCodeBlock {
     public:
+        EvalCodeBlock(CopyParsedBlockTag, EvalCodeBlock& other)
+            : GlobalCodeBlock(CopyParsedBlock, other)
+            , m_baseScopeDepth(other.m_baseScopeDepth)
+            , m_variables(other.m_variables)
+        {
+        }
+        
         EvalCodeBlock(EvalExecutable* ownerExecutable, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth, PassOwnPtr<CodeBlock> alternative)
             : GlobalCodeBlock(ownerExecutable, EvalCode, globalObject, sourceProvider, 0, alternative)
             , m_baseScopeDepth(baseScopeDepth)
@@ -1187,6 +1229,15 @@ namespace JSC {
 
     class FunctionCodeBlock : public CodeBlock {
     public:
+        FunctionCodeBlock(CopyParsedBlockTag, FunctionCodeBlock& other)
+            : CodeBlock(CopyParsedBlock, other, other.sharedSymbolTable())
+        {
+            // The fact that we have to do this is yucky, but is necessary because of the
+            // class hierarchy issues described in the comment block for the main
+            // constructor, below.
+            sharedSymbolTable()->ref();
+        }
+
         // Rather than using the usual RefCounted::create idiom for SharedSymbolTable we just use new
         // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
@@ -1207,6 +1258,27 @@ namespace JSC {
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif
+    };
+
+    // Use this if you want to copy a code block and you're paranoid about a GC
+    // happening.
+    class BytecodeDestructionBlocker {
+    public:
+        BytecodeDestructionBlocker(CodeBlock* codeBlock)
+            : m_codeBlock(codeBlock)
+            , m_oldValueOfShouldDiscardBytecode(codeBlock->m_shouldDiscardBytecode)
+        {
+            codeBlock->m_shouldDiscardBytecode = false;
+        }
+        
+        ~BytecodeDestructionBlocker()
+        {
+            m_codeBlock->m_shouldDiscardBytecode = m_oldValueOfShouldDiscardBytecode;
+        }
+        
+    private:
+        CodeBlock* m_codeBlock;
+        bool m_oldValueOfShouldDiscardBytecode;
     };
 
     inline Register& ExecState::r(int index)

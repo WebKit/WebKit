@@ -908,7 +908,7 @@ void JITCodeGenerator::cachedPutById(GPRReg basePayloadGPR, GPRReg valueTagGPR, 
 
     silentSpillAllRegisters(InvalidGPRReg);
     V_DFGOperation_EJCI optimizedCall;
-    if (m_jit.codeBlock()->isStrictMode()) {
+    if (m_jit.strictModeFor(at(m_compileIndex).codeOrigin)) {
         if (putKind == Direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;
         else

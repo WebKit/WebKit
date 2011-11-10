@@ -30,6 +30,7 @@
 #include "Heuristics.h"
 #include "JSValue.h"
 #include "Register.h"
+#include "UnconditionalFinalizer.h"
 #include "VTableSpectrum.h"
 #include "WeakReferenceHarvester.h"
 #include <wtf/HashMap.h>
@@ -194,8 +195,8 @@ namespace JSC {
         Mutex m_opaqueRootsLock;
         HashSet<void*> m_opaqueRoots;
 
-        Mutex m_weakReferenceHarvesterLock;
-        WeakReferenceHarvester* m_firstWeakReferenceHarvester;
+        ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
+        ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
     };
 
     class MarkStack {
@@ -229,11 +230,12 @@ namespace JSC {
 
         void addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
         {
-            MutexLocker locker(m_shared.m_weakReferenceHarvesterLock);
-            if (weakReferenceHarvester->m_nextAndFlag & 1)
-                return;
-            weakReferenceHarvester->m_nextAndFlag = reinterpret_cast<uintptr_t>(m_shared.m_firstWeakReferenceHarvester) | 1;
-            m_shared.m_firstWeakReferenceHarvester = weakReferenceHarvester;
+            m_shared.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
+        }
+        
+        void addUnconditionalFinalizer(UnconditionalFinalizer* unconditionalFinalizer)
+        {
+            m_shared.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
         }
 
     protected:

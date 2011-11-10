@@ -156,29 +156,37 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    if (!lexicalGlobalObject->evalEnabled())
-        return throwError(exec, createEvalError(exec, "Eval is disabled"));
-    RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
-    if (!evalNode) {
-        ASSERT(exception);
-        return exception;
-    }
-    recordParse(evalNode->features(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
-
-    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
-
-    OwnPtr<CodeBlock> previousCodeBlock = m_evalCodeBlock.release();
-    ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
-    m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChainNode->localDepth(), previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
-    if ((exception = generator->generate())) {
-        m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
+    
+    if (!!m_evalCodeBlock && m_evalCodeBlock->canProduceCopyWithBytecode()) {
+        BytecodeDestructionBlocker blocker(m_evalCodeBlock.get());
+        OwnPtr<EvalCodeBlock> newCodeBlock = adoptPtr(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
+        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock.release()));
+        m_evalCodeBlock = newCodeBlock.release();
+    } else {
+        if (!lexicalGlobalObject->evalEnabled())
+            return throwError(exec, createEvalError(exec, "Eval is disabled"));
+        RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
+        if (!evalNode) {
+            ASSERT(exception);
+            return exception;
+        }
+        recordParse(evalNode->features(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
+        
+        JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+        
+        OwnPtr<CodeBlock> previousCodeBlock = m_evalCodeBlock.release();
+        ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
+        m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChainNode->localDepth(), previousCodeBlock.release()));
+        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
+        if ((exception = generator->generate())) {
+            m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
+            evalNode->destroyData();
+            return exception;
+        }
+        
         evalNode->destroyData();
-        return exception;
+        m_evalCodeBlock->copyPostParseDataFromAlternative();
     }
-
-    evalNode->destroyData();
-    m_evalCodeBlock->copyDataFromAlternative();
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
@@ -198,7 +206,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_evalCodeBlock->discardBytecode();
+            m_evalCodeBlock->handleBytecodeDiscardingOpportunity();
 #endif
         m_evalCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
     }
@@ -290,27 +298,35 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
-    if (!programNode) {
-        ASSERT(exception);
-        return exception;
-    }
-    recordParse(programNode->features(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
-
-    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
     
-    OwnPtr<CodeBlock> previousCodeBlock = m_programCodeBlock.release();
-    ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
-    m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider(), previousCodeBlock.release()));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
-    if ((exception = generator->generate())) {
-        m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
-        programNode->destroyData();
-        return exception;
-    }
+    if (!!m_programCodeBlock && m_programCodeBlock->canProduceCopyWithBytecode()) {
+        BytecodeDestructionBlocker blocker(m_programCodeBlock.get());
+        OwnPtr<ProgramCodeBlock> newCodeBlock = adoptPtr(new ProgramCodeBlock(CodeBlock::CopyParsedBlock, *m_programCodeBlock));
+        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock.release()));
+        m_programCodeBlock = newCodeBlock.release();
+    } else {
+        RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
+        if (!programNode) {
+            ASSERT(exception);
+            return exception;
+        }
+        recordParse(programNode->features(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
 
-    programNode->destroyData();
-    m_programCodeBlock->copyDataFromAlternative();
+        JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+    
+        OwnPtr<CodeBlock> previousCodeBlock = m_programCodeBlock.release();
+        ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
+        m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider(), previousCodeBlock.release()));
+        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
+        if ((exception = generator->generate())) {
+            m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
+            programNode->destroyData();
+            return exception;
+        }
+
+        programNode->destroyData();
+        m_programCodeBlock->copyPostParseDataFromAlternative();
+    }
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
@@ -329,7 +345,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_programCodeBlock->discardBytecode();
+            m_programCodeBlock->handleBytecodeDiscardingOpportunity();
 #endif
         m_programCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
     }
@@ -388,9 +404,9 @@ void ProgramExecutable::clearCodeVirtual()
     Base::clearCodeVirtual();
 }
 
-CodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
+FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
-    CodeBlock* result;
+    FunctionCodeBlock* result;
     if (kind == CodeForCall)
         result = m_codeBlockForCall.get();
     else {
@@ -400,7 +416,7 @@ CodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
     if (!result)
         return 0;
     while (result->alternative())
-        result = result->alternative();
+        result = static_cast<FunctionCodeBlock*>(result->alternative());
     ASSERT(result);
     ASSERT(result->getJITType() == JITCode::BaselineJIT);
     return result;
@@ -428,8 +444,21 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
     return error;
 }
 
+FunctionCodeBlock* FunctionExecutable::codeBlockWithBytecodeFor(CodeSpecializationKind kind)
+{
+    FunctionCodeBlock* codeBlock = baselineCodeBlockFor(kind);
+    if (codeBlock->canProduceCopyWithBytecode())
+        return codeBlock;
+    return 0;
+}
+
 PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
+    if (!!codeBlockFor(specializationKind) && codeBlockFor(specializationKind)->canProduceCopyWithBytecode()) {
+        BytecodeDestructionBlocker blocker(codeBlockFor(specializationKind).get());
+        return adoptPtr(new FunctionCodeBlock(CodeBlock::CopyParsedBlock, *codeBlockFor(specializationKind)));
+    }
+    
     exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
     JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
@@ -453,7 +482,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     if (exception)
         return nullptr;
 
-    result->copyDataFrom(codeBlockFor(specializationKind).get());
+    result->copyPostParseDataFrom(codeBlockFor(specializationKind).get());
     return result.release();
 }
 
@@ -498,7 +527,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForCall->discardBytecode();
+            m_codeBlockForCall->handleBytecodeDiscardingOpportunity();
 #endif
         
         m_codeBlockForCall->setJITCode(m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
@@ -561,7 +590,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
         }
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForConstruct->discardBytecode();
+            m_codeBlockForConstruct->handleBytecodeDiscardingOpportunity();
 #endif
         
         m_codeBlockForConstruct->setJITCode(m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
