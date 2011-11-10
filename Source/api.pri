@@ -37,10 +37,6 @@ CONFIG(release) {
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 }
 
-MODULE_FILE = $${ROOT_WEBKIT_DIR}/Tools/qmake/qt_webkit.pri
-include($${MODULE_FILE})
-VERSION = $${QT.webkit.MAJOR_VERSION}.$${QT.webkit.MINOR_VERSION}.$${QT.webkit.PATCH_VERSION}
-
 !static: DEFINES += QT_MAKEDLL
 
 SOURCES += \
@@ -164,13 +160,24 @@ contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
 }
 
-modulefile.files = $${MODULE_FILE}
+
+# ------------- Install rules -------------
+
+modulefile.files = $${ROOT_WEBKIT_DIR}/Tools/qmake/qt_webkit.pri
 mkspecs = $$[QMAKE_MKSPECS]
 mkspecs = $$split(mkspecs, :)
 modulefile.path = $$last(mkspecs)/modules
 INSTALLS += modulefile
 
-headers.files = $${ROOT_BUILD_DIR}/include/$${TARGET}/*
+include($$first(modulefile.files))
+VERSION = $${QT.webkit.VERSION}
+
+# Syncqt has already run at this point, so we can use headers.pri
+# as a basis for our install-rules
+HEADERS_PRI = $${ROOT_BUILD_DIR}/include/$$TARGET/headers.pri
+!include($$HEADERS_PRI): error(Failed to resolve install headers)
+
+headers.files = $$SYNCQT.HEADER_FILES $$SYNCQT.HEADER_CLASSES
 !isEmpty(INSTALL_HEADERS): headers.path = $$INSTALL_HEADERS/$${TARGET}
 else: headers.path = $$[QT_INSTALL_HEADERS]/$${TARGET}
 INSTALLS += headers
@@ -203,7 +210,7 @@ mac {
         # For debug_and_release configs, only copy headers in release
         !debug_and_release|if(build_pass:CONFIG(release, debug|release)) {
             FRAMEWORK_HEADERS.version = Versions
-            FRAMEWORK_HEADERS.files = $$files($$headers.files, false)
+            FRAMEWORK_HEADERS.files = $${headers.files}
             FRAMEWORK_HEADERS.path = Headers
             QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
         }

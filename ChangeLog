@@ -1,3 +1,24 @@
+2011-11-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure headers.pri has the right relative paths for install
+
+        The install rules are generated from api.pri which lives in Source,
+        which means the paths in headers.pri, which is the basis for the
+        install rules, needs to be relative to Source as well.
+
+        We were also installing the headers from the forwarding headers
+        directory, which was wrong, as those headers contained relative paths.
+
+        We now install the actual headers, by using headers.pri as a basis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=71697
+
+        Reviewed by Simon Hausmann.
+
+        * Source/QtWebKit.pro:
+        * Source/api.pri:
+        * sync.profile:
+
 2011-11-09  Shinya Kawanaka  <shinyak@google.com>
 
         Internals.markerRangeForNode should be able to take markers by specifying a marker type.

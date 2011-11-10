@@ -34,9 +34,14 @@ SUBDIRS += examples
     win32-msvc*: command = $$command -windows
 
     outdir = $$toSystemPath($${ROOT_BUILD_DIR})
-    rootdir = $$toSystemPath($${ROOT_WEBKIT_DIR})
 
-    fwheader_generator.commands = perl $${command} -outdir $${outdir} -separate-module $${TARGET}$${DIRLIST_SEPARATOR}$${rootdir}$${DIRLIST_SEPARATOR}$$toSystemPath(Source/WebKit/qt/Api)
+    # The module root has to be the same as directory of the pro-file that generates
+    # the install rules (api.pri), otherwise the relative paths in the generated
+    # headers.pri will be incorrect.
+    module_rootdir = $$toSystemPath($${_PRO_FILE_PWD_})
+
+    module = $${TARGET}$${DIRLIST_SEPARATOR}$${module_rootdir}$${DIRLIST_SEPARATOR}$$toSystemPath(WebKit/qt/Api)
+    fwheader_generator.commands = perl $${command} -outdir $${outdir} -separate-module $${module}
     fwheader_generator.depends = $${syncqt}
 
     variables = $$computeSubdirVariables(api)

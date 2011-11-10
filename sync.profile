@@ -1,8 +1,10 @@
 %modules = ( # path to module name map
-    "QtWebKit" => "$basedir"
+    # Has to be the same directory as the pro file that generates install rules,
+    # otherwise the relative paths in headers.pri will not be correct.
+    "QtWebKit" => "$basedir/Source"
 );
 %moduleheaders = ( # restrict the module headers to those found in relative path
-    "QtWebKit" => "Source/WebKit/qt/Api;Source/WebKit2/UIProcess/API/qt",
+    "QtWebKit" => "WebKit/qt/Api;WebKit2/UIProcess/API/qt",
 );
 %classnames = (
 );
