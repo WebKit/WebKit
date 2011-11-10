@@ -575,11 +575,14 @@ media_list:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createMediaList();
         $$->appendMediaQuery(p->sinkFloatingMediaQuery($1));
+        p->updateLastMediaLine($$);
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
+        CSSParser* p = static_cast<CSSParser*>(parser);
         if ($$)
-            $$->appendMediaQuery(static_cast<CSSParser*>(parser)->sinkFloatingMediaQuery($4));
+            $$->appendMediaQuery(p->sinkFloatingMediaQuery($4));
+        p->updateLastMediaLine($$);
     }
     | media_list error {
         $$ = 0;

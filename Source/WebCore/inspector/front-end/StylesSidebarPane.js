@@ -339,7 +339,7 @@ WebInspector.StylesSidebarPane.prototype = {
             // Add rules in reverse order to match the cascade order.
             for (var j = pseudoElementCSSRules.rules.length - 1; j >= 0; --j) {
                 var rule = pseudoElementCSSRules.rules[j];
-                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
             }
             usedProperties = {};
             disabledComputedProperties = {};
@@ -411,7 +411,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 addedStyleAttributes = true;
                 addStyleAttributes();
             }
-            styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
+            styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
         }
 
         if (!addedStyleAttributes)
@@ -453,7 +453,7 @@ WebInspector.StylesSidebarPane.prototype = {
                     insertInheritedNodeSeparator(parentNode);
                     separatorInserted = true;
                 }
-                styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, isInherited: true, editable: !!(rule.style && rule.style.id) });
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, isInherited: true, editable: !!(rule.style && rule.style.id) });
             }
             parentNode = parentNode.parentNode;
         }
@@ -837,6 +837,37 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     WebInspector.PropertiesSection.call(this, "");
     this.element.className = "styles-section monospace" + (isFirstSection ? " first-styles-section" : "");
 
+    if (styleRule.media) {
+        for (var i = styleRule.media.length - 1; i >= 0; --i) {
+            var media = styleRule.media[i];
+            var mediaDataElement = this.titleElement.createChild("div", "media");
+            var mediaText;
+            switch (media.source) {
+            case WebInspector.CSSMedia.Source.LINKED_SHEET:
+            case WebInspector.CSSMedia.Source.INLINE_SHEET:
+                mediaText = "media=\"" + media.text + "\"";
+                break;
+            case WebInspector.CSSMedia.Source.MEDIA_RULE:
+                mediaText = "@media " + media.text;
+                break;
+            case WebInspector.CSSMedia.Source.IMPORT_RULE:
+                mediaText = "@import " + media.text;
+                break;
+            }
+
+            var mediaTextElement = mediaDataElement.createChild("span");
+            mediaTextElement.textContent = mediaText;
+            mediaTextElement.title = media.text;
+
+            if (media.sourceURL) {
+                var refElement = mediaDataElement.createChild("div", "subtitle");
+                var anchor = WebInspector.linkifyResourceAsNode(media.sourceURL, media.sourceLine < 0 ? undefined : media.sourceLine, "subtitle");
+                anchor.style.float = "right";
+                refElement.appendChild(anchor);
+            }
+        }
+    }
+
     var selectorContainer = document.createElement("div");
     this._selectorElement = document.createElement("span");
     this._selectorElement.textContent = styleRule.selectorText;
@@ -1122,7 +1153,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleEmptySpaceDoubleClick: function(event)
     {
-        if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only")) {
+        if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
             event.stopPropagation();
             return;
         }
@@ -1210,7 +1241,7 @@ WebInspector.StylePropertiesSection.prototype = {
             }
 
             this.rule = newRule;
-            this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
+            this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, media: newRule.media, sourceURL: newRule.sourceURL, rule: newRule };
 
             var oldIdentifier = this.identifier;
             this.identifier = newRule.selectorText + ":" + this._selectorRefElement.textContent;

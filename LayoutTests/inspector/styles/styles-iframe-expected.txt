@@ -8,6 +8,7 @@ element.style  { ()
 
 ======== Matched CSS Rules ========
 [expanded] 
+media="screen" (styles-iframe.html)
 #main  { (styles-iframe.html:5)
 background: blue;
 
@@ -22,6 +23,7 @@ element.style  { ()
 
 ======== Matched CSS Rules ========
 [expanded] 
+media="screen" (styles-iframe-data.html)
 body  { (styles-iframe-data.html:4)
 background: green;
 

@@ -260,6 +260,7 @@ public:
     Vector<OwnPtr<CSSParserSelector> >* reusableRegionSelectorVector() { return &m_reusableRegionSelectorVector; }
 
     void updateLastSelectorLineAndPosition();
+    void updateLastMediaLine(MediaList*);
 
     void clearProperties();
 

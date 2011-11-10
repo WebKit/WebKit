@@ -85,6 +85,9 @@ public:
         m_parentStyleSheet = styleSheet;
     }
 
+    int lastLine() const { return m_lastLine; }
+    void setLastLine(int lastLine) { m_lastLine = lastLine; }
+
 private:
     MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription);
     MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription);
@@ -96,6 +99,7 @@ private:
 
     CSSStyleSheet* m_parentStyleSheet;
     Vector<MediaQuery*> m_queries;
+    int m_lastLine;
 };
 
 } // namespace

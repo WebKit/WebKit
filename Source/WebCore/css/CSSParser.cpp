@@ -7695,6 +7695,11 @@ void CSSParser::updateLastSelectorLineAndPosition()
     markRuleBodyStart();
 }
 
+void CSSParser::updateLastMediaLine(MediaList* media)
+{
+    media->setLastLine(m_lineNumber);
+}
+
 void CSSParser::markSelectorListStart()
 {
     m_selectorListRange.start = yytext - m_data;

@@ -276,6 +276,11 @@
     white-space: normal;
 }
 
+.styles-section .header .title .media, .styles-section .header .title .media .subtitle {
+    color: rgb(128, 128, 128);
+    overflow: hidden;
+}
+
 .styles-section .header .subtitle {
     color: rgb(85, 85, 85);
     float: right;
@@ -283,6 +288,7 @@
     max-width: 65%;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 .styles-section .header .subtitle a {

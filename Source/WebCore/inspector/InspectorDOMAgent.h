@@ -161,7 +161,7 @@ public:
     void copyNode(ErrorString*, int nodeId);
     void setDOMListener(DOMListener*);
 
-    String documentURLString(Document*) const;
+    static String documentURLString(Document*);
 
     PassRefPtr<InspectorObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();

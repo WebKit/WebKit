@@ -215,7 +215,8 @@ WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipT
     var linkText = WebInspector.formatLinkText(url, lineNumber);
     var anchor = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
     anchor.setAttribute("preferred_panel", "resources");
-    anchor.setAttribute("line_number", lineNumber);
+    if (typeof lineNumber !== "undefined")
+        anchor.setAttribute("line_number", lineNumber);
     return anchor;
 }
 

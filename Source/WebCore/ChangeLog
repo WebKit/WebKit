@@ -1,5 +1,51 @@
 2011-11-10  Alexander Pavlov  <apavlov@chromium.org>
 
+        Web Inspector: Show media queries associated with specific CSS rules
+        https://bugs.webkit.org/show_bug.cgi?id=65626
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/styles/media-queries.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateLastMediaLine):
+        * css/CSSParser.h:
+        * css/MediaList.cpp:
+        (WebCore::MediaList::MediaList):
+        * css/MediaList.h:
+        (WebCore::MediaList::lastLine):
+        (WebCore::MediaList::setLastLine):
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::bindStyleSheet):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::documentURLString):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildMediaObject):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSRule):
+        (WebInspector.CSSMedia):
+        (WebInspector.CSSMedia.parsePayload):
+        (WebInspector.CSSMedia.parseMediaArrayPayload):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyResourceAsNode):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylePropertiesSection.prototype._handleEmptySpaceDoubleClick):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        * inspector/front-end/elementsPanel.css:
+        (.styles-section .header .title .media, .styles-section .header .title .media .subtitle):
+        (.styles-section .header .subtitle):
+
+2011-11-10  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: [SuggestBox] Do not display suggest box if editing in the middle of prompt unless a stop character follows
         https://bugs.webkit.org/show_bug.cgi?id=72018
 

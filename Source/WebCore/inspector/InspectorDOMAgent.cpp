@@ -1210,7 +1210,8 @@ void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* n
         *nodeId = 0;
 }
 
-String InspectorDOMAgent::documentURLString(Document* document) const
+// static
+String InspectorDOMAgent::documentURLString(Document* document)
 {
     if (!document || document->url().isNull())
         return "";

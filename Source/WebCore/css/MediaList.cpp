@@ -60,12 +60,14 @@ namespace WebCore {
 MediaList::MediaList(CSSStyleSheet* parentStyleSheet, bool fallbackToDescriptor)
     : m_fallback(fallbackToDescriptor)
     , m_parentStyleSheet(parentStyleSheet)
+    , m_lastLine(0)
 {
 }
 
 MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool fallbackToDescriptor)
     : m_fallback(fallbackToDescriptor)
     , m_parentStyleSheet(parentStyleSheet)
+    , m_lastLine(0)
 {
     ExceptionCode ec = 0;
     setMediaText(media, ec);
@@ -84,6 +86,7 @@ MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool 
 MediaList::MediaList(CSSImportRule* parentRule, const String& media)
     : m_fallback(false)
     , m_parentStyleSheet(parentRule->parentStyleSheet())
+    , m_lastLine(0)
 {
     ExceptionCode ec = 0;
     setMediaText(media, ec);

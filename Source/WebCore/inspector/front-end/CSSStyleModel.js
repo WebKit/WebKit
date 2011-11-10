@@ -490,6 +490,8 @@ WebInspector.CSSRule = function(payload)
     this.style = WebInspector.CSSStyleDeclaration.parsePayload(payload.style);
     this.style.parentRule = this;
     this.selectorRange = payload.selectorRange;
+    if (payload.media)
+        this.media = WebInspector.CSSMedia.parseMediaArrayPayload(payload.media);
 }
 
 WebInspector.CSSRule.parsePayload = function(payload)
@@ -651,6 +653,38 @@ WebInspector.CSSProperty.prototype = {
 
         CSSAgent.toggleProperty(this.ownerStyle.id, this.index, disabled, callback.bind(this));
     }
+}
+
+/**
+ * @constructor
+ * @param {*} payload
+ */
+WebInspector.CSSMedia = function(payload)
+{
+    this.text = payload.text;
+    this.source = payload.source;
+    this.sourceURL = payload.sourceURL || "";
+    this.sourceLine = typeof payload.sourceLine === "undefined" || this.source === "linkedSheet" ? -1 : payload.sourceLine;
+}
+
+WebInspector.CSSMedia.Source = {
+    LINKED_SHEET: "linkedSheet",
+    INLINE_SHEET: "inlineSheet",
+    MEDIA_RULE: "mediaRule",
+    IMPORT_RULE: "importRule"
+};
+
+WebInspector.CSSMedia.parsePayload = function(payload)
+{
+    return new WebInspector.CSSMedia(payload);
+}
+
+WebInspector.CSSMedia.parseMediaArrayPayload = function(payload)
+{
+    var result = [];
+    for (var i = 0; i < payload.length; ++i)
+        result.push(WebInspector.CSSMedia.parsePayload(payload[i]));
+    return result;
 }
 
 /**
