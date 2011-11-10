@@ -1,5 +1,21 @@
 2011-11-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Add ARMv7 register info for the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=72050
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::toRegister):
+        (JSC::DFG::FPRInfo::toIndex):
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+
+2011-11-10  Gavin Barraclough  <barraclough@apple.com>
+
         #ifdef CPU(X86) specific div/mod code in DFGSpeculativeJIT32_64
         https://bugs.webkit.org/show_bug.cgi?id=72047
 

@@ -36,6 +36,8 @@ namespace JSC { namespace DFG {
 typedef MacroAssembler::FPRegisterID FPRReg;
 #define InvalidFPRReg ((FPRReg)-1)
 
+#if CPU(X86) || CPU(X86_64)
+
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
@@ -48,11 +50,15 @@ public:
     static const FPRReg fpRegT3 = X86Registers::xmm3;
     static const FPRReg fpRegT4 = X86Registers::xmm4;
     static const FPRReg fpRegT5 = X86Registers::xmm5;
-    // These constants provide the names for the general purpose argument & return value registers.
+#if CPU(X86_64)
+    // Only X86_64 passes aguments in xmm registers
     static const FPRReg argumentFPR0 = X86Registers::xmm0; // fpRegT0
     static const FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
     static const FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
     static const FPRReg argumentFPR3 = X86Registers::xmm3; // fpRegT3
+#endif
+    // On X86 the return will actually be on the x87 stack,
+    // so we'll copy to xmm0 for sanity!
     static const FPRReg returnValueFPR = X86Registers::xmm0; // fpRegT0
 
     // FPRReg mapping is direct, the machine regsiter numbers can
@@ -95,6 +101,67 @@ public:
     }
 #endif
 };
+
+#endif
+
+#if CPU(ARM_THUMB2)
+
+class FPRInfo {
+public:
+    typedef FPRReg RegisterType;
+    static const unsigned numberOfRegisters = 6;
+
+    // Temporary registers.
+    // d7 is use by the MacroAssembler as fpTempRegister.
+    static const FPRReg fpRegT0 = ARMRegisters::d0;
+    static const FPRReg fpRegT1 = ARMRegisters::d1;
+    static const FPRReg fpRegT2 = ARMRegisters::d2;
+    static const FPRReg fpRegT3 = ARMRegisters::d3;
+    static const FPRReg fpRegT4 = ARMRegisters::d4;
+    static const FPRReg fpRegT5 = ARMRegisters::d5;
+    // ARMv7 doesn't pass arguments in fp registers. The return
+    // value is also actually in integer registers, for now
+    // we'll return in d0 for simplicity.
+    static const FPRReg returnValueFPR = ARMRegisters::d0; // fpRegT0
+
+    // FPRReg mapping is direct, the machine regsiter numbers can
+    // be used directly as indices into the FPR RegisterBank.
+    COMPILE_ASSERT(ARMRegisters::d0 == 0, d0_is_0);
+    COMPILE_ASSERT(ARMRegisters::d1 == 1, d1_is_1);
+    COMPILE_ASSERT(ARMRegisters::d2 == 2, d2_is_2);
+    COMPILE_ASSERT(ARMRegisters::d3 == 3, d3_is_3);
+    COMPILE_ASSERT(ARMRegisters::d4 == 4, d4_is_4);
+    COMPILE_ASSERT(ARMRegisters::d5 == 5, d5_is_5);
+    static FPRReg toRegister(unsigned index)
+    {
+        return (FPRReg)index;
+    }
+    static unsigned toIndex(FPRReg reg)
+    {
+        return (unsigned)reg;
+    }
+
+#ifndef NDEBUG
+    static const char* debugName(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(reg < 32);
+        static const char* nameForRegister[32] = {
+            "d0", "d1", "d2", "d3",
+            "d4", "d5", "d6", "d7",
+            "d8", "d9", "d10", "d11",
+            "d12", "d13", "d14", "d15"
+            "d16", "d17", "d18", "d19"
+            "d20", "d21", "d22", "d23"
+            "d24", "d25", "d26", "d27"
+            "d28", "d29", "d30", "d31"
+        };
+        return nameForRegister[reg];
+    }
+#endif
+};
+
+#endif
 
 typedef RegisterBank<FPRInfo>::iterator fpr_iterator;
 
