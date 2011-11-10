@@ -46,12 +46,36 @@ namespace WebCore {
 
 class ImageLayerTextureUpdater : public LayerTextureUpdater {
 public:
+    class Texture : public LayerTextureUpdater::Texture {
+    public:
+        Texture(ImageLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
+            : LayerTextureUpdater::Texture(texture)
+            , m_textureUpdater(textureUpdater)
+        {
+        }
+
+        virtual void updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+        {
+            textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
+        }
+
+    private:
+        ImageLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
+
+        ImageLayerTextureUpdater* m_textureUpdater;
+    };
+
     static PassRefPtr<ImageLayerTextureUpdater> create(bool useMapTexSubImage)
     {
         return adoptRef(new ImageLayerTextureUpdater(useMapTexSubImage));
     }
 
     virtual ~ImageLayerTextureUpdater() { }
+
+    virtual PassRefPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager)
+    {
+        return adoptRef(new Texture(this, ManagedTexture::create(manager)));
+    }
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
 
@@ -61,7 +85,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */)
+    virtual void prepareToUpdate(const IntRect& /* contentRect */, const IntSize& tileSize, int /* borderTexels */)
     {
         m_texSubImage.setSubImageSize(tileSize);
     }

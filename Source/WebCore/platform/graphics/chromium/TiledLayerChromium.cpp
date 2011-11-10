@@ -51,17 +51,20 @@ namespace WebCore {
 class UpdatableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(UpdatableTile);
 public:
-    explicit UpdatableTile(PassOwnPtr<ManagedTexture> tex) : m_tex(tex) { }
+    explicit UpdatableTile(PassRefPtr<LayerTextureUpdater::Texture> texture) : m_texture(texture) { }
 
-    ManagedTexture* texture() { return m_tex.get(); }
+    LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
+    ManagedTexture* managedTexture() { return m_texture->texture(); }
 
     bool dirty() const { return !m_dirtyLayerRect.isEmpty(); }
     void clearDirty() { m_dirtyLayerRect = IntRect(); }
 
     // Layer-space dirty rectangle that needs to be repainted.
     IntRect m_dirtyLayerRect;
+    // Content-space rectangle that needs to be updated.
+    IntRect m_updateRect;
 private:
-    OwnPtr<ManagedTexture> m_tex;
+    RefPtr<LayerTextureUpdater::Texture> m_texture;
 };
 
 TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
@@ -167,17 +170,12 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
             else if (!tile->dirty())
                 continue;
 
-            // Calculate page-space rectangle to copy from.
-            IntRect sourceRect = m_tiler->tileContentRect(tile);
-            const IntPoint anchor = sourceRect.location();
-            sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
-            // Paint rect not guaranteed to line up on tile boundaries, so
-            // make sure that sourceRect doesn't extend outside of it.
-            sourceRect.intersect(m_paintRect);
-            if (sourceRect.isEmpty())
+            IntRect sourceRect = tile->m_updateRect;
+            if (tile->m_updateRect.isEmpty())
                 continue;
 
-            ASSERT(tile->texture()->isReserved());
+            ASSERT(tile->managedTexture()->isReserved());
+            const IntPoint anchor = m_tiler->tileContentRect(tile).location();
 
             // Calculate tile-space rectangle to upload into.
             IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
@@ -197,12 +195,12 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
             if (paintOffset.y() + destRect.height() > m_paintRect.height())
                 CRASH();
 
-            tile->texture()->bindTexture(context, updater.allocator());
+            tile->managedTexture()->bindTexture(context, updater.allocator());
             const GC3Dint filter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
-            updater.append(tile->texture(), textureUpdater(), sourceRect, destRect);
+            updater.append(tile->texture(), sourceRect, destRect);
             tile->clearDirty();
         }
     }
@@ -240,10 +238,10 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         int i = iter->first.first;
         int j = iter->first.second;
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
-        if (!tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+        if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
             continue;
 
-        tiledLayer->syncTextureId(i, j, tile->texture()->textureId());
+        tiledLayer->syncTextureId(i, j, tile->managedTexture()->textureId());
     }
 }
 
@@ -261,7 +259,7 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
-    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(ManagedTexture::create(textureManager())));
+    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(textureUpdater()->createTexture(textureManager())));
     m_tiler->addTile(tile, i, j);
     tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile.get());
 
@@ -309,10 +307,10 @@ void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
-            if (!tile || !tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+            if (!tile || !tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 continue;
 
-            tile->texture()->reserve(m_tiler->tileSize(), m_textureFormat);
+            tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat);
         }
     }
 }
@@ -346,10 +344,10 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
             if (!tile)
                 tile = createTile(i, j);
 
-            if (!tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile);
 
-            if (!tile->texture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
+            if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
                 m_skipsDraw = true;
                 cleanupResources();
                 return;
@@ -374,6 +372,31 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels());
+
+    m_tiler->contentRectToTileIndices(m_requestedUpdateRect, left, top, right, bottom);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            if (!tile)
+                tile = createTile(i, j);
+            else if (!tile->dirty())
+                continue;
+
+            // Calculate content-space rectangle to copy from.
+            IntRect sourceRect = m_tiler->tileContentRect(tile);
+            const IntPoint anchor = sourceRect.location();
+            sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
+            // Paint rect not guaranteed to line up on tile boundaries, so
+            // make sure that sourceRect doesn't extend outside of it.
+            sourceRect.intersect(m_paintRect);
+
+            tile->m_updateRect = sourceRect;
+            if (sourceRect.isEmpty())
+                continue;
+
+            tile->texture()->prepareRect(sourceRect);
+        }
+    }
 }
 
 }
