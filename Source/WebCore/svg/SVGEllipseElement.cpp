@@ -141,21 +141,6 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 
     ASSERT_NOT_REACHED();
 }
-
-void SVGEllipseElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    float radiusX = rx().value(this);
-    if (radiusX <= 0)
-        return;
-
-    float radiusY = ry().value(this);
-    if (radiusY <= 0)
-        return;
-
-    path.addEllipse(FloatRect(cx().value(this) - radiusX, cy().value(this) - radiusY, radiusX * 2, radiusY * 2));
-}
  
 bool SVGEllipseElement::selfHasRelativeLengths() const
 {

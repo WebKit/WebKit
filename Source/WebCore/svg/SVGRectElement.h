@@ -48,8 +48,6 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void toPathData(Path&) const;
-
     virtual bool selfHasRelativeLengths() const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRectElement)

@@ -1634,6 +1634,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGInlineFlowBox.cpp
         rendering/svg/SVGInlineTextBox.cpp
         rendering/svg/SVGMarkerLayoutInfo.cpp
+        rendering/svg/SVGPathData.cpp
         rendering/svg/SVGRenderSupport.cpp
         rendering/svg/SVGRenderTreeAsText.cpp
         rendering/svg/SVGResources.cpp

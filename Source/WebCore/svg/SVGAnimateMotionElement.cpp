@@ -31,6 +31,7 @@
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGPathData.h"
 #include "SVGPathElement.h"
 #include "SVGPathParserFactory.h"
 #include "SVGTransformList.h"
@@ -132,7 +133,7 @@ Path SVGAnimateMotionElement::animationPath() const
             SVGPathElement* pathElement = mPath->pathElement();
             Path path;
             if (pathElement)
-                pathElement->toPathData(path);
+                updatePathFromGraphicsElement(pathElement, path);
             return path;
         }
     }

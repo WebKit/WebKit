@@ -92,7 +92,6 @@ public:
 
     SVGPathByteStream* pathByteStream() const { return m_pathByteStream.get(); }
 
-    virtual void toPathData(Path&) const;
     void pathSegListChanged(SVGPathSegRole);
 
     static const SVGPropertyInfo* dPropertyInfo();

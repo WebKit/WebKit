@@ -24,8 +24,6 @@
 #include "SVGPolygonElement.h"
 #include "SVGNames.h"
 
-#include "Path.h"
-
 namespace WebCore {
 
 inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document* document)
@@ -37,23 +35,6 @@ inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Docume
 PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGPolygonElement(tagName, document));
-}
-
-void SVGPolygonElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    SVGPointList& points = pointList();
-    if (points.isEmpty())
-        return;
-
-    path.moveTo(points.first());
-
-    unsigned size = points.size();
-    for (unsigned i = 1; i < size; ++i)
-        path.addLineTo(points.at(i));
-
-    path.closeSubpath();
 }
 
 }

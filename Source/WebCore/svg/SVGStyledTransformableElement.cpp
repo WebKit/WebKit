@@ -29,6 +29,7 @@
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "SVGPathData.h"
 
 namespace WebCore {
 
@@ -148,7 +149,7 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
 
 void SVGStyledTransformableElement::toClipPath(Path& path)
 {
-    toPathData(path);
+    updatePathFromGraphicsElement(this, path);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());
 }

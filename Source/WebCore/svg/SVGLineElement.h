@@ -48,8 +48,6 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void toPathData(Path&) const;
-
     virtual bool supportsMarkers() const { return true; }
 
     virtual bool selfHasRelativeLengths() const;

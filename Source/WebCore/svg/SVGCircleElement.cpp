@@ -137,18 +137,6 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-void SVGCircleElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    float radius = r().value(this);
-
-    if (radius <= 0)
-        return;
-
-    path.addEllipse(FloatRect(cx().value(this) - radius, cy().value(this) - radius, radius * 2, radius * 2));
-}
-
 bool SVGCircleElement::selfHasRelativeLengths() const
 {
     return cx().isRelative()

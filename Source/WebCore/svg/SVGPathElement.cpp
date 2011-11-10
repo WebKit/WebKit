@@ -327,14 +327,6 @@ SVGPathSegListPropertyTearOff* SVGPathElement::animatedNormalizedPathSegList()
     return 0;
 }
 
-void SVGPathElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    SVGPathParserFactory* factory = SVGPathParserFactory::self();
-    factory->buildPathFromByteStream(m_pathByteStream.get(), path);
-}
-
 void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
 {
     SVGPathParserFactory* factory = SVGPathParserFactory::self();

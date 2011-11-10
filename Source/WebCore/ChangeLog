@@ -1,3 +1,60 @@
+2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Remove virtual toPathData() method from all graphics elements
+        https://bugs.webkit.org/show_bug.cgi?id=72009
+
+        Reviewed by Zoltan Herczeg.
+
+        In bug 71780, SVGLengthContext was introduced, to allow to resolve SVGLengths against arbitary viewports.
+        SVGLength::value(), which needs a SVGLengthContext, is still used all over svg/ - that should be changed, as rendering/
+        should resolve these lengths, as HTML does it using Length & RenderStyles for CSS.
+
+        As first step, move the #1 client of the SVGLength::value() methods - toPathData() out of svg/ into rendering/svg/SVGPathData
+        as free-function, replacing the virtual toPathData() function from SVGStyledTransformableElement.
+
+        Doesn't affect any tests.
+
+        * CMakeLists.txt: Add rendering/svg/SVGPathData.* to build.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/svg/RenderSVGAllInOne.cpp: Ditto.
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::layout): Use "updatePathFromGraphicsElement(element, m_path)" instead of "element->toPathData(m_path)", avoiding a virtual call.
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath): Ditto.
+        * rendering/svg/SVGPathData.cpp: Added.
+        (WebCore::updatePathFromCircleElement):
+        (WebCore::updatePathFromEllipseElement):
+        (WebCore::updatePathFromLineElement):
+        (WebCore::updatePathFromPathElement):
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+        (WebCore::updatePathFromRectElement):
+        (WebCore::updatePathFromGraphicsElement):
+        * rendering/svg/SVGPathData.h: Added.
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::animationPath): Use updatePathFromGraphicsElement instead of toPathData.
+        * svg/SVGCircleElement.cpp: Remove toPathData() virtual method.
+        * svg/SVGCircleElement.h: Ditto.
+        * svg/SVGEllipseElement.cpp: Ditto.
+        * svg/SVGEllipseElement.h: Ditto.
+        * svg/SVGLineElement.cpp: Ditto.
+        * svg/SVGLineElement.h: Ditto.
+        * svg/SVGPathElement.cpp: Ditto.
+        * svg/SVGPathElement.h: Ditto.
+        * svg/SVGPolygonElement.cpp: Ditto.
+        * svg/SVGPolygonElement.h: Ditto.
+        * svg/SVGPolylineElement.cpp: Ditto.
+        * svg/SVGPolylineElement.h: Ditto.
+        * svg/SVGRectElement.cpp: Ditto.
+        * svg/SVGRectElement.h: Ditto.
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::toClipPath): Use updatePathFromGraphicsElement instead of toPathData.
+        * svg/SVGStyledTransformableElement.h: Remove toPathData() virtual method.
+
 2011-11-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] get rid of JavaScriptSourceFrameDelegate

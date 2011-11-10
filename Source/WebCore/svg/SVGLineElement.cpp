@@ -142,14 +142,6 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-void SVGLineElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    path.moveTo(FloatPoint(x1().value(this), y1().value(this)));
-    path.addLineTo(FloatPoint(x2().value(this), y2().value(this)));
-}
-
 bool SVGLineElement::selfHasRelativeLengths() const
 {
     return x1().isRelative()

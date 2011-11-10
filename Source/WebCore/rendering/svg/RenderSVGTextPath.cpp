@@ -26,6 +26,7 @@
 #include "RenderBlock.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"
+#include "SVGPathData.h"
 #include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextPathElement.h"
@@ -51,7 +52,8 @@ Path RenderSVGTextPath::layoutPath() const
     SVGPathElement* pathElement = static_cast<SVGPathElement*>(targetElement);
     
     Path pathData;
-    pathElement->toPathData(pathData);
+    updatePathFromGraphicsElement(pathElement, pathData);
+
     // Spec:  The transform attribute on the referenced 'path' element represents a
     // supplemental transformation relative to the current user coordinate system for
     // the current 'text' element, including any adjustments to the current user coordinate

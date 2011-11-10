@@ -58,6 +58,7 @@
 #include "SVGInlineFlowBox.cpp"
 #include "SVGInlineTextBox.cpp"
 #include "SVGMarkerLayoutInfo.cpp"
+#include "SVGPathData.cpp"
 #include "SVGRenderSupport.cpp"
 #include "SVGRenderTreeAsText.cpp"
 #include "SVGResources.cpp"

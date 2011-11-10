@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,25 +17,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
+#ifndef SVGPathData_h
+#define SVGPathData_h
 
 #if ENABLE(SVG)
-#include "SVGPolylineElement.h"
-#include "SVGNames.h"
-
 namespace WebCore {
 
-inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document* document)
-    : SVGPolyElement(tagName, document)
-{
-    ASSERT(hasTagName(SVGNames::polylineTag));
-}
+class SVGElement;
+class Path;
 
-PassRefPtr<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document* document)
-{
-    return adoptRef(new SVGPolylineElement(tagName, document));
-}
+void updatePathFromGraphicsElement(SVGElement*, Path&);
 
-}
+};
 
 #endif // ENABLE(SVG)
+#endif // SVGPathData_h

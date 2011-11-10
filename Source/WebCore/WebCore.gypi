@@ -4768,6 +4768,8 @@
             'rendering/svg/SVGMarkerData.h',
             'rendering/svg/SVGMarkerLayoutInfo.cpp',
             'rendering/svg/SVGMarkerLayoutInfo.h',
+            'rendering/svg/SVGPathData.cpp',
+            'rendering/svg/SVGPathData.h',
             'rendering/svg/SVGRenderSupport.cpp',
             'rendering/svg/SVGRenderSupport.h',
             'rendering/svg/SVGRenderTreeAsText.cpp',

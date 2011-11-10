@@ -32,8 +32,6 @@ public:
 
 private:
     SVGPolygonElement(const QualifiedName&, Document*);
-
-    virtual void toPathData(Path&) const;
 };
 
 } // namespace WebCore

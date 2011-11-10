@@ -155,39 +155,6 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-void SVGRectElement::toPathData(Path& path) const
-{
-    ASSERT(path.isEmpty());
-
-    float widthValue = width().value(this);
-    if (widthValue <= 0)
-        return;
-
-    float heightValue = height().value(this);
-    if (heightValue <= 0)
-        return;
-
-    float xValue = x().value(this);
-    float yValue = y().value(this);
-
-    FloatRect rect(xValue, yValue, widthValue, heightValue);
-
-    bool hasRx = hasAttribute(SVGNames::rxAttr);
-    bool hasRy = hasAttribute(SVGNames::ryAttr);
-    if (hasRx || hasRy) {
-        float rxValue = rx().value(this);
-        float ryValue = ry().value(this);
-        if (!hasRx)
-            rxValue = ryValue;
-        else if (!hasRy)
-            ryValue = rxValue;
-        path.addRoundedRect(rect, FloatSize(rxValue, ryValue));
-        return;
-    }
-
-    path.addRect(rect);
-}
-
 bool SVGRectElement::selfHasRelativeLengths() const
 {
     return x().isRelative()

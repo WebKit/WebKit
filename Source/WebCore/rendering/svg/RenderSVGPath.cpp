@@ -37,6 +37,7 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "SVGPathData.h"
 #include "SVGRenderSupport.h"
 #include "SVGResources.h"
 #include "SVGStyledTransformableElement.h"
@@ -117,7 +118,7 @@ void RenderSVGPath::layout()
     bool needsPathUpdate = m_needsPathUpdate;
     if (needsPathUpdate) {
         m_path.clear();
-        element->toPathData(m_path);
+        updatePathFromGraphicsElement(element, m_path);
         m_needsPathUpdate = false;
         updateCachedBoundariesInParents = true;
     }
