@@ -91,7 +91,7 @@ public:
     unsigned m_lineBoxContain: 7; // LineBoxContain
     // CSS Image Values Level 3
     unsigned m_imageRendering : 2; // EImageRendering
-
+    unsigned m_lineGridSnap : 2; // LineGridSnap
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

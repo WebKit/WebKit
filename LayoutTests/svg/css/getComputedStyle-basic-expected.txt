@@ -304,6 +304,8 @@ rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-grid) : none
 rect: style.getPropertyCSSValue(-webkit-line-grid) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-line-grid-snap) : none
+rect: style.getPropertyCSSValue(-webkit-line-grid-snap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-locale) : auto
 rect: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-margin-before-collapse) : collapse
@@ -790,6 +792,8 @@ g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-grid) : none
 g: style.getPropertyCSSValue(-webkit-line-grid) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-line-grid-snap) : none
+g: style.getPropertyCSSValue(-webkit-line-grid-snap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-locale) : auto
 g: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-margin-before-collapse) : collapse

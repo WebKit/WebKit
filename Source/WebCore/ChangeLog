@@ -1,3 +1,39 @@
+2011-11-10  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72060
+        
+        [CSS Line Grid] Add support for the line-grid-snap property to control snapping to the nearest
+        enclosing grid.
+
+        Reviewed by Dan Bernstein.
+
+        Added fast/line-grid/line-grid-snap-parsing.html.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LineGridSnap):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::lineGridSnap):
+        (WebCore::InheritedFlags::setLineGridSnap):
+        (WebCore::InheritedFlags::initialLineGridSnap):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2011-11-10  Kentaro Hara  <haraken@chromium.org>
 
         CodeGeneratorV8.pm can generate Event constructors

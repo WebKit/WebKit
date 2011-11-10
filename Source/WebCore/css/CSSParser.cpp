@@ -1942,6 +1942,10 @@ bool CSSParser::parseValue(int propId, bool important)
             }
         }
         break;
+    case CSSPropertyWebkitLineGridSnap:
+        if (id == CSSValueNone || id == CSSValueBaseline || id == CSSValueBounds)
+            validPrimitive = true;
+        break;
     case CSSPropertyWebkitLocale:
         if (id == CSSValueAuto || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;

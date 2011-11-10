@@ -3014,6 +3014,38 @@ template<> inline CSSPrimitiveValue::operator Hyphens() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineGridSnap gridSnap)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (gridSnap) {
+    case LineGridSnapNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case LineGridSnapBaseline:
+        m_value.ident = CSSValueBaseline;
+        break;
+    case LineGridSnapBounds:
+        m_value.ident = CSSValueBounds;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator LineGridSnap() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return LineGridSnapNone;
+    case CSSValueBaseline:
+        return LineGridSnapBaseline;
+    case CSSValueBounds:
+        return LineGridSnapBounds;
+    default:
+        ASSERT_NOT_REACHED();
+        return LineGridSnapNone;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
     : CSSValue(PrimitiveClass)
 {

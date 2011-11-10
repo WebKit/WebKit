@@ -3408,6 +3408,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             m_style->setLineGrid(primitiveValue->getStringValue());
         return;
+    case CSSPropertyWebkitLineGridSnap:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(lineGridSnap, LineGridSnap)
+        return;
     case CSSPropertyWebkitRegionBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)
         return;

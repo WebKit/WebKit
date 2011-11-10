@@ -457,6 +457,8 @@ enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
 
 enum ColumnAxis { HorizontalColumnAxis, VerticalColumnAxis, AutoColumnAxis };
 
+enum LineGridSnap { LineGridSnapNone, LineGridSnapBaseline, LineGridSnapBounds };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h
