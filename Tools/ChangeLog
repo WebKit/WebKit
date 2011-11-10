@@ -1,3 +1,33 @@
+2011-11-07  Kaustubh Atrawalkar  <kaustubh@motorola.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] Implement a MouseDown/MouseUp/MouseMoveTo/MouseScrollBy/LeapForward functions for WebKit2 EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=69411
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        use the EventSender instead of WebProcess Event Simulation.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::WTREventQueueItem::WTREventQueueItem):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::getMouseButtonModifiers):
+        (WTR::eventSenderButtonToGDKButton):
+        (WTR::EventSenderProxy::createMouseButtonEvent):
+        (WTR::EventSenderProxy::updateClickCountForButton):
+        (WTR::EventSenderProxy::replaySavedEvents):
+        (WTR::EventSenderProxy::sendOrQueueEvent):
+        (WTR::webkitModifiersToGDKModifiers):
+        (WTR::getGDKKeySymForKeyRef):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::leapForward):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Enable exports and constructor functions in static libs

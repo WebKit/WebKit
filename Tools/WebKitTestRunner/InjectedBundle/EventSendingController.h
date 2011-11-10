@@ -31,7 +31,7 @@
 #include <WebKit2/WKGeometry.h>
 #include <wtf/PassRefPtr.h>
 
-#if !PLATFORM(MAC) && !PLATFORM(QT)
+#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(GTK)
 #define USE_WEBPROCESS_EVENT_SIMULATION
 #endif
 

@@ -30,11 +30,18 @@
 #if PLATFORM(QT)
 #include <QEvent>
 #include <QTouchEvent>
+#elif PLATFORM(GTK)
+#include <gdk/gdk.h>
+#include <wtf/Vector.h>
 #endif
 
 namespace WTR {
 
 class TestController;
+
+#if PLATFORM(GTK)
+struct WTREventQueueItem;
+#endif
 
 class EventSenderProxy {
 public:
@@ -67,12 +74,18 @@ private:
     double currentEventTime() { return m_time; }
     void updateClickCountForButton(int button);
 
+#if PLATFORM(QT) || PLATFORM(GTK)
+    void replaySavedEvents();
+#endif
+
 #if PLATFORM(QT)
 #if ENABLE(TOUCH_EVENTS)
     void sendTouchEvent(QEvent::Type);
 #endif
     void sendOrQueueEvent(QEvent*);
-    void replaySavedEvents();
+#elif PLATFORM(GTK)
+    void sendOrQueueEvent(GdkEvent*);
+    GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
 #endif
 
     double m_time;
@@ -84,6 +97,9 @@ private:
     WKEventMouseButton m_clickButton;
 #if PLATFORM(MAC)
     int eventNumber;
+#elif PLATFORM(GTK)
+    Vector<WTREventQueueItem> m_eventQueue;
+    unsigned m_mouseButtonCurrentlyDown;
 #elif PLATFORM(QT)
     Qt::MouseButtons m_mouseButtons;
 
