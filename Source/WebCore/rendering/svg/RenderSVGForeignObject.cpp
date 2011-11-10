@@ -47,7 +47,8 @@ RenderSVGForeignObject::~RenderSVGForeignObject()
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context->paintingDisabled()
+        || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
         return;
 
     PaintInfo childPaintInfo(paintInfo);
@@ -61,7 +62,22 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (opacity < 1.0f)
         childPaintInfo.context->beginTransparencyLayer(opacity);
 
+    // Paint all phases of FO elements atomically, as though the FO element established its
+    // own stacking context.
+    bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
+    LayoutPoint childPoint = IntPoint();
+    childPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
     RenderBlock::paint(childPaintInfo, IntPoint());
+    if (!preservePhase) {
+        childPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
+        RenderBlock::paint(childPaintInfo, childPoint);
+        childPaintInfo.phase = PaintPhaseFloat;
+        RenderBlock::paint(childPaintInfo, childPoint);
+        childPaintInfo.phase = PaintPhaseForeground;
+        RenderBlock::paint(childPaintInfo, childPoint);
+        childPaintInfo.phase = PaintPhaseOutline;
+        RenderBlock::paint(childPaintInfo, childPoint);
+    }
 
     if (opacity < 1.0f)
         childPaintInfo.context->endTransparencyLayer();

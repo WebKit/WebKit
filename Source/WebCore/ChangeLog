@@ -1,3 +1,18 @@
+2011-11-10  Florin Malita  <fmalita@google.com>
+
+        SVG object covers CSS background in HTML foreignObject
+        https://bugs.webkit.org/show_bug.cgi?id=58417
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/foreignObject/background-render-phase.html
+
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::paint):
+
+            Paint SVG foreign objects atomically, following the same pattern as
+            http://trac.webkit.org/browser/trunk/Source/WebCore/rendering/InlineBox.cpp#L209.
+
 2011-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99851.
