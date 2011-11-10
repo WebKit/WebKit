@@ -28,9 +28,10 @@
 
 #include "QtGestureRecognizer.h"
 
-#include "WebPageProxy.h"
 #include <QtCore/QBasicTimer>
+#include <QtCore/QObject>
 #include <QtCore/QtGlobal>
+#include <wtf/OwnPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QTouchEvent;
@@ -42,12 +43,13 @@ const qreal maxDoubleTapDistance = 120;
 const int tapAndHoldTime = 800;
 const int doubleClickInterval = 400;
 
+class QtWebPageProxy;
+
 namespace WebKit {
 
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:
-    QtTapGestureRecognizer(QtViewportInteractionEngine*);
-    void setWebPageProxy(WebPageProxy*);
+    QtTapGestureRecognizer(QtViewportInteractionEngine*, QtWebPageProxy*);
     bool recognize(const QTouchEvent*, qint64 eventTimestampMillis);
     void reset();
 
@@ -57,7 +59,7 @@ protected:
     void tapAndHoldTimeout();
 
 private:
-    WebPageProxy* m_webPageProxy;
+    QtWebPageProxy* m_webPageProxy;
     QBasicTimer m_doubleTapTimer;
     QBasicTimer m_tapAndHoldTimer;
     OwnPtr<QTouchEvent> m_touchBeginEventForTap;

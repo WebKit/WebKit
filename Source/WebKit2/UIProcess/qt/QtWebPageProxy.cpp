@@ -133,7 +133,7 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInterac
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
-    , m_tapGestureRecognizer(viewportInteractionEngine)
+    , m_tapGestureRecognizer(viewportInteractionEngine, this)
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
@@ -142,7 +142,6 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInterac
 {
     ASSERT(viewInterface);
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
-    m_tapGestureRecognizer.setWebPageProxy(m_webPageProxy.get());
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
     if (!contextRef)
         s_defaultPageProxyCount++;
@@ -335,6 +334,17 @@ bool QtWebPageProxy::handleDropEvent(QDropEvent* ev)
 
     ev->setAccepted(accepted);
     return accepted;
+}
+
+void QtWebPageProxy::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)
+{
+    WebGestureEvent gesture(WebEvent::GestureSingleTap, point.pos().toPoint(), point.screenPos().toPoint(), WebEvent::Modifiers(0), 0);
+    m_webPageProxy->handleGestureEvent(gesture);
+}
+
+void QtWebPageProxy::handleDoubleTapEvent(const QTouchEvent::TouchPoint& point)
+{
+    m_webPageProxy->findZoomableAreaForPoint(point.pos().toPoint());
 }
 
 void QtWebPageProxy::timerEvent(QTimerEvent* ev)

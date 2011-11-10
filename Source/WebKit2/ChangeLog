@@ -1,3 +1,23 @@
+2011-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Clean up how singe / double taps are handled
+        https://bugs.webkit.org/show_bug.cgi?id=72024
+
+        Reviewed by Simon Hausmann.
+
+        Move all decision making to the QtWebPageProxy.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::tapTimeout):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::handleSingleTapEvent):
+        (QtWebPageProxy::handleDoubleTapEvent):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Clean up build system

@@ -38,6 +38,7 @@
 #include <QBasicTimer>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QTouchEvent>
 #include <QMenu>
 #include <QSharedPointer>
 
@@ -194,6 +195,9 @@ public:
 
     void handleDownloadRequest(DownloadProxy*);
     void init();
+
+    void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
+    void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 
 public Q_SLOTS:
     void navigationStateChanged();
