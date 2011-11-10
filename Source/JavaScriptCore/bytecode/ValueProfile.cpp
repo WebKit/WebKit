@@ -32,51 +32,6 @@
 namespace JSC {
 
 #if ENABLE(VALUE_PROFILER)
-void ValueProfile::computeStatistics(const ClassInfo* classInfo, Statistics& statistics)
-{
-    statistics.cells++;
-    
-    if (classInfo == &JSFinalObject::s_info) {
-        statistics.finalObjects++;
-        statistics.objects++;
-        return;
-    }
-    
-    if (classInfo == &JSArray::s_info) {
-        statistics.arrays++;
-        statistics.objects++;
-        return;
-    }
-    
-    if (classInfo == &JSString::s_info) {
-        statistics.strings++;
-        return;
-    }
-    
-    if (classInfo->isSubClassOf(&JSObject::s_info))
-        statistics.objects++;
-}
-
-void ValueProfile::computeStatistics(Statistics& statistics) const
-{
-    for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
-        JSValue value = JSValue::decode(m_buckets[i]);
-        if (!value)
-            continue;
-        
-        statistics.samples++;
-        
-        if (value.isInt32())
-            statistics.int32s++;
-        else if (value.isDouble())
-            statistics.doubles++;
-        else if (value.isCell())
-            computeStatistics(value.asCell()->structure()->classInfo(), statistics);
-        else if (value.isBoolean())
-            statistics.booleans++;
-    }
-}
-
 PredictedType ValueProfile::computeUpdatedPrediction()
 {
     for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {

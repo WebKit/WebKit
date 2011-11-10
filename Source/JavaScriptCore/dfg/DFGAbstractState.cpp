@@ -498,7 +498,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             destination = source;
             break;
         }
-            
+        
         if (isOtherPrediction(child.prediction())) {
             source.filter(PredictOther);
             destination.set(PredictObjectOther);
@@ -534,7 +534,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetCallee:
-        forNode(nodeIndex).set(PredictObjectOther);
+        forNode(nodeIndex).set(PredictFunction);
         break;
             
     case GetScopeChain:
@@ -604,12 +604,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     case CheckMethod:
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
         forNode(node.child1()).filter(m_graph.m_methodCheckData[node.methodCheckDataIndex()].structure);
-        forNode(nodeIndex).set(PredictObjectOther);
+        forNode(nodeIndex).set(PredictFunction);
         m_haveStructures = true;
         break;
         
     case CheckFunction:
-        forNode(node.child1()).filter(PredictObjectOther);
+        forNode(node.child1()).filter(PredictFunction);
         // FIXME: Should be able to propagate the fact that we know what the function is.
         break;
             

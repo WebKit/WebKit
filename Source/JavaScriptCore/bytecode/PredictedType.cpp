@@ -30,6 +30,7 @@
 #include "PredictedType.h"
 
 #include "JSByteArray.h"
+#include "JSFunction.h"
 #include "ValueProfile.h"
 #include <wtf/BoundsCheckedPointer.h>
 
@@ -68,7 +69,12 @@ const char* predictionToString(PredictedType value)
         isTop = false;
     
     if (value & PredictByteArray)
-        ptr.strcat("ByteArray");
+        ptr.strcat("Bytearray");
+    else
+        isTop = false;
+    
+    if (value & PredictFunction)
+        ptr.strcat("Function");
     else
         isTop = false;
     
@@ -116,6 +122,9 @@ PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
     
     if (classInfo == &JSString::s_info)
         return PredictString;
+    
+    if (classInfo->isSubClassOf(&JSFunction::s_info))
+        return PredictFunction;
 
     if (classInfo->isSubClassOf(&JSByteArray::s_info))
         return PredictByteArray;

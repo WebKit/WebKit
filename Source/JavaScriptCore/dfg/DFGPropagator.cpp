@@ -526,7 +526,7 @@ private:
         }
             
         case GetCallee: {
-            changed |= setPrediction(PredictObjectOther);
+            changed |= setPrediction(PredictFunction);
             break;
         }
             

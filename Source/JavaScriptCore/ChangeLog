@@ -1,3 +1,32 @@
+2011-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueProfile/PredictedType contains dead code, and doesn't recognize functions
+        https://bugs.webkit.org/show_bug.cgi?id=72065
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+        
+        Added PredictFunction support, and did some cleaning up along the way.
+        ValueProfile no longer has statistics machinery, because we never used
+        it. Rearranged some bits in PredictedType to more easily make room for
+        one more object type. Changed some debug code to use more consistent
+        conventions (ByteArray becomes Bytearray so that if we ever have a
+        "Byte" prediction we don't get confused between a prediction that is
+        the union of Byte and Array and a prediction that indicates precisely
+        a ByteArray).
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC::isFunctionPrediction):
+        * bytecode/ValueProfile.cpp:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+
 2011-11-10  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/72049> Specify testapi.js install path using JAVASCRIPTCORE_FRAMEWORKS_DIR
