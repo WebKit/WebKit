@@ -3873,13 +3873,7 @@ BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 // SVG failures after r99539.
 BUGWK71793 : fast/backgrounds/animated-svg-as-mask.html = IMAGE
 BUGWK71793 : svg/as-background-image/animated-svg-as-background.html = IMAGE
-BUGWK71793 : svg/as-background-image/svg-as-background-with-relative-size.html = IMAGE
-BUGWK71793 : svg/as-background-image/svg-background-partial-redraw.html = IMAGE
 BUGWK71793 : svg/as-image/animated-svg-as-image.html = IMAGE
-BUGWK71793 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
-BUGWK71793 : svg/as-image/img-preserveAspectRatio-support-2.html = IMAGE
-BUGWK71793 : svg/as-image/same-image-two-instances.html = IMAGE
-BUGWK71793 : svg/as-image/svg-image-change-content-size.xhtml = IMAGE
 BUGWK71793 : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 BUGWK71793 : svg/wicd/test-scalable-background-image2.xhtml = IMAGE
 BUGWK71793 : svg/zoom/page/zoom-background-images.html = IMAGE
