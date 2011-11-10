@@ -222,3 +222,7 @@ mac {
     QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
 }
 
+plugin_backend_xlib {
+    CONFIG *= link_pkgconfig
+    PKGCONFIG += x11
+}

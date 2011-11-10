@@ -341,6 +341,9 @@ private:
 #elif PLUGIN_ARCHITECTURE(X11)
     Pixmap m_drawable;
     Display* m_pluginDisplay;
+
+public: // Need to call it in the NPN_GetValue browser callback.
+    static Display* x11HostDisplay();
 #endif
 };
 

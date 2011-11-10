@@ -34,10 +34,7 @@
 #include <WebCore/NotImplemented.h>
 
 #if PLATFORM(QT)
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QPixmap>
-#include <QX11Info>
+#include <WebCore/QtX11ImageConversion.h>
 #elif PLATFORM(GTK)
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
@@ -50,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static Display *getPluginDisplay()
+static Display* getPluginDisplay()
 {
 #if PLATFORM(QT)
     // At the moment, we only support gdk based plugins (like Flash) that use a different X connection.
@@ -87,12 +84,12 @@ static Display *getPluginDisplay()
 #endif
 }
 
-static inline Display* x11Display()
+static inline int x11Screen()
 {
 #if PLATFORM(QT)
-    return QX11Info::display();
+    return XDefaultScreen(NetscapePlugin::x11HostDisplay());
 #elif PLATFORM(GTK)
-    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+    return gdk_screen_get_number(gdk_screen_get_default());
 #else
     return 0;
 #endif
@@ -101,7 +98,7 @@ static inline Display* x11Display()
 static inline int displayDepth()
 {
 #if PLATFORM(QT)
-    return QApplication::desktop()->x11Info().depth();
+    return XDefaultDepth(NetscapePlugin::x11HostDisplay(), x11Screen());
 #elif PLATFORM(GTK)
     return gdk_visual_get_depth(gdk_screen_get_system_visual(gdk_screen_get_default()));
 #else
@@ -112,20 +109,9 @@ static inline int displayDepth()
 static inline unsigned long rootWindowID()
 {
 #if PLATFORM(QT)
-    return QX11Info::appRootWindow();
+    return XDefaultRootWindow(NetscapePlugin::x11HostDisplay());
 #elif PLATFORM(GTK)
     return GDK_ROOT_WINDOW();
-#else
-    return 0;
-#endif
-}
-
-static inline int x11Screen()
-{
-#if PLATFORM(QT)
-    return QX11Info::appScreen();
-#elif PLATFORM(GTK)
-    return gdk_screen_get_number(gdk_screen_get_default());
 #else
     return 0;
 #endif
@@ -142,6 +128,22 @@ static bool moduleMixesGtkSymbols(Module* module)
 }
 #endif
 
+Display* NetscapePlugin::x11HostDisplay()
+{
+#if PLATFORM(QT)
+    static Display* dedicatedDisplay = 0;
+    if (!dedicatedDisplay)
+        dedicatedDisplay = XOpenDisplay(0);
+
+    ASSERT(dedicatedDisplay);
+    return dedicatedDisplay;
+#elif PLATFORM(GTK)
+    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+#else
+    return 0;
+#endif
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
 #if PLATFORM(GTK)
@@ -157,8 +159,11 @@ bool NetscapePlugin::platformPostInitialize()
 
     NPSetWindowCallbackStruct* callbackStruct = new NPSetWindowCallbackStruct;
     callbackStruct->type = 0;
-    Display* display = x11Display();
+    Display* display = x11HostDisplay();
     int depth = displayDepth();
+#if PLATFORM(QT)
+    ASSERT(depth == 16 || depth == 24 || depth == 32);
+#endif
     callbackStruct->display = display;
     callbackStruct->depth = depth;
 
@@ -191,7 +196,7 @@ void NetscapePlugin::platformDestroy()
     delete static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
 
     if (m_drawable) {
-        XFreePixmap(x11Display(), m_drawable);
+        XFreePixmap(x11HostDisplay(), m_drawable);
         m_drawable = 0;
     }
 }
@@ -209,7 +214,7 @@ void NetscapePlugin::platformGeometryDidChange()
         return;
     }
 
-    Display* display = x11Display();
+    Display* display = x11HostDisplay();
     if (m_drawable)
         XFreePixmap(display, m_drawable);
 
@@ -243,17 +248,11 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     if (context->paintingDisabled() || !m_drawable)
         return;
 
-#if PLATFORM(QT)
-#elif !PLATFORM(GTK)
-    notImplemented();
-    return;
-#endif
-
     XEvent xevent;
     memset(&xevent, 0, sizeof(XEvent));
     XGraphicsExposeEvent& exposeEvent = xevent.xgraphicsexpose;
     exposeEvent.type = GraphicsExpose;
-    exposeEvent.display = x11Display();
+    exposeEvent.display = x11HostDisplay();
     exposeEvent.drawable = m_drawable;
 
     IntRect exposedRect(dirtyRect);
@@ -267,14 +266,16 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
     NPP_HandleEvent(&xevent);
 
-    if (m_pluginDisplay != x11Display())
+    if (m_pluginDisplay != x11HostDisplay())
         XSync(m_pluginDisplay, false);
 
 #if PLATFORM(QT)
-    QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
-    ASSERT(qtDrawable.depth() == static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->depth);
+    XImage* xImage = XGetImage(NetscapePlugin::x11HostDisplay(), m_drawable, exposedRect.x(), exposedRect.y(),
+                               exposedRect.width(), exposedRect.height(), ULONG_MAX, ZPixmap);
     QPainter* painter = context->platformContext();
-    painter->drawPixmap(QPoint(exposedRect.x(), exposedRect.y()), qtDrawable, exposedRect);
+    painter->drawImage(QPoint(exposedRect.x(), exposedRect.y()), qimageFromXImage(xImage), exposedRect);
+
+    XDestroyImage(xImage);
 #elif PLATFORM(GTK)
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay,
                                                                                  m_drawable,
@@ -292,6 +293,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     cairo_paint(cr);
 
     cairo_restore(cr);
+#else
+    notImplemented();
 #endif
 }
 
@@ -300,7 +303,7 @@ static inline void initializeXEvent(XEvent& event)
     memset(&event, 0, sizeof(XEvent));
     event.xany.serial = 0;
     event.xany.send_event = false;
-    event.xany.display = x11Display();
+    event.xany.display = NetscapePlugin::x11HostDisplay();
     event.xany.window = 0;
 }
 

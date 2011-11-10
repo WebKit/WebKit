@@ -2864,6 +2864,11 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         plugins/PluginViewNone.cpp
 }
 
+plugin_backend_xlib {
+    SOURCES += plugins/qt/QtX11ImageConversion.cpp
+    HEADERS += plugins/qt/QtX11ImageConversion.h
+}
+
 contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
         storage/ChangeVersionWrapper.cpp \

@@ -96,6 +96,17 @@ isEmpty(HAVE_QRAWFONT) {
     }
 }
 
+# Netscape plugins support for WebKit2
+!no_webkit2:!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED): {
+    contains(QT_CONFIG, xcb-xlib) {
+        CONFIG += plugin_backend_xlib
+        DEFINES += PLUGIN_ARCHITECTURE_X11=1 \
+                   PLUGIN_ARCHITECTURE_UNSUPPORTED=0
+    } else {
+        DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
+    }
+}
+
 # WebGL support
 contains(QT_CONFIG, opengl):!win32-* {
     !contains(DEFINES, ENABLE_WEBGL=.): DEFINES += ENABLE_WEBGL=1

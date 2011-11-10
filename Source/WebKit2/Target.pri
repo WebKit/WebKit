@@ -744,10 +744,6 @@ SOURCES += \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES
 
-contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=0) {
-    DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED
-}
-
 contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
     HEADERS += \
         Shared/NativeWebTouchEvent.h
@@ -756,3 +752,7 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
+
+plugin_backend_xlib {
+    DEFINES += XP_UNIX
+}

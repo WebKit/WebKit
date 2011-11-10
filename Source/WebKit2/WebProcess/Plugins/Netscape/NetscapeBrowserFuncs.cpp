@@ -36,14 +36,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 
-#if PLUGIN_ARCHITECTURE(X11)
-#if PLATFORM(QT)
-#include <QX11Info>
-#elif PLATFORM(GTK)
-#include <gdk/gdkx.h>
-#endif
-#endif
-
 using namespace WebCore;
 using namespace std;
 
@@ -527,15 +519,8 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
        case NPNVxDisplay: {
            if (!npp)
                return NPERR_GENERIC_ERROR;
-#if PLATFORM(QT)
-           *reinterpret_cast<Display**>(value) = QX11Info::display();
+           *reinterpret_cast<Display**>(value) = NetscapePlugin::x11HostDisplay();
            break;
-#elif PLATFORM(GTK)
-           *reinterpret_cast<Display**>(value) = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-           break;
-#else
-           goto default;
-#endif
        }
        case NPNVSupportsXEmbedBool:
            *static_cast<NPBool*>(value) = true;

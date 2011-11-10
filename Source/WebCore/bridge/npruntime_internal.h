@@ -51,4 +51,5 @@
     #undef True
     #undef False
     #undef Success
+    #undef Expose
 #endif
