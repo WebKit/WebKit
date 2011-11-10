@@ -819,11 +819,19 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsNull());
 
+    JSValue unfiltered;
     LocalScope scope(exec->globalData());
-    LiteralParser jsonParser(exec, source.characters(), source.length(), LiteralParser::StrictJSON);
-    JSValue unfiltered = jsonParser.tryLiteralParse();
-    if (!unfiltered)
-        return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));
+    if (source.is8Bit()) {
+        LiteralParser<LChar> jsonParser(exec, source.characters8(), source.length(), StrictJSON);
+        unfiltered = jsonParser.tryLiteralParse();
+        if (!unfiltered)
+            return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));
+    } else {
+        LiteralParser<UChar> jsonParser(exec, source.characters16(), source.length(), StrictJSON);
+        unfiltered = jsonParser.tryLiteralParse();
+        if (!unfiltered)
+            return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));        
+    }
     
     if (exec->argumentCount() < 2)
         return JSValue::encode(unfiltered);

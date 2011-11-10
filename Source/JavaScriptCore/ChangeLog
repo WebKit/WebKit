@@ -1,3 +1,61 @@
+2011-11-09  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize JSC::LiteralParser class by character type
+        https://bugs.webkit.org/show_bug.cgi?id=71862
+
+        Changed LiteralParser to be templatized of character type.
+
+        Moved five enums out of class definition to work around a clang compiler defect.
+
+        Added lexIdentifier templated method to break out character specific versions.
+        Added static setParserTokenString templated method to handle setting approriately
+        sized string pointer.
+
+        To keep code in LiteralParser.cpp and keep LiteralParser.h small, the two
+        flavors of LiteralParser are explicitly instantiated at the end of
+        LiteralParser.cpp.
+
+        Reviewed by Oliver Hunt.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeFromJSONString):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::execute):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/LiteralParser.cpp:
+        (JSC::isJSONWhiteSpace):
+        (JSC::::tryJSONPParse):
+        (JSC::::makeIdentifier):
+        (JSC::::Lexer::lex):
+        (JSC::::Lexer::lexIdentifier):
+        (JSC::::Lexer::next):
+        (JSC::LChar):
+        (JSC::UChar):
+        (JSC::isSafeStringCharacter):
+        (JSC::::Lexer::lexString):
+        (JSC::::Lexer::lexNumber):
+        (JSC::::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::LiteralParser):
+        (JSC::LiteralParser::getErrorMessage):
+        (JSC::LiteralParser::tryLiteralParse):
+        (JSC::LiteralParser::Lexer::Lexer):
+        (JSC::LiteralParser::Lexer::currentToken):
+        (JSC::LiteralParser::Lexer::getErrorMessage):
+        * runtime/UString.h:
+        (JSC::LChar):
+        (JSC::UChar):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::append):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append):
+
 2011-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         Multiple CodeBlock should be able to share the same instruction

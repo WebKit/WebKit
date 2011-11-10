@@ -445,9 +445,15 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 
     UString s = x.toString(exec);
 
-    LiteralParser preparser(exec, s.characters(), s.length(), LiteralParser::NonStrictJSON);
-    if (JSValue parsedObject = preparser.tryLiteralParse())
-        return JSValue::encode(parsedObject);
+    if (s.is8Bit()) {
+        LiteralParser<LChar> preparser(exec, s.characters8(), s.length(), NonStrictJSON);
+        if (JSValue parsedObject = preparser.tryLiteralParse())
+            return JSValue::encode(parsedObject);
+    } else {
+        LiteralParser<UChar> preparser(exec, s.characters16(), s.length(), NonStrictJSON);
+        if (JSValue parsedObject = preparser.tryLiteralParse())
+            return JSValue::encode(parsedObject);        
+    }
 
     EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false);
     JSObject* error = eval->compile(exec, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain());

@@ -36,14 +36,16 @@
 
 namespace JSC {
 
-static inline bool isJSONWhiteSpace(const UChar& c)
+template <typename CharType>
+static inline bool isJSONWhiteSpace(const CharType& c)
 {
     // The JSON RFC 4627 defines a list of allowed characters to be considered
     // insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
     return c == ' ' || c == 0x9 || c == 0xA || c == 0xD;
 }
 
-bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
+template <typename CharType>
+bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
 {
     if (m_lexer.next() != TokIdentifier)
         return false;
@@ -120,7 +122,8 @@ bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSour
     return m_lexer.currentToken().type == TokEnd;
 }
     
-ALWAYS_INLINE const Identifier LiteralParser::makeIdentifier(const UChar* characters, size_t length)
+template <typename CharType>
+ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LChar* characters, size_t length)
 {
     if (!length)
         return m_exec->globalData().propertyNames->emptyIdentifier;
@@ -139,7 +142,28 @@ ALWAYS_INLINE const Identifier LiteralParser::makeIdentifier(const UChar* charac
     return m_recentIdentifiers[characters[0]];
 }
 
-template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
+template <typename CharType>
+ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UChar* characters, size_t length)
+{
+    if (!length)
+        return m_exec->globalData().propertyNames->emptyIdentifier;
+    if (characters[0] >= MaximumCachableCharacter)
+        return Identifier(&m_exec->globalData(), characters, length);
+
+    if (length == 1) {
+        if (!m_shortIdentifiers[characters[0]].isNull())
+            return m_shortIdentifiers[characters[0]];
+        m_shortIdentifiers[characters[0]] = Identifier(&m_exec->globalData(), characters, length);
+        return m_shortIdentifiers[characters[0]];
+    }
+    if (!m_recentIdentifiers[characters[0]].isNull() && Identifier::equal(m_recentIdentifiers[characters[0]].impl(), characters, length))
+        return m_recentIdentifiers[characters[0]];
+    m_recentIdentifiers[characters[0]] = Identifier(&m_exec->globalData(), characters, length);
+    return m_recentIdentifiers[characters[0]];
+}
+
+template <typename CharType>
+template <ParserMode mode> TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
 {
     while (m_ptr < m_end && isJSONWhiteSpace(*m_ptr))
         ++m_ptr;
@@ -240,15 +264,8 @@ template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser
             token.end = ++m_ptr;
             return TokAssign;
         }
-        if (isASCIIAlpha(*m_ptr) || *m_ptr == '_' || *m_ptr == '$') {
-            while (m_ptr < m_end && (isASCIIAlphanumeric(*m_ptr) || *m_ptr == '_' || *m_ptr == '$'))
-                m_ptr++;
-            token.stringToken = token.start;
-            token.stringLength = m_ptr - token.start;
-            token.type = TokIdentifier;
-            token.end = m_ptr;
-            return TokIdentifier;
-        }
+        if (isASCIIAlpha(*m_ptr) || *m_ptr == '_' || *m_ptr == '$')
+            return lexIdentifier(token);
         if (*m_ptr == '\'') {
             if (mode == StrictJSON) {
                 m_lexErrorMessage = "Single quotes (\') are not allowed in JSON";
@@ -261,7 +278,34 @@ template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser
     return TokError;
 }
 
-LiteralParser::TokenType LiteralParser::Lexer::next()
+template <>
+ALWAYS_INLINE TokenType LiteralParser<LChar>::Lexer::lexIdentifier(LiteralParserToken<LChar>& token)
+{
+    while (m_ptr < m_end && (isASCIIAlphanumeric(*m_ptr) || *m_ptr == '_' || *m_ptr == '$'))
+        m_ptr++;
+    token.stringIs8Bit = 1;
+    token.stringToken8 = token.start;
+    token.stringLength = m_ptr - token.start;
+    token.type = TokIdentifier;
+    token.end = m_ptr;
+    return TokIdentifier;
+}
+
+template <>
+ALWAYS_INLINE TokenType LiteralParser<UChar>::Lexer::lexIdentifier(LiteralParserToken<UChar>& token)
+{
+    while (m_ptr < m_end && (isASCIIAlphanumeric(*m_ptr) || *m_ptr == '_' || *m_ptr == '$'))
+        m_ptr++;
+    token.stringIs8Bit = 0;
+    token.stringToken16 = token.start;
+    token.stringLength = m_ptr - token.start;
+    token.type = TokIdentifier;
+    token.end = m_ptr;
+    return TokIdentifier;
+}
+
+template <typename CharType>
+TokenType LiteralParser<CharType>::Lexer::next()
 {
     if (m_mode == NonStrictJSON)
         return lex<NonStrictJSON>(m_currentToken);
@@ -270,20 +314,40 @@ LiteralParser::TokenType LiteralParser::Lexer::next()
     return lex<StrictJSON>(m_currentToken);
 }
 
-template <LiteralParser::ParserMode mode, UChar terminator> static inline bool isSafeStringCharacter(UChar c)
+template <>
+ALWAYS_INLINE void setParserTokenString<LChar>(LiteralParserToken<LChar>& token, const LChar* string)
 {
-    return (c >= ' ' && (mode == LiteralParser::StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || c == '\t';
+    token.stringIs8Bit = 1;
+    token.stringToken8 = string;
+}
+
+template <>
+ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token, const UChar* string)
+{
+    token.stringIs8Bit = 0;
+    token.stringToken16 = string;
+}
+
+template <ParserMode mode, typename CharType, LChar terminator> static inline bool isSafeStringCharacter(LChar c)
+{
+    return (c >= ' ' && c != '\\' && c != terminator) || c == '\t';
+}
+
+template <ParserMode mode, typename CharType, UChar terminator> static inline bool isSafeStringCharacter(UChar c)
+{
+    return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || c == '\t';
 }
 
 // "inline" is required here to help WINSCW compiler resolve specialized argument in templated functions.
-template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
+template <typename CharType>
+template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserToken<CharType>& token)
 {
     ++m_ptr;
-    const UChar* runStart = m_ptr;
+    const CharType* runStart = m_ptr;
     UStringBuilder builder;
     do {
         runStart = m_ptr;
-        while (m_ptr < m_end && isSafeStringCharacter<mode, terminator>(*m_ptr))
+        while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
             ++m_ptr;
         if (builder.length())
             builder.append(runStart, m_ptr - runStart);
@@ -340,7 +404,7 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
                             return TokError;
                         }
                     }
-                    builder.append(JSC::Lexer<UChar>::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
+                    builder.append(JSC::Lexer<CharType>::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
                     m_ptr += 5;
                     break;
 
@@ -363,11 +427,17 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
 
     if (builder.isEmpty()) {
         token.stringBuffer = UString();
-        token.stringToken = runStart;
+        setParserTokenString<CharType>(token, runStart);
         token.stringLength = m_ptr - runStart;
     } else {
         token.stringBuffer = builder.toUString();
-        token.stringToken = token.stringBuffer.characters();
+        if (token.stringBuffer.is8Bit()) {
+            token.stringIs8Bit = 1;
+            token.stringToken8 = token.stringBuffer.characters8();
+        } else {
+            token.stringIs8Bit = 0;
+            token.stringToken16 = token.stringBuffer.characters16();
+        }
         token.stringLength = token.stringBuffer.length();
     }
     token.type = TokString;
@@ -375,7 +445,8 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
     return TokString;
 }
 
-LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& token)
+template <typename CharType>
+TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>& token)
 {
     // ES5 and json.org define numbers as
     // number
@@ -423,7 +494,7 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
         int result = 0;
         token.type = TokNumber;
         token.end = m_ptr;
-        const UChar* digit = token.start;
+        const CharType* digit = token.start;
         int negative = 1;
         if (*digit == '-') {
             negative = -1;
@@ -471,7 +542,8 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
     return TokNumber;
 }
 
-JSValue LiteralParser::parse(ParserState initialState)
+template <typename CharType>
+JSValue LiteralParser<CharType>::parse(ParserState initialState)
 {
     ParserState state = initialState;
     MarkedArgumentBuffer objectStack;
@@ -526,7 +598,7 @@ JSValue LiteralParser::parse(ParserState initialState)
 
                 TokenType type = m_lexer.next();
                 if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
-                    Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
+                    LiteralParserToken<CharType> identifierToken = m_lexer.currentToken();
 
                     // Check for colon
                     if (m_lexer.next() != TokColon) {
@@ -535,7 +607,10 @@ JSValue LiteralParser::parse(ParserState initialState)
                     }
                     
                     m_lexer.next();
-                    identifierStack.append(makeIdentifier(identifierToken.stringToken, identifierToken.stringLength));
+                    if (identifierToken.stringIs8Bit)
+                        identifierStack.append(makeIdentifier(identifierToken.stringToken8, identifierToken.stringLength));
+                    else
+                        identifierStack.append(makeIdentifier(identifierToken.stringToken16, identifierToken.stringLength));
                     stateStack.append(DoParseObjectEndExpression);
                     goto startParseExpression;
                 }
@@ -555,7 +630,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                     m_parseErrorMessage = "Property name must be a string literal";
                     return JSValue();
                 }
-                Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
+                LiteralParserToken<CharType> identifierToken = m_lexer.currentToken();
 
                 // Check for colon
                 if (m_lexer.next() != TokColon) {
@@ -564,7 +639,10 @@ JSValue LiteralParser::parse(ParserState initialState)
                 }
 
                 m_lexer.next();
-                identifierStack.append(makeIdentifier(identifierToken.stringToken, identifierToken.stringLength));
+                if (identifierToken.stringIs8Bit)
+                    identifierStack.append(makeIdentifier(identifierToken.stringToken8, identifierToken.stringLength));
+                else
+                    identifierStack.append(makeIdentifier(identifierToken.stringToken16, identifierToken.stringLength));
                 stateStack.append(DoParseObjectEndExpression);
                 goto startParseExpression;
             }
@@ -591,13 +669,16 @@ JSValue LiteralParser::parse(ParserState initialState)
                     case TokLBrace:
                         goto startParseObject;
                     case TokString: {
-                        Lexer::LiteralParserToken stringToken = m_lexer.currentToken();
+                        LiteralParserToken<CharType> stringToken = m_lexer.currentToken();
                         m_lexer.next();
-                        lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken, stringToken.stringLength).ustring());
+                        if (stringToken.stringIs8Bit)
+                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken8, stringToken.stringLength).ustring());
+                        else
+                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken16, stringToken.stringLength).ustring());
                         break;
                     }
                     case TokNumber: {
-                        Lexer::LiteralParserToken numberToken = m_lexer.currentToken();
+                        LiteralParserToken<CharType> numberToken = m_lexer.currentToken();
                         m_lexer.next();
                         lastValue = jsNumber(numberToken.numberToken);
                         break;
@@ -622,9 +703,14 @@ JSValue LiteralParser::parse(ParserState initialState)
                     case TokRBrace:
                         m_parseErrorMessage = "Unexpected token '}'";
                         return JSValue();
-                    case TokIdentifier:
-                        m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                    case TokIdentifier: {
+                        const LiteralParserToken<CharType>& token = m_lexer.currentToken();
+                        if (token.stringIs8Bit)
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken8, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                        else
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken16, m_lexer.currentToken().stringLength).ascii().data()).impl();
                         return JSValue();
+                    }
                     case TokColon:
                         m_parseErrorMessage = "Unexpected token ':'";
                         return JSValue();
@@ -736,5 +822,9 @@ JSValue LiteralParser::parse(ParserState initialState)
         continue;
     }
 }
+
+// Instantiate the two flavors of LiteralParser we need instead of putting most of this file in LiteralParser.h
+template class LiteralParser<LChar>;
+template class LiteralParser<UChar>;
 
 }

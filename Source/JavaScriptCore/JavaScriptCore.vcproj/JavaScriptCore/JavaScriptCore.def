@@ -62,7 +62,7 @@ EXPORTS
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXAAVJSGlobalData@2@II@Z
     ?allocateSlowCase@AllocationSpace@JSC@@AAEPAXAAUSizeClass@MarkedSpace@2@@Z
-    ?append@StringBuilder@WTF@@QAEXPBDI@Z
+    ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z

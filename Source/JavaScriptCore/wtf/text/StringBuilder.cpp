@@ -158,16 +158,16 @@ void StringBuilder::append(const UChar* characters, unsigned length)
     memcpy(appendUninitialized(length), characters, static_cast<size_t>(length) * 2);
 }
 
-void StringBuilder::append(const char* characters, unsigned length)
+void StringBuilder::append(const LChar* characters, unsigned length)
 {
     if (!length)
         return;
     ASSERT(characters);
 
     UChar* dest = appendUninitialized(length);
-    const char* end = characters + length;
+    const LChar* end = characters + length;
     while (characters < end)
-        *(dest++) = *(const unsigned char*)(characters++);
+        *(dest++) = *(characters++);
 }
 
 void StringBuilder::shrinkToFit()

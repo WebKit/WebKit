@@ -39,7 +39,9 @@ public:
     }
 
     void append(const UChar*, unsigned);
-    void append(const char*, unsigned);
+    void append(const LChar*, unsigned);
+
+    ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
 
     void append(const String& string)
     {

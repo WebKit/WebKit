@@ -445,9 +445,15 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
         if (!codeBlock->isStrictMode()) {
             // FIXME: We can use the preparser in strict mode, we just need additional logic
             // to prevent duplicates.
-            LiteralParser preparser(callFrame, programSource.characters(), programSource.length(), LiteralParser::NonStrictJSON);
-            if (JSValue parsedObject = preparser.tryLiteralParse())
-                return parsedObject;
+            if (programSource.is8Bit()) {
+                LiteralParser<LChar> preparser(callFrame, programSource.characters8(), programSource.length(), NonStrictJSON);
+                if (JSValue parsedObject = preparser.tryLiteralParse())
+                    return parsedObject;
+            } else {
+                LiteralParser<UChar> preparser(callFrame, programSource.characters16(), programSource.length(), NonStrictJSON);
+                if (JSValue parsedObject = preparser.tryLiteralParse())
+                    return parsedObject;                
+            }
         }
 
         JSValue exceptionValue;
@@ -779,16 +785,25 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
         return checkedReturn(throwStackOverflowError(callFrame));
 
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
-    LiteralParser literalParser(callFrame, program->source().data(), program->source().length(), LiteralParser::JSONP);
-    Vector<LiteralParser::JSONPData> JSONPData;
-    if (literalParser.tryJSONPParse(JSONPData, scopeChain->globalObject->supportsRichSourceInfo())) {
+    Vector<JSONPData> JSONPData;
+    bool parseResult;
+    const UString programSource = program->source().toString();
+    if (programSource.is8Bit()) {
+        LiteralParser<LChar> literalParser(callFrame, programSource.characters8(), programSource.length(), JSONP);
+        parseResult = literalParser.tryJSONPParse(JSONPData, scopeChain->globalObject->supportsRichSourceInfo());
+    } else {
+        LiteralParser<UChar> literalParser(callFrame, programSource.characters16(), programSource.length(), JSONP);
+        parseResult = literalParser.tryJSONPParse(JSONPData, scopeChain->globalObject->supportsRichSourceInfo());        
+    }
+
+    if (parseResult) {
         JSGlobalObject* globalObject = scopeChain->globalObject.get();
         JSValue result;
         for (unsigned entry = 0; entry < JSONPData.size(); entry++) {
-            Vector<LiteralParser::JSONPPathEntry> JSONPPath;
+            Vector<JSONPPathEntry> JSONPPath;
             JSONPPath.swap(JSONPData[entry].m_path);
             JSValue JSONPValue = JSONPData[entry].m_value.get();
-            if (JSONPPath.size() == 1 && JSONPPath[0].m_type == LiteralParser::JSONPPathEntryTypeDeclare) {
+            if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
                 if (globalObject->hasProperty(callFrame, JSONPPath[0].m_pathEntryName)) {
                     PutPropertySlot slot;
                     globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
@@ -800,9 +815,9 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
             }
             JSValue baseObject(globalObject);
             for (unsigned i = 0; i < JSONPPath.size() - 1; i++) {
-                ASSERT(JSONPPath[i].m_type != LiteralParser::JSONPPathEntryTypeDeclare);
+                ASSERT(JSONPPath[i].m_type != JSONPPathEntryTypeDeclare);
                 switch (JSONPPath[i].m_type) {
-                case LiteralParser::JSONPPathEntryTypeDot: {
+                case JSONPPathEntryTypeDot: {
                     if (i == 0) {
                         PropertySlot slot(globalObject);
                         if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
@@ -817,7 +832,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                         return jsUndefined();
                     continue;
                 }
-                case LiteralParser::JSONPPathEntryTypeLookup: {
+                case JSONPPathEntryTypeLookup: {
                     baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathIndex);
                     if (callFrame->hadException())
                         return jsUndefined();
@@ -830,7 +845,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
             }
             PutPropertySlot slot;
             switch (JSONPPath.last().m_type) {
-            case LiteralParser::JSONPPathEntryTypeCall: {
+            case JSONPPathEntryTypeCall: {
                 JSValue function = baseObject.get(callFrame, JSONPPath.last().m_pathEntryName);
                 if (callFrame->hadException())
                     return jsUndefined();
@@ -846,13 +861,13 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                     return jsUndefined();
                 break;
             }
-            case LiteralParser::JSONPPathEntryTypeDot: {
+            case JSONPPathEntryTypeDot: {
                 baseObject.put(callFrame, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
                 if (callFrame->hadException())
                     return jsUndefined();
                 break;
             }
-            case LiteralParser::JSONPPathEntryTypeLookup: {
+            case JSONPPathEntryTypeLookup: {
                 baseObject.put(callFrame, JSONPPath.last().m_pathIndex, JSONPValue);
                 if (callFrame->hadException())
                     return jsUndefined();

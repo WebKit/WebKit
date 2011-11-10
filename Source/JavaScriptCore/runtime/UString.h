@@ -94,6 +94,9 @@ public:
         return m_impl->characters16();
     }
 
+    template <typename CharType>
+    inline const CharType* getCharacters() const;
+
     bool is8Bit() const { return m_impl->is8Bit(); }
 
     CString ascii() const;
@@ -134,6 +137,20 @@ public:
 private:
     RefPtr<StringImpl> m_impl;
 };
+
+template<>
+inline const LChar* UString::getCharacters<LChar>() const
+{
+    ASSERT(is8Bit());
+    return characters8();
+}
+
+template<>
+inline const UChar* UString::getCharacters<UChar>() const
+{
+    ASSERT(!is8Bit());
+    return characters16();
+}
 
 NEVER_INLINE bool equalSlowCase(const UString& s1, const UString& s2);
 
