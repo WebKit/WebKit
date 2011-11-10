@@ -393,7 +393,7 @@ END
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"}) {
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
         push(@headerContent, <<END);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
 END
@@ -2286,26 +2286,9 @@ END
 
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
-    # In namespace WebCore, add generated implementation for 'CanBeConstructed'.
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"} && !$dataNode->extendedAttributes->{"V8CustomConstructor"} && !$dataNode->extendedAttributes->{"Constructor"}) {
-        my $v8ConstructFunction;
-        my $callWith = $dataNode->extendedAttributes->{"CallWith"};
-        if ($callWith and $callWith eq "ScriptExecutionContext") {
-            $v8ConstructFunction = "constructDOMObjectWithScriptExecutionContext";
-        } else {
-            $v8ConstructFunction = "constructDOMObject";
-        }
-        push(@implContent, <<END);
-v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.${interfaceName}.Contructor");
-    return V8Proxy::${v8ConstructFunction}<$interfaceName>(args, &info);
-}
-
-END
-    } elsif ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+    if ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
-    } elsif (($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"}) && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+    } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     }
 
@@ -2379,7 +2362,7 @@ END
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 END
 
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
         push(@implContent, <<END);
     desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END

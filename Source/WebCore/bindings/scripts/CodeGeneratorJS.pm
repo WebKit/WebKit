@@ -3191,7 +3191,7 @@ sub GenerateConstructorDeclaration
     my $dataNode = shift;
 
     my $constructorClassName = "${className}Constructor";
-    my $canConstruct = $dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"};
+    my $canConstruct = $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"};
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
@@ -3269,66 +3269,55 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
     push(@$outputArray, "}\n\n");
 
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) {
+    if ($dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) {
         if (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
             push(@$outputArray, "    ${constructorClassName}* jsConstructor = static_cast<${constructorClassName}*>(exec->callee());\n");
 
-            if ($dataNode->extendedAttributes->{"Constructor"}) {
-                my $function = $dataNode->constructor;
-                my @constructorArgList;
+            my $function = $dataNode->constructor;
+            my @constructorArgList;
 
-                $implIncludes{"<runtime/Error.h>"} = 1;
+            $implIncludes{"<runtime/Error.h>"} = 1;
 
-                GenerateArgumentsCountCheck($outputArray, $function, $dataNode);
+            GenerateArgumentsCountCheck($outputArray, $function, $dataNode);
 
-                if (@{$function->raisesExceptions} || $dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
-                    $implIncludes{"ExceptionCode.h"} = 1;
-                    push(@$outputArray, "    ExceptionCode ec = 0;\n");
-                }
+            if (@{$function->raisesExceptions} || $dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                $implIncludes{"ExceptionCode.h"} = 1;
+                push(@$outputArray, "    ExceptionCode ec = 0;\n");
+            }
 
-                # For now, we do not support SVG constructors.
-                # We do not also support a constructor [Optional] argument without CallWithDefaultValue
-                # nor CallWithNullValue.
-                my $numParameters = @{$function->parameters};
-                my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
+            # For now, we do not support SVG constructors.
+            # We do not also support a constructor [Optional] argument without CallWithDefaultValue
+            # nor CallWithNullValue.
+            my $numParameters = @{$function->parameters};
+            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 
-                if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
-                    push(@constructorArgList, "context");
-                    push(@$outputArray, "    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();\n");
-                    push(@$outputArray, "    if (!context)\n");
-                    push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
-                }
+            if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
+                push(@constructorArgList, "context");
+                push(@$outputArray, "    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();\n");
+                push(@$outputArray, "    if (!context)\n");
+                push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
+            }
 
-                my $index = 0;
-                foreach my $parameter (@{$function->parameters}) {
-                    last if $index eq $paramIndex;
-                    push(@constructorArgList, $parameter->name);
-                    $index++;
-                }
+            my $index = 0;
+            foreach my $parameter (@{$function->parameters}) {
+                last if $index eq $paramIndex;
+                push(@constructorArgList, $parameter->name);
+                $index++;
+            }
 
-                if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
-                    push(@constructorArgList, "ec");
-                }
-                my $constructorArg = join(", ", @constructorArgList);
-                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
-                if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
-                    push(@$outputArray, "    if (ec) {\n");
-                    push(@$outputArray, "        setDOMException(exec, ec);\n");
-                    push(@$outputArray, "        return JSValue::encode(JSValue());\n");
-                    push(@$outputArray, "    }\n");
-                }
-            } else {
-                my $constructorArg = "";
-                if ($dataNode->extendedAttributes->{"CallWith"} and $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
-                    $constructorArg = "context";
-                    push(@$outputArray, "    ScriptExecutionContext* context = static_cast<${constructorClassName}*>(exec->callee())->scriptExecutionContext();\n");
-                    push(@$outputArray, "    if (!context)\n");
-                    push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
-                }
-                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+            if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                push(@constructorArgList, "ec");
+            }
+            my $constructorArg = join(", ", @constructorArgList);
+            push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+            if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+                push(@$outputArray, "    if (ec) {\n");
+                push(@$outputArray, "        setDOMException(exec, ec);\n");
+                push(@$outputArray, "        return JSValue::encode(JSValue());\n");
+                push(@$outputArray, "    }\n");
             }
 
             push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));\n");

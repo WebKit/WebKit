@@ -251,12 +251,6 @@ namespace WebCore {
         static v8::Handle<v8::Value> throwTypeError();
         static v8::Handle<v8::Value> throwSyntaxError();
 
-        template <typename T>
-        static v8::Handle<v8::Value> constructDOMObject(const v8::Arguments&, WrapperTypeInfo*);
-
-        template <typename T>
-        static v8::Handle<v8::Value> constructDOMObjectWithScriptExecutionContext(const v8::Arguments&, WrapperTypeInfo*);
-
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
 
@@ -336,41 +330,6 @@ namespace WebCore {
         typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
         IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
     };
-
-    template <typename T>
-    v8::Handle<v8::Value> V8Proxy::constructDOMObject(const v8::Arguments& args, WrapperTypeInfo* type)
-    {
-        if (!args.IsConstructCall())
-            return throwError(V8Proxy::TypeError, "DOM object constructor cannot be called as a function.");
-
-        // Note: it's OK to let this RefPtr go out of scope because we also call
-        // SetDOMWrapper(), which effectively holds a reference to obj.
-        RefPtr<T> obj = T::create();
-        V8DOMWrapper::setDOMWrapper(args.Holder(), type, obj.get());
-        obj->ref();
-        V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
-        return args.Holder();
-    }
-
-    template <typename T>
-    v8::Handle<v8::Value> V8Proxy::constructDOMObjectWithScriptExecutionContext(const v8::Arguments& args, WrapperTypeInfo* type)
-    {
-        if (!args.IsConstructCall())
-            return throwError(V8Proxy::TypeError, "");
-
-        ScriptExecutionContext* context = getScriptExecutionContext();
-        if (!context)
-            return throwError(V8Proxy::ReferenceError, "");
-
-        // Note: it's OK to let this RefPtr go out of scope because we also call
-        // SetDOMWrapper(), which effectively holds a reference to obj.
-        RefPtr<T> obj = T::create(context);
-        V8DOMWrapper::setDOMWrapper(args.Holder(), type, obj.get());
-        obj->ref();
-        V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
-        return args.Holder();
-    }
-
 
     v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle& worldContext);
 
