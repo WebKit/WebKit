@@ -1434,7 +1434,7 @@ static const RootInlineBox* previousRootInlineBox(const InlineBox* box)
     while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
         previousNode = previousNode->previousLeafNode();
   
-    while (previousNode) {
+    while (previousNode && !previousNode->isShadowRoot()) {
         Position pos = createLegacyEditingPosition(previousNode, caretMaxOffset(previousNode));
         
         if (pos.isCandidate()) {
@@ -1457,7 +1457,7 @@ static const RootInlineBox* nextRootInlineBox(const InlineBox* box)
     while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
         nextNode = nextNode->nextLeafNode();
   
-    while (nextNode) {
+    while (nextNode && !nextNode->isShadowRoot()) {
         Position pos;
         pos = createLegacyEditingPosition(nextNode, caretMinOffset(nextNode));
         
