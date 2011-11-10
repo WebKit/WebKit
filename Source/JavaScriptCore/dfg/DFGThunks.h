@@ -23,42 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
+#ifndef DFGThunks_h
+#define DFGThunks_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
 
-class ExecState;
+class JSGlobalData;
 
 namespace DFG {
 
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(AssemblyHelpers& jit)
-        : m_jit(jit)
-    {
-    }
-    
-    void compileExit(const OSRExit&, SpeculationRecovery*);
-
-private:
-    AssemblyHelpers& m_jit;
-};
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*);
-}
+MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData*);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitCompiler_h
+#endif // DFGThunks_h

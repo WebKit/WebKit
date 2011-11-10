@@ -34,22 +34,19 @@
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
 #include "DFGSpeculativeJIT.h"
+#include "DFGThunks.h"
 #include "JSGlobalData.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {
 
-void JITCompiler::linkOSRExits(SpeculativeJIT& speculative)
+void JITCompiler::linkOSRExits()
 {
-    OSRExitCompiler osrExitCompiler(*this);
-    
-    OSRExitVector::Iterator exitsIter = speculative.osrExits().begin();
-    OSRExitVector::Iterator exitsEnd = speculative.osrExits().end();
-    
-    while (exitsIter != exitsEnd) {
-        const OSRExit& exit = *exitsIter;
-        osrExitCompiler.compileExit(exit, speculative.speculationRecovery(exit.m_recoveryIndex));
-        ++exitsIter;
+    for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
+        OSRExit& exit = codeBlock()->osrExit(i);
+        exit.m_check.initialJump().link(this);
+        store32(Imm32(i), &globalData()->osrExitIndex);
+        exit.m_check.switchToLateJump(jump());
     }
 }
 
@@ -81,7 +78,7 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
     bool compiledSpeculative = speculative.compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 
-    linkOSRExits(speculative);
+    linkOSRExits();
 
     // Iterate over the m_calls vector, checking for jumps to link.
     bool didLinkExceptionCheck = false;
@@ -196,6 +193,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.cachedFunction.setLocation(linkBuffer.locationOf(m_methodGets[i].m_putFunction));
         info.cachedPrototype.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoObj));
         info.callReturnLocation = linkBuffer.locationOf(m_methodGets[i].m_slowCall);
+    }
+    
+    MacroAssemblerCodeRef osrExitThunk = globalData()->getCTIStub(osrExitGenerationThunkGenerator);
+    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
+    for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
+        OSRExit& exit = codeBlock()->osrExit(i);
+        linkBuffer.link(exit.m_check.lateJump(), target);
+        exit.m_check.correctLateJump(linkBuffer);
     }
 }
 

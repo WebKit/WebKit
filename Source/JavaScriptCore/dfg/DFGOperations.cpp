@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGOSRExit.h"
 #include "DFGRepatch.h"
 #include "InlineASM.h"
 #include "Interpreter.h"
@@ -783,7 +784,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void* debug
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    printf("Speculation failure in %p at 0x%x with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->debugOffset, alternative ? alternative->executeCounter() : 0, alternative ? alternative->reoptimizationRetryCounter() : 0, alternative ? alternative->optimizationDelayCounter() : 0, codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
+    printf("Speculation failure in %p at @%u with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->nodeIndex, alternative ? alternative->executeCounter() : 0, alternative ? alternative->reoptimizationRetryCounter() : 0, alternative ? alternative->optimizationDelayCounter() : 0, codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
 }
 #endif
 

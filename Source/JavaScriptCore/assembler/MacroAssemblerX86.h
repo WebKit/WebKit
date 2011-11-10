@@ -46,6 +46,7 @@ public:
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::jump;
     using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::storeDouble;
@@ -153,6 +154,12 @@ public:
     Call call()
     {
         return Call(m_assembler.call(), Call::Linkable);
+    }
+
+    // Address is a memory location containing the address to jump to
+    void jump(AbsoluteAddress address)
+    {
+        m_assembler.jmp_m(address.m_ptr);
     }
 
     Call tailRecursiveCall()

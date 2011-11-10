@@ -23,42 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
+#include "config.h"
+#include "DFGCorrectableJumpPoint.h"
 
-#include <wtf/Platform.h>
+#include "CodeBlock.h"
 
-#if ENABLE(DFG_JIT)
+namespace JSC { namespace DFG {
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
-
-namespace JSC {
-
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(AssemblyHelpers& jit)
-        : m_jit(jit)
-    {
-    }
-    
-    void compileExit(const OSRExit&, SpeculationRecovery*);
-
-private:
-    AssemblyHelpers& m_jit;
-};
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*);
+CodeLocationJump CorrectableJumpPoint::codeLocationForRepatch(CodeBlock* codeBlock) const
+{
+    ASSERT(m_mode == CorrectedJump);
+    return CodeLocationJump(codeBlock->getJITCode().dataAddressAtOffset(m_codeOffset));
 }
 
 } } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGOSRExitCompiler_h

@@ -133,19 +133,6 @@ public:
     bool compile();
     void linkOSREntries(LinkBuffer&);
 
-    // Retrieve the list of bail-outs from the speculative path,
-    // and additional recovery information.
-    OSRExitVector& osrExits()
-    {
-        return m_osrExits;
-    }
-    SpeculationRecovery* speculationRecovery(size_t index)
-    {
-        // OSRExit::m_recoveryIndex is offset by 1,
-        // 0 means no recovery.
-        return index ? &m_speculationRecoveryList[index - 1] : 0;
-    }
-
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
     GPRReg fillSpeculateInt(NodeIndex, DataFormat& returnFormat);
@@ -239,15 +226,15 @@ private:
     {
         if (!m_compileOkay)
             return;
-        m_osrExits.append(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
         if (!m_compileOkay)
             return;
-        m_speculationRecoveryList.append(recovery);
-        m_osrExits.append(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_speculationRecoveryList.size()));
+        m_jit.codeBlock()->appendSpeculationRecovery(recovery);
+        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
 
     // Called when we statically determine that a speculation will fail.
@@ -270,12 +257,6 @@ private:
     // will make conflicting speculations about the same operand). In such cases this
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
-    // This vector tracks bail-outs from the speculative path to the old JIT.
-    OSRExitVector m_osrExits;
-    // Some bail-outs need to record additional information recording specific recovery
-    // to be performed (for example, on detected overflow from an add, we may need to
-    // reverse the addition if an operand is being overwritten).
-    Vector<SpeculationRecovery, 16> m_speculationRecoveryList;
     
     // Tracking for which nodes are currently holding the values of arguments and bytecode
     // operand-indexed variables.

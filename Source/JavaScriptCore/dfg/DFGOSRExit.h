@@ -30,10 +30,13 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeOrigin.h"
 #include "DFGCommon.h"
+#include "DFGCorrectableJumpPoint.h"
 #include "DFGGPRInfo.h"
 #include "MacroAssembler.h"
 #include "ValueProfile.h"
+#include "ValueRecovery.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
@@ -79,10 +82,12 @@ private:
 struct OSRExit {
     OSRExit(JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
     
+    MacroAssemblerCodeRef m_code;
+    
     JSValueSource m_jsValueSource;
     ValueProfile* m_valueProfile;
     
-    MacroAssembler::Jump m_check;
+    CorrectableJumpPoint m_check;
     NodeIndex m_nodeIndex;
     CodeOrigin m_codeOrigin;
     
@@ -126,7 +131,13 @@ struct OSRExit {
     Vector<ValueRecovery, 0> m_variables;
     int m_lastSetOperand;
 };
-typedef SegmentedVector<OSRExit, 16> OSRExitVector;
+
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
+struct SpeculationFailureDebugInfo {
+    CodeBlock* codeBlock;
+    NodeIndex nodeIndex;
+};
+#endif
 
 } } // namespace JSC::DFG
 

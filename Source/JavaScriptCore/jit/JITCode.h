@@ -92,6 +92,12 @@ namespace JSC {
             ASSERT(offset < size());
             return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
         }
+        
+        void* dataAddressAtOffset(size_t offset) const
+        {
+            ASSERT(offset < size());
+            return reinterpret_cast<char*>(m_ref.code().dataLocation()) + offset;
+        }
 
         // This function returns the offset in bytes of 'pointerIntoCode' into
         // this block of code.  The pointer provided must be a pointer into this

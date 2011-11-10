@@ -54,13 +54,6 @@ class SpeculationRecovery;
 struct EntryLocation;
 struct OSRExit;
 
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-struct SpeculationFailureDebugInfo {
-    CodeBlock* codeBlock;
-    unsigned debugOffset;
-};
-#endif
-
 // === CallLinkRecord ===
 //
 // A record of a call out from JIT code that needs linking to a helper function.
@@ -303,7 +296,7 @@ private:
     void link(LinkBuffer&);
 
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
-    void linkOSRExits(SpeculativeJIT&);
+    void linkOSRExits();
     
     // The dataflow graph currently being generated.
     Graph& m_graph;

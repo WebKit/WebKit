@@ -74,6 +74,12 @@
 		0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0976F14693AEF00CF2442 /* DFGOSRExitCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0977014693AEF00CF2442 /* DFGOSRExitCompiler64.cpp */; };
 		0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC09775146943AD00CF2442 /* DFGOSRExitCompiler32_64.cpp */; };
+		0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0978E146A6F6300CF2442 /* DFGOSRExit.cpp */; };
+		0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */; };
+		0FC0979C146A772500CF2442 /* DFGCorrectableJumpPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0979A146A772000CF2442 /* DFGCorrectableJumpPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC0979E146B272100CF2442 /* DFGCorrectableJumpPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0979D146B271E00CF2442 /* DFGCorrectableJumpPoint.cpp */; };
+		0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0979F146B28C700CF2442 /* DFGThunks.cpp */; };
+		0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC097A0146B28C700CF2442 /* DFGThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
 		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -845,6 +851,12 @@
 		0FC0977014693AEF00CF2442 /* DFGOSRExitCompiler64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitCompiler64.cpp; path = dfg/DFGOSRExitCompiler64.cpp; sourceTree = "<group>"; };
 		0FC09775146943AD00CF2442 /* DFGOSRExitCompiler32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitCompiler32_64.cpp; path = dfg/DFGOSRExitCompiler32_64.cpp; sourceTree = "<group>"; };
 		0FC0977E1469EBC400CF2442 /* DFGCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCommon.h; path = dfg/DFGCommon.h; sourceTree = "<group>"; };
+		0FC0978E146A6F6300CF2442 /* DFGOSRExit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExit.cpp; path = dfg/DFGOSRExit.cpp; sourceTree = "<group>"; };
+		0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitCompiler.cpp; path = dfg/DFGOSRExitCompiler.cpp; sourceTree = "<group>"; };
+		0FC0979A146A772000CF2442 /* DFGCorrectableJumpPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCorrectableJumpPoint.h; path = dfg/DFGCorrectableJumpPoint.h; sourceTree = "<group>"; };
+		0FC0979D146B271E00CF2442 /* DFGCorrectableJumpPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCorrectableJumpPoint.cpp; path = dfg/DFGCorrectableJumpPoint.cpp; sourceTree = "<group>"; };
+		0FC0979F146B28C700CF2442 /* DFGThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGThunks.cpp; path = dfg/DFGThunks.cpp; sourceTree = "<group>"; };
+		0FC097A0146B28C700CF2442 /* DFGThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGThunks.h; path = dfg/DFGThunks.h; sourceTree = "<group>"; };
 		0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierSupport.cpp; sourceTree = "<group>"; };
 		0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierSupport.h; sourceTree = "<group>"; };
 		0FC815121405118600CFA603 /* VTableSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTableSpectrum.cpp; sourceTree = "<group>"; };
@@ -2305,6 +2317,12 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
+				0FC097A0146B28C700CF2442 /* DFGThunks.h */,
+				0FC0979D146B271E00CF2442 /* DFGCorrectableJumpPoint.cpp */,
+				0FC0979A146A772000CF2442 /* DFGCorrectableJumpPoint.h */,
+				0FC0978E146A6F6300CF2442 /* DFGOSRExit.cpp */,
+				0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */,
 				0FC09775146943AD00CF2442 /* DFGOSRExitCompiler32_64.cpp */,
 				0FC0976F14693AEF00CF2442 /* DFGOSRExitCompiler.h */,
 				0FC0977014693AEF00CF2442 /* DFGOSRExitCompiler64.cpp */,
@@ -2923,6 +2941,8 @@
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0FC0976D1468AB4E00CF2442 /* DFGAssemblyHelpers.h in Headers */,
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
+				0FC0979C146A772500CF2442 /* DFGCorrectableJumpPoint.h in Headers */,
+				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3456,6 +3476,10 @@
 				0FC0976E1468AB5100CF2442 /* DFGAssemblyHelpers.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
+				0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */,
+				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
+				0FC0979E146B272100CF2442 /* DFGCorrectableJumpPoint.cpp in Sources */,
+				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

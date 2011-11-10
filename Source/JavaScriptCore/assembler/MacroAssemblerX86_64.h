@@ -49,6 +49,7 @@ public:
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::jump;
     using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
@@ -125,6 +126,13 @@ public:
         Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
         ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
         return result;
+    }
+
+    // Address is a memory location containing the address to jump to
+    void jump(AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister);
+        jump(Address(scratchRegister));
     }
 
     Call tailRecursiveCall()

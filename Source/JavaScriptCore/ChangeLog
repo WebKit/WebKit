@@ -1,3 +1,82 @@
+2011-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit code should be lazily generated
+        https://bugs.webkit.org/show_bug.cgi?id=71744
+
+        Reviewed by Gavin Barraclough.
+        
+        The OSR exit code is now generated the first time it is executed,
+        rather than right after speculative compilation. Because most OSR
+        exits are never taken, this should greatly reduce both code size
+        and compilation time.
+        
+        This is a 1% win on SunSpider, and a 1% win on V8 when running in
+        my harness. No change in V8 in V8's harness (due to the long runs,
+        so compile time is not an issue) and no change in Kraken (again,
+        long runs of small code so compile time has no measurable effect).
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::jump):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::jump):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::jmp_m):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::createDFGDataIfNecessary):
+        (JSC::CodeBlock::appendDFGOSREntryData):
+        (JSC::CodeBlock::numberOfDFGOSREntries):
+        (JSC::CodeBlock::dfgOSREntryData):
+        (JSC::CodeBlock::dfgOSREntryDataForBytecodeIndex):
+        (JSC::CodeBlock::appendOSRExit):
+        (JSC::CodeBlock::appendSpeculationRecovery):
+        (JSC::CodeBlock::numberOfOSRExits):
+        (JSC::CodeBlock::numberOfSpeculationRecoveries):
+        (JSC::CodeBlock::osrExit):
+        (JSC::CodeBlock::speculationRecovery):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        * dfg/DFGCorrectableJumpPoint.cpp: Added.
+        (JSC::DFG::CorrectableJumpPoint::codeLocationForRepatch):
+        * dfg/DFGCorrectableJumpPoint.h: Added.
+        (JSC::DFG::CorrectableJumpPoint::CorrectableJumpPoint):
+        (JSC::DFG::CorrectableJumpPoint::switchToLateJump):
+        (JSC::DFG::CorrectableJumpPoint::correctInitialJump):
+        (JSC::DFG::CorrectableJumpPoint::correctLateJump):
+        (JSC::DFG::CorrectableJumpPoint::initialJump):
+        (JSC::DFG::CorrectableJumpPoint::lateJump):
+        (JSC::DFG::CorrectableJumpPoint::correctJump):
+        (JSC::DFG::CorrectableJumpPoint::getJump):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOSRExit.cpp: Added.
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::OSRExit::dump):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompiler.cpp: Added.
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        * dfg/DFGThunks.cpp: Added.
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * dfg/DFGThunks.h: Added.
+        * jit/JITCode.h:
+        (JSC::JITCode::dataAddressAtOffset):
+        * runtime/JSGlobalData.h:
+
 2011-11-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing build breakage

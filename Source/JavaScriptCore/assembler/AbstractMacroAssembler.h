@@ -37,6 +37,9 @@ namespace JSC {
 
 class LinkBuffer;
 class RepatchBuffer;
+namespace DFG {
+class CorrectableJumpPoint;
+}
 
 template <class AssemblerType>
 class AbstractMacroAssembler {
@@ -257,6 +260,7 @@ public:
     class Label {
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
+        friend class DFG::CorrectableJumpPoint;
         friend class Jump;
         friend class MacroAssemblerCodeRef;
         friend class LinkBuffer;
@@ -405,6 +409,7 @@ public:
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
         friend class Call;
+        friend class DFG::CorrectableJumpPoint;
         friend class LinkBuffer;
     public:
         Jump()

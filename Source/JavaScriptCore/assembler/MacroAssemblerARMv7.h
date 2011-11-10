@@ -1031,6 +1031,13 @@ public:
         load32(address, dataTempRegister);
         m_assembler.bx(dataTempRegister);
     }
+    
+    void jump(AbsoluteAddress address)
+    {
+        move(TrusteddImmPtr(address.m_ptr), dataTempRegister);
+        load32(Address(dataTempRegister), dataTempRegister);
+        m_assembler.bx(dataTempRegister);
+    }
 
 
     // Arithmetic control flow operations:

@@ -23,42 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGOSRExit.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "DFGSpeculativeJIT.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(AssemblyHelpers& jit)
-        : m_jit(jit)
-    {
-    }
-    
-    void compileExit(const OSRExit&, SpeculationRecovery*);
-
-private:
-    AssemblyHelpers& m_jit;
-};
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*);
+OSRExit::OSRExit(JSValueSource jsValueSource, ValueProfile* valueProfile, MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
+    : m_jsValueSource(jsValueSource)
+    , m_valueProfile(valueProfile)
+    , m_check(check)
+    , m_nodeIndex(jit->m_compileIndex)
+    , m_codeOrigin(jit->m_codeOriginForOSR)
+    , m_recoveryIndex(recoveryIndex)
+    , m_arguments(jit->m_arguments.size())
+    , m_variables(jit->m_variables.size())
+    , m_lastSetOperand(jit->m_lastSetOperand)
+{
+    ASSERT(m_codeOrigin.isSet());
+    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
+        m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
+    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
+        m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
 }
+
+#ifndef NDEBUG
+void OSRExit::dump(FILE* out) const
+{
+    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
+        m_arguments[argument].dump(out);
+    fprintf(out, " : ");
+    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
+        m_variables[variable].dump(out);
+}
+#endif
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGOSRExitCompiler_h

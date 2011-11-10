@@ -23,42 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGOSRExitCompiler.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "CallFrame.h"
+#include "LinkBuffer.h"
+#include "RepatchBuffer.h"
 
-namespace JSC {
-
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(AssemblyHelpers& jit)
-        : m_jit(jit)
-    {
-    }
-    
-    void compileExit(const OSRExit&, SpeculationRecovery*);
-
-private:
-    AssemblyHelpers& m_jit;
-};
+namespace JSC { namespace DFG {
 
 extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*);
+
+void compileOSRExit(ExecState* exec)
+{
+    CodeBlock* codeBlock = exec->codeBlock();
+    JSGlobalData* globalData = &exec->globalData();
+    
+    uint32_t exitIndex = globalData->osrExitIndex;
+    OSRExit& exit = codeBlock->osrExit(exitIndex);
+    
+    SpeculationRecovery* recovery = 0;
+    if (exit.m_recoveryIndex)
+        recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    fprintf(stderr, "Generating OSR exit #%u for code block %p.\n", exitIndex, codeBlock);
+#endif
+
+    {
+        AssemblyHelpers jit(globalData, codeBlock);
+        OSRExitCompiler exitCompiler(jit);
+        
+        exitCompiler.compileExit(exit, recovery);
+        
+        LinkBuffer patchBuffer(*globalData, &jit);
+        exit.m_code = patchBuffer.finalizeCode();
+    }
+    
+    {
+        RepatchBuffer repatchBuffer(codeBlock);
+        repatchBuffer.relink(exit.m_check.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code().executableAddress()));
+    }
+    
+    globalData->osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
+
+} // extern "C"
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGOSRExitCompiler_h

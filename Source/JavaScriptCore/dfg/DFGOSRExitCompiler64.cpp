@@ -28,13 +28,13 @@
 
 #if ENABLE(DFG_JIT) && USE(JSVALUE64)
 
+#include "DFGOperations.h"
+
 namespace JSC { namespace DFG {
 
 void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* recovery)
 {
     // 1) Pro-forma stuff.
-    exit.m_check.link(&m_jit);
-
 #if DFG_ENABLE(DEBUG_VERBOSE)
     fprintf(stderr, "OSR exit for Node @%d (", (int)exit.m_nodeIndex);
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
@@ -43,13 +43,13 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             break;
         fprintf(stderr, " -> %p ", codeOrigin.inlineCallFrame->executable.get());
     }
-    fprintf(stderr, ") at JIT offset 0x%x  ", m_jit.debugOffset());
+    fprintf(stderr, ")  ");
     exit.dump(stderr);
 #endif
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
     SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
     debugInfo->codeBlock = m_jit.codeBlock();
-    debugInfo->debugOffset = m_jit.debugOffset();
+    debugInfo->nodeIndex = exit.m_nodeIndex;
     
     m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
 #endif

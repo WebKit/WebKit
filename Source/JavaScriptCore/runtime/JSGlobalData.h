@@ -240,10 +240,9 @@ namespace JSC {
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
-#ifndef NDEBUG
-        int64_t debugDataBuffer[64];
-#endif
 #if ENABLE(DFG_JIT)
+        uint32_t osrExitIndex;
+        void* osrExitJumpDestination;
         Vector<void*> scratchBuffers;
         size_t sizeOfLastScratchBuffer;
         

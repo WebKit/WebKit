@@ -33,6 +33,7 @@
 #include "CodeOrigin.h"
 #include "CompactJITCodeMap.h"
 #include "DFGOSREntry.h"
+#include "DFGOSRExit.h"
 #include "EvalCodeCache.h"
 #include "Heuristics.h"
 #include "Instruction.h"
@@ -361,19 +362,69 @@ namespace JSC {
             return m_jitCodeMap.get();
         }
         
+        void createDFGDataIfNecessary()
+        {
+            if (!!m_dfgData)
+                return;
+            
+            m_dfgData = adoptPtr(new DFGData);
+        }
+        
         DFG::OSREntryData* appendDFGOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
         {
+            createDFGDataIfNecessary();
             DFG::OSREntryData entry;
             entry.m_bytecodeIndex = bytecodeIndex;
             entry.m_machineCodeOffset = machineCodeOffset;
-            m_dfgOSREntry.append(entry);
-            return &m_dfgOSREntry.last();
+            m_dfgData->osrEntry.append(entry);
+            return &m_dfgData->osrEntry.last();
         }
-        unsigned numberOfDFGOSREntries() const { return m_dfgOSREntry.size(); }
-        DFG::OSREntryData* dfgOSREntryData(unsigned i) { return &m_dfgOSREntry[i]; }
+        unsigned numberOfDFGOSREntries() const
+        {
+            if (!m_dfgData)
+                return 0;
+            return m_dfgData->osrEntry.size();
+        }
+        DFG::OSREntryData* dfgOSREntryData(unsigned i) { return &m_dfgData->osrEntry[i]; }
         DFG::OSREntryData* dfgOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
         {
-            return binarySearch<DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(m_dfgOSREntry.begin(), m_dfgOSREntry.size(), bytecodeIndex);
+            return binarySearch<DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(m_dfgData->osrEntry.begin(), m_dfgData->osrEntry.size(), bytecodeIndex);
+        }
+        
+        void appendOSRExit(const DFG::OSRExit& osrExit)
+        {
+            createDFGDataIfNecessary();
+            m_dfgData->osrExit.append(osrExit);
+        }
+        
+        void appendSpeculationRecovery(const DFG::SpeculationRecovery& recovery)
+        {
+            createDFGDataIfNecessary();
+            m_dfgData->speculationRecovery.append(recovery);
+        }
+        
+        unsigned numberOfOSRExits()
+        {
+            if (!m_dfgData)
+                return 0;
+            return m_dfgData->osrExit.size();
+        }
+        
+        unsigned numberOfSpeculationRecoveries()
+        {
+            if (!m_dfgData)
+                return 0;
+            return m_dfgData->speculationRecovery.size();
+        }
+        
+        DFG::OSRExit& osrExit(unsigned index)
+        {
+            return m_dfgData->osrExit[index];
+        }
+        
+        DFG::SpeculationRecovery& speculationRecovery(unsigned index)
+        {
+            return m_dfgData->speculationRecovery[index];
         }
 #endif
 
@@ -996,7 +1047,14 @@ namespace JSC {
 #endif
 #if ENABLE(DFG_JIT)
         OwnPtr<CompactJITCodeMap> m_jitCodeMap;
-        Vector<DFG::OSREntryData> m_dfgOSREntry;
+        
+        struct DFGData {
+            Vector<DFG::OSREntryData, 4> osrEntry;
+            SegmentedVector<DFG::OSRExit, 16> osrExit;
+            Vector<DFG::SpeculationRecovery, 4> speculationRecovery;
+        };
+        
+        OwnPtr<DFGData> m_dfgData;
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;

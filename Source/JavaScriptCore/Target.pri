@@ -86,6 +86,7 @@ SOURCES += \
     dfg/DFGAssemblyHelpers.cpp \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \
+    dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCodeGenerator.cpp \
@@ -94,6 +95,8 @@ SOURCES += \
     dfg/DFGJITCompiler.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
+    dfg/DFGOSRExit.cpp \
+    dfg/DFGOSRExitCompiler.cpp \
     dfg/DFGOSRExitCompiler64.cpp \
     dfg/DFGOSRExitCompiler32_64.cpp \
     dfg/DFGPropagator.cpp \
@@ -101,6 +104,7 @@ SOURCES += \
     dfg/DFGSpeculativeJIT.cpp \
     dfg/DFGSpeculativeJIT32_64.cpp \
     dfg/DFGSpeculativeJIT64.cpp \
+    dfg/DFGThunks.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \

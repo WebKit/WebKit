@@ -134,10 +134,12 @@ public:
     // Add a debug call. This call has no effect on JIT code execution state.
     void debugCall(V_DFGDebugOperation_EP function, void* argument)
     {
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_globalData->scratchBufferForSize(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters)));
+        
         for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
-            storePtr(GPRInfo::toRegister(i), m_globalData->debugDataBuffer + i);
+            storePtr(GPRInfo::toRegister(i), buffer + i);
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+            move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
         }
 #if CPU(X86_64)
@@ -152,11 +154,11 @@ public:
         move(TrustedImmPtr(reinterpret_cast<void*>(function)), GPRInfo::regT0);
         call(GPRInfo::regT0);
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+            move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
         }
         for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
-            loadPtr(m_globalData->debugDataBuffer + i, GPRInfo::toRegister(i));
+            loadPtr(buffer + i, GPRInfo::toRegister(i));
     }
 #endif
 

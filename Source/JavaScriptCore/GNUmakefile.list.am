@@ -115,6 +115,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
 	Source/JavaScriptCore/dfg/DFGCapabilities.h \
+	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.cpp \
+	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.h \
 	Source/JavaScriptCore/dfg/DFGDriver.cpp \
 	Source/JavaScriptCore/dfg/DFGDriver.h \
 	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
@@ -138,8 +140,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOSREntry.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler32_64.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler64.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.h \
+	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
 	Source/JavaScriptCore/dfg/DFGPropagator.cpp \
 	Source/JavaScriptCore/dfg/DFGPropagator.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
@@ -151,6 +155,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGStructureSet.h \
+	Source/JavaScriptCore/dfg/DFGThunks.cpp \
+	Source/JavaScriptCore/dfg/DFGThunks.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
 	Source/JavaScriptCore/heap/AllocationSpace.cpp \
 	Source/JavaScriptCore/heap/AllocationSpace.h \

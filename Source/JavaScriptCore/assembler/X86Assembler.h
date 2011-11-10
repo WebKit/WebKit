@@ -1280,6 +1280,13 @@ public:
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, base, offset);
     }
+    
+#if !CPU(X86_64)
+    void jmp_m(const void* address)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, address);
+    }
+#endif
 
     AssemblerLabel jne()
     {
