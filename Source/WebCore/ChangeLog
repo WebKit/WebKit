@@ -1,3 +1,16 @@
+2011-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99782.
+        http://trac.webkit.org/changeset/99782
+        https://bugs.webkit.org/show_bug.cgi?id=71979
+
+        broke most of the feImage tests (Requested by thorton on
+        #webkit).
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::build):
+
 2011-11-09  Kentaro Hara  <haraken@chromium.org>
 
         Remove [CanBeConstructed] IDL from CodeGenerator{JS,V8}.pm
