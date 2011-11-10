@@ -306,6 +306,31 @@ testComputedFilterRule("No values",
                        ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
                        ["sharpen(0 0px 1)"]);
 
+testComputedFilterRule("Color then three values",
+                       "drop-shadow(red 1px 2px 3px)", 1,
+                       ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+                       ["drop-shadow(rgb(255, 0, 0) 1px 2px 3px)"]);
+
+testComputedFilterRule("Three values then color",
+                       "drop-shadow(1px 2px 3px red)", 1,
+                       ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+                       ["drop-shadow(rgb(255, 0, 0) 1px 2px 3px)"]);
+
+testComputedFilterRule("Color then three values with zero length",
+                       "drop-shadow(#abc 0 0 0)", 1,
+                       ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+                       ["drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"]);
+
+testComputedFilterRule("Three values with zero length",
+                       "drop-shadow(0 0 0)", 1,
+                       ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+                       ["drop-shadow(rgba(0, 0, 0, 0) 0px 0px 0px)"]);
+
+testComputedFilterRule("Two values no color",
+                       "drop-shadow(1px 2px)", 1,
+                       ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+                       ["drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)"]);
+
 testComputedFilterRule("Multiple operations",
                        "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)", 9,
                        [

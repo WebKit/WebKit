@@ -5427,15 +5427,19 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         }
 #endif
 
-        bool haveNonPrimitiveValue = false;
-        for (unsigned j = 0; j < filterValue->length(); ++j) {
-            if (!filterValue->itemWithoutBoundsCheck(j)->isPrimitiveValue()) {
-                haveNonPrimitiveValue = true;
-                break;
+        // Check that all parameters are primitive values, with the
+        // exception of drop shadow which has a ShadowValue parameter.
+        if (operationType != FilterOperation::DROP_SHADOW) {
+            bool haveNonPrimitiveValue = false;
+            for (unsigned j = 0; j < filterValue->length(); ++j) {
+                if (!filterValue->itemWithoutBoundsCheck(j)->isPrimitiveValue()) {
+                    haveNonPrimitiveValue = true;
+                    break;
+                }
             }
+            if (haveNonPrimitiveValue)
+                continue;
         }
-        if (haveNonPrimitiveValue)
-            continue;
 
         CSSPrimitiveValue* firstValue = filterValue->length() ? static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(0)) : 0;
         switch (filterValue->operationType()) {
@@ -5529,6 +5533,26 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
                 threshold = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(2))->getDoubleValue();
 
             operations.operations().append(SharpenFilterOperation::create(amount, radius, threshold, operationType));
+            break;
+        }
+        case WebKitCSSFilterValue::DropShadowFilterOperation: {
+            if (filterValue->length() != 1)
+                return false;
+
+            CSSValue* cssValue = filterValue->itemWithoutBoundsCheck(0);
+            if (!cssValue->isShadowValue())
+                continue;
+
+            ShadowValue* item = static_cast<ShadowValue*>(cssValue);
+            int x = item->x->computeLength<int>(style, rootStyle, zoomFactor);
+            int y = item->y->computeLength<int>(style, rootStyle, zoomFactor);
+            int blur = item->blur ? item->blur->computeLength<int>(style, rootStyle, zoomFactor) : 0;
+            Color color;
+            if (item->color)
+                color = getColorFromPrimitiveValue(item->color.get());
+            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
+            
+            operations.operations().append(DropShadowFilterOperation::create(shadowData.release(), operationType));
             break;
         }
         case WebKitCSSFilterValue::UnknownFilterOperation:

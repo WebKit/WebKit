@@ -644,14 +644,69 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
 PASS subRule.cssText is 'sharpen()'
 
-Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
+Color then three values : drop-shadow(red 1px 2px 3px)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)'
+PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(red 1px 2px 3px)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
-PASS filterRule.length is 9
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
+
+Three values then color : drop-shadow(1px 2px 3px red)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(red 1px 2px 3px)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
+
+Color then three values with zero length : drop-shadow(#abc 0 0 0)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
+
+Three values with zero length : drop-shadow(0 0 0)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(0px 0px 0px)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(0px 0px 0px)'
+
+Two values no color : drop-shadow(1px 2px)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'drop-shadow(1px 2px)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(1px 2px)'
+
+Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2) drop-shadow(green 1px 2px 3px)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2) drop-shadow(green 1px 2px 3px)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 10
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.5)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
@@ -670,6 +725,8 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(5px 2em)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
 PASS subRule.cssText is 'sharpen(0.5 3px 2)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(green 1px 2px 3px)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

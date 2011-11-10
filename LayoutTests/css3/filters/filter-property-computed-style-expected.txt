@@ -313,6 +313,31 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
 PASS subRule.cssText is 'sharpen(0 0px 1)'
 
+Color then three values : drop-shadow(red 1px 2px 3px)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgb(255, 0, 0) 1px 2px 3px)'
+
+Three values then color : drop-shadow(1px 2px 3px red)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgb(255, 0, 0) 1px 2px 3px)'
+
+Color then three values with zero length : drop-shadow(#abc 0 0 0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
+
+Three values with zero length : drop-shadow(0 0 0)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgba(0, 0, 0, 0) 0px 0px 0px)'
+
+Two values no color : drop-shadow(1px 2px)
+PASS filterStyle.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
+PASS subRule.cssText is 'drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)'
+
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
 PASS filterStyle.length is 9
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE

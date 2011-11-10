@@ -81,6 +81,10 @@ private:
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 #endif
 
+#if ENABLE(CSS_FILTERS)
+    PassRefPtr<CSSValue> valueForFilter(RenderStyle*) const;
+#endif
+
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;

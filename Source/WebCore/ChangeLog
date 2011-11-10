@@ -1,3 +1,40 @@
+2011-11-10  Dean Jackson  <dino@apple.com>
+
+        Parse drop-shadow() filter syntax
+        https://bugs.webkit.org/show_bug.cgi?id=69108
+
+        Reviewed by Simon Fraser.
+
+        Support parsing of the shadow syntax inside drop-shadow
+        and returning the correct computed style for a filter that
+        has such a function.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+            Move this from a static function (computedFilter) to a method on
+            CSSComputedStyleDeclaration, which allows us to call the
+            existing method for shadow styles.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseShadow):
+            Previously parseShadow expected to be called with the entire
+            value of a property, not just to look at a restricted subset.
+            Change parseShadow to take a CSSParserValueList as parameter,
+            allowing it to be used to parse the arguments to the drop-shadow
+            function. Also, return the CSSValueList rather than injecting
+            it directly into the property value.
+        (WebCore::filterInfoForName):
+        (WebCore::CSSParser::parseFilter):
+            Support for the drop-shadow() function.
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+            Updated to use the new arguments for parseShadow.
+
 2011-11-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: ApplicationCache UI is confusing and incorrect.

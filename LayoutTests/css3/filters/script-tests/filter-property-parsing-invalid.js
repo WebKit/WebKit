@@ -87,4 +87,12 @@ testInvalidFilterRule("Too many parameters and commas", "sharpen(1, 1px, 1, 1)")
 testInvalidFilterRule("Commas", "sharpen(1, 10px, 1)");
 testInvalidFilterRule("Trailing comma", "sharpen(1, 10px,)");
 
+testInvalidFilterRule("No values", "drop-shadow()");
+testInvalidFilterRule("Missing lengths", "drop-shadow(red)");
+testInvalidFilterRule("Not enough lengths", "drop-shadow(red 1px)");
+testInvalidFilterRule("Missing units", "drop-shadow(red 1 2 3)");
+testInvalidFilterRule("Inset", "drop-shadow(red 1px 2px 3px inset)");
+testInvalidFilterRule("Too many parameters", "drop-shadow(red 1px 2px 3px 4px)");
+testInvalidFilterRule("Commas", "drop-shadow(red, 1px, 2px, 3px)");
+
 successfullyParsed = true;

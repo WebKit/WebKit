@@ -649,9 +649,11 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
 }
 
 #if ENABLE(CSS_FILTERS)
-static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* style) const
 {
-    if (!renderer || style->filter().operations().isEmpty())
+    CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
+
+    if (style->filter().operations().isEmpty())
         return primitiveValueCache->createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
@@ -725,6 +727,13 @@ static PassRefPtr<CSSValue> computedFilter(RenderObject* renderer, const RenderS
             filterValue->append(primitiveValueCache->createValue(sharpenOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             filterValue->append(zoomAdjustedPixelValue(sharpenOperation->radius().value(), style, primitiveValueCache));
             filterValue->append(primitiveValueCache->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::DROP_SHADOW: {
+            DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::DropShadowFilterOperation);
+            // We want our computed style to look like that of a text shadow (has neither spread nor inset style).
+            filterValue->append(valueForShadow(dropShadowOperation->shadow(), CSSPropertyTextShadow, style));
             break;
         }
 #if ENABLE(CSS_SHADERS)
@@ -2014,7 +2023,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->regionOverflow());
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
-            return computedFilter(renderer, style.get(), primitiveValueCache);
+            return valueForFilter(style.get());
 #endif
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:

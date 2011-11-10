@@ -331,9 +331,34 @@ testFilterRule("No values",
                ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
                ["sharpen()"]);
 
+testFilterRule("Color then three values",
+              "drop-shadow(red 1px 2px 3px)", 1, "drop-shadow(red 1px 2px 3px)",
+              ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+              ["drop-shadow(red 1px 2px 3px)"]);
+
+testFilterRule("Three values then color",
+              "drop-shadow(1px 2px 3px red)", 1, "drop-shadow(red 1px 2px 3px)",
+              ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+              ["drop-shadow(red 1px 2px 3px)"]);
+
+testFilterRule("Color then three values with zero length",
+              "drop-shadow(#abc 0 0 0)", 1, "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)",
+              ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+              ["drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"]);
+
+testFilterRule("Three values with zero length",
+              "drop-shadow(0 0 0)", 1, "drop-shadow(0px 0px 0px)",
+              ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+              ["drop-shadow(0px 0px 0px)"]);
+
+testFilterRule("Two values no color",
+              "drop-shadow(1px 2px)", 1, "drop-shadow(1px 2px)",
+              ["WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"],
+              ["drop-shadow(1px 2px)"]);
+
 testFilterRule("Multiple operations",
-               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)", 9,
-               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)",
+               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2) drop-shadow(green 1px 2px 3px)", 10,
+               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2) drop-shadow(green 1px 2px 3px)",
                [
                    "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
                    "WebKitCSSFilterValue.CSS_FILTER_SEPIA",
@@ -343,7 +368,8 @@ testFilterRule("Multiple operations",
                    "WebKitCSSFilterValue.CSS_FILTER_OPACITY",
                    "WebKitCSSFilterValue.CSS_FILTER_GAMMA",
                    "WebKitCSSFilterValue.CSS_FILTER_BLUR",
-                   "WebKitCSSFilterValue.CSS_FILTER_SHARPEN"
+                   "WebKitCSSFilterValue.CSS_FILTER_SHARPEN",
+                   "WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW"
                ],
                [
                    "grayscale(0.5)",
@@ -354,7 +380,8 @@ testFilterRule("Multiple operations",
                    "opacity(0.9)",
                    "gamma(2 1.1 1)",
                    "blur(5px 2em)",
-                   "sharpen(0.5 3px 2)"
+                   "sharpen(0.5 3px 2)",
+                   "drop-shadow(green 1px 2px 3px)"
                ]);
 
 successfullyParsed = true;

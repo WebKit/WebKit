@@ -1533,8 +1533,15 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitBoxShadow:
         if (id == CSSValueNone)
             validPrimitive = true;
-        else
-            return parseShadow(propId, important);
+        else {
+            RefPtr<CSSValueList> shadowValueList = parseShadow(m_valueList, propId);
+            if (shadowValueList) {
+                addProperty(propId, shadowValueList.release(), important);
+                m_valueList->next();
+                return true;
+            }
+            return false;
+        }
         break;
     case CSSPropertyWebkitBoxReflect:
         if (id == CSSValueNone)
@@ -4984,34 +4991,34 @@ struct ShadowParseContext {
     bool allowBreak;
 };
 
-bool CSSParser::parseShadow(int propId, bool important)
+PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, int propId)
 {
     ShadowParseContext context(static_cast<CSSPropertyID>(propId), primitiveValueCache());
     CSSParserValue* val;
-    while ((val = m_valueList->current())) {
+    while ((val = valueList->current())) {
         // Check for a comma break first.
         if (val->unit == CSSParserValue::Operator) {
             if (val->iValue != ',' || !context.allowBreak)
                 // Other operators aren't legal or we aren't done with the current shadow
                 // value.  Treat as invalid.
-                return false;
+                return 0;
 #if ENABLE(SVG)
             // -webkit-svg-shadow does not support multiple values.
             if (static_cast<CSSPropertyID>(propId) == CSSPropertyWebkitSvgShadow)
-                return false;
+                return 0;
 #endif
             // The value is good.  Commit it.
             context.commitValue();
         } else if (validUnit(val, FLength, true)) {
             // We required a length and didn't get one. Invalid.
             if (!context.allowLength())
-                return false;
+                return 0;
 
             // A length is allowed here.  Construct the value and add it.
             context.commitLength(val);
         } else if (val->id == CSSValueInset) {
             if (!context.allowStyle)
-                return false;
+                return 0;
 
             context.commitStyle(val);
         } else {
@@ -5022,7 +5029,7 @@ bool CSSParser::parseShadow(int propId, bool important)
                             || val->id == CSSValueCurrentcolor);
             if (isColor) {
                 if (!context.allowColor)
-                    return false;
+                    return 0;
                 parsedColor = primitiveValueCache()->createIdentifierValue(val->id);
             }
 
@@ -5031,25 +5038,22 @@ bool CSSParser::parseShadow(int propId, bool important)
                 parsedColor = parseColor(val);
 
             if (!parsedColor || !context.allowColor)
-                return false; // This value is not a color or length and is invalid or
+                return 0; // This value is not a color or length and is invalid or
                               // it is a color, but a color isn't allowed at this point.
 
             context.commitColor(parsedColor.release());
         }
 
-        m_valueList->next();
+        valueList->next();
     }
 
     if (context.allowBreak) {
         context.commitValue();
-        if (context.values->length()) {
-            addProperty(propId, context.values.release(), important);
-            m_valueList->next();
-            return true;
-        }
+        if (context.values && context.values->length())
+            return context.values.release();
     }
 
-    return false;
+    return 0;
 }
 
 bool CSSParser::parseReflect(int propId, bool important)
@@ -6498,6 +6502,9 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
     } else if (equalIgnoringCase(name, "sharpen(")) {
         filterType = WebKitCSSFilterValue::SharpenFilterOperation;
         maximumArgumentCount = 3;
+    } else if (equalIgnoringCase(name, "drop-shadow(")) {
+        filterType = WebKitCSSFilterValue::DropShadowFilterOperation;
+        maximumArgumentCount = 4;  // x-offset, y-offset, blur-radius, color -- spread and inset style not allowed.
     }
 #if ENABLE(CSS_SHADERS)
     else if (equalIgnoringCase(name, "custom("))
@@ -6734,25 +6741,34 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
             CSSParserValueList* args = value->function->args.get();
             if (!args || args->size() > maximumArgumentCount)
                 return 0;
-
+            
             // Create the new WebKitCSSFilterValue for this operation and add it to our list.
             RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(filterType);
             list->append(filterValue);
-
-            CSSParserValue* argument = args->current();
-            unsigned argumentCount = 0;
-
-            while (argument) {
-                if (!isValidFilterArgument(argument, filterType, argumentCount))
+            
+            if (filterType == WebKitCSSFilterValue::DropShadowFilterOperation) {
+                RefPtr<CSSValueList> shadowValueList = parseShadow(args, CSSPropertyWebkitFilter);
+                if (shadowValueList && shadowValueList->length() == 1)
+                    filterValue->append((shadowValueList.release())->itemWithoutBoundsCheck(0));
+                else
                     return 0;
+            } else {
 
-                filterValue->append(createPrimitiveNumericValue(argument));
+                CSSParserValue* argument = args->current();
+                unsigned argumentCount = 0;
 
-                argument = args->next();
-                if (!argument)
-                    break;
+                while (argument) {
+                    if (!isValidFilterArgument(argument, filterType, argumentCount))
+                        return 0;
 
-                ++argumentCount;
+                    filterValue->append(createPrimitiveNumericValue(argument));
+
+                    argument = args->next();
+                    if (!argument)
+                        break;
+
+                    ++argumentCount;
+                }
             }
         }
     }
