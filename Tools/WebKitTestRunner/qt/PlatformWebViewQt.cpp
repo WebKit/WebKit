@@ -39,7 +39,7 @@ namespace WTR {
 class WrapperWindow : public QQuickView {
     Q_OBJECT
 public:
-    WrapperWindow(QQuickItem* view)
+    WrapperWindow(QQuickWebView* view)
         : QQuickView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
         , m_view(view)
     {
@@ -59,11 +59,11 @@ private slots:
         QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
         QWindowSystemInterface::handleWindowActivated(this);
-        m_view->setFocus(true);
+        m_view->page()->setFocus(true);
     }
 
 private:
-    QQuickItem* m_view;
+    QQuickWebView* m_view;
 };
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)

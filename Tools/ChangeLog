@@ -1,3 +1,16 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix focus related layout tests after API refactoring
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make sure the focus is set on the page now, not on the view
+        (which doesn't actually handle the focus).
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::WrapperWindow):
+        (WTR::WrapperWindow::handleStatusChanged):
+
 2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Merge QTouchWebView and QDesktopWebView into one class
