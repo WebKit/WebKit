@@ -44,8 +44,16 @@ void Gradient::platformDestroy()
 
 cairo_pattern_t* Gradient::platformGradient()
 {
-    if (m_gradient)
+    return platformGradient(1);
+}
+
+cairo_pattern_t* Gradient::platformGradient(float globalAlpha)
+{
+    if (m_gradient && m_platformGradientAlpha == globalAlpha)
         return m_gradient;
+
+    platformDestroy();
+    m_platformGradientAlpha = globalAlpha;
 
     if (m_radial)
         m_gradient = cairo_pattern_create_radial(m_p0.x(), m_p0.y(), m_r0, m_p1.x(), m_p1.y(), m_r1);
@@ -54,7 +62,9 @@ cairo_pattern_t* Gradient::platformGradient()
 
     Vector<ColorStop>::iterator stopIterator = m_stops.begin();
     while (stopIterator != m_stops.end()) {
-        cairo_pattern_add_color_stop_rgba(m_gradient, stopIterator->stop, stopIterator->red, stopIterator->green, stopIterator->blue, stopIterator->alpha);
+        cairo_pattern_add_color_stop_rgba(m_gradient, stopIterator->stop,
+                                          stopIterator->red, stopIterator->green, stopIterator->blue,
+                                          stopIterator->alpha * globalAlpha);
         ++stopIterator;
     }
 

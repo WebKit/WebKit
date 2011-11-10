@@ -138,6 +138,8 @@ namespace WebCore {
 #if USE(CG)
         void paint(CGContextRef);
         void paint(GraphicsContext*);
+#elif USE(CAIRO)
+        PlatformGradient platformGradient(float globalAlpha);
 #endif
 
     private:
@@ -163,6 +165,11 @@ namespace WebCore {
         AffineTransform m_gradientSpaceTransformation;
 
         PlatformGradient m_gradient;
+
+#if USE(CAIRO)
+        float m_platformGradientAlpha;
+#endif
+
     };
 
 } //namespace

@@ -1,3 +1,30 @@
+2011-11-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] Avoid clipping when painting more often
+        https://bugs.webkit.org/show_bug.cgi?id=71179
+
+        Reviewed by Xan Lopez.
+
+        No new tests. These changes are covered by existing tests.
+
+        * platform/graphics/Gradient.h: Add a Cairo-specific method
+        that gets the platform gradient with a particular alpha value.
+        * platform/graphics/cairo/GradientCairo.cpp: Now cache the alpha
+        value of the last created platform gradient.
+        (WebCore::Gradient::platformGradient): If the cached platform gradient
+        has a different alpha value than the one requested, destroy it and start
+        over.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow): Adjust the source to avoid calling
+        cairo_clip/cairo_paint_with_alpha and just do a fill.
+        (WebCore::shadowAndFillCurrentCairoPath): No need to clip here. Just
+        call cairo_fill.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::drawPatternToCairoContext): If we have a >= 1 alpha value
+        we can simply fill and avoid calling cairo_clip here.
+        (WebCore::prepareCairoContextSource): Remove TODO about recreating the
+        gradient. No longer need to reduce the gradient source.
+
 2011-11-09  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/10423024> WebProcess doesn't use AuthBrokerAgent for proxy credentials

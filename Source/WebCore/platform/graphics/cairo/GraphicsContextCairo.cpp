@@ -134,8 +134,7 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
         cairo_save(cairoShadowContext);
         cairo_append_path(cairoShadowContext, path.get());
         shadowContext->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
-        cairo_clip(cairoShadowContext);
-        cairo_paint(cairoShadowContext);
+        cairo_fill(cairoShadowContext);
         cairo_restore(cairoShadowContext);
     }
 
@@ -157,12 +156,11 @@ static inline void shadowAndFillCurrentCairoPath(GraphicsContext* context)
     cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
 
-    context->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
-
     drawPathShadow(context, Fill);
 
-    cairo_clip(cr);
-    cairo_paint_with_alpha(cr, context->platformContext()->globalAlpha());
+    context->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::AdjustPatternForGlobalAlpha);
+    cairo_fill(cr);
+
     cairo_restore(cr);
 }
 

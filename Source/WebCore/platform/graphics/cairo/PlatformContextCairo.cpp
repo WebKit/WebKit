@@ -143,8 +143,12 @@ static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, con
     cairo_translate(cr, destRect.x(), destRect.y());
     cairo_set_source(cr, pattern);
     cairo_rectangle(cr, 0, 0, destRect.width(), destRect.height());
-    cairo_clip(cr);
-    cairo_paint_with_alpha(cr, alpha);
+
+    if (alpha < 1) {
+        cairo_clip(cr);
+        cairo_paint_with_alpha(cr, alpha);
+    } else
+        cairo_fill(cr);
 }
 
 void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext* context)
@@ -213,13 +217,9 @@ static void prepareCairoContextSource(cairo_t* cr, Pattern* pattern, Gradient* g
         RefPtr<cairo_pattern_t> cairoPattern(adoptRef(pattern->createPlatformPattern(AffineTransform())));
         cairo_set_source(cr, cairoPattern.get());
         reduceSourceByAlpha(cr, globalAlpha);
-    } else if (gradient) {
-        cairo_set_source(cr, gradient->platformGradient());
-
-        // FIXME: It would be faster to simply recreate the Cairo gradient and multiply the
-        // color stops by the global alpha.
-        reduceSourceByAlpha(cr, globalAlpha);
-    } else { // Solid color source.
+    } else if (gradient)
+        cairo_set_source(cr, gradient->platformGradient(globalAlpha));
+    else { // Solid color source.
         if (globalAlpha < 1)
             setSourceRGBAFromColor(cr, colorWithOverrideAlpha(color.rgb(), color.alpha() / 255.f * globalAlpha));
         else
