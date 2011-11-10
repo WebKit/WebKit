@@ -1,3 +1,15 @@
+2011-11-09  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71873
+
+        Reviewed by Geoff Garen.
+
+        Incrementally re-landing these changes, trying to determine what went wrong.
+        (The whole patch failed tests on the build bot but worked locally.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+
 2011-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit code should be lazily generated
