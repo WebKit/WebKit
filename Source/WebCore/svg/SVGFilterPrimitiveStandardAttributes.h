@@ -39,7 +39,7 @@ class SVGFilterBuilder;
 
 class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement {
 public:
-    void setStandardAttributes(bool, FilterEffect*) const;
+    void setStandardAttributes(FilterEffect*) const;
 
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter* filter) = 0;
     // Returns true, if the new value is different from the old one.

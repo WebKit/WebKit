@@ -189,12 +189,6 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
     return true;
 }
 
-void SVGLinearGradientElement::calculateStartEndPoints(const LinearGradientAttributes& attributes, FloatPoint& startPoint, FloatPoint& endPoint)
-{
-    startPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.x1(), attributes.y1());
-    endPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.x2(), attributes.y2());
-}
-
 bool SVGLinearGradientElement::selfHasRelativeLengths() const
 {
     return x1().isRelative()

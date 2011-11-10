@@ -157,11 +157,6 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
         object->setNeedsLayout(true);
 }
 
-FloatRect SVGMaskElement::maskBoundingBox(const FloatRect& objectBoundingBox) const
-{
-    return SVGLengthContext::resolveRectangle<SVGMaskElement>(this, maskUnits(), objectBoundingBox);
-}
-
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceMasker(this);

@@ -175,7 +175,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
 
     // Create gradient object
     if (!gradientData->gradient) {
-        buildGradient(gradientData, gradientElement);
+        buildGradient(gradientData);
 
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding

@@ -45,19 +45,20 @@ bool RenderSVGResourceLinearGradient::collectGradientAttributes(SVGGradientEleme
     return static_cast<SVGLinearGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
 }
 
-void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const
+FloatPoint RenderSVGResourceLinearGradient::startPoint(const LinearGradientAttributes& attributes) const
 {
-    SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradientElement);
+    return SVGLengthContext::resolvePoint(static_cast<const SVGElement*>(node()), attributes.gradientUnits(), attributes.x1(), attributes.y1());
+}
 
-    // Determine gradient start/end points
-    FloatPoint startPoint;
-    FloatPoint endPoint;
-    linearGradientElement->calculateStartEndPoints(m_attributes, startPoint, endPoint);
+FloatPoint RenderSVGResourceLinearGradient::endPoint(const LinearGradientAttributes& attributes) const
+{
+    return SVGLengthContext::resolvePoint(static_cast<const SVGElement*>(node()), attributes.gradientUnits(), attributes.x2(), attributes.y2());
+}
 
-    gradientData->gradient = Gradient::create(startPoint, endPoint);
+void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData) const
+{
+    gradientData->gradient = Gradient::create(startPoint(m_attributes), endPoint(m_attributes));
     gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
-
-    // Add stops
     addStops(gradientData, m_attributes.stops());
 }
 

@@ -205,30 +205,6 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     return true;
 }
 
-void SVGRadialGradientElement::calculateFocalCenterPointsAndRadius(const RadialGradientAttributes& attributes, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius)
-{
-    // Determine gradient focal/center points and radius
-    focalPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.fx(), attributes.fy());
-    centerPoint = SVGLengthContext::resolvePoint(this, attributes.gradientUnits(), attributes.cx(), attributes.cy());
-    radius = SVGLengthContext::resolveLength(this, attributes.gradientUnits(), attributes.r());
-
-    // Eventually adjust focal points, as described below
-    float deltaX = focalPoint.x() - centerPoint.x();
-    float deltaY = focalPoint.y() - centerPoint.y();
-    float radiusMax = 0.99f * radius;
-
-    // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and r, set
-    // (fx, fy) to the point of intersection of the line through (fx, fy) and the circle.
-    // We scale the radius by 0.99 to match the behavior of FireFox.
-    if (sqrt(deltaX * deltaX + deltaY * deltaY) > radiusMax) {
-        float angle = atan2f(deltaY, deltaX);
-
-        deltaX = cosf(angle) * radiusMax;
-        deltaY = sinf(angle) * radiusMax;
-        focalPoint = FloatPoint(deltaX + centerPoint.x(), deltaY + centerPoint.y());
-    }
-}
-
 bool SVGRadialGradientElement::selfHasRelativeLengths() const
 {
     return cx().isRelative()

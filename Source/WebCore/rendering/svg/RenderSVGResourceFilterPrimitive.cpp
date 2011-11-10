@@ -65,8 +65,7 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
 FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {
     FloatRect uniteRect;
-    FloatRect subregionBoundingBox = effect->effectBoundaries();
-    FloatRect subregion = subregionBoundingBox;
+    FloatRect subregion = effect->effectBoundaries();
     SVGFilter* filter = static_cast<SVGFilter*>(effect->filter());
     ASSERT(filter);
 
@@ -82,36 +81,14 @@ FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(Fi
         uniteRect = filter->filterRegionInUserSpace();
     }
 
-    if (filter->effectBoundingBoxMode()) {
-        subregion = uniteRect;
-        // Avoid the calling of a virtual method several times.
-        FloatRect targetBoundingBox = filter->targetBoundingBox();
-
-        if (effect->hasX())
-            subregion.setX(targetBoundingBox.x() + subregionBoundingBox.x() * targetBoundingBox.width());
-
-        if (effect->hasY())
-            subregion.setY(targetBoundingBox.y() + subregionBoundingBox.y() * targetBoundingBox.height());
-
-        if (effect->hasWidth())
-            subregion.setWidth(subregionBoundingBox.width() * targetBoundingBox.width());
-
-        if (effect->hasHeight())
-            subregion.setHeight(subregionBoundingBox.height() * targetBoundingBox.height());
-    } else {
-        if (!effect->hasX())
-            subregion.setX(uniteRect.x());
-
-        if (!effect->hasY())
-            subregion.setY(uniteRect.y());
-
-        if (!effect->hasWidth())
-            subregion.setWidth(uniteRect.width());
-
-        if (!effect->hasHeight())
-            subregion.setHeight(uniteRect.height());
-    }
-
+    if (!effect->hasX())
+        subregion.setX(uniteRect.x());
+    if (!effect->hasY())
+        subregion.setY(uniteRect.y());
+    if (!effect->hasWidth())
+        subregion.setWidth(uniteRect.width());
+    if (!effect->hasHeight())
+        subregion.setHeight(uniteRect.height());
     effect->setFilterPrimitiveSubregion(subregion);
 
     FloatRect absoluteSubregion = filter->mapLocalRectToAbsoluteRect(subregion);

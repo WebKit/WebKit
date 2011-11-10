@@ -39,8 +39,6 @@ class SVGMaskElement : public SVGStyledLocatableElement,
 public:
     static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document*);
 
-    FloatRect maskBoundingBox(const FloatRect&) const;
-
 private:
     SVGMaskElement(const QualifiedName&, Document*);
 

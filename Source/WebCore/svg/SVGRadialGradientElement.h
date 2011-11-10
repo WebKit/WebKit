@@ -34,7 +34,6 @@ public:
     static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
 
     bool collectGradientAttributes(RadialGradientAttributes&);
-    void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
 
 private:
     SVGRadialGradientElement(const QualifiedName&, Document*);

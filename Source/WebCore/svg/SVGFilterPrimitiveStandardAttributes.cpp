@@ -126,34 +126,20 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser,
         invalidate();
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveBoundingBoxMode, FilterEffect* filterEffect) const
+void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(FilterEffect* filterEffect) const
 {
     ASSERT(filterEffect);
     if (!filterEffect)
         return;
 
-    if (this->hasAttribute(SVGNames::xAttr))
+    if (hasAttribute(SVGNames::xAttr))
         filterEffect->setHasX(true);
-    if (this->hasAttribute(SVGNames::yAttr))
+    if (hasAttribute(SVGNames::yAttr))
         filterEffect->setHasY(true);
-    if (this->hasAttribute(SVGNames::widthAttr))
+    if (hasAttribute(SVGNames::widthAttr))
         filterEffect->setHasWidth(true);
-    if (this->hasAttribute(SVGNames::heightAttr))
+    if (hasAttribute(SVGNames::heightAttr))
         filterEffect->setHasHeight(true);
-
-    FloatRect effectBBox;
-    if (primitiveBoundingBoxMode)
-        effectBBox = FloatRect(x().valueAsPercentage(),
-                               y().valueAsPercentage(),
-                               width().valueAsPercentage(),
-                               height().valueAsPercentage());
-    else
-        effectBBox = FloatRect(x().value(this),
-                               y().value(this),
-                               width().value(this),
-                               height().value(this));
-
-    filterEffect->setEffectBoundaries(effectBBox);
 }
 
 RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* arena, RenderStyle*)

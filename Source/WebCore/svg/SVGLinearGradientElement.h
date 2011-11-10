@@ -34,7 +34,6 @@ public:
     static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
 
     bool collectGradientAttributes(LinearGradientAttributes&);
-    void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
 private:
     SVGLinearGradientElement(const QualifiedName&, Document*);

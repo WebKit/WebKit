@@ -1,3 +1,64 @@
+2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Move unit resolving for all resources to rendering/
+        https://bugs.webkit.org/show_bug.cgi?id=72011
+
+        Reviewed by Andreas Kling.
+
+        Remove maskBoundingBox()/filterBoundingBox(), to avoid doing length resolution in svg/.
+        RenderSVGResource* now uses SVGLengthContext::resolveRectangle, to do this while laying out.
+
+        Move linear gradient start/end point, radial gradient focal/center point, radius calculations into
+        their RenderSVGResource classes, cleanup code a bit.
+
+        Convert filters to use SVGLengthContext. Fix DRT dumps for filters, while I'm at it, to give
+        meaningful values, when objectBoundingBox is used as primitive units, when applying to <text>/<tspan>s.
+
+        Several tests results need rebaselines on all platforms.
+
+        * platform/graphics/filters/Filter.h:
+        * rendering/svg/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::objectBoundingBox):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::startPoint):
+        (WebCore::RenderSVGResourceLinearGradient::endPoint):
+        (WebCore::RenderSVGResourceLinearGradient::buildGradient):
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::centerPoint):
+        (WebCore::RenderSVGResourceRadialGradient::focalPoint):
+        (WebCore::RenderSVGResourceRadialGradient::radius):
+        (WebCore::RenderSVGResourceRadialGradient::adjustFocalPointIfNeeded):
+        (WebCore::RenderSVGResourceRadialGradient::buildGradient):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGLinearGradientElement.cpp:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMaskElement.cpp:
+        * svg/SVGMaskElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        * svg/SVGRadialGradientElement.h:
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::filterRegionInUserSpace):
+
 2011-11-10  Stephen Chenney  <schenney@chromium.org>
 
         Null deref when no use element exists for SVG element instance

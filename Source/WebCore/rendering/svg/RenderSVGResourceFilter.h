@@ -76,7 +76,7 @@ public:
 
     virtual FloatRect resourceBoundingBox(RenderObject*);
 
-    PassRefPtr<SVGFilterBuilder> buildPrimitives(Filter*);
+    PassRefPtr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
 
     SVGUnitTypes::SVGUnitType filterUnits() const { return static_cast<SVGFilterElement*>(node())->filterUnits(); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return static_cast<SVGFilterElement*>(node())->primitiveUnits(); }

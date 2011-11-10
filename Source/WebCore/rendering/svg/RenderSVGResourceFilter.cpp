@@ -93,10 +93,10 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool m
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(Filter* filter)
+PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
 {
     SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());
-    bool primitiveBoundingBoxMode = filterElement->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    FloatRect targetBoundingBox = filter->targetBoundingBox();
 
     // Add effects to the builder
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(filter);
@@ -115,7 +115,8 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(Filter* fi
             return 0;
         }
         builder->appendEffectToEffectReferences(effect, effectElement->renderer());
-        effectElement->setStandardAttributes(primitiveBoundingBoxMode, effect.get());
+        effectElement->setStandardAttributes(effect.get());
+        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement, filterElement->primitiveUnits(), targetBoundingBox));
         builder->add(effectElement->result(), effect);
     }
     return builder.release();
@@ -160,7 +161,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     FloatRect targetBoundingBox = object->objectBoundingBox();
 
     SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());
-    filterData->boundaries = filterElement->filterBoundingBox(targetBoundingBox);
+    filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
     if (filterData->boundaries.isEmpty())
         return false;
 
@@ -330,7 +331,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(RenderObject* object)
 {
     if (SVGFilterElement* element = static_cast<SVGFilterElement*>(node()))
-        return element->filterBoundingBox(object->objectBoundingBox());
+        return SVGLengthContext::resolveRectangle<SVGFilterElement>(element, element->filterUnits(), object->objectBoundingBox());
 
     return FloatRect();
 }

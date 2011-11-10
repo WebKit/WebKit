@@ -575,11 +575,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         linearGradientElement->collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        FloatPoint startPoint;
-        FloatPoint endPoint;
-        linearGradientElement->calculateStartEndPoints(attributes, startPoint, endPoint);
-
-        ts << " [start=" << startPoint << "] [end=" << endPoint << "]\n";
+        ts << " [start=" << gradient->startPoint(attributes) << "] [end=" << gradient->endPoint(attributes) << "]\n";
     }  else if (resource->resourceType() == RadialGradientResourceType) {
         RenderSVGResourceRadialGradient* gradient = static_cast<RenderSVGResourceRadialGradient*>(resource);
 
@@ -591,10 +587,10 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         radialGradientElement->collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        FloatPoint focalPoint;
-        FloatPoint centerPoint;
-        float radius;
-        radialGradientElement->calculateFocalCenterPointsAndRadius(attributes, focalPoint, centerPoint, radius);
+        FloatPoint focalPoint = gradient->focalPoint(attributes);
+        FloatPoint centerPoint = gradient->centerPoint(attributes);
+        float radius = gradient->radius(attributes);
+        gradient->adjustFocalPointIfNeeded(radius, centerPoint, focalPoint);
 
         ts << " [center=" << centerPoint << "] [focal=" << focalPoint << "] [radius=" << radius << "]\n";
     } else

@@ -59,7 +59,7 @@ protected:
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual void calculateGradientTransform(AffineTransform&) = 0;
     virtual bool collectGradientAttributes(SVGGradientElement*) = 0;
-    virtual void buildGradient(GradientData*, SVGGradientElement*) const = 0;
+    virtual void buildGradient(GradientData*) const = 0;
 
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
 

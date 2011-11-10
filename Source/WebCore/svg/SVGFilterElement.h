@@ -44,7 +44,6 @@ public:
     static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
 
     void setFilterRes(unsigned long filterResX, unsigned long filterResY);
-    FloatRect filterBoundingBox(const FloatRect&) const;
 
 private:
     SVGFilterElement(const QualifiedName&, Document*);
