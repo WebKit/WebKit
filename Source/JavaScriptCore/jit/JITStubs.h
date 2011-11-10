@@ -150,9 +150,6 @@ namespace JSC {
     struct JITStackFrame {
         JITStubArg reserved; // Unused
         JITStubArg args[6];
-#if USE(JSVALUE64)
-        void* padding; // Maintain 16-byte stack alignment.
-#endif
 
         ReturnAddressPtr thunkReturnAddress;
 
@@ -160,11 +157,15 @@ namespace JSC {
         void* preservedR4;
         void* preservedR5;
         void* preservedR6;
+        void* preservedR7;
+        void* preservedR8;
+        void* preservedR9;
+        void* preservedR10;
+        void* preservedR11;
 
         // These arguments passed in r1..r3 (r0 contained the entry code pointed, which is not preserved)
         RegisterFile* registerFile;
         CallFrame* callFrame;
-        void* unused1;
 
         // These arguments passed on the stack.
         Profiler** enabledProfilerReference;

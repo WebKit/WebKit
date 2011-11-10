@@ -96,7 +96,11 @@ namespace JSC {
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
-        
+
+#if ENABLE(VALUE_PROFILER)
+        static const RegisterID bucketCounterRegister = ARMRegisters::r7;
+#endif
+
         static const RegisterID regT0 = ARMRegisters::r0;
         static const RegisterID regT1 = ARMRegisters::r1;
         static const RegisterID regT2 = ARMRegisters::r2;

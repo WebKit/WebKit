@@ -1294,8 +1294,6 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    UNUSED_PARAM(currentInstruction);
-    UNUSED_PARAM(iter);
 #if ENABLE(JIT_USE_SOFT_MODULO)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
@@ -1308,6 +1306,8 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     stubCall.addArgument(op2);
     stubCall.call(result);
 #else
+    UNUSED_PARAM(currentInstruction);
+    UNUSED_PARAM(iter);
     ASSERT_NOT_REACHED();
 #endif
 }

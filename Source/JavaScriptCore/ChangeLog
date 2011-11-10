@@ -1,5 +1,27 @@
 2011-11-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Add ENABLE_VALUE_PROFILER support for ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=72043
+
+        Reviewed by Geoff Garen.
+
+        This requires us to make a bucketCounterRegister available; to do so we'll need to spill more registers on entry to JIT code.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+            - cleanup location of UNUSED_PARAM
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+            - Update JITStackFrame structure & asm code to spill more registers.
+        * jit/JSInterfaceJIT.h:
+            - Assign a bucketCounterRegister.
+
+2011-11-10  Gavin Barraclough  <barraclough@apple.com>
+
         Fix sampling counters on ARMv7, move add64 functionality to macro assembler
         https://bugs.webkit.org/show_bug.cgi?id=72040
 

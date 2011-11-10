@@ -188,10 +188,15 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define PRESERVED_R4_OFFSET              0x40
 #define PRESERVED_R5_OFFSET              0x44
 #define PRESERVED_R6_OFFSET              0x48
-#define REGISTER_FILE_OFFSET             0x4C
-#define CALLFRAME_OFFSET                 0x50
-#define EXCEPTION_OFFSET                 0x54
-#define ENABLE_PROFILER_REFERENCE_OFFSET 0x58
+#define PRESERVED_R7_OFFSET              0x4C
+#define PRESERVED_R8_OFFSET              0x50
+#define PRESERVED_R9_OFFSET              0x54
+#define PRESERVED_R10_OFFSET             0x58
+#define PRESERVED_R11_OFFSET             0x5C
+#define REGISTER_FILE_OFFSET             0x60
+#define CALLFRAME_OFFSET                 0x64
+#define EXCEPTION_OFFSET                 0x64
+#define ENABLE_PROFILER_REFERENCE_OFFSET 0x68
 
 #elif (COMPILER(GCC) || COMPILER(MSVC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
@@ -531,12 +536,22 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "str r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
     "str r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "str r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
+    "str r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
+    "str r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
+    "str r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
+    "str r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
+    "str r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
     "str r1, [sp, #" STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "]" "\n"
     "str r2, [sp, #" STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "]" "\n"
     "str r3, [sp, #" STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "]" "\n"
     "cpy r5, r2" "\n"
     "mov r6, #512" "\n"
     "blx r0" "\n"
+    "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
+    "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
+    "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
+    "ldr r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
+    "ldr r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
     "ldr r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
@@ -555,6 +570,11 @@ HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "cpy r0, sp" "\n"
     "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
+    "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
+    "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
+    "ldr r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
+    "ldr r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
     "ldr r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
@@ -571,6 +591,11 @@ HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
+    "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
+    "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
+    "ldr r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
+    "ldr r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
     "ldr r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
@@ -626,12 +651,22 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, P
     str r4, [sp, # PRESERVED_R4_OFFSET ]
     str r5, [sp, # PRESERVED_R5_OFFSET ]
     str r6, [sp, # PRESERVED_R6_OFFSET ]
+    str r7, [sp, # PRESERVED_R7_OFFSET ]
+    str r8, [sp, # PRESERVED_R8_OFFSET ]
+    str r9, [sp, # PRESERVED_R9_OFFSET ]
+    str r10, [sp, # PRESERVED_R10_OFFSET ]
+    str r11, [sp, # PRESERVED_R11_OFFSET ]
     str r1, [sp, # REGISTER_FILE_OFFSET ]
     str r2, [sp, # CALLFRAME_OFFSET ]
     str r3, [sp, # EXCEPTION_OFFSET ]
     cpy r5, r2
     mov r6, #512
     blx r0
+    ldr r11, [sp, # PRESERVED_R11_OFFSET ]
+    ldr r10, [sp, # PRESERVED_R10_OFFSET ]
+    ldr r9, [sp, # PRESERVED_R9_OFFSET ]
+    ldr r8, [sp, # PRESERVED_R8_OFFSET ]
+    ldr r7, [sp, # PRESERVED_R7_OFFSET ]
     ldr r6, [sp, # PRESERVED_R6_OFFSET ]
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
@@ -645,6 +680,12 @@ __asm void ctiVMThrowTrampoline()
     PRESERVE8
     cpy r0, sp
     bl cti_vm_throw
+    ldr r11, [sp, # PRESERVED_R11_OFFSET ]
+    ldr r10, [sp, # PRESERVED_R10_OFFSET ]
+    ldr r9, [sp, # PRESERVED_R9_OFFSET ]
+    ldr r8, [sp, # PRESERVED_R8_OFFSET ]
+    ldr r7, [sp, # PRESERVED_R7_OFFSET ]
+    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
     ldr r6, [sp, # PRESERVED_R6_OFFSET ]
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
@@ -656,6 +697,12 @@ __asm void ctiVMThrowTrampoline()
 __asm void ctiOpThrowNotCaught()
 {
     PRESERVE8
+    ldr r11, [sp, # PRESERVED_R11_OFFSET ]
+    ldr r10, [sp, # PRESERVED_R10_OFFSET ]
+    ldr r9, [sp, # PRESERVED_R9_OFFSET ]
+    ldr r8, [sp, # PRESERVED_R8_OFFSET ]
+    ldr r7, [sp, # PRESERVED_R7_OFFSET ]
+    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
     ldr r6, [sp, # PRESERVED_R6_OFFSET ]
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
@@ -726,6 +773,11 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR4) == PRESERVED_R4_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR5) == PRESERVED_R5_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR6) == PRESERVED_R6_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR7) == PRESERVED_R7_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR8) == PRESERVED_R8_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR9) == PRESERVED_R9_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR10) == PRESERVED_R10_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR11) == PRESERVED_R11_OFFSET);
 
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
