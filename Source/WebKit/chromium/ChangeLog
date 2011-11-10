@@ -1,3 +1,17 @@
+2011-11-10  Iain Merrick  <husky@google.com>
+
+        [Chromium] Fix CCLayerTreeHostImplTest::scrollRootCallsCommitAndRedraw
+        https://bugs.webkit.org/show_bug.cgi?id=72027
+
+        We weren't calling setScrollable(true) when setting up the test, so
+        scroll events were being ignored. Test failed in debug builds, but passed
+        in release because we were using ASSERT instead of ASSERT_TRUE.
+
+        Reviewed by Tony Gentilcore.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+
 2011-11-10  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Scroll deltas are cleared during commit to the main thread

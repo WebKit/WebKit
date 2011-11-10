@@ -149,12 +149,13 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
 TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
 {
     RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollable(true);
     root->setScrollPosition(IntPoint(0, 0));
     root->setMaxScrollPosition(IntSize(100, 100));
     m_hostImpl->setRootLayer(root);
     m_hostImpl->scrollRootLayer(IntSize(0, 10));
-    ASSERT(m_didRequestRedraw);
-    ASSERT(m_didRequestCommit);
+    EXPECT_TRUE(m_didRequestRedraw);
+    EXPECT_TRUE(m_didRequestCommit);
 }
 
 class BlendStateTrackerContext: public MockWebGraphicsContext3D {
