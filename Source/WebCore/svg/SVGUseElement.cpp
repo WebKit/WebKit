@@ -624,7 +624,8 @@ void SVGUseElement::detachInstance()
 {
     if (!m_targetElementInstance)
         return;
-    m_targetElementInstance->detach();
+    m_targetElementInstance->clearUseElements();
+    m_targetElementInstance->clearChildren();
     m_targetElementInstance = 0;
 }
 
