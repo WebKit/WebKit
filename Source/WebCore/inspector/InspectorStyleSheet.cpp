@@ -1084,7 +1084,7 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
     if (m_origin == "user" || m_origin == "user-agent")
         return false;
 
-    if (!m_pageStyleSheet || !ownerDocument())
+    if (!m_pageStyleSheet || !ownerDocument() || !ownerDocument()->frame())
         return false;
 
     String error;

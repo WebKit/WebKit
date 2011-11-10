@@ -77,6 +77,7 @@ WebInspector.ResourcesPanel = function(database)
     this._origins = {};
     this._domains = {};
 
+
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
@@ -110,10 +111,9 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.Panel.prototype.wasShown.call(this);
         if (!this._initialized) {
             this._populateResourceTree();
-            this._initializeApplicationCacheModel();
-
+            this._populateApplicationCacheTree();
             this._initDefaultSelection();
-            
+
             this._initialized = true;
         }
     },
@@ -167,14 +167,10 @@ WebInspector.ResourcesPanel.prototype = {
 
         this._cookieViews = {};
 
-        this._applicationCacheView = null;
-        delete this._cachedApplicationCacheViewStatus;
-
         this.databasesListTreeElement.removeChildren();
         this.localStorageListTreeElement.removeChildren();
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
-        this.applicationCacheListTreeElement.removeChildren();
 
         if (this.visibleView)
             this.visibleView.detach();
@@ -262,6 +258,10 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
             frameTreeElement.frameNavigated(event.data.frame);
+
+        var applicationCacheFrameTreeElement = this._applicationCacheFrameElements[frameId];
+        if (applicationCacheFrameTreeElement)
+            applicationCacheFrameTreeElement.frameNavigated(event.data.frame);
     },
 
     _cachedResourcesLoaded: function()
@@ -290,9 +290,6 @@ WebInspector.ResourcesPanel.prototype = {
 
             var cookieDomainTreeElement = new WebInspector.CookieTreeElement(this, domain);
             this.cookieListTreeElement.appendChild(cookieDomainTreeElement);
-
-            var applicationCacheTreeElement = new WebInspector.ApplicationCacheTreeElement(this, domain);
-            this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
         }
     },
 
@@ -480,18 +477,19 @@ WebInspector.ResourcesPanel.prototype = {
         this._innerShowView(view);
     },
 
-    showApplicationCache: function(treeElement, appcacheDomain)
+    showApplicationCache: function(frameId)
     {
-        var view = this._applicationCacheView;
-        if (!view) {
-            view = new WebInspector.ApplicationCacheItemsView(this._applicationCacheModel, treeElement, appcacheDomain);
-            this._applicationCacheView = view;
+        var status = this._applicationCacheModel.frameManifestStatus(frameId)
+
+        if (!this._applicationCacheViews[frameId]) {
+            this._applicationCacheViews[frameId] = new WebInspector.ApplicationCacheItemsView(this._applicationCacheModel, frameId, status);
+
+            // FIXME: Make sure this._cachedApplicationCacheNetworkState is always set and is always up to date.
+            if (typeof(this._cachedApplicationCacheNetworkState) === "number")
+                this._applicationCacheViews[frameId].updateNetworkState(this._cachedApplicationCacheNetworkState);
         }
 
-        this._innerShowView(view);
-
-        if ("_cachedApplicationCacheViewStatus" in this)
-            this._applicationCacheView.updateStatus(this._cachedApplicationCacheViewStatus);
+        this._innerShowView(this._applicationCacheViews[frameId]);
     },
 
     showCategoryView: function(categoryName)
@@ -566,28 +564,76 @@ WebInspector.ResourcesPanel.prototype = {
             domStorage._domStorageView.update();
     },
 
-    _initializeApplicationCacheModel: function()
+    _populateApplicationCacheTree: function()
     {
         this._applicationCacheModel = new WebInspector.ApplicationCacheModel();
-    },
-    
-    updateApplicationCacheStatus: function(status)
-    {
-        this._cachedApplicationCacheViewStatus = status;
-        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
-            this._applicationCacheView.updateStatus(status);
+        
+        this._applicationCacheViews = {};
+        this._applicationCacheFrameElements = {};
+        this._applicationCacheManifestElements = {};
+        
+        this._applicationCacheModel.addEventListener(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestAdded, this._applicationCacheFrameManifestAdded, this);
+        this._applicationCacheModel.addEventListener(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestRemoved, this._applicationCacheFrameManifestRemoved, this);
+
+        this._applicationCacheModel.addEventListener(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestStatusUpdated, this._applicationCacheFrameManifestStatusChanged, this);
+        this._applicationCacheModel.addEventListener(WebInspector.ApplicationCacheModel.EventTypes.NetworkStateChanged, this._applicationCacheNetworkStateChanged, this);
     },
 
-    updateNetworkState: function(isNowOnline)
+    _applicationCacheFrameManifestAdded: function(event)
     {
-        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
-            this._applicationCacheView.updateNetworkState(isNowOnline);
+        var frameId = event.data;
+        var manifestURL = this._applicationCacheModel.frameManifestURL(frameId);
+        var status = this._applicationCacheModel.frameManifestStatus(frameId)
+
+        var manifestTreeElement = this._applicationCacheManifestElements[manifestURL]
+        if (!manifestTreeElement) {
+            manifestTreeElement = new WebInspector.ApplicationCacheManifestTreeElement(this, manifestURL);
+            this.applicationCacheListTreeElement.appendChild(manifestTreeElement);
+            this._applicationCacheManifestElements[manifestURL] = manifestTreeElement;
+        }
+
+        var frameTreeElement = new WebInspector.ApplicationCacheFrameTreeElement(this, frameId, manifestURL);
+        manifestTreeElement.appendChild(frameTreeElement);
+        manifestTreeElement.expand();
+        this._applicationCacheFrameElements[frameId] = frameTreeElement;
     },
 
-    updateManifest: function(manifest)
+    _applicationCacheFrameManifestRemoved: function(event)
     {
-        if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
-            this._applicationCacheView.updateManifest(manifest);
+        var frameId = event.data;
+        var frameTreeElement = this._applicationCacheFrameElements[frameId];
+        if (!frameTreeElement)
+            return;
+
+        var manifestURL = frameTreeElement.manifestURL;
+        delete this._applicationCacheFrameElements[frameId];
+        delete this._applicationCacheViews[frameId];
+        frameTreeElement.parent.removeChild(frameTreeElement);
+
+        var manifestTreeElement = this._applicationCacheManifestElements[manifestURL];
+        if (manifestTreeElement.children.length !== 0)
+            return;
+
+        delete this._applicationCacheManifestElements[manifestURL];
+        manifestTreeElement.parent.removeChild(manifestTreeElement);
+    },
+
+    _applicationCacheFrameManifestStatusChanged: function(event)
+    {
+        var frameId = event.data;
+        var status = this._applicationCacheModel.frameManifestStatus(frameId)
+
+        if (this._applicationCacheViews[frameId])
+            this._applicationCacheViews[frameId].updateStatus(status);
+    },
+
+    _applicationCacheNetworkStateChanged: function(event)
+    {
+        var isNowOnline = event.data;
+
+        this._cachedApplicationCacheNetworkState = isNowOnline;
+        for (var manifestURL in this._applicationCacheViews)
+            this._applicationCacheViews[manifestURL].updateNetworkState(isNowOnline);
     },
 
     _domStorageForId: function(storageId)
@@ -1502,25 +1548,84 @@ WebInspector.CookieTreeElement.prototype.__proto__ = WebInspector.BaseStorageTre
  * @constructor
  * @extends {WebInspector.BaseStorageTreeElement}
  */
-WebInspector.ApplicationCacheTreeElement = function(storagePanel, appcacheDomain)
+WebInspector.ApplicationCacheManifestTreeElement = function(storagePanel, manifestURL)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, appcacheDomain ? appcacheDomain : WebInspector.UIString("Local Files"), ["application-cache-storage-tree-item"]);
-    this._appcacheDomain = appcacheDomain;
+    var title = WebInspector.Resource.displayName(manifestURL);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, ["application-cache-storage-tree-item"]);
+    this.tooltip = manifestURL;
+    this._manifestURL = manifestURL;
 }
 
-WebInspector.ApplicationCacheTreeElement.prototype = {
+WebInspector.ApplicationCacheManifestTreeElement.prototype = {
     get itemURL()
     {
-        return "appcache://" + this._appcacheDomain;
+        return "appcache://" + this._manifestURL;
+    },
+
+    get manifestURL()
+    {
+        return this._manifestURL;
     },
 
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel.showApplicationCache(this, this._appcacheDomain);
+        this._storagePanel.showCategoryView(this._manifestURL);
     }
 }
-WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+WebInspector.ApplicationCacheManifestTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.BaseStorageTreeElement}
+ */
+WebInspector.ApplicationCacheFrameTreeElement = function(storagePanel, frameId, manifestURL)
+{
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, "", ["frame-storage-tree-item"]);
+    this._frameId = frameId;
+    this._manifestURL = manifestURL;
+    this._refreshTitles();
+}
+
+WebInspector.ApplicationCacheFrameTreeElement.prototype = {
+    get itemURL()
+    {
+        return "appcache://" + this._manifestURL + "/" + encodeURI(this.displayName);
+    },
+
+    get frameId()
+    {
+        return this._frameId;
+    },
+
+    get manifestURL()
+    {
+        return this._manifestURL;
+    },
+
+    _refreshTitles: function()
+    {
+        var frame = WebInspector.resourceTreeModel.frameForId(this._frameId);
+        if (!frame) {
+            this.subtitleText = WebInspector.UIString("new frame");
+            return;
+        }
+        this.titleText = frame.name;
+        this.subtitleText = WebInspector.Resource.displayName(frame.url);
+    },
+
+    frameNavigated: function()
+    {
+        this._refreshTitles();
+    },
+
+    onselect: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        this._storagePanel.showApplicationCache(this._frameId);
+    }
+}
+WebInspector.ApplicationCacheFrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor

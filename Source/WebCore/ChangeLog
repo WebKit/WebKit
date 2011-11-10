@@ -1,3 +1,89 @@
+2011-11-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: ApplicationCache UI is confusing and incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=64581
+
+        Reviewed by Pavel Feldman.
+
+        Fixed resources panel application cache UI.
+        Manifest urls are now shown under application cache tree element.
+        Under each manifest url tree element frames using relevant application
+        cache are listed. Application cache detailed views could be opened for each
+        frame.
+
+        Test: http/tests/inspector/resource-tree/appcache-iframe-manifests.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::setFrontend):
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::networkStateChanged):
+        (WebCore::InspectorApplicationCacheAgent::enable):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::assertFrameWithDocumentLoader):
+        (WebCore::InspectorApplicationCacheAgent::getManifestForFrame):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCacheForFrame):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::resourceContent):
+        (WebCore::InspectorPageAgent::getResourceContent):
+        (WebCore::InspectorPageAgent::assertFrame):
+        (WebCore::InspectorPageAgent::assertDocumentLoader):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView):
+        (WebInspector.ApplicationCacheItemsView.prototype._update):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid):
+        * inspector/front-end/ApplicationCacheModel.js:
+        (WebInspector.ApplicationCacheModel):
+        (WebInspector.ApplicationCacheModel.prototype._frameNavigated):
+        (WebInspector.ApplicationCacheModel.prototype._frameDetached):
+        (WebInspector.ApplicationCacheModel.prototype._mainFrameNavigated):
+        (WebInspector.ApplicationCacheModel.prototype._manifestForFrameLoaded):
+        (WebInspector.ApplicationCacheModel.prototype._framesWithManifestsLoaded):
+        (WebInspector.ApplicationCacheModel.prototype._frameManifestUpdated):
+        (WebInspector.ApplicationCacheModel.prototype._frameManifestRemoved):
+        (WebInspector.ApplicationCacheModel.prototype.frameManifestURL):
+        (WebInspector.ApplicationCacheModel.prototype.frameManifestStatus):
+        (WebInspector.ApplicationCacheModel.prototype._statusUpdated):
+        (WebInspector.ApplicationCacheModel.prototype.requestApplicationCache):
+        (WebInspector.ApplicationCacheModel.prototype._networkStateUpdated):
+        (WebInspector.ApplicationCacheDispatcher.prototype.applicationCacheStatusUpdated):
+        (WebInspector.ApplicationCacheDispatcher.prototype.networkStateUpdated):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype.frameForId):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.wasShown):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._frameNavigated):
+        (WebInspector.ResourcesPanel.prototype.addDocumentURL):
+        (WebInspector.ResourcesPanel.prototype.showApplicationCache):
+        (WebInspector.ResourcesPanel.prototype._populateApplicationCacheTree):
+        (WebInspector.ResourcesPanel.prototype._applicationCacheFrameManifestAdded):
+        (WebInspector.ResourcesPanel.prototype._applicationCacheFrameManifestRemoved):
+        (WebInspector.ResourcesPanel.prototype._applicationCacheFrameManifestStatusChanged):
+        (WebInspector.ResourcesPanel.prototype._applicationCacheNetworkStateChanged):
+        (WebInspector.ApplicationCacheManifestTreeElement):
+        (WebInspector.ApplicationCacheManifestTreeElement.prototype.get itemURL):
+        (WebInspector.ApplicationCacheManifestTreeElement.prototype.get manifestURL):
+        (WebInspector.ApplicationCacheManifestTreeElement.prototype.onselect):
+        (WebInspector.ApplicationCacheFrameTreeElement):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.get itemURL):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.get frameId):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.get manifestURL):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype._refreshTitles):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.frameNavigated):
+        (WebInspector.ApplicationCacheFrameTreeElement.prototype.onselect):
+
 2011-11-10  Andreas Kling  <kling@webkit.org>
 
         Shrink CSSMutableStyleDeclaration.

@@ -186,18 +186,9 @@ PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* i
 // static
 void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result, bool* base64Encoded)
 {
-    if (!frame) {
-        *errorString = "No frame to get resource content for";
+    DocumentLoader* loader = assertDocumentLoader(errorString, frame);
+    if (!loader)
         return;
-    }
-
-    FrameLoader* frameLoader = frame->loader();
-    DocumentLoader* loader = frameLoader->documentLoader();
-
-    if (!loader) {
-        *errorString = "No documentLoader for frame to get resource content for";
-        return;
-    }
 
     RefPtr<SharedBuffer> buffer;
     bool success = false;
@@ -481,11 +472,10 @@ void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>* 
 
 void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, String* content, bool* base64Encoded)
 {
-    Frame* frame = frameForId(frameId);
-    if (!frame) {
-        *errorString = "No frame for given id found";
+    Frame* frame = assertFrame(errorString, frameId);
+    if (!frame)
         return;
-    }
+
     resourceContent(errorString, frame, KURL(ParsedURLString, url), content, base64Encoded);
 }
 
@@ -659,6 +649,26 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
         m_loaderToIdentifier.set(loader, identifier);
     }
     return identifier;
+}
+
+Frame* InspectorPageAgent::assertFrame(ErrorString* errorString, String frameId)
+{
+    Frame* frame = frameForId(frameId);
+    if (!frame)
+        *errorString = "No frame for given id found";
+
+    return frame;
+}
+
+// static
+DocumentLoader* InspectorPageAgent::assertDocumentLoader(ErrorString* errorString, Frame* frame)
+{
+    FrameLoader* frameLoader = frame->loader();
+    DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
+    if (!documentLoader)
+        *errorString = "No documentLoader for given frame found";
+
+    return documentLoader;
 }
 
 void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)

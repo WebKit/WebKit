@@ -27,7 +27,7 @@
  * @constructor
  * @extends {WebInspector.View}
  */
-WebInspector.ApplicationCacheItemsView = function(model, treeElement, appcacheDomain)
+WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
 {
     WebInspector.View.call(this);
     
@@ -64,13 +64,12 @@ WebInspector.ApplicationCacheItemsView = function(model, treeElement, appcacheDo
     this.statusMessage.className = "storage-application-cache-status";
     this.statusMessage.textContent = "";
 
-    this._treeElement = treeElement;
-    this._appcacheDomain = appcacheDomain;
+    this._frameId = frameId;
 
     this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("No Application Cache information available."));
     this._emptyView.show(this.element);
 
-    this.updateStatus(applicationCache.UNCACHED);
+    this.updateStatus(status);
 
     // FIXME: Status bar items don't work well enough yet, so they are being hidden.
     // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
@@ -116,6 +115,9 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this.deleteButton.visible = false;
     },
 
+    /**
+     * @param {number} status
+     */
     updateStatus: function(status)
     {
         var statusInformation = {};
@@ -136,6 +138,9 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this.statusMessage.textContent = info.text;
     },
 
+    /**
+     * @param {boolean} isNowOnline
+     */
     updateNetworkState: function(isNowOnline)
     {
         if (Preferences.onlineDetectionEnabled) {
@@ -151,27 +156,30 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     _update: function()
     {
-        this._model.getApplicationCachesAsync(this._updateCallback.bind(this));
+        this._model.requestApplicationCache(this._frameId, this._updateCallback.bind(this));
     },
 
-    _updateCallback: function(applicationCaches)
+    /**
+     * @param {Object} applicationCache
+     */
+    _updateCallback: function(applicationCache)
     {
-        // FIXME: applicationCaches is just one cache.
-        // FIXME: are these variables needed anywhere else?
-        this._manifest = applicationCaches.manifest;
-        this._creationTime = applicationCaches.creationTime;
-        this._updateTime = applicationCaches.updateTime;
-        this._size = applicationCaches.size;
-        this._resources = applicationCaches.resources;
-        var lastPathComponent = applicationCaches.lastPathComponent;
-
-        if (!this._manifest) {
+        if (!applicationCache || !applicationCache.manifestURL) {
             this._emptyView.show(this.element);
             this.deleteButton.visible = false;
             if (this._dataGrid)
                 this._dataGrid.element.addStyleClass("hidden");
             return;
         }
+
+        // FIXME: applicationCaches is just one cache.
+        // FIXME: are these variables needed anywhere else?
+        this._manifest = applicationCache.manifestURL;
+        this._creationTime = applicationCache.creationTime;
+        this._updateTime = applicationCache.updateTime;
+        this._size = applicationCache.size;
+        this._resources = applicationCache.resources;
+        var lastPathComponent = applicationCache.lastPathComponent;
 
         if (!this._dataGrid)
             this._createDataGrid();
@@ -181,9 +189,6 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this._dataGrid.element.removeStyleClass("hidden");
         this._emptyView.detach();
         this.deleteButton.visible = true;
-
-        var totalSizeString = Number.bytesToString(this._size);
-        this._treeElement.subtitle = WebInspector.UIString("%s (%s)", lastPathComponent, totalSizeString);
 
         // FIXME: For Chrome, put creationTime and updateTime somewhere.
         // NOTE: localizedString has not yet been added.
@@ -235,7 +240,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         for (var i = 0; i < this._resources.length; ++i) {
             var data = {};
             var resource = this._resources[i];
-            data[0] = resource.name;
+            data[0] = resource.url;
             data[1] = resource.type;
             data[2] = Number.bytesToString(resource.size);
             var node = new WebInspector.DataGridNode(data);
@@ -248,7 +253,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
             }
         }
 
-        if (!nodeToSelect)
+        if (!nodeToSelect && this._dataGrid.children.length)
             this._dataGrid.children[0].selected = true;
     },
 

@@ -39,6 +39,7 @@ class InspectorArray;
 class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
+class InspectorPageAgent;
 class InspectorValue;
 class InstrumentingAgents;
 class Page;
@@ -49,26 +50,32 @@ typedef String ErrorString;
 class InspectorApplicationCacheAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InstrumentingAgents*, Page*);
+    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
     ~InspectorApplicationCacheAgent() { }
 
+    // Inspector Controller API
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
 
-    // Backend to Frontend
+    // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();
 
-    // From Frontend
-    void getApplicationCaches(ErrorString*, RefPtr<InspectorObject>* applicationCaches);
+    // ApplicationCache API for InspectorFrontend
+    void enable(ErrorString*);
+    void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>* result);
+    void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
+    void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>* applicationCache);
 
 private:
     PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
     PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
+    DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
+
     InstrumentingAgents* m_instrumentingAgents;
-    Page* m_inspectedPage;
+    InspectorPageAgent* m_pageAgent;
     InspectorFrontend::ApplicationCache* m_frontend;
 };
 

@@ -118,6 +118,8 @@ public:
     Frame* frameForId(const String& frameId);
     String frameId(Frame*);
     String loaderId(DocumentLoader*);
+    Frame* assertFrame(ErrorString*, String frameId);
+    static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);

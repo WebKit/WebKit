@@ -32,20 +32,179 @@
  */
 WebInspector.ApplicationCacheModel = function()
 {
+    ApplicationCacheAgent.enable();
     InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheDispatcher(this));
+    
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
+    
+    this._statuses = {};
+    this._manifestURLsByFrame = {};
+
+    this._mainFrameNavigated();
+}
+
+WebInspector.ApplicationCacheModel.EventTypes = {
+    FrameManifestStatusUpdated: "FrameManifestStatusUpdated",
+    FrameManifestAdded: "FrameManifestAdded",
+    FrameManifestRemoved: "FrameManifestRemoved",
+    NetworkStateChanged: "NetworkStateChanged"
 }
 
 WebInspector.ApplicationCacheModel.prototype = {
-    getApplicationCachesAsync: function(callback)
+    _frameNavigated: function(event)
     {
-        function mycallback(error, applicationCaches)
-        {
-            // FIXME: Currently, this list only returns a single application cache.
-            if (!error && applicationCaches)
-                callback(applicationCaches);
+        if (event.data.isMainFrame) {
+            this._mainFrameNavigated();
+            return;
         }
 
-        ApplicationCacheAgent.getApplicationCaches(mycallback);
+        var frame = /** @type {PageAgent.Frame} */ event.data["frame"];
+        var frameId = frame.id;
+        ApplicationCacheAgent.getManifestForFrame(frameId, this._manifestForFrameLoaded.bind(this, frameId));
+    },
+    
+    _frameDetached: function(event)
+    {
+        var frameId = event.data;
+        this._frameManifestRemoved(frameId);
+    },
+    
+    _mainFrameNavigated: function()
+    {
+        ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
+    },
+
+    /**
+     * @param {string} frameId
+     * @param {string} error
+     * @param {string} manifestURL
+     */
+    _manifestForFrameLoaded: function(frameId, error, manifestURL)
+    {
+        if (error) {
+            console.error(error);
+            return;
+        }
+        
+        if (!manifestURL)
+            this._frameManifestRemoved(frameId);
+    },
+    
+    /**
+     * @param {string} error
+     * @param {Array.<ApplicationCacheAgent.FrameWithManifest>} framesWithManifests
+     */
+    _framesWithManifestsLoaded: function(error, framesWithManifests)
+    {
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        for (var i = 0; i < framesWithManifests.length; ++i)
+            this._frameManifestUpdated(framesWithManifests[i].frameId, framesWithManifests[i].manifestURL, framesWithManifests[i].status);
+    },
+    
+    /**
+     * @param {string} frameId
+     * @param {string} manifestURL
+     * @param {number} status
+     */
+    _frameManifestUpdated: function(frameId, manifestURL, status)
+    {
+        if (status === applicationCache.UNCACHED) {
+            this._frameManifestRemoved(frameId);
+            return;
+        }
+            
+        if (!manifestURL)
+            return;
+            
+        if (this._manifestURLsByFrame[frameId] && manifestURL !== this._manifestURLsByFrame[frameId])
+            this._frameManifestRemoved(frameId);
+        
+        var statusChanged = this._statuses[frameId] !== status;
+        this._statuses[frameId] = status;
+        
+        if (!this._manifestURLsByFrame[frameId]) {
+            this._manifestURLsByFrame[frameId] = manifestURL;
+            this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestAdded, frameId);
+        }
+            
+        if (statusChanged)
+            this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestStatusUpdated, frameId);
+    },
+    
+    /**
+     * @param {string} frameId
+     */
+    _frameManifestRemoved: function(frameId)
+    {
+        if (!this._manifestURLsByFrame[frameId])
+            return;
+
+        var manifestURL = this._manifestURLsByFrame[frameId];
+        delete this._manifestURLsByFrame[frameId];
+        delete this._statuses[frameId];
+        
+        this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.FrameManifestRemoved, frameId);
+    },
+    
+    /**
+     * @param {string} frameId
+     * @return {string}
+     */
+    frameManifestURL: function(frameId)
+    {
+        return this._manifestURLsByFrame[frameId] || "";
+    },
+    
+    /**
+     * @param {string} frameId
+     * @return {number}
+     */
+    frameManifestStatus: function(frameId)
+    {
+        return this._statuses[frameId] || applicationCache.UNCACHED;
+    },
+    
+    /**
+     * @param {string} frameId
+     * @param {string} manifestURL
+     * @param {number} status
+     */
+    _statusUpdated: function(frameId, manifestURL, status)
+    {
+        this._frameManifestUpdated(frameId, manifestURL, status);
+    },
+    
+    /**
+     * @param {string} frameId
+     * @param {function(Object)} callback
+     */
+    requestApplicationCache: function(frameId, callback)
+    {
+        function callbackWrapper(error, applicationCache)
+        {
+            if (error) {
+                console.error(error);
+                callback(null);
+                return;
+            }
+            
+            callback(applicationCache);
+        }
+        
+        ApplicationCacheAgent.getApplicationCacheForFrame(frameId, callbackWrapper.bind(this));
+    },
+    
+    /**
+     * @param {boolean} isNowOnline
+     */
+    _networkStateUpdated: function(isNowOnline)
+    {
+        this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.NetworkStateChanged, isNowOnline);
     }
 }
 
@@ -62,18 +221,20 @@ WebInspector.ApplicationCacheDispatcher = function(applicationCacheModel)
 
 WebInspector.ApplicationCacheDispatcher.prototype = {
     /**
+     * @param {string} frameId
+     * @param {string} manifestURL
      * @param {number} status
      */
-    updateApplicationCacheStatus: function(status)
+    applicationCacheStatusUpdated: function(frameId, manifestURL, status)
     {
-        WebInspector.panels.resources.updateApplicationCacheStatus(status);
+        this._applicationCacheModel._statusUpdated(frameId, manifestURL, status);
     },
-
+    
     /**
      * @param {boolean} isNowOnline
      */
-    updateNetworkState: function(isNowOnline)
+    networkStateUpdated: function(isNowOnline)
     {
-        WebInspector.panels.resources.updateNetworkState(isNowOnline);
-    }
+        this._applicationCacheModel._networkStateUpdated(isNowOnline);
+    },
 }

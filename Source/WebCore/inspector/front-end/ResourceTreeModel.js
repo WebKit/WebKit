@@ -114,6 +114,11 @@ WebInspector.ResourceTreeModel.prototype = {
         return this._subframes[parentFrameId] || [];
     },
 
+    frameForId: function(frameId)
+    {
+        return this._frameIds[frameId];
+    },
+
     resources: function(frameId)
     {
         var result = [];
