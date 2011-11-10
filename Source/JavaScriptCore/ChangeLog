@@ -1,3 +1,20 @@
+2011-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Refactoring CMakeLists${PORT}.txt to Platform${PORT}.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=56705
+
+        Reviewed by Adam Roben.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake: Renamed from Source/JavaScriptCore/CMakeListsEfl.txt.
+        * PlatformWinCE.cmake: Renamed from Source/JavaScriptCore/CMakeListsWinCE.txt.
+        * shell/CMakeLists.txt:
+        * shell/PlatformEfl.cmake: Renamed from Source/JavaScriptCore/shell/CMakeListsEfl.txt.
+        * shell/PlatformWinCE.cmake: Renamed from Source/JavaScriptCore/shell/CMakeListsWinCE.txt.
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEfl.cmake: Renamed from Source/JavaScriptCore/wtf/CMakeListsEfl.txt.
+        * wtf/PlatformWinCE.cmake: Renamed from Source/JavaScriptCore/wtf/CMakeListsWinCE.txt.
+
 2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.

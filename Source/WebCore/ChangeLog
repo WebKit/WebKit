@@ -1,3 +1,16 @@
+2011-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Refactoring CMakeLists${PORT}.txt to Platform${PORT}.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=56705
+
+        Reviewed by Adam Roben.
+
+        No new tests, just renaming CMakeLists*.txt to Platform*.cmake.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake: Renamed from Source/WebCore/CMakeListsEfl.txt.
+        * PlatformWinCE.cmake: Renamed from Source/WebCore/CMakeListsWinCE.txt.
+
 2011-11-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: wrong JSON.stringify used in webInspector.inspectedWindow.eval() backend
