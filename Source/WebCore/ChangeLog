@@ -1,3 +1,23 @@
+2011-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        feImage referencing a primitive draws incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=71731
+        <rdar://problem/10408178>
+
+        Reviewed by Simon Fraser.
+        
+        Don't attempt to resolve an <feImage>'s referenced element until it's used, as it
+        may not exist at the time the attribute is set on the <feImage>.
+        
+        Don't attempt to render an <feImage> if the referenced element is of size 0x0.
+
+        Tests: svg/filters/feImage-reference-svg-primitive.svg
+               svg/filters/feImage-zero-size-crash.svg
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::build):
+
 2011-11-09  Dominic Cooney  <dominicc@chromium.org>
 
         Remove WebGLContextEvent.initEvent method

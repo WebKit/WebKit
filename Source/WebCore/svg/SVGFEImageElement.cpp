@@ -113,7 +113,8 @@ void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
     }
 
     if (SVGURIReference::parseMappedAttribute(attr)) {
-        requestImageResource();
+        m_cachedImage = 0;
+        m_targetImage.clear();
         return;
     }
 
@@ -162,6 +163,9 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
 
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)
 {
+    if (!m_cachedImage && !m_targetImage)
+        requestImageResource();
+
     if (!m_cachedImage && !m_targetImage) {
         Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
         if (!hrefElement || !hrefElement->isSVGElement())
@@ -172,6 +176,10 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* fil
             return 0;
 
         IntRect targetRect = enclosingIntRect(renderer->objectBoundingBox());
+
+        if (targetRect.isEmpty())
+            return 0;
+
         m_targetImage = ImageBuffer::create(targetRect.size(), ColorSpaceLinearRGB);
 
         AffineTransform contentTransformation;
