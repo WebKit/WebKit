@@ -1065,7 +1065,7 @@ void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
     m_page->chrome()->client()->numWheelEventHandlersChanged(count);
 }
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(WX)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 struct ScopedFramePaintingState {
     ScopedFramePaintingState(Frame* theFrame, RenderObject* theRenderer)
         : frame(theFrame)
