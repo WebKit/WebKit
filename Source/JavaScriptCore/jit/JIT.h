@@ -1021,7 +1021,7 @@ namespace JSC {
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS)
-        void emitCount(AbstractSamplingCounter&, uint32_t = 1);
+        void emitCount(AbstractSamplingCounter&, int32_t = 1);
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)

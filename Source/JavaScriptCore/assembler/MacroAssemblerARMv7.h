@@ -211,6 +211,26 @@ public:
         store32(dataTempRegister, address.m_ptr);
     }
 
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+
+        m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        if (armImm.isValid())
+            m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
+        else {
+            move(imm, addressTempRegister);
+            m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        }
+        m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+
+        m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
+        m_assembler.adc(dataTempRegister, dataTempRegister, ARMThumbImmediate::makeEncodedImm(imm.m_value >> 31));
+        m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
+    }
+
     void and32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.ARM_and(dest, op1, op2);

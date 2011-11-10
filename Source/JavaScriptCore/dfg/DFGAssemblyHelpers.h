@@ -214,11 +214,13 @@ public:
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS)
-    // Debug profiling tool.
-    static void emitCount(MacroAssembler&, AbstractSamplingCounter&, uint32_t increment = 1);
-    void emitCount(AbstractSamplingCounter& counter, uint32_t increment = 1)
+    static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)
     {
-        emitCount(*this, counter, increment);
+        jit.add64(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
+    }
+    void emitCount(AbstractSamplingCounter& counter, int32_t increment = 1)
+    {
+        add64(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
     }
 #endif
 

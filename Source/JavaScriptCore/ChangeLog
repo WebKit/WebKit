@@ -1,4 +1,31 @@
-2011-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
+2011-11-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix sampling counters on ARMv7, move add64 functionality to macro assembler
+        https://bugs.webkit.org/show_bug.cgi?id=72040
+
+        Reviewed by Geoff Garen.
+
+        The ability to add an integer to a uint64_t in memory is poorly copied in
+        multiple places & ifdef'ed on architecture, addWithCarry32 is also a badly
+        designed interface since add32 is not required to set flags (we have no
+        concept of flags in the macro assembler interface).
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add64):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add64):
+        * dfg/DFGAssemblyHelpers.cpp:
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::emitCount):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitCount):
+
+011-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Refactoring CMakeLists${PORT}.txt to Platform${PORT}.cmake
         https://bugs.webkit.org/show_bug.cgi?id=56705

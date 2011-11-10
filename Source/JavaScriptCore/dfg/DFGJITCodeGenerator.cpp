@@ -243,7 +243,7 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex 
         return;
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
 
 #if ENABLE(GGC)
@@ -286,7 +286,7 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrier
         return;
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
 
 #if ENABLE(GGC)
@@ -318,7 +318,7 @@ void JITCodeGenerator::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex va
         return;
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
 
 #if ENABLE(GGC)

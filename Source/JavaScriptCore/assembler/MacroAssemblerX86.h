@@ -62,11 +62,12 @@ public:
         m_assembler.addl_im(imm.m_value, address.m_ptr);
     }
     
-    void addWithCarry32(TrustedImm32 imm, AbsoluteAddress address)
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.adcl_im(imm.m_value, address.m_ptr);
+        m_assembler.addl_im(imm.m_value, address.m_ptr);
+        m_assembler.adcl_im(imm.m_value >> 31, reinterpret_cast<const char*>(address.m_ptr) + sizeof(int32_t));
     }
-    
+
     void and32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.andl_im(imm.m_value, address.m_ptr);

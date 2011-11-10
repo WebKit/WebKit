@@ -184,7 +184,12 @@ public:
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         addPtr(imm, Address(scratchRegister));
     }
-    
+
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        addPtr(imm, address);
+    }
+
     void andPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.andq_rr(src, dest);

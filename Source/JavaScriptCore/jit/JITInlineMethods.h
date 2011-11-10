@@ -358,17 +358,9 @@ ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS)
-ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, uint32_t count)
+ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, int32_t count)
 {
-#if CPU(X86_64) // Or any other 64-bit plattform.
-    addPtr(TrustedImm32(count), AbsoluteAddress(counter.addressOfCounter()));
-#elif CPU(X86) // Or any other little-endian 32-bit plattform.
-    intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
-    add32(TrustedImm32(count), AbsoluteAddress(counter.addressOfCounter()));
-    addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
-#else
-#error "SAMPLING_FLAGS not implemented on this platform."
-#endif
+    add64(TrustedImm32(count), AbsoluteAddress(counter.addressOfCounter()));
 }
 #endif
 
