@@ -863,6 +863,8 @@ public:
 #if ENABLE(CSS_FILTERS)
     const FilterOperations& filter() const { return rareNonInheritedData->m_filter->m_operations; }
     bool hasFilter() const { return !rareNonInheritedData->m_filter->m_operations.operations().isEmpty(); }
+#else
+    bool hasFilter() const { return false; }
 #endif
         
 // attribute setter methods

@@ -3022,6 +3022,8 @@ webcore_sources += \
 	Source/WebCore/rendering/CounterNode.h \
 	Source/WebCore/rendering/EllipsisBox.cpp \
 	Source/WebCore/rendering/EllipsisBox.h \
+	Source/WebCore/rendering/FilterEffectRenderer.cpp \
+	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \
 	Source/WebCore/rendering/FixedTableLayout.h \
 	Source/WebCore/rendering/GapRects.h \

@@ -418,6 +418,13 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 #endif
         }
 
+#if ENABLE(CSS_FILTERS)
+        if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
+            && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
+            return StyleDifferenceLayout;
+        }
+#endif
+
 #if !USE(ACCELERATED_COMPOSITING)
         if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
             if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D

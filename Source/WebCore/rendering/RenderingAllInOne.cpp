@@ -29,6 +29,7 @@
 #include "BidiRun.cpp"
 #include "CounterNode.cpp"
 #include "EllipsisBox.cpp"
+#include "FilterEffectRenderer.cpp"
 #include "FixedTableLayout.cpp"
 #include "HitTestingTransformState.cpp"
 #include "HitTestResult.cpp"

@@ -52,6 +52,9 @@
 
 namespace WebCore {
 
+#if ENABLE(CSS_FILTERS)
+class FilterEffectRenderer;
+#endif
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
@@ -421,6 +424,9 @@ public:
         PaintLayerTemporaryClipRects = 1 << 2,
         PaintLayerPaintingReflection = 1 << 3,
         PaintLayerPaintingOverlayScrollbars = 1 << 4
+#if ENABLE(CSS_FILTERS)
+        , PaintLayerPaintingFilter = 1 << 5
+#endif
     };
     
     typedef unsigned PaintLayerFlags;
@@ -502,7 +508,11 @@ public:
     bool preserves3D() const { return renderer()->style()->transformStyle3D() == TransformStyle3DPreserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
 
-     // Overloaded new operator.  Derived classes must override operator new
+#if ENABLE(CSS_FILTERS)
+    bool hasFilter() const { return renderer()->hasFilter(); }
+#endif
+
+    // Overloaded new operator. Derived classes must override operator new
     // in order to allocate out of the RenderArena.
     void* operator new(size_t, RenderArena*) throw();
 
@@ -659,7 +669,12 @@ private:
     void updateReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
-    
+
+#if ENABLE(CSS_FILTERS)
+    void updateOrRemoveFilterEffect();
+    void updateFilterBackingStore();
+#endif
+
     void parentClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     ClipRect backgroundClipRect(const RenderLayer* rootLayer, RenderRegion*, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
@@ -810,7 +825,11 @@ protected:
     
     // May ultimately be extended to many replicas (with their own paint order).
     RenderReplica* m_reflection;
-    
+  
+#if ENABLE(CSS_FILTERS)
+    RefPtr<FilterEffectRenderer> m_filter;
+#endif
+        
     // Renderers to hold our custom scroll corner and resizer.
     RenderScrollbarPart* m_scrollCorner;
     RenderScrollbarPart* m_resizer;

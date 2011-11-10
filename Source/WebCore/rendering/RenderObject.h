@@ -504,6 +504,12 @@ public:
     bool hasTransform() const { return m_hasTransform; }
     bool hasMask() const { return style() && style()->hasMask(); }
 
+#if ENABLE(CSS_FILTERS)
+    bool hasFilter() const { return style() && style()->hasFilter(); }
+#else
+    bool hasFilter() const { return false; }
+#endif
+
     inline bool preservesNewline() const;
 
 #if !HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)

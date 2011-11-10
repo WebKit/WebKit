@@ -1,3 +1,78 @@
+2011-11-10  Dean Jackson  <dino@apple.com>
+
+        Move/copy/merge SVG filter rendering code to generic rendering
+        https://bugs.webkit.org/show_bug.cgi?id=68472
+
+        Reviewed by Simon Fraser.
+
+        Implement an extremely simple version of the filter
+        chain. Only a single hue-rotate filter is supported
+        at the moment. The change in this commit was to insert a new
+        step in RenderLayer's painting to capture the content to an
+        offscreen ImageBuffer, apply a filter operation on that buffer,
+        and then draw the result in place of the original element. The full
+        implementation will need something like the SVGFilterBuilder
+        but this is a good prototype of effects on HTML content.
+        It's an open question at the moment as to when the filter
+        effect should apply: after masking, after overflow, after outline,
+        etc. Currently the filter applies at the end of the paintLayer code.
+        This will likely change.
+        
+        Added a FilterEffectRenderer class that is the root of the filter
+        tree. At the moment it holds the offscreen context and
+        the existing paint context.
+        
+        Other than rendering, the rest of this patch adds tests
+        to make sure any element with a filter style will become
+        a RenderLayer. In order to avoid a lot of duplicated code
+        around the more complex logic tests, RenderStyle::hasFilter
+        is available outside ENABLE(CSS_FILTERS), but returns false
+        in those situations.
+
+        Tests: css3/filters/add-filter-rendering.html
+               css3/filters/remove-filter-rendering.html
+               css3/filters/simple-filter-rendering.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/FilterEffectRenderer.cpp: Added.
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer):
+        (WebCore::FilterEffectRenderer::~FilterEffectRenderer):
+        * rendering/FilterEffectRenderer.h: Added.
+        (WebCore::FilterEffectRenderer::create):
+        (WebCore::FilterEffectRenderer::setSourceImageRect):
+        (WebCore::FilterEffectRenderer::sourceImageRect):
+        (WebCore::FilterEffectRenderer::setFilterRegion):
+        (WebCore::FilterEffectRenderer::filterRegion):
+        (WebCore::FilterEffectRenderer::effectBoundingBoxMode):
+        (WebCore::FilterEffectRenderer::setEffect):
+        (WebCore::FilterEffectRenderer::effect):
+        (WebCore::FilterEffectRenderer::setSourceGraphic):
+        (WebCore::FilterEffectRenderer::sourceGraphic):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::requiresLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::styleChanged):
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        (WebCore::RenderLayer::updateFilterBackingStore):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasFilter):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasFilter):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasFilter):
+
 2011-11-10  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word crash when create legacy position for shadowRoot

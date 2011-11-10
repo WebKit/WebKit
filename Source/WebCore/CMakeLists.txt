@@ -1215,6 +1215,7 @@ SET(WebCore_SOURCES
     rendering/BidiRun.cpp
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
+    rendering/FilterEffectRenderer.cpp
     rendering/FixedTableLayout.cpp
     rendering/HitTestingTransformState.cpp
     rendering/HitTestResult.cpp

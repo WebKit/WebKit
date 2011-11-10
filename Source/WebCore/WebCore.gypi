@@ -4544,6 +4544,8 @@
             'rendering/CounterNode.h',
             'rendering/EllipsisBox.cpp',
             'rendering/EllipsisBox.h',
+            'rendering/FilterEffectRenderer.cpp',
+            'rendering/FilterEffectRenderer.h',
             'rendering/FixedTableLayout.cpp',
             'rendering/FixedTableLayout.h',
             'rendering/HitTestingTransformState.cpp',
