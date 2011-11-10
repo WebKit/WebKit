@@ -64,7 +64,6 @@ public:
         GestureScrollBegin,
         GestureScrollEnd,
         GestureSingleTap,
-        GestureTapAndHold,
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1,3 +1,14 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Mac build fix: Remove TapAndHold gesture type.
+
+        It broke the build because it's unhandled. Remove it since it's not
+        supported at the moment anyway. (looks like an accidental addition?)
+
+        * Shared/WebEvent.h:
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Enable exports and constructor functions in static libs

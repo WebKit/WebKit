@@ -135,10 +135,12 @@ void QtTapGestureRecognizer::tapAndHoldTimeout()
 {
     ASSERT(m_touchBeginEventForTap);
     m_tapAndHoldTimer.stop();
+#if 0 // No support for synthetic context menus in WK2 yet.
     QTouchEvent::TouchPoint tapPoint = m_touchBeginEventForTap->touchPoints().at(0);
     WebGestureEvent gesture(WebEvent::GestureTapAndHold, tapPoint.pos().toPoint(), tapPoint.screenPos().toPoint(), WebEvent::Modifiers(0), 0);
     if (m_webPageProxy)
         m_webPageProxy->handleGestureEvent(gesture);
+#endif
     m_touchBeginEventForTap.clear();
     m_tapState = TapAndHold;
 
