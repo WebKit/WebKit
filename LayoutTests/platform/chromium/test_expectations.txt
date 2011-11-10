@@ -670,7 +670,7 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 BUGCR77706 : editing/spelling/grammar.html = FAIL
 
 // Needs grammar checking.
-BUGWK71792 : editing/spelling/markers.html = FAIL
+BUGWK71792 : editing/spelling/markers.html = MISSING
 
 // Flaky
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
