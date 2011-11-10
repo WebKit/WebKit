@@ -426,11 +426,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
         JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
         
         silentSpillAllRegisters(gpr);
-        
-        m_jit.moveDouble(fpr, FPRInfo::argumentFPR0);
-        appendCallWithExceptionCheck(toInt32);
-        m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, gpr);
-        
+        callOperation(toInt32, gpr, fpr);
         silentFillAllRegisters(gpr);
         
         truncatedToInteger.link(&m_jit);

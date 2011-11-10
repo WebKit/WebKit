@@ -228,6 +228,13 @@ private:
             return;
         m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
+    // Add a set of speculation checks without additional recovery.
+    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
+    {
+        Vector<MacroAssembler::Jump, 16> JumpVector = jumpsToFail.jumps();
+        for (unsigned i = 0; i < JumpVector.size(); ++i)
+            speculationCheck(jsValueSource, nodeIndex, JumpVector[i]);
+    }
     // Add a speculation check with additional recovery.
     void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {

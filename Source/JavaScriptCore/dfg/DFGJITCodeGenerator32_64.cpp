@@ -421,13 +421,7 @@ void JITCodeGenerator::nonSpeculativeValueToInt32(Node& node)
         JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
 
         silentSpillAllRegisters(gpr);
-
-        m_jit.subPtr(TrustedImm32(sizeof(double)), JITCompiler::stackPointerRegister);
-        m_jit.storeDouble(fpr, JITCompiler::stackPointerRegister);
-        appendCallWithExceptionCheck(toInt32);
-        m_jit.move(GPRInfo::returnValueGPR, gpr);
-        m_jit.addPtr(TrustedImm32(sizeof(double)), JITCompiler::stackPointerRegister);
-
+        callOperation(toInt32, gpr, fpr);
         silentFillAllRegisters(gpr);
 
         truncatedToInteger.link(&m_jit);
@@ -857,8 +851,10 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg basePayloadGPR, GPRReg 
 {
     ASSERT(nodeType == GetById || nodeType == GetMethod);
 
+    m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    m_jit.endUninterruptedSequence();
     
     m_jit.loadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
     JITCompiler::DataLabelCompact tagLoadWithPatch = m_jit.load32WithCompactAddressOffsetPatch(JITCompiler::Address(resultPayloadGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
@@ -888,8 +884,10 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg basePayloadGPR, GPRReg 
 
 void JITCodeGenerator::cachedPutById(GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
+    m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+    m_jit.endUninterruptedSequence();
 
     writeBarrier(basePayloadGPR, valueTagGPR, valueIndex, WriteBarrierForPropertyAccess, scratchGPR);
 

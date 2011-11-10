@@ -64,6 +64,47 @@
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 16)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 24)
 
+#elif COMPILER(GCC) && CPU(ARM_THUMB2)
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
+    asm ( \
+    ".text" "\n" \
+    ".align 2" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    ".thumb" "\n" \
+    ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "cpy a2, lr" "\n" \
+        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
+    asm ( \
+    ".text" "\n" \
+    ".align 2" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    ".thumb" "\n" \
+    ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "cpy a4, lr" "\n" \
+        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+    asm ( \
+    ".text" "\n" \
+    ".align 2" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    ".thumb" "\n" \
+    ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "str lr, [sp, #4]" "\n" \
+        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+    );
+
 #endif
 
 #define P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
@@ -521,6 +562,19 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
     "mov %edi, 4(%esp)\n"
     "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+);
+#elif CPU(ARM_THUMB2)
+asm (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+".thumb" "\n"
+".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "ldr r5, [r5, #-40]" "\n"
+    "cpy r0, r5" "\n"
+    "b " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
 

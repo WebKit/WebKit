@@ -71,6 +71,34 @@ public:
         push(address);
     }
 
+    void getPCAfterCall(GPRReg gpr)
+    {
+          peek(gpr, -1);
+    }
+#endif // CPU(X86_64) || CPU(X86)
+
+#if CPU(ARM)
+    ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        move(linkRegister, reg);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        move(reg, linkRegister);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtr(address, linkRegister);
+    }
+
+    ALWAYS_INLINE void getPCAfterCall(GPRReg gpr)
+    {
+        move(ARMRegisters::lr, gpr);
+    }
+#endif
+
     void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, GPRReg to)
     {
         loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
@@ -84,7 +112,6 @@ public:
     {
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
-#endif // CPU(X86_64) || CPU(X86)
 
     Jump branchIfNotCell(GPRReg reg)
     {
@@ -132,6 +159,7 @@ public:
 
 #ifndef NDEBUG
     // Add a debug call. This call has no effect on JIT code execution state.
+#if CPU(X86_64) || CPU(X86)
     void debugCall(V_DFGDebugOperation_EP function, void* argument)
     {
         EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_globalData->scratchBufferForSize(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters)));
@@ -160,6 +188,15 @@ public:
         for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
             loadPtr(buffer + i, GPRInfo::toRegister(i));
     }
+#else
+    void debugCall(V_DFGDebugOperation_EP function, void* argument) NO_RETURN_DUE_TO_ASSERT
+    {
+        // debugCall not supported on this platform.
+        UNUSED_PARAM(function);
+        UNUSED_PARAM(argument);
+        ASSERT_NOT_REACHED();
+    }
+#endif
 #endif
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
@@ -192,24 +229,35 @@ public:
         movePtrToDouble(gpr, fpr);
         return fpr;
     }
-#elif USE(JSVALUE32_64)
+#endif
+
+#if USE(JSVALUE32_64) && CPU(X86)
     void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
-#if CPU(X86)
         movePackedToInt32(fpr, payloadGPR);
         rshiftPacked(TrustedImm32(32), fpr);
         movePackedToInt32(fpr, tagGPR);
-#endif
     }
     void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
         jitAssertIsJSDouble(tagGPR);
-#if CPU(X86)
         moveInt32ToPacked(payloadGPR, fpr);
         moveInt32ToPacked(tagGPR, scratchFPR);
         lshiftPacked(TrustedImm32(32), scratchFPR);
         orPacked(scratchFPR, fpr);
+    }
 #endif
+
+#if USE(JSVALUE32_64) && CPU(ARM)
+    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
+    {
+        m_assembler.vmov(payloadGPR, tagGPR, fpr);
+    }
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
+    {
+        jitAssertIsJSDouble(tagGPR);
+        UNUSED_PARAM(scratchFPR);
+        m_assembler.vmov(fpr, payloadGPR, tagGPR);
     }
 #endif
 

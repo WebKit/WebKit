@@ -592,7 +592,6 @@ protected:
             m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
             info.spill((DataFormat)(spillFormat | DataFormatJS));
             return;
-        }
 #elif USE(JSVALUE32_64)
         case DataFormatDouble:
         case DataFormatJSDouble: {
@@ -621,8 +620,8 @@ protected:
             }
             info.spill((DataFormat)(spillFormat | DataFormatJS));
             return;
-        }
 #endif
+        }
     }
     
     bool isStrictInt32(NodeIndex);
@@ -972,7 +971,7 @@ protected:
     // On X86 we use cdecl calling conventions, which pass all arguments on the
     // stack. On other architectures we may need to sort values into the
     // correct registers.
-#if CPU(X86)
+#if !NUMBER_OF_ARGUMENT_REGISTERS
     unsigned m_callArgumentIndex;
     void resetCallArguments() { m_callArgumentIndex = 0; }
 
@@ -1128,7 +1127,10 @@ protected:
         addCallArgument(arg4);
         addCallArgument(arg5);
     }
-#else
+#endif // !NUMBER_OF_ARGUMENT_REGISTERS
+    // These methods are suitable for any calling convention that provides for
+    // at least 4 argument registers, e.g. X86_64, ARMv7.
+#if NUMBER_OF_ARGUMENT_REGISTERS >= 4
     template<GPRReg destA, GPRReg destB>
     void setupTwoStubArgs(GPRReg srcA, GPRReg srcB)
     {
@@ -1157,6 +1159,7 @@ protected:
         } else
             m_jit.swap(destA, destB);
     }
+#if CPU(X86_64)
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
     {
@@ -1203,6 +1206,7 @@ protected:
         m_jit.moveDouble(destB, destA);
         m_jit.moveDouble(temp, destB);
     }
+#endif
     void setupStubArguments(GPRReg arg1, GPRReg arg2)
     {
         setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
@@ -1259,6 +1263,7 @@ protected:
             m_jit.swap(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
     }
 
+#if CPU(X86_64)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
         m_jit.moveDouble(arg1, FPRInfo::argumentFPR0);
@@ -1268,6 +1273,18 @@ protected:
     {
         setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
     }
+#else
+    ALWAYS_INLINE void setupArguments(FPRReg arg1)
+    {
+        m_jit.assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
+    }
+
+    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
+    {
+        m_jit.assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
+        m_jit.assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
+    }
+#endif
 
     ALWAYS_INLINE void setupArgumentsExecState()
     {
@@ -1326,13 +1343,63 @@ protected:
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3)
+    {
+        setupStubArguments(arg1, arg2);
+        m_jit.move(arg3, GPRInfo::argumentGPR3);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImmPtr arg3)
     {
         setupStubArguments(arg1, arg2);
         m_jit.move(arg3, GPRInfo::argumentGPR3);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
-#endif
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3)
+    {
+        m_jit.move(arg1, GPRInfo::argumentGPR1);
+        m_jit.move(arg2, GPRInfo::argumentGPR2);
+        m_jit.move(arg3, GPRInfo::argumentGPR3);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+#endif // NUMBER_OF_ARGUMENT_REGISTERS >= 4
+    // These methods are suitable for any calling convention that provides for
+    // exactly 4 argument registers, e.g. ARMv7.
+#if NUMBER_OF_ARGUMENT_REGISTERS == 4
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
+    {
+        m_jit.poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
+    {
+        m_jit.poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3, GPRReg arg4)
+    {
+        m_jit.poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, TrustedImmPtr arg4)
+    {
+        m_jit.poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5)
+    {
+        m_jit.poke(arg5, 1);
+        m_jit.poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+#endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
 
     // These methods add calls to C++ helper functions.
     // These methods are broadly value representation specific (i.e.
@@ -1685,6 +1752,19 @@ protected:
         JITCompiler::Call call = m_jit.appendCall(function);
         m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
         m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
+        return call;
+    }
+#elif CPU(ARM)
+    JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, FPRReg result)
+    {
+        JITCompiler::Call call = appendCallWithExceptionCheck(function);
+        m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
+        return call;
+    }
+    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    {
+        JITCompiler::Call call = m_jit.appendCall(function);
+        m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
         return call;
     }
 #else

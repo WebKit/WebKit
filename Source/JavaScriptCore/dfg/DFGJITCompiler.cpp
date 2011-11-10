@@ -46,7 +46,9 @@ void JITCompiler::linkOSRExits()
         OSRExit& exit = codeBlock()->osrExit(i);
         exit.m_check.initialJump().link(this);
         store32(Imm32(i), &globalData()->osrExitIndex);
+        beginUninterruptedSequence();
         exit.m_check.switchToLateJump(jump());
+        endUninterruptedSequence();
     }
 }
 
@@ -98,7 +100,7 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
         // of the call out from JIT code that threw the exception; this is still
         // available on the stack, just below the stack pointer!
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        peek(GPRInfo::argumentGPR1, -1);
+        getPCAfterCall(GPRInfo::argumentGPR1);
         m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
         // and the address of the handler in returnValueGPR2.

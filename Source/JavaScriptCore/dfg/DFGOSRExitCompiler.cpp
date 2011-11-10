@@ -64,7 +64,7 @@ void compileOSRExit(ExecState* exec)
     
     {
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(exit.m_check.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code().executableAddress()));
+        repatchBuffer.relink(exit.m_check.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     }
     
     globalData->osrExitJumpDestination = exit.m_code.code().executableAddress();

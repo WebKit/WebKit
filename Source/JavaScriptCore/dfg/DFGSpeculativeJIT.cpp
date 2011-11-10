@@ -652,6 +652,8 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
     MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThan, source, scratch);
     
     jit.loadDouble(&half, scratch);
+    // FIXME: This should probably just use a floating point round!
+    // https://bugs.webkit.org/show_bug.cgi?id=72054
     jit.addDouble(source, scratch);
     jit.truncateDoubleToInt32(scratch, result);   
     MacroAssembler::Jump truncatedInt = jit.jump();

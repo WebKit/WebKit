@@ -1,3 +1,55 @@
+2011-11-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Add ARMv7 support to the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=72061
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::preserveReturnAddressAfterCall):
+        (JSC::DFG::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        (JSC::DFG::AssemblyHelpers::emitPutImmediateToCallFrameHeader):
+        (JSC::DFG::AssemblyHelpers::boxDouble):
+        (JSC::DFG::AssemblyHelpers::unboxDouble):
+            - Add CPU(ARM) copies of these functions.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::spill):
+            - Fix matching of '}' re #if blocks, makes some tools happy.
+        (JSC::DFG::JITCodeGenerator::setupArguments):
+        (JSC::DFG::JITCodeGenerator::setupArgumentsWithExecState):
+        (JSC::DFG::JITCodeGenerator::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::JITCodeGenerator::appendCallSetResult):
+            - Add CPU(ARM) / 4 argument register copies of these functions.
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+            - Should use callOperation to plant a call to a DFG_OPERATION.
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+            - These methods need to plant a relinkable jump; we currently do so
+              using beginUninterruptedSequence() / endUninterruptedSequence().
+        * dfg/DFGJITCodeGenerator64.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+            - Should use callOperation to plant a call to a DFG_OPERATION.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+            - This method needs to plant a relinkable jump; we currently do so
+              using beginUninterruptedSequence() / endUninterruptedSequence().
+        (JSC::DFG::JITCompiler::compileBody):
+            - Add abstraction to retrieve the pc after a call.
+        * dfg/DFGOSRExitCompiler.cpp:
+            - Fix a bug - CodeLocationLabel needs a data address rather than an
+              executable one, but can just take a MacroAssemblerCodePtr instead!
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::compileClampDoubleToByte):
+            - Add FIXME comment to come back to! - bug#72054.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+            - Add missing method (ooops, required by bug#72047)
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+            - Need to wrap fmod on ARMv7.
+
+
 2011-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not reparse code that was just parsed
