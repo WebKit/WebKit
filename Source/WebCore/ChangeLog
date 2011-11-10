@@ -1,3 +1,16 @@
+2011-11-10  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix progress load reporting for MHTML documents.
+
+        MHTML documents containing references to resources they don't include
+        never finish loading.
+        https://bugs.webkit.org/show_bug.cgi?id=71859
+
+        Reviewed by Adam Barth.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+
 2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix linking with --whole-archive

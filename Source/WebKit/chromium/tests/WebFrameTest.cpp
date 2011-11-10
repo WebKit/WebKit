@@ -64,12 +64,12 @@ public:
 
     void registerMockedHttpURLLoad(const std::string& fileName)
     {
-        FrameTestHelpers::registerMockedURLLoad(m_baseURL, fileName);
+        FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, fileName);
     }
 
     void registerMockedChromeURLLoad(const std::string& fileName)
     {
-        FrameTestHelpers::registerMockedURLLoad(m_chromeURL, fileName);
+        FrameTestHelpers::registerMockedURLLoadAsHTML(m_chromeURL, fileName);
     }
 
 protected:
@@ -175,7 +175,7 @@ TEST_F(WebFrameTest, ReloadDoesntSetRedirect)
     registerMockedHttpURLLoad("form.html");
 
     TestReloadDoesntRedirectWebFrameClient webFrameClient;
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "form.html", false, &webFrameClient);
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "form.html", false, 0, &webFrameClient);
 
     webView->mainFrame()->reload(true);
     // start reload before request is delivered.
@@ -268,7 +268,7 @@ TEST_F(WebFrameTest, ContextNotificationsLoadUnload)
 
     // Load a frame with an iframe, make sure we get the right create notifications.
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, 0, &webFrameClient);
 
     WebFrame* mainFrame = webView->mainFrame();
     WebFrame* childFrame = mainFrame->firstChild();
@@ -306,7 +306,7 @@ TEST_F(WebFrameTest, ContextNotificationsReload)
     registerMockedHttpURLLoad("context_notifications_test_frame.html");
 
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, 0, &webFrameClient);
 
     // Refresh, we should get two release notifications and two more create notifications.
     webView->mainFrame()->reload(false);
@@ -345,7 +345,7 @@ TEST_F(WebFrameTest, ContextNotificationsIsolatedWorlds)
     registerMockedHttpURLLoad("context_notifications_test_frame.html");
 
     ContextLifetimeTestWebFrameClient webFrameClient;
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, &webFrameClient);
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "context_notifications_test.html", true, 0, &webFrameClient);
 
     // Add an isolated world.
     webFrameClient.reset();

@@ -45,17 +45,22 @@
 namespace WebKit {
 namespace FrameTestHelpers {
 
-void registerMockedURLLoad(const std::string& base, const std::string& fileName)
+void registerMockedURLLoadAsHTML(const std::string& base, const std::string& fileName)
 {
-    WebURLResponse response;
-    response.initialize();
-    response.setMIMEType("text/html");
+    registerMockedURLLoad(base, fileName, "text/html");
+}
+
+void registerMockedURLLoad(const std::string& base, const std::string& fileName, const std::string& mimeType)
+{
+    GURL url(base + fileName);
+    WebURLResponse response(url);
+    response.setMIMEType(WebString::fromUTF8(mimeType));
 
     std::string filePath = webkit_support::GetWebKitRootDir().utf8();
     filePath += "/Source/WebKit/chromium/tests/data/";
     filePath += fileName;
 
-    webkit_support::RegisterMockedURL(GURL(base + fileName), response, WebString::fromUTF8(filePath));
+    webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
 }
 
 void loadFrame(WebFrame* frame, const std::string& url)
@@ -84,12 +89,17 @@ static WebViewClient* defaultWebViewClient()
     return &client;
 }
 
-WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebFrameClient* webFrameClient)
+WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebViewClient* webViewClient, WebFrameClient* webFrameClient)
 {
+    if (!webViewClient)
+        webViewClient = defaultWebViewClient();
     if (!webFrameClient)
         webFrameClient = defaultWebFrameClient();
-    WebView* webView = WebView::create(defaultWebViewClient());
-    webView->settings()->setJavaScriptEnabled(enableJavascript);
+    WebView* webView = WebView::create(webViewClient);
+    WebSettings* settings = webView->settings();
+    settings->setImagesEnabled(true);
+    settings->setLoadsImagesAutomatically(true);
+    settings->setJavaScriptEnabled(enableJavascript);
     webView->initializeMainFrame(webFrameClient);
 
     loadFrame(webView->mainFrame(), url);

@@ -1,3 +1,26 @@
+2011-11-10  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix progress load reporting for MHTML documents.
+
+        MHTML documents containing references to resources they don't include
+        never finish loading.
+        https://bugs.webkit.org/show_bug.cgi?id=71859
+
+        Reviewed by Adam Barth.
+
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::registerMockedURLLoadAsHTML):
+        (WebKit::FrameTestHelpers::registerMockedURLLoad):
+        (WebKit::FrameTestHelpers::createWebViewAndLoad):
+        * tests/FrameTestHelpers.h:
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::registerMockedHttpURLLoad):
+        (WebKit::WebFrameTest::registerMockedChromeURLLoad):
+        (WebKit::TEST_F):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+        * tests/data/page_with_image.mht: Added.
+
 2011-11-09  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Add WebMediaStreamRegistry

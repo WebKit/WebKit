@@ -1,0 +1,31 @@
+From: <Saved by UnMHT>
+Subject: =?iso-2022-jp?B?UGFnZSB3aXRoIHNxdWFyZQ==?=
+Date: Wed, May 18 2011 16:38:33 GMT-0700
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0000_02C8A5EE.D896CA6B";
+	type="text/html"
+
+------=_NextPart_000_0000_02C8A5EE.D896CA6B
+Content-Type: text/html; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://localhost/page_with_image.html
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
+=3Diso-8859-1">
+
+
+<title>Page with square</title>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+}
+
+</script>
+<base href=3D"http://localhost/"></base></head><body>
+This is a red square:<br>
+<img onerror=3D"document.getElementById(&#x27;error&#x27;).innerHTML+=3D&#x=
+27;Failed to load image!&#x27;" src=3D"resources/red_square.png">
+<div id=3D"error"></div>
+</body></html>
+------=_NextPart_000_0000_02C8A5EE.D896CA6B--
