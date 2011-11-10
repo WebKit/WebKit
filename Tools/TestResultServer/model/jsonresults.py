@@ -99,19 +99,6 @@ class JsonResults(object):
             build_number = int(incremental_builds[index])
             logging.debug("Merging build %s, incremental json index: %d.", build_number, index)
 
-            # FIXME: make this case work.
-            if build_number < aggregated_build_number:
-                logging.warning("Build %d in incremental json is older than the most recent build in aggregated results: %d",
-                    build_number, aggregated_build_number)
-                return False
-
-            # FIXME: skip the duplicated build and merge rest of the results.
-            # Need to be careful on skiping the corresponding value in
-            # _merge_tests because the property data for each test could be accumulated.
-            if build_number == aggregated_build_number:
-                logging.warning("Duplicate build %d in incremental json", build_number)
-                return False
-
             # Merge this build into aggreagated results.
             cls._merge_one_build(aggregated_json, incremental_json, index, num_runs)
 

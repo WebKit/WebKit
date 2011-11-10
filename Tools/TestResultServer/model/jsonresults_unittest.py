@@ -373,38 +373,42 @@ class JsonResultsTest(unittest.TestCase):
     def test_merge_incremental_result_older_build(self):
         # Test the build in incremental results is older than the most recent
         # build in aggregated results.
-        # The incremental results should be dropped and no merge happens.
         self._test_merge(
             # Aggregated results
             {"builds": ["3", "1"],
              "tests": {"001.html": {
-                           "results": "[200,\"F\"]",
-                           "times": "[200,0]"}}},
+                           "results": "[5,\"F\"]",
+                           "times": "[5,0]"}}},
             # Incremental results
             {"builds": ["2"],
              "tests": {"001.html": {
                            "results": "[1, \"F\"]",
                            "times": "[1,0]"}}},
             # Expected no merge happens.
-            None)
+            {"builds": ["2", "3", "1"],
+             "tests": {"001.html": {
+                           "results": "[6,\"F\"]",
+                           "times": "[6,0]"}}})
 
     def test_merge_incremental_result_same_build(self):
         # Test the build in incremental results is same as the build in
         # aggregated results.
-        # The incremental results should be dropped and no merge happens.
         self._test_merge(
             # Aggregated results
             {"builds": ["2", "1"],
              "tests": {"001.html": {
-                           "results": "[200,\"F\"]",
-                           "times": "[200,0]"}}},
+                           "results": "[5,\"F\"]",
+                           "times": "[5,0]"}}},
             # Incremental results
             {"builds": ["3", "2"],
              "tests": {"001.html": {
                            "results": "[2, \"F\"]",
                            "times": "[2,0]"}}},
             # Expected no merge happens.
-            None)
+            {"builds": ["3", "2", "2", "1"],
+             "tests": {"001.html": {
+                           "results": "[7,\"F\"]",
+                           "times": "[7,0]"}}})
 
     def test_merge_remove_test_with_no_data(self):
         # Remove test where there is no data in all runs.

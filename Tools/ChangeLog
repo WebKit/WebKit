@@ -1,3 +1,18 @@
+2011-11-09  Ojan Vafai  <ojan@chromium.org>
+
+        Merge in results to the test results server even if build numbers conflict
+        https://bugs.webkit.org/show_bug.cgi?id=71967
+
+        Reviewed by Tony Chang.
+
+        This was initially meant to be a sanity check that we don't
+        enter duplicate runs, but it turns out that we can reasonably get
+        in these situations when a builder is clobbered (e.g. the build
+        numbers start over again from 0).
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2011-11-09  Eric Seidel  <eric@webkit.org>
 
         Remove the concept of platform-dependent unittests
