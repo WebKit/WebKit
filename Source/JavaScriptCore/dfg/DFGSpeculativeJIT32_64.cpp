@@ -36,12 +36,12 @@ namespace JSC { namespace DFG {
 
 // On Windows we need to wrap fmod; on other platforms we can call it directly.
 #if CALLING_CONVENTION_IS_STDCALL
-static double CDECL fmodWithCDecl(double x, double y)
+static double DFG_OPERATION fmodAsDFGOperation(double x, double y)
 {
     return fmod(x, y);
 }
 #else
-#define fmodWithCDecl fmod
+#define fmodAsDFGOperation fmod
 #endif
 
 #if USE(JSVALUE32_64)
@@ -1142,6 +1142,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithDiv: {
+#if CPU(X86)
         if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
             SpeculateIntegerOperand op2(this, node.child2());
@@ -1181,6 +1182,7 @@ void SpeculativeJIT::compile(Node& node)
             integerResult(eax.gpr(), m_compileIndex);
             break;
         }
+#endif
         
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
@@ -1190,53 +1192,84 @@ void SpeculativeJIT::compile(Node& node)
         FPRReg reg2 = op2.fpr();
         m_jit.divDouble(reg1, reg2, result.fpr());
 
+#if !CPU(X86)
+        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
+            FPRTemporary scratch(this, op2);
+            GPRTemporary intResult(this);
+
+            JITCompiler::JumpList failureCases;
+            m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr());
+            speculationCheck(JSValueRegs(), NoNode, failureCases);
+
+            integerResult(intResult.gpr(), m_compileIndex);
+            break;
+        }
+#endif
+
         doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 
     case ArithMod: {
-        if (at(node.child1()).shouldNotSpeculateInteger() || at(node.child2()).shouldNotSpeculateInteger()
-            || !node.canSpeculateInteger()) {
-            SpeculateDoubleOperand op1(this, node.child1());
-            SpeculateDoubleOperand op2(this, node.child2());
-            
-            FPRReg op1FPR = op1.fpr();
-            FPRReg op2FPR = op2.fpr();
-            
-            flushRegisters();
-            
-            FPRResult result(this);
+#if CPU(X86)
+        if (!at(node.child1()).shouldNotSpeculateInteger() && !at(node.child2()).shouldNotSpeculateInteger()
+            && node.canSpeculateInteger()) {
+            SpeculateIntegerOperand op1(this, node.child1());
+            SpeculateIntegerOperand op2(this, node.child2());
+            GPRTemporary eax(this, X86Registers::eax);
+            GPRTemporary edx(this, X86Registers::edx);
+            GPRReg op1Gpr = op1.gpr();
+            GPRReg op2Gpr = op2.gpr();
 
-            callOperation(fmodWithCDecl, result.fpr(), op1FPR, op2FPR);
-            
-            doubleResult(result.fpr(), m_compileIndex);
+            speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::Zero, op2Gpr));
+
+            GPRReg temp2 = InvalidGPRReg;
+            if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
+                temp2 = allocate();
+                m_jit.move(op2Gpr, temp2);
+                op2Gpr = temp2;
+            }
+
+            m_jit.move(op1Gpr, eax.gpr());
+            m_jit.assembler().cdq();
+            m_jit.assembler().idivl_r(op2Gpr);
+
+            if (temp2 != InvalidGPRReg)
+                unlock(temp2);
+
+            integerResult(edx.gpr(), m_compileIndex);
             break;
         }
+#endif
         
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary eax(this, X86Registers::eax);
-        GPRTemporary edx(this, X86Registers::edx);
-        GPRReg op1Gpr = op1.gpr();
-        GPRReg op2Gpr = op2.gpr();
+        SpeculateDoubleOperand op1(this, node.child1());
+        SpeculateDoubleOperand op2(this, node.child2());
+        
+        FPRReg op1FPR = op1.fpr();
+        FPRReg op2FPR = op2.fpr();
+        
+        flushRegisters();
+        
+        FPRResult result(this);
 
-        speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::Zero, op2Gpr));
+        callOperation(fmodAsDFGOperation, result.fpr(), op1FPR, op2FPR);
+        
+#if !CPU(X86)
+        if (!at(node.child1()).shouldNotSpeculateInteger() && !at(node.child2()).shouldNotSpeculateInteger()
+            && node.canSpeculateInteger()) {
+            FPRTemporary scratch(this, op2);
+            GPRTemporary intResult(this);
 
-        GPRReg temp2 = InvalidGPRReg;
-        if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
-            temp2 = allocate();
-            m_jit.move(op2Gpr, temp2);
-            op2Gpr = temp2;
+            JITCompiler::JumpList failureCases;
+            m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr());
+            speculationCheck(JSValueRegs(), NoNode, failureCases);
+
+            integerResult(intResult.gpr(), m_compileIndex);
+            break;
         }
+#endif
 
-        m_jit.move(op1Gpr, eax.gpr());
-        m_jit.assembler().cdq();
-        m_jit.assembler().idivl_r(op2Gpr);
-
-        if (temp2 != InvalidGPRReg)
-            unlock(temp2);
-
-        integerResult(edx.gpr(), m_compileIndex);
+        doubleResult(result.fpr(), m_compileIndex);
         break;
     }
 

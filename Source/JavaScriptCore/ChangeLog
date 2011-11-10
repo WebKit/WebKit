@@ -1,5 +1,21 @@
 2011-11-10  Gavin Barraclough  <barraclough@apple.com>
 
+        #ifdef CPU(X86) specific div/mod code in DFGSpeculativeJIT32_64
+        https://bugs.webkit.org/show_bug.cgi?id=72047
+
+        Reviewed by Geoff Garen.
+
+        We currently don't attempt to abstract divide through the macro assembler,
+        due to these instructions commonly having specific requirements. This means
+        there is architecture specific code in the JIT - #ifdef it, and provide a
+        common implementation.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::fmodAsDFGOperation):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-11-10  Gavin Barraclough  <barraclough@apple.com>
+
         Add ENABLE_VALUE_PROFILER support for ARMv7
         https://bugs.webkit.org/show_bug.cgi?id=72043
 
