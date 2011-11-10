@@ -2732,8 +2732,6 @@ BUGWK58587 : media/video-controls-rendering.html = IMAGE
 //BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
 //BUGWK70046 SLOW MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS MISSING
 
-BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
-
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 BUGWK54051 MAC : plugins/invalidate_rect.html = TEXT
