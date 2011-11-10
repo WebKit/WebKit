@@ -1,3 +1,14 @@
+2011-11-10  Dean Jackson  <dino@apple.com>
+
+        Remove effectBoundingBoxMode from CSS Filters
+        https://bugs.webkit.org/show_bug.cgi?id=72058
+
+        Reviewed by Simon Fraser.
+
+        As suggested by Nikolas, we don't need this virtual method any more.
+
+        * rendering/FilterEffectRenderer.h:
+
 2011-11-10  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72060

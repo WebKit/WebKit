@@ -58,10 +58,6 @@ public:
     virtual void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
     virtual FloatRect filterRegion() const { return m_filterRegion; }
 
-    // At the moment we don't adjust the bounds of our caller. We
-    // will do this once the full filter chain is built (for effects such as blur).
-    virtual bool effectBoundingBoxMode() const { return false; }
-
     virtual void setEffect(PassRefPtr<FilterEffect> effect) { m_effect = effect; }
     virtual RefPtr<FilterEffect> effect() const { return m_effect; }
 
