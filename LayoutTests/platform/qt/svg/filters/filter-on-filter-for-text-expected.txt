@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (30,10) size 209x26 contains 1 chunk(s)
       [filter="filter"] RenderSVGResourceFilter {filter} at (9.10,7.40) size 250.80x31.20
       RenderSVGInlineText {#text} at (0,0) size 137x26
-        [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
+        [filter="filter"] RenderSVGResourceFilter {filter} at (16.30,7.40) size 164.40x31.20
         chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 19 width 137.00: "This is for filter "
       RenderSVGTSpan {tspan} at (0,0) size 66x26
         RenderSVGInlineText {#text} at (137,0) size 66x26
-          [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
+          [filter="filter"] RenderSVGResourceFilter {filter} at (160.40,7.40) size 79.20x31.20
           chunk 1 text run 1 at (167.00,30.00) startOffset 0 endOffset 9 width 66.00: "on filter"
       RenderSVGInlineText {#text} at (203,0) size 6x26
-        [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
+        [filter="filter"] RenderSVGResourceFilter {filter} at (232.40,7.40) size 7.20x31.20
         chunk 1 text run 1 at (233.00,30.00) startOffset 0 endOffset 1 width 6.00: "."
