@@ -6,13 +6,15 @@ RUNNING TEST: extension_testEvalConsoleAPI
 Evaluate: "function" (exception: undefined)
 RUNNING TEST: extension_testEvalDefinesGlobalSymbols
 Evaluate: {"func":"function","variable":42} (exception: undefined)
-RUNNING TEST: extension_testEvalFailed
-Evaluate: "TypeError: JSON.stringify cannot serialize cyclic structures." (exception: true)
 RUNNING TEST: extension_testEvalOk
 Evaluate: {"str":"foo","num":42} (exception: undefined)
 RUNNING TEST: extension_testEvalStatement
 Evaluate: 0 (exception: undefined)
+RUNNING TEST: extension_testEvalStringifyingLoopFailed
+Evaluate: "Object has too long reference chain(must not be longer than 1000)" (exception: true)
 RUNNING TEST: extension_testEvalUndefined
 Evaluate: undefined (exception: undefined)
+RUNNING TEST: extension_testWithStringifyOverridden
+Evaluate: "OK" (exception: undefined)
 All tests done.
 

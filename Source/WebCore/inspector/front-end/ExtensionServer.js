@@ -298,17 +298,19 @@ WebInspector.ExtensionServer.prototype = {
     {
         function callback(error, resultPayload, wasThrown)
         {
-            if (error)
-                return;
-            var resultObject = WebInspector.RemoteObject.fromPayload(resultPayload);
             var result = {};
+            if (error) {
+                result.isException = true;
+                result.value = error.message;
+            }  else
+                result.value = resultPayload.value;
+
             if (wasThrown)
                 result.isException = true;
-            result.value = resultObject.description;
+      
             this._dispatchCallback(message.requestId, port, result);
         }
-        var evalExpression = "JSON.stringify(eval(unescape('" + escape(message.expression) + "')));";
-        RuntimeAgent.evaluate(evalExpression, "", true, undefined, undefined, undefined, callback.bind(this));
+        RuntimeAgent.evaluate(message.expression, "", true, undefined, undefined, true, callback.bind(this));
     },
 
     _onGetConsoleMessages: function()

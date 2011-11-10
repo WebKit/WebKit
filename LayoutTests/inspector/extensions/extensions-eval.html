@@ -6,14 +6,17 @@
 
 window.inspectedValue = { str: "foo", num: 42 };
 
+window.loop = { };
+window.loop.next = window.loop;
+
 function extension_testEvalOk(nextTest)
 {
     webInspector.inspectedWindow.eval("inspectedValue", callbackAndNextTest(extension_onEval, nextTest));
 }
 
-function extension_testEvalFailed(nextTest)
+function extension_testEvalStringifyingLoopFailed(nextTest)
 {
-    webInspector.inspectedWindow.eval("document.body", callbackAndNextTest(extension_onEval, nextTest));
+    webInspector.inspectedWindow.eval("window.loop", callbackAndNextTest(extension_onEval, nextTest));
 }
 
 function extension_testEvalDefinesGlobalSymbols(nextTest)
@@ -36,6 +39,11 @@ function extension_testEvalUndefined(nextTest)
 function extension_testEvalConsoleAPI(nextTest)
 {
     webInspector.inspectedWindow.eval("typeof inspect", callbackAndNextTest(extension_onEval, nextTest));
+}
+
+function extension_testWithStringifyOverridden(nextTest)
+{
+    webInspector.inspectedWindow.eval("(JSON.stringify = function() { throw 'oops! you can not use JSON.stringify'; }), 'OK'", callbackAndNextTest(extension_onEval, nextTest));
 }
 
 function extension_onEval(value, isException)

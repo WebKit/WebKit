@@ -506,10 +506,7 @@ InspectedWindow.prototype = {
     {
         function callbackWrapper(result)
         {
-            var value = result.value;
-            if (!result.isException)
-                value = value === "undefined" ? undefined : JSON.parse(value);
-            callback(value, result.isException);
+            callback(result.value, result.isException);
         }
         return extensionServer.sendRequest({ command: "evaluateOnInspectedPage", expression: expression }, callback && callbackWrapper);
     },
