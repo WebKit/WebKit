@@ -73,6 +73,7 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl)
 {
     return toV8(impl.get());
 }
+
 }
 
 #endif // V8TestMediaQueryListListener_h

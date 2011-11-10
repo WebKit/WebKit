@@ -18,10 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef V8TestObj_h
-#define V8TestObj_h
+#ifndef V8TestEventConstructor_h
+#define V8TestEventConstructor_h
 
-#include "TestObj.h"
+#include "TestEventConstructor.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -30,55 +30,51 @@
 
 namespace WebCore {
 
-class V8TestObj {
+class V8TestEventConstructor {
 public:
     static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestObj* toNative(v8::Handle<v8::Object> object)
+    static TestEventConstructor* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestEventConstructor*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestObj*);
+    inline static v8::Handle<v8::Object> wrap(TestEventConstructor*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
-    static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> customMethodWithArgsCallback(const v8::Arguments&);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> customAttrAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
-    static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestObj*);
+    static v8::Handle<v8::Object> existingWrapper(TestEventConstructor*);
 
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestObj*);
+    static v8::Handle<v8::Object> wrapSlow(TestEventConstructor*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestObj::existingWrapper(TestObj* impl)
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestEventConstructor::existingWrapper(TestEventConstructor* impl)
 {
     return getDOMObjectMap().get(impl);
 }
 
-v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl)
+v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl)
 {
         v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestObj::wrapSlow(impl);
+    return V8TestEventConstructor::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestObj* impl)
+inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl)
 {
     if (!impl)
         return v8::Null();
-    return V8TestObj::wrap(impl);
+    return V8TestEventConstructor::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl)
 {
     return toV8(impl.get());
 }
 
 }
 
-#endif // V8TestObj_h
+#endif // V8TestEventConstructor_h

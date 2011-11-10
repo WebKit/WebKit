@@ -75,6 +75,7 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface
 {
     return toV8(impl.get());
 }
+
 }
 
 #endif // V8TestSerializedScriptValueInterface_h

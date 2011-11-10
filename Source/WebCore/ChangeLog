@@ -1,3 +1,117 @@
+2011-11-10  Kentaro Hara  <haraken@chromium.org>
+
+        CodeGeneratorV8.pm can generate Event constructors
+        https://bugs.webkit.org/show_bug.cgi?id=72055
+
+        Reviewed by Adam Barth.
+
+        This patch makes CodeGeneratorV8.pm generate Event constructors
+        and replaces a custom constructor of Event with the generated one.
+        After this patch is landed without regression,
+        I will replace custom constructors of all other Events.
+        This patch introduces two new IDLs:
+
+        - [ConstructorTemplate=Event] IDL indicates that CodeGenerator should
+        generate an Event constructor.
+        - [InitializedByConstructor] IDL on an attribute indicates that
+        the attribute can be initialized by the constructor.
+
+        Tests: fast/events/constructors/event-constructors.html
+               fast/events/constructors/custom-event-constructor.html
+               fast/events/constructors/progress-event-constructor.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader): Added a header for fillXXXXEventInit(...).
+        (IsConstructable): Judges if a given interface is constructable.
+        (IsConstructorTemplate): Judges if a given interface has a given template, e.g. judges if an interface has [ConstructorTemplate=Event].
+        (GenerateEventConstructorCallback): Generates an Event constructor. The generated code is the same as the code that had been written in V8EventConstructors.cpp.
+        (GenerateImplementation): Generates an Event constructor if [ConstructorTemplate=Event] is specified.
+        * dom/Event.idl: Added [ConstructorTemplate=Event] IDL. Added [InitializedByConstructor] IDL to attributes that can be initialized by a constructor.
+
+        * bindings/scripts/test/TestEventConstructor.idl: Added a new run-bindings-test.
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.cpp: Updated a run-bindings-tests result.
+        (WebDOMTestEventConstructor::WebDOMTestEventConstructorPrivate::WebDOMTestEventConstructorPrivate):
+        (WebDOMTestEventConstructor::WebDOMTestEventConstructor):
+        (WebDOMTestEventConstructor::operator=):
+        (WebDOMTestEventConstructor::impl):
+        (WebDOMTestEventConstructor::~WebDOMTestEventConstructor):
+        (WebDOMTestEventConstructor::attr1):
+        (WebDOMTestEventConstructor::attr2):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp: Ditto.
+        (WebKit::kit):
+        (webkit_dom_test_event_constructor_get_attr1):
+        (webkit_dom_test_event_constructor_get_attr2):
+        (WebKit::core):
+        (webkit_dom_test_event_constructor_finalize):
+        (webkit_dom_test_event_constructor_set_property):
+        (webkit_dom_test_event_constructor_get_property):
+        (webkit_dom_test_event_constructor_constructed):
+        (webkit_dom_test_event_constructor_class_init):
+        (webkit_dom_test_event_constructor_init):
+        (WebKit::wrapTestEventConstructor):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructorPrivate.h: Ditto.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp: Ditto.
+        (WebCore::JSTestEventConstructorConstructor::JSTestEventConstructorConstructor):
+        (WebCore::JSTestEventConstructorConstructor::finishCreation):
+        (WebCore::JSTestEventConstructorConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventConstructorConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestEventConstructorConstructor::getConstructData):
+        (WebCore::JSTestEventConstructorPrototype::self):
+        (WebCore::JSTestEventConstructor::JSTestEventConstructor):
+        (WebCore::JSTestEventConstructor::finishCreation):
+        (WebCore::JSTestEventConstructor::createPrototype):
+        (WebCore::JSTestEventConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventConstructor::getOwnPropertyDescriptor):
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        (WebCore::jsTestEventConstructorConstructor):
+        (WebCore::JSTestEventConstructor::getConstructor):
+        (WebCore::toJS):
+        (WebCore::toTestEventConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h: Ditto.
+        (WebCore::JSTestEventConstructor::create):
+        (WebCore::JSTestEventConstructor::createStructure):
+        (WebCore::JSTestEventConstructor::impl):
+        (WebCore::JSTestEventConstructorPrototype::create):
+        (WebCore::JSTestEventConstructorPrototype::createStructure):
+        (WebCore::JSTestEventConstructorPrototype::JSTestEventConstructorPrototype):
+        (WebCore::JSTestEventConstructorConstructor::create):
+        (WebCore::JSTestEventConstructorConstructor::createStructure):
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.mm: Ditto.
+        (-[DOMTestEventConstructor dealloc]):
+        (-[DOMTestEventConstructor finalize]):
+        (-[DOMTestEventConstructor attr1]):
+        (-[DOMTestEventConstructor attr2]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestEventConstructorInternal.h: Ditto.
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp: Ditto.
+        (WebCore::TestEventConstructorInternal::V8_USE):
+        (WebCore::TestEventConstructorInternal::attr1AttrGetter):
+        (WebCore::TestEventConstructorInternal::attr2AttrGetter):
+        (WebCore::ConfigureV8TestEventConstructorTemplate):
+        (WebCore::V8TestEventConstructor::GetRawTemplate):
+        (WebCore::V8TestEventConstructor::GetTemplate):
+        (WebCore::V8TestEventConstructor::HasInstance):
+        (WebCore::V8TestEventConstructor::wrapSlow):
+        (WebCore::V8TestEventConstructor::derefObject):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h: Ditto.
+        (WebCore::V8TestEventConstructor::toNative):
+        (WebCore::V8TestEventConstructor::existingWrapper):
+        (WebCore::V8TestEventConstructor::wrap):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestInterface.h: Ditto.
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h: Ditto.
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h: Ditto.
+        * bindings/scripts/test/V8/V8TestObj.h: Ditto.
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h: Ditto.
+        * bindings/v8/custom/V8EventConstructors.cpp: Removed a custom constructor of Event.
+
 2011-11-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not share CSS style for MediaElement backed by a plugin

@@ -23,7 +23,8 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         CustomToJS,
-        CustomConstructor,
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor,
         NoStaticTables,
         Polymorphic
     ] Event {
@@ -57,8 +58,8 @@ module events {
         readonly attribute EventTarget      target;
         readonly attribute EventTarget      currentTarget;
         readonly attribute unsigned short   eventPhase;
-        readonly attribute boolean          bubbles;
-        readonly attribute boolean          cancelable;
+        readonly attribute [InitializedByConstructor] boolean bubbles;
+        readonly attribute [InitializedByConstructor] boolean cancelable;
         readonly attribute DOMTimeStamp     timeStamp;
 
         void               stopPropagation();

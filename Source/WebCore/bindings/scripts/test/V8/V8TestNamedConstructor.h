@@ -80,6 +80,7 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl)
 {
     return toV8(impl.get());
 }
+
 }
 
 #endif // V8TestNamedConstructor_h

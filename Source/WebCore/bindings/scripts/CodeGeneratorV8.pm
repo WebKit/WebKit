@@ -307,21 +307,24 @@ sub GenerateHeader
             push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n");
         }
     }
-    push(@headerContent, "\nclass FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
+
+    push(@headerContent, "\n");
+    push(@headerContent, "class FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
+    push(@headerContent, "class OptionsObject;\n") if IsConstructorTemplate($dataNode, "Event");
 
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
     if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
         push(@headerContent, <<END);
-
 class V8${nativeType}Constructor {
 public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static WrapperTypeInfo info;
 };
+
 END
     }
 
-    push(@headerContent, "\nclass $className {\n");
+    push(@headerContent, "class $className {\n");
     push(@headerContent, "public:\n");
 
     push(@headerContent, "    static const bool hasDependentLifetime = ");
@@ -393,7 +396,7 @@ END
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
+    if (IsConstructable($dataNode)) {
         push(@headerContent, <<END);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
 END
@@ -506,7 +509,11 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl${forceNewObje
 END
     }
 
-    push(@headerContent, "}\n\n");
+    if (IsConstructorTemplate($dataNode, "Event")) {
+        push(@headerContent, "\nbool fill${implClassName}Init(${implClassName}Init&, const OptionsObject&);\n");
+    }
+
+    push(@headerContent, "\n}\n\n");
     push(@headerContent, "#endif // $className" . "_h\n");
 
     my $conditionalString = GenerateConditionalString($dataNode);
@@ -690,6 +697,21 @@ sub IsVisibleAcrossOrigins
 {
     my $dataNode = shift;
     return $dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($dataNode->name eq "DOMWindow");
+}
+
+sub IsConstructable
+{
+    my $dataNode = shift;
+
+    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"V8ConstructorTemplate"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
+}
+
+sub IsConstructorTemplate
+{
+    my $dataNode = shift;
+    my $template = shift;
+
+    return ($dataNode->extendedAttributes->{"V8ConstructorTemplate"} && $dataNode->extendedAttributes->{"V8ConstructorTemplate"} eq $template) || ($dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template);
 }
 
 sub GenerateDomainSafeFunctionGetter
@@ -1606,6 +1628,68 @@ END
     push(@implContent, "\n");
 }
 
+sub GenerateEventConstructorCallback
+{
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    AddToImplIncludes("OptionsObject.h");
+    AddToImplIncludes("V8BindingMacros.h");
+    push(@implContent, <<END);
+v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${implClassName}.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
+    ${implClassName}Init eventInit;
+    if (args.Length() >= 2) {
+        EXCEPTION_BLOCK(OptionsObject, options, args[1]);
+        if (!fill${implClassName}Init(eventInit, options))
+            return v8::Undefined();
+    }
+
+    RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
+    return toV8(event.release(), args.Holder());
+}
+
+bool fill${implClassName}Init(${implClassName}Init& eventInit, const OptionsObject& options)
+{
+END
+
+    foreach my $interfaceBase (@{$dataNode->parents}) {
+        push(@implContent, <<END);
+    if (!fill${interfaceBase}Init(eventInit, options))
+        return false;
+
+END
+    }
+
+    for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
+        my $attribute = @{$dataNode->attributes}[$index];
+        if ($attribute->signature->extendedAttributes->{"InitializedByConstructor"}) {
+            my $attributeName = $attribute->signature->name;
+            push(@implContent, "    options.get(\"$attributeName\", eventInit.$attributeName);\n");
+        }
+    }
+
+    push(@implContent, <<END);
+    return true;
+}
+
+END
+}
+
 sub GenerateNamedConstructorCallback
 {
     my $function = shift;
@@ -2290,6 +2374,8 @@ END
         GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+    } elsif (IsConstructorTemplate($dataNode, "Event")) {
+        GenerateEventConstructorCallback($dataNode, $interfaceName);
     }
 
     my $access_check = "";
@@ -2362,7 +2448,7 @@ END
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 END
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"}) {
+    if (IsConstructable($dataNode)) {
         push(@implContent, <<END);
     desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END
