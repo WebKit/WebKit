@@ -3871,13 +3871,8 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
 // SVG failures after r99539.
-BUGWK71793 : css2.1/20110323/background-intrinsic-004.htm = IMAGE
-BUGWK71793 : css2.1/20110323/background-intrinsic-005.htm = IMAGE
 BUGWK71793 : fast/backgrounds/animated-svg-as-mask.html = IMAGE
 BUGWK71793 : svg/as-background-image/animated-svg-as-background.html = IMAGE
-BUGWK71793 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
-BUGWK71793 : svg/as-background-image/svg-as-background-2.html = IMAGE
-BUGWK71793 : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGWK71793 : svg/as-background-image/svg-as-background-with-relative-size.html = IMAGE
 BUGWK71793 : svg/as-background-image/svg-background-partial-redraw.html = IMAGE
 BUGWK71793 : svg/as-image/animated-svg-as-image.html = IMAGE
