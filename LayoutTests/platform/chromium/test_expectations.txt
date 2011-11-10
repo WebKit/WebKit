@@ -3871,9 +3871,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
 // SVG failures after r99539.
-BUGWK71793 MAC CPU-CG : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUGWK71793 MAC CPU-CG : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGWK71793 MAC CPU-CG : svg/custom/embedding-external-svgs.xhtml = IMAGE
 // Uncomment the above results when you remove any of the following lines.
 BUGWK71793 BUGCR83426 : svg/as-border-image/svg-as-border-image.html = IMAGE
 BUGWK71793 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
