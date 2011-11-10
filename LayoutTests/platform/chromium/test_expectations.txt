@@ -3881,6 +3881,8 @@ BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAG
 
 BUG_OJAN : storage/indexeddb/key-type-array.html = TIMEOUT CRASH
 
+BUGWK72037 : storage/indexeddb/factory-deletedatabase-interactions.html = TEXT TIMEOUT PASS
+
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/regexp-caching.html = TEXT
