@@ -36,9 +36,10 @@ public:
 
 protected:
     QtGestureRecognizer(QtViewportInteractionEngine*);
+    void setViewportInteractionEngine(QtViewportInteractionEngine*);
     void reset();
 
-    QtViewportInteractionEngine* const m_viewportInteractionEngine;
+    QtViewportInteractionEngine* m_viewportInteractionEngine;
     enum State {
         NoGesture,
         GestureRecognitionStarted,

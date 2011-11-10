@@ -1,0 +1,94 @@
+/*
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef qquickwebview_p_h
+#define qquickwebview_p_h
+
+#include "QtPolicyInterface.h"
+#include "QtViewInterface.h"
+#include "QtViewportInteractionEngine.h"
+#include "QtWebPageProxy.h"
+
+#include "qquickwebview.h"
+
+#include <QtCore/QScopedPointer>
+
+class QWebNavigationController;
+class QtWebPageProxy;
+
+QT_BEGIN_NAMESPACE
+class QFileDialog;
+QT_END_NAMESPACE
+
+class QWEBKIT_EXPORT QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
+    Q_DECLARE_PUBLIC(QQuickWebView)
+public:
+    QQuickWebViewPrivate();
+    virtual ~QQuickWebViewPrivate() { }
+    void setPageProxy(QtWebPageProxy*);
+    void initialize(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
+    void initializeTouch(QQuickWebView* viewport);
+    void initializeDesktop(QQuickWebView* viewport);
+    void enableMouseEvents();
+    void disableMouseEvents();
+
+    void loadDidCommit();
+    void contentSizeChanged(const QSize& newSize);
+    void scrollPositionRequested(const QPoint& pos);
+    void updateViewportSize();
+    void updateViewportConstraints();
+    void setUseTraditionalDesktopBehaviour(bool enable);
+
+    static QQuickWebViewPrivate* get(QQuickWebView* view)
+    {
+        return view->d_ptr.data();
+    }
+
+    void _q_viewportUpdated();
+    void _q_viewportTrajectoryVectorChanged(const QPointF&);
+    void _q_onOpenPanelFilesSelected();
+    void _q_onOpenPanelFinished(int result);
+    void _q_onVisibleChanged();
+
+    // QtPolicyInterface.
+    virtual QtPolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
+
+    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtViewInterface::FileChooserType);
+    void runJavaScriptAlert(const QString&);
+    bool runJavaScriptConfirm(const QString&);
+    QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
+    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+
+    QScopedPointer<QQuickWebPage> pageView;
+    QScopedPointer<WebKit::QtViewInterface> viewInterface;
+    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
+
+    WebCore::ViewportArguments viewportArguments;
+
+    QQuickWebView* q_ptr;
+    QScopedPointer<QtWebPageProxy> pageProxy;
+
+    QWebNavigationController* navigationController;
+    bool useTraditionalDesktopBehaviour;
+    QFileDialog* fileDialog;
+    WKOpenPanelResultListenerRef openPanelResultListener;
+};
+
+#endif /* qquickwebview_p_h */

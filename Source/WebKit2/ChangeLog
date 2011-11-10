@@ -1,3 +1,209 @@
+2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Merge QTouchWebView and QDesktopWebView into one class
+        https://bugs.webkit.org/show_bug.cgi?id=71355
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Merge QTouchWebView and QDesktopWebView into one class called
+        QQuickWebView and its attached page QQuickWebPage. You can switch to the
+        traditional desktop use case with the private header. Also now on desktop
+        platforms AC is turn on by default. I also merged our two
+        subclasses of QtViewInterface into one as the split doesn't make
+        that much sense anymore. In the future we want to be able to enable the
+        traditional desktop use case depending the platform the code is running.
+        API tests and QML tests have been updated.
+
+        * Target.pri:
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qbasewebview.cpp: Removed.
+        * UIProcess/API/qt/qbasewebview_p.h: Removed.
+        * UIProcess/API/qt/qdesktopwebview.cpp: Removed.
+        * UIProcess/API/qt/qdesktopwebview.h: Removed.
+        * UIProcess/API/qt/qdesktopwebview_p.h: Removed.
+        * UIProcess/API/qt/qquickwebpage.cpp: Renamed from Source/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp.
+        (QQuickWebPage::QQuickWebPage):
+        (QQuickWebPage::~QQuickWebPage):
+        (QQuickWebPage::keyPressEvent):
+        (QQuickWebPage::keyReleaseEvent):
+        (QQuickWebPage::inputMethodEvent):
+        (QQuickWebPage::focusInEvent):
+        (QQuickWebPage::focusOutEvent):
+        (QQuickWebPage::mousePressEvent):
+        (QQuickWebPage::mouseMoveEvent):
+        (QQuickWebPage::mouseReleaseEvent):
+        (QQuickWebPage::mouseDoubleClickEvent):
+        (QQuickWebPage::wheelEvent):
+        (QQuickWebPage::hoverEnterEvent):
+        (QQuickWebPage::hoverMoveEvent):
+        (QQuickWebPage::hoverLeaveEvent):
+        (QQuickWebPage::dragMoveEvent):
+        (QQuickWebPage::dragEnterEvent):
+        (QQuickWebPage::dragLeaveEvent):
+        (QQuickWebPage::dropEvent):
+        (QQuickWebPage::geometryChanged):
+        (QQuickWebPage::event):
+        (QQuickWebPage::touchEvent):
+        (QQuickWebPage::itemChange):
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::initializeSceneGraphConnections):
+        (QQuickWebPagePrivate::setPageProxy):
+        (computeEffectiveOpacity):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (QQuickWebPagePrivate::_q_onAfterSceneRender):
+        (QQuickWebPagePrivate::_q_onSceneGraphInitialized):
+        * UIProcess/API/qt/qquickwebpage.h: Renamed from Source/WebKit2/UIProcess/API/qt/qtouchwebpage.h.
+        * UIProcess/API/qt/qquickwebpage_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qtouchwebpage_p.h.
+        * UIProcess/API/qt/qquickwebview.cpp: Added.
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::enableMouseEvents):
+        (QQuickWebViewPrivate::disableMouseEvents):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::initializeDesktop):
+        (QQuickWebViewPrivate::initializeTouch):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::contentSizeChanged):
+        (QQuickWebViewPrivate::scrollPositionRequested):
+        (QQuickWebViewPrivate::_q_viewportUpdated):
+        (QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged):
+        (QQuickWebViewPrivate::_q_onVisibleChanged):
+        (QQuickWebViewPrivate::updateViewportSize):
+        (QQuickWebViewPrivate::updateViewportConstraints):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::runJavaScriptAlert):
+        (QQuickWebViewPrivate::runJavaScriptConfirm):
+        (QQuickWebViewPrivate::runJavaScriptPrompt):
+        (QQuickWebViewPrivate::chooseFiles):
+        (QQuickWebViewPrivate::_q_onOpenPanelFilesSelected):
+        (QQuickWebViewPrivate::_q_onOpenPanelFinished):
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (toPolicyAction):
+        (hasMetaMethod):
+        (QQuickWebViewPrivate::navigationPolicyForURL):
+        (QQuickWebViewPrivate::setPageProxy):
+        (QQuickWebView::QQuickWebView):
+        (QQuickWebView::~QQuickWebView):
+        (QQuickWebView::page):
+        (QQuickWebView::load):
+        (QQuickWebView::postMessage):
+        (QQuickWebView::url):
+        (QQuickWebView::loadProgress):
+        (QQuickWebView::title):
+        (QQuickWebView::navigationController):
+        (QQuickWebView::preferences):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::touchEvent):
+        (QQuickWebView::pageRef):
+        * UIProcess/API/qt/qquickwebview.h: Renamed from Source/WebKit2/UIProcess/API/qt/qbasewebview.h.
+        * UIProcess/API/qt/qquickwebview_p.h: Added.
+        * UIProcess/API/qt/qtouchwebview.cpp: Removed.
+        * UIProcess/API/qt/qtouchwebview.h: Removed.
+        * UIProcess/API/qt/qtouchwebview_p.h: Removed.
+        * UIProcess/API/qt/tests/commonviewtests/commonviewtests.pro: Removed.
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp: Removed.
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp: Removed.
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h: Removed.
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_download.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadZeroSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_navigationPolicyForUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_preferences.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_properties.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_load.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadNegativeSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadZeroSizeView.qml:
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml:
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (DesktopWebView::DesktopWebView):
+        (main):
+        * UIProcess/API/qt/tests/qquickwebview/qquickwebview.pro: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qdesktopwebview/qdesktopwebview.pro.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp: Added.
+        (tst_QQuickWebView::tst_QQuickWebView):
+        (tst_QQuickWebView::init):
+        (tst_QQuickWebView::cleanup):
+        (tst_QQuickWebView::webView):
+        (tst_QQuickWebView::accessPage):
+        (tst_QQuickWebView::navigationStatusAtStartup):
+        (LoadStartedCatcher::LoadStartedCatcher):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QQuickWebView::stopEnabledAfterLoadStarted):
+        (tst_QQuickWebView::baseUrl):
+        (tst_QQuickWebView::loadEmptyUrl):
+        (tst_QQuickWebView::loadEmptyPageViewVisible):
+        (tst_QQuickWebView::loadEmptyPageViewHidden):
+        (tst_QQuickWebView::loadNonexistentFileUrl):
+        (tst_QQuickWebView::backAndForward):
+        (tst_QQuickWebView::reload):
+        (tst_QQuickWebView::stop):
+        (tst_QQuickWebView::loadProgress):
+        (tst_QQuickWebView::show):
+        * UIProcess/API/qt/tests/qtouchwebview/qtouchwebview.pro: Removed.
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp: Removed.
+        * UIProcess/API/qt/tests/testwindow.h:
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        (WebKit::QtGestureRecognizer::QtGestureRecognizer):
+        (WebKit::QtGestureRecognizer::setViewportInteractionEngine):
+        * UIProcess/qt/QtGestureRecognizer.h:
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::setViewportInteractionEngine):
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        (WebKit::QtPinchGestureRecognizer::setViewportInteractionEngine):
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        * UIProcess/qt/QtTouchViewInterface.cpp: Removed.
+        * UIProcess/qt/QtTouchViewInterface.h: Removed.
+        * UIProcess/qt/QtViewInterface.cpp: Added.
+        (WebKit::QtViewInterface::QtViewInterface):
+        (WebKit::QtViewInterface::didFindZoomableArea):
+        (WebKit::QtViewInterface::sceneGraphUpdateQueue):
+        (WebKit::QtViewInterface::setViewNeedsDisplay):
+        (WebKit::QtViewInterface::drawingAreaSize):
+        (WebKit::QtViewInterface::contentSizeChanged):
+        (WebKit::QtViewInterface::scrollPositionRequested):
+        (WebKit::QtViewInterface::isActive):
+        (WebKit::QtViewInterface::hasFocus):
+        (WebKit::QtViewInterface::isVisible):
+        (WebKit::QtViewInterface::startDrag):
+        (WebKit::QtViewInterface::didChangeViewportProperties):
+        (WebKit::QtViewInterface::didChangeUrl):
+        (WebKit::QtViewInterface::didChangeTitle):
+        (WebKit::QtViewInterface::didChangeToolTip):
+        (WebKit::QtViewInterface::didChangeStatusText):
+        (WebKit::QtViewInterface::didChangeCursor):
+        (WebKit::QtViewInterface::loadDidBegin):
+        (WebKit::QtViewInterface::loadDidCommit):
+        (WebKit::QtViewInterface::loadDidSucceed):
+        (WebKit::QtViewInterface::loadDidFail):
+        (WebKit::QtViewInterface::didChangeLoadProgress):
+        (WebKit::QtViewInterface::didMouseMoveOverElement):
+        (WebKit::QtViewInterface::showContextMenu):
+        (WebKit::QtViewInterface::hideContextMenu):
+        (WebKit::QtViewInterface::runJavaScriptAlert):
+        (WebKit::QtViewInterface::runJavaScriptConfirm):
+        (WebKit::QtViewInterface::runJavaScriptPrompt):
+        (WebKit::QtViewInterface::processDidCrash):
+        (WebKit::QtViewInterface::didRelaunchProcess):
+        (WebKit::QtViewInterface::engine):
+        (WebKit::QtViewInterface::downloadRequested):
+        (WebKit::QtViewInterface::chooseFiles):
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::setViewportInteractionEngine):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        * WebKit2.pri:
+
 2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.

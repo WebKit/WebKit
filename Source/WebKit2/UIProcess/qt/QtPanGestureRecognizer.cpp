@@ -37,8 +37,17 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtViewportInteractionEngine* inte
     reset();
 }
 
+void QtPanGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+{
+    QtGestureRecognizer::setViewportInteractionEngine(engine);
+    reset();
+}
+
 bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
+    if (!m_viewportInteractionEngine)
+        return false;
+
     // Pan gesture always starts on TouchBegin unless the engine is suspended, or
     // we ignored the event.
     if (m_state == NoGesture && event->type() != QEvent::TouchBegin)

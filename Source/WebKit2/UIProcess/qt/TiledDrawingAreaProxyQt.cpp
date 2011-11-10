@@ -27,7 +27,7 @@
 #include "TiledDrawingAreaProxy.h"
 
 #include "QtSGUpdateQueue.h"
-#include "QtTouchViewInterface.h"
+#include "QtViewInterface.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WKAPICast.h"

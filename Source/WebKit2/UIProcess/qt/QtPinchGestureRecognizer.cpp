@@ -57,6 +57,9 @@ QtPinchGestureRecognizer::QtPinchGestureRecognizer(QtViewportInteractionEngine* 
 
 bool QtPinchGestureRecognizer::recognize(const QTouchEvent* event)
 {
+    if (!m_viewportInteractionEngine)
+        return false;
+
     const QList<QTouchEvent::TouchPoint>& touchPoints = event->touchPoints();
     if (touchPoints.size() < 2) {
         if (m_state == GestureRecognized)
@@ -128,6 +131,12 @@ bool QtPinchGestureRecognizer::recognize(const QTouchEvent* event)
     }
 
     return false;
+}
+
+void QtPinchGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+{
+    QtGestureRecognizer::setViewportInteractionEngine(engine);
+    reset();
 }
 
 void QtPinchGestureRecognizer::reset()

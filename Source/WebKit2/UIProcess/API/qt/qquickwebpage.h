@@ -18,46 +18,28 @@
  *
  */
 
-#ifndef qdesktopwebview_h
-#define qdesktopwebview_h
+#ifndef qquickwebpage_h
+#define qquickwebpage_h
 
-#include "qbasewebview.h"
 #include "qwebkitglobal.h"
 
-class QDesktopWebViewPrivate;
+#include <QtCore/QSharedPointer>
+#include <QtDeclarative/QQuickItem>
 
-QT_BEGIN_NAMESPACE
-class QFocusEvent;
-class QMouseEvent;
-class QHoverEvent;
-class QInputMethodEvent;
-class QKeyEvent;
-class QPainter;
-class QRectF;
-class QDragEnterEvent;
-class QDragMoveEvent;
-class QDragLeaveEvent;
-class QDropEvent;
-class QTouchEvent;
-class QWheelEvent;
-QT_END_NAMESPACE
+class QQuickWebView;
+class QQuickWebPagePrivate;
+class QWebNavigationController;
+class QWebPreferences;
 
-typedef const struct OpaqueWKContext* WKContextRef;
-typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
-typedef const struct OpaqueWKPage* WKPageRef;
-
-namespace WTR {
-    class PlatformWebView;
+namespace WebKit {
+class QtViewInterface;
 }
 
-class QWEBKIT_EXPORT QDesktopWebView : public QBaseWebView {
+class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
     Q_OBJECT
 public:
-    QDesktopWebView(QQuickItem* parent = 0);
-    virtual ~QDesktopWebView();
-
-Q_SIGNALS:
-    void linkHovered(const QUrl& url, const QString& title);
+    QQuickWebPage(QQuickItem* parent = 0);
+    virtual ~QQuickWebPage();
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);
@@ -65,10 +47,10 @@ protected:
     virtual void inputMethodEvent(QInputMethodEvent*);
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
-    virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mouseMoveEvent(QMouseEvent*);
     virtual void mouseReleaseEvent(QMouseEvent *);
-    virtual void mouseDoubleClickEvent(QMouseEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent*);
     virtual void wheelEvent(QWheelEvent*);
     virtual void hoverEnterEvent(QHoverEvent*);
     virtual void hoverMoveEvent(QHoverEvent*);
@@ -77,22 +59,20 @@ protected:
     virtual void dragEnterEvent(QDragEnterEvent*);
     virtual void dragLeaveEvent(QDragLeaveEvent*);
     virtual void dropEvent(QDropEvent*);
-
-    virtual void geometryChanged(const QRectF&, const QRectF&);
-    void paint(QPainter*);
+    virtual void touchEvent(QTouchEvent*);
     virtual bool event(QEvent*);
+    virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void itemChange(ItemChange, const ItemChangeData&);
 
 private:
-    QDesktopWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
-    WKPageRef pageRef() const;
-    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
-    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
+    Q_PRIVATE_SLOT(d, void _q_onAfterSceneRender());
+    Q_PRIVATE_SLOT(d, void _q_onSceneGraphInitialized());
 
-    friend class WTR::PlatformWebView;
-    Q_DECLARE_PRIVATE(QDesktopWebView)
+    QQuickWebPagePrivate* d;
+    friend class QQuickWebViewPrivate;
+    friend class WebKit::QtViewInterface;
 };
 
-QML_DECLARE_TYPE(QDesktopWebView)
-Q_DECLARE_METATYPE(QDesktopWebView::NavigationPolicy)
+QML_DECLARE_TYPE(QQuickWebPage)
 
-#endif /* qdesktopwebview_h */
+#endif /* qquickwebpage_h */

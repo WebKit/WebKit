@@ -29,8 +29,8 @@
 #include <WebKit2/WKRetainPtr.h>
 
 #if defined(BUILDING_QT__)
-class QDesktopWebView;
-typedef QDesktopWebView* PlatformWKView;
+class QQuickWebView;
+typedef QQuickWebView* PlatformWKView;
 class QQuickView;
 typedef QQuickView* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__

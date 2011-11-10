@@ -51,6 +51,7 @@ public:
     };
 
     QtPinchGestureRecognizer(QtViewportInteractionEngine*);
+    void setViewportInteractionEngine(QtViewportInteractionEngine*);
     bool recognize(const QTouchEvent*);
     void reset();
 

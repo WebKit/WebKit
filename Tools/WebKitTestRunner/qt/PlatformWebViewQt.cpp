@@ -27,7 +27,7 @@
 #include "config.h"
 
 #include "PlatformWebView.h"
-#include "qdesktopwebview.h"
+#include "qquickwebview.h"
 
 #include <QApplication>
 #include <QDeclarativeProperty>
@@ -67,7 +67,7 @@ private:
 };
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : m_view(new QDesktopWebView(contextRef, pageGroupRef))
+    : m_view(new QQuickWebView(contextRef, pageGroupRef))
     , m_window(new WrapperWindow(m_view))
     , m_windowIsKey(true)
 {

@@ -174,6 +174,8 @@ public:
     void setNavigatorQtObjectEnabled(bool);
     bool navigatorQtObjectEnabled() const { return m_navigatorQtObjectEnabled; }
 
+    void setViewportInteractionEngine(QtViewportInteractionEngine* engine) { m_interactionEngine = engine; m_panGestureRecognizer.setViewportInteractionEngine(engine); m_pinchGestureRecognizer.setViewportInteractionEngine(engine);}
+
     void postMessageToNavigatorQtObject(const QString&);
 
     qreal textZoomFactor() const;

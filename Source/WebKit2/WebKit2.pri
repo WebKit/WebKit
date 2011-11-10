@@ -51,11 +51,9 @@ SOURCES += \
     $$PWD/UIProcess/API/C/WKResourceCacheManager.cpp \
     $$PWD/UIProcess/API/cpp/qt/WKStringQt.cpp \
     $$PWD/UIProcess/API/cpp/qt/WKURLQt.cpp \
-    $$PWD/UIProcess/API/qt/qbasewebview.cpp \
-    $$PWD/UIProcess/API/qt/qdesktopwebview.cpp \
     $$PWD/UIProcess/API/qt/qwebdownloaditem.cpp \
-    $$PWD/UIProcess/API/qt/qtouchwebpage.cpp \
-    $$PWD/UIProcess/API/qt/qtouchwebview.cpp \
+    $$PWD/UIProcess/API/qt/qquickwebpage.cpp \
+    $$PWD/UIProcess/API/qt/qquickwebview.cpp \
     $$PWD/UIProcess/API/qt/qwebnavigationcontroller.cpp \
     $$PWD/UIProcess/API/qt/qwebpreferences.cpp \
     $$PWD/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
@@ -132,18 +130,14 @@ HEADERS += \
     $$PWD/UIProcess/API/cpp/WKRetainPtr.h \
     $$PWD/UIProcess/API/cpp/qt/WKStringQt.h \
     $$PWD/UIProcess/API/cpp/qt/WKURLQt.h \
-    $$PWD/UIProcess/API/qt/qbasewebview.h \
-    $$PWD/UIProcess/API/qt/qbasewebview_p.h \
-    $$PWD/UIProcess/API/qt/qdesktopwebview.h \
-    $$PWD/UIProcess/API/qt/qdesktopwebview_p.h \
     $$PWD/UIProcess/API/qt/qwebpreferences.h \
     $$PWD/UIProcess/API/qt/qwebpreferences_p.h \
     $$PWD/UIProcess/API/qt/qwebdownloaditem.h \
     $$PWD/UIProcess/API/qt/qwebdownloaditem_p.h \
-    $$PWD/UIProcess/API/qt/qtouchwebpage.h \
-    $$PWD/UIProcess/API/qt/qtouchwebpage_p.h \
-    $$PWD/UIProcess/API/qt/qtouchwebview.h \
-    $$PWD/UIProcess/API/qt/qtouchwebview_p.h \
+    $$PWD/UIProcess/API/qt/qquickwebpage.h \
+    $$PWD/UIProcess/API/qt/qquickwebpage_p.h \
+    $$PWD/UIProcess/API/qt/qquickwebview.h \
+    $$PWD/UIProcess/API/qt/qquickwebview_p.h \
     $$PWD/UIProcess/API/qt/qwebnavigationcontroller.h \
     $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     $$PWD/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \

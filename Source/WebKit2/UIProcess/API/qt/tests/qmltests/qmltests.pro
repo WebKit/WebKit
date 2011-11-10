@@ -5,6 +5,11 @@ CONFIG += warn_on testcase
 QT -= testlib
 QT += qmltest
 
+# FIXME: When webkit-private works let's use it.
+load(javascriptcore)
+load(webcore)
+load(webkit2)
+
 # QML files tested are the ones in WebKit source repository.
 DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
 

@@ -35,8 +35,7 @@ Rectangle {
     property bool canGoBack: false
     property bool canGoForward: false
     property bool canStop: false
-    property int loadProgress: 0
-    property alias webView: viewLoader.item
+    property alias webview: webView
 
     signal pageTitleChanged(string title)
 
@@ -155,10 +154,10 @@ Rectangle {
                     bottom: parent.bottom
                     left: parent.left
                 }
-                width: parent.width / 100 * loadProgress
+                width: parent.width / 100 * webView.loadProgress
                 color: "blue"
                 opacity: 0.3
-                visible: loadProgress != 100
+                visible: webView.loadProgress != 100
             }
 
             TextInput {
@@ -191,32 +190,31 @@ Rectangle {
         }
     }
 
-    Loader {
-        id: viewLoader
+    WebView {
+        id: webView
         anchors {
             top: navigationBar.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
-        source: options.useTouchWebView ? "TouchView.qml" : "DesktopView.qml"
-    }
 
-    Connections {
-        target: viewLoader.item
-        onTitleChanged: pageTitleChanged(viewLoader.item.title)
+        signal navigationStateChanged
+
+        Component.onCompleted: navigation.navigationStateChanged.connect(navigationStateChanged);
+
+        onTitleChanged: pageTitleChanged(title)
         onUrlChanged: {
-            addressLine.text = viewLoader.item.url
+            addressLine.text = url
             if (options.printLoadedUrls)
-                console.log("Loaded:", viewLoader.item.url);
+                console.log("Loaded:", webView.url);
             forceActiveFocus();
         }
         onNavigationStateChanged: {
-            canGoBack = viewLoader.item.navigation.canGoBack
-            canGoForward = viewLoader.item.navigation.canGoForward
-            canStop = viewLoader.item.navigation.canStop
+            canGoBack = navigation.canGoBack
+            canGoForward = navigation.canGoForward
+            canStop = navigation.canStop
         }
-        onLoadProgressChanged: loadProgress = viewLoader.item.loadProgress
     }
 
     Keys.onPressed: {

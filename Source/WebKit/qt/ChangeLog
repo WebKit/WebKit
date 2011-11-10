@@ -1,3 +1,15 @@
+2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Merge QTouchWebView and QDesktopWebView into one class
+        https://bugs.webkit.org/show_bug.cgi?id=71355
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Register only QQuickWebView and QQuickWebPage in the plugin.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Enable exports and constructor functions in static libs

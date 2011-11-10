@@ -24,8 +24,11 @@
 #include <QMenu>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSize>
+#include <QtCore/QUrl>
 #include <WebKit2/WKBase.h>
 
+class QQuickWebPage;
+class QQuickWebView;
 class QtWebError;
 class QWebDownloadItem;
 
@@ -37,7 +40,6 @@ class QJSEngine;
 class QMimeData;
 class QPoint;
 class QRect;
-class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
@@ -47,6 +49,8 @@ class ViewportArguments;
 
 namespace WebKit {
 
+class QtSGUpdateQueue;
+
 class QtViewInterface {
 public:
     enum FileChooserType {
@@ -54,49 +58,61 @@ public:
         MultipleFilesSelection
     };
 
-    virtual void setViewNeedsDisplay(const QRect&) = 0;
+    QtViewInterface(QQuickWebView* viewportView, QQuickWebPage* pageView);
 
-    virtual QSize drawingAreaSize() = 0;
-    virtual void contentSizeChanged(const QSize&) = 0;
-    virtual void scrollPositionRequested(const QPoint& pos) = 0;
+    QtSGUpdateQueue* sceneGraphUpdateQueue() const;
 
-    virtual bool isActive() = 0;
-    virtual bool hasFocus() = 0;
-    virtual bool isVisible() = 0;
+    virtual void setViewNeedsDisplay(const QRect&);
 
-    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*) = 0;
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&) = 0;
+    virtual QSize drawingAreaSize();
+    virtual void contentSizeChanged(const QSize&);
+    virtual void scrollPositionRequested(const QPoint& pos);
 
-    virtual void didFindZoomableArea(const QPoint&, const QRect&) = 0;
+    virtual bool isActive();
+    virtual bool hasFocus();
+    virtual bool isVisible();
 
-    virtual void didChangeUrl(const QUrl&) = 0;
-    virtual void didChangeTitle(const QString&) = 0;
-    virtual void didChangeToolTip(const QString&) = 0;
-    virtual void didChangeStatusText(const QString&) = 0;
-    virtual void didChangeCursor(const QCursor&) = 0;
-    virtual void loadDidBegin() = 0;
-    virtual void loadDidCommit() = 0;
-    virtual void loadDidSucceed() = 0;
-    virtual void loadDidFail(const QtWebError&) = 0;
-    virtual void didChangeLoadProgress(int) = 0;
+    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*);
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
 
-    virtual void showContextMenu(QSharedPointer<QMenu>) = 0;
-    virtual void hideContextMenu() = 0;
+    virtual void didFindZoomableArea(const QPoint&, const QRect&);
 
-    virtual void runJavaScriptAlert(const QString&) = 0;
-    virtual bool runJavaScriptConfirm(const QString&) = 0;
-    virtual QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok) = 0;
+    virtual void didChangeUrl(const QUrl&);
+    virtual void didChangeTitle(const QString&);
+    virtual void didChangeToolTip(const QString&);
+    virtual void didChangeStatusText(const QString&);
+    virtual void didChangeCursor(const QCursor&);
+    virtual void loadDidBegin();
+    virtual void loadDidCommit();
+    virtual void loadDidSucceed();
+    virtual void loadDidFail(const QtWebError&);
+    virtual void didChangeLoadProgress(int);
 
-    virtual void processDidCrash() = 0;
-    virtual void didRelaunchProcess() = 0;
+    virtual void showContextMenu(QSharedPointer<QMenu>);
+    virtual void hideContextMenu();
 
-    virtual QJSEngine* engine() = 0;
+    virtual void runJavaScriptAlert(const QString&);
+    virtual bool runJavaScriptConfirm(const QString&);
+    virtual QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
 
-    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType) = 0;
+    virtual void processDidCrash();
+    virtual void didRelaunchProcess();
 
-    virtual void didMouseMoveOverElement(const QUrl&, const QString&) = 0;
+    virtual QJSEngine* engine();
 
-    virtual void downloadRequested(QWebDownloadItem*) = 0;
+    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
+
+    virtual void didMouseMoveOverElement(const QUrl&, const QString&);
+
+    virtual void downloadRequested(QWebDownloadItem*);
+
+private:
+    QQuickWebView* const m_viewportView;
+    QQuickWebPage* const m_pageView;
+
+    QSharedPointer<QMenu> activeMenu;
+    QUrl lastHoveredURL;
+    QString lastHoveredTitle;
 };
 
 }

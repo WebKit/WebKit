@@ -18,29 +18,43 @@
  *
  */
 
-#ifndef qbasewebview_h
-#define qbasewebview_h
+#ifndef qquickwebview_h
+#define qquickwebview_h
 
 #include "qwebkitglobal.h"
-#include <QtDeclarative/qquickpainteditem.h>
+#include <QtDeclarative/qquickitem.h>
 
-class QBaseWebViewPrivate;
+class QQuickWebPage;
+class QQuickWebViewPrivate;
 class QWebDownloadItem;
 class QWebNavigationController;
 class QWebPreferences;
+
+namespace WebKit {
+class QtViewInterface;
+}
+
+namespace WTR {
+class PlatformWebView;
+}
+
+typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
+typedef const struct OpaqueWKPage* WKPageRef;
 
 QT_BEGIN_NAMESPACE
 class QPainter;
 class QUrl;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QBaseWebView : public QQuickPaintedItem {
+class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
+    Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
     Q_ENUMS(NavigationPolicy)
     Q_ENUMS(ErrorType)
 public:
@@ -56,10 +70,8 @@ public:
         HttpError,
         DownloadError
     };
-    virtual ~QBaseWebView();
-
-    // FIXME: We inherit from QQuickPaintedItem until QDesktopWebView works on top of a plain QQuickItem.
-    void paint(QPainter*) { }
+    QQuickWebView(QQuickItem* parent = 0);
+    virtual ~QQuickWebView();
 
     QUrl url() const;
     QString title() const;
@@ -67,6 +79,7 @@ public:
 
     QWebNavigationController* navigationController() const;
     QWebPreferences* preferences() const;
+    QQuickWebPage* page();
 
 public Q_SLOTS:
      void load(const QUrl&);
@@ -77,19 +90,37 @@ Q_SIGNALS:
     void statusBarMessageChanged(const QString& message);
     void loadStarted();
     void loadSucceeded();
-    void loadFailed(QBaseWebView::ErrorType errorType, int errorCode, const QUrl& url);
+    void loadFailed(QQuickWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
     void messageReceived(const QVariantMap& message);
     void downloadRequested(QWebDownloadItem* downloadItem);
+    void linkHovered(const QUrl& url, const QString& title);
+    void viewModeChanged();
 
 protected:
-    QBaseWebView(QBaseWebViewPrivate &dd, QQuickItem *parent = 0);
-    // Hides QObject::d_ptr allowing us to use the convenience macros.
-    QScopedPointer<QBaseWebViewPrivate> d_ptr;
+    virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void touchEvent(QTouchEvent* event);
+
 private:
-    Q_DECLARE_PRIVATE(QBaseWebView)
+    Q_DECLARE_PRIVATE(QQuickWebView)
+
+    QQuickWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
+    WKPageRef pageRef() const;
+
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportUpdated());
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportTrajectoryVectorChanged(const QPointF&));
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
+    Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
+    // Hides QObject::d_ptr allowing us to use the convenience macros.
+    QScopedPointer<QQuickWebViewPrivate> d_ptr;
+
     friend class QtWebPageProxy;
+    friend class WebKit::QtViewInterface;
+    friend class WTR::PlatformWebView;
 };
 
-#endif /* qbasewebview_h */
+QML_DECLARE_TYPE(QQuickWebView)
+
+#endif /* qquickwebview_h */

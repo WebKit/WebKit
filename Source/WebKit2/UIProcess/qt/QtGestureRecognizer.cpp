@@ -32,12 +32,16 @@ QtGestureRecognizer::QtGestureRecognizer(QtViewportInteractionEngine* viewportIn
     : m_viewportInteractionEngine(viewportInteractionEngine)
     , m_state(NoGesture)
 {
-    ASSERT(viewportInteractionEngine);
 }
 
 void QtGestureRecognizer::reset()
 {
     m_state = NoGesture;
+}
+
+void QtGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+{
+    m_viewportInteractionEngine = engine;
 }
 
 }

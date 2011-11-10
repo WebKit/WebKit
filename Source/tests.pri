@@ -43,8 +43,6 @@ contains(DEFINES, ENABLE_WEBGL=1) {
     WEBKIT2_TESTS_DIR = $$PWD/WebKit2/UIProcess/API/qt/tests
 
     SUBDIRS += \
-        $$WEBKIT2_TESTS_DIR/qtouchwebview \
-        $$WEBKIT2_TESTS_DIR/qdesktopwebview \
-        $$WEBKIT2_TESTS_DIR/commonviewtests \
+        $$WEBKIT2_TESTS_DIR/qquickwebview \
         $$WEBKIT2_TESTS_DIR/qmltests
 }

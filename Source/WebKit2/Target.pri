@@ -243,7 +243,6 @@ HEADERS += \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/ClientImpl.h \
-    UIProcess/qt/QtTouchViewInterface.h \
     UIProcess/qt/QtPolicyInterface.h \
     UIProcess/qt/QtGestureRecognizer.h \
     UIProcess/qt/QtPanGestureRecognizer.h \
@@ -487,7 +486,7 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ClientImpl.cpp \
     UIProcess/qt/LayerTreeHostProxyQt.cpp \
-    UIProcess/qt/QtTouchViewInterface.cpp \
+    UIProcess/qt/QtViewInterface.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \
     UIProcess/qt/QtPinchGestureRecognizer.cpp \

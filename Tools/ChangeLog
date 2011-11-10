@@ -1,3 +1,27 @@
+2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Merge QTouchWebView and QDesktopWebView into one class
+        https://bugs.webkit.org/show_bug.cgi?id=71355
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make MiniBrowser and WebKitTestRunner work again after the
+        merge.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::webView):
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        * MiniBrowser/qt/main.cpp:
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/DesktopView.qml: Removed.
+        * MiniBrowser/qt/qml/TouchView.qml: Removed.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-11-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Change semantics of the haveQt() function to match API promises

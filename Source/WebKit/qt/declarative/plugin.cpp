@@ -23,9 +23,8 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 
 #if defined(HAVE_WEBKIT2)
-#include "qdesktopwebview.h"
-#include "qtouchwebpage.h"
-#include "qtouchwebview.h"
+#include "qquickwebpage.h"
+#include "qquickwebview.h"
 #include "qwebdownloaditem.h"
 #include "qwebnavigationcontroller.h"
 #include "qwebpreferences.h"
@@ -50,11 +49,10 @@ public:
 #endif
 
 #if defined(HAVE_WEBKIT2)
-        qmlRegisterType<QDesktopWebView>(uri, 3, 0, "DesktopWebView");
-        qmlRegisterType<QTouchWebView>(uri, 3, 0, "TouchWebView");
+        qmlRegisterType<QQuickWebView>(uri, 3, 0, "WebView");
         qmlRegisterUncreatableType<QWebNavigationController>(uri, 3, 0, "NavigationController", QObject::tr("Cannot create separate instance of NavigationController"));
         qmlRegisterUncreatableType<QWebPreferences>(uri, 3, 0, "WebPreferences", QObject::tr("Cannot create separate instance of WebPreferences"));
-        qmlRegisterUncreatableType<QTouchWebPage>(uri, 3, 0, "TouchWebPage", QObject::tr("Cannot create separate instance of TouchWebPage, use TouchWebView"));
+        qmlRegisterUncreatableType<QQuickWebPage>(uri, 3, 0, "WebPage", QObject::tr("Cannot create separate instance of WebPage, use WebView"));
         qmlRegisterUncreatableType<QNetworkReply>(uri, 3, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
         qmlRegisterUncreatableType<QWebDownloadItem>(uri, 5, 0, "DownloadItem", QObject::tr("Cannot create separate instance of DownloadItem"));
 #endif

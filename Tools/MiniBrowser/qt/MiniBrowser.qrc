@@ -6,7 +6,5 @@
         <file>icons/stop.png</file>
         <file>qml/BrowserWindow.qml</file>
         <file>useragentlist.txt</file>
-        <file>qml/DesktopView.qml</file>
-        <file>qml/TouchView.qml</file>
     </qresource>
 </RCC>

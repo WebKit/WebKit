@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 
-TouchWebView {
+WebView {
     id: webView
     height: 0
     width: 0

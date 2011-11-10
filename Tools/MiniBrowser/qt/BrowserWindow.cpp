@@ -28,9 +28,9 @@
 
 #include "BrowserWindow.h"
 
-#include "qdesktopwebview.h"
-#include "qtouchwebview.h"
-#include "qtouchwebpage.h"
+#include "config.h"
+#include "qquickwebpage.h"
+#include "qquickwebview_p.h"
 #include "utils.h"
 
 #include <QDeclarativeEngine>
@@ -52,6 +52,8 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     engine()->rootContext()->setContextProperty("options", options);
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
+    if (!options->useTouchWebView())
+        QQuickWebViewPrivate::get(rootObject()->property("webview").value<QQuickWebView*>())->setUseTraditionalDesktopBehaviour(true);
     if (options->startMaximized())
         setWindowState(Qt::WindowMaximized);
     else
@@ -61,11 +63,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
 
 QObject* BrowserWindow::webView() const
 {
-    QObject* webView = rootObject()->property("webView").value<QDesktopWebView*>();
-    // The webView is created in QML, therefore it might not exist yet.
-    if (!webView)
-        webView = rootObject()->property("webView").value<QTouchWebView*>();
-    return webView;
+    return rootObject()->property("webview").value<QQuickWebView*>();
 }
 
 void BrowserWindow::load(const QString& url)

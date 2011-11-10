@@ -25,7 +25,7 @@
 #include <QtDeclarative/qquickitem.h>
 #include <QtDeclarative/qquickview.h>
 
-// TestWindow: Utility class to ignore QGraphicsView details.
+// TestWindow: Utility class to ignore QQuickView details.
 class TestWindow : public QQuickView {
 public:
     inline TestWindow(QQuickItem* webView);
