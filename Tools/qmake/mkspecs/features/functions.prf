@@ -232,7 +232,13 @@ defineTest(linkStaticLibrary) {
     path = $$1
     target = $$2
 
-    LIBS = -l$$target $$LIBS
+    mac {
+        LIBS = -Wl,-force_load,$${path}$${QMAKE_DIR_SEP}lib$${target}.a $$LIBS
+    } else:win32-msvc*|wince*|win32-icc {
+        LIBS = /OPT:REF -l$$target $$LIBS
+    } else {
+        LIBS = -Wl,-whole-archive -l$$target -Wl,-no-whole-archive $$LIBS
+    }
 
     win32-msvc*|wince*|win32-icc {
         LIBS = -L$$path $$LIBS

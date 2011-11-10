@@ -78,17 +78,6 @@
 #define VK_OEM_PERIOD 0xBE
 #endif
 
-static void initResources()
-{
-    static bool initialized = false;
-    if (initialized)
-        return;
-    Q_INIT_RESOURCE(WebKit);
-    Q_INIT_RESOURCE(WebCore);
-    Q_INIT_RESOURCE(InspectorBackendStub);
-    initialized = true;
-}
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -99,8 +88,6 @@ void WebPage::platformInitialize()
 
     // If accelerated compositing is enabled, we want to be in force-compositing mode, so that we don't switch between composited/non-composited state.
     settings->setForceCompositingMode(true);
-
-    initResources();
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)

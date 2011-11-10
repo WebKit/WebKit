@@ -1,5 +1,15 @@
 2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Enable exports and constructor functions in static libs
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate): Remove unnecessary manual Qt resource
+        initialization.
+
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed, rolling out r99701.
         http://trac.webkit.org/changeset/99701
 

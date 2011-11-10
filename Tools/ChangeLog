@@ -1,3 +1,13 @@
+2011-11-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Enable exports and constructor functions in static libs
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/functions.prf: Use --whole-archive and their
+        mac/win32-msvc equivalents when linking static libraries into a shared
+        library or executable.
+
 2011-11-09  Hayato Ito  <hayato@chromium.org>
 
         [NRWT] Make results.html aware of reference filename in reftests.
