@@ -1,3 +1,21 @@
+2011-11-10  Andreas Kling  <kling@webkit.org>
+
+        Shrink CSSMutableStyleDeclaration.
+        <http://webkit.org/b/72032>
+
+        Reviewed by Antti Koivisto.
+
+        Move m_strictParsing and m_iteratorCount (debug only) up into
+        CSSStyleDeclaration, effectively shaving one CPU word (4/8 bytes)
+        off of every CSSMutableStyleDeclaration.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleDeclaration.h:
+
 2011-11-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5

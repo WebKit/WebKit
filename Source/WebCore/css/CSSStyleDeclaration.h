@@ -109,6 +109,13 @@ protected:
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
+    // These bits are only used by CSSMutableStyleDeclaration but kept here
+    // to maximize struct packing.
+    bool m_strictParsing : 1;
+#ifndef NDEBUG
+    unsigned m_iteratorCount : 4;
+#endif
+
 private:
     bool m_isMutableStyleDeclaration : 1;
     bool m_parentIsRule : 1;

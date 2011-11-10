@@ -172,10 +172,6 @@ private:
     Vector<CSSProperty, 4> m_properties;
 
     Node* m_node;
-    bool m_strictParsing : 1;
-#ifndef NDEBUG
-    unsigned m_iteratorCount : 4;
-#endif
 
     friend class CSSMutableStyleDeclarationConstIterator;
 };

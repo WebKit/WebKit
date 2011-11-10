@@ -39,7 +39,11 @@ using namespace WTF;
 namespace WebCore {
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent, bool isMutable)
-    : m_isMutableStyleDeclaration(isMutable)
+    : m_strictParsing(!parent || parent->useStrictParsing())
+#ifndef NDEBUG
+    , m_iteratorCount(0)
+#endif
+    , m_isMutableStyleDeclaration(isMutable)
     , m_parentIsRule(true)
     , m_parentRule(parent)
 {

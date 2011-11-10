@@ -43,20 +43,14 @@ namespace WebCore {
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
     : CSSStyleDeclaration(0, /* isMutable */ true)
     , m_node(0)
-    , m_strictParsing(false)
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
 {
+    // This constructor is used for various inline style declarations, so disable strict parsing.
+    m_strictParsing = false;
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
     : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_node(0)
-    , m_strictParsing(!parent || parent->useStrictParsing())
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
 {
 }
 
@@ -64,10 +58,6 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Ve
     : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_properties(properties)
     , m_node(0)
-    , m_strictParsing(!parent || parent->useStrictParsing())
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
 {
     m_properties.shrinkToFit();
     // FIXME: This allows duplicate properties.
@@ -76,10 +66,6 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Ve
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CSSProperty* const * properties, int numProperties)
     : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_node(0)
-    , m_strictParsing(!parent || parent->useStrictParsing())
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
