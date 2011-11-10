@@ -1,5 +1,14 @@
 2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Don't run 
+        fontDataForCombiningCharacterSequence on wx as we don't 
+        support it yet.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Update how we hash the font after
         changes to the StringHasher APIs.
 
