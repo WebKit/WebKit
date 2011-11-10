@@ -1,5 +1,12 @@
 2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Rolling out part of r99854, which didn't belong there.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawSVGToImageBuffer):
+
+2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Move unit resolving for all resources to rendering/
         https://bugs.webkit.org/show_bug.cgi?id=72011
 

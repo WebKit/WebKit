@@ -158,9 +158,6 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     ASSERT(buffer);
     ASSERT(!size.isEmpty());
 
-    if (!m_page)
-        return;
-
     Frame* frame = m_page->mainFrame();
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
