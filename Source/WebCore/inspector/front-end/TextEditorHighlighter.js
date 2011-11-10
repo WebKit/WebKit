@@ -40,6 +40,8 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._highlightChunkLimit = 1000;
 }
 
+WebInspector.TextEditorHighlighter._MaxLineCount = 10000;
+
 WebInspector.TextEditorHighlighter.prototype = {
     set mimeType(mimeType)
     {
@@ -58,6 +60,9 @@ WebInspector.TextEditorHighlighter.prototype = {
      */
     highlight: function(endLine, forceRun)
     {
+        if (this._textModel.linesCount > WebInspector.TextEditorHighlighter._MaxLineCount)
+            return;
+
         // First check if we have work to do.
         var state = this._textModel.getAttribute(endLine - 1, "highlight");
         if (state && state.postConditionStringified) {
@@ -87,6 +92,9 @@ WebInspector.TextEditorHighlighter.prototype = {
 
     updateHighlight: function(startLine, endLine)
     {
+        if (this._textModel.linesCount > WebInspector.TextEditorHighlighter._MaxLineCount)
+            return;
+
         // Start line was edited, we should highlight everything until endLine.
         this._clearHighlightState(startLine);
 

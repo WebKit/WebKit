@@ -1,3 +1,19 @@
+2011-11-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not highlight files larger than 10KLOC.
+        https://bugs.webkit.org/show_bug.cgi?id=72025
+
+        This is a temporary measure while I am improving the highlighter
+        footprint. Otherwise, highlighting pretty printed Gmail takes ~1.3G of RAM.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype.highlight):
+        (WebInspector.TextEditorHighlighter.prototype.updateHighlight):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._didRequestContent):
+
 2011-11-10  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Scroll deltas are cleared during commit to the main thread

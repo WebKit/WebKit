@@ -135,6 +135,7 @@ WebInspector.UISourceCode.prototype = {
 
         for (var i = 0; i < this._requestContentCallbacks.length; ++i)
             this._requestContentCallbacks[i](mimeType, content);
+        this._requestContentCallbacks = [];
     }
 }
 
