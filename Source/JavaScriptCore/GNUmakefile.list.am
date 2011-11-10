@@ -84,6 +84,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
+	Source/JavaScriptCore/bytecode/DataFormat.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
@@ -99,6 +100,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.h \
 	Source/JavaScriptCore/bytecode/ValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/ValueProfile.h \
+	Source/JavaScriptCore/bytecode/ValueRecovery.h \
+	Source/JavaScriptCore/bytecode/VirtualRegister.h \
 	Source/JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
 	Source/JavaScriptCore/bytecompiler/BytecodeGenerator.h \
 	Source/JavaScriptCore/bytecompiler/Label.h \
@@ -115,6 +118,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
 	Source/JavaScriptCore/dfg/DFGCapabilities.h \
+	Source/JavaScriptCore/dfg/DFGCommon.h \
 	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.cpp \
 	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.h \
 	Source/JavaScriptCore/dfg/DFGDriver.cpp \
@@ -281,6 +285,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/parser/Nodes.h \
 	Source/JavaScriptCore/parser/ParserArena.cpp \
 	Source/JavaScriptCore/parser/ParserArena.h \
+	Source/JavaScriptCore/parser/ParserTokens.h \
 	Source/JavaScriptCore/parser/Parser.cpp \
 	Source/JavaScriptCore/parser/Parser.h \
 	Source/JavaScriptCore/parser/ResultType.h \
@@ -563,6 +568,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/HashTable.h \
 	Source/JavaScriptCore/wtf/HashTraits.h \
 	Source/JavaScriptCore/wtf/HexNumber.h \
+	Source/JavaScriptCore/wtf/InlineASM.h \
 	Source/JavaScriptCore/wtf/ListHashSet.h \
 	Source/JavaScriptCore/wtf/ListRefPtr.h \
 	Source/JavaScriptCore/wtf/Locker.h \
@@ -620,6 +626,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/SHA1.cpp \
 	Source/JavaScriptCore/wtf/SHA1.h \
 	Source/JavaScriptCore/wtf/SinglyLinkedList.h \
+	Source/JavaScriptCore/wtf/Spectrum.h \
 	Source/JavaScriptCore/wtf/StackBounds.cpp \
 	Source/JavaScriptCore/wtf/StackBounds.h \
 	Source/JavaScriptCore/wtf/StaticConstructors.h \

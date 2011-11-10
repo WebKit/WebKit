@@ -1,3 +1,10 @@
+2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.am: Add missing files.
+        * GNUmakefile.list.am: Ditto.
+
 2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Deploy SVGLengthContext in more places

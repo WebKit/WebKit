@@ -1,3 +1,9 @@
+2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2011-11-09  Michael Saboff  <msaboff@apple.com>
 
         Towards 8 Bit Strings: Templatize JSC::LiteralParser class by character type

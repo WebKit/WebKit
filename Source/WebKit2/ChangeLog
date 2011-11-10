@@ -1,3 +1,9 @@
+2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.am: Fix typos in gtk-doc files and scripts.
+
 2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Mac build fix: Remove TapAndHold gesture type.
