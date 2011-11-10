@@ -1,5 +1,13 @@
 2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Update how we hash the font after
+        changes to the StringHasher APIs.
+
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::computeHash):
+
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Remove from WebDOMEventTarget
         bindings methods that have been removed from EventTarget.
 

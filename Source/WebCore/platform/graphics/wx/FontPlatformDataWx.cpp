@@ -122,13 +122,14 @@ unsigned FontPlatformData::computeHash() const
 
     // make a hash that is unique for this font, but not globally unique - that is,
     // a font whose properties are equal should generate the same hash
+    const char* fontName = thisFont->GetFaceName().utf8_str();
     uintptr_t hashCodes[6] = {
         thisFont->GetPointSize(),
         thisFont->GetFamily(),
         thisFont->GetStyle(),
         thisFont->GetWeight(),
-        thisFont->GetUnderlined(), 
-        StringHasher::computeHash(thisFont->GetFaceName().utf8_str().data())
+        thisFont->GetUnderlined(),
+        (uintptr_t)thisFont
     };
 
     return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
