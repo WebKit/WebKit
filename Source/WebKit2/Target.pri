@@ -117,6 +117,29 @@ HEADERS += \
     PluginProcess/PluginControllerProxy.h \
     PluginProcess/PluginProcess.h \
     PluginProcess/WebProcessConnection.h \
+    Shared/API/c/WKBase.h \
+    Shared/API/c/WKCertificateInfo.h \
+    Shared/API/c/WKContextMenuItem.h \
+    Shared/API/c/WKContextMenuItemTypes.h \
+    Shared/API/c/WKDictionary.h \
+    Shared/API/c/WKError.h \
+    Shared/API/c/WKGeometry.h \
+    Shared/API/c/WKGraphicsContext.h \
+    Shared/API/c/WKImage.h \
+    Shared/API/c/WKMutableDictionary.h \
+    Shared/API/c/WKNumber.h \
+    Shared/API/c/WKPageLoadTypes.h \
+    Shared/API/c/WKSecurityOrigin.h \
+    Shared/API/c/WKSerializedScriptValue.h \
+    Shared/API/c/WKSharedAPICast.h \
+    Shared/API/c/WKString.h \
+    Shared/API/c/WKStringPrivate.h \
+    Shared/API/c/WKType.h \
+    Shared/API/c/WKURL.h \
+    Shared/API/c/WKURLRequest.h \
+    Shared/API/c/WKURLResponse.h \
+    Shared/API/c/WKUserContentURLPattern.h \
+    Shared/API/c/qt/WKImageQt.h \
     Shared/APIClientTraits.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
@@ -181,6 +204,50 @@ HEADERS += \
     Shared/qt/ArgumentCodersQt.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/WebEventFactoryQt.h \
+    UIProcess/API/C/WKAPICast.h \
+    UIProcess/API/C/WKAuthenticationChallenge.h \
+    UIProcess/API/C/WKAuthenticationDecisionListener.h \
+    UIProcess/API/C/WKBackForwardList.h \
+    UIProcess/API/C/WKBackForwardListItem.h \
+    UIProcess/API/C/WKContext.h \
+    UIProcess/API/C/WKContextPrivate.h \
+    UIProcess/API/C/WKCredential.h \
+    UIProcess/API/C/WKCredentialTypes.h \
+    UIProcess/API/C/WKDatabaseManager.h \
+    UIProcess/API/C/WKDownload.h \
+    UIProcess/API/C/WKFrame.h \
+    UIProcess/API/C/WKFramePolicyListener.h \
+    UIProcess/API/C/WKGeolocationManager.h \
+    UIProcess/API/C/WKGeolocationPermissionRequest.h \
+    UIProcess/API/C/WKGeolocationPosition.h \
+    UIProcess/API/C/WKHitTestResult.h \
+    UIProcess/API/C/WKIconDatabase.h \
+    UIProcess/API/C/WKInspector.h \
+    UIProcess/API/C/WKOpenPanelParameters.h \
+    UIProcess/API/C/WKOpenPanelResultListener.h \
+    UIProcess/API/C/WKNavigationData.h \
+    UIProcess/API/C/WKPage.h \
+    UIProcess/API/C/WKPageGroup.h \
+    UIProcess/API/C/WKPagePrivate.h \
+    UIProcess/API/C/WKPluginSiteDataManager.h \
+    UIProcess/API/C/WKPreferences.h \
+    UIProcess/API/C/WKPreferencesPrivate.h \
+    UIProcess/API/C/WKProtectionSpace.h \
+    UIProcess/API/C/WKProtectionSpaceTypes.h \
+    UIProcess/API/C/WebKit2.h \
+    UIProcess/API/C/qt/WKNativeEvent.h \
+    UIProcess/API/cpp/WKRetainPtr.h \
+    UIProcess/API/cpp/qt/WKStringQt.h \
+    UIProcess/API/cpp/qt/WKURLQt.h \
+    UIProcess/API/qt/qwebpreferences.h \
+    UIProcess/API/qt/qwebpreferences_p.h \
+    UIProcess/API/qt/qwebdownloaditem.h \
+    UIProcess/API/qt/qwebdownloaditem_p.h \
+    UIProcess/API/qt/qquickwebpage.h \
+    UIProcess/API/qt/qquickwebpage_p.h \
+    UIProcess/API/qt/qquickwebview.h \
+    UIProcess/API/qt/qquickwebview_p.h \
+    UIProcess/API/qt/qwebnavigationcontroller.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
     UIProcess/Authentication/WebCredential.h \
@@ -273,6 +340,15 @@ HEADERS += \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/IconDatabase/WebIconDatabaseProxy.h \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
+    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
+    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
@@ -356,7 +432,27 @@ SOURCES += \
     PluginProcess/PluginProcess.cpp \
     PluginProcess/WebProcessConnection.cpp \
     PluginProcess/qt/PluginControllerProxyQt.cpp \
+    PluginProcess/qt/PluginProcessMainQt.cpp \
     PluginProcess/qt/PluginProcessQt.cpp \
+    Shared/API/c/WKArray.cpp \
+    Shared/API/c/WKCertificateInfo.cpp \
+    Shared/API/c/WKContextMenuItem.cpp \
+    Shared/API/c/WKDictionary.cpp \
+    Shared/API/c/WKError.cpp \
+    Shared/API/c/WKGeometry.cpp \
+    Shared/API/c/WKGraphicsContext.cpp \
+    Shared/API/c/WKImage.cpp \
+    Shared/API/c/WKMutableDictionary.cpp \
+    Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKSecurityOrigin.cpp \
+    Shared/API/c/WKSerializedScriptValue.cpp \
+    Shared/API/c/WKString.cpp \
+    Shared/API/c/WKType.cpp \
+    Shared/API/c/WKURL.cpp \
+    Shared/API/c/WKURLRequest.cpp \
+    Shared/API/c/WKURLResponse.cpp \
+    Shared/API/c/WKUserContentURLPattern.cpp \
+    Shared/API/c/qt/WKImageQt.cpp \
     Shared/APIClientTraits.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
@@ -420,6 +516,38 @@ SOURCES += \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
+    UIProcess/API/C/WKAuthenticationChallenge.cpp \
+    UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
+    UIProcess/API/C/WKBackForwardList.cpp \
+    UIProcess/API/C/WKBackForwardListItem.cpp \
+    UIProcess/API/C/WKContext.cpp \
+    UIProcess/API/C/WKCredential.cpp \
+    UIProcess/API/C/WKDatabaseManager.cpp \
+    UIProcess/API/C/WKDownload.cpp \
+    UIProcess/API/C/WKFrame.cpp \
+    UIProcess/API/C/WKFramePolicyListener.cpp \
+    UIProcess/API/C/WKGeolocationManager.cpp \
+    UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
+    UIProcess/API/C/WKGeolocationPosition.cpp \
+    UIProcess/API/C/WKHitTestResult.cpp \
+    UIProcess/API/C/WKIconDatabase.cpp \
+    UIProcess/API/C/WKInspector.cpp \
+    UIProcess/API/C/WKOpenPanelParameters.cpp \
+    UIProcess/API/C/WKOpenPanelResultListener.cpp \
+    UIProcess/API/C/WKNavigationData.cpp \
+    UIProcess/API/C/WKPage.cpp \
+    UIProcess/API/C/WKPageGroup.cpp \
+    UIProcess/API/C/WKPluginSiteDataManager.cpp \
+    UIProcess/API/C/WKPreferences.cpp \
+    UIProcess/API/C/WKProtectionSpace.cpp \
+    UIProcess/API/C/WKResourceCacheManager.cpp \
+    UIProcess/API/cpp/qt/WKStringQt.cpp \
+    UIProcess/API/cpp/qt/WKURLQt.cpp \
+    UIProcess/API/qt/qwebdownloaditem.cpp \
+    UIProcess/API/qt/qquickwebpage.cpp \
+    UIProcess/API/qt/qquickwebview.cpp \
+    UIProcess/API/qt/qwebnavigationcontroller.cpp \
+    UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
     UIProcess/Authentication/AuthenticationDecisionListener.cpp \
     UIProcess/Authentication/WebCredential.cpp \
@@ -522,6 +650,18 @@ SOURCES += \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundle.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
@@ -600,6 +740,7 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/QtBuiltinBundle.cpp \
     WebProcess/qt/QtBuiltinBundlePage.cpp \
+    WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES
 

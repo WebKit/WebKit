@@ -17,7 +17,10 @@ include(WebKit/WebKit.pri)
 
 CONFIG += webcore
 
-!no_webkit2: include(WebKit2/WebKit2.pri)
+!no_webkit2 {
+    CONFIG += webkit2
+    QT += declarative
+}
 
 v8:linux-* {
     QMAKE_LIBDIR += $${V8_LIB_DIR}

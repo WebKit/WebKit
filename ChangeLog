@@ -1,3 +1,11 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Clean up build system
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri: Eliminate use of WebKit2.pri.
+
 2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Merge QTouchWebView and QDesktopWebView into one class

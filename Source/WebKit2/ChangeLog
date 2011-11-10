@@ -1,3 +1,15 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Clean up build system
+
+        Reviewed by Tor Arne Vestbø.
+
+        Now that we use whole-archive linking we can fold the files that contain exported
+        symbols back into the WebKit2 static library.
+
+        * Target.pri: Fold in sources from WebKit2.pri.
+        * WebKit2.pri: Removed.
+
 2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Merge QTouchWebView and QDesktopWebView into one class
