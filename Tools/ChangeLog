@@ -1,3 +1,37 @@
+2011-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        bencher script should support remote benchmarking
+        https://bugs.webkit.org/show_bug.cgi?id=71618
+
+        Rubber-stamped by Geoff Garen.
+        
+        Added the following features:
+        
+        - Benchmark report tells you the hostname and machine model (according to
+          'sysctl hw.model') of the machine you did the run on, and svn revision number
+          (according to 'svn info') of the VMs you're testing.
+        
+        - The --remote option. You give this an ssh-style hostname (i.e. user@host is
+          acceptable, in addition to just host, in which case your username is used)
+          and it automatically packages the build directories of the VMs you're testing,
+          sends them to the remote machine along with your copy of the bencher script
+          and all of the options you passed.  This pretty much seamlessly allows you
+          to run a set of benchmarks on any machine that is sufficiently compatible with
+          yours (i.e. similar OS) and that has the appropriate ~/.bencher file, which
+          must now include a tempPath setting that tells bencher where to put files
+          when that machine is used as a slave in a remote benchmarking run.
+          
+        - Added yet another way of specifying which benchmarks to run. This was sort of
+          necessary for --remote to work as expected. Previously, you either said what
+          suites to exclude (for example --exclude-sunspider) or that you only wanted
+          to run one suite to the exclusion of others (--sunspider-only). But it's
+          often better to just be able to specify the list of suites you want. This is
+          now supported. You can say, for example, --v8 --sunspider, which means, just
+          run V8 and SunSpider. This is equivalent to saying --exclude-kraken, which is
+          still supported.
+
+        * Scripts/bencher:
+
 2011-11-10  Tony Chang  <tony@chromium.org>
 
         Lazily start DRT instances in NRWT

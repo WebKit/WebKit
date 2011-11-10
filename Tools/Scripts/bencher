@@ -28,6 +28,7 @@ require 'rubygems'
 require 'getoptlong'
 require 'pathname'
 require 'tempfile'
+require 'socket'
 
 begin
   require 'json'
@@ -42,9 +43,15 @@ CONFIGURATION_FLNM = ENV["HOME"]+"/.bencher"
 
 unless FileTest.exist? CONFIGURATION_FLNM
   $stderr.puts "Error: no configuration file at ~/.bencher."
-  $stderr.puts "This file should contain paths to SunSpider, V8, and Kraken, in JSON"
-  $stderr.puts "format.  For example:"
-  $stderr.puts "{ \"sunSpiderPath\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/sunspider-1.0\", \"v8Path\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/v8-v6\", \"krakenPath\": \"/Volumes/Data/pizlo/kraken/kraken-e119421cb325/tests/kraken-1.1\" }"
+  $stderr.puts "This file should contain paths to SunSpider, V8, and Kraken, as well as a"
+  $stderr.puts "temporary directory that bencher can use for its remote mode. It should be"
+  $stderr.puts "formatted in JSON.  For example:"
+  $stderr.puts "{"
+  $stderr.puts "    \"sunSpiderPath\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/sunspider-1.0\","
+  $stderr.puts "    \"v8Path\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/v8-v6\","
+  $stderr.puts "    \"krakenPath\": \"/Volumes/Data/pizlo/kraken/kraken-e119421cb325/tests/kraken-1.1\","
+  $stderr.puts "    \"tempPath\": \"/Volumes/Data/pizlo/bencher/temp\""
+  $stderr.puts "}"
   exit 1
 end
 
@@ -53,6 +60,7 @@ CONFIGURATION = JSON.parse(File::read(CONFIGURATION_FLNM))
 SUNSPIDER_PATH = CONFIGURATION["sunSpiderPath"]
 V8_PATH = CONFIGURATION["v8Path"]
 KRAKEN_PATH = CONFIGURATION["krakenPath"]
+TEMP_PATH = CONFIGURATION["tempPath"]
 
 IBR_LOOKUP=[0.00615583, 0.0975, 0.22852, 0.341628, 0.430741, 0.500526, 0.555933, 
             0.600706, 0.637513, 0.668244, 0.694254, 0.716537, 0.735827, 0.752684, 
@@ -213,6 +221,11 @@ $timeMode=:auto
 $keepFiles=false
 $forceVMKind=nil
 $brief=false
+$silent=false
+$remoteHosts=[]
+$sshOptions=[]
+$slave=false
+$vms = []
 
 # Helpful functions and classes
 
@@ -243,7 +256,7 @@ def usage
   puts "the executable and <name> is the name that you would like to give the"
   puts "configuration for the purposeof reporting.  If no name is given, a generic name"
   puts "of the form Conf#<n> will be ascribed to the configuration automatically."
-  puts 
+  puts
   puts "Options:"
   puts "--rerun <n>          Set the number of iterations of the benchmark that"
   puts "                     contribute to the measured run time.  Default is #{$rerun}."
@@ -273,6 +286,16 @@ def usage
   puts "--keep-files         Keep temporary files.  Useful for debugging."
   puts "--verbose or -v      Print more stuff."
   puts "--brief              Print only the final result for each VM."
+  puts "--silent             Don't print progress. This might slightly reduce some"
+  puts "                     performance perturbation."
+  puts "--remote <sshhosts>  Performance performance measurements remotely, on the given"
+  puts "                     SSH host(s). Easiest way to use this is to specify the SSH"
+  puts "                     user@host string. However, you can also supply a comma-"
+  puts "                     separated list of SSH hosts. Alternatively, you can use this"
+  puts "                     option multiple times to specify multiple hosts. This"
+  puts "                     automatically copies the WebKit release builds of the VMs"
+  puts "                     you specified to all of the hosts."
+  puts "--ssh-options        Pass additional options to SSH."
   puts "--help or -h         Display this message."
   puts
   puts "Example:"
@@ -561,7 +584,7 @@ def benchRunHarness(vm, benchpath)
     begin
       result=vm.runAndReport(file.path)
     rescue => e
-      $stderr.puts "Could not run #{file.path}:"
+      $stderr.puts "Could not run #{file.path} because #{e}:"
       File.open(file.path,"r") {
         | inp |
         inp.each_line {
@@ -703,8 +726,9 @@ class StatsAccumulator
 end
 
 class VM < StatsAccumulator
-  def initialize(path, name, nameKind)
+  def initialize(origPath, path, name, nameKind, svnRevision)
     super()
+    @origPath = origPath
     @path = path
     @name = name
     @nameKind = nameKind
@@ -734,6 +758,39 @@ class VM < StatsAccumulator
         end
       }
     end
+    
+    @svnRevision = svnRevision
+    
+    unless $slave
+      # Try to detect information about the VM.
+      if path =~ /\/WebKitBuild\/Release\/([a-zA-Z]+)$/
+        @checkoutPath = $~.pre_match
+        unless @svnRevision
+          begin
+            Dir.chdir(@checkoutPath) {
+              $stderr.puts ">> cd #{@checkoutPath} && svn info" if $verbosity>=2
+              IO.popen("svn info", "r") {
+                | inp |
+                inp.each_line {
+                  | line |
+                  if line =~ /Revision: ([0-9]+)/
+                    @svnRevision = $1
+                  end
+                }
+              }
+            }
+            unless @svnRevision
+              $stderr.puts "Warning: running svn info for #{name} silently failed."
+            end
+          rescue => e
+            # Failed to detect svn revision.
+            $stderr.puts "Warning: could not get svn revision information for #{name}: #{e}"
+          end
+        end
+      else
+        $stderr.puts "Warning: could not identify checkout location for #{name}"
+      end
+    end
   end
   
   def to_s
@@ -748,6 +805,10 @@ class VM < StatsAccumulator
     $measureGC == true or ($measureGC == name)
   end
   
+  def origPath
+    @origPath
+  end
+  
   def path
     @path
   end
@@ -758,6 +819,14 @@ class VM < StatsAccumulator
   
   def vmType
     @vmType
+  end
+  
+  def checkoutPath
+    @checkoutPath
+  end
+  
+  def svnRevision
+    @svnRevision
   end
   
   def printFunction
@@ -774,6 +843,15 @@ class VM < StatsAccumulator
   def run(filename)
     case @vmType
     when :jsc
+      if @path =~ /\/Release\/([a-zA-Z]+)$/
+        raise unless @path =~ /\/([a-zA-Z]+)$/
+        libPath = $~.pre_match
+        ENV["DYLD_LIBRARY_PATH"]=libPath
+        ENV["DYLD_FRAMEWORK_PATH"]=libPath
+      else
+        ENV["DYLD_LIBRARY_PATH"]=""
+        ENV["DYLD_FRAMEWORK_PATH"]=""
+      end
       cmd = "#{@path} #{filename}"
       $stderr.puts ">> #{cmd}" if $verbosity>=2
       IO.popen(cmd,"r") {
@@ -1143,17 +1221,31 @@ def statsToStr(stats)
 end
   
 begin
+  $sawBenchOptions = false
+  
+  def resetBenchOptionsIfNecessary
+    unless $sawBenchOptions
+      $includeSunSpider = false
+      $includeV8 = false
+      $includeKraken = false
+      $sawBenchOptions = true
+    end
+  end
+  
   GetoptLong.new(['--rerun', GetoptLong::REQUIRED_ARGUMENT],
                  ['--inner', GetoptLong::REQUIRED_ARGUMENT],
                  ['--outer', GetoptLong::REQUIRED_ARGUMENT],
                  ['--warmup', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--time-mode', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--timing-mode', GetoptLong::REQUIRED_ARGUMENT],
                  ['--sunspider-only', GetoptLong::NO_ARGUMENT],
                  ['--v8-only', GetoptLong::NO_ARGUMENT],
                  ['--kraken-only', GetoptLong::NO_ARGUMENT],
                  ['--exclude-sunspider', GetoptLong::NO_ARGUMENT],
                  ['--exclude-v8', GetoptLong::NO_ARGUMENT],
                  ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
+                 ['--sunspider', GetoptLong::NO_ARGUMENT],
+                 ['--v8', GetoptLong::NO_ARGUMENT],
+                 ['--kraken', GetoptLong::NO_ARGUMENT],
                  ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
                  ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
                  ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
@@ -1161,6 +1253,11 @@ begin
                  ['--keep-files', GetoptLong::NO_ARGUMENT],
                  ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                  ['--brief', GetoptLong::NO_ARGUMENT],
+                 ['--silent', GetoptLong::NO_ARGUMENT],
+                 ['--remote', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--ssh-options', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--slave', GetoptLong::NO_ARGUMENT],
+                 ['--vms', GetoptLong::REQUIRED_ARGUMENT],
                  ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -1172,7 +1269,7 @@ begin
       $outer = intArg(opt,arg,1,nil)
     when '--warmup'
       $warmup = intArg(opt,arg,0,nil)
-    when '--time-mode'
+    when '--timing-mode'
       if arg.upcase == "PRECISETIME"
         $timeMode = :preciseTime
       elsif arg.upcase == "DATE"
@@ -1209,6 +1306,15 @@ begin
       $includeV8 = false
     when '--exclude-kraken'
       $includeKraken = false
+    when '--sunspider'
+      resetBenchOptionsIfNecessary
+      $includeSunSpider = true
+    when '--v8'
+      resetBenchOptionsIfNecessary
+      $includeV8 = true
+    when '--kraken'
+      resetBenchOptionsIfNecessary
+      $includeKraken = true
     when '--benchmarks'
       $benchmarkPattern = Regexp.new(arg)
     when '--measure-gc'
@@ -1225,17 +1331,29 @@ begin
       $verbosity += 1
     when '--brief'
       $brief = true
+    when '--silent'
+      $silent = true
+    when '--remote'
+      $remoteHosts += arg.split(',')
+    when '--ssh-options'
+      $sshOptions << arg
+    when '--slave'
+      $slave = true
+    when '--vms'
+      JSON.parse(File::read(arg)).each {
+        | vmDescriptor |
+        $vms << VM.new(vmDescriptor["origPath"],
+                       vmDescriptor["path"],
+                       vmDescriptor["name"],
+                       vmDescriptor["nameKind"].to_sym,
+                       vmDescriptor["svnRevision"])
+      }
     when '--help'
       usage
     else
       raise "bad option: #{opt}"
     end
   }
-  
-  if ARGV.empty?
-    quickFail("Please specify at least on configuraiton on the command line.",
-              "Insufficient arguments")
-  end
   
   SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH, :arithmeticMean)
   ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
@@ -1268,8 +1386,6 @@ begin
     KRAKEN.add KrakenBenchmark.new(name)
   }
 
-  $vms = []
-  
   ARGV.each {
     | vm |
     if vm =~ /([a-zA-Z0-9_ ]+):/
@@ -1281,8 +1397,13 @@ begin
       nameKind = :auto
     end
     $stderr.puts "#{name}: #{vm}" if $verbosity >= 1
-    $vms << VM.new(vm, name, nameKind)
+    $vms << VM.new(Pathname.new(vm).realpath, vm, name, nameKind, nil)
   }
+  
+  if $vms.empty?
+    quickFail("Please specify at least on configuraiton on the command line.",
+              "Insufficient arguments")
+  end
   
   if $measureGC and $measureGC != true
     found = false
@@ -1401,6 +1522,127 @@ begin
       }
     }
   }
+  
+  unless $remoteHosts.empty?
+    # Handle the remote benchmarking case.
+    
+    raise unless TEMP_PATH
+    
+    $stderr.puts "Packaging VM builds for remote hosts..." if $verbosity==0
+    
+    # First package all of the release builds.
+    $vms.each_with_index {
+      | vm, index |
+      unless vm.checkoutPath
+        fail("Could not figure out how to package #{vm.name}, because the VM type was not recognized", "Bad VM kind for --remote")
+      end
+      
+      Dir.chdir(vm.checkoutPath + "/WebKitBuild") {
+        cmd = "tar -czf #{TEMP_PATH}/vm#{index}.tar.gz Release"
+        $stderr.puts ">> #{cmd}" if $verbosity>=2
+        raise unless system(cmd)
+      }
+    }
+    
+    # Now actually go talk to the remote hosts.
+    
+    def sshRead(host, command)
+      cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{host.inspect} #{command.inspect}"
+      $stderr.puts ">> #{cmd}" if $verbosity>=2
+      result = ""
+      IO.popen(cmd, "r") {
+        | inp |
+        inp.each_line {
+          | line |
+          $stderr.puts "#{host}: #{line}" if $verbosity>=2
+          result += line
+        }
+      }
+      raise "#{$?}" unless $?.success?
+      result
+    end
+    
+    def sshWrite(host, command, data)
+      cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{host.inspect} #{command.inspect}"
+      $stderr.puts ">> #{cmd}" if $verbosity>=2
+      IO.popen(cmd, "w") {
+        | outp |
+        outp.write(data)
+      }
+      raise "#{$?}" unless $?.success?
+    end
+    
+    $remoteHosts.each {
+      | host |
+      
+      $stderr.puts "Sending VM builds to #{host}..." if $verbosity==0
+      
+      remoteTempPath = JSON::parse(sshRead(host, "cat ~/.bencher"))["tempPath"]
+      raise unless remoteTempPath
+      
+      sshWrite(host, "cd #{remoteTempPath.inspect} && cat > bencher && chmod 700 bencher", IO::read($0))
+      
+      $vms.size.times {
+        | index |
+        sshWrite(host, "cd #{remoteTempPath.inspect} && rm -rf vm#{index} && mkdir vm#{index} && cd vm#{index} && tar -xzf /dev/stdin", IO::read("#{TEMP_PATH}/vm#{index}.tar.gz"))
+      }
+      
+      config=[]
+      $vms.each_with_index {
+        | vm, index |
+        config << {
+          "origPath" => vm.origPath,
+          "path" => "#{remoteTempPath}/vm#{index}/Release/jsc",
+          "name" => vm.name,
+          "nameKind" => vm.nameKind.to_s,
+          "svnRevision" => vm.svnRevision
+        }
+      }
+      
+      sshWrite(host, "cd #{remoteTempPath.inspect} && (cat > vms.conf)", config.to_json)
+      
+      $stderr.puts "Running on #{host}..." if $verbosity==0
+      
+      cmd = "cd #{remoteTempPath.inspect} && ./bencher"
+      cmd += " --rerun #{$rerun}"
+      cmd += " --inner #{$inner}"
+      cmd += " --outer #{$outer}"
+      cmd += " --warmup #{$warmup}"
+      cmd += " --timing-mode #{$timeMode.to_s}"
+      cmd += " --sunspider" if $includeSunSpider
+      cmd += " --v8" if $includeV8
+      cmd += " --kraken" if $includeKraken
+      if $measureGC
+        if $measureGC == true
+          cmd += " --measure-gc"
+        else
+          cmd += " --measure-gc #{$measureGC.inspect}"
+        end
+      end
+      if $verbosity>=1
+        cmd += " -"
+        $verbosity.times {
+          cmd += "v"
+        }
+      end
+      cmd += " --brief" if $brief
+      cmd += " --silent" if $silent
+      cmd += " --slave"
+      cmd += " --vms #{(remoteTempPath+'/vms.conf').inspect}"
+      result = sshRead(host, cmd)
+      puts result
+      if result =~ /Generating benchmark report at (.*)\n\n/
+        reportName = $1
+        report = $~.post_match
+        File.open(reportName, "w") {
+          | outp |
+          outp.puts report
+        }
+      end
+    }
+    
+    exit 0
+  end
 
   $plans = []
   $benchmarksOnVMs.each {
@@ -1429,20 +1671,9 @@ begin
     vm.to_s.size
   }.max + 1
 
-  unless $brief
-    3.times {
-      | idx |
-      $stderr.print "\rStarting in #{3-idx}..."
-      $stderr.flush
-      sleep 1
-    }
-    $stderr.print "\r                       \r"
-    $stderr.flush
-  end
-  
   $plans.each_with_index {
     | plan, idx |
-    if $verbosity == 0
+    if $verbosity == 0 and not $silent
       text1 = lpad(idx.to_s,$plans.size.to_s.size)+"/"+$plans.size.to_s
       text2 = plan.suite.to_s+"/"+plan.benchmark.to_s+"/"+plan.vm.to_s
       $stderr.print "\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}"
@@ -1452,7 +1683,7 @@ begin
     plan.runAndRecord
   }
   
-  if $verbosity == 0
+  if $verbosity == 0 and not $silent
     $stderr.print "\r#{$plans.size}/#{$plans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}"
     $stderr.puts "\r#{$plans.size}/#{$plans.size}"
   end
@@ -1528,7 +1759,7 @@ begin
     "_benchReport.txt"
 
   unless $brief
-    $stderr.puts "Generating benchmark report at #{reportName}"
+    puts "Generating benchmark report at #{reportName}"
   end
   
   outp = $stdout
@@ -1594,6 +1825,21 @@ begin
   else
     outp.print "#{$suites[0..-2].join(', ')}, and #{$suites[-1]}"
   end
+  outp.print " on #{Socket.gethostname}"
+  begin
+    IO.popen("sysctl hw.model", "r") {
+      | inp |
+      inp.each_line {
+        | line |
+        if line =~ /hw.model: /
+          outp.print " (#{$~.post_match.chomp})"
+          break
+        end
+      }
+    }
+  rescue => e
+    # Silently fail since this isn't critical.
+  end
   outp.puts "."
   outp.puts
   
@@ -1610,7 +1856,11 @@ begin
   outp.puts "VMs tested:"
   $vms.each {
     | vm |
-    outp.puts "\"#{vm.name}\" at #{Pathname.new(vm.path).realpath}"
+    outp.print "\"#{vm.name}\" at #{vm.origPath}"
+    if vm.svnRevision
+      outp.print " (r#{vm.svnRevision})"
+    end
+    outp.puts
   }
   
   outp.puts
@@ -1627,7 +1877,7 @@ begin
                   else (" Emitted a call to gc() between sample measurements.") end)+
                  (if $warmup == 0 then (" Did not include any warm-up iterations; measurements "+
                                         "began with the very first iteration.")
-                  else (" Used #{$warmup*$rerun} benchmark iteration#{plural($warmup)} per VM "+
+                  else (" Used #{$warmup*$rerun} benchmark iteration#{plural($warmup*$rerun)} per VM "+
                         "invocation for warm-up.") end)+
                  (case $timeMode
                   when :preciseTime then (" Used the jsc-specific preciseTime() function to get "+
@@ -1746,11 +1996,14 @@ begin
       outp.print("    "+$overallResults[-1].compareTo($overallResults[0]).to_s)
     end
     outp.puts
-    outp.puts
+  end
+  outp.puts
+  
+  if outp != $stdout
+    outp.close
   end
   
   if outp != $stdout and not $brief
-    outp.close
     puts
     File.open(reportName) {
       | inp |
