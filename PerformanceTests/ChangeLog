@@ -1,3 +1,20 @@
+2011-11-09  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Microbenchmarks for appendChild, removeChild, and innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=71939
+
+        Reviewed by Ojan Vafai.
+
+        These benchmarks time both the DOM mutations themselves and the time taken
+        to call the MutationCallback. This measurement is achieved by
+        executing the code entirely within the MutationCallback itself.
+
+        * Mutation/append-child-deep.html: Added. Covers appendChild in a 200-node-deep tree with subtree observation.
+        * Mutation/append-child.html: Added. Covers appendChild in a flat tree.
+        * Mutation/inner-html.html: Added. Covers innerHTML adding and removing many nodes at a time.
+        * Mutation/remove-child-deep.html: Added. Covers removeChild in a 200-node-deep tree with subtree observation.
+        * Mutation/remove-child.html: Added. Covers removeChild in a flat tree.
+
 2011-10-25  Adam Barth  <abarth@webkit.org>
 
         EventTargetFactory.in is not sorted
