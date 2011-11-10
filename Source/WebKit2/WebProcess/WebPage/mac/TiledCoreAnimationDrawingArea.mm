@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebKitSystemInterface.h>
 
 @interface CATransaction (Details)
@@ -38,6 +39,37 @@
 @end
 
 using namespace WebCore;
+
+@interface WKContentLayer : CALayer {
+    WebKit::WebPage *_webPage;
+}
+
+- (id)initWithWebPage:(WebKit::WebPage *)webPage;
+
+@end
+
+@implementation WKContentLayer
+
+- (id)initWithWebPage:(WebKit::WebPage *)webPage
+{
+    self = [super init];
+    if (self)
+        self->_webPage = webPage;
+
+    return self;
+}
+
+- (void)drawInContext:(CGContextRef)context
+{
+    _webPage->layoutIfNeeded();
+
+    CGRect clipRect = CGContextGetClipBoundingBox(context);
+
+    GraphicsContext graphicsContext(context);
+    _webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
+}
+
+@end
 
 namespace WebKit {
 
@@ -51,16 +83,23 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 {
     m_rootLayer = [CALayer layer];
 
-    m_rootLayer.get().frame = (CGRect)m_webPage->bounds();
+    CGRect rootLayerFrame = m_webPage->bounds();
+    m_rootLayer.get().frame = rootLayerFrame;
     m_rootLayer.get().opaque = YES;
+    m_rootLayer.get().geometryFlipped = YES;
 
     // Give the root layer a background color so it's visible on screen.
     m_rootLayer.get().backgroundColor = CGColorCreateGenericRGB(1, 0, 0, 1);
 
+    m_contentLayer.adoptNS([[WKContentLayer alloc] initWithWebPage:webPage]);
+    m_contentLayer.get().frame = m_rootLayer.get().frame;
+
+    [m_rootLayer.get() addSublayer:m_contentLayer.get()];
+
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer.get());
-    
+
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
@@ -70,14 +109,14 @@ TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
 }
 
-void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect&)
+void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
-    // FIXME: Implement.
+    [m_contentLayer.get() setNeedsDisplayInRect:rect];
 }
 
 void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    // FIXME: Implement.
+    [m_contentLayer.get() setNeedsDisplayInRect:scrollRect];
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer*)
@@ -92,9 +131,15 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 {
+    m_webPage->setSize(viewSize);
+    m_webPage->layoutIfNeeded();
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [m_rootLayer.get() setFrame:CGRectMake(0, 0, viewSize.width(), viewSize.height())];
+
+    m_rootLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
+    m_contentLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
+
     [CATransaction commit];
     
     [CATransaction flush];

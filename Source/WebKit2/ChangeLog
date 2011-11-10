@@ -1,5 +1,32 @@
 2011-11-10  Anders Carlsson  <andersca@apple.com>
 
+        Add a simple content layer to TiledCoreAnimationDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=72044
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Add a content layer member variable.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (-[WKContentLayer _initWithWebPage:WebKit::]):
+        Add initializer.
+
+        (-[WKContentLayer drawInContext:]):
+        Lay out and draw the web page.
+
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Add the content layer as a sublayer of the root layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setNeedsDisplay):
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+        Tell the content layer to paint.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Resize the content layer as well.
+
+2011-11-10  Anders Carlsson  <andersca@apple.com>
+
         The WKView layer hosting subview needs to be flipped
         https://bugs.webkit.org/show_bug.cgi?id=72042
 

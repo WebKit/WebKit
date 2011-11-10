@@ -30,6 +30,7 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
+OBJC_CLASS WKContentLayer;
 
 typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
@@ -56,6 +57,8 @@ private:
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
 
     RetainPtr<CALayer> m_rootLayer;
+
+    RetainPtr<WKContentLayer> m_contentLayer;
 };
 
 } // namespace WebKit
