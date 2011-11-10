@@ -1,3 +1,15 @@
+2011-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add WebMediaStreamRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=71458
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebMediaStreamRegistry.h: Added.
+        * src/WebMediaStreamRegistry.cpp: Added.
+        (WebKit::WebMediaStreamRegistry::lookupMediaStreamDescriptor):
+
 2011-11-09  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add draw-time scale delta to compositor thread
