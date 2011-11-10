@@ -83,6 +83,8 @@ WebInspector.SourceFrame.prototype = {
     {
         this._ensureContentLoaded();
         this._textViewer.show(this.element);
+        if (this._wasHiddenWhileEditing)
+            this.setReadOnly(false);
     },
 
     willHide: function()
@@ -92,7 +94,9 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.freeCachedElements();
 
         this._clearLineHighlight();
-        this._textViewer.readOnly = true;
+        if (!this._textViewer.readOnly)
+            this._wasHiddenWhileEditing = true;
+        this.setReadOnly(true);
     },
 
     get statusBarItems()

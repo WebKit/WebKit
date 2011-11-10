@@ -1,3 +1,14 @@
+2011-11-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: console does not work after switching panel while editing.
+        https://bugs.webkit.org/show_bug.cgi?id=71918
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.wasShown):
+        (WebInspector.SourceFrame.prototype.willHide):
+
 2011-11-09  Rakesh KN  <rakesh.kn@motorola.com>
 
         Need support for dirname attribute
