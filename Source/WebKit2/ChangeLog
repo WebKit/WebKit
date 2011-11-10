@@ -1,3 +1,34 @@
+2011-11-10  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt][WK2] Add Tap Gesture recognition to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=71841
+
+        Add a Tap gesture recognizer that delivers GestureSingleTap
+        and GestureTapAndHold events through the WebPageProxy.
+        Add a GestureTapAndHold to WebEvent.
+        Add a DoubleTap gesture for zooming in and out.
+
+        This patch is based on work of Benjamin Poulain.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/WebEvent.h:
+        * Target.pri:
+        * UIProcess/qt/QtTapGestureRecognizer.cpp: Added.
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::setWebPageProxy):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::tapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+        (WebKit::QtTapGestureRecognizer::reset):
+        (WebKit::QtTapGestureRecognizer::timerEvent):
+        * UIProcess/qt/QtTapGestureRecognizer.h: Added.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::processDidCrash):
+        (QtWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-09  Shinya Kawanaka  <shinyak@google.com>
 
         Internals.markerRangeForNode should be able to take markers by specifying a marker type.

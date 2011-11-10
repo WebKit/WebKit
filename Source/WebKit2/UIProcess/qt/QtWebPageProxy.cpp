@@ -133,6 +133,7 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInterac
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
+    , m_tapGestureRecognizer(viewportInteractionEngine)
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
@@ -141,6 +142,7 @@ QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInterac
 {
     ASSERT(viewInterface);
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
+    m_tapGestureRecognizer.setWebPageProxy(m_webPageProxy.get());
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
     if (!contextRef)
         s_defaultPageProxyCount++;
@@ -652,6 +654,7 @@ void QtWebPageProxy::processDidCrash()
     updateNavigationState();
     m_panGestureRecognizer.reset();
     m_pinchGestureRecognizer.reset();
+    m_tapGestureRecognizer.reset();
     m_viewInterface->processDidCrash();
 }
 
@@ -825,9 +828,11 @@ void QtWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 {
     if (!m_interactionEngine)
         return;
+
     if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
         m_panGestureRecognizer.reset();
         m_pinchGestureRecognizer.reset();
+        m_tapGestureRecognizer.reset();
         return;
     }
 
@@ -862,6 +867,13 @@ void QtWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
     qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
     m_panGestureRecognizer.recognize(ev, eventTimestampMillis);
     m_pinchGestureRecognizer.recognize(ev);
+
+    if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized())
+        m_tapGestureRecognizer.reset();
+    else {
+        const QTouchEvent* ev = event.nativeEvent();
+        m_tapGestureRecognizer.recognize(ev, eventTimestampMillis);
+    }
 }
 #endif
 

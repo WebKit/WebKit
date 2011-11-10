@@ -28,6 +28,7 @@
 #include "QtPanGestureRecognizer.h"
 #include "QtPinchGestureRecognizer.h"
 #include "QtPolicyInterface.h"
+#include "QtTapGestureRecognizer.h"
 #include "QtViewInterface.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
@@ -208,6 +209,7 @@ protected:
     QtViewportInteractionEngine* m_interactionEngine;
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
+    QtTapGestureRecognizer m_tapGestureRecognizer;
     WebKit::QtPolicyInterface* const m_policyInterface;
 
 private:
