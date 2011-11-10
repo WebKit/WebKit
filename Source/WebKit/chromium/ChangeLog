@@ -1,3 +1,9 @@
+2011-11-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-11-10  Iain Merrick  <husky@google.com>
 
         [Chromium] Fix CCLayerTreeHostImplTest::scrollRootCallsCommitAndRedraw
