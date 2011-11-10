@@ -1,3 +1,15 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix keyboard related layout tests after API refactoring
+
+        Reviewed by Tor Arne Vestbø.
+
+        Send key events to the handling page item, not the view.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::sendEvent):
+        (WTR::PlatformWebView::postEvent):
+
 2011-11-10  Alexandre Mazari  <amazari@igalia.com>
 
         [GTK] Make the ENABLE(FEATURE) macro work in DRT
