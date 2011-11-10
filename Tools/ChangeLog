@@ -1,3 +1,14 @@
+2011-11-10  Alexandre Mazari  <amazari@igalia.com>
+
+        [GTK] Make the ENABLE(FEATURE) macro work in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=71940
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am:
+        Add webcore_cppflags to Programs_DumpRenderTree_CPP so
+        ENABLE_* variables are part of the environment.
+
 2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix focus related layout tests after API refactoring

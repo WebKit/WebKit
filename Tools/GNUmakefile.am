@@ -81,7 +81,8 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(srcdir)/Source/WebCore/testing/js \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/Source/WebKit/gtk \
-	$(javascriptcore_cppflags)
+	$(javascriptcore_cppflags) \
+	$(webcore_cppflags)
 
 if TARGET_X11
 Programs_DumpRenderTree_CPPFLAGS += \
