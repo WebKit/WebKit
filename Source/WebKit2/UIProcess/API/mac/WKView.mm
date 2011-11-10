@@ -1887,11 +1887,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
+    // We want to make sure to update the active state while hidden, so since the view is about to be hidden,
+    // we hide it first and then update the active state.
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
+    // We want to make sure to update the active state while hidden, so since the view is about to become visible,
+    // we update the active state first and then make it visible.
+    _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 

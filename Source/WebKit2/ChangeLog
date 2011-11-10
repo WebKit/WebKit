@@ -1,3 +1,19 @@
+2011-11-10  Timothy Hatcher  <timothy@apple.com>
+
+        Make WKViews in NSPopovers render as they would in active windows.
+
+        The NSWindowDid{Become,Resign}KeyNotifications are not fired when NSPopovers
+        are shown or hidden since they share key with the parent window. So WKView
+        needs to update the active state during order on/off screen notifications.
+
+        https://webkit.org/b/68435
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _windowDidOrderOffScreen:]): Call viewStateDidChange with WebPageProxy::ViewWindowIsActive.
+        (-[WKView _windowDidOrderOnScreen:]): Ditto.
+
 2011-11-10  Anders Carlsson  <andersca@apple.com>
 
         Add a simple content layer to TiledCoreAnimationDrawingArea
