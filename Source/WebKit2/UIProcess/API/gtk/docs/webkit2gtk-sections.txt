@@ -15,6 +15,8 @@ WEBKIT_WEB_VIEW_BASE_GET_CLASS
 <SUBSECTION Private>
 webkit_web_view_base_get_type
 WebKitWebViewBasePrivate
+WEBKIT_API
+WEBKIT_OBSOLETE_API
 </SECTION>
 
 <SECTION>

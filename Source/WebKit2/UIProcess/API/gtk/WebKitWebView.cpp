@@ -419,8 +419,8 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
  * webkit_web_view_get_title:
  * @web_view: a #WebKitWebView
  * 
- * Gets the value of #WebKitWebView:title.
- * You can connect to #WebKitWebView::notify signal of @web_view to 
+ * Gets the value of the #WebKitWebView:title property.
+ * You can connect to notify::title signal of @web_view to 
  * be notified when the title has been received.
  *
  * Returns: The main frame document title of @web_view.
@@ -650,9 +650,9 @@ void webkit_web_view_set_custom_charset(WebKitWebView* webView, const gchar* cha
  * webkit_web_view_get_estimated_load_progress:
  * @web_view: a #WebKitWebView
  *
- * Gets the value of #WebKitWebView:estimated-load-progress.
+ * Gets the value of the #WebKitWebView:estimated-load-progress property.
  * You can monitor the estimated progress of a load operation by
- * connecting to the ::notify signal of @web_view.
+ * connecting to the notify::estimated-load-progress signal of @web_view.
  *
  * Returns: an estimate of the of the percent complete for a document
  *     load as a range from 0.0 to 1.0.

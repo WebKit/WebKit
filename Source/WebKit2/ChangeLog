@@ -1,3 +1,18 @@
+2011-11-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Fix remaining gtkdoc errors
+        https://bugs.webkit.org/show_bug.cgi?id=71990
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp: Update add the phrase "property" to
+        references to properties, because the gtkdoc stylesheet does not differeniate
+        between properties and signals. Standardize the way we talk about property
+        notifications.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add an include to silence 
+        warnings about GIR annotations.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add the decorators the private section.
+
 2011-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Clean up how singe / double taps are handled
