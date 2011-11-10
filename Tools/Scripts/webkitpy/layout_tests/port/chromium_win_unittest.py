@@ -73,10 +73,10 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self._port = port
         setup_mount = self._mock_path_from_chromium_base("third_party", "cygwin", "setup_mount.bat")
         # FIXME: This is kinda lame, we only run setup_mount on win32 platforms, so we only expect the run_command output there.
-        if sys.platform != "win32":
-            expected_stderr = ""
-        else:
+        if sys.platform in ("win32", "cygwin"):
             expected_stderr = "MOCK run_command: %s, cwd=None\n" % [setup_mount]
+        else:
+            expected_stderr = ""
         output = outputcapture.OutputCapture()
         output.assert_outputs(self, port.setup_environ_for_server, expected_stderr=expected_stderr)
 

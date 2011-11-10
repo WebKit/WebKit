@@ -1,3 +1,12 @@
+2011-11-09  Eric Seidel  <eric@webkit.org>
+
+        Remove the concept of platform-dependent unittests
+        https://bugs.webkit.org/show_bug.cgi?id=71963
+
+        Unreviewed.  Fix test-webkitpy on cygwin.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+
 2011-11-09  Dana Jansens  <danakj@chromium.org>
 
         Add cc-bugs group to watch changes in chromium graphics
