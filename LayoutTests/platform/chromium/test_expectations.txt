@@ -1072,7 +1072,6 @@ BUGWK70748 CPU : fast/css/nested-rounded-corners.html = IMAGE
 BUGWK70748 CPU : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGWK70748 CPU : fast/forms/basic-selects.html = IMAGE
 BUGWK70748 CPU : fast/forms/validation-message-appearance.html = IMAGE
-BUGWK70748 CPU : fast/layers/video-layer.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
