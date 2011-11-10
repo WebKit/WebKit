@@ -1,3 +1,15 @@
+2011-11-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ChangeLog mistakenly recognizes any string between '*' and ':' as touched files
+        https://bugs.webkit.org/show_bug.cgi?id=72057
+
+        Reviewed by Eric Seidel.
+
+        Make the regular expression more explicit.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+
 2011-11-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5

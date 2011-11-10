@@ -88,6 +88,31 @@ class ChangeLogTest(unittest.TestCase):
         tests. The close method can be called on a window that's already closed
         so we can't assert here.
 
+2011-11-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] ResourceRequest's nsURLRequest() does not differentiate null and empty URLs with CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=71539
+
+        Reviewed by David Kilzer.
+
+        In order to have CFURL and NSURL to be consistent when both are used on Mac,
+        KURL::createCFURL() is changed to support empty URL values.
+
+        * This change log entry is made up to test _parse_entry:
+            * a list of things
+
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::createCFURLFromBuffer):
+        (WebCore::KURL::createCFURL):
+        * platform/mac/KURLMac.mm :
+        (WebCore::KURL::operator NSURL *):
+        (WebCore::KURL::createCFURL):
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::closeWindowSoon): call new function and moves its
+        previous functionality there.
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+
 == Rolled over to ChangeLog-2009-06-16 ==
 """
 
@@ -156,10 +181,13 @@ class ChangeLogTest(unittest.TestCase):
     def test_parse_log_entries_from_changelog(self):
         changelog_file = StringIO(self._example_changelog)
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
-        self.assertEquals(len(parsed_entries), 3)
+        self.assertEquals(len(parsed_entries), 4)
         self.assertEquals(parsed_entries[0].reviewer_text(), "David Levin")
         self.assertEquals(parsed_entries[1].author_email(), "ddkilzer@apple.com")
         self.assertEquals(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
+        self.assertEquals(parsed_entries[3].author_name(), "Benjamin Poulain")
+        self.assertEquals(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
+            "WebCoreSupport/ChromeClientEfl.cpp", "ewk/ewk_private.h", "ewk/ewk_view.cpp"])
 
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)

@@ -75,7 +75,7 @@ class ChangeLogEntry(object):
     date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<name>.+?)\s+<(?P<email>[^<>]+)>$'
 
     # e.g. * Source/WebCore/page/EventHandler.cpp: Implement FooBarQuux.
-    touched_files_regexp = r'\s*\*\s*(?P<file>.+)\:'
+    touched_files_regexp = r'^\s*\*\s*(?P<file>[A-Za-z0-9_\-\./\\]+)\s*\:'
 
     # e.g. Reviewed by Darin Adler.
     # (Discard everything after the first period to match more invalid lines.)
