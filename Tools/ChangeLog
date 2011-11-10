@@ -1,3 +1,15 @@
+2011-11-09  Dana Jansens  <danakj@chromium.org>
+
+        Add cc-bugs group to watch changes in chromium graphics
+        https://bugs.webkit.org/show_bug.cgi?id=71690
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/committers.py: Make new Account superclass for non-contributor watch accounts
+        * Scripts/webkitpy/common/config/committers_unittest.py: Test the Account superclass
+        * Scripts/webkitpy/common/config/watchlist: Add cc-bugs@google.com to watch list
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py: Check for Accounts also, but require it to be the bugzilla email for any Account/Contributor/etc.
+
 2011-11-09  Eric Seidel  <eric@webkit.org>
 
         Remove more platform-dependent unittests

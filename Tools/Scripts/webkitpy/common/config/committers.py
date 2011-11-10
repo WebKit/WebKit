@@ -29,7 +29,8 @@
 #
 # WebKit's Python module for committer and reviewer validation.
 
-class Contributor(object):
+
+class Account(object):
     def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
         assert(name)
         assert(email_or_emails)
@@ -68,6 +69,12 @@ class Contributor(object):
         return False
 
 
+class Contributor(Account):
+    def __init__(self, name, email_or_emails, irc_nickname=None):
+        Account.__init__(self, name, email_or_emails, irc_nickname)
+        self.is_contributor = True
+
+
 class Committer(Contributor):
     def __init__(self, name, email_or_emails, irc_nickname=None):
         Contributor.__init__(self, name, email_or_emails, irc_nickname)
@@ -78,6 +85,17 @@ class Reviewer(Committer):
     def __init__(self, name, email_or_emails, irc_nickname=None):
         Committer.__init__(self, name, email_or_emails, irc_nickname)
         self.can_review = True
+
+
+# This is a list of email addresses that have bugzilla accounts but are not
+# used for contributing (such as mailing lists).
+
+
+watchers_who_are_not_contributors = [
+    Account("Chromium Compositor Bugs", ["cc-bugs@google.com"], ""),
+    Account("David Levin", ["levin+threading@chromium.org"], ""),
+    Account("David Levin", ["levin+watchlist@chromium.org"], ""),
+]
 
 
 # This is a list of people who are neither committers nor reviewers, but get
@@ -360,7 +378,7 @@ reviewers_list = [
     Reviewer("David Harrison", "harrison@apple.com", "harrison"),
     Reviewer("David Hyatt", "hyatt@apple.com", ["dhyatt", "hyatt"]),
     Reviewer("David Kilzer", ["ddkilzer@webkit.org", "ddkilzer@apple.com"], "ddkilzer"),
-    Reviewer("David Levin", ["levin@chromium.org", "levin+threading@chromium.org", "levin+watchlist@chromium.org"], "dave_levin"),
+    Reviewer("David Levin", "levin@chromium.org", "dave_levin"),
     Reviewer("Dean Jackson", "dino@apple.com", "dino"),
     Reviewer("Dimitri Glazkov", "dglazkov@chromium.org", "dglazkov"),
     Reviewer("Dirk Pranke", "dpranke@chromium.org", "dpranke"),
@@ -438,11 +456,17 @@ class CommitterList(object):
     def __init__(self,
                  committers=committers_unable_to_review,
                  reviewers=reviewers_list,
-                 contributors=contributors_who_are_not_committers):
+                 contributors=contributors_who_are_not_committers,
+                 watchers=watchers_who_are_not_contributors):
+        self._accounts = watchers + contributors + committers + reviewers
         self._contributors = contributors + committers + reviewers
         self._committers = committers + reviewers
         self._reviewers = reviewers
-        self._contributors_by_email = {}
+        self._accounts_by_email = {}
+        self._accounts_by_login = {}
+
+    def accounts(self):
+        return self._accounts
 
     def contributors(self):
         return self._contributors
@@ -453,13 +477,27 @@ class CommitterList(object):
     def reviewers(self):
         return self._reviewers
 
-    def _email_to_contributor_map(self):
-        if not len(self._contributors_by_email):
-            for contributor in self._contributors:
-                for email in contributor.emails:
-                    assert(email not in self._contributors_by_email)  # We should never have duplicate emails.
-                    self._contributors_by_email[email] = contributor
-        return self._contributors_by_email
+    def _email_to_account_map(self):
+        if not len(self._accounts_by_email):
+            for account in self._accounts:
+                for email in account.emails:
+                    assert(email not in self._accounts_by_email)  # We should never have duplicate emails.
+                    self._accounts_by_email[email] = account
+        return self._accounts_by_email
+
+    def _login_to_account_map(self):
+        if not len(self._accounts_by_login):
+            for account in self._accounts:
+                if account.emails:
+                    login = account.bugzilla_email()
+                    assert(login not in self._accounts_by_login)  # We should never have duplicate emails.
+                    self._accounts_by_login[login] = account
+        return self._accounts_by_login
+
+    def _contributor_only(self, record):
+        if record and not record.is_contributor:
+            return None
+        return record
 
     def _committer_only(self, record):
         if record and not record.can_commit:
@@ -490,11 +528,17 @@ class CommitterList(object):
     def contributors_by_search_string(self, string):
         return filter(lambda contributor: contributor.contains_string(string), self.contributors())
 
+    def account_by_login(self, login):
+        return self._login_to_account_map().get(login.lower())
+
+    def account_by_email(self, email):
+        return self._email_to_account_map().get(email.lower())
+
     def contributor_by_email(self, email):
-        return self._email_to_contributor_map().get(email.lower())
+        return self._contributor_only(self.account_by_email(email))
 
     def committer_by_email(self, email):
-        return self._committer_only(self.contributor_by_email(email))
+        return self._committer_only(self.account_by_email(email))
 
     def reviewer_by_email(self, email):
-        return self._reviewer_only(self.contributor_by_email(email))
+        return self._reviewer_only(self.account_by_email(email))

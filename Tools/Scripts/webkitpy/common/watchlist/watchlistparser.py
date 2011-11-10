@@ -146,13 +146,13 @@ class WatchListParser(object):
         self._validate_definitions(cc_definitions_set, self._CC_RULES, watch_list)
         self._validate_definitions(messages_definitions_set, self._MESSAGE_RULES, watch_list)
 
-        contributors = CommitterList()
+        accounts = CommitterList()
         for cc_rule in watch_list.cc_rules:
             # Copy the instructions since we'll be remove items from the original list and
             # modifying a list while iterating through it leads to undefined behavior.
             intructions_copy = cc_rule.instructions()[:]
             for email in intructions_copy:
-                if not contributors.contributor_by_email(email):
+                if not accounts.account_by_login(email):
                     cc_rule.remove_instruction(email)
                     self._log_error("The email alias %s which is in the watchlist is not listed as a contributor in committers.py" % email)
                     continue

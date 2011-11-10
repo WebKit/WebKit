@@ -115,7 +115,7 @@
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
-        "ChromiumGraphics": [ "jamesr@chromium.org", ],
+        "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
         "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "pnormand@igalia.com", ],
