@@ -1,5 +1,12 @@
 2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Add stub for new method.
+        
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::openFile):
+
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. wx should not be excluded
         from building ScopedFramePaintingState code.
 

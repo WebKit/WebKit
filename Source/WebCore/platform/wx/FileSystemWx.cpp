@@ -118,7 +118,12 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
     handle = temp;
     return String(sFilename);
 }
-
+    
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
+{
+    notImplemented();
+}
+    
 void closeFile(PlatformFileHandle& handle)
 {
     if (handle && handle != invalidPlatformFileHandle)
