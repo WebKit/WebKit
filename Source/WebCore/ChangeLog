@@ -1,5 +1,11 @@
 2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix build.
+
+        * WebCore.gypi: Need to add rendering/svg/SVGPathData.* in another place as well, cr-bots are not compiling it and thus fail linking.
+
+2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Remove virtual toPathData() method from all graphics elements
         https://bugs.webkit.org/show_bug.cgi?id=72009
 
