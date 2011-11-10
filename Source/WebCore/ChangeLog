@@ -1,3 +1,12 @@
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Remove from WebDOMEventTarget
+        bindings methods that have been removed from EventTarget.
+
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (toWebKit):
+        * bindings/cpp/WebDOMEventTarget.h:
+
 2011-11-09  Martin Robinson  <mrobinson@igalia.com>
 
         [Cairo] Avoid clipping when painting more often

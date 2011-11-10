@@ -51,12 +51,6 @@ public:
 
     WebDOMNode toNode();
     WebDOMDOMWindow toDOMWindow();
-    WebDOMXMLHttpRequest toXMLHttpRequest();
-    WebDOMXMLHttpRequestUpload toXMLHttpRequestUpload();
-    WebDOMMessagePort toMessagePort();
-
-    WebDOMEventSource toEventSource();
-    WebDOMDOMApplicationCache toDOMApplicationCache();
     WebDOMWorker toWorker();
     WebDOMDedicatedWorkerContext toDedicatedWorkerContext();
     WebDOMSharedWorker toSharedWorker();

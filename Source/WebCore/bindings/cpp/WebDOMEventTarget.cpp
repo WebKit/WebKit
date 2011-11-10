@@ -99,11 +99,6 @@ WebDOM##type WebDOMEventTarget::to##type() \
 
 ConvertTo(Node)
 ConvertTo(DOMWindow)
-ConvertTo(XMLHttpRequest)
-ConvertTo(XMLHttpRequestUpload)
-ConvertTo(MessagePort)
-ConvertTo(EventSource)
-ConvertTo(DOMApplicationCache)
 
 #if ENABLE(WORKERS)
 ConvertTo(Worker)
@@ -136,27 +131,12 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
     if (WebCore::DOMWindow* window = value->toDOMWindow())
         return toWebKit(window);
 
-    if (WebCore::XMLHttpRequest* xhr = value->toXMLHttpRequest())
-        return toWebKit(xhr);
-
-    if (WebCore::XMLHttpRequestUpload* upload = value->toXMLHttpRequestUpload())
-        return toWebKit(upload);
-
-    if (WebCore::MessagePort* messagePort = value->toMessagePort())
-        return toWebKit(messagePort);
-
-    if (WebCore::EventSource* eventSource = value->toEventSource())
-        return toWebKit(eventSource);
-
 #if ENABLE(SVG) && 0
     // FIXME: Enable once SVG bindings are generated.
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
     if (WebCore::SVGElementInstance* instance = value->toSVGElementInstance())
         return toWebKit(instance);
 #endif
-
-    if (WebCore::DOMApplicationCache* cache = value->toDOMApplicationCache())
-        return toWebKit(cache);
 
 #if ENABLE(WORKERS)
     if (WebCore::Worker* worker = value->toWorker())
