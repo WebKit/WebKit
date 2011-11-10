@@ -68,10 +68,11 @@ void SVGAnimatedLengthAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>
     from = constructFromString(fromString);
     to = constructFromString(byString);
     
+    SVGLengthContext lengthContext(m_contextElement);
     SVGLength& fromLength = from->length();
     SVGLength& toLength = to->length();
     ExceptionCode ec = 0;
-    toLength.setValue(toLength.value(m_contextElement) + fromLength.value(m_contextElement), m_contextElement, ec);
+    toLength.setValue(toLength.value(lengthContext) + fromLength.value(lengthContext), lengthContext, ec);
     ASSERT(!ec);
 }
 
@@ -103,12 +104,13 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigne
         toSVGLength = sharedSVGLength(m_lengthMode, toLengthString); 
     }
     
-    float result = animatedSVGLength.value(m_contextElement);
+    SVGLengthContext lengthContext(m_contextElement);
+    float result = animatedSVGLength.value(lengthContext);
     SVGLengthType unitType = percentage < 0.5 ? fromSVGLength.unitType() : toSVGLength.unitType();
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromSVGLength.value(m_contextElement), toSVGLength.value(m_contextElement));
+    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromSVGLength.value(lengthContext), toSVGLength.value(lengthContext));
 
     ExceptionCode ec = 0;
-    animatedSVGLength.setValue(m_contextElement, result, m_lengthMode, unitType, ec);
+    animatedSVGLength.setValue(lengthContext, result, m_lengthMode, unitType, ec);
     ASSERT(!ec);
 }
 
@@ -120,7 +122,8 @@ float SVGAnimatedLengthAnimator::calculateDistance(const String& fromString, con
     SVGLengthMode lengthMode = SVGLength::lengthModeForAnimatedLengthAttribute(animationElement->attributeName());
     SVGLength from = SVGLength(lengthMode, fromString);
     SVGLength to = SVGLength(lengthMode, toString);
-    return fabsf(to.value(m_contextElement) - from.value(m_contextElement));
+    SVGLengthContext lengthContext(m_contextElement);
+    return fabsf(to.value(lengthContext) - from.value(lengthContext));
 }
 
 }

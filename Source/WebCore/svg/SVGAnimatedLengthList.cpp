@@ -66,9 +66,10 @@ void SVGAnimatedLengthListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedT
     unsigned itemsCount = fromLengthList.size();
     if (itemsCount != toLengthList.size())
         return;
+    SVGLengthContext lengthContext(m_contextElement);
     ExceptionCode ec = 0;
     for (unsigned i = 0; i < itemsCount; ++i) {
-        toLengthList[i].setValue(toLengthList[i].value(m_contextElement) + fromLengthList[i].value(m_contextElement), m_contextElement, ec);
+        toLengthList[i].setValue(toLengthList[i].value(lengthContext) + fromLengthList[i].value(lengthContext), lengthContext, ec);
         ASSERT(!ec);
     }
 }
@@ -114,15 +115,16 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
     bool animatedListSizeEqual = itemsCount == animatedLengthList.size();
     if (!animatedListSizeEqual)
         animatedLengthList.clear();
+    SVGLengthContext lengthContext(m_contextElement);
     ExceptionCode ec = 0;
     for (unsigned i = 0; i < itemsCount; ++i) {
-        float result = animatedListSizeEqual ? animatedLengthList[i].value(m_contextElement) : 0;
+        float result = animatedListSizeEqual ? animatedLengthList[i].value(lengthContext) : 0;
         SVGLengthType unitType = percentage < 0.5 ? fromLengthList[i].unitType() : toLengthList[i].unitType();
-        SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromLengthList[i].value(m_contextElement), toLengthList[i].value(m_contextElement));
+        SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromLengthList[i].value(lengthContext), toLengthList[i].value(lengthContext));
         if (!animatedListSizeEqual)
-            animatedLengthList.append(SVGLength(m_contextElement, result, m_lengthMode, unitType));
+            animatedLengthList.append(SVGLength(lengthContext, result, m_lengthMode, unitType));
         else {
-            animatedLengthList[i].setValue(m_contextElement, result, m_lengthMode, unitType, ec);
+            animatedLengthList[i].setValue(lengthContext, result, m_lengthMode, unitType, ec);
             ASSERT(!ec);
         }
     }
