@@ -91,6 +91,7 @@ class FactoryTest(unittest.TestCase):
         # FIXME: Hacking sys.platform like this is WRONG.
         orig_platform = sys.platform
         sys.platform = platform
+        # FIXME: We need a better way to mock this.
         self.assertTrue(isinstance(self.make_factory().get(options=options), expected_port))
         sys.platform = orig_platform
 

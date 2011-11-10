@@ -36,23 +36,17 @@ from webkitpy.layout_tests.port import port_testcase
 
 class ChromiumGpuTest(unittest.TestCase):
     def integration_test_chromium_gpu_linux(self):
-        if sys.platform not in ('linux2', 'linux3'):
-            return
         self.assert_port_works('chromium-gpu-linux')
         self.assert_port_works('chromium-gpu-linux', 'chromium-gpu', 'linux2')
         self.assert_port_works('chromium-gpu-linux', 'chromium-gpu', 'linux3')
 
     def integration_test_chromium_gpu_mac(self):
-        if sys.platform != 'darwin':
-            return
         self.assert_port_works('chromium-gpu-cg-mac')
         self.assert_port_works('chromium-gpu-mac')
         # For now, chromium-gpu on Mac defaults to the chromium-gpu-cg-mac port.
         self.assert_port_works('chromium-gpu-cg-mac', 'chromium-gpu', 'darwin')
 
     def integration_test_chromium_gpu_win(self):
-        if sys.platform not in ('cygwin', 'win32'):
-            return
         self.assert_port_works('chromium-gpu-win')
         self.assert_port_works('chromium-gpu-win', 'chromium-gpu', 'win32')
         self.assert_port_works('chromium-gpu-win', 'chromium-gpu', 'cygwin')

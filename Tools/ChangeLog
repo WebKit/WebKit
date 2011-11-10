@@ -1,3 +1,18 @@
+2011-11-09  Eric Seidel  <eric@webkit.org>
+
+        Remove more platform-dependent unittests
+        https://bugs.webkit.org/show_bug.cgi?id=71971
+
+        Reviewed by Adam Barth.
+
+        Tests which only run on a couple platforms will break.
+        All tests should run on all platforms where possible.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+
 2011-11-09  Ojan Vafai  <ojan@chromium.org>
 
         Merge in results to the test results server even if build numbers conflict

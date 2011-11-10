@@ -45,13 +45,6 @@ class ChromiumWinTest(port_testcase.PortTestCase):
             self.register_cygwin = True
             self.results_directory = '/'
 
-    def setUp(self):
-        self.orig_platform = sys.platform
-
-    def tearDown(self):
-        sys.platform = self.orig_platform
-        self._port = None
-
     port_maker = chromium_win.ChromiumWinPort
 
     def _mock_path_from_chromium_base(self, *comps):

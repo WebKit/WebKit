@@ -30,46 +30,22 @@ import os
 import sys
 import unittest
 
-from webkitpy.common.system import executive
-from webkitpy.common.system import executive_mock
-from webkitpy.common.system import filesystem
-from webkitpy.common.system import filesystem_mock
-from webkitpy.common.system import outputcapture
+from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.outputcapture import OutputCapture
 
 import config
-
-
-def mock_run_command(arg_list):
-    # Set this to True to test actual output (where possible).
-    integration_test = False
-    if integration_test:
-        return executive.Executive().run_command(arg_list)
-
-    if 'webkit-build-directory' in arg_list[1]:
-        return mock_webkit_build_directory(arg_list[2:])
-    return 'Error'
-
-
-def mock_webkit_build_directory(arg_list):
-    if arg_list == ['--top-level']:
-        return '/WebKitBuild'
-    elif arg_list == ['--configuration', '--debug']:
-        return '/WebKitBuild/Debug'
-    elif arg_list == ['--configuration', '--release']:
-        return '/WebKitBuild/Release'
-    return 'Error'
 
 
 class ConfigTest(unittest.TestCase):
     def tearDown(self):
         config.clear_cached_configuration()
 
-    def make_config(self, output='', files={}, exit_code=0, exception=None,
-                    run_command_fn=None):
-        e = executive_mock.MockExecutive2(output=output, exit_code=exit_code,
-                                          exception=exception,
-                                          run_command_fn=run_command_fn)
-        fs = filesystem_mock.MockFileSystem(files)
+    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None):
+        e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn)
+        fs = MockFileSystem(files)
         return config.Config(e, fs)
 
     def assert_configuration(self, contents, expected):
@@ -80,6 +56,20 @@ class ConfigTest(unittest.TestCase):
 
     def test_build_directory(self):
         # --top-level
+        def mock_webkit_build_directory(arg_list):
+            if arg_list == ['--top-level']:
+                return '/WebKitBuild'
+            elif arg_list == ['--configuration', '--debug']:
+                return '/WebKitBuild/Debug'
+            elif arg_list == ['--configuration', '--release']:
+                return '/WebKitBuild/Release'
+            return 'Error'
+
+        def mock_run_command(arg_list):
+            if 'webkit-build-directory' in arg_list[1]:
+                return mock_webkit_build_directory(arg_list[2:])
+            return 'Error'
+
         c = self.make_config(run_command_fn=mock_run_command)
         self.assertTrue(c.build_directory(None).endswith('WebKitBuild'))
 
@@ -104,14 +94,13 @@ class ConfigTest(unittest.TestCase):
         self.assert_configuration('Development', 'Debug')
 
     def test_default_configuration__notfound(self):
-        # This tests what happens if the default configuration file
-        # doesn't exist.
+        # This tests what happens if the default configuration file doesn't exist.
         c = self.make_config(output='foo', files={'foo/Configuration': None})
         self.assertEqual(c.default_configuration(), "Release")
 
     def test_default_configuration__unknown(self):
         # Ignore the warning about an unknown configuration value.
-        oc = outputcapture.OutputCapture()
+        oc = OutputCapture()
         oc.capture_output()
         self.assert_configuration('Unknown', 'Unknown')
         oc.restore_output()
@@ -119,18 +108,18 @@ class ConfigTest(unittest.TestCase):
     def test_default_configuration__standalone(self):
         # FIXME: This test runs a standalone python script to test
         # reading the default configuration to work around any possible
-        # caching / reset bugs. See https://bugs.webkit.org/show_bug?id=49360
+        # caching / reset bugs. See https://bugs.webkit.org/show_bug.cgi?id=49360
         # for the motivation. We can remove this test when we remove the
         # global configuration cache in config.py.
-        e = executive.Executive()
-        fs = filesystem.FileSystem()
+        e = Executive()
+        fs = FileSystem()
         c = config.Config(e, fs)
-        script = c.path_from_webkit_base('Tools', 'Scripts',
-            'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
+        script = c.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
 
         # Note: don't use 'Release' here, since that's the normal default.
         expected = 'Debug'
 
+        # FIXME: Why are we running a python subprocess here??
         args = [sys.executable, script, '--mock', expected]
         actual = e.run_command(args).rstrip()
         self.assertEqual(actual, expected)
@@ -147,35 +136,35 @@ class ConfigTest(unittest.TestCase):
         # We run webkit-build-directory to find out where the default
         # configuration file is. See what happens if that script fails.
         # (We should get the default value, 'Release').
-        c = self.make_config(exception=executive.ScriptError())
+        c = self.make_config(exception=ScriptError())
         actual = c.default_configuration()
         self.assertEqual(actual, 'Release')
 
     def test_path_from_webkit_base(self):
-        # FIXME: We use a real filesystem here. Should this move to a
-        # mocked one?
-        c = config.Config(executive.Executive(), filesystem.FileSystem())
+        c = config.Config(MockExecutive(), MockFileSystem())
         self.assertTrue(c.path_from_webkit_base('foo'))
 
     def test_webkit_base_dir(self):
-        # FIXME: We use a real filesystem here. Should this move to a
-        # mocked one?
-        c = config.Config(executive.Executive(), filesystem.FileSystem())
+        # FIXME: We use a real filesystem here. Should this move to a mocked one?
+        executive = Executive()
+        filesystem = FileSystem()
+        c = config.Config(executive, filesystem)
         base_dir = c.webkit_base_dir()
         self.assertTrue(base_dir)
         self.assertNotEqual(base_dir[-1], '/')
 
-        orig_cwd = os.getcwd()
+        # FIXME: Once we use a MockFileSystem for this test we don't need to save the orig_cwd.
+        orig_cwd = filesystem.getcwd()
         if sys.platform == 'win32':
-            os.chdir(os.environ['USERPROFILE'])
+            filesystem.chdir(os.environ['USERPROFILE'])
         else:
-            os.chdir(os.environ['HOME'])
-        c = config.Config(executive.Executive(), filesystem.FileSystem())
+            filesystem.chdir(os.environ['HOME'])
+        c = config.Config(executive, filesystem)
         try:
             base_dir_2 = c.webkit_base_dir()
             self.assertEqual(base_dir, base_dir_2)
         finally:
-            os.chdir(orig_cwd)
+            filesystem.chdir(orig_cwd)
 
 
 if __name__ == '__main__':
