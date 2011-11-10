@@ -524,6 +524,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // we make sure that is actually present
     ASSERT(challenge.nsURLAuthenticationChallenge());
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOWLEOPARD)
+    // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
+    // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
+    if (challenge.protectionSpace().isProxy()) {
+        // Cannot use receivedRequestToContinueWithoutCredential(), because current challenge is not yet set.
+        [challenge.sender() continueWithoutCredentialForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+        return;
+    }
+#endif
+
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
                                                                    password:d->m_pass
@@ -564,6 +574,9 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     d->m_currentWebChallenge = core(d->m_currentMacChallenge);
     d->m_currentWebChallenge.setAuthenticationClient(this);
 
+    // FIXME: Several concurrent requests can return with the an authentication challenge for the same protection space.
+    // We should avoid making additional client calls for the same protection space when already waiting for the user,
+    // because typing the same credentials several times is annoying.
     if (client())
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
 }

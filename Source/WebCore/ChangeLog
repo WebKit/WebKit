@@ -1,3 +1,15 @@
+2011-11-09  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/10423024> WebProcess doesn't use AuthBrokerAgent for proxy credentials
+        https://bugs.webkit.org/show_bug.cgi?id=71964
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        Don't ask the client for proxy credentials. CFNetwork results are authoritative, and proxy
+        credentials are system-wide.
+
 2011-11-09  Daniel Sievers  <sievers@chromium.org>
 
         [chromium] Fix typo in checkerboarding code

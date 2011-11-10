@@ -577,6 +577,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     ASSERT(challenge.cfURLAuthChallengeRef());
     ASSERT(challenge.authenticationClient() == this); // Should be already set.
 
+#if !PLATFORM(WIN)
+    // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
+    // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
+    if (challenge.protectionSpace().isProxy()) {
+        // Cannot use receivedRequestToContinueWithoutCredential(), because current challenge is not yet set.
+        CFURLConnectionUseCredential(d->m_connection.get(), 0, challenge.cfURLAuthChallengeRef());
+        return;
+    }
+#endif
+
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         RetainPtr<CFStringRef> user(AdoptCF, d->m_user.createCFString());
         RetainPtr<CFStringRef> pass(AdoptCF, d->m_pass.createCFString());
