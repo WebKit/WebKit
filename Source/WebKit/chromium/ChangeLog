@@ -1,3 +1,21 @@
+2011-11-10  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Scroll deltas are cleared during commit to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=71916
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+        CCLayerTreeHostImplTest.scrollDeltaRepeatedScrolls
+        This test is modified to verify that CCLayerTreeHostImpl::processScrollDeltas()
+        maintain the current scroll deltas and scroll positions.
+        It also verifies that scroll deltas are subtracted correctly by calling
+        CCLayerTreeHostCommon::applyScrollAndScale().
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        call setLayerTreeHost() on the root layer.
+
 2011-11-10  Jay Civelli  <jcivelli@chromium.org>
 
         Fix progress load reporting for MHTML documents.

@@ -32,6 +32,7 @@
 #include "cc/CCFrameRateController.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCScheduler.h"
 #include "cc/CCScopedMainThreadProxy.h"
@@ -353,7 +354,7 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
         return;
 
     // Scroll deltas need to be applied even if the commit will be dropped.
-    m_layerTreeHost->applyScrollAndScale(*scrollInfo.get());
+    CCLayerTreeHostCommon::applyScrollAndScale(m_layerTreeHost->rootLayer(), *scrollInfo);
 
     // Drop beginFrameAndCommit calls that occur out of sequence. See createBeginFrameAndCommitTaskOnImplThread for
     // an explanation of how out-of-sequence beginFrameAndCommit tasks can occur.
@@ -385,7 +386,7 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
         // coordinated by the CCScheduler.
         TRACE_EVENT("commit", this, 0);
         CCCompletionEvent completion;
-        s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, AllowCrossThreadAccess(&completion)));
+        s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, AllowCrossThreadAccess(&completion), scrollInfo));
         completion.wait();
     }
 
@@ -394,7 +395,7 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
     ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 }
 
-void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion)
+void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion, PassOwnPtr<CCScrollAndScaleSet> scrollInfo)
 {
     TRACE_EVENT("CCThreadProxy::beginFrameCompleteOnImplThread", this, 0);
     ASSERT(!m_commitCompletionEventOnImplThread);
@@ -411,6 +412,7 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
     ASSERT(!m_currentTextureUpdaterOnImplThread);
     m_currentTextureUpdaterOnImplThread = adoptPtr(new CCTextureUpdater(m_layerTreeHostImpl->contentsTextureAllocator()));
     m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), *m_currentTextureUpdaterOnImplThread);
+    CCLayerTreeHostCommon::applyScrollAndScale(m_layerTreeHostImpl->rootLayer(), *scrollInfo);
 
     m_schedulerOnImplThread->beginFrameComplete();
 }

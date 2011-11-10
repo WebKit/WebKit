@@ -1,3 +1,52 @@
+2011-11-10  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Scroll deltas are cleared during commit to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=71916
+
+        Reviewed by James Robinson.
+
+        The patch keeps the scroll deltas and scroll position unchanged when
+        committing to the main thread. After commit has completed on the main
+        thread the submitted scroll deltas are then subtracted from the current
+        scroll deltas on the impl thread.
+
+        Doing so allow scroll deltas to be available at all time which enables
+        proper positioning for layers that are fixed-positioned to the
+        container layer.
+
+        This patch is tested by the following unit tests:
+        - CCLayerTreeHostImplTest.scrollDeltaRepeatedScrolls
+          This test is modified to verify that scroll deltas and scroll position
+          are unchanged during commit. And then after commit scroll deltas are
+          subtracted correctly.
+
+        - CCLayerTreeHostTestScrollSimple.runMultiThread and
+          CCLayerTreeHostTestScrollMultipleRedraw.runMultiThread
+          These tests verifies that scroll deltas made on impl thread are
+          committed to the main thread. The scroll deltas is eventually delegated
+          to CCLayerTreeHostClient. When commit has completed the scroll deltas
+          are subtracted correctly. There's no change to these two tests but they
+          verify this patch maintains the overall behavior of scrolling.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::applyScrollAndScale):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::applyScrollAndScale):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::applyScrollAndScaleInternal):
+        (WebCore::CCLayerTreeHostCommon::applyScrollAndScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.

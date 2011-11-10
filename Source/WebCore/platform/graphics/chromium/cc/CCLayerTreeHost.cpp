@@ -461,17 +461,6 @@ void CCLayerTreeHost::clearPendingUpdate()
     m_updateList.clear();
 }
 
-void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
-{
-    // FIXME: pushing scroll offsets to non-root layers not implemented
-    if (!info.scrolls.size())
-        return;
-
-    ASSERT(info.scrolls.size() == 1);
-    IntSize scrollDelta = info.scrolls[0].scrollDelta;
-    m_client->applyScrollAndScale(scrollDelta, info.pageScale);
-}
-
 void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
 {
     if (animating())

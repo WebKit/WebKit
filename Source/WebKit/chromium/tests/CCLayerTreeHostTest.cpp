@@ -342,6 +342,7 @@ void CCLayerTreeHostTest::doBeginTest()
     RefPtr<LayerChromium> rootLayer = LayerChromium::create(0);
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT(m_layerTreeHost);
+    rootLayer->setLayerTreeHost(m_layerTreeHost.get());
 
     m_beginning = true;
     beginTest();

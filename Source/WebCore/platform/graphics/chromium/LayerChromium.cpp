@@ -104,6 +104,15 @@ void LayerChromium::cleanupResourcesRecursive()
     cleanupResources();
 }
 
+void LayerChromium::applyScrollAndScale(const IntSize& scrollDelta, float pageScale)
+{
+    // FIXME: apply scroll delta not just to CCLayerTreeHostClient.
+    if (!layerTreeHost() || !layerTreeHost()->client())
+        return;
+
+    layerTreeHost()->client()->applyScrollAndScale(scrollDelta, pageScale);
+}
+
 void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     // If we're changing layer renderers then we need to free up any resources
