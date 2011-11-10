@@ -377,6 +377,19 @@ WebInspector.TextPrompt.prototype = {
         this._loadCompletions(wordPrefixRange, force, this._completionsReady.bind(this, selection, auto, wordPrefixRange, reverse));
     },
 
+    _boxForAnchorAtStart: function(selection, textRange)
+    {
+        var rangeCopy = selection.getRangeAt(0).cloneRange();
+        var anchorElement = document.createElement("span");
+        anchorElement.textContent = "\u200B";
+        textRange.insertNode(anchorElement);
+        var box = anchorElement.boxInWindow(window, this._suggestBox._parentElement);
+        anchorElement.parentElement.removeChild(anchorElement);
+        selection.removeAllRanges();
+        selection.addRange(rangeCopy);
+        return box;
+    },
+
     /**
      * @param {Array.<string>=} completions
      */
@@ -401,7 +414,7 @@ WebInspector.TextPrompt.prototype = {
         this._userEnteredText = fullWordRange.toString();
 
         if (this._suggestBox) {
-            this._suggestBox.updateSuggestions(completions);
+            this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions);
             return; // Do nothing, the suggest box is driving us.
         }
 
@@ -830,8 +843,6 @@ WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, classNam
     this._element.addEventListener("mousedown", this._onboxmousedown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
     this.contentElement = this.containerElement.createChild("div", "content");
-
-    this._updateBoxPosition();
 }
 
 WebInspector.TextPrompt.SuggestBox.prototype = {
@@ -847,12 +858,20 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
     _onscrollresize: function(isScroll, event)
     {
-        if (isScroll && this._element.isAncestor(event.target))
+        if (isScroll && this._element.isAncestor(event.target) || !this.visible)
             return;
-        this._updateBoxPosition();
+        this._updateBoxPositionWithExistingAnchor();
     },
 
-    _updateBoxPosition: function()
+    _updateBoxPositionWithExistingAnchor: function()
+    {
+        this._updateBoxPosition(this._anchorBox);
+    },
+
+    /**
+     * @param {AnchorBox} anchorBox
+     */
+    _updateBoxPosition: function(anchorBox)
     {
         // Measure the content element box.
         this.contentElement.style.display = "inline-block";
@@ -864,28 +883,39 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         this.containerElement.appendChild(this.contentElement);
 
         // Lay out the suggest-box relative to the anchorBox.
-        const anchorBox = this._inputElement.boxInWindow(window, this._parentElement);
+        this._anchorBox = anchorBox;
         const suggestBoxPaddingX = 21;
         const suggestBoxPaddingY = 2;
         const spacer = 6;
         const minHeight = 25;
-        const maxWidth = document.body.offsetWidth - anchorBox.x - spacer;
-        const width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
+        var maxWidth = document.body.offsetWidth - anchorBox.x - spacer;
+        var width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
 
         var maxHeight = document.body.offsetHeight - anchorBox.y - anchorBox.height - spacer;
+        var paddedWidth = contentWidth + suggestBoxPaddingX;
         var paddedHeight = contentHeight + suggestBoxPaddingY;
         var height = Math.min(paddedHeight, maxHeight);
+        var boxX = anchorBox.x;
+        var boxY;
         if (height >= minHeight || height === paddedHeight) {
             // Locate the suggest box under the anchorBox.
-            this._element.positionAt(anchorBox.x, anchorBox.y + anchorBox.height);
+            boxY = anchorBox.y + anchorBox.height;
             this._element.removeStyleClass("above-anchor");
         } else {
             // Locate the suggest box above the anchorBox.
             maxHeight = anchorBox.y - spacer;
             height = Math.min(contentHeight, maxHeight - suggestBoxPaddingY) + suggestBoxPaddingY;
-            this._element.positionAt(anchorBox.x, anchorBox.y - height);
+            boxY = anchorBox.y - height;
             this._element.addStyleClass("above-anchor");
         }
+
+        if (width < paddedWidth) {
+            // Shift the suggest box to the left to accommodate the content without trimming to the BODY edge.
+            maxWidth = document.body.offsetWidth - spacer;
+            width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
+            boxX = document.body.offsetWidth - width;
+        }
+        this._element.positionAt(boxX, boxY);
         this._element.style.width = width + "px";
         this._element.style.height = height + "px";
     },
@@ -974,24 +1004,16 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     },
 
     /**
+     * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
      */
-    updateSuggestionsSoon: function(completions)
-    {
-        if (!this._suggestTimeout)
-            this._suggestTimeout = setTimeout(this.updateSuggestions.bind(this, completions), 10);
-    },
-
-    /**
-     * @param {Array.<string>=} completions
-     */
-    updateSuggestions: function(completions)
+    updateSuggestions: function(anchorBox, completions)
     {
         if (this._suggestTimeout) {
             clearTimeout(this._suggestTimeout);
             delete this._suggestTimeout;
         }
-        this._completionsReady(completions);
+        this._completionsReady(anchorBox, completions);
     },
 
     _onItemMouseDown: function(text, event)
@@ -1054,9 +1076,10 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     },
 
     /**
+     * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
      */
-    _completionsReady: function(completions)
+    _completionsReady: function(anchorBox, completions)
     {
         if (!completions || !completions.length) {
             this.hide()
@@ -1064,7 +1087,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         }
 
         this._updateItems(completions);
-        this._updateBoxPosition();
+        this._updateBoxPosition(anchorBox);
         if (this.contentElement.children.length && (this.contentElement.children.length > 1 || this.contentElement.children[0].textContent.length !== this._textPrompt._userEnteredText.length)) {
             // Will not be shown if a sole suggestion is equal to the user input.
             this._element.addStyleClass("visible");

@@ -29,8 +29,6 @@
  * http://ejohn.org/files/jsdiff.js (released under the MIT license).
  */
 
-function setupPrototypeUtilities() {
-
 Function.prototype.bind = function(thisObject)
 {
     var func = this;
@@ -283,9 +281,27 @@ Element.prototype.totalOffsetTop = function()
     return total;
 }
 
+/**
+ * @constructor
+ * @param {number=} x
+ * @param {number=} y
+ * @param {number=} width
+ * @param {number=} height
+ */
+function AnchorBox(x, y, width, height)
+{
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
+}
+
+/**
+ * @return {AnchorBox}
+ */
 Element.prototype.offsetRelativeToWindow = function(targetWindow)
 {
-    var elementOffset = {x: 0, y: 0};
+    var elementOffset = new AnchorBox();
     var curElement = this;
     var curWindow = this.ownerDocument.defaultView;
     while (curWindow && curElement) {
@@ -301,6 +317,9 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
     return elementOffset;
 }
 
+/**
+ * @return {AnchorBox}
+ */
 Element.prototype.boxInWindow = function(targetWindow, relativeParent)
 {
     targetWindow = targetWindow || this.ownerDocument.defaultView;
@@ -852,10 +871,6 @@ String.format = function(format, substitutions, formatters, initialValue, append
 
     return { formattedResult: result, unusedSubstitutions: unusedSubstitutions };
 }
-
-} // setupPrototypeUtilities()
-
-setupPrototypeUtilities();
 
 function isEnterKey(event) {
     // Check if in IME.
