@@ -60,5 +60,7 @@ module core {
         [Custom] void recordActionTaken(in unsigned long actionCode);
         [Custom] void recordPanelShown(in unsigned long panelCode);
         [Custom] void recordSettingChanged(in unsigned long settingChanged);
+        
+        DOMString loadResourceSynchronously(in DOMString url);
     };
 }

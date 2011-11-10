@@ -339,31 +339,23 @@ function test()
 
         function testCompilerSourceMapping(next)
         {
-            function createCompilerSourceMappingMock()
-            {
-                return {
-                    compiledLocationToSourceLocation: function(lineNumber, columnNumber)
-                    {
-                        if (lineNumber < 10)
-                            return { sourceURL: "source1.js", lineNumber: lineNumber * 2, columnNumber: columnNumber * 2 };
-                        return { sourceURL: "source2.js", lineNumber: (lineNumber - 10) * 2, columnNumber: columnNumber * 2 };
-                    },
-                    sourceLocationToCompiledLocation: function(sourceURL, lineNumber)
-                    {
-                        if (sourceURL === "source1.js")
-                            return { lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 };
-                        return { lineNumber: Math.floor(lineNumber / 2) + 10, columnNumber: 0 };
-                    },
-                    sources: function() { return ["source1.js", "source2.js"]; }
-                };
-            }
-            function createCompilerSourceMappingProviderMock()
-            {
-                return {
-                    loadSourceMapping: function(callback) { callback(createCompilerSourceMappingMock()); },
-                    loadSourceCode: function(url, callback) { callback("<content of " + url + ">"); }
-                }
-            }
+            var compilerSourceMappingMock = {
+                compiledLocationToSourceLocation: function(lineNumber, columnNumber)
+                {
+                    if (lineNumber < 10)
+                        return { sourceURL: "source1.js", lineNumber: lineNumber * 2, columnNumber: columnNumber * 2 };
+                    return { sourceURL: "source2.js", lineNumber: (lineNumber - 10) * 2, columnNumber: columnNumber * 2 };
+                },
+                sourceLocationToCompiledLocation: function(sourceURL, lineNumber)
+                {
+                    if (sourceURL === "source1.js")
+                        return { lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 };
+                    return { lineNumber: Math.floor(lineNumber / 2) + 10, columnNumber: 0 };
+                },
+                sources: function() { return ["source1.js", "source2.js"]; },
+                load: function() { return true; },
+                loadSourceCode: function(url) { return "<content of " + url + ">"; }
+            };
 
             var script = createScriptMock("compiled.js", 0, 0, true, "<script source>");
             var resource = createPendingResourceMock("script", "<resource content>");
@@ -371,7 +363,7 @@ function test()
             var uiSourceCodeList;
 
             waitForSourceMappingEvent(rawSourceCode, checkMapping);
-            rawSourceCode.setCompilerSourceMappingProvider(createCompilerSourceMappingProviderMock());
+            rawSourceCode.setCompilerSourceMapping(compilerSourceMappingMock);
             function checkMapping()
             {
                 var sourceMapping = rawSourceCode.sourceMapping;
@@ -404,14 +396,14 @@ function test()
 
         function testCompilerSourceMappingCouldNotBeLoaded(next)
         {
-            var compilerSourceMappingProviderMock = { loadSourceMapping: function(callback) { callback(null); } };
+            var compilerSourceMappingMock = { load: function() { return false; } };
 
             var script = createScriptMock("compiled.js", 0, 0, true, "<script source>");
             var rawSourceCode = createRawSourceCode(script, null);
             var uiSourceCodeList;
 
             waitForSourceMappingEvent(rawSourceCode, checkMapping);
-            rawSourceCode.setCompilerSourceMappingProvider(compilerSourceMappingProviderMock);
+            rawSourceCode.setCompilerSourceMapping(compilerSourceMappingMock);
 
             function checkMapping()
             {

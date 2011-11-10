@@ -243,11 +243,11 @@ WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentP
  * @constructor
  * @implements {WebInspector.ContentProvider}
  */
-WebInspector.CompilerSourceMappingContentProvider = function(sourceURL, compilerSourceMappingProvider)
+WebInspector.CompilerSourceMappingContentProvider = function(sourceURL, compilerSourceMapping)
 {
     this._mimeType = "text/javascript";
     this._sourceURL = sourceURL;
-    this._compilerSourceMappingProvider = compilerSourceMappingProvider;
+    this._compilerSourceMapping = compilerSourceMapping;
 };
 
 WebInspector.CompilerSourceMappingContentProvider.prototype = {
@@ -256,11 +256,8 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
      */
     requestContent: function(callback)
     {
-        function didLoadSourceCode(sourceCode)
-        {
-            callback(this._mimeType, sourceCode);
-        }
-        this._compilerSourceMappingProvider.loadSourceCode(this._sourceURL, didLoadSourceCode.bind(this));
+        var sourceCode = this._compilerSourceMapping.loadSourceCode(this._sourceURL);
+        callback(this._mimeType, sourceCode);
     },
 
     /**

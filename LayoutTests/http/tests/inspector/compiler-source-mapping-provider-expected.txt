@@ -1,8 +1,0 @@
-Tests CompilerSourceMappingProvider class.
-
-
-Running: testLoad
-
-Running: testTimeout
-log: Request timed out.
-

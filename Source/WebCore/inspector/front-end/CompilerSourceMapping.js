@@ -70,9 +70,9 @@ WebInspector.ClosureCompilerSourceMappingPayload = function()
  * for format description.
  * @implements {WebInspector.CompilerSourceMapping}
  * @constructor
- * @param {WebInspector.ClosureCompilerSourceMappingPayload} mappingPayload
+ * @param {string} sourceMappingURL
  */
-WebInspector.ClosureCompilerSourceMapping = function(mappingPayload)
+WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL)
 {
     if (!WebInspector.ClosureCompilerSourceMapping.prototype._base64Map) {
         const base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -81,15 +81,26 @@ WebInspector.ClosureCompilerSourceMapping = function(mappingPayload)
             WebInspector.ClosureCompilerSourceMapping.prototype._base64Map[base64Digits.charAt(i)] = i;
     }
 
-    this._sources = mappingPayload.sources;
-    this._mappings = [];
-    this._reverseMappingsBySourceURL = {};
-    for (var i = 0; i < this._sources.length; ++i)
-        this._reverseMappingsBySourceURL[this._sources[i]] = [];
-    this._parseMappings(mappingPayload);
+    this._sourceMappingURL = sourceMappingURL;
 }
 
 WebInspector.ClosureCompilerSourceMapping.prototype = {
+    /**
+     * @return {boolean}
+     */
+    load: function()
+    {
+        try {
+            // FIXME: make sendRequest async.
+            var response = InspectorFrontendHost.loadResourceSynchronously(this._sourceMappingURL);
+            this._parseMappingPayload(JSON.parse(response));
+            return true
+        } catch(e) {
+            console.error(e.message);
+            return false;
+        }
+    },
+
     /**
      * @param {number} lineNumber
      * @param {number} columnNumber
@@ -119,6 +130,24 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         return this._sources;
     },
 
+    /**
+     * @param {string} sourceURL
+     * @return {string}
+     */
+    loadSourceCode: function(sourceURL)
+    {
+        try {
+            var rootURL = this._sourceMappingURL.substring(0, this._sourceMappingURL.lastIndexOf("/") + 1);
+            if (this._sourceRoot)
+                rootURL += this._sourceRoot + "/";
+            // FIXME: make sendRequest async.
+            return InspectorFrontendHost.loadResourceSynchronously(rootURL + sourceURL);
+        } catch(e) {
+            console.error(e.message);
+            return "";
+        }
+    },
+
     _findMapping: function(lineNumber, columnNumber)
     {
         var first = 0;
@@ -137,8 +166,16 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         return this._mappings[first];
     },
 
-    _parseMappings: function(mappingPayload)
+    _parseMappingPayload: function(mappingPayload)
     {
+        this._sourceRoot = mappingPayload.sourceRoot;
+        this._sources = mappingPayload.sources;
+
+        this._mappings = [];
+        this._reverseMappingsBySourceURL = {};
+        for (var i = 0; i < this._sources.length; ++i)
+            this._reverseMappingsBySourceURL[this._sources[i]] = [];
+
         var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(mappingPayload.mappings);
 
         var lineNumber = 0;

@@ -93,19 +93,19 @@ WebInspector.RawSourceCode.prototype = {
     },
 
     /**
-     * @param {number} provider Should assign proper type upon first use
+     * @param {WebInspector.CompilerSourceMapping} compilerSourceMapping
      */
-    setCompilerSourceMappingProvider: function(provider)
+    setCompilerSourceMapping: function(compilerSourceMapping)
     {
-        if (provider)
+        if (compilerSourceMapping)
             this._useTemporaryContent = false;
-        this._compilerSourceMappingProvider = provider;
+        this._compilerSourceMapping = compilerSourceMapping;
         this._updateSourceMapping();
     },
 
     _resourceFinished: function()
     {
-        if (this._compilerSourceMappingProvider)
+        if (this._compilerSourceMapping)
             return;
         this._useTemporaryContent = false;
         this._updateSourceMapping();
@@ -182,30 +182,23 @@ WebInspector.RawSourceCode.prototype = {
      */
     _createSourceMapping: function(callback)
     {
-        if (this._compilerSourceMappingProvider) {
-            /**
-             * @this {WebInspector.RawSourceCode}
-             * @param {WebInspector.CompilerSourceMapping} compilerSourceMapping
-             */
-            function didLoadSourceMapping(compilerSourceMapping)
-            {
-                if (!compilerSourceMapping) {
-                    delete this._compilerSourceMappingProvider;
-                    callback(null);
-                    return;
-                }
-                var uiSourceCodeList = [];
-                var sourceURLs = compilerSourceMapping.sources();
-                for (var i = 0; i < sourceURLs.length; ++i) {
-                    var sourceURL = sourceURLs[i];
-                    var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, this._compilerSourceMappingProvider);
-                    var uiSourceCode = new WebInspector.UISourceCode(sourceURL, sourceURL, this.isContentScript, this, contentProvider);
-                    uiSourceCodeList.push(uiSourceCode);
-                }
-                var sourceMapping = new WebInspector.RawSourceCode.CompilerSourceMapping(this, uiSourceCodeList, compilerSourceMapping);
-                callback(sourceMapping);
+        if (this._compilerSourceMapping) {
+            var success = this._compilerSourceMapping.load();
+            if (!success) {
+                delete this._compilerSourceMapping;
+                callback(null);
+                return;
             }
-            this._compilerSourceMappingProvider.loadSourceMapping(didLoadSourceMapping.bind(this));
+            var uiSourceCodeList = [];
+            var sourceURLs = this._compilerSourceMapping.sources();
+            for (var i = 0; i < sourceURLs.length; ++i) {
+                var sourceURL = sourceURLs[i];
+                var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, this._compilerSourceMapping);
+                var uiSourceCode = new WebInspector.UISourceCode(sourceURL, sourceURL, this.isContentScript, this, contentProvider);
+                uiSourceCodeList.push(uiSourceCode);
+            }
+            var sourceMapping = new WebInspector.RawSourceCode.CompilerSourceMapping(this, uiSourceCodeList, this._compilerSourceMapping);
+            callback(sourceMapping);
             return;
         }
 

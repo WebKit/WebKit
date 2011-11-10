@@ -251,6 +251,18 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
 }
 #endif
 
+String InspectorFrontendHost::loadResourceSynchronously(const String& url)
+{
+    ResourceRequest request(url);
+    request.setHTTPMethod("GET");
+
+    Vector<char> data;
+    ResourceError error;
+    ResourceResponse response;
+    m_frontendPage->mainFrame()->loader()->loadResourceSynchronously(request, DoNotAllowStoredCredentials, error, response, data);
+    return String(data.data(), data.size());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

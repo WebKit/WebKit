@@ -872,7 +872,7 @@ WebInspector._toolbarItemClicked = function(event)
 WebInspector.installSourceMappingForTest = function(url)
 {
     // FIXME: remove this method when it's possible to set compiler source mappings via UI.
-    var provider = new WebInspector.CompilerSourceMappingProvider(url);
+    var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(url);
     var uiSourceCode = WebInspector.panels.scripts.visibleView._delegate._uiSourceCode;
-    uiSourceCode.rawSourceCode.setCompilerSourceMappingProvider(provider);
+    uiSourceCode.rawSourceCode.setCompilerSourceMapping(sourceMapping);
 }

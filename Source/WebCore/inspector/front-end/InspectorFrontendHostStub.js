@@ -149,6 +149,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     recordSettingChanged: function(settingCode)
     {
+    },
+
+    loadResourceSynchronously: function(url)
+    {
+        return "";
     }
 }
 

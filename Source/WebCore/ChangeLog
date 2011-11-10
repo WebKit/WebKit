@@ -1,3 +1,40 @@
+2011-11-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: load source maps via front-end host.
+        https://bugs.webkit.org/show_bug.cgi?id=71301
+
+        Reviewed by Yury Semikhatsky.
+
+        Currently we use an auxiliary iframe hack to load source map files from inspector page. This approach has several drawbacks:
+         - in addition to source map url we need to know auxiliary iframe url
+         - we need a protocol to communicate with iframe
+         - source map provider needs to provide auxiliary document to make our hack work
+        Loading source maps from front-end host solves all problems.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::loadResourceSynchronously):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMapping):
+        (WebInspector.ClosureCompilerSourceMapping.prototype.load):
+        (WebInspector.ClosureCompilerSourceMapping.prototype.loadSourceCode):
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseMappingPayload):
+        * inspector/front-end/CompilerSourceMappingProvider.js: Removed.
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.CompilerSourceMappingContentProvider):
+        (WebInspector.CompilerSourceMappingContentProvider.prototype.requestContent):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype.setCompilerSourceMapping):
+        (WebInspector.RawSourceCode.prototype._resourceFinished):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didLoadSourceMapping):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.installSourceMappingForTest):
+
 2011-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99816.

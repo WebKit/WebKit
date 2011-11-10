@@ -79,6 +79,8 @@ public:
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
     void sendMessageToBackend(const String& message);
 
+    String loadResourceSynchronously(const String& url);
+
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;
