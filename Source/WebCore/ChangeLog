@@ -1,3 +1,22 @@
+2011-11-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not share CSS style for MediaElement backed by a plugin
+        https://bugs.webkit.org/show_bug.cgi?id=72005
+
+        Reviewed by Simon Fraser.
+
+        With PLUGIN_PROXY_FOR_VIDEO, the RenderMedia elements are rendered through RenderBoxModelObject.
+        Like the embedded element, the proxied media element can gain a layer outside a change of style.
+
+        This patch prevents style sharing for the Audio and Video elements when PLUGIN_PROXY_FOR_VIDEO
+        is enabled.
+
+        This path is covered by exising tests. In particular, http/tests/misc/empty-urls.html
+        ASSERT() because of this.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+
 2011-11-10  Dean Jackson  <dino@apple.com>
 
         Move/copy/merge SVG filter rendering code to generic rendering

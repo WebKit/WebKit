@@ -1033,7 +1033,12 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
 #if USE(ACCELERATED_COMPOSITING)
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
     // See comments in RenderObject::setStyle().
-    if (element->hasTagName(iframeTag) || element->hasTagName(frameTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag))
+    if (element->hasTagName(iframeTag) || element->hasTagName(frameTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+        // With proxying, the media elements are backed by a RenderEmbeddedObject.
+        || element->hasTagName(videoTag) || element->hasTagName(audioTag)
+#endif
+        )
         return false;
 #endif
 
