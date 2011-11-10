@@ -189,6 +189,7 @@ fast/canvas/canvas-webkitLineDash.html
 fast/canvas/canvas-zoom.html 
 fast/canvas/fillText-shadow.html 
 fast/canvas/toDataURL-supportedTypes.html 
+fast/canvas/webgl
 fast/clip
 fast/compact/001.html 
 fast/compact/002.html 
@@ -432,6 +433,7 @@ loader/load-defer-resume-crash.html
 
 # WinCairo currently has no media features.
 media
+mhtml
 plugins
 printing
 scrollbars
@@ -532,6 +534,11 @@ http/tests/uri/css-href.php
 http/tests/workers
 http/tests/xmlhttprequest
 http/tests/xmlviewer/extensions-api.html
+
+
+#require video/audio tag - not implemented in WinCairo (yet)
+userscripts/user-script-video-document.html
+userscripts/user-script-audio-document.html
 
 #
 #  Everything above here is a WinCairo-specific bug.
