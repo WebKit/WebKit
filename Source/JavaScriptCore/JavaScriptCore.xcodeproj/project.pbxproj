@@ -799,7 +799,7 @@
 		BCBA2828136A610A00B05860 /* Install Support Script */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = "$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework/Versions/A/Resources";
+			dstPath = "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources";
 			dstSubfolderSpec = 0;
 			files = (
 				BCBA2829136A611600B05860 /* testapi.js in Install Support Script */,

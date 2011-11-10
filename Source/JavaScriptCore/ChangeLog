@@ -1,3 +1,15 @@
+2011-11-10  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/72049> Specify testapi.js install path using JAVASCRIPTCORE_FRAMEWORKS_DIR
+
+        Reviewed by Joseph Pecoraro.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: The testapi.js
+        script should use JAVASCRIPTCORE_FRAMEWORKS_DIR in its dstPath
+        for installation.  Also removed "Versions/A/" from the path
+        since this is unneeded due the default symlinks present in the
+        framework.
+
 2011-11-10  Gavin Barraclough  <barraclough@apple.com>
 
         Add ARMv7 support to the DFG JIT
