@@ -61,18 +61,30 @@ SVGElementInstance::SVGElementInstance(SVGUseElement* correspondingUseElement, S
 
 SVGElementInstance::~SVGElementInstance()
 {
+    // Call detach because we may be deleted directly if we are a child of a detached instance.
+    detach();
+
 #ifndef NDEBUG
     instanceCounter.decrement();
 #endif
 
-    // Deregister as instance for passed element.
-    m_element->removeInstanceMapping(this);
-
-    clearChildren();
 }
 
-void SVGElementInstance::clearChildren()
+void SVGElementInstance::detach()
 {
+    // Clear all pointers. When the node is detached from the shadow DOM it should be removed but,
+    // due to ref counting, it may not be. So clear everything to avoid dangling pointers.
+
+    // Deregister as instance for passed element.
+    if (m_element)
+        m_element->removeInstanceMapping(this);
+    m_element = 0;
+
+    m_shadowTreeElement = 0;
+
+    m_directUseElement = 0;
+    m_correspondingUseElement = 0;
+
     removeAllChildrenInContainer<SVGElementInstance, SVGElementInstance>(this);
 }
 

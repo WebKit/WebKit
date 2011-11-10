@@ -1,3 +1,28 @@
+2011-11-10  Stephen Chenney  <schenney@chromium.org>
+
+        Null deref when no use element exists for SVG element instance
+        https://bugs.webkit.org/show_bug.cgi?id=59136
+
+        Cleans up the object when it is detached from the shadow DOM tree,
+        rather than leaving it in a half-clean state with some nulled
+        references but not others.
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: svg/custom/element-instance-held-by-js-crash.svg
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::~SVGElementInstance): Added a call to
+        detach to clean up if deletion happens without a prior detach call (as
+        when an entire tree is removed).
+        (WebCore::SVGElementInstance::detach): New method that replaces other
+        clean-up methods when the instance is removed from the shadow DOM.
+        * svg/SVGElementInstance.h: Added new detach method and removed
+        unnecessary clear methods.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::detachInstance): Changed calls to clear to
+        instead detach.
+
 2011-11-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Show media queries associated with specific CSS rules
