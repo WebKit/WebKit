@@ -1424,6 +1424,9 @@ private:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
+
+    const RefPtr<HTMLCollection>& collection(CollectionType);
+    RefPtr<HTMLCollection> m_collections[NumCollectionTypes];
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

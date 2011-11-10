@@ -54,7 +54,9 @@ enum CollectionType {
     DataListOptions,
     MapAreas,
 
-    OtherCollection
+    OtherCollection,
+
+    NumCollectionTypes
 };
 
 static const CollectionType FirstUnnamedDocumentCachedType = DocImages;

@@ -1,3 +1,38 @@
+2011-11-10  Andreas Kling  <kling@webkit.org>
+
+        Cache and reuse HTMLCollections exposed by Document.
+        <http://webkit.org/b/71956>
+
+        Reviewed by Antti Koivisto.
+
+        Let Document cache the various HTMLCollection objects it exposes.
+        They're created on-demand and stored in a tight Vector.
+        This is a behavior change, since the lifetime of returned collections
+        is now tied to the lifetime of the Document. However, this matches the
+        current behavior of Firefox and Opera.
+
+        This reduces memory consumption by ~800 kB (on 64-bit) when loading
+        the full HTML5 spec. document.links was called 34001 times, yielding
+        34001 separate HTMLCollections, and now we only need 1.
+
+        The document.all collection retains the old behavior, as caching it
+        would be a bit more complicated.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::collection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        * dom/Document.h:
+        * html/CollectionType.h:
+
 2011-11-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [SuggestBox] Correctly position the box under the first character of the suggestion prefix.
