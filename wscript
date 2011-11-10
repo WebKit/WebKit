@@ -185,7 +185,7 @@ def build(bld):
                    'Source/WebCore/platform/mac/WebCoreSystemInterface.mm',
                    'Source/WebCore/platform/graphics/cg/FloatSizeCG.cpp',
                    'Source/WebCore/platform/graphics/mac/ComplexTextController.cpp',
-                   'Source/WebCore/platform/graphics/mac/ComplexTextControllerCoreText.cpp',
+                   'Source/WebCore/platform/graphics/mac/ComplexTextControllerCoreText.mm',
                    'Source/WebCore/platform/graphics/mac/ComplexTextControllerATSUI.cpp',
                    'Source/WebCore/platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
                    'Source/WebCore/platform/graphics/mac/SimpleFontDataATSUI.mm',
@@ -318,6 +318,13 @@ def build(bld):
         excludes.append('WebDOMScriptProfileNode.cpp')
         excludes.append('WebNativeEventListener.cpp')
         
+        # features we don't build / use
+        excludes.append('JSNavigatorCustom.cpp')
+        excludes.append('WebGLContextEvent.cpp')
+        excludes.append('FileSystemPOSIX.cpp')
+        excludes.append('SharedBufferPOSIX.cpp')
+        
+        
         # These files appear not to build with older versions of ICU
         excludes.append('LocalizedNumberICU.cpp')
         excludes.append('LocaleToScriptMappingICU.cpp')
@@ -338,6 +345,9 @@ def build(bld):
         
         # we don't use gestures currently
         excludes.append('PlatformGestureRecognizer.cpp')
+        
+        # we need a better system to exclude CF stuff
+        excludes.append('HyphenationCF.cpp')
         
         if sys.platform.startswith('darwin'):
             webcore.includes += ' Source/WebKit/mac/WebCoreSupport WebCore/platform/mac'

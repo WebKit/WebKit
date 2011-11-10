@@ -141,6 +141,7 @@ webcore_dirs_common = [
     'Source/WebCore/platform/image-decoders/webp',
     'Source/WebCore/platform/mock',
     'Source/WebCore/platform/network',
+    'Source/WebCore/platform/posix',
     'Source/WebCore/platform/sql',
     'Source/WebCore/platform/text',
     'Source/WebCore/platform/text/transcoder',
@@ -236,7 +237,7 @@ def common_configure(conf):
 
     build_port = Options.options.port
 
-    feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
+    feature_defines = ['ENABLE_DATABASE', 'ENABLE_SQL_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
                     'ENABLE_SVG', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
                     'BUILDING_%s' % build_port.upper()]
 
@@ -348,12 +349,15 @@ def common_configure(conf):
         if min_version == "10.4":
             sdk_version += "u"
             conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceTiger'])
+        elif min_version == "10.7":
+            conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLion'])
         else:
             # NOTE: There is a WebKitSystemInterfaceSnowLeopard, but when we use that
             # on 10.6, we get a strange missing symbol error, and this library seems to
             # work fine for wx's purposes.
             conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLeopard'])
-
+            conf.env.append_value('LINKFLAGS', ['-framework', 'QuartzCore'])
+        
         # match WebKit Mac's default here unless we're building on platforms that won't support 64-bit.
         archs = []
         

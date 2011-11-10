@@ -1,3 +1,9 @@
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Update project files.
+
+        * wscript:
+
 2011-11-09  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][DRT] window internals object is not reset after each test
