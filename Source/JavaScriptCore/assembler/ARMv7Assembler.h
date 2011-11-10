@@ -534,11 +534,13 @@ private:
         OP_BLX              = 0x4700,
         OP_BX               = 0x4700,
         OP_STR_reg_T1       = 0x5000,
+        OP_STRB_reg_T1      = 0x5400,
         OP_LDR_reg_T1       = 0x5800,
         OP_LDRH_reg_T1      = 0x5A00,
         OP_LDRB_reg_T1      = 0x5C00,
         OP_STR_imm_T1       = 0x6000,
         OP_LDR_imm_T1       = 0x6800,
+        OP_STRB_imm_T1      = 0x7000,
         OP_LDRB_imm_T1      = 0x7800,
         OP_LDRH_imm_T1      = 0x8800,
         OP_STR_imm_T2       = 0x9000,
@@ -569,18 +571,23 @@ private:
         OP_SUB_reg_T2   = 0xEBA0,
         OP_SUB_S_reg_T2 = 0xEBB0,
         OP_CMP_reg_T2   = 0xEBB0,
+        OP_VMOV_CtoD    = 0xEC00,
+        OP_VMOV_DtoC    = 0xEC10,
         OP_VSTR         = 0xED00,
         OP_VLDR         = 0xED10,
-        OP_VMOV_StoC    = 0xEE00,
-        OP_VMOV_CtoS    = 0xEE10,
+        OP_VMOV_CtoS    = 0xEE00,
+        OP_VMOV_StoC    = 0xEE10,
         OP_VMUL_T2      = 0xEE20,
         OP_VADD_T2      = 0xEE30,
         OP_VSUB_T2      = 0xEE30,
         OP_VDIV         = 0xEE80,
+        OP_VABS_T2      = 0xEEB0,
         OP_VCMP         = 0xEEB0,
         OP_VCVT_FPIVFP  = 0xEEB0,
+        OP_VMOV_T2      = 0xEEB0,
         OP_VMOV_IMM_T2  = 0xEEB0,
         OP_VMRS         = 0xEEB0,
+        OP_VSQRT_T1     = 0xEEB0,
         OP_B_T3a        = 0xF000,
         OP_B_T4a        = 0xF000,
         OP_AND_imm_T1   = 0xF000,
@@ -592,6 +599,7 @@ private:
         OP_ADD_imm_T3   = 0xF100,
         OP_ADD_S_imm_T3 = 0xF110,
         OP_CMN_imm      = 0xF110,
+        OP_ADC_imm      = 0xF140,
         OP_SUB_imm_T3   = 0xF1A0,
         OP_SUB_S_imm_T3 = 0xF1B0,
         OP_CMP_imm_T2   = 0xF1B0,
@@ -602,6 +610,8 @@ private:
         OP_MOVT         = 0xF2C0,
         OP_UBFX_T1      = 0xF3C0,
         OP_NOP_T2a      = 0xF3AF,
+        OP_STRB_imm_T3  = 0xF800,
+        OP_STRB_reg_T2  = 0xF800,
         OP_LDRB_imm_T3  = 0xF810,
         OP_LDRB_reg_T2  = 0xF810,
         OP_LDRH_reg_T2  = 0xF830,
@@ -610,6 +620,7 @@ private:
         OP_STR_reg_T2   = 0xF840,
         OP_LDR_imm_T4   = 0xF850,
         OP_LDR_reg_T2   = 0xF850,
+        OP_STRB_imm_T2  = 0xF880,
         OP_LDRB_imm_T2  = 0xF890,
         OP_LDRH_imm_T2  = 0xF8B0,
         OP_STR_imm_T3   = 0xF8C0,
@@ -627,14 +638,19 @@ private:
         OP_VDIVb        = 0x0A00,
         OP_VLDRb        = 0x0A00,
         OP_VMOV_IMM_T2b = 0x0A00,
+        OP_VMOV_T2b     = 0x0A40,
         OP_VMUL_T2b     = 0x0A00,
         OP_VSTRb        = 0x0A00,
-        OP_VMOV_CtoSb   = 0x0A10,
         OP_VMOV_StoCb   = 0x0A10,
+        OP_VMOV_CtoSb   = 0x0A10,
+        OP_VMOV_DtoCb   = 0x0A10,
+        OP_VMOV_CtoDb   = 0x0A10,
         OP_VMRSb        = 0x0A10,
+        OP_VABS_T2b     = 0x0A40,
         OP_VCMPb        = 0x0A40,
         OP_VCVT_FPIVFPb = 0x0A40,
         OP_VSUB_T2b     = 0x0A40,
+        OP_VSQRT_T1b    = 0x0A40,
         OP_NOP_T2b      = 0x8000,
         OP_B_T3b        = 0x8000,
         OP_B_T4b        = 0x9000,
@@ -700,6 +716,17 @@ private:
 
 public:
     
+    void adc(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    {
+        // Rd can only be SP if Rn is also SP.
+        ASSERT((rd != ARMRegisters::sp) || (rn == ARMRegisters::sp));
+        ASSERT(rd != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(imm.isEncodedImm());
+
+        m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_ADC_imm, rn, rd, imm);
+    }
+
     void add(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
@@ -861,7 +888,7 @@ public:
         return m_formatter.label();
     }
 
-    void bkpt(uint8_t imm=0)
+    void bkpt(uint8_t imm = 0)
     {
         m_formatter.oneWordOp8Imm8(OP_BKPT, imm);
     }
@@ -1354,6 +1381,65 @@ public:
             m_formatter.twoWordOp12Reg4FourFours(OP_STR_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
 
+    // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
+    ALWAYS_INLINE void strb(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(rt != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(imm.isUInt12());
+
+        if (!((rt | rn) & 8) && imm.isUInt7())
+            m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STRB_imm_T1, imm.getUInt7() >> 2, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRB_imm_T2, rn, rt, imm.getUInt12());
+    }
+
+    // If index is set, this is a regular offset or a pre-indexed store;
+    // if index is not set then is is a post-index store.
+    //
+    // If wback is set rn is updated - this is a pre or post index store,
+    // if wback is not set this is a regular offset memory access.
+    //
+    // (-255 <= offset <= 255)
+    // _reg = REG[rn]
+    // _tmp = _reg + offset
+    // MEM[index ? _tmp : _reg] = REG[rt]
+    // if (wback) REG[rn] = _tmp
+    ALWAYS_INLINE void strb(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    {
+        ASSERT(rt != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(index || wback);
+        ASSERT(!wback | (rt != rn));
+    
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+        ASSERT((offset & ~0xff) == 0);
+        
+        offset |= (wback << 8);
+        offset |= (add   << 9);
+        offset |= (index << 10);
+        offset |= (1 << 11);
+        
+        m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRB_imm_T3, rn, rt, offset);
+    }
+
+    // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
+    ALWAYS_INLINE void strb(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    {
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(!BadReg(rm));
+        ASSERT(shift <= 3);
+
+        if (!shift && !((rt | rn | rm) & 8))
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_STRB_reg_T1, rm, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4FourFours(OP_STRB_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
+
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
@@ -1489,34 +1575,34 @@ public:
         m_formatter.twoWordOp12Reg40Imm3Reg4Imm20Imm5(OP_UBFX_T1, rd, rn, (lsb & 0x1c) << 10, (lsb & 0x3) << 6, (width - 1) & 0x1f);
     }
 
-    void vadd_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    void vadd(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VADD_T2, OP_VADD_T2b, true, rn, rd, rm);
     }
 
-    void vcmp_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    void vcmp(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(4), rd, rm);
     }
 
-    void vcmpz_F64(FPDoubleRegisterID rd)
+    void vcmpz(FPDoubleRegisterID rd)
     {
         m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(5), rd, VFPOperand(0));
     }
 
-    void vcvt_F64_S32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
+    void vcvt_signedToFloatingPoint(FPDoubleRegisterID rd, FPSingleRegisterID rm)
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(false, false, false), rd, rm);
     }
 
-    void vcvtr_S32_F64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    void vcvt_floatingPointToSigned(FPSingleRegisterID rd, FPDoubleRegisterID rm)
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(true, false, true), rd, rm);
     }
 
-    void vdiv_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    void vdiv(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VDIV, OP_VDIVb, true, rn, rd, rm);
     }
@@ -1529,13 +1615,32 @@ public:
     void vmov(RegisterID rd, FPSingleRegisterID rn)
     {
         ASSERT(!BadReg(rd));
-        m_formatter.vfpOp(OP_VMOV_CtoS, OP_VMOV_CtoSb, false, rn, rd, VFPOperand(0));
+        m_formatter.vfpOp(OP_VMOV_StoC, OP_VMOV_StoCb, false, rn, rd, VFPOperand(0));
     }
 
     void vmov(FPSingleRegisterID rd, RegisterID rn)
     {
         ASSERT(!BadReg(rn));
-        m_formatter.vfpOp(OP_VMOV_StoC, OP_VMOV_StoCb, false, rd, rn, VFPOperand(0));
+        m_formatter.vfpOp(OP_VMOV_CtoS, OP_VMOV_CtoSb, false, rd, rn, VFPOperand(0));
+    }
+
+    void vmov(RegisterID rd1, RegisterID rd2, FPDoubleRegisterID rn)
+    {
+        ASSERT(!BadReg(rd1));
+        ASSERT(!BadReg(rd2));
+        m_formatter.vfpOp(OP_VMOV_DtoC, OP_VMOV_DtoCb, true, rd2, VFPOperand(rd1 | 16), rn);
+    }
+
+    void vmov(FPDoubleRegisterID rd, RegisterID rn1, RegisterID rn2)
+    {
+        ASSERT(!BadReg(rn1));
+        ASSERT(!BadReg(rn2));
+        m_formatter.vfpOp(OP_VMOV_CtoD, OP_VMOV_CtoDb, true, rn2, VFPOperand(rn1 | 16), rd);
+    }
+
+    void vmov(FPDoubleRegisterID rd, FPDoubleRegisterID rn)
+    {
+        m_formatter.vfpOp(OP_VMOV_T2, OP_VMOV_T2b, true, VFPOperand(0), rd, rn);
     }
 
     void vmrs(RegisterID reg = ARMRegisters::pc)
@@ -1544,7 +1649,7 @@ public:
         m_formatter.vfpOp(OP_VMRS, OP_VMRSb, false, VFPOperand(1), VFPOperand(0x10 | reg), VFPOperand(0));
     }
 
-    void vmul_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    void vmul(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VMUL_T2, OP_VMUL_T2b, true, rn, rd, rm);
     }
@@ -1554,9 +1659,19 @@ public:
         m_formatter.vfpMemOp(OP_VSTR, OP_VSTRb, true, rn, rd, imm);
     }
 
-    void vsub_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    void vsub(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VSUB_T2, OP_VSUB_T2b, true, rn, rd, rm);
+    }
+
+    void vabs(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VABS_T2, OP_VABS_T2b, true, VFPOperand(16), rd, rm);
+    }
+
+    void vsqrt(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VSQRT_T1, OP_VSQRT_T1b, true, VFPOperand(17), rd, rm);
     }
 
     void nop()
@@ -1806,6 +1921,10 @@ public:
         return reinterpret_cast<void*>(readInt32(where));
     }
 
+#ifndef NDEBUG
+    unsigned debugOffset() { return m_formatter.debugOffset(); }
+#endif
+
 private:
     // VFP operations commonly take one or more 5-bit operands, typically representing a
     // floating point register number.  This will commonly be encoded in the instruction
@@ -1865,6 +1984,7 @@ private:
             if (isRoundZero)
                 op |= 0x10;
         } else {
+            ASSERT(!isRoundZero);
             // 'op' field in instruction is isUnsigned
             if (!isUnsigned)
                 op |= 0x10;

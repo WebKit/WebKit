@@ -1,5 +1,35 @@
 2011-11-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Renovate ARMv7 assembler/macro-assembler
+        https://bugs.webkit.org/show_bug.cgi?id=71982
+
+        Reviewed by Geoff Garen.
+
+        ARMv7Assembler:
+        * add support for strb (byte stores)
+        * rename the VMOV_CtoS opcodes (there are currently backwards!)
+        * add support for adc (add with carry)
+        * add support for vsqrt, vabs
+        * add support for vmov (between FPRs, and to/from GPR pairs).
+        * remove '_F64' postfixes from instructions (these aren't helpful, functions can already be distinguished by their signatures).
+        * rename vcvt_F64_S32  to vcvt_signedToFloatingPoint, the prior postfix was unhelpful in failing to distinguish the types (S32 indicates a single precision register, but the type could be float, int32, or uint32).
+        * rename vcvtr_S32_F64 to vcvt_floatingPointToSigned, as for previous, also vcvtr was the incorrect name for the operation (the emitted instruction truncates).
+
+        MacroAssemblerARMv7:
+        * add 3-operand versions of and32, lshift32, or32, rshift32, urshift32, sub32, xor32, 
+        * add store8, and store32 imm to base-index.
+        * fix load32WithCompactAddressOffsetPatch to work for all gprs (the fix is a little kludgy but functional; to do better we'll have to also fix the repatching code).
+        * Update supportsFloating* flags (all features now supported).
+        * add moveDouble, storeDouble to absolute address, addDouble to absolute address
+        * add 3-operand double operations.
+        * implement sqrtDouble/absDouble
+        * add branchTruncateDoubleToInt32, implement truncateDoubleToInt32
+        * move should do nothing if src == dest
+        * branchTest8-on-memory can be implemented in terms of branchTest32-on-register (branchTest8-on-register has been removed).
+        * add 3-operand branchAdd32, branchSub32, also branchAdd32 absolute address.
+
+2011-11-09  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=71873
 
         Reviewed by Geoff Garen.
