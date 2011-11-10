@@ -84,16 +84,22 @@ LIBCURL_URL="http://curl.haxx.se/download/$LIBCURL_TARBALL"
 
 export MAC_OS_X_DEPLOYMENT_TARGET=10.4
 
-ARCH_FLAGS="-arch i386 -arch ppc -arch x86_64"
+ARCH_FLAGS="-arch i386 -arch x86_64"
 SDK="/Developer/SDKs/MacOSX10.4u.sdk"
 
 if [ ! -d $SDK ]; then
     SDK="/Developer/SDKs/MacOSX10.5.sdk"
 fi
 
+if [ ! -d $SDK ]; then
+    SDK="/Developer/SDKs/MacOSX10.6.sdk"
+fi
+
 if [ "${OSTYPE:0:6}" == "darwin" ]; then  
-    export CC="gcc-4.0"
-    export CXX="g++-4.0"
+    if [ -x /usr/bin/gcc-4.0 ]; then
+        export CC="gcc-4.0"
+        export CXX="g++-4.0"
+    fi
 fi
 
 cd $DL_DIR

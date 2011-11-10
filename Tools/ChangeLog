@@ -1,3 +1,9 @@
+2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Support XCode 4 when building deps.
+
+        * wx/install-unix-extras:
+
 2011-11-09  Eric Seidel  <eric@webkit.org>
 
         Remove the concept of platform-dependent unittests
