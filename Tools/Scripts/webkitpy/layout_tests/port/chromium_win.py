@@ -55,8 +55,6 @@ def os_version(windows_version=None):
 
 
 class ChromiumWinPort(chromium.ChromiumPort):
-    """Chromium Win implementation of the Port class."""
-
     # FIXME: Figure out how to unify this with base.TestConfiguration.all_systems()?
     SUPPORTED_VERSIONS = ('xp', 'vista', 'win7')
 

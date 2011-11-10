@@ -80,8 +80,7 @@ class WebKitPortUnitTests(unittest.TestCase):
 
 
 class WebKitPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return TestWebKitPort
+    port_maker = TestWebKitPort
 
     def test_check_build(self):
         pass

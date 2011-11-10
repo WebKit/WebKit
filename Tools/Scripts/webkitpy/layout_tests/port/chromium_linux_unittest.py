@@ -36,13 +36,9 @@ from webkitpy.layout_tests.port import port_testcase
 
 
 class ChromiumLinuxPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        if not platform.startswith('linux'):
-            return None
-        return chromium_linux.ChromiumLinuxPort
+    port_maker = chromium_linux.ChromiumLinuxPort
 
-    def assert_architecture(self, port_name=None, file_output=None,
-                            expected_architecture=None):
+    def assert_architecture(self, port_name=None, file_output=None, expected_architecture=None):
         host = MockHost()
         host.filesystem.exists = lambda x: 'DumpRenderTree' in x
         if file_output:

@@ -47,7 +47,6 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
-mock_options = MockOptions(configuration='Release')
 
 
 class PortTestCase(unittest.TestCase):
@@ -55,26 +54,16 @@ class PortTestCase(unittest.TestCase):
     HTTP_PORTS = (8000, 8080, 8443)
     WEBSOCKET_PORTS = (8880,)
 
-    def port_maker(self, platform):
-        """Override to return the class object of the port to be tested,
-        or None if a valid port object cannot be constructed on the specified
-        platform."""
-        raise NotImplementedError()
+    # Subclasses override this to point to their Port subclass.
+    port_maker = None
 
-    def make_port(self, options=mock_options):
-        """This routine should be used for tests that should only be run
-        when we can create a full, valid port object."""
-        maker = self.port_maker(sys.platform)
-        if not maker:
-            return None
-
-        return maker(options=options, host=MockHost())
+    def make_port(self, host=None, options=None, **kwargs):
+        host = host or MockHost()
+        options = options or MockOptions(configuration='Release')
+        return self.port_maker(host, options=options, **kwargs)
 
     def test_default_worker_model(self):
         port = self.make_port()
-        if not port:
-            return
-
         if multiprocessing:
             self.assertEqual(port.default_worker_model(), 'processes')
         else:
@@ -82,8 +71,6 @@ class PortTestCase(unittest.TestCase):
 
     def test_driver_cmd_line(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertTrue(len(port.driver_cmd_line()))
 
         options = MockOptions(additional_drt_flag=['--foo=bar', '--foo=baz'])
@@ -93,11 +80,7 @@ class PortTestCase(unittest.TestCase):
         self.assertTrue('--foo=baz' in cmd_line)
 
     def test_uses_apache(self):
-        port = self.make_port()
-        if not port:
-            return
-
-        self.assertTrue(port._uses_apache())
+        self.assertTrue(self.make_port()._uses_apache())
 
     def assert_servers_are_down(self, host, ports):
         for port in ports:
@@ -122,31 +105,23 @@ class PortTestCase(unittest.TestCase):
 
     def integration_test_http_lock(self):
         port = self.make_port()
-        if not port:
-            return
         # Only checking that no exception is raised.
         port.acquire_http_lock()
         port.release_http_lock()
 
     def integration_test_check_sys_deps(self):
         port = self.make_port()
-        if not port:
-            return
         # Only checking that no exception is raised.
         port.check_sys_deps(True)
 
     def integration_test_helper(self):
         port = self.make_port()
-        if not port:
-            return
         # Only checking that no exception is raised.
         port.start_helper()
         port.stop_helper()
 
     def integration_test_http_server__normal(self):
         port = self.make_port()
-        if not port:
-            return
         self.assert_servers_are_down('localhost', self.HTTP_PORTS)
         port.start_http_server()
         self.assert_servers_are_up('localhost', self.HTTP_PORTS)
@@ -155,8 +130,6 @@ class PortTestCase(unittest.TestCase):
 
     def integration_test_http_server__fails(self):
         port = self.make_port()
-        if not port:
-            return
         # Test that if a port isn't available, the call fails.
         for port_number in self.HTTP_PORTS:
             test_socket = socket.socket()
@@ -187,8 +160,6 @@ class PortTestCase(unittest.TestCase):
         # Test that calling start() on two different ports causes the
         # first port to be treated as stale and killed.
         port = self.make_port()
-        if not port:
-            return
         # Test that if a port isn't available, the call fails.
         port.start_http_server()
         new_port = self.make_port()
@@ -212,9 +183,7 @@ class PortTestCase(unittest.TestCase):
 
     def integration_test_image_diff(self):
         port = self.make_port()
-        if not port:
-            return
-
+        # FIXME: This test will never run since we are using a MockFilesystem for these tests!?!?
         if not port.check_image_diff():
             # The port hasn't been built - don't run the tests.
             return
@@ -237,8 +206,6 @@ class PortTestCase(unittest.TestCase):
 
     def test_diff_image__missing_both(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertFalse(port.diff_image(None, None)[0])
         self.assertFalse(port.diff_image(None, '')[0])
         self.assertFalse(port.diff_image('', None)[0])
@@ -246,35 +213,24 @@ class PortTestCase(unittest.TestCase):
 
     def test_diff_image__missing_actual(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertTrue(port.diff_image(None, 'foo')[0])
         self.assertTrue(port.diff_image('', 'foo')[0])
 
     def test_diff_image__missing_expected(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertTrue(port.diff_image('foo', None)[0])
         self.assertTrue(port.diff_image('foo', '')[0])
 
     def test_check_build(self):
         port = self.make_port()
-        if not port:
-            return
         port.check_build(needs_http=True)
 
     def test_check_wdiff(self):
         port = self.make_port()
-        if not port:
-            return
         port.check_wdiff()
 
     def integration_test_websocket_server__normal(self):
         port = self.make_port()
-        if not port:
-            return
-
         self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)
         port.start_websocket_server()
         self.assert_servers_are_up('localhost', self.WEBSOCKET_PORTS)
@@ -283,8 +239,6 @@ class PortTestCase(unittest.TestCase):
 
     def integration_test_websocket_server__fails(self):
         port = self.make_port()
-        if not port:
-            return
 
         # Test that start() fails if a port isn't available.
         for port_number in self.WEBSOCKET_PORTS:
@@ -309,8 +263,6 @@ class PortTestCase(unittest.TestCase):
 
     def integration_test_websocket_server__two_servers(self):
         port = self.make_port()
-        if not port:
-            return
 
         # Test that calling start() on two different ports causes the
         # first port to be treated as stale and killed.
@@ -336,21 +288,15 @@ class PortTestCase(unittest.TestCase):
 
     def test_test_configuration(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertTrue(port.test_configuration())
 
     def test_all_test_configurations(self):
         port = self.make_port()
-        if not port:
-            return
         self.assertTrue(len(port.all_test_configurations()) > 0)
         self.assertTrue(port.test_configuration() in port.all_test_configurations(), "%s not in %s" % (port.test_configuration(), port.all_test_configurations()))
 
     def integration_test_http_server__loop(self):
         port = self.make_port()
-        if not port:
-            return
 
         i = 0
         while i < 10:

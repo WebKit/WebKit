@@ -35,8 +35,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class GtkPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return GtkPort
+    port_maker = GtkPort
 
     def test_show_results_html_file(self):
         port = self.make_port()

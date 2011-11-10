@@ -48,9 +48,9 @@ import config_mock
 
 
 class PortTest(unittest.TestCase):
-    def make_port(self, *args, **kwargs):
-        kwargs.setdefault('host', MockHost())
-        return Port(*args, **kwargs)
+    def make_port(self, host=None, **kwargs):
+        host = host or MockHost()
+        return Port(host, **kwargs)
 
     def test_format_wdiff_output_as_html(self):
         output = "OUTPUT %s %s %s" % (Port._WDIFF_DEL, Port._WDIFF_ADD, Port._WDIFF_END)

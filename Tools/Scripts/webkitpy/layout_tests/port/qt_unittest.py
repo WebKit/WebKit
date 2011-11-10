@@ -39,8 +39,7 @@ from webkitpy.common.host_mock import MockHost
 
 
 class QtPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return QtPort
+    port_maker = QtPort
 
     def _assert_search_path(self, search_paths, sys_platform, use_webkit2=False, qt_version='4.7'):
         # FIXME: Port constructors should not "parse" the port name, but

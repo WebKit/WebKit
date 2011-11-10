@@ -32,6 +32,7 @@ import unittest
 
 from webkitpy.common.system import outputcapture
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 from webkitpy.layout_tests.port import chromium_win
@@ -51,25 +52,16 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         sys.platform = self.orig_platform
         self._port = None
 
-    def port_maker(self, platform):
-        if platform not in ('cygwin', 'win32'):
-            return None
-        return chromium_win.ChromiumWinPort
+    port_maker = chromium_win.ChromiumWinPort
 
     def _mock_path_from_chromium_base(self, *comps):
         return self._port._filesystem.join("/chromium/src", *comps)
 
     def test_uses_apache(self):
-        port = self.make_port()
-        if not port:
-            return
-
-        self.assertFalse(port._uses_apache())
+        self.assertFalse(self.make_port()._uses_apache())
 
     def test_setup_environ_for_server(self):
         port = self.make_port()
-        if not port:
-            return
 
         port._executive = MockExecutive(should_log=True)
         self._port = port
@@ -82,14 +74,16 @@ class ChromiumWinTest(port_testcase.PortTestCase):
 
     def test_setup_environ_for_server_register_cygwin(self):
         port = self.make_port(options=ChromiumWinTest.RegisterCygwinOption())
-        if not port:
-            return
 
         port._executive = MockExecutive(should_log=True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         self._port = port
         setup_mount = self._mock_path_from_chromium_base("third_party", "cygwin", "setup_mount.bat")
-        expected_stderr = "MOCK run_command: %s, cwd=None\n" % [setup_mount]
+        # FIXME: This is kinda lame, we only run setup_mount on win32 platforms, so we only expect the run_command output there.
+        if sys.platform != "win32":
+            expected_stderr = ""
+        else:
+            expected_stderr = "MOCK run_command: %s, cwd=None\n" % [setup_mount]
         output = outputcapture.OutputCapture()
         output.assert_outputs(self, port.setup_environ_for_server, expected_stderr=expected_stderr)
 

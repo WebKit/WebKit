@@ -117,8 +117,7 @@ class ChromiumDriverTest(unittest.TestCase):
 
 
 class ChromiumPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return chromium.ChromiumPort
+    port_maker = chromium.ChromiumPort
 
     def test_all_test_configurations(self):
         """Validate the complete set of configurations this port knows about."""
@@ -276,8 +275,6 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
 
     def test_overrides_and_builder_names(self):
         port = self.make_port()
-        if not port:
-            return
 
         filesystem = MockFileSystem()
         port._filesystem = filesystem

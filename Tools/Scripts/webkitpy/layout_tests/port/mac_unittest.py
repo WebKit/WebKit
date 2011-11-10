@@ -36,14 +36,10 @@ from webkitpy.common.host_mock import MockHost
 
 
 class MacTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        # FIXME: This platform check should no longer be necessary and should be removed as soon as possible.
-        if platform != 'darwin':
-            return None
-        return MacPort
+    port_maker = MacPort
 
     def assert_skipped_file_search_paths(self, port_name, expected_paths):
-        port = MacPort(MockHost(), port_name=port_name)
+        port = self.make_port(port_name=port_name)
         self.assertEqual(port._skipped_file_search_paths(), expected_paths)
 
     def test_skipped_file_search_paths(self):
@@ -74,11 +70,11 @@ java/
     ]
 
     def test_tests_from_skipped_file_contents(self):
-        port = MacPort(MockHost())
+        port = self.make_port()
         self.assertEqual(port._tests_from_skipped_file_contents(self.example_skipped_file), self.example_skipped_tests)
 
     def assert_name(self, port_name, os_version_string, expected):
-        port = MacPort(MockHost(), port_name=port_name, os_version_string=os_version_string)
+        port = self.make_port(port_name=port_name, os_version_string=os_version_string)
         self.assertEquals(expected, port.name())
 
     def test_tests_for_other_platforms(self):

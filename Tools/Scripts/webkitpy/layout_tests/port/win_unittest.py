@@ -41,8 +41,7 @@ from webkitpy.tool.mocktool import MockOptions
 
 
 class WinPortTest(port_testcase.PortTestCase):
-    def port_maker(self, platform):
-        return WinPort
+    port_maker = WinPort
 
     def test_show_results_html_file(self):
         port = self.make_port()
