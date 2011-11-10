@@ -3182,6 +3182,9 @@ contains(DEFINES, ENABLE_XSLT=1) {
             bindings/js/JSXSLTProcessorCustom.cpp
     }
 
+    SOURCES += xml/XMLTreeViewer.cpp
+    HEADERS += xml/XMLTreeViewer.h
+
     contains(DEFINES, WTF_USE_LIBXML2=1) {
         SOURCES += \
             xml/XSLTProcessor.cpp \
@@ -3192,7 +3195,6 @@ contains(DEFINES, ENABLE_XSLT=1) {
             xml/XSLTExtensions.cpp \
             xml/XSLImportRule.cpp \
             xml/XSLTUnicodeSort.cpp \
-            xml/XMLTreeViewer.cpp \
             xml/parser/XMLDocumentParserLibxml2.cpp \
             xml/parser/XMLDocumentParserScope.cpp
 
@@ -3201,7 +3203,6 @@ contains(DEFINES, ENABLE_XSLT=1) {
                 xml/XSLTExtensions.h \
                 xml/XSLImportRule.h \
                 xml/XSLTUnicodeSort.h \
-                xml/XMLTreeViewer.h \
                 xml/parser/XMLDocumentParserScope.h
 
     } else {

@@ -1,3 +1,17 @@
+2011-11-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix linking with --whole-archive
+
+        Reviewed by Zoltan Herczeg.
+
+        Compile XMLTreeViewer and related files when XSLT is enabled, not
+        when XSLT _and_ USE_LIBXML2. The files do not depend on libxml2, they
+        are #ifdeffed with ENABLE(XSLT) only, and they are referenced from for
+        example NewXMLDocumentParser.cpp from within XSLT blocks.
+
+        * DerivedSources.pri:
+        * Target.pri:
+
 2011-11-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: load source maps via front-end host.

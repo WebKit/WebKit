@@ -30,7 +30,7 @@ TOKENIZER = $$PWD/css/tokenizer.flex
 
 CSSBISON = $$PWD/css/CSSGrammar.y
 
-contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
+contains(DEFINES, ENABLE_XSLT=1) {
     XMLVIEWER_CSS = $$PWD/xml/XMLViewer.css
     XMLVIEWER_JS = $$PWD/xml/XMLViewer.js
 }
@@ -812,7 +812,7 @@ colordata.clean = ${QMAKE_FILE_OUT}
 colordata.depends = $$PWD/make-hash-tools.pl
 GENERATORS += colordata
 
-contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
+contains(DEFINES, ENABLE_XSLT=1) {
     # GENERATOR 8-C:
     xmlviewercss.output = XMLViewerCSS.h
     xmlviewercss.input = XMLVIEWER_CSS
