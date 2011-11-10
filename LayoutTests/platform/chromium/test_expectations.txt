@@ -669,6 +669,9 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
 
+// Needs grammar checking.
+BUGWK71792 : editing/spelling/markers.html = FAIL
+
 // Flaky
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 

@@ -297,6 +297,9 @@ media/media-captions.html
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
 
+# Needs grammar checking.
+editing/spelling/markers.html
+
 # Legacy full screen API tests are now obsolete.
 media/context-menu-actions.html
 media/media-fullscreen-inline.html

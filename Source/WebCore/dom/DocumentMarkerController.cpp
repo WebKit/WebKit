@@ -318,15 +318,17 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoin
     return 0;
 }
 
-Vector<DocumentMarker*> DocumentMarkerController::markersFor(Node* node)
+Vector<DocumentMarker*> DocumentMarkerController::markersFor(Node* node, DocumentMarker::MarkerTypes markerTypes)
 {
     Vector<DocumentMarker*> result;
     MarkerList* list = m_markers.get(node);
     if (!list)
         return result;
 
-    for (size_t i = 0; i < list->size(); ++i)
-        result.append(&(list->at(i)));
+    for (size_t i = 0; i < list->size(); ++i) {
+        if (markerTypes.contains(list->at(i).type()))
+            result.append(&(list->at(i)));
+    }
 
     return result;
 }

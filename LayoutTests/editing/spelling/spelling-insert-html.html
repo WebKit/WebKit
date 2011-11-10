@@ -26,7 +26,7 @@ if (window.internals) {
     var texts = destination.childNodes;
     var markedText = "";
     for (var i = 0; i < texts.length; ++i) {
-        var marked = internals.markerRangeForNode(texts[i], 0);
+        var marked = internals.markerRangeForNode(texts[i], "spelling", 0);
         if (marked)
             markedText += marked.toString()
     }

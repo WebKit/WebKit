@@ -1,3 +1,13 @@
+2011-11-09  Shinya Kawanaka  <shinyak@google.com>
+
+        Internals.markerRangeForNode should be able to take markers by specifying a marker type.
+        https://bugs.webkit.org/show_bug.cgi?id=71792
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def: Exposed necessary references.
+        * win/WebKit2CFLite.def: ditto.
+
 2011-10-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit] Replace the gtkdoc autools magic with something more flexible

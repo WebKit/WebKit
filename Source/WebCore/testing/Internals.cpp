@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "ClientRect.h"
 #include "Document.h"
+#include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
@@ -62,6 +63,34 @@
 #endif
 
 namespace WebCore {
+
+static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
+{
+    if (markerType.isEmpty() || equalIgnoringCase(markerType, "all"))
+        result = DocumentMarker::AllMarkers();
+    else if (equalIgnoringCase(markerType, "Spelling"))
+        result =  DocumentMarker::Spelling;
+    else if (equalIgnoringCase(markerType, "Grammar"))
+        result =  DocumentMarker::Grammar;
+    else if (equalIgnoringCase(markerType, "TextMatch"))
+        result =  DocumentMarker::TextMatch;
+    else if (equalIgnoringCase(markerType, "Replacement"))
+        result =  DocumentMarker::Replacement;
+    else if (equalIgnoringCase(markerType, "CorrectionIndicator"))
+        result =  DocumentMarker::CorrectionIndicator;
+    else if (equalIgnoringCase(markerType, "RejectedCorrection"))
+        result =  DocumentMarker::RejectedCorrection;
+    else if (equalIgnoringCase(markerType, "Autocorrected"))
+        result =  DocumentMarker::Autocorrected;
+    else if (equalIgnoringCase(markerType, "SpellCheckingExemption"))
+        result =  DocumentMarker::SpellCheckingExemption;
+    else if (equalIgnoringCase(markerType, "DeletedAutocorrection"))
+        result =  DocumentMarker::DeletedAutocorrection;
+    else
+        return false;
+
+    return true;
+}
 
 const char* Internals::internalsId = "internals";
 
@@ -210,24 +239,36 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
-unsigned Internals::markerCountForNode(Node* node, ExceptionCode& ec)
+unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
 {
     if (!node) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
 
-    return node->document()->markers()->markersFor(node).size();
+    DocumentMarker::MarkerTypes markerTypes = 0;
+    if (!markerTypesFrom(markerType, markerTypes)) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    return node->document()->markers()->markersFor(node, markerTypes).size();
 }
 
-PassRefPtr<Range> Internals::markerRangeForNode(Node* node, unsigned index, ExceptionCode& ec)
+PassRefPtr<Range> Internals::markerRangeForNode(Node* node, const String& markerType, unsigned index, ExceptionCode& ec)
 {
     if (!node) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
-    
-    Vector<DocumentMarker*> markers = node->document()->markers()->markersFor(node);
+
+    DocumentMarker::MarkerTypes markerTypes = 0;
+    if (!markerTypesFrom(markerType, markerTypes)) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    Vector<DocumentMarker*> markers = node->document()->markers()->markersFor(node, markerTypes);
     if (markers.size() <= index)
         return 0;
     return Range::create(node->document(), node, markers[index]->startOffset(), node, markers[index]->endOffset());

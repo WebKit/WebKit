@@ -154,6 +154,7 @@ EXPORTS
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?ensureShadowRoot@Element@WebCore@@QAEPAVShadowRoot@2@XZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
+        ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
@@ -162,7 +163,7 @@ EXPORTS
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
-        ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@@Z
+        ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z

@@ -72,8 +72,8 @@ public:
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
-    unsigned markerCountForNode(Node*, ExceptionCode&);
-    PassRefPtr<Range> markerRangeForNode(Node*, unsigned, ExceptionCode&);
+    unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
+    PassRefPtr<Range> markerRangeForNode(Node*, const String&, unsigned, ExceptionCode&);
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
     void setEnableCompositingForFixedPosition(Document*, bool enabled, ExceptionCode&);

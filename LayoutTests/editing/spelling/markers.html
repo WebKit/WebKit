@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+</style>
+<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<pre id="description"></pre>
+<pre id="console"></pre>
+<div id="container">
+</div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function createEditableElement(id, parent) {
+    var e = document.createElement('div');
+    e.setAttribute("contentEditable", "true");
+    e.className = 'editing';
+    e.id = id;
+
+    parent.appendChild(e);
+    return e;
+}
+
+function typeText(elem, text) {
+    elem.focus();
+    for (var i = 0; i < text.length; ++i) {
+        typeCharacterCommand(text[i]);
+    }
+}
+
+var container = document.getElementById('container');
+var range;
+
+debug("Grammar Error Only");
+var id = 'id1'
+var e = createEditableElement(id, container);
+typeText(e, 'I have a issue.');
+if (window.internals) {
+    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '0');
+    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '1');
+    range = internals.markerRangeForNode(e.firstChild, "grammar", 0);
+    shouldBe("range.toString()", '"a"');
+}
+
+debug("Spelling Error Only");
+var id = 'id2'
+var e = createEditableElement(id, container);
+typeText(e, 'zz.');
+if (window.internals) {
+    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '1');
+    range = internals.markerRangeForNode(e.firstChild, "spelling", 0);
+    shouldBe('range.toString()', '"zz"');
+    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '0');
+}
+
+debug("Grammar and Spelling Error");
+var id = 'id3'
+var e = createEditableElement(id, container);
+typeText(e, 'orange,zz,apple.');
+if (window.internals) {
+    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '1');
+    range = internals.markerRangeForNode(e.firstChild, "spelling", 0);
+    shouldBe('range.toString()', '"zz"');
+    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '1');
+    range = internals.markerRangeForNode(e.firstChild, "grammar", 0);
+    shouldBe('range.toString()', '"orange,zz,apple."');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

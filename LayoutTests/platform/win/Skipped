@@ -1024,6 +1024,9 @@ svg/text/caret-in-svg-text.xhtml
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
 
+# Needs grammar checking.
+editing/spelling/markers.html
+
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
 

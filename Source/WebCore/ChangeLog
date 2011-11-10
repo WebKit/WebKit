@@ -1,3 +1,25 @@
+2011-11-09  Shinya Kawanaka  <shinyak@google.com>
+
+        Internals.markerRangeForNode should be able to take markers by specifying a marker type.
+        https://bugs.webkit.org/show_bug.cgi?id=71792
+
+        Reviewed by Hajime Morita.
+
+        Test: editing/spelling/markers.html
+
+        * WebCore.exp.in:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markersFor):
+          Takes marker types to get only necessary markers.
+        * dom/DocumentMarkerController.h:
+        * testing/Internals.cpp:
+        (WebCore::markerTypesFrom): Added.
+        (WebCore::Internals::markerCountForNode):
+          Takes marker types to get only necessary markers.
+        (WebCore::Internals::markerRangeForNode): ditto.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-11-09  David Reveman  <reveman@chromium.org>
 
         [Chromium] Add support for painting into an SkPicture and then rasterizing into tile-sized chunks.

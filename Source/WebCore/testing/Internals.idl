@@ -45,8 +45,8 @@ module window {
         void setInspectorResourcesDataSizeLimits(in Document document, in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
 
         ClientRect boundingBox(in Element element) raises(DOMException);
-        unsigned long markerCountForNode(in Node node) raises(DOMException);
-        Range markerRangeForNode(in Node node, in unsigned long index) raises(DOMException);
+        unsigned long markerCountForNode(in Node node, in DOMString markerType) raises(DOMException);
+        Range markerRangeForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
 
         void setForceCompositingMode(in Document document, in boolean enabled) raises(DOMException);
         void setEnableCompositingForFixedPosition(in Document document, in boolean enabled) raises(DOMException);

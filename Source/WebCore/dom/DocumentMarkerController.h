@@ -69,7 +69,7 @@ public:
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
     DocumentMarker* markerContainingPoint(const LayoutPoint&, DocumentMarker::MarkerType);
-    Vector<DocumentMarker*> markersFor(Node*);
+    Vector<DocumentMarker*> markersFor(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
     Vector<DocumentMarker*> markersInRange(Range*, DocumentMarker::MarkerTypes);
     Vector<DocumentMarker> markersForNode(Node*);
     Vector<LayoutRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
