@@ -159,9 +159,6 @@ plugins/js-from-destroy.html
 fast/css/webkit-mask-crash-fieldset-legend.html
 fast/css/webkit-mask-crash-table.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=71932
-svg/as-image/svg-image-change-content-size.xhtml
-
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################

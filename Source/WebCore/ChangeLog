@@ -1,5 +1,18 @@
 2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        [GTK] svg/as-image/svg-image-change-content-size.xhtml crashes
+        https://bugs.webkit.org/show_bug.cgi?id=71932
+
+        Reviewed by Philippe Normand.
+
+        Null check m_page in drawSVGToImageBuffer(), just like all others methods do.
+        As drawSVGToImageBuffer() is fired from a timer, it may get into this state under certain conditions, as seen on the 64bit gtk bot.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawSVGToImageBuffer):
+
+2011-11-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Rolling out part of r99854, which didn't belong there.
 
         * svg/graphics/SVGImage.cpp:
