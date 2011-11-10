@@ -1391,10 +1391,10 @@ Programs_WebKitPluginProcess_CXXFLAGS = \
 endif
 
 EXTRA_DIST += \
-	$(WebKit2)/UIProcess/API/gtk/docs/GNUmakefile.am \
-	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
-	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
-	$(WebKit2)/UIProcess/API/gtk/docs/version.xml.in \
+	$(WebKit2)/UIProcess/API/gtk/docs/build-gtkdoc.py \
+	$(WebKit2)/UIProcess/API/gtk/docs/gtkdoc.py \
+	$(WebKit2)/UIProcess/API/gtk/docs/webkitgtk-docs.sgml \
+	$(WebKit2)/UIProcess/API/gtk/docs/webkitgtk-sections.txt \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types \
 	$(WebKit2)/Scripts/generate-message-receiver.py \
 	$(WebKit2)/Scripts/generate-messages-header.py \
@@ -1422,4 +1422,3 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/ResourceCache/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebCoreSupport/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebPage/*.in)
-

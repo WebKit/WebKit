@@ -1,3 +1,19 @@
+2011-10-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit] Replace the gtkdoc autools magic with something more flexible
+        https://bugs.webkit.org/show_bug.cgi?id=70877
+
+        Reviewed by Philippe Normand.
+
+        Add a script that runs gtkdoc manually instead of using the autotools
+        magic. Remove now unused gtkdoc files.
+
+        * GNUmakefile.am: Remove references to removed gtkdoc files.
+        * UIProcess/API/gtk/docs/GNUmakefile.am: Removed.
+        * UIProcess/API/gtk/docs/build-gtkdoc: Added.
+        * UIProcess/API/gtk/docs/gtkdoc.py: Added.
+        * UIProcess/API/gtk/docs/version.xml.in: Removed.
+
 2011-11-09  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/10423024> WebProcess doesn't use AuthBrokerAgent for proxy credentials

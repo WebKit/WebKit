@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+#  Copyright (C) 2011 Igalia S.L.
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2 of the License, or (at your option) any later version.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
+import glob
+import gtkdoc
+import logging
+import os.path
+import sys
+
+def configure_logging():
+    level = logging.DEBUG if '-v' in sys.argv else logging.INFO
+    logger = logging.getLogger("gtkdoc")
+    logger.setLevel(level)
+    handler = logging.StreamHandler()
+    handler.setLevel(level)
+    logger.addHandler(handler)
+    if level == logging.DEBUG:
+        handler.setFormatter(logging.Formatter('[%(asctime)s]  %(message)s'))
+    else:
+        handler.setFormatter(logging.Formatter('%(message)s'))
+
+def find_build_directory(top_level):
+    def is_valid_build_directory(build_dir):
+        return os.path.exists(os.path.join(build_dir, ".libs"))
+
+    if is_valid_build_directory(top_level):
+        return top_level
+
+    build_dir = os.path.join(top_level, 'WebKitBuild')
+    if is_valid_build_directory(build_dir):
+        return build_dir
+
+    build_dir = os.path.join(top_level, 'WebKitBuild', 'Release')
+    if is_valid_build_directory(build_dir):
+        return build_dir
+
+    build_dir = os.path.join(top_level, 'WebKitBuild', 'Debug')
+    if is_valid_build_directory(build_dir):
+        return build_dir
+    print "Could not determine build directory."
+    sys.exit(1)
+
+doc_dir = os.path.abspath(os.path.dirname(__file__))
+top_level = os.path.normpath(os.path.join(doc_dir, '..', '..',
+                                          '..', '..', '..', '..'))
+build_dir = find_build_directory(top_level)
+
+output_dir = os.path.join(build_dir, "Documentation", "webkit2gtk")
+src_dir = os.path.join(doc_dir, '..')
+library_path = os.path.join(build_dir, ".libs")
+pkg_config_path = \
+    os.path.join(build_dir, "Source", "WebKit2", "webkit2gtk-3.0.pc")
+
+derived_sources = os.path.join(build_dir, "DerivedSources", "WebKit2")
+cflags = \
+' -I' + os.path.join(derived_sources, 'webkit2gtk', 'include') + \
+' -I' + os.path.join(derived_sources, 'webkit2gtk') + \
+' -I' + os.path.join(derived_sources, 'include') + \
+' -I' + os.path.join(top_level, 'Source')
+' -I' + src_dir
+
+ignored_files = glob.glob("%s/*Private.h" % src_dir) + \
+                glob.glob("%s/PageClientImpl.*" % src_dir) + \
+                glob.glob("%s/tests/*.h" % src_dir)
+
+configure_logging()
+generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path,
+                                   module_name="webkit2gtk",
+                                   output_dir=output_dir,
+                                   source_dirs=[src_dir],
+                                   doc_dir=doc_dir,
+                                   cflags=cflags,
+                                   library_path=library_path,
+                                   decorator="WEBKIT_API",
+                                   deprecation_guard="WEBKIT_DISABLE_DEPRECATED",
+                                   ignored_files=ignored_files)
+generator.generate(html='--skip-html' not in sys.argv)
+sys.exit(generator.saw_warnings)
