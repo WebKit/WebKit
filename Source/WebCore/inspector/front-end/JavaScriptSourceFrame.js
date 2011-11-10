@@ -31,26 +31,25 @@
 /**
  * @constructor
  * @extends {WebInspector.SourceFrame}
- * @param {WebInspector.JavaScriptSourceFrameDelegate} delegate
+ * @param {WebInspector.ScriptsPanel} scriptsPanel
  * @param {WebInspector.DebuggerPresentationModel} model
  * @param {WebInspector.UISourceCode} uiSourceCode
  */
-WebInspector.JavaScriptSourceFrame = function(delegate, model, uiSourceCode)
+WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
 {
     WebInspector.SourceFrame.call(this, uiSourceCode.url);
 
-    this._delegate = delegate;
+    this._scriptsPanel = scriptsPanel;
+    this._model = model;
+    this._uiSourceCode = uiSourceCode;
+    this._popoverObjectGroup = "popover";
+    this._breakpoints = {};
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
             this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this), true);
 
     this.textViewer.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
-    uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
+    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
     this.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._onTextViewerContentLoaded, this);
-
-    this._model = model;
-    this._uiSourceCode = uiSourceCode; 
-    this._popoverObjectGroup = "popover";
-    this._breakpoints = {};
 }
 
 WebInspector.JavaScriptSourceFrame.prototype = {
@@ -74,7 +73,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     suggestedFileName: function()
     {
-        return this._delegate.suggestedFileName();
+        var names = this._scriptsPanel.folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
+        return names.displayName || "untitled.js";
     },
 
     editContent: function(newContent, callback)
@@ -86,7 +86,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         if (!this.textViewer.readOnly)
             return;
-        this._delegate.requestContent(this.setContent.bind(this));
+        this.requestContent(this.setContent.bind(this));
     },
 
     setReadOnly: function(readOnly)
@@ -95,7 +95,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             this._popoverHelper.hidePopover();
         WebInspector.SourceFrame.prototype.setReadOnly.call(this, readOnly);
         if (readOnly)
-            this._delegate.setScriptSourceIsBeingEdited(false);
+            this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, false);
     },
 
     populateLineGutterContextMenu: function(lineNumber, contextMenu)
@@ -105,7 +105,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         var breakpoint = this._model.findBreakpoint(this._uiSourceCode, lineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add breakpoint" : "Add Breakpoint"), this._delegate.setBreakpoint.bind(this._delegate, lineNumber, "", true));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add breakpoint" : "Add Breakpoint"), this._setBreakpoint.bind(this, lineNumber, "", true));
 
             function addConditionalBreakpoint()
             {
@@ -114,7 +114,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 {
                     this.removeBreakpoint(lineNumber);
                     if (committed)
-                        this._delegate.setBreakpoint(lineNumber, condition, true);
+                        this._setBreakpoint(lineNumber, condition, true);
                 }
                 this._editBreakpointCondition(lineNumber, "", didEditBreakpointCondition.bind(this));
             }
@@ -149,7 +149,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         var selection = window.getSelection();
         if (selection.type !== "Range" || selection.isCollapsed)
             return;
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add to watch" : "Add to Watch"), this._delegate.addToWatch.bind(this._delegate, selection.toString()));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add to watch" : "Add to Watch"),
+                this._scriptsPanel.addToWatch.bind(this._scriptsPanel, selection.toString()));
+
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate in console" : "Evaluate in Console"), WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
     },
 
@@ -188,7 +190,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 executionLineNumber: this._executionLineNumber,
                 breakpoints: this._breakpoints
             }
-            this._delegate.setScriptSourceIsBeingEdited(true);
+            this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, true);
         }
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
@@ -237,10 +239,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         for (var lineNumber in newBreakpoints) {
             var breakpoint = newBreakpoints[lineNumber];
-            this._delegate.setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
+            this._setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
         }
-
-        this._delegate.setScriptSourceIsBeingEdited(false);
+        this._scriptsPanel.setScriptSourceIsBeingEdited(this._uiSourceCode, false);
         delete this._javaScriptSourceFrameState;
     },
 
@@ -357,6 +358,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this.textViewer.endUpdates();
     },
 
+    _setBreakpoint: function(lineNumber, condition, enabled)
+    {
+        this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
+        this._scriptsPanel.activateBreakpoints();
+    },
+
     _onMouseDown: function(event)
     {
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
@@ -373,7 +380,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             else
                 this._model.removeBreakpoint(this._uiSourceCode, lineNumber);
         } else
-            this._delegate.setBreakpoint(lineNumber, "", true);
+            this._setBreakpoint(lineNumber, "", true);
         event.preventDefault();
     },
 
@@ -466,25 +473,3 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 }
 
 WebInspector.JavaScriptSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
-
-/**
- * @interface
- */
-WebInspector.JavaScriptSourceFrameDelegate = function()
-{
-}
-
-WebInspector.JavaScriptSourceFrameDelegate.prototype = {
-    setBreakpoint: function(lineNumber, condition, enabled) { },
-
-    setScriptSourceIsBeingEdited: function(inEditMode) { },
-
-    suggestedFileName: function() { },
-
-    addToWatch: function() { }
-}
-
-/**
- * Default implementation.
- */
-WebInspector.JavaScriptSourceFrameDelegate.stub = Object.create(WebInspector.JavaScriptSourceFrameDelegate.prototype);

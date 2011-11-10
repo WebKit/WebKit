@@ -1,3 +1,30 @@
+2011-11-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] get rid of JavaScriptSourceFrameDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=71922
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.suggestedFileName):
+        (WebInspector.JavaScriptSourceFrame.prototype._onContentChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype.setReadOnly):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu.addConditionalBreakpoint.didEditBreakpointCondition):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu.):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.JavaScriptSourceFrame.prototype.beforeTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype.didEditContent):
+        (WebInspector.JavaScriptSourceFrame.prototype._setBreakpoint):
+        (WebInspector.JavaScriptSourceFrame.prototype._onMouseDown):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.activateBreakpoints):
+        (WebInspector.ScriptsPanel.prototype.folderAndDisplayNameForScriptURL):
+        (WebInspector.ScriptsPanel.prototype.setScriptSourceIsBeingEdited):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSource):
+        (WebInspector.ScriptsPanel.prototype.addToWatch):
+
 2011-11-10  Jay Civelli  <jcivelli@chromium.org>
 
         Fix progress load reporting for MHTML documents.

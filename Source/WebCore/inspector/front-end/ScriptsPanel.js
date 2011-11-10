@@ -229,9 +229,15 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.show();
     },
 
-    get breakpointsActivated()
+    breakpointsActivated: function()
     {
         return this.toggleBreakpointsButton.toggled;
+    },
+
+    activateBreakpoints: function()
+    {
+        if (!this.breakpointsActivated)
+            this._toggleBreakpointsClicked();
     },
 
     _uiSourceCodeAdded: function(event)
@@ -300,7 +306,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
 
-        var names = this._folderAndDisplayNameForScriptURL(uiSourceCode.url);
+        var names = this.folderAndDisplayNameForScriptURL(uiSourceCode.url);
         option.displayName = names.displayName;
 
         var contentScriptPrefix = uiSourceCode.isContentScript ? "2:" : "0:";
@@ -371,7 +377,7 @@ WebInspector.ScriptsPanel.prototype = {
         uiSourceCode._option = option;
     },
 
-    _folderAndDisplayNameForScriptURL: function(url)
+    folderAndDisplayNameForScriptURL: function(url)
     {
         var parsedURL = url.asParsedURL();
         if (parsedURL)
@@ -399,7 +405,7 @@ WebInspector.ScriptsPanel.prototype = {
         return { domain: (parsedURL ? parsedURL.host : ""), folderName: folderName, displayName: displayName };
     },
 
-    _setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
+    setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
     {
         var option = uiSourceCode._option;
         if (!option)
@@ -646,8 +652,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _createSourceFrame: function(uiSourceCode)
     {
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this, uiSourceCode);
-        var sourceFrame = new WebInspector.JavaScriptSourceFrame(delegate, this._presentationModel, uiSourceCode);
+        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, this._presentationModel, uiSourceCode);
 
         sourceFrame._uiSourceCode = uiSourceCode;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -1154,50 +1159,12 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
         this._presentationModel.setFormatSource(this._toggleFormatSourceButton.toggled);
-    }
-}
-
-WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-/**
- * @constructor
- * @implements {WebInspector.JavaScriptSourceFrameDelegate}
- * @param {WebInspector.ScriptsPanel} scriptsPanel
- * @param {WebInspector.UISourceCode} uiSourceCode
- */
-WebInspector.SourceFrameDelegateForScriptsPanel = function(scriptsPanel, uiSourceCode)
-{
-    WebInspector.JavaScriptSourceFrameDelegate.call(this);
-
-    this._scriptsPanel = scriptsPanel;
-    this._model = this._scriptsPanel._presentationModel;
-    this._uiSourceCode = uiSourceCode;
-}
-
-WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
-    setBreakpoint: function(lineNumber, condition, enabled)
-    {
-        this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
-
-        if (!this._scriptsPanel.breakpointsActivated)
-            this._scriptsPanel._toggleBreakpointsClicked();
-    },
-
-    setScriptSourceIsBeingEdited: function(inEditMode)
-    {
-        this._scriptsPanel._setScriptSourceIsBeingEdited(this._uiSourceCode, inEditMode);
-    },
-
-    suggestedFileName: function()
-    {
-        var names = this._scriptsPanel._folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
-        return names.displayName || "untitled.js";
     },
 
     addToWatch: function(expression)
     {
-        this._scriptsPanel.sidebarPanes.watchExpressions.addExpression(expression);
+        this.sidebarPanes.watchExpressions.addExpression(expression);
     }
 }
 
-WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.JavaScriptSourceFrameDelegate.prototype;
+WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;

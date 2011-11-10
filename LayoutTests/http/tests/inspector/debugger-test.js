@@ -26,9 +26,7 @@ InspectorTest.completeDebuggerTest = function()
 {
     var scriptsPanel = WebInspector.panels.scripts;
 
-    if (!scriptsPanel.breakpointsActivated)
-        scriptsPanel.toggleBreakpointsButton.element.click();
-
+    scriptsPanel.activateBreakpoints();
     InspectorTest.resumeExecution(disableDebugger);
 
     function disableDebugger()
@@ -175,7 +173,7 @@ InspectorTest.showScriptSource = function(scriptName, callback)
 
 InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabled)
 {
-    sourceFrame._delegate.setBreakpoint(lineNumber, condition, enabled);
+    sourceFrame._setBreakpoint(lineNumber, condition, enabled);
 };
 
 InspectorTest.removeBreakpoint = function(sourceFrame, lineNumber)
