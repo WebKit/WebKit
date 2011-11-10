@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class FormDataList; 
 class SpinButtonElement;
 
 // The class represents types of which UI contain text fields.
@@ -77,6 +78,7 @@ private:
     virtual bool shouldRespectListAttribute();
     virtual HTMLElement* placeholderElement() const;
     virtual void updatePlaceholderText();
+    virtual bool appendFormData(FormDataList&, bool multipart) const;
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
