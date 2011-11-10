@@ -72,6 +72,8 @@ public:
 
     virtual void show(const QWebSelectData& data);
     virtual void hide();
+    virtual void setGeometry(const QRect&) { }
+    virtual void setFont(const QFont&) { }
 
 private slots:
     void popupClosed();

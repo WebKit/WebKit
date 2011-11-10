@@ -1,3 +1,21 @@
+2011-11-03  Luiz Agostini  <luiz.agostini@palm.com>
+
+        [Qt] Adding methods setGeometry and setFont to QWebSelectMethod class.
+        https://bugs.webkit.org/show_bug.cgi?id=71530
+
+        Reviewed by Simon Hausmann.
+
+        Adding methods setGeometry and setFont so that users of platform plugin may show the
+        popup menus in proper position and using proper font.
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::show):
+        * examples/platformplugin/WebPlugin.h:
+        (WebPopup::setGeometry):
+        (WebPopup::setFont):
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2011-11-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Merge QTouchWebView and QDesktopWebView into one class
