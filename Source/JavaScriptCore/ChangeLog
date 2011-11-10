@@ -1,3 +1,30 @@
+2011-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Multiple CodeBlock should be able to share the same instruction
+        stream without copying
+        https://bugs.webkit.org/show_bug.cgi?id=71978
+
+        Reviewed by Oliver Hunt.
+        
+        This refactors CodeBlock::m_instructions to be a Vector boxed in a
+        ref-counted object, but otherwise does not take advantage of this.
+        
+        This is performance neutral.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasInstructions):
+        (JSC::CodeBlock::numberOfInstructions):
+        (JSC::CodeBlock::instructions):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+
 2011-11-09  Gavin Barraclough  <barraclough@apple.com>
 
         Renovate ARMv7 assembler/macro-assembler

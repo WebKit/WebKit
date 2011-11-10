@@ -438,7 +438,10 @@ namespace JSC {
         void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
         bool isNumericCompareFunction() { return m_isNumericCompareFunction; }
 
-        Vector<Instruction>& instructions() { return m_instructions; }
+        bool hasInstructions() const { return !!m_instructions; }
+        unsigned numberOfInstructions() const { return !m_instructions ? 0 : m_instructions->m_instructions.size(); }
+        Vector<Instruction>& instructions() { return m_instructions->m_instructions; }
+        const Vector<Instruction>& instructions() const { return m_instructions->m_instructions; }
         void discardBytecode() { m_instructions.clear(); }
 
 #ifndef NDEBUG
@@ -1015,7 +1018,10 @@ namespace JSC {
         WriteBarrier<ScriptExecutable> m_ownerExecutable;
         JSGlobalData* m_globalData;
 
-        Vector<Instruction> m_instructions;
+        struct Instructions : public RefCounted<Instructions> {
+            Vector<Instruction> m_instructions;
+        };
+        RefPtr<Instructions> m_instructions;
         unsigned m_instructionCount;
 
         int m_thisRegister;

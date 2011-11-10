@@ -284,14 +284,14 @@ static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned i
 
 void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand) const
 {
-    unsigned instructionOffset = vPC - m_instructions.begin();
+    unsigned instructionOffset = vPC - instructions().begin();
     printf("  [%4d] %s: %s\n", instructionOffset, name, pointerToSourceString(vPC[operand].u.structure).utf8().data());
 }
 
 void CodeBlock::printStructures(const Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
-    unsigned instructionOffset = vPC - m_instructions.begin();
+    unsigned instructionOffset = vPC - instructions().begin();
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id)) {
         printStructure("get_by_id", vPC, 4);
@@ -336,23 +336,23 @@ void CodeBlock::printStructures(const Instruction* vPC) const
 
 void CodeBlock::dump(ExecState* exec) const
 {
-    if (m_instructions.isEmpty()) {
+    if (!m_instructions) {
         printf("No instructions available.\n");
         return;
     }
 
     size_t instructionCount = 0;
 
-    for (size_t i = 0; i < m_instructions.size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(m_instructions[i].u.opcode)])
+    for (size_t i = 0; i < instructions().size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(instructions()[i].u.opcode)])
         ++instructionCount;
 
     printf("%lu m_instructions; %lu bytes at %p; %d parameter(s); %d callee register(s)\n\n",
         static_cast<unsigned long>(instructionCount),
-        static_cast<unsigned long>(m_instructions.size() * sizeof(Instruction)),
+        static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         this, m_numParameters, m_numCalleeRegisters);
 
-    Vector<Instruction>::const_iterator begin = m_instructions.begin();
-    Vector<Instruction>::const_iterator end = m_instructions.end();
+    Vector<Instruction>::const_iterator begin = instructions().begin();
+    Vector<Instruction>::const_iterator end = instructions().end();
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
         dump(exec, begin, it);
 
@@ -390,14 +390,14 @@ void CodeBlock::dump(ExecState* exec) const
     if (!m_globalResolveInfos.isEmpty()) {
         size_t i = 0;
         do {
-             printGlobalResolveInfo(m_globalResolveInfos[i], instructionOffsetForNth(exec, m_instructions, i + 1, isGlobalResolve));
+             printGlobalResolveInfo(m_globalResolveInfos[i], instructionOffsetForNth(exec, instructions(), i + 1, isGlobalResolve));
              ++i;
         } while (i < m_globalResolveInfos.size());
     }
     if (!m_structureStubInfos.isEmpty()) {
         size_t i = 0;
         do {
-            printStructureStubInfo(m_structureStubInfos[i], instructionOffsetForNth(exec, m_instructions, i + 1, isPropertyAccess));
+            printStructureStubInfo(m_structureStubInfos[i], instructionOffsetForNth(exec, instructions(), i + 1, isPropertyAccess));
              ++i;
         } while (i < m_structureStubInfos.size());
     }
@@ -409,14 +409,14 @@ void CodeBlock::dump(ExecState* exec) const
     if (!m_globalResolveInstructions.isEmpty()) {
         size_t i = 0;
         do {
-             printStructures(&m_instructions[m_globalResolveInstructions[i]]);
+             printStructures(&instructions()[m_globalResolveInstructions[i]]);
              ++i;
         } while (i < m_globalResolveInstructions.size());
     }
     if (!m_propertyAccessInstructions.isEmpty()) {
         size_t i = 0;
         do {
-            printStructures(&m_instructions[m_propertyAccessInstructions[i]]);
+            printStructures(&instructions()[m_propertyAccessInstructions[i]]);
              ++i;
         } while (i < m_propertyAccessInstructions.size());
     }
@@ -1416,9 +1416,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_isConstructor(isConstructor)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
     , m_globalData(0)
-#ifndef NDEBUG
+    , m_instructions(adoptRef(new Instructions))
     , m_instructionCount(0)
-#endif
     , m_argumentsRegister(-1)
     , m_needsFullScopeChain(ownerExecutable->needsActivation())
     , m_usesEval(ownerExecutable->usesEval())
@@ -1554,9 +1553,9 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #endif
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
-        visitStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
+        visitStructures(visitor, &instructions()[m_propertyAccessInstructions[i]]);
     for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
-        visitStructures(visitor, &m_instructions[m_globalResolveInstructions[i]]);
+        visitStructures(visitor, &instructions()[m_globalResolveInstructions[i]]);
 #endif
 #if ENABLE(JIT)
     for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
@@ -1722,7 +1721,7 @@ bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
 
 void CodeBlock::shrinkToFit()
 {
-    m_instructions.shrinkToFit();
+    instructions().shrinkToFit();
 
 #if ENABLE(INTERPRETER)
     m_propertyAccessInstructions.shrinkToFit();
