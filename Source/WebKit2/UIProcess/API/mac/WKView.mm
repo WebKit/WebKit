@@ -200,6 +200,18 @@ struct WKViewInterpretKeyEventsParameters {
 - (bool)didReceiveUnhandledCommand;
 @end
 
+@interface WKFlippedView : NSView
+@end
+
+@implementation WKFlippedView
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+@end
+
 @implementation WKView
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
@@ -2338,7 +2350,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     ASSERT(!layerTreeContext.isEmpty());
 
     // Create an NSView that will host our layer tree.
-    _data->_layerHostingView.adoptNS([[NSView alloc] initWithFrame:[self bounds]]);
+    _data->_layerHostingView.adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
     [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
     [CATransaction begin];

@@ -1,3 +1,20 @@
+2011-11-10  Anders Carlsson  <andersca@apple.com>
+
+        The WKView layer hosting subview needs to be flipped
+        https://bugs.webkit.org/show_bug.cgi?id=72042
+
+        Reviewed by Darin Adler.
+
+        In order to match the Core Animation layer hierarchy, the layer hosting WKView
+        subview needs to be flipped.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKFlippedView isFlipped]):
+        Add a NSView subview whose sole purpose is to be flipped.
+
+        (-[WKView _enterAcceleratedCompositingMode:]):
+        Create a WKFlippedView instead of a regular NSView.
+
 2011-11-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5
