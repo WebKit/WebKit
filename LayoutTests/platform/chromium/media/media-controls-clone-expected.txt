@@ -1,0 +1,97 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x324
+  RenderBlock {HTML} at (0,0) size 800x324
+    RenderBody {BODY} at (8,8) size 784x308
+      RenderBlock {DIV} at (0,0) size 784x154
+        RenderMedia {AUDIO} at (300,118) size 300x32
+      RenderBlock {DIV} at (0,154) size 784x154
+        RenderMedia {AUDIO} at (300,118) size 300x32
+layer at (8,8) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,162) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,8) size 300x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
+layer at (8,126) size 300x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
+layer at (15,132) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (38,126) size 236x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+        RenderBlock {DIV} at (0,0) size 153x29
+        RenderBlock {DIV} at (153,0) size 9x29
+layer at (215,132) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 41x21
+      RenderText {#text} at (0,2) size 41x17
+        text run at (0,2) width 41: "00:00"
+layer at (46,128) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (274,126) size 34x32
+  RenderButton {INPUT} at (266,0) size 34x32
+layer at (308,126) size 300x32
+  RenderBlock (relative positioned) {DIV} at (0,0) size 300x32
+layer at (308,126) size 300x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+layer at (315,132) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (338,126) size 236x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+        RenderBlock {DIV} at (0,0) size 153x29
+        RenderBlock {DIV} at (153,0) size 9x29
+layer at (515,132) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 41x21
+      RenderText {#text} at (0,2) size 41x17
+        text run at (0,2) width 41: "00:00"
+layer at (346,128) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (574,126) size 34x32
+  RenderButton {INPUT} at (266,0) size 34x32
+layer at (8,162) size 300x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
+layer at (8,280) size 300x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
+layer at (15,286) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (38,280) size 236x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+        RenderBlock {DIV} at (0,0) size 153x29
+        RenderBlock {DIV} at (153,0) size 9x29
+layer at (215,286) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 41x21
+      RenderText {#text} at (0,2) size 41x17
+        text run at (0,2) width 41: "00:00"
+layer at (46,282) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (274,280) size 34x32
+  RenderButton {INPUT} at (266,0) size 34x32
+layer at (308,280) size 300x32
+  RenderBlock (relative positioned) {DIV} at (0,0) size 300x32
+layer at (308,280) size 300x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+layer at (315,286) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (338,280) size 236x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+        RenderBlock {DIV} at (0,0) size 153x29
+        RenderBlock {DIV} at (153,0) size 9x29
+layer at (515,286) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 41x21
+      RenderText {#text} at (0,2) size 41x17
+        text run at (0,2) width 41: "00:00"
+layer at (346,282) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (574,280) size 34x32
+  RenderButton {INPUT} at (266,0) size 34x32
