@@ -1,3 +1,19 @@
+2011-11-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Change semantics of the haveQt() function to match API promises
+
+        Having Qt 5 does not imply that we have Qt 4, from an API point of
+        view, as a major version can in theory break BC/SC. Our minimum
+        version of Qt 4 will always be the latest released version of Qt 4,
+        so the only place we should use haveQt(4, x) is when checking for
+        the minimum requirements.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2011-11-07  Kaustubh Atrawalkar  <kaustubh@motorola.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] Implement a MouseDown/MouseUp/MouseMoveTo/MouseScrollBy/LeapForward functions for WebKit2 EventSender

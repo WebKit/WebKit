@@ -89,7 +89,7 @@ isEmpty(HAVE_QRAWFONT) {
 
 # Nescape plugins support (NPAPI)
 !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
-    unix:!haveQt(5)|win32-*:!embedded:!wince*: {
+    unix:haveQt(4)|win32-*:!embedded:!wince*: {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
     } else {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0

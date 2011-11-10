@@ -27,7 +27,7 @@ examples.CONFIG += no_default_target
 examples.makefile = Makefile
 SUBDIRS += examples
 
-!haveQt(5):!build_pass {
+haveQt(4):!build_pass {
     # Use our own copy of syncqt from Qt 4.8 to generate forwarding headers
     syncqt = $$toSystemPath($${ROOT_WEBKIT_DIR}/Tools/qmake/syncqt-4.8)
     command = $$syncqt

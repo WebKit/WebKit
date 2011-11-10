@@ -184,14 +184,14 @@ defineTest(addStrictSubdirOrderBetween) {
     return(true)
 }
 
-# Check if we have Qt version x,y,x or higher
+# Check if we have the given Qt version. The major version needs
+# to be exact, the minor and patch version is same or higher
 defineTest(haveQt) {
     count(ARGS, 1, lessThan)|count(ARGS, 3, greaterThan) {
         error("Unexpected number of arguments: haveQt($$ARGS)")
     }
 
-    lessThan(QT_MAJOR_VERSION, $$1): return(false)
-    greaterThan(QT_MAJOR_VERSION, $$1): return(true)
+    !equals(QT_MAJOR_VERSION, $$1): return(false)
 
     count(ARGS, 1, greaterThan) {
         lessThan(QT_MINOR_VERSION, $$2): return(false)

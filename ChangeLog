@@ -1,5 +1,19 @@
 2011-11-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Change semantics of the haveQt() function to match API promises
+
+        Having Qt 5 does not imply that we have Qt 4, from an API point of
+        view, as a major version can in theory break BC/SC. Our minimum
+        version of Qt 4 will always be the latest released version of Qt 4,
+        so the only place we should use haveQt(4, x) is when checking for
+        the minimum requirements.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/QtWebKit.pro:
+
+2011-11-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Make sure headers.pri has the right relative paths for install
 
         The install rules are generated from api.pri which lives in Source,
