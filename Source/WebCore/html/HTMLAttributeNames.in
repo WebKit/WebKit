@@ -90,7 +90,6 @@ default
 defer
 dir
 direction
-dirname
 disabled
 download
 draggable

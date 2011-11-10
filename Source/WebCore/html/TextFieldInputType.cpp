@@ -33,10 +33,8 @@
 #include "TextFieldInputType.h"
 
 #include "BeforeTextInsertedEvent.h"
-#include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "RenderLayer.h"
@@ -50,8 +48,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
     : InputType(element)
@@ -366,15 +362,6 @@ void TextFieldInputType::updatePlaceholderText()
     }
     m_placeholder->setInnerText(placeholderText, ec);
     ASSERT(!ec);
-}
-
-bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) const
-{
-    InputType::appendFormData(list, multipart);
-    const AtomicString& dirnameAttrValue = element()->fastGetAttribute(dirnameAttr);
-    if (!dirnameAttrValue.isNull())
-        list.appendData(dirnameAttrValue, element()->directionForFormData());
-    return true;
 }
 
 } // namespace WebCore

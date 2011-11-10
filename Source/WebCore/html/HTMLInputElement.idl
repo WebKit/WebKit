@@ -23,7 +23,6 @@ module html {
     interface HTMLInputElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         attribute [Reflect=checked] boolean defaultChecked;
-        attribute [Reflect] DOMString dirName;
         readonly attribute HTMLFormElement form;
         attribute [Reflect, URL] DOMString formAction;
         attribute [ConvertNullToNullString] DOMString formEnctype;

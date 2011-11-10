@@ -79,8 +79,6 @@ public:
     void setInnerTextValue(const String&);
     String innerTextValue() const;
 
-    String directionForFormData() const;
-
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual void updatePlaceholderText() = 0;
