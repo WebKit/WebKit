@@ -1,3 +1,13 @@
+2011-11-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [SuggestBox] Do not display suggest box if editing in the middle of prompt unless a stop character follows
+        https://bugs.webkit.org/show_bug.cgi?id=72018
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+
 2011-11-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not highlight files larger than 10KLOC.

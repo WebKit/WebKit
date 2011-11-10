@@ -357,10 +357,16 @@ WebInspector.TextPrompt.prototype = {
         // Do not attempt to auto-complete an empty input in the auto mode (only on demand).
         if (auto && isEmptyInput && !force)
             shouldExit = true;
-        if (!auto && !isEmptyInput && !selectionRange.commonAncestorContainer.isDescendant(this._element))
+        else if (!auto && !isEmptyInput && !selectionRange.commonAncestorContainer.isDescendant(this._element))
             shouldExit = true;
-        if (auto && !this.isCaretAtEndOfPrompt() && !this._suggestBox && !force)
+        else if (auto && !this._suggestBox && !force && !this.isCaretAtEndOfPrompt())
             shouldExit = true;
+        else if (!force) {
+            // BUG72018: Do not show suggest box if caret is followed by a non-stop character.
+            var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.endOffset, this._completionStopCharacters, this._element, "forward");
+            if (wordSuffixRange.toString().length)
+                shouldExit = true;
+        }
         if (shouldExit) {
             if (this.isSuggestBoxVisible())
                 this._suggestBox.hide();
