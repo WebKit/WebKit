@@ -265,6 +265,24 @@ function runTests()
     runSingleRowTest(results, false, '', 'ref mismatch html actual ');
 
     results = mockResults();
+    results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE', 1);
+    results.tests['bar-reftest.html'].is_reftest = true;
+    results.tests['bar-reftest.html'].ref_file = 'common.html';
+    runSingleRowTest(results, false, '', 'ref html images diff (1%) ');
+    runTest(results, function() {
+        assertTrue(document.getElementsByClassName('result-link')[0].getAttribute('href') == 'common.html');
+    });
+
+    results = mockResults();
+    results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE');
+    results.tests['bar-reftest.html'].is_mismatch_reftest = true;
+    results.tests['bar-reftest.html'].ref_file = 'common.html';
+    runSingleRowTest(results, false, '', 'ref mismatch html actual ');
+    runTest(results, function() {
+        assertTrue(document.getElementsByClassName('result-link')[0].getAttribute('href') == 'common.html');
+    });
+
+    results = mockResults();
     var subtree = results.tests['foo'] = {}
     subtree['bar-flaky-pass.html'] = mockExpectation('PASS TEXT', 'PASS');
     runTest(results, function() {

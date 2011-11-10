@@ -68,6 +68,43 @@ BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 TestExpectations = test_expectations.TestExpectations
 
 
+def interpret_test_failures(port, test_name, failures):
+    """Interpret test failures and returns a test result as dict.
+
+    Args:
+        port: interface to port-specific hooks
+        test_name: test name relative to layout_tests directory
+        failures: list of test failures
+    Returns:
+        A dictionary like {'is_reftest': True, ...}
+    """
+    test_dict = {}
+    failure_types = [type(failure) for failure in failures]
+    # FIXME: get rid of all this is_* values once there is a 1:1 map between
+    # TestFailure type and test_expectations.EXPECTATION.
+    if test_failures.FailureMissingAudio in failure_types:
+        test_dict['is_missing_audio'] = True
+
+    for failure in failures:
+        if isinstance(failure, test_failures.FailureImageHashMismatch):
+            test_dict['image_diff_percent'] = failure.diff_percent
+        elif isinstance(failure, test_failures.FailureReftestMismatch):
+            test_dict['is_reftest'] = True
+            if failure.reference_filename != port.reftest_expected_filename(test_name):
+                test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
+        elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
+            test_dict['is_mismatch_reftest'] = True
+            if failure.reference_filename != port.reftest_expected_mismatch_filename(test_name):
+                test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
+
+    if test_failures.FailureMissingResult in failure_types:
+        test_dict['is_missing_text'] = True
+
+    if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
+        test_dict['is_missing_image'] = True
+    return test_dict
+
+
 # FIXME: This should be on the Manager class (since that's the only caller)
 # or split off from Manager onto another helper class, but should not be a free function.
 # Most likely this should be made into its own class, and this super-long function
@@ -160,29 +197,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed
         # and only set it if there actually is stderr data.
 
-        failure_types = [type(f) for f in result.failures]
-        # FIXME: get rid of all this is_* values once there is a 1:1 map between
-        # TestFailure type and test_expectations.EXPECTATION.
-        if test_failures.FailureMissingAudio in failure_types:
-            test_dict['is_missing_audio'] = True
-
-        if test_failures.FailureReftestMismatch in failure_types:
-            test_dict['is_reftest'] = True
-
-        for f in result.failures:
-            if 'is_reftest' in result.failures:
-                test_dict['is_reftest'] = True
-            if type(f) is test_failures.FailureImageHashMismatch:
-                test_dict['image_diff_percent'] = f.diff_percent
-
-        if test_failures.FailureReftestMismatchDidNotOccur in failure_types:
-            test_dict['is_mismatch_reftest'] = True
-
-        if test_failures.FailureMissingResult in failure_types:
-            test_dict['is_missing_text'] = True
-
-        if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
-            test_dict['is_missing_image'] = True
+        test_dict.update(interpret_test_failures(port_obj, test_name, result.failures))
 
         # Store test hierarchically by directory. e.g.
         # foo/bar/baz.html: test_dict

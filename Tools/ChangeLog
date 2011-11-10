@@ -1,3 +1,16 @@
+2011-11-09  Hayato Ito  <hayato@chromium.org>
+
+        [NRWT] Make results.html aware of reference filename in reftests.
+        https://bugs.webkit.org/show_bug.cgi?id=71574
+
+        Reviewed by Ryosuke Niwa.
+
+        If a reference filename is different from the default one, include that in result summary
+        so results.html can link to the correct reference file.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+
 2011-11-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Update project files and

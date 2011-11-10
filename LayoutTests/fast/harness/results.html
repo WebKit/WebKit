@@ -406,7 +406,12 @@ function testLinkWithExpandButton(test)
 
 function resultLink(testPrefix, suffix, contents)
 {
-    return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
+    return referenceLink(testPrefix, testPrefix + suffix, contents);
+}
+
+function referenceLink(testPrefix, reference_filename, contents)
+{
+    return '<a class=result-link href="' + reference_filename + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
 }
 
 function isFailureExpected(expected, actual)
@@ -541,12 +546,18 @@ function tableRow(testObject)
         globalState().hasImageFailures = true;
 
         if (testObject.is_mismatch_reftest) {
-            row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html') +
-                resultLink(test_prefix, '-actual.png', 'actual');
+            if (testObject.ref_file)
+                row += referenceLink(test_prefix, testObject.ref_file, 'ref mismatch html');
+            else
+                row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html');
+            row += resultLink(test_prefix, '-actual.png', 'actual');
         } else {
-            if (testObject.is_reftest)
-                row += resultLink(test_prefix, '-expected.html', 'ref html');
-            
+            if (testObject.is_reftest) {
+                if (testObject.ref_file)
+                    row += referenceLink(test_prefix, testObject.ref_file, 'ref html');
+                else
+                    row += resultLink(test_prefix, '-expected.html', 'ref html');
+            }
             if (globalState().shouldToggleImages) {
                 row += resultLink(test_prefix, '-diffs.html', 'images');
             } else {

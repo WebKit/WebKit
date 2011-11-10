@@ -42,7 +42,8 @@ from webkitpy.layout_tests.port import port_testcase
 
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.controllers.manager import Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
+from webkitpy.layout_tests.controllers.manager import interpret_test_failures,  Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
@@ -302,6 +303,38 @@ class KeyCompareTest(unittest.TestCase):
         self.assert_cmp('/ab', '/a/a/b', -1)
         self.assert_cmp('/a/a/b', '/ab', 1)
         self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
+
+
+class ResultSummaryTest(unittest.TestCase):
+
+    def setUp(self):
+        host = MockHost()
+        self.port = host.port_factory.get(port_name='test')
+
+    def test_interpret_test_failures(self):
+        test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
+            [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
+        self.assertTrue('is_reftest' in test_dict)
+        self.assertFalse('is_mismatch_reftest' in test_dict)
+        self.assertFalse('ref_file' in test_dict)
+
+        test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
+            [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/common.html'))])
+        self.assertTrue('is_reftest' in test_dict)
+        self.assertFalse('is_mismatch_reftest' in test_dict)
+        self.assertEqual(test_dict['ref_file'], 'foo/common.html')
+
+        test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
+            [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
+        self.assertFalse('is_reftest' in test_dict)
+        self.assertTrue(test_dict['is_mismatch_reftest'])
+        self.assertFalse('ref_file' in test_dict)
+
+        test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
+            [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/common.html'))])
+        self.assertFalse('is_reftest' in test_dict)
+        self.assertTrue(test_dict['is_mismatch_reftest'])
+        self.assertEqual(test_dict['ref_file'], 'foo/common.html')
 
 
 if __name__ == '__main__':
