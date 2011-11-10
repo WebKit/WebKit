@@ -205,7 +205,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         worker = self
 
         driver = self._port.create_driver(self._worker_number)
-        driver.start()
 
         class SingleTestThread(threading.Thread):
             def __init__(self):
@@ -246,7 +245,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         """
         if not self._driver or self._driver.poll() is not None:
             self._driver = self._port.create_driver(self._worker_number)
-            self._driver.start()
         return self.run_single_test(self._driver, test_input)
 
     def run_single_test(self, driver, test_input):

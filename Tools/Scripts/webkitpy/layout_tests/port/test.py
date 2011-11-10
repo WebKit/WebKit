@@ -509,8 +509,5 @@ class TestDriver(Driver):
             test.actual_checksum, audio, crash=test.crash,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 
-    def start(self):
-        pass
-
     def stop(self):
         pass

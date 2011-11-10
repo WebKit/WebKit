@@ -448,7 +448,7 @@ class ChromiumDriver(Driver):
         cmd.extend(self._wrapper_options())
         return cmd
 
-    def start(self):
+    def _start(self):
         assert not self._proc
         # FIXME: This should use ServerProcess like WebKitDriver does.
         # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
@@ -510,6 +510,9 @@ class ChromiumDriver(Driver):
             self._port._filesystem.remove(self._image_path)
 
     def run_test(self, driver_input):
+        if not self._proc:
+            self._start()
+
         output = []
         error = []
         crash = False
@@ -523,7 +526,7 @@ class ChromiumDriver(Driver):
 
         uri = self._port.test_to_uri(driver_input.test_name)
         cmd = self._test_shell_command(uri, driver_input.timeout, driver_input.image_hash)
-        (line, crash) = self._write_command_and_read_line(input=cmd)
+        line, crash = self._write_command_and_read_line(input=cmd)
 
         while not crash and line.rstrip() != "#EOF":
             # Make sure we haven't crashed.
@@ -565,7 +568,7 @@ class ChromiumDriver(Driver):
             else:
                 error.append(line)
 
-            (line, crash) = self._write_command_and_read_line(input=None)
+            line, crash = self._write_command_and_read_line(input=None)
 
         run_time = time.time() - start_time
         output_image = self._output_image_with_retry()

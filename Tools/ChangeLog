@@ -1,3 +1,18 @@
+2011-11-10  Tony Chang  <tony@chromium.org>
+
+        Lazily start DRT instances in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=72038
+
+        Reviewed by Eric Seidel.
+
+        Just a refactoring, no new tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-11-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         ChangeLog mistakenly recognizes any string between '*' and ':' as touched files

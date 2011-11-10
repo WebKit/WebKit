@@ -455,6 +455,7 @@ class WebKitDriver(Driver):
         # instead scope these locally in run_test.
         self.error_from_test = str()
         self.err_seen_eof = False
+        self._server_process = None
 
 
     # FIXME: This may be unsafe, as python does not guarentee any ordering of __del__ calls
@@ -479,7 +480,7 @@ class WebKitDriver(Driver):
         cmd.append('-')
         return cmd
 
-    def start(self):
+    def _start(self):
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
@@ -540,6 +541,8 @@ class WebKitDriver(Driver):
         return (None, block.content_hash)
 
     def run_test(self, driver_input):
+        if not self._server_process:
+            self._start()
         self.error_from_test = str()
         self.err_seen_eof = False
 

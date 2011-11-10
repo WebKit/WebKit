@@ -134,8 +134,5 @@ class DryrunDriver(Driver):
             audio = self._port.expected_audio(driver_input.test_name)
         return DriverOutput(text, image, checksum, audio, crash=False, test_time=time.time() - start_time, timeout=False, error='')
 
-    def start(self):
-        pass
-
     def stop(self):
         pass
