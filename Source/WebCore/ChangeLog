@@ -1,3 +1,13 @@
+2011-11-11  Adam Klein  <adamk@chromium.org>
+
+        [v8] Remove unused V8Proxy::executingScript method
+        https://bugs.webkit.org/show_bug.cgi?id=72160
+
+        Reviewed by Nate Chapin.
+
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+
 2011-11-11  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Andy Estes

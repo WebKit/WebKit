@@ -334,11 +334,6 @@ PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code
     return scriptData.release();
 }
 
-bool V8Proxy::executingScript() const
-{
-    return m_recursion;
-}
-
 v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* node)
 {
     ASSERT(v8::Context::InContext());
