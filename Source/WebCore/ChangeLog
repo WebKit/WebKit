@@ -1,3 +1,10 @@
+2011-11-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Unbreak my 32bit SL build.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect): Use narrowPrecisionToFloat() to convert float -> double.
+
 2011-10-28  Philippe Normand  <pnormand@igalia.com>
 
         HRTF Database consolidation

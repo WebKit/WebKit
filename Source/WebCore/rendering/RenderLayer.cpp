@@ -57,6 +57,7 @@
 #include "FEMerge.h"
 #include "FilterEffectRenderer.h"
 #endif
+#include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -4397,7 +4398,7 @@ void RenderLayer::updateOrRemoveFilterEffect()
             if (operation->getOperationType() == FilterOperation::HUE_ROTATE) {
                 const BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<const BasicColorMatrixFilterOperation*>(operation);
                 Vector<float> inputParameters;
-                inputParameters.append(colorMatrixOperation->amount());
+                inputParameters.append(narrowPrecisionToFloat(colorMatrixOperation->amount()));
                 effect = FEColorMatrix::create(m_filter.get(), FECOLORMATRIX_TYPE_HUEROTATE, inputParameters);
             }
         }
