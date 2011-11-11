@@ -197,7 +197,7 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return 0;
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 {
     notImplemented();
 }

@@ -225,7 +225,7 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return WebContextMenuProxyGtk::create(m_viewWidget, page);
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate)
 {
     notImplemented();
 }

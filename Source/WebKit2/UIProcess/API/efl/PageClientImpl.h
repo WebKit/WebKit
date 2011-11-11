@@ -81,7 +81,7 @@ private:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool);
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool, bool);
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
