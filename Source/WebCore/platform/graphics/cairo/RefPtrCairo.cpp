@@ -88,6 +88,18 @@ template<> void derefIfNotNull(cairo_pattern_t* ptr)
         cairo_pattern_destroy(ptr);
 }
 
+template<> void refIfNotNull(cairo_region_t* ptr)
+{
+    if (LIKELY(ptr != 0))
+        cairo_region_reference(ptr);
+}
+
+template<> void derefIfNotNull(cairo_region_t* ptr)
+{
+    if (LIKELY(ptr != 0))
+        cairo_region_destroy(ptr);
+}
+
 #if USE(FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr)
 {

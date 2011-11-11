@@ -1,3 +1,43 @@
+2011-11-11  Julien Chaffraix  <jchaffraix@codeaurora.org>, Zaheer Ahmad  <zahimad@codeaurora.org>, Joone Hur  <joone.hur@collabora.co.uk>, Tomasz Morawski  <t.morawski@samsung.com>
+
+        Added TileCairo and TiledBackingStoreBackendCairo files
+        https://bugs.webkit.org/show_bug.cgi?id=71350
+
+        Reviewed by Martin Robinson.
+
+        Added TileCairo and TiledBackingStoreBackend files needed by Tiled Backing Store implementation that uses cairo
+        library eg. EFL and Gtk WebKit port.
+
+        This patch contains some parts of rebased and updated code from 45423 bug. Originals authors of the code are:
+        - Julien Chaffraix  <jchaffraix@codeaurora.org>
+        - Zaheer Ahmad  <zahmad@codeaurora.org>
+        - Joone Hur  <joone.hur@collabora.co.uk>
+
+        * platform/graphics/cairo/RefPtrCairo.cpp: Added support of RefPtr for cairo_region object.
+        (WTF::refIfNotNull): New refIfNotNull function for cairo_region object.
+        (WTF::derefIfNotNull): New derefIfNotNull function for cairo_region object.
+        * platform/graphics/cairo/RefPtrCairo.h: Added support of RefPtr for cairo_region object.
+        * platform/graphics/cairo/TileCairo.cpp: Added a new file. Implementation of TileCairo class.
+        (WebCore::TileCairo::TileCairo):
+        (WebCore::TileCairo::~TileCairo):
+        (WebCore::TileCairo::isDirty):
+        (WebCore::TileCairo::isReadyToPaint):
+        (WebCore::TileCairo::invalidate):
+        (WebCore::TileCairo::updateBackBuffer):
+        (WebCore::TileCairo::swapBackBufferToFront):
+        (WebCore::TileCairo::paint):
+        (WebCore::TileCairo::resize):
+        * platform/graphics/cairo/TileCairo.h: Added a new file. Implementation of TileCairo class.
+        (WebCore::TileCairo::create):
+        (WebCore::TileCairo::coordinate):
+        (WebCore::TileCairo::rect):
+        * platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp: Added a new file. Implementation of
+        TiledBackingStoreBackend methods.
+        (WebCore::TiledBackingStoreBackend::createTile):
+        (WebCore::checkeredSurface): Helper function that creates checkered surface (see below function)
+        (WebCore::TiledBackingStoreBackend::paintCheckerPattern): Function is used to draw a place holder when tile no
+        exist or it is not ready to paint yet. The checkered surface is used here.
+
 2011-11-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove unneeded frame check in FrameView::detachCustomScrollbars
