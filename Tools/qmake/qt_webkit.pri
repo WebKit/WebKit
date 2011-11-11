@@ -5,6 +5,7 @@ QT.webkit.PATCH_VERSION = 0
 
 QT.webkit.name = QtWebKit
 QT.webkit.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtWebKit
+QT.webkit.private_includes = $$QT_MODULE_INCLUDE_BASE/$$QT.webkit.name/$$QT.webkit.VERSION
 QT.webkit.sources = $$QT_MODULE_BASE
 QT.webkit.libs = $$QT_MODULE_LIB_BASE
 QT.webkit.depends = core gui opengl network xmlpatterns script

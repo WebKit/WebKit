@@ -1,3 +1,11 @@
+2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Add support for QT += webkit-private
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/qt_webkit.pri: Declare private headers.
+
 2011-11-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix attempt after r99907. Since that revision
