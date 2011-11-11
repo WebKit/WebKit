@@ -1,3 +1,14 @@
+2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Interactive color box for gradients in CSS property values
+        https://bugs.webkit.org/show_bug.cgi?id=72112
+
+        Reviewed by Yury Semikhatsky.
+
+        Add "background-image" to the list of color-aware properties (may contain gradient definition).
+
+        * inspector/front-end/CSSKeywordCompletions.js:
+
 2011-11-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: [chromium] list dedicated workers in case inspector opened post-worker creation.
