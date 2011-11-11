@@ -51,7 +51,6 @@
 #include "JSStorage.h"
 #include "ScriptValue.h"
 #include "Storage.h"
-#include <parser/SourceCode.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
@@ -155,29 +154,6 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (value.inherits(&JSHTMLCollection::s_info))
         return jsString(exec, String("array"));
     return jsUndefined();
-}
-
-JSValue JSInjectedScriptHost::functionLocation(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-    JSValue value = exec->argument(0);
-    if (!value.asCell()->inherits(&JSFunction::s_info))
-        return jsUndefined();
-    JSFunction* function = asFunction(value);
-
-    const SourceCode* sourceCode = function->sourceCode();
-    if (!sourceCode)
-        return jsUndefined();
-    int lineNumber = sourceCode->firstLine();
-    if (lineNumber)
-        lineNumber -= 1; // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
-    UString scriptId = UString::number(sourceCode->provider()->asID());
-
-    JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->globalData(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
-    result->putDirect(exec->globalData(), Identifier(exec, "scriptId"), jsString(exec, scriptId));
-    return result;
 }
 
 JSValue JSInjectedScriptHost::inspect(ExecState* exec)

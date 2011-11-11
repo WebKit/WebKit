@@ -34,7 +34,6 @@ namespace JSC {
     class JSActivation;
     class JSGlobalObject;
     class NativeExecutable;
-    class SourceCode;
     class VPtrHackExecutable;
     namespace DFG {
     class JITCodeGenerator;
@@ -96,8 +95,6 @@ namespace JSC {
         // To call either of these methods include Executable.h
         inline bool isHostFunction() const;
         FunctionExecutable* jsExecutable() const;
-
-        const SourceCode* sourceCode() const;
 
         static JS_EXPORTDATA const ClassInfo s_info;
 

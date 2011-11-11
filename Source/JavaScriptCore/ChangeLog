@@ -1,3 +1,16 @@
+2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99950.
+        http://trac.webkit.org/changeset/99950
+        https://bugs.webkit.org/show_bug.cgi?id=72117
+
+        "Landed wrong patch by mistake" (Requested by yurys on
+        #webkit).
+
+        * JavaScriptCore.exp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+
 2011-11-11  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r99898.

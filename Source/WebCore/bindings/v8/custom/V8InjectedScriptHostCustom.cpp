@@ -150,27 +150,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::functionLocationCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.typeCallback()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    v8::HandleScope handleScope;
-
-    v8::Handle<v8::Value> value = args[0];
-    if (!value->IsFunction())
-        return v8::Undefined();
-    v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(value);
-    int lineNumber = function->GetScriptLineNumber();
-    int columnNumber = function->GetScriptColumnNumber();
-    v8::Local<v8::Object> result = v8::Object::New();
-    result->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
-    result->Set(v8::String::New("columnNumber"), v8::Integer::New(columnNumber));
-    result->Set(v8::String::New("scriptId"), function->GetScriptId());
-    return result;
-}
-
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.inspect()");

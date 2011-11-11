@@ -149,13 +149,6 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
     return name(exec);
 }
 
-const SourceCode* JSFunction::sourceCode() const
-{
-    if (isHostFunction())
-        return 0;
-    return &jsExecutable()->source();
-}
-
 void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFunction* thisObject = static_cast<JSFunction*>(cell);

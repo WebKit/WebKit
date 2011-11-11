@@ -88,20 +88,6 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::getFunctionLocation(ErrorString* errorString, const String& functionId, RefPtr<InspectorObject>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "getFunctionLocation");
-    function.appendArgument(functionId);
-    RefPtr<InspectorValue> resultValue;
-    makeCall(function, &resultValue);
-    if (!resultValue || resultValue->type() != InspectorValue::TypeObject) {
-        if (!resultValue->asString(errorString))
-            *errorString = "Internal error";
-        return;
-    }
-    *result = resultValue->asObject();
-}
-
 void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* properties)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getProperties");
