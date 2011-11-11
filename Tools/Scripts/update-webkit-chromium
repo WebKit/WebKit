@@ -87,6 +87,8 @@ GetOptions(
 print "Updating chromium port dependencies using gclient...\n";
 my @gclientArgs = ($gclientPath, "sync");
 push @gclientArgs, "--force" if $force;
+# --reset could delete modified files if necessary to sync.
+push @gclientArgs, "--reset" if $force;
 push @gclientArgs, "--delete_unversioned_trees" if $force;
 push @gclientArgs, "--deps=unix,android" if isChromiumAndroid();
 
