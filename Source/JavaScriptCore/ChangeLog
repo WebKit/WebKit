@@ -1,3 +1,12 @@
+2011-11-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Enable DFG JIT for ARMv7/iOS.
+
+        Rubber stamped by Oliver Hunt.
+
+        * wtf/Platform.h:
+            - enable DFG JIT for ARMv7/iOS.
+
 2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize supportsProfiling, supportsRichSourceInfo, shouldInterruptScript in JSGlobalObject
