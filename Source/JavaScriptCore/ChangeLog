@@ -1,3 +1,9 @@
+2011-11-11  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Let a newer Xcode update this file.
+        If an older Xcode downgrades this file and we have a risk of some kind of
+        oscillating commit situation, please contact me so I know not to do this again.
+
 2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add jsCast to replace static_cast
