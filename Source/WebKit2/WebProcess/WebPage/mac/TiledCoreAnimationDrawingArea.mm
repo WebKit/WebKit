@@ -66,7 +66,7 @@ using namespace WebCore;
     CGRect clipRect = CGContextGetClipBoundingBox(context);
 
     GraphicsContext graphicsContext(context);
-    _webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
+    _webPage->drawRect(graphicsContext, enclosingIntRect(NSRectFromCGRect(clipRect)));
 }
 
 @end
