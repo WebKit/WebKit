@@ -1,3 +1,22 @@
+2011-11-11  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r99953.
+        Caused 4 tests to hit an assert.
+        https://bugs.webkit.org/show_bug.cgi?id=72163
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didStartWorkerContext):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::~InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::setFrontend):
+        (WebCore::InspectorWorkerAgent::restore):
+        (WebCore::InspectorWorkerAgent::clearFrontend):
+        (WebCore::InspectorWorkerAgent::setWorkerInspectionEnabled):
+        (WebCore::InspectorWorkerAgent::didStartWorkerContext):
+        (WebCore::InspectorWorkerAgent::workerContextTerminated):
+        * inspector/InspectorWorkerAgent.h:
+
 2011-11-11  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r100024.
