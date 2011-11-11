@@ -1,3 +1,14 @@
+2011-11-11  Timothy Hatcher  <timothy@apple.com>
+
+        Don't remove InspectorBackendStub.js in Release builds after it has been
+        combined into inspector.js. Also remove any *.qrc file on Mac.
+
+        https://webkit.org/b/72186
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-11-11  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Patch that implementing the changes required to allow WebGL
