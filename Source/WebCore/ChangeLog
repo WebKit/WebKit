@@ -1,3 +1,23 @@
+2011-11-11  Vincent Scheib  <scheib@chromium.org>
+
+        Unreviewed, rolling out r99994.
+        http://trac.webkit.org/changeset/99994
+        https://bugs.webkit.org/show_bug.cgi?id=72150
+
+        Broke chromium windows build
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitLockMouseEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitUnlockMouseEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitMouseLockedEnabled):
+        * page/MouseLockable.cpp: Removed.
+        * page/MouseLockable.h: Removed.
+        * page/MouseLockable.idl: Removed.
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2011-11-11  Adam Klein  <adamk@chromium.org>
 
         [v8] Remove unused V8Proxy::executingScript method
