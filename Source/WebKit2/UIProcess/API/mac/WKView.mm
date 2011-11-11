@@ -2337,7 +2337,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut
+- (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
 {
     if (!findIndicator) {
         _data->_findIndicatorWindow = nullptr;
@@ -2347,7 +2347,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!_data->_findIndicatorWindow)
         _data->_findIndicatorWindow = FindIndicatorWindow::create(self);
 
-    _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut);
+    _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }
 
 - (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext

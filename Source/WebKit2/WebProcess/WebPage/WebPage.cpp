@@ -874,6 +874,12 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setDeviceScaleFactor(scaleFactor);
 #endif
+
+    if (m_findController.isShowingOverlay()) {
+        // We must have updated layout to get the selection rects right.
+        layoutIfNeeded();
+        m_findController.deviceScaleFactorDidChange();
+    }
 }
 
 float WebPage::deviceScaleFactor() const

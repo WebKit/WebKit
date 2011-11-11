@@ -151,7 +151,7 @@ public:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) = 0;
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
 
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut) = 0;
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;
 #if PLATFORM(WIN)
     virtual void didInstallOrUninstallPageOverlay(bool) = 0;
 #endif

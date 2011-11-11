@@ -47,7 +47,7 @@ public:
     static PassOwnPtr<FindIndicatorWindow> create(WKView *);
     ~FindIndicatorWindow();
 
-    void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
 
 private:
     explicit FindIndicatorWindow(WKView *);

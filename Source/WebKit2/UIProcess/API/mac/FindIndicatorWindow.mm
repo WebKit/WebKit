@@ -129,7 +129,7 @@ FindIndicatorWindow::~FindIndicatorWindow()
     closeWindow();
 }
 
-void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)
+void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
 {
     if (m_findIndicator == findIndicator)
         return;
@@ -163,13 +163,15 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
     [[m_wkView window] addChildWindow:m_findIndicatorWindow.get() ordered:NSWindowAbove];
     [m_findIndicatorWindow.get() setReleasedWhenClosed:NO];
 
-    // Start the bounce animation.
-    m_bounceAnimationContext = WKWindowBounceAnimationContextCreate(m_findIndicatorWindow.get());
-    m_bounceAnimation.adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
-                                                                                  animationDuration:bounceAnimationDuration
-                                                                          animationProgressCallback:&FindIndicatorWindow::bounceAnimationCallback
-                                                                            animationDidEndCallback:&FindIndicatorWindow::bounceAnimationDidEnd]);
-    [m_bounceAnimation.get() startAnimation];
+    if (animate) {
+        // Start the bounce animation.
+        m_bounceAnimationContext = WKWindowBounceAnimationContextCreate(m_findIndicatorWindow.get());
+        m_bounceAnimation.adoptNS([[WKFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this
+                                                                                    animationDuration:bounceAnimationDuration
+                                                                            animationProgressCallback:&FindIndicatorWindow::bounceAnimationCallback
+                                                                              animationDidEndCallback:&FindIndicatorWindow::bounceAnimationDidEnd]);
+        [m_bounceAnimation.get() startAnimation];
+    }
 
     if (fadeOut)
         m_startFadeOutTimer.startOneShot(timeBeforeFadeStarts);

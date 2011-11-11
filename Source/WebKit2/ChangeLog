@@ -1,3 +1,55 @@
+2011-11-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66584
+        WebKit2's find bouncy looks blurry after dragging window onto >1.0 scale factor 
+        display
+        -and corresponding-
+        <rdar://problem/9987559>
+
+        Reviewed by Anders Carlsson.
+
+        The setFindIndicator message and various functions of the same name must all take 
+        an additional parameter indicating whether or not setting the find indicator 
+        should result in a bounce animation. This is because when the device scale factor 
+        changes, if there is currently a find indicator, it must be re-set to a higher or 
+        lower resolution version, but we don't want the bounce animation to happen again.
+        * UIProcess/API/mac/FindIndicatorWindow.h:
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setFindIndicator):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setFindIndicator:fadeOut:animate:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFindIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        New function FindController::isShowingOverlay() is used to determine if 
+        FindController::deviceScaleFactorDidChange() needs to be called.
+        * WebProcess/WebPage/FindController.h:
+        (WebKit::FindController::isShowingOverlay): 
+
+        FindController::deviceScaleFactorDidChange() calls updateFindIndicator to re-
+        generate the bitmap at the appropriate scale factor, but tells it not to animate 
+        this time.
+        (WebKit::FindController::deviceScaleFactorDidChange):
+
+        updateFindIndicator() takes a new parameter indicating whether or not the 
+        FindIndicator should animate. It defaults to true since the deviceScaleFactor 
+        changing is the only case currently where we do not want it to animate.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        (WebKit::FindController::hideFindIndicator):
+
+        Calls into FindController::deviceScaleFactorDidChange() when the scale factor has 
+        changed and the find overlay is showing.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor):
+
 2011-11-10  Timothy Hatcher  <timothy@apple.com>
 
         Make WKViews in NSPopovers render as they would in active windows.
