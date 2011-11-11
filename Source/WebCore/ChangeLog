@@ -1,3 +1,13 @@
+2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Metrics] Editor is committed when scrolling a content box dimension up/down for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=72108
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._attributesUpdated):
+
 2011-11-11  Alpha Lam  <hclam@chromium.org>
 
         [chromium] scrolling is broken with compositor thread

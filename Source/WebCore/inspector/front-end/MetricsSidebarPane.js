@@ -52,6 +52,11 @@ WebInspector.MetricsSidebarPane.prototype = {
 
     _innerUpdate: function()
     {
+        // "style" attribute might have changed. Update metrics unless they are being edited
+        // (if a CSS property is added, a StyleSheetChanged event is dispatched).
+        if (this._isEditingMetrics)
+            return;
+
         // FIXME: avoid updates of a collapsed pane.
         var node = this.node;
 
@@ -87,9 +92,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         if (this.node !== event.data.node)
             return;
 
-        // "style" attribute might have changed. Update metrics unless they are being edited.
-        if (!this._isEditingMetrics)
-            this._innerUpdate();
+        this._innerUpdate();
     },
 
     _getPropertyValueAsPx: function(style, propertyName)
