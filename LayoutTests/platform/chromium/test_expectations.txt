@@ -3192,7 +3192,7 @@ BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS 
 // Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
 BUGCR83426 MAC : svg/as-border-image/svg-as-border-image-2.html = PASS IMAGE
-// BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
+BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = PASS IMAGE
@@ -3545,8 +3545,8 @@ BUG_REED WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED WIN LINUX GPU : fast/canvas/canvas-lineWidth.html = TEXT
 
-// BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-// BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
+BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
@@ -3821,8 +3821,8 @@ BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
 BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 
-BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = IMAGE+TEXT
-// BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE+TEXT
+BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
+BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
 
@@ -3866,13 +3866,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
-
-// SVG failures after r99539.
-// Uncomment the above results when you remove any of the following lines.
-BUGWK71793 BUGCR83426 : svg/as-border-image/svg-as-border-image.html = IMAGE
-BUGWK71793 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
-BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-1.html = IMAGE
-BUGWK71793 BUG_ABARTH : svg/as-background-image/svg-as-background-3.html = IMAGE
 
 BUGWK71830 : svg/zoom/page/zoom-svg-as-relative-image.html = IMAGE
 BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE+TEXT
