@@ -23,7 +23,6 @@
 #include <WebKit2/qquickwebpage.h>
 #include <WebKit2/qquickwebview.h>
 #include <WebKit2/qwebdownloaditem.h>
-#include <WebKit2/qwebnavigationcontroller.h>
 #include <WebKit2/qwebpreferences.h>
 
 #endif /* WKView_h */

@@ -1,3 +1,41 @@
+2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Remove QWebNavigationController
+        https://bugs.webkit.org/show_bug.cgi?id=72113
+
+        Reviewed by Andreas Kling.
+
+        Fold the functions and properties of QWebNavigationController into
+        QQuickWebView.
+
+        * Target.pri:
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage.h:
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebView::goBack):
+        (QQuickWebView::goForward):
+        (QQuickWebView::stop):
+        (QQuickWebView::reload):
+        (QQuickWebView::canGoBack):
+        (QQuickWebView::canGoForward):
+        (QQuickWebView::canStop):
+        (QQuickWebView::canReload):
+        (QQuickWebView::title):
+        * UIProcess/API/qt/qquickwebview.h:
+        * UIProcess/API/qt/qwebnavigationcontroller.cpp: Removed.
+        * UIProcess/API/qt/qwebnavigationcontroller.h: Removed.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::navigationStatusAtStartup):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QQuickWebView::stopEnabledAfterLoadStarted):
+        (tst_QQuickWebView::backAndForward):
+        (tst_QQuickWebView::reload):
+        (tst_QQuickWebView::stop):
+
 2011-11-10  Beth Dakin  <bdakin@apple.com>
 
         Once more for the QT build.

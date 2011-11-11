@@ -247,7 +247,6 @@ HEADERS += \
     UIProcess/API/qt/qquickwebpage_p.h \
     UIProcess/API/qt/qquickwebview.h \
     UIProcess/API/qt/qquickwebview_p.h \
-    UIProcess/API/qt/qwebnavigationcontroller.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
     UIProcess/Authentication/WebCredential.h \
@@ -546,7 +545,6 @@ SOURCES += \
     UIProcess/API/qt/qwebdownloaditem.cpp \
     UIProcess/API/qt/qquickwebpage.cpp \
     UIProcess/API/qt/qquickwebview.cpp \
-    UIProcess/API/qt/qwebnavigationcontroller.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
     UIProcess/Authentication/AuthenticationDecisionListener.cpp \

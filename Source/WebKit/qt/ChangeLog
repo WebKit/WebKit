@@ -1,3 +1,13 @@
+2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Remove QWebNavigationController
+        https://bugs.webkit.org/show_bug.cgi?id=72113
+
+        Reviewed by Andreas Kling.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes): Don't register QWebNavigationController with qml.
+
 2011-11-03  Luiz Agostini  <luiz.agostini@palm.com>
 
         [Qt] Adding methods setGeometry and setFont to QWebSelectMethod class.

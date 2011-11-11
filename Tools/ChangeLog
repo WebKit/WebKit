@@ -1,5 +1,18 @@
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][WK2] Remove QWebNavigationController
+        https://bugs.webkit.org/show_bug.cgi?id=72113
+
+        Reviewed by Andreas Kling.
+
+        Adapt to the move of the QWebNavigationController functions/properties to
+        QQuickWebView.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
+2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Build system tweak
 
         Reviewed by Tor Arne Vestbø.

@@ -28,7 +28,6 @@
 
 class QQuickWebView;
 class QQuickWebPagePrivate;
-class QWebNavigationController;
 class QWebPreferences;
 
 namespace WebKit {

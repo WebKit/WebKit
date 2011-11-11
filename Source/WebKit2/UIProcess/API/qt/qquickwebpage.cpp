@@ -163,7 +163,6 @@ void QQuickWebPage::itemChange(ItemChange change, const ItemChangeData& data)
 QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* view)
     : q(view)
     , pageProxy(0)
-    , navigationController(0)
     , sgUpdateQueue(view)
     , paintingIsInitialized(false)
 {

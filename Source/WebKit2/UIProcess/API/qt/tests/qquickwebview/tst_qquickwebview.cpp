@@ -24,7 +24,6 @@
 #include <QtTest/QtTest>
 #include <qquickwebpage.h>
 #include <qquickwebview.h>
-#include <qwebnavigationcontroller.h>
 
 class tst_QQuickWebView : public QObject {
     Q_OBJECT
@@ -87,13 +86,13 @@ void tst_QQuickWebView::accessPage()
 
 void tst_QQuickWebView::navigationStatusAtStartup()
 {
-    QCOMPARE(webView()->navigationController()->canGoBack(), false);
+    QCOMPARE(webView()->canGoBack(), false);
 
-    QCOMPARE(webView()->navigationController()->canGoForward(), false);
+    QCOMPARE(webView()->canGoForward(), false);
 
-    QCOMPARE(webView()->navigationController()->canStop(), false);
+    QCOMPARE(webView()->canStop(), false);
 
-    QCOMPARE(webView()->navigationController()->canReload(), false);
+    QCOMPARE(webView()->canReload(), false);
 }
 
 class LoadStartedCatcher : public QObject {
@@ -110,7 +109,7 @@ public slots:
     {
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
 
-        QCOMPARE(m_webView->navigationController()->canStop(), true);
+        QCOMPARE(m_webView->canStop(), true);
     }
 
 signals:
@@ -122,13 +121,13 @@ private:
 
 void tst_QQuickWebView::stopEnabledAfterLoadStarted()
 {
-    QCOMPARE(webView()->navigationController()->canStop(), false);
+    QCOMPARE(webView()->canStop(), false);
 
     LoadStartedCatcher catcher(webView());
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     waitForSignal(&catcher, SIGNAL(finished()));
 
-    QCOMPARE(webView()->navigationController()->canStop(), true);
+    QCOMPARE(webView()->canStop(), true);
 
     waitForSignal(webView(), SIGNAL(loadSucceeded()));
 }
@@ -183,12 +182,12 @@ void tst_QQuickWebView::backAndForward()
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
 
-    webView()->navigationController()->goBack();
+    webView()->goBack();
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
-    webView()->navigationController()->goForward();
+    webView()->goForward();
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
@@ -201,7 +200,7 @@ void tst_QQuickWebView::reload()
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
-    webView()->navigationController()->reload();
+    webView()->reload();
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
@@ -215,7 +214,7 @@ void tst_QQuickWebView::stop()
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
     // FIXME: This test should be fleshed out. Right now it's just here to make sure we don't crash.
-    webView()->navigationController()->stop();
+    webView()->stop();
 }
 
 void tst_QQuickWebView::loadProgress()

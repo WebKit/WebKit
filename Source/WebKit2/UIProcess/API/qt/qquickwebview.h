@@ -27,7 +27,6 @@
 class QQuickWebPage;
 class QQuickWebViewPrivate;
 class QWebDownloadItem;
-class QWebNavigationController;
 class QWebPreferences;
 
 namespace WebKit {
@@ -52,7 +51,10 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
-    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
+    Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canStop READ canStop NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
     Q_ENUMS(NavigationPolicy)
@@ -77,13 +79,22 @@ public:
     QString title() const;
     int loadProgress() const;
 
-    QWebNavigationController* navigationController() const;
+    bool canGoBack() const;
+    bool canGoForward() const;
+    bool canStop() const;
+    bool canReload() const;
+
     QWebPreferences* preferences() const;
     QQuickWebPage* page();
 
 public Q_SLOTS:
-     void load(const QUrl&);
-     void postMessage(const QString&);
+    void load(const QUrl&);
+    void postMessage(const QString&);
+
+    void goBack();
+    void goForward();
+    void stop();
+    void reload();
 
 Q_SIGNALS:
     void titleChanged(const QString& title);
@@ -97,6 +108,7 @@ Q_SIGNALS:
     void downloadRequested(QWebDownloadItem* downloadItem);
     void linkHovered(const QUrl& url, const QString& title);
     void viewModeChanged();
+    void navigationStateChanged();
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);

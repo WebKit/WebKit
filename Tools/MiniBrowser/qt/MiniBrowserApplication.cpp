@@ -28,7 +28,6 @@
 
 #include "MiniBrowserApplication.h"
 
-#include "qwebnavigationcontroller.h"
 #include "utils.h"
 #include <QRegExp>
 #include <QEvent>

@@ -23,8 +23,8 @@
 
 #include "QtSGUpdateQueue.h"
 #include "QtViewInterface.h"
+#include "QtWebPageProxy.h"
 #include "qquickwebpage.h"
-#include "qwebnavigationcontroller.h"
 
 QT_BEGIN_NAMESPACE
 class QRectF;
@@ -48,7 +48,6 @@ public:
 
     QQuickWebPage* const q;
     QtWebPageProxy* pageProxy;
-    QWebNavigationController* navigationController;
     WebKit::QtSGUpdateQueue sgUpdateQueue;
     bool paintingIsInitialized;
 };

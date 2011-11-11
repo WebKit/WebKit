@@ -26,7 +26,6 @@
 #include "qquickwebpage.h"
 #include "qquickwebview.h"
 #include "qwebdownloaditem.h"
-#include "qwebnavigationcontroller.h"
 #include "qwebpreferences.h"
 
 #include <QtNetwork/qnetworkreply.h>
@@ -50,7 +49,6 @@ public:
 
 #if defined(HAVE_WEBKIT2)
         qmlRegisterType<QQuickWebView>(uri, 3, 0, "WebView");
-        qmlRegisterUncreatableType<QWebNavigationController>(uri, 3, 0, "NavigationController", QObject::tr("Cannot create separate instance of NavigationController"));
         qmlRegisterUncreatableType<QWebPreferences>(uri, 3, 0, "WebPreferences", QObject::tr("Cannot create separate instance of WebPreferences"));
         qmlRegisterUncreatableType<QQuickWebPage>(uri, 3, 0, "WebPage", QObject::tr("Cannot create separate instance of WebPage, use WebView"));
         qmlRegisterUncreatableType<QNetworkReply>(uri, 3, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));

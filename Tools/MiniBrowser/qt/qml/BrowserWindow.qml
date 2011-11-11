@@ -32,9 +32,6 @@ import QtWebKit 3.0
 Rectangle {
     // Do not define anchors or an initial size here! This would mess up with QSGView::SizeRootObjectToView.
 
-    property bool canGoBack: false
-    property bool canGoForward: false
-    property bool canStop: false
     property alias webview: webView
 
     signal pageTitleChanged(string title)
@@ -76,14 +73,14 @@ Rectangle {
                     anchors.fill: parent
                     color: reloadButton.color
                     opacity: 0.8
-                    visible: !canGoBack
+                    visible: !webView.canGoBack
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
                         console.log("going back")
-                        webView.navigation.goBack()
+                        webView.goBack()
                     }
                 }
             }
@@ -102,14 +99,14 @@ Rectangle {
                     anchors.fill: parent
                     color: forwardButton.color
                     opacity: 0.8
-                    visible: !canGoForward
+                    visible: !webView.canGoForward
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
                         console.log("going forward")
-                        webView.navigation.goForward()
+                        webView.goForward()
                     }
                 }
             }
@@ -121,18 +118,18 @@ Rectangle {
 
                 Image {
                     anchors.centerIn: parent
-                    source: canStop ? "../icons/stop.png" : "../icons/refresh.png"
+                    source: webView.canStop ? "../icons/stop.png" : "../icons/refresh.png"
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        if (canStop) {
+                        if (webView.canStop) {
                             console.log("stop loading")
-                            webView.navigation.stop()
+                            webView.stop()
                         } else {
                             console.log("reloading")
-                            webView.navigation.reload()
+                            webView.reload()
                         }
                     }
                 }
@@ -199,21 +196,12 @@ Rectangle {
             bottom: parent.bottom
         }
 
-        signal navigationStateChanged
-
-        Component.onCompleted: navigation.navigationStateChanged.connect(navigationStateChanged);
-
         onTitleChanged: pageTitleChanged(title)
         onUrlChanged: {
             addressLine.text = url
             if (options.printLoadedUrls)
                 console.log("Loaded:", webView.url);
             forceActiveFocus();
-        }
-        onNavigationStateChanged: {
-            canGoBack = navigation.canGoBack
-            canGoForward = navigation.canGoForward
-            canStop = navigation.canStop
         }
     }
 

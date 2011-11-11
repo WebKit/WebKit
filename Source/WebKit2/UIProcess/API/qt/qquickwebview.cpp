@@ -29,7 +29,6 @@
 
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
-#include "qwebnavigationcontroller.h"
 #include "qwebpreferences_p.h"
 
 #include <QtDeclarative/QQuickCanvas>
@@ -78,6 +77,8 @@ void QQuickWebViewPrivate::initialize(QQuickWebView* viewport, WKContextRef cont
 
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
     pageProxy->init();
+
+    QObject::connect(pageProxy.data(), SIGNAL(updateNavigationState()), q_ptr, SIGNAL(navigationStateChanged()));
 }
 
 void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
@@ -396,6 +397,30 @@ void QQuickWebView::postMessage(const QString& message)
     d->pageProxy->postMessageToNavigatorQtObject(message);
 }
 
+void QQuickWebView::goBack()
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->goBack();
+}
+
+void QQuickWebView::goForward()
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->goForward();
+}
+
+void QQuickWebView::stop()
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->stop();
+}
+
+void QQuickWebView::reload()
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->reload();
+}
+
 QUrl QQuickWebView::url() const
 {
     Q_D(const QQuickWebView);
@@ -408,18 +433,34 @@ int QQuickWebView::loadProgress() const
     return d->pageProxy->loadProgress();
 }
 
+bool QQuickWebView::canGoBack() const
+{
+    Q_D(const QQuickWebView);
+    return d->pageProxy->canGoBack();
+}
+
+bool QQuickWebView::canGoForward() const
+{
+    Q_D(const QQuickWebView);
+    return d->pageProxy->canGoForward();
+}
+
+bool QQuickWebView::canStop() const
+{
+    Q_D(const QQuickWebView);
+    return d->pageProxy->canStop();
+}
+
+bool QQuickWebView::canReload() const
+{
+    Q_D(const QQuickWebView);
+    return d->pageProxy->canReload();
+}
+
 QString QQuickWebView::title() const
 {
     Q_D(const QQuickWebView);
     return d->pageProxy->title();
-}
-
-QWebNavigationController* QQuickWebView::navigationController() const
-{
-    Q_D(const QQuickWebView);
-    if (!d->navigationController)
-        const_cast<QQuickWebViewPrivate*>(d)->navigationController = new QWebNavigationController(d->pageProxy.data());
-    return d->navigationController;
 }
 
 QWebPreferences* QQuickWebView::preferences() const
