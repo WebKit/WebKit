@@ -2452,10 +2452,6 @@ fast/canvas/canvas-composite-canvas.html
 # https://bugs.webkit.org/show_bug.cgi?id=70905
 inspector/extensions/extensions-console.html
 
-# [Qt] 4 new tests fail introduced in r98852
-# https://bugs.webkit.org/show_bug.cgi?id=71253
-fast/backgrounds/size/contain-and-cover-zoomed.html
-
 # REGRESSION(r99195)
 # https://bugs.webkit.org/show_bug.cgi?id=70609
 fast/viewport/viewport-83.html
