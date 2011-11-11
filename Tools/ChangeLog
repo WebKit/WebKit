@@ -1,5 +1,13 @@
 2011-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Add missing include to PlatformWebViewQt
+
+        Reviewed by Simon Hausmann.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+
+2011-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Fix incremental builds on Windows after buildsystem refactor
 
         The qmake rules to ensure that we run make on the derived sources

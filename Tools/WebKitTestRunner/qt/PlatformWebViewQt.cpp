@@ -28,6 +28,7 @@
 
 #include "PlatformWebView.h"
 #include "qquickwebview.h"
+#include "qquickwebpage.h"
 
 #include <QApplication>
 #include <QDeclarativeProperty>
