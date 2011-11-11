@@ -71,9 +71,6 @@ public:
     
     void swap(JSRetainPtr&);
 
-    // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-    T releaseRef() { return leakRef(); }
-
 private:
     T m_ptr;
 };

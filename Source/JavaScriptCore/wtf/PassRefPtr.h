@@ -92,9 +92,6 @@ namespace WTF {
 
         friend PassRefPtr adoptRef<T>(T*);
 
-        // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
-
     private:
         // adopting constructor
         PassRefPtr(T* ptr, bool) : m_ptr(ptr) { }
@@ -154,9 +151,6 @@ namespace WTF {
         T* operator->() const { return m_ptr; }
 
         NonNullPassRefPtr& operator=(const NonNullPassRefPtr&) { COMPILE_ASSERT(!sizeof(T*), NonNullPassRefPtr_should_never_be_assigned_to); return *this; }
-
-        // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
 
     private:
         mutable T* m_ptr;

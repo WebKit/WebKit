@@ -1,5 +1,14 @@
 2011-11-11  Darin Adler  <darin@apple.com>
 
+        Remove all releaseRef implementations except for RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=71423
+
+        Reviewed by Julien Chaffraix.
+
+        * platform/win/COMPtr.h: Removed releaseRef.
+
+2011-11-11  Darin Adler  <darin@apple.com>
+
         * WebCore.xcodeproj/project.pbxproj: Let a newer Xcode update this file.
         If an older Xcode downgrades this file and we have a risk of some kind of
         oscillating commit situation, please contact me so I know not to do this again.

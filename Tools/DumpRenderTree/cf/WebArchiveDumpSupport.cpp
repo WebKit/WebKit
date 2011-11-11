@@ -226,5 +226,5 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     // Replace "Apple Computer" with "Apple" in the DTD declaration.
     CFStringFindAndReplace(string.get(), CFSTR("-//Apple Computer//"), CFSTR("-//Apple//"), CFRangeMake(0, CFStringGetLength(string.get())), 0);
 
-    return string.releaseRef();
+    return string.leakRef();
 }

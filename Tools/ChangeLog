@@ -1,3 +1,13 @@
+2011-11-11  Darin Adler  <darin@apple.com>
+
+        Remove all releaseRef implementations except for RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=71423
+
+        Reviewed by Julien Chaffraix.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (createXMLStringFromWebArchiveData): Use leakRef instead of releaseRef.
+
 2011-11-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make ChangeLogEntry's reviewer parsing algorithm support last 4 WebCore change logs
