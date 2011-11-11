@@ -37,7 +37,6 @@
 #include "WebDocument.h"
 #include "WebFrame.h"
 #include "WebFrameImpl.h"
-#include "WebViewClient.h"
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
@@ -63,7 +62,7 @@ protected:
 
 TEST_F(WebViewTest, FocusIsInactive)
 {
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, "visible_iframe.html");
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "visible_iframe.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "visible_iframe.html");
 
     webView->setFocus(true);
@@ -77,43 +76,6 @@ TEST_F(WebViewTest, FocusIsInactive)
     webView->setFocus(true);
     EXPECT_TRUE(document->hasFocus());
 
-    webView->close();
-}
-
-class TestWebViewClient : public WebViewClient {
-public:
-    TestWebViewClient() : m_didStartLoading(false), m_didStopLoading(false), m_loadProgress(0) { }
-    virtual void didStartLoading() { m_didStartLoading = true; }
-    virtual void didStopLoading() { m_didStopLoading = true; }
-    virtual void didChangeLoadProgress(WebFrame*, double loadProgress) { m_loadProgress = loadProgress; }
-
-    bool loadingStarted() const { return m_didStartLoading; }
-    bool loadingStopped() const { return m_didStopLoading; }
-    double loadProgress() const { return m_loadProgress; }
-
-private:
-    bool m_didStartLoading;
-    bool m_didStopLoading;
-    double m_loadProgress;
-};
-
-TEST_F(WebViewTest, MHTMLWithMissingResourceFinishesLoading)
-{
-    TestWebViewClient webViewClient;
-
-    std::string fileName = "page_with_image.mht";
-    std::string fileDir = webkit_support::GetWebKitRootDir().utf8();
-    fileDir.append("/Source/WebKit/chromium/tests/data/");
-    // Making file loading works in unit-tests would require some additional work.
-    // Mocking them as regular URLs works fine in the meantime.
-    FrameTestHelpers::registerMockedURLLoad("file://" + fileDir, fileName, "multipart/related");
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad("file://" + fileDir + fileName, true, &webViewClient);
-
-    EXPECT_TRUE(webViewClient.loadingStarted());
-    EXPECT_TRUE(webViewClient.loadingStopped());
-    EXPECT_EQ(1.0, webViewClient.loadProgress());
-
-    // Close the WebView after checking the loading state and progress, as the close() call triggers a stop loading callback.
     webView->close();
 }
 

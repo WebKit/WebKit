@@ -38,16 +38,14 @@ namespace WebKit {
 class WebFrame;
 class WebFrameClient;
 class WebView;
-class WebViewClient;
 
 namespace FrameTestHelpers {
 
-void registerMockedURLLoadAsHTML(const std::string& base, const std::string& fileName);
-void registerMockedURLLoad(const std::string& base, const std::string& fileName, const std::string& mimeType);
+void registerMockedURLLoad(const std::string& base, const std::string& fileName);
 
 void loadFrame(WebFrame*, const std::string& url);
 
-WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript = false, WebViewClient*  = 0, WebFrameClient* = 0);
+WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript = false, WebFrameClient* = 0);
 
 } // namespace FrameTestHelpers
 } // namespace WebKit

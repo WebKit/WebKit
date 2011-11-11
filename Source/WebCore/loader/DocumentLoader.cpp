@@ -636,28 +636,19 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
     if (!archive)
         return false;
 
-    bool failLoad = false;
     switch (archive->type()) {
 #if ENABLE(WEB_ARCHIVE)
     case Archive::WebArchive:
         // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
-        failLoad = m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
-        break;
+        return m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
 #endif
 #if ENABLE(MHTML)
     case Archive::MHTML:
-        // Always fail the load for resources not included in the MHTML.
-        failLoad = true;
-        break;
+        return true; // Always fail the load for resources not included in the MHTML.
 #endif
     default:
         return false;
     }
-    if (failLoad) {
-        loader->cancel();
-        return true;
-    }
-    return false;
 }
 #endif // ENABLE(WEB_ARCHIVE)
 
