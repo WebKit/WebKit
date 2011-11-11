@@ -1,4 +1,4 @@
-<body>
+<body onload='startTest()'>
 <p>Test WorkerContext.close functionality. Should print a series of PASS messages, followed with DONE.</p>
 <div id=result></div>
 <script>
@@ -13,11 +13,13 @@ if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 }
 
-var worker = new Worker('resources/worker-close.js');
-var timeout = 0;
+function startTest() {
+    var worker = new Worker('resources/worker-close.js');
+    var timeout = 0;
 
-worker.postMessage("typeofClose");
-worker.onmessage = testTypeofClose;
+    worker.postMessage("typeofClose");
+    worker.onmessage = testTypeofClose;
+}
 
 function testTypeofClose(evt)
 {
