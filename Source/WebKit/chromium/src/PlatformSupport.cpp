@@ -86,6 +86,7 @@
 #endif
 
 #include "BitmapImage.h"
+#include "ClipboardChromium.h"
 #include "Cookie.h"
 #include "Document.h"
 #include "FrameView.h"
@@ -227,6 +228,12 @@ void PlatformSupport::clipboardWriteImage(NativeImagePtr image,
     WebImage webImage(image);
 #endif
     webKitPlatformSupport()->clipboard()->writeImage(webImage, sourceURL, title);
+}
+
+void PlatformSupport::clipboardWriteDataObject(Clipboard* clipboard)
+{
+    WebDragData data = static_cast<ClipboardChromium*>(clipboard)->dataObject();
+    webKitPlatformSupport()->clipboard()->writeDataObject(data);
 }
 
 // Cookies --------------------------------------------------------------------

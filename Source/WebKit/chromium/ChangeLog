@@ -1,3 +1,15 @@
+2011-11-10  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Add plumbing for JS to write to clipboard in copy/cut events.
+        https://bugs.webkit.org/show_bug.cgi?id=71414
+
+        Reviewed by Darin Fisher.
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::writeDataObject):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::clipboardWriteDataObject):
+
 2011-11-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed.  Rolled DEPS.

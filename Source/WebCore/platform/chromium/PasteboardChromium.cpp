@@ -155,8 +155,9 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     PlatformSupport::clipboardWriteImage(bitmap, url, title);
 }
 
-void Pasteboard::writeClipboard(Clipboard*)
+void Pasteboard::writeClipboard(Clipboard* clipboard)
 {
+    PlatformSupport::clipboardWriteDataObject(clipboard);
 }
 
 bool Pasteboard::canSmartReplace()

@@ -1,5 +1,18 @@
 2011-11-10  Daniel Cheng  <dcheng@chromium.org>
 
+        [chromium] Add plumbing for JS to write to clipboard in copy/cut events.
+        https://bugs.webkit.org/show_bug.cgi?id=71414
+
+        Reviewed by Darin Fisher.
+
+        No new tests since no new functionality enabled yet.
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/chromium/PlatformSupport.h:
+
+2011-11-10  Daniel Cheng  <dcheng@chromium.org>
+
         Atomically update the system clipboard for copy/cut events
         https://bugs.webkit.org/show_bug.cgi?id=40515
 

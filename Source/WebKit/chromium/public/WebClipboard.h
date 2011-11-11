@@ -87,6 +87,7 @@ public:
         const WebURL&, const WebString& title) { }
     virtual void writeImage(
         const WebImage&, const WebURL&, const WebString& title) { }
+    virtual void writeDataObject(const WebDragData&) { }
 
 protected:
     ~WebClipboard() {}

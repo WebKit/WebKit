@@ -66,7 +66,7 @@ typedef struct HFONT__* HFONT;
 
 namespace WebCore {
 
-class ClipboardData;
+class Clipboard;
 class Color;
 class Cursor;
 class Document;
@@ -111,6 +111,7 @@ public:
     static void clipboardWritePlainText(const String&);
     static void clipboardWriteURL(const KURL&, const String&);
     static void clipboardWriteImage(NativeImagePtr, const KURL&, const String&);
+    static void clipboardWriteDataObject(Clipboard*);
 
     // Cookies ------------------------------------------------------------
     static void setCookies(const Document*, const KURL&, const String& value);
