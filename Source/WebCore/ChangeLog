@@ -1,3 +1,12 @@
+2011-11-11  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Andy Estes
+
+        100,000!
+        Congratulations WebKit, and here's to hundreds of thousands more!
+        
+        * ChangeLog: Point out revision 100,000.
+
 2011-11-11  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/71921> Remove use of strcpy in KURL
