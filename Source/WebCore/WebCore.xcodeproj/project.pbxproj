@@ -688,6 +688,7 @@
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
 		29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */; };
+		29CD61DE146D02890068E82A /* WebKitCSSShaderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B42157146976960087E604 /* WebKitCSSShaderValue.h */; };
 		29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */; };
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
@@ -1359,7 +1360,6 @@
 		501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 501BAAA813950E2C00F7ACEB /* WindRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
-		50B42158146976960087E604 /* WebKitCSSShaderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B42157146976960087E604 /* WebKitCSSShaderValue.h */; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
@@ -20534,7 +20534,6 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
-				50B42157146976960087E604 /* WebKitCSSShaderValue.h */,
 				AD03AAF81468453900A39B5B /* CSSValue.cpp */,
 				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
 				CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */,
@@ -20736,6 +20735,7 @@
 				498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */,
 				498391560F1E776900C23782 /* WebKitCSSMatrix.h */,
 				498391570F1E776900C23782 /* WebKitCSSMatrix.idl */,
+				50B42157146976960087E604 /* WebKitCSSShaderValue.h */,
 				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
 				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
 				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
@@ -24653,6 +24653,7 @@
 				974D2DA5146A535D00D51F8B /* SecurityPolicy.h in Headers */,
 				71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */,
 				31313F661443B35F006E2A90 /* FilterEffectRenderer.h in Headers */,
+				29CD61DE146D02890068E82A /* WebKitCSSShaderValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,13 @@
+2011-11-10  Andy Estes  <aestes@apple.com>
+
+        WebKitCSSShaderValue.h is not a member of the WebCore target
+        https://bugs.webkit.org/show_bug.cgi?id=72093
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj: Make WebKitCSSShaderValue.h a
+        member of the WebCore target, and make it a project header.
+
 2011-11-10  Dan Bernstein  <mitz@apple.com>
 
         Disabling assertions breaks the debug build
