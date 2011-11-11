@@ -185,10 +185,6 @@ bool ClipboardQt::setData(const String& type, const String& data)
         m_writableData->setData(QString(type), array);
     }
 
-#ifndef QT_NO_CLIPBOARD
-    if (isForCopyAndPaste())
-        QGuiApplication::clipboard()->setMimeData(m_writableData);
-#endif
     return true;
 }
 

@@ -105,6 +105,11 @@ void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
     }
 }
 
+void Pasteboard::writeClipboard(Clipboard*)
+{
+    notImplemented();
+}
+
 void Pasteboard::clear()
 {
     wxTheClipboard->Clear();

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "ClipboardGtk.h"
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
@@ -129,6 +130,13 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     dataObject->setImage(pixbuf.get());
 
     PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard);
+}
+
+void Pasteboard::writeClipboard(Clipboard* clipboard)
+{
+    GtkClipboard* gtkClipboard = static_cast<ClipboardGtk*>(clipboard)->clipboard();
+    if (gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(gtkClipboard);
 }
 
 void Pasteboard::clear()

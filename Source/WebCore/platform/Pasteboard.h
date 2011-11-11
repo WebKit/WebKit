@@ -73,6 +73,7 @@ extern NSString *WebURLPboardType;
 extern NSString *WebURLsWithTitlesPboardType;
 #endif
 
+class Clipboard;
 class DocumentFragment;
 class Frame;
 class HitTestResult;
@@ -102,6 +103,7 @@ public:
     void writeFileWrapperAsRTFDAttachment(NSFileWrapper*);
     String asURL(Frame*);
 #endif
+    void writeClipboard(Clipboard*);
     void clear();
     bool canSmartReplace();
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);

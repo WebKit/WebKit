@@ -446,11 +446,6 @@ bool Editor::tryDHTMLCopy()
     if (m_frame->selection()->isInPasswordField())
         return false;
 
-    if (canCopy())
-        // Must be done before oncopy adds types and data to the pboard,
-        // also done for security, as it erases data from the last copy/paste.
-        Pasteboard::generalPasteboard()->clear();
-
     return !dispatchCPPEvent(eventNames().copyEvent, ClipboardWritable);
 }
 
@@ -459,11 +454,6 @@ bool Editor::tryDHTMLCut()
     if (m_frame->selection()->isInPasswordField())
         return false;
     
-    if (canCut())
-        // Must be done before oncut adds types and data to the pboard,
-        // also done for security, as it erases data from the last copy/paste.
-        Pasteboard::generalPasteboard()->clear();
-
     return !dispatchCPPEvent(eventNames().cutEvent, ClipboardWritable);
 }
 
@@ -746,6 +736,11 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
     RefPtr<Event> evt = ClipboardEvent::create(eventType, true, true, clipboard);
     target->dispatchEvent(evt, ec);
     bool noDefaultProcessing = evt->defaultPrevented();
+    if (noDefaultProcessing && policy == ClipboardWritable) {
+        Pasteboard* pasteboard = Pasteboard::generalPasteboard();
+        pasteboard->clear();
+        pasteboard->writeClipboard(clipboard.get());
+    }
 
     // invalidate clipboard here for security
     clipboard->setAccessPolicy(ClipboardNumb);

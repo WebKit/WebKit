@@ -73,6 +73,7 @@ namespace WebCore {
         virtual bool hasData();
 
         PassRefPtr<DataObjectGtk> dataObject() { return m_dataObject; }
+        GtkClipboard* clipboard() { return m_clipboard; }
 
     private:
         ClipboardGtk(ClipboardAccessPolicy, GtkClipboard*, Frame*);

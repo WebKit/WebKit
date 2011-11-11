@@ -1,3 +1,54 @@
+2011-11-10  Daniel Cheng  <dcheng@chromium.org>
+
+        Atomically update the system clipboard for copy/cut events
+        https://bugs.webkit.org/show_bug.cgi?id=40515
+
+        Reviewed by David Levin.
+
+        This change consolidates the system pasteboard mutation logic into dispatchCPPEvent() rather
+        than having it scattered throughout tryDHTMLCopy/tryDHTMLCut and the various Clipboard*
+        classes. This allows us to ensure that the system pasteboard remains in a consistent state
+        even if there's an exception thrown during event handling, and it also lays the ground work
+        for allowing pages to prevent copy/cut without causing the system pasteboard to be cleared.
+
+        No new tests, since any layout test would be flaky since it would depend on and affect
+        global system state.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::tryDHTMLCopy): Move Pasteboard::clear() call to dispatchCPPEvent().
+        (WebCore::Editor::tryDHTMLCut): Ditto.
+        (WebCore::Editor::dispatchCPPEvent):
+        Only persist Clipboard mutations to the system pasteboard if the event was dispatched
+        successfully and default processing was prevented.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard):
+        When creating a Clipboard for copy/cut, back it with a unique instance of NSPasteboard to
+        buffer pasteboard mutations.
+        * platform/Pasteboard.h:
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/gtk/ClipboardGtk.cpp: Moved pasteboard writeback to PasteboardGtk.
+        (WebCore::ClipboardGtk::setData):
+        * platform/gtk/ClipboardGtk.h:
+        (WebCore::ClipboardGtk::clipboard):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeClipboard):
+        Implement logic to flush data from temporary NSPasteboard to system pasteboard.
+        * platform/gtk/ClipboardGtk.cpp: Moved pasteboard writeback to PasteboardQt.
+        (WebCore::ClipboardGtk::setData):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/wince/PasteboardWinCE.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeClipboard):
+
 2011-11-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableSection's recalcCell logic is doing too much work

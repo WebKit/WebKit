@@ -181,9 +181,6 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
         success = true;
     }
 
-    if (success && m_clipboard)
-        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
-
     return success;
 }
 

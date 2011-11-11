@@ -48,7 +48,8 @@ using namespace HTMLNames;
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    return ClipboardMac::create(Clipboard::CopyAndPaste, [NSPasteboard generalPasteboard], policy, frame);
+    return ClipboardMac::create(Clipboard::CopyAndPaste,
+        policy == ClipboardWritable ? [NSPasteboard pasteboardWithUniqueName] : [NSPasteboard generalPasteboard], policy, frame);
 }
 
 void Editor::showFontPanel()

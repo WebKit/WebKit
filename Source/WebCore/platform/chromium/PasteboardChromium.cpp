@@ -155,6 +155,10 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     PlatformSupport::clipboardWriteImage(bitmap, url, title);
 }
 
+void Pasteboard::writeClipboard(Clipboard*)
+{
+}
+
 bool Pasteboard::canSmartReplace()
 {
     return PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::WebSmartPasteFormat, m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "ClipboardQt.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "Frame.h"
@@ -169,6 +170,13 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     if (!pixmap)
         return;
     QGuiApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
+#endif
+}
+
+void Pasteboard::writeClipboard(Clipboard* clipboard)
+{
+#ifndef QT_NO_CLIPBOARD
+    QGuiApplication::clipboard()->setMimeData(static_cast<ClipboardQt*>(clipboard)->clipboardData());
 #endif
 }
 
