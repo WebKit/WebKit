@@ -1,3 +1,11 @@
+2011-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        100,000 !!!
+
+        Reviewed by Zoltan Herczeg.
+
+        * ChangeLog: Point out revision 100,000.
+
 2011-08-25  Alexey Proskuryakov  <ap@apple.com>
 
         Fix build when GCC 4.2 is not installed.
