@@ -1120,7 +1120,7 @@ WebInspector.NetworkLogView.prototype = {
                 node.reveal();
             this._currentMatchedResourceIndex = matchedResourceIndex;
         }
-        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._currentMatchedResourceIndex + 1);
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._currentMatchedResourceIndex);
     },
 
     performSearch: function(searchQuery, sortOrFilterApplied)

@@ -62,6 +62,7 @@
 #include "HitTestResult.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
@@ -95,6 +96,9 @@ namespace WebCore {
 namespace DOMAgentState {
 static const char documentRequested[] = "documentRequested";
 };
+
+static const size_t maxTextSize = 10000;
+static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
 static Color parseColor(const RefPtr<InspectorObject>* colorObject)
 {
@@ -146,7 +150,7 @@ protected:
             resultCollector.add(nodes->item(i));
     }
 
-    RefPtr<Document> m_document;
+    Document* m_document;
     String m_query;
 };
 
@@ -234,7 +238,7 @@ public:
             return;
 
         ExceptionCode ec = 0;
-        RefPtr<XPathResult> result = m_document->evaluate(m_query, m_document.get(), 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
+        RefPtr<XPathResult> result = m_document->evaluate(m_query, m_document, 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
         if (ec || !result)
             return;
 
@@ -295,7 +299,6 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, I
     , m_frontend(0)
     , m_domListener(0)
     , m_lastNodeId(1)
-    , m_matchJobsTimer(this, &InspectorDOMAgent::onMatchJobsTimer)
     , m_searchingForNode(false)
 {
 }
@@ -359,7 +362,7 @@ Node* InspectorDOMAgent::highlightedNode() const
 void InspectorDOMAgent::reset()
 {
     ErrorString error;
-    cancelSearch(&error);
+    m_searchResults.clear();
     discardBindings();
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
@@ -896,7 +899,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
     }
 }
 
-void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, const bool* const runSynchronously)
+void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount)
 {
     // FIXME: Few things are missing here:
     // 1) Search works with node granularity - number of matches within node is not calculated.
@@ -922,31 +925,29 @@ void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespa
     String escapedTagNameQuery = tagNameQuery;
     escapedTagNameQuery.replace("'", "\\'");
 
-    // Clear pending jobs.
-    cancelSearch(error);
-
     // Find all frames, iframes and object elements to search their documents.
     Vector<Document*> docs = documents();
+    Vector<MatchJob*> matchJobs;
     for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
         Document* document = *it;
 
         if (!tagNameQuery.isEmpty() && startTagFound && endTagFound) {
-            m_pendingMatchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
-            m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
+            matchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
+            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
             continue;
         }
 
         if (!tagNameQuery.isEmpty() && startTagFound) {
-            m_pendingMatchJobs.append(new MatchXPathJob(document, "//*[starts-with(name(), '" + escapedTagNameQuery + "')]"));
-            m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
+            matchJobs.append(new MatchXPathJob(document, "//*[starts-with(name(), '" + escapedTagNameQuery + "')]"));
+            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
             continue;
         }
 
         if (!tagNameQuery.isEmpty() && endTagFound) {
             // FIXME: we should have a matchEndOfTagNames search function if endTagFound is true but not startTagFound.
             // This requires ends-with() support in XPath, WebKit only supports starts-with() and contains().
-            m_pendingMatchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
-            m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
+            matchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
+            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
             continue;
         }
 
@@ -954,42 +955,58 @@ void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespa
         if (matchesEveryNode) {
             // These queries will match every node. Matching everything isn't useful and can be slow for large pages,
             // so limit the search functions list to plain text and attribute matching for these.
-            m_pendingMatchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
-            m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
+            matchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
+            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
             continue;
         }
 
-        m_pendingMatchJobs.append(new MatchExactIdJob(document, whitespaceTrimmedQuery));
-        m_pendingMatchJobs.append(new MatchExactClassNamesJob(document, whitespaceTrimmedQuery));
-        m_pendingMatchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
-        m_pendingMatchJobs.append(new MatchQuerySelectorAllJob(document, "[" + attributeNameQuery + "]"));
-        m_pendingMatchJobs.append(new MatchQuerySelectorAllJob(document, whitespaceTrimmedQuery));
-        m_pendingMatchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
+        matchJobs.append(new MatchExactIdJob(document, whitespaceTrimmedQuery));
+        matchJobs.append(new MatchExactClassNamesJob(document, whitespaceTrimmedQuery));
+        matchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
+        matchJobs.append(new MatchQuerySelectorAllJob(document, "[" + attributeNameQuery + "]"));
+        matchJobs.append(new MatchQuerySelectorAllJob(document, whitespaceTrimmedQuery));
+        matchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
         if (!tagNameQuery.isEmpty())
-            m_pendingMatchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
-        m_pendingMatchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-        m_pendingMatchJobs.append(new MatchXPathJob(document, whitespaceTrimmedQuery));
+            matchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
+        matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
+        matchJobs.append(new MatchXPathJob(document, whitespaceTrimmedQuery));
     }
 
-    if (runSynchronously && *runSynchronously) {
-        // For tests.
-        ListHashSet<Node*> resultCollector;
-        for (Deque<MatchJob*>::iterator it = m_pendingMatchJobs.begin(); it != m_pendingMatchJobs.end(); ++it)
-            (*it)->match(resultCollector);
-        reportNodesAsSearchResults(resultCollector);
-        cancelSearch(error);
-        return;
-    }
-    m_matchJobsTimer.startOneShot(0);
+    ListHashSet<Node*> resultCollector;
+    for (Vector<MatchJob*>::iterator it = matchJobs.begin(); it != matchJobs.end(); ++it)
+        (*it)->match(resultCollector);
+    deleteAllValues(matchJobs);
+
+    *searchId = IdentifiersFactory::createIdentifier();
+    SearchResults::iterator resultsIt = m_searchResults.add(*searchId, Vector<RefPtr<Node> >()).first;
+
+    for (ListHashSet<Node*>::iterator it = resultCollector.begin(); it != resultCollector.end(); ++it)
+        resultsIt->second.append(*it);
+
+    *resultCount = resultsIt->second.size();
 }
 
-void InspectorDOMAgent::cancelSearch(ErrorString*)
+void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<InspectorArray>* nodeIds)
 {
-    if (m_matchJobsTimer.isActive())
-        m_matchJobsTimer.stop();
-    deleteAllValues(m_pendingMatchJobs);
-    m_pendingMatchJobs.clear();
-    m_searchResults.clear();
+    SearchResults::iterator it = m_searchResults.find(searchId);
+    if (it == m_searchResults.end()) {
+        *errorString = "No search session with given id found";
+        return;
+    }
+
+    int size = it->second.size();
+    if (fromIndex < 0 || toIndex > size || fromIndex >= toIndex) {
+        *errorString = "Invalid search result range";
+        return;
+    }
+
+    for (int i = fromIndex; i < toIndex; ++i)
+        (*nodeIds)->pushNumber(pushNodePathToFrontend((it->second)[i].get()));
+}
+
+void InspectorDOMAgent::discardSearchResults(ErrorString*, const String& searchId)
+{
+    m_searchResults.remove(searchId);
 }
 
 bool InspectorDOMAgent::handleMousePress()
@@ -1232,6 +1249,10 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         case Node::COMMENT_NODE:
         case Node::CDATA_SECTION_NODE:
             nodeValue = node->nodeValue();
+            if (nodeValue.length() > maxTextSize) {
+                nodeValue = nodeValue.left(maxTextSize);
+                nodeValue.append(ellipsisUChar);
+            }
             break;
         case Node::ATTRIBUTE_NODE:
             localName = node->localName();
@@ -1573,36 +1594,6 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
         node = child;
     }
     return node;
-}
-
-void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)
-{
-    if (!m_pendingMatchJobs.size()) {
-        ErrorString error;
-        cancelSearch(&error);
-        return;
-    }
-
-    ListHashSet<Node*> resultCollector;
-    MatchJob* job = m_pendingMatchJobs.takeFirst();
-    job->match(resultCollector);
-    delete job;
-
-    reportNodesAsSearchResults(resultCollector);
-
-    m_matchJobsTimer.startOneShot(0.025);
-}
-
-void InspectorDOMAgent::reportNodesAsSearchResults(ListHashSet<Node*>& resultCollector)
-{
-    RefPtr<InspectorArray> nodeIds = InspectorArray::create();
-    for (ListHashSet<Node*>::iterator it = resultCollector.begin(); it != resultCollector.end(); ++it) {
-        if (m_searchResults.contains(*it))
-            continue;
-        m_searchResults.add(*it);
-        nodeIds->pushNumber(pushNodePathToFrontend(*it));
-    }
-    m_frontend->searchResults(nodeIds.release());
 }
 
 void InspectorDOMAgent::copyNode(ErrorString*, int nodeId)

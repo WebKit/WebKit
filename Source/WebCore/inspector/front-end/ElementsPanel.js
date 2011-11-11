@@ -252,7 +252,7 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
 
         delete this._currentSearchResultIndex;
-        this._searchResults = [];
+        delete this._searchResults;
         WebInspector.domAgent.cancelSearch();
     },
 
@@ -265,11 +265,22 @@ WebInspector.ElementsPanel.prototype = {
         if (!whitespaceTrimmedQuery.length)
             return;
 
-        this._updatedMatchCountOnce = false;
-        this._matchesCountUpdateTimeout = null;
         this._searchQuery = query;
 
-        WebInspector.domAgent.performSearch(whitespaceTrimmedQuery, this._addNodesToSearchResult.bind(this));
+        /**
+         * @param {number} resultCount
+         */
+        function resultCountCallback(resultCount)
+        {
+            WebInspector.searchController.updateSearchMatchesCount(resultCount, this);
+            if (!resultCount)
+                return;
+
+            this._searchResults = new Array(resultCount);
+            this._currentSearchResultIndex = -1;
+            this.jumpToNextSearchResult();
+        }
+        WebInspector.domAgent.performSearch(whitespaceTrimmedQuery, resultCountCallback.bind(this));
     },
 
     _contextMenuEventFired: function(event)
@@ -322,70 +333,55 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    _updateMatchesCount: function()
-    {
-        WebInspector.searchController.updateSearchMatchesCount(this._searchResults.length, this);
-        this._matchesCountUpdateTimeout = null;
-        this._updatedMatchCountOnce = true;
-    },
-
-    _updateMatchesCountSoon: function()
-    {
-        if (!this._updatedMatchCountOnce)
-            return this._updateMatchesCount();
-        if (this._matchesCountUpdateTimeout)
-            return;
-        // Update the matches count every half-second so it doesn't feel twitchy.
-        this._matchesCountUpdateTimeout = setTimeout(this._updateMatchesCount.bind(this), 500);
-    },
-
-    _addNodesToSearchResult: function(nodeIds)
-    {
-        if (!nodeIds.length)
-            return;
-
-        var oldSearchResultIndex = this._currentSearchResultIndex;
-        for (var i = 0; i < nodeIds.length; ++i) {
-            var nodeId = nodeIds[i];
-            var node = WebInspector.domAgent.nodeForId(nodeId);
-            if (!node)
-                continue;
-
-            this._currentSearchResultIndex = 0;
-            this._searchResults.push(node);
-        }
-
-        // Avoid invocations of highlighting for every chunk of nodeIds.
-        if (oldSearchResultIndex !== this._currentSearchResultIndex)
-            this._highlightCurrentSearchResult();
-        this._updateMatchesCountSoon();
-    },
-
     jumpToNextSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
+        if (!this._searchResults)
             return;
 
+        this._hideSearchHighlights();
         if (++this._currentSearchResultIndex >= this._searchResults.length)
             this._currentSearchResultIndex = 0;
-        this._highlightCurrentSearchResult();
+            
+        this._highlightCurrentSearchResult(true);
     },
 
     jumpToPreviousSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
+        if (!this._searchResults)
             return;
 
+        this._hideSearchHighlights();
         if (--this._currentSearchResultIndex < 0)
             this._currentSearchResultIndex = (this._searchResults.length - 1);
-        this._highlightCurrentSearchResult();
+
+        this._highlightCurrentSearchResult(false);
     },
 
     _highlightCurrentSearchResult: function()
     {
-        this._hideSearchHighlights();
-        var node = this._searchResults[this._currentSearchResultIndex];
-        var treeElement = this.treeOutline.findTreeElement(node);
+        var index = this._currentSearchResultIndex;
+        var searchResults = this._searchResults;
+        var searchResult = searchResults[index];
+
+        if (searchResult === null) {
+            WebInspector.searchController.updateCurrentMatchIndex(index, this);
+            return;
+        }
+
+        if (typeof searchResult === "undefined") {
+            // No data for slot, request it.
+            function callback(node)
+            {
+                searchResults[index] = node || null;
+                this._highlightCurrentSearchResult();
+            }
+            WebInspector.domAgent.searchResult(index, callback.bind(this));
+            return;
+        }
+
+        WebInspector.searchController.updateCurrentMatchIndex(index, this);
+
+        var treeElement = this.treeOutline.findTreeElement(searchResult);
         if (treeElement) {
             treeElement.highlightSearchResults(this._searchQuery);
             treeElement.reveal();
@@ -394,12 +390,14 @@ WebInspector.ElementsPanel.prototype = {
 
     _hideSearchHighlights: function()
     {
-        for (var i = 0; this._searchResults && i < this._searchResults.length; ++i) {
-            var node = this._searchResults[i];
-            var treeElement = this.treeOutline.findTreeElement(node);
-            if (treeElement)
-                treeElement.hideSearchHighlights();
-        }
+        if (!this._searchResults)
+            return;
+        var searchResult = this._searchResults[this._currentSearchResultIndex];
+        if (!searchResult)
+            return;
+        var treeElement = this.treeOutline.findTreeElement(searchResult);
+        if (treeElement)
+            treeElement.hideSearchHighlights();
     },
 
     selectedDOMNode: function()

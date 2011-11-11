@@ -164,13 +164,13 @@ WebInspector.SearchController.prototype = {
 
         if (matches) {
             if (matches === 1) {
-                if (currentMatchIndex === 1)
+                if (currentMatchIndex === 0)
                     var matchesString = WebInspector.UIString("1 of 1 match");
                 else
                     var matchesString = WebInspector.UIString("1 match");
             } else {
-                if (currentMatchIndex)
-                    var matchesString = WebInspector.UIString("%d of %d matches", currentMatchIndex, matches);
+                if (typeof currentMatchIndex === "number")
+                    var matchesString = WebInspector.UIString("%d of %d matches", currentMatchIndex + 1, matches);
                 else
                     var matchesString = WebInspector.UIString("%d matches", matches);
             }

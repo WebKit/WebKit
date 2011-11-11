@@ -832,19 +832,59 @@ WebInspector.DOMAgent.prototype = {
 
     /**
      * @param {string} query
-     * @param {function(Array.<DOMAgent.Node>)} searchResultCollector
-     * @param {boolean=} searchSynchronously
+     * @param {function(number)} searchCallback
      */
-    performSearch: function(query, searchResultCollector, searchSynchronously)
+    performSearch: function(query, searchCallback)
     {
-        this._searchResultCollector = searchResultCollector;
-        DOMAgent.performSearch(query, !!searchSynchronously);
+        this.cancelSearch();
+
+        /**
+         * @param {?Protocol.Error} error
+         * @param {string} searchId
+         * @param {number} resultsCount
+         */
+        function callback(error, searchId, resultsCount)
+        {
+            this._searchId = searchId;
+            searchCallback(resultsCount);
+        }
+        DOMAgent.performSearch(query, callback.bind(this));
+    },
+
+    /**
+     * @param {number} index
+     * @param {?function(DOMAgent.Node)} callback
+     */
+    searchResult: function(index, callback)
+    {
+        if (this._searchId) {
+            /**
+             * @param {?Protocol.Error} error
+             * @param {Array.<number>} nodeIds
+             */
+            function mycallback(error, nodeIds)
+            {
+                if (error) {
+                    console.error(error);
+                    callback(null);
+                    return;
+                }
+                if (nodeIds.length != 1)
+                    return;
+
+                callback(this._idToDOMNode[nodeIds[0]]);
+            }
+            DOMAgent.getSearchResults(this._searchId, index, index + 1, mycallback.bind(this));
+        } else
+            callback(null);
     },
 
     cancelSearch: function()
     {
-        delete this._searchResultCollector;
-        DOMAgent.cancelSearch();
+        if (this._searchId) {
+            DOMAgent.discardSearchResults(this._searchId);
+            delete this._searchId;
+        }
     },
 
     /**
@@ -1020,15 +1060,6 @@ WebInspector.DOMDispatcher.prototype = {
     childNodeRemoved: function(parentNodeId, nodeId)
     {
         this._domAgent._childNodeRemoved(parentNodeId, nodeId);
-    },
-
-    /**
-     * @param {Array.<DOMAgent.NodeId>} nodeIds
-     */
-    searchResults: function(nodeIds)
-    {
-        if (this._domAgent._searchResultCollector)
-            this._domAgent._searchResultCollector(nodeIds);
     }
 }
 

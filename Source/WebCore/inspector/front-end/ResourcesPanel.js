@@ -743,7 +743,7 @@ WebInspector.ResourcesPanel.prototype = {
                 return; // User has selected another view while we were searching.
             if (this._lastSearchResultIndex != -1)
                 this.visibleView.jumpToSearchResult(this._lastSearchResultIndex);
-            WebInspector.searchController.updateCurrentMatchIndex(searchResult.currentMatchIndex, this);
+            WebInspector.searchController.updateCurrentMatchIndex(searchResult.currentMatchIndex - 1, this);
         }
 
         // Then run SourceFrame search if needed and jump to search result index when done.

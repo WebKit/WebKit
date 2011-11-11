@@ -7,56 +7,73 @@ function test()
 {
     WebInspector.showPanel("elements");
 
-    var searchResults = [];
-    function addSearchResult(error, markupValue)
+    function searchCallback(next, resultCount)
     {
-        if (error)
-            return;
+        for (var i = 0; i < resultCount; ++i)
+            WebInspector.domAgent.searchResult(i, searchResultCallback.bind(this, i + 1 === resultCount));
 
-        if (markupValue.indexOf("ter" + "mi" + "nator") !== -1) {
-            InspectorTest.addResult("====================================");
-            InspectorTest.addResult("Results:");
-            InspectorTest.addResults(searchResults);
-            InspectorTest.completeTest();
-            return;
-         }
-        searchResults.push(markupValue);
-    }
+        function searchResultCallback(isLastItem, node)
+        {
+            node.getOuterHTML(addSearchResult.bind(this, isLastItem));
+        }
 
-    function addNodesToSearchResult(nodeIds)
-    {
-        for (var i = 0; i < nodeIds.length; ++i) {
-            var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
-            if (node.nodeType() === Node.TEXT_NODE)
-                searchResults.push(node.nodeValue());
-            else
-                node.getOuterHTML(addSearchResult);
+        function addSearchResult(isLastItem, error, markupValue)
+        {
+            InspectorTest.addResult(markupValue.split("").join(" "));
+            if (isLastItem) {
+                WebInspector.domAgent.cancelSearch();
+                next();
+            }
         }
     }
 
-    WebInspector.domAgent.requestDocument(step1);
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            WebInspector.domAgent.requestDocument(next);
+        },
 
-    function step1()
-    {
-        // Plain text.
-        WebInspector.domAgent.performSearch("Foo" + "Bar", addNodesToSearchResult, true);
-        // Partial text.
-        WebInspector.domAgent.performSearch("oo" + "Ba", addNodesToSearchResult, true);
-        // Start tag.
-        WebInspector.domAgent.performSearch("<inpu" + "t", addNodesToSearchResult, true);
-        // Partial tag.
-        WebInspector.domAgent.performSearch("npu" + "t", addNodesToSearchResult, true);
-        // Exact attribute name.
-        WebInspector.domAgent.performSearch("valu" + "e", addNodesToSearchResult, true);
-        // Exact attribute val<>ue.
-        WebInspector.domAgent.performSearch("In" + "putVa" + "l", addNodesToSearchResult, true);
-        // Partial attribute val<>ue.
-        WebInspector.domAgent.performSearch("n" + "putVa" + "l", addNodesToSearchResult, true);
-        // XPath attribute.
-        WebInspector.domAgent.performSearch("//html" + "//@attr", addNodesToSearchResult, true);
-        // Terminator.
-        WebInspector.domAgent.performSearch("ter" + "mi" + "nator", addNodesToSearchResult, true);
-    }
+        function testPlainText(next)
+        {
+            WebInspector.domAgent.performSearch("Foo" + "Bar", searchCallback.bind(this, next));
+        },
+
+        function testPartialText(next)
+        {
+            WebInspector.domAgent.performSearch("oo" + "Ba", searchCallback.bind(this, next));
+        },
+
+        function testStartTag(next)
+        {
+            WebInspector.domAgent.performSearch("<inpu" + "t", searchCallback.bind(this, next));
+        },
+
+        function testPartialTag(next)
+        {
+            WebInspector.domAgent.performSearch("npu" + "t", searchCallback.bind(this, next));
+        },
+
+        function testExactAttributeName(next)
+        {
+            WebInspector.domAgent.performSearch("valu" + "e", searchCallback.bind(this, next));
+        },
+
+        function testExactAttributeVal_ue(next)
+        {
+            WebInspector.domAgent.performSearch("In" + "putVa" + "l", searchCallback.bind(this, next));
+        },
+
+        function testPartialAttributeVal_ue(next)
+        {
+            WebInspector.domAgent.performSearch("n" + "putVa" + "l", searchCallback.bind(this, next));
+        },
+
+        function testXPathAttribute(next)
+        {
+            WebInspector.domAgent.performSearch("//html" + "//@attr", searchCallback.bind(this, next));
+        }
+    ]);
+
 }
 </script>
 </head>

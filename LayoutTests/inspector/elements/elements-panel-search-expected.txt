@@ -2,14 +2,30 @@ Tests that elements panel search is returning proper results.
 
 FooBar
 
-====================================
-Results:
-FooBar
-FooBar
-<input value="InputVal">
-<input value="InputVal">
-<input value="InputVal">
-<input value="InputVal">
-<input value="InputVal">
-<div attr="foo"></div>
+
+Running: testSetUp
+
+Running: testPlainText
+F o o B a r
+
+Running: testPartialText
+F o o B a r
+
+Running: testStartTag
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testPartialTag
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testExactAttributeName
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testExactAttributeVal_ue
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testPartialAttributeVal_ue
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testXPathAttribute
+< d i v   a t t r = " f o o " > < / d i v >
 

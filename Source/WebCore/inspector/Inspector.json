@@ -1208,15 +1208,34 @@
             {
                 "name": "performSearch",
                 "parameters": [
-                    { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
-                    { "name": "runSynchronously", "type": "boolean", "optional": true, "description": "When set to true, performing search synchronously (can block user interaction)." }
+                    { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." }
                 ],
-                "description": "Starts asynchronous search for a given string in the DOM tree. Use <code>cancelSearch</code> to stop given asynchronous search task.",
+                "returns": [
+                    { "name": "searchId", "type": "string", "description": "Unique search session identifier." },
+                    { "name": "resultCount", "type": "integer", "description": "Number of search results." }
+                ],
+                "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session.",
                 "hidden": true
             },
             {
-                "name": "cancelSearch",
-                "description": "Cancels asynchronous search started with <code>performSearch</code>.",
+                "name": "getSearchResults",
+                "parameters": [
+                    { "name": "searchId", "type": "string", "description": "Unique search session identifier." },
+                    { "name": "fromIndex", "type": "integer", "description": "Start index of the search result to be returned." },
+                    { "name": "toIndex", "type": "integer", "description": "End index of the search result to be returned." }
+                ],
+                "returns": [
+                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the search result nodes." }
+                ],
+                "description": "Returns search results from given <code>fromIndex</code> to given <code>toIndex</code> from the sarch with the given identifier.",
+                "hidden": true
+            },
+            {
+                "name": "discardSearchResults",
+                "parameters": [
+                    { "name": "searchId", "type": "string", "description": "Unique search session identifier." }
+                ],
+                "description": "Discards search results from the session with the given id. <code>getSearchResults</code> should no longer be called for that search.",
                 "hidden": true
             },
             {
@@ -1387,14 +1406,6 @@
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has been removed." }
                 ],
                 "description": "Mirrors <code>DOMNodeRemoved</code> event."
-            },
-            {
-                "name": "searchResults",
-                "parameters": [
-                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the search result nodes." }
-                ],
-                "description": "Pushes search results initiated using <code>performSearch</code> to the client.",
-                "hidden": true
             }
         ]
     },

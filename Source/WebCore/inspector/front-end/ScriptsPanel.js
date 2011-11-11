@@ -1113,7 +1113,7 @@ WebInspector.ScriptsPanel.prototype = {
 
             WebInspector.searchController.updateSearchMatchesCount(searchMatches, this);
             view.jumpToFirstSearchResult();
-            WebInspector.searchController.updateCurrentMatchIndex(view.currentSearchResultIndex + 1, this);
+            WebInspector.searchController.updateCurrentMatchIndex(view.currentSearchResultIndex, this);
         }
 
         this._searchView.performSearch(query, finishedCallback.bind(this));
@@ -1133,7 +1133,7 @@ WebInspector.ScriptsPanel.prototype = {
             this._searchView.jumpToFirstSearchResult();
         else
             this._searchView.jumpToNextSearchResult();
-        WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex + 1, this);
+        WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
     },
 
     jumpToPreviousSearchResult: function()
@@ -1152,7 +1152,7 @@ WebInspector.ScriptsPanel.prototype = {
             this._searchView.jumpToLastSearchResult();
         else
             this._searchView.jumpToPreviousSearchResult();
-        WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex + 1, this);
+        WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
     },
 
     _toggleFormatSource: function()
