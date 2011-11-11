@@ -271,8 +271,6 @@ namespace JSC {
 
         virtual bool shouldInterruptScript() const { return true; }
 
-        virtual bool allowsAccessFrom(const JSGlobalObject*) const { return true; }
-
         bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }

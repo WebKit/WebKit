@@ -1,3 +1,21 @@
+2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize JSGlobalObject::allowsAccessFrom
+        https://bugs.webkit.org/show_bug.cgi?id=71969
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        Since allowsAccessFrom is only used by WebScriptObject, we know that we'll always have a 
+        JSDOMWindowBase, so we can simply have allowsAccessFrom to live in JSDOMWindowBase rather 
+        than JSGlobalObject.
+
+        * bindings/js/JSDOMWindowBase.h: De-virtualized allowsAccessFrom.
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _isSafeScript]): Added a cast from a JSGlobalObject to a JSDOMWindowBase in 
+        order to call the allowsAccessFrom method.
+
 2011-11-11  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Support attributeFilter for attribute mutations
