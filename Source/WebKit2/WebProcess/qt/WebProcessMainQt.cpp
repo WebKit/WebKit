@@ -38,10 +38,6 @@
 #include <QUrl>
 #include <QtGlobal>
 
-#if USE(MEEGOTOUCH)
-#include <MComponentData>
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "WebGraphicsLayer.h"
 #endif
@@ -163,10 +159,6 @@ Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
         qDebug() << "Waiting 3 seconds for debugger";
         sleep(3);
     }
-#endif
-
-#if USE(MEEGOTOUCH)
-    new MComponentData(argc, argv);
 #endif
 
     initializeProxy();
