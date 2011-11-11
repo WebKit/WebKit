@@ -19,7 +19,9 @@ include(WebKit/qt/docs/docs.pri)
 
 SUBDIRS += WebKit/qt/declarative
 haveQt(5) {
-    SUBDIRS += WebKit/qt/declarative/private
+    !no_webkit2 {
+        SUBDIRS += WebKit/qt/declarative/private
+    }
 }
 
 tests.file = tests.pri

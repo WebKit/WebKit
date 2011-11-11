@@ -1,5 +1,14 @@
 2011-11-11  Alexis Menard  <alexis.menard@openbossa.org>
 
+        [Qt] Build fix of the private QML module with --no-webkit2.
+        https://bugs.webkit.org/show_bug.cgi?id=67707
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/QtWebKit.pro:
+
+2011-11-11  Alexis Menard  <alexis.menard@openbossa.org>
+
         [Qt] Add a way to have experimental features in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=67707
 
