@@ -1,3 +1,16 @@
+2011-11-11  Timothy Hatcher  <timothy@apple.com>
+
+        Only use the textured window style mask when there is no override inspector page.
+
+        https://webkit.org/b/72142
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformOpen): Don't set NSTexturedBackgroundWindowMask if
+        there is an override inspector page. Make setAutorecalculatesContentBorderThickness:,
+        setContentBorderThickness: and WKNSWindowMakeBottomCornersSquare conditional.
+
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove dead MeeGoTouch code.
