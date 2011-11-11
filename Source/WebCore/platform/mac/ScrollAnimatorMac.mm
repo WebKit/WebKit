@@ -711,10 +711,12 @@ void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoin
 
 void ScrollAnimatorMac::notifyPositionChanged()
 {
-    if (!scrollableArea()->isOnActivePage())
-        return;
 #if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() contentAreaScrolled];
+    // This function is called when a page is going into the page cache, but the page 
+    // isn't really scrolling in that case. We should only pass the message on to the
+    // ScrollbarPainterController when we're really scrolling on an active page.
+    if (scrollableArea()->isOnActivePage())
+        [m_scrollbarPainterController.get() contentAreaScrolled];
 #endif
     ScrollAnimator::notifyPositionChanged();
 }
