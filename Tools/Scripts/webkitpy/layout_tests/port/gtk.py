@@ -44,7 +44,7 @@ _log = logging.getLogger(__name__)
 
 
 class GtkDriver(WebKitDriver):
-    def start(self):
+    def _start(self):
         display_id = self._worker_number + 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
