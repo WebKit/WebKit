@@ -1,3 +1,11 @@
+2011-11-11  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: roll out changes to InspectorDOMAgent that squeezed into 99933.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::MatchJob::MatchJob):
+        (WebCore::InspectorDOMAgent::onMatchJobsTimer):
+
 2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Metrics] Editor is committed when scrolling a content box dimension up/down for the first time
