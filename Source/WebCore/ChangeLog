@@ -1,3 +1,127 @@
+2011-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement TextTrackList and the textTracks attribute of HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=71123
+
+        Reviewed by Sam Weinig.
+
+        Test: media/track/track-add-track.html
+              media/track/tracklist-is-reachable.html
+
+        * CMakeLists.txt: Add new files for TextTrackList.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSTextTrackListCustom.cpp: Added.
+        (WebCore::JSTextTrackListOwner::isReachableFromOpaqueRoots):
+
+        * dom/EventTargetFactory.in: Add TextTrackList, conditional on VIDEO_TRACK.
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForJSConstructor): Update for scheduleLoad change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Update for m_textTracks change from
+            generic Vector to TextTrackList.
+        (WebCore::HTMLMediaElement::attributeChanged): Ditto.
+        (WebCore::HTMLMediaElement::insertedIntoDocument): Update for scheduleLoad change.
+        (WebCore::HTMLMediaElement::scheduleLoad): Add a parameter so caller can specify if
+            the main resource or a text track should be loaded.
+        (WebCore::HTMLMediaElement::loadTimerFired): Update to allow text track loading.
+        (WebCore::HTMLMediaElement::loadInternal): Don't call loadTextTracks.
+        (WebCore::HTMLMediaElement::isSafeToLoadURL): Log when CSP denies load.
+        (WebCore::HTMLMediaElement::playInternal): Update for scheduleLoad change.
+        (WebCore::HTMLMediaElement::pauseInternal): Ditto.
+        (WebCore::HTMLMediaElement::addTrack): Update for m_textTracks change from
+            generic Vector to TextTrackList.
+        (WebCore::HTMLMediaElement::addTextTrack): New, add track to m_textTracks and configure.
+        (WebCore::HTMLMediaElement::configureTextTracks): New, add comments about what this should
+            do eventually.
+        (WebCore::HTMLMediaElement::textTracks): New, return TextTrackList.
+        (WebCore::HTMLMediaElement::trackWasAdded): Bail if runtime feature is not enabled, schedule
+            asynchronous text track load.
+        (WebCore::HTMLMediaElement::trackWillBeRemoved): Minor cleanup.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Ditto.
+        (WebCore::HTMLMediaElement::sourceWasAdded): Update for scheduleLoad change.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl: Add textTracks attribute.
+
+        * html/HTMLTrackElement.cpp: 
+        (WebCore::HTMLTrackElement::insertedIntoTree): Use new mediaElement() method.
+        (WebCore::HTMLTrackElement::willRemove): Ditto.
+        (WebCore::HTMLTrackElement::attributeChanged): When 'src' is changed, call scheduleLoad
+            instead of HTMLMediaElement
+        (WebCore::HTMLTrackElement::isDefault): hasAttribute -> fastHasAttribute.
+        (WebCore::HTMLTrackElement::track): Allocate track if necessary.
+        (WebCore::HTMLTrackElement::scheduleLoad): New, tell the track to schedule a load.
+        (WebCore::HTMLTrackElement::canLoadUrl): New, check security policy to see if it is OK
+            to load a text track. If so, dispatch 'beforeload' event to give it a chance to disallow
+            load.
+        (WebCore::HTMLTrackElement::loadingCompleted): Renamed from textTrackLoadingCompleted.
+        (WebCore::HTMLTrackElement::textTrackReadyStateChanged): New, TextTrackLoadingClient interface
+            used to inform parent of TextTrack state changes.
+        (WebCore::HTMLTrackElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLTrackElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLTrackElement::textTrackRemoveCues): Ditto.
+        (WebCore::HTMLTrackElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLTrackElement::textTrackRemoveCue): Ditto.
+        (WebCore::HTMLTrackElement::mediaElement): New, return parent element.
+        * html/HTMLTrackElement.h:
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack): Initialize new instance variables.
+        (WebCore::LoadableTextTrack::scheduleLoad): New, prime a timer to kick off loading.
+        (WebCore::LoadableTextTrack::loadTimerFired): Cancel current load, if any, check to see if
+            new url is allowed to load, and start new load.
+        (WebCore::LoadableTextTrack::cueLoadingCompleted): 
+        * html/LoadableTextTrack.h:
+        (WebCore::LoadableTextTrackClient::~LoadableTextTrackClient): TextTrackLoadingClient -> LoadableTextTrackClient
+        (WebCore::LoadableTextTrackClient::canLoadUrl): 
+        (WebCore::LoadableTextTrackClient::loadingCompleted):
+        (WebCore::LoadableTextTrack::create):
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): setClient(0) -> clearClient().
+        * html/TextTrack.h:
+        (WebCore::TextTrack::clearClient): Renamed from setClient, because it is only used to clear the client pointer.
+
+        * html/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::add): Get rid of a compiler warning that breaks the OS X build.
+
+        * html/track/TextTrackList.cpp: Added. Implement the TextTrackList object.
+        (TextTrackList::TextTrackList):
+        (TextTrackList::~TextTrackList):
+        (TextTrackList::length):
+        (TextTrackList::item):
+        (TextTrackList::append):
+        (TextTrackList::remove):
+        (TextTrackList::interfaceName):
+        (TextTrackList::scheduleAddTrackEvent):
+        (TextTrackList::asyncEventTimerFired):
+        * html/track/TextTrackList.h: Added.
+        (WebCore::TextTrackList::create):
+        (WebCore::TextTrackList::scriptExecutionContext):
+        (WebCore::TextTrackList::clearOwner):
+        (WebCore::TextTrackList::owner):
+        (WebCore::TextTrackList::refEventTarget):
+        (WebCore::TextTrackList::derefEventTarget):
+        (WebCore::TextTrackList::eventTargetData):
+        (WebCore::TextTrackList::ensureEventTargetData):
+        * html/track/TextTrackList.idl: Added.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::cancelLoad): New, cancel pending or in progress load and delete loader.
+        (WebCore::TextTrackLoader::notifyFinished): Call cancelLoad.
+        (WebCore::TextTrackLoader::load): Ditto.
+        * loader/TextTrackLoader.h:
+        * page/DOMWindow.idl: Add TextTrackList.
+
 2011-11-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: reimplement DOM search using no XPath.

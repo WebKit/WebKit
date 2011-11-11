@@ -504,6 +504,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTextTrackCue.h \
 	DerivedSources/WebCore/JSTextTrackCueList.cpp \
 	DerivedSources/WebCore/JSTextTrackCueList.h \
+	DerivedSources/WebCore/JSTextTrackList.cpp \
+	DerivedSources/WebCore/JSTextTrackList.h \
 	DerivedSources/WebCore/JSTimeRanges.cpp \
 	DerivedSources/WebCore/JSTimeRanges.h \
 	DerivedSources/WebCore/JSTouch.cpp \
@@ -850,6 +852,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	Source/WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	Source/WebCore/bindings/js/JSTextCustom.cpp \
+	Source/WebCore/bindings/js/JSTextTrackListCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchListCustom.cpp \
 	Source/WebCore/bindings/js/JSTrackCustom.cpp \
@@ -1980,6 +1983,8 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/TextTrackList.cpp \
+	Source/WebCore/html/track/TextTrackList.h \
 	Source/WebCore/html/track/TrackBase.cpp \
 	Source/WebCore/html/track/TrackBase.h \
 	Source/WebCore/html/track/TrackEvent.cpp \

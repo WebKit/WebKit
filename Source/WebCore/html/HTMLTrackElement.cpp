@@ -32,6 +32,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 
 using namespace std;
@@ -49,6 +50,8 @@ inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document
 
 HTMLTrackElement::~HTMLTrackElement()
 {
+    if (m_track)
+        m_track->clearClient();
 }
 
 PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document* document)
@@ -59,16 +62,16 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
 void HTMLTrackElement::insertedIntoTree(bool deep)
 {
     HTMLElement::insertedIntoTree(deep);
-    Element* parent = parentElement();
-    if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->trackWasAdded(this);
+
+    if (HTMLMediaElement* parent = mediaElement())
+        parent->trackWasAdded(this);
 }
 
 void HTMLTrackElement::willRemove()
 {
-    Element* parent = parentElement();
-    if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->trackWillBeRemoved(this);
+    if (HTMLMediaElement* parent = mediaElement())
+        parent->trackWillBeRemoved(this);
+
     HTMLElement::willRemove();
 }
 
@@ -90,8 +93,8 @@ void HTMLTrackElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {
-        if (!getAttribute(srcAttr).isEmpty() && parentNode())
-            static_cast<HTMLMediaElement*>(parentNode())->trackSourceChanged(this);
+        if (!getAttribute(srcAttr).isEmpty() && mediaElement())
+            scheduleLoad();
     }
 }
 
@@ -137,7 +140,7 @@ void HTMLTrackElement::setLabel(const String& label)
 
 bool HTMLTrackElement::isDefault() const
 {
-    return hasAttribute(defaultAttr);
+    return fastHasAttribute(defaultAttr);
 }
 
 void HTMLTrackElement::setIsDefault(bool isDefault)
@@ -145,11 +148,19 @@ void HTMLTrackElement::setIsDefault(bool isDefault)
     setBooleanAttribute(defaultAttr, isDefault);
 }
 
-TextTrack* HTMLTrackElement::track() const
+LoadableTextTrack* HTMLTrackElement::ensureTrack()
 {
-    if (m_track)
-        return m_track.get();
-    return 0;
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return 0;
+
+    if (!m_track)
+        m_track = LoadableTextTrack::create(this, kind(), label(), srclang(), isDefault());
+    return m_track.get();
+}
+
+TextTrack* HTMLTrackElement::track()
+{
+    return ensureTrack();
 }
 
 bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
@@ -157,18 +168,78 @@ bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
     return attribute->name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-void HTMLTrackElement::load(ScriptExecutionContext* context, TextTrackClient* trackClient)
+void HTMLTrackElement::scheduleLoad()
 {
-    m_track = LoadableTextTrack::create(trackClient, this, kind(), label(), srclang(), isDefault());
+    if (!mediaElement())
+        return;
 
-    if (hasAttribute(srcAttr))
-        m_track->load(getNonEmptyURLAttribute(srcAttr), context);
+    if (!fastHasAttribute(srcAttr))
+        return;
+
+    ensureTrack()->scheduleLoad(getNonEmptyURLAttribute(srcAttr));
 }
 
-void HTMLTrackElement::textTrackLoadingCompleted(LoadableTextTrack*, bool loadingFailed)
+bool HTMLTrackElement::canLoadUrl(LoadableTextTrack*, const KURL& url)
+{
+    HTMLMediaElement* parent = mediaElement();
+    if (!parent)
+        return false;
+
+    if (!parent->isSafeToLoadURL(url, HTMLMediaElement::Complain))
+        return false;
+    
+    return dispatchBeforeLoadEvent(url.string());
+}
+
+void HTMLTrackElement::didCompleteLoad(LoadableTextTrack*, bool loadingFailed)
 {
     ExceptionCode ec = 0;
     dispatchEvent(Event::create(loadingFailed ? eventNames().errorEvent : eventNames().loadEvent, false, false), ec);
+}
+    
+void HTMLTrackElement::textTrackReadyStateChanged(TextTrack* track)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackReadyStateChanged(track);
+}
+    
+void HTMLTrackElement::textTrackModeChanged(TextTrack* track)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackModeChanged(track);
+}
+    
+void HTMLTrackElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackAddCues(track, cues);
+}
+    
+void HTMLTrackElement::textTrackRemoveCues(TextTrack* track, const TextTrackCueList* cues)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackAddCues(track, cues);
+}
+    
+void HTMLTrackElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue> cue)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackAddCue(track, cue);
+}
+    
+void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, PassRefPtr<TextTrackCue> cue)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackRemoveCue(track, cue);
+}
+
+HTMLMediaElement* HTMLTrackElement::mediaElement() const
+{
+    Element* parent = parentElement();
+    if (parent && parent->isMediaElement())
+        return static_cast<HTMLMediaElement*>(parentNode());
+
+    return 0;
 }
 
 #if ENABLE(MICRODATA)

@@ -68,6 +68,14 @@ void TextTrackLoader::cueLoadTimerFired(Timer<TextTrackLoader>* timer)
         m_client->cueLoadingCompleted(this, m_state == Failed);
 }
 
+void TextTrackLoader::cancelLoad()
+{
+    if (m_cachedCueData) {
+        m_cachedCueData->removeClient(this);
+        m_cachedCueData = 0;
+    }
+}
+
 void TextTrackLoader::processNewCueData(CachedResource* resource)
 {
     ASSERT(m_cachedCueData == resource);
@@ -142,8 +150,7 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
     if (!m_cueLoadTimer.isActive())
         m_cueLoadTimer.startOneShot(0);
     
-    m_cachedCueData->removeClient(this);
-    m_cachedCueData = 0;
+    cancelLoad();
 }
 
 bool TextTrackLoader::load(const KURL& url)
@@ -151,10 +158,7 @@ bool TextTrackLoader::load(const KURL& url)
     if (!m_client->shouldLoadCues(this))
         return false;
     
-    if (m_cachedCueData) {
-        m_cachedCueData->removeClient(this);
-        m_cachedCueData = 0;
-    }
+    cancelLoad();
     
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);

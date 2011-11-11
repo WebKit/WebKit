@@ -510,6 +510,7 @@ DOM_CLASSES = \
     TextTrack \
     TextTrackCue \
     TextTrackCueList \
+    TextTrackList \
     TimeRanges \
     Touch \
     TouchEvent \

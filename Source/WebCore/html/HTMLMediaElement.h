@@ -53,6 +53,7 @@ class HTMLTrackElement;
 class MediaControls;
 class MediaError;
 class KURL;
+class TextTrackList;
 class TimeRanges;
 class Uint8Array;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -89,7 +90,11 @@ public:
     PlatformLayer* platformLayer() const;
 #endif
 
-    void scheduleLoad();
+    enum LoadType {
+        MediaResource = 1 << 0,
+        TextTrackResource = 1 << 1
+    };
+    void scheduleLoad(LoadType);
     
     MediaPlayer::MovieLoadType movieLoadType() const;
     
@@ -181,9 +186,20 @@ public:
 
 #if ENABLE(VIDEO_TRACK)
     PassRefPtr<TextTrack> addTrack(const String& kind, const String& label = "", const String& language = "");
+    TextTrackList* textTracks() const;
+
+    void addTextTrack(PassRefPtr<TextTrack>);
+
     virtual void trackWasAdded(HTMLTrackElement*);
     virtual void trackWillBeRemoved(HTMLTrackElement*);
-    virtual void trackSourceChanged(HTMLTrackElement*);
+
+    // TextTrackClient
+    virtual void textTrackReadyStateChanged(TextTrack*);
+    virtual void textTrackModeChanged(TextTrack*);
+    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
+    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -229,6 +245,9 @@ public:
 
     AudioSourceProvider* audioSourceProvider();
 #endif
+
+    enum InvalidURLAction { DoNothing, Complain };
+    bool isSafeToLoadURL(const KURL&, InvalidURLAction);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
@@ -349,23 +368,11 @@ private:
     void waitForSourceChange();
     void prepareToPlay();
 
-    enum InvalidSourceAction { DoNothing, Complain };
-    bool isSafeToLoadURL(const KURL&, InvalidSourceAction);
-    KURL selectNextSourceChild(ContentType*, InvalidSourceAction);
+    KURL selectNextSourceChild(ContentType*, InvalidURLAction);
     void mediaLoadingFailed(MediaPlayer::NetworkState);
 
 #if ENABLE(VIDEO_TRACK)
-    void loadTextTracks();
-    void loadNextTextTrack(HTMLTrackElement*);
-
-    // TextTrackClient
-    virtual void textTrackReadyStateChanged(TextTrack*);
-    virtual void textTrackModeChanged(TextTrack*);
-    virtual void textTrackCreated(TextTrack*);
-    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
-    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
-    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
-    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
+    void configureTextTracks();
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
@@ -471,6 +478,9 @@ private:
     mutable float m_cachedTime;
     mutable double m_cachedTimeWallClockUpdateTime;
     mutable double m_minimumWallClockTimeToCacheMediaTime;
+    
+    typedef unsigned PendingLoadFlags;
+    PendingLoadFlags m_pendingLoadFlags;
 
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
@@ -514,7 +524,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-    Vector<RefPtr<TextTrack> > m_textTracks;
+    RefPtr<TextTrackList> m_textTracks;
 #endif
 };
 

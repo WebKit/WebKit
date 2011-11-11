@@ -89,6 +89,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TextTrackList.h"
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -173,6 +174,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_cachedTime(invalidMediaTime)
     , m_cachedTimeWallClockUpdateTime(0)
     , m_minimumWallClockTimeToCacheMediaTime(0)
+    , m_pendingLoadFlags(0)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_shouldDelayLoadEvent(false)
@@ -197,6 +199,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_havePreparedToPlay(false)
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
+#endif
+#if ENABLE(VIDEO_TRACK)
+    , m_textTracks(0)
 #endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
@@ -225,8 +230,12 @@ HTMLMediaElement::~HTMLMediaElement()
     document()->unregisterForMediaVolumeCallbacks(this);
     document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
 #if ENABLE(VIDEO_TRACK)
-    for (unsigned i = 0; i < m_textTracks.size(); ++i)
-        m_textTracks[i]->setClient(0);
+    if (m_textTracks)
+        m_textTracks->clearOwner();
+    if (m_textTracks) {
+        for (unsigned i = 0; i < m_textTracks->length(); ++i)
+            m_textTracks->item(i)->clearClient();
+    }
 #endif
 }
 
@@ -268,7 +277,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (attrName == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
         if (!getAttribute(srcAttr).isEmpty())
-            scheduleLoad();
+            scheduleLoad(MediaResource);
     } else if (attrName == controlsAttr)
         configureMediaControls();
 }
@@ -381,10 +390,10 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
  
 void HTMLMediaElement::insertedIntoDocument()
 {
-    LOG(Media, "HTMLMediaElement::removedFromDocument");
+    LOG(Media, "HTMLMediaElement::insertedIntoDocument");
     HTMLElement::insertedIntoDocument();
     if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
-        scheduleLoad();
+        scheduleLoad(MediaResource);
 }
 
 void HTMLMediaElement::removedFromDocument()
@@ -423,22 +432,32 @@ void HTMLMediaElement::didRecalcStyle(StyleChange)
         renderer()->updateFromElement();
 }
 
-void HTMLMediaElement::scheduleLoad()
+void HTMLMediaElement::scheduleLoad(LoadType loadType)
 {
     LOG(Media, "HTMLMediaElement::scheduleLoad");
+
+    if ((loadType & MediaResource) && !(m_pendingLoadFlags & MediaResource)) {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    createMediaPlayerProxy();
+        createMediaPlayerProxy();
+#endif
+        
+        prepareForLoad();
+        m_pendingLoadFlags |= MediaResource;
+    }
+
+#if ENABLE(VIDEO_TRACK)
+    if (loadType & TextTrackResource)
+        m_pendingLoadFlags |= TextTrackResource;
 #endif
 
-    if (m_loadTimer.isActive())
-        return;
-    prepareForLoad();
-    m_loadTimer.startOneShot(0);
+    if (!m_loadTimer.isActive())
+        m_loadTimer.startOneShot(0);
 }
 
 void HTMLMediaElement::scheduleNextSourceChild()
 {
     // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
+    m_pendingLoadFlags |= MediaResource;
     m_loadTimer.startOneShot(0);
 }
 
@@ -474,10 +493,19 @@ void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 {
-    if (m_loadState == LoadingFromSourceElement)
-        loadNextSourceChild();
-    else
-        loadInternal();
+    if (m_pendingLoadFlags & MediaResource) {
+        if (m_loadState == LoadingFromSourceElement)
+            loadNextSourceChild();
+        else
+            loadInternal();
+    }
+
+#if ENABLE(VIDEO_TRACK)
+    if (m_pendingLoadFlags & TextTrackResource)
+        configureTextTracks();
+#endif
+
+    m_pendingLoadFlags = 0;
 }
 
 PassRefPtr<MediaError> HTMLMediaElement::error() const 
@@ -633,9 +661,6 @@ void HTMLMediaElement::loadInternal()
     removeBehaviorRestriction(RequirePageConsentToLoadMediaRestriction);
 
     selectMediaResource();
-#if ENABLE(VIDEO_TRACK)
-    loadTextTracks();
-#endif
 }
 
 void HTMLMediaElement::selectMediaResource()
@@ -837,39 +862,12 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 }
 
 #if ENABLE(VIDEO_TRACK)
-void HTMLMediaElement::loadTextTracks()
-{
-    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
-        return;
-
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(trackTag))
-            loadNextTextTrack(static_cast<HTMLTrackElement*>(node));
-    }
-}
-
-void HTMLMediaElement::loadNextTextTrack(HTMLTrackElement* track)
-{
-    // FIXME(71124): This should schedule an *asynchronous* load.
-    track->load(ActiveDOMObject::scriptExecutionContext(), this);
-    RefPtr<TextTrack> textTrack = track->track();
-    if (textTrack)
-        m_textTracks.append(textTrack.release());
-    
-    // FIXME(71123): Set the text track mode accordingly.
-}
-
 void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
 {
     // FIXME(62885): Implement.
 }
 
 void HTMLMediaElement::textTrackModeChanged(TextTrack*)
-{
-    // FIXME(62885): Implement.
-}
-
-void HTMLMediaElement::textTrackCreated(TextTrack*)
 {
     // FIXME(62885): Implement.
 }
@@ -896,7 +894,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>)
 
 #endif
 
-bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction actionIfInvalid)
+bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidURLAction actionIfInvalid)
 {
     if (!url.isValid()) {
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE because url is invalid", urlForLogging(url).utf8().data());
@@ -911,8 +909,10 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
         return false;
     }
 
-    if (!document()->contentSecurityPolicy()->allowMediaFromSource(url))
+    if (!document()->contentSecurityPolicy()->allowMediaFromSource(url)) {
+        LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> rejected by Content Security Policy", urlForLogging(url).utf8().data());
         return false;
+    }
 
     return true;
 }
@@ -1670,7 +1670,7 @@ void HTMLMediaElement::playInternal()
 
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
-        scheduleLoad();
+        scheduleLoad(MediaResource);
 
     if (endedPlayback()) {
         ExceptionCode unused;
@@ -1709,7 +1709,7 @@ void HTMLMediaElement::pauseInternal()
 
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
-        scheduleLoad();
+        scheduleLoad(MediaResource);
 
     m_autoplaying = false;
     
@@ -1989,41 +1989,117 @@ float HTMLMediaElement::percentLoaded() const
 #if ENABLE(VIDEO_TRACK)
 PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language)
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return 0;
+
+    // FIXME(71915): addTrack should throw a SyntaxError exception if 'kind' is an unknown value.
     RefPtr<TextTrack> textTrack = TextTrack::create(this, kind, label, language);
-    m_textTracks.append(textTrack);
+    addTextTrack(textTrack);
     return textTrack.release();
 }
 
-void HTMLMediaElement::trackWasAdded(HTMLTrackElement* track)
+void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
 {
+    if (!m_textTracks)
+        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+    m_textTracks->append(track);
+
+    configureTextTracks();
+}
+
+void HTMLMediaElement::configureTextTracks()
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    
+    // When a text track corresponding to a track element is added to a media element's list of text tracks,
+    // the user agent must set the text track mode appropriately, as determined by the following conditions:
+    
+    // * If the text track kind is subtitles or captions and the user has indicated an interest in having a
+    // track with this text track kind, text track language, and text track label enabled, and there is no
+    // other text track in the media element's list of text tracks with a text track kind of either subtitles
+    // or captions whose text track mode is showing
+    // * If the text track kind is descriptions and the user has indicated an interest in having text 
+    // descriptions with this text track language and text track label enabled, and there is no other text 
+    // track in the media element's list of text tracks with a text track kind of descriptions whose text 
+    // track mode is showing
+    //    Let the text track mode be showing.
+    //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
+    //    by default, the user agent must furthermore change that text track's text track mode to hidden.
+    
+    // * If the text track kind is chapters and the text track language is one that the user agent has reason
+    // to believe is appropriate for the user, and there is no other text track in the media element's list of
+    // text tracks with a text track kind of chapters whose text track mode is showing
+    //    Let the text track mode be showing.
+    
+    // * If the track element has a default attribute specified, and there is no other text track in the media
+    // element's list of text tracks whose text track mode is showing or showing by default
+    //    Let the text track mode be showing by default.
+    
+    // Otherwise
+    //    Let the text track mode be disabled.
+    
+    // FIXME(71123): Until the above logic has been implemented, just tell all text tracks to load.
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(trackTag))
+            static_cast<HTMLTrackElement*>(node)->scheduleLoad();
+    }
+}
+
+TextTrackList* HTMLMediaElement::textTracks() const 
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return 0;
+
+    if (m_textTracks)
+        return m_textTracks.get();
+
+    return 0;
+}
+
+void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
 #if !LOG_DISABLED
-    if (track->hasTagName(trackTag)) {
-        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+    if (trackElement->hasTagName(trackTag)) {
+        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
         LOG(Media, "HTMLMediaElement::trackWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
-    loadNextTextTrack(track);
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // When a track element's parent element changes and the new parent is a media element, 
+    // then the user agent must add the track element's corresponding text track to the 
+    // media element's list of text tracks ... [continues in TextTrackList::append]
+    RefPtr<TextTrack> textTrack = trackElement->track();
+    if (!textTrack)
+        return;
+    addTextTrack(textTrack);    
+    scheduleLoad(TextTrackResource);
 }
  
-void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* track)
+void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
 {
 #if !LOG_DISABLED
-    if (track->hasTagName(trackTag)) {
-        KURL url = track->getNonEmptyURLAttribute(srcAttr);
+    if (trackElement->hasTagName(trackTag)) {
+        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
         LOG(Media, "HTMLMediaElement::trackWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
-}
 
-void HTMLMediaElement::trackSourceChanged(HTMLTrackElement* track)
-{
-#if !LOG_DISABLED
-    if (track->hasTagName(trackTag)) {
-        KURL url = track->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::trackSourceChanged - 'src' is %s", urlForLogging(url).utf8().data());
-    }
-#endif
-    loadNextTextTrack(track);
+    RefPtr<TextTrack> textTrack = trackElement->track();
+    if (!textTrack)
+        return;
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // When a track element's parent element changes and the old parent was a media element, 
+    // then the user agent must remove the track element's corresponding text track from the 
+    // media element's list of text tracks.
+    m_textTracks->remove(textTrack);
 }
 #endif
 
@@ -2042,7 +2118,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     return nextURL.isValid();
 }
 
-KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSourceAction actionIfInvalid)
+KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidURLAction actionIfInvalid)
 {
 #if !LOG_DISABLED
     // Don't log if this was just called to find out if there are any valid <source> elements.
@@ -2154,7 +2230,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
     // attribute and whose networkState has the value NETWORK_EMPTY, the user agent must invoke 
     // the media element's resource selection algorithm.
     if (networkState() == HTMLMediaElement::NETWORK_EMPTY) {
-        scheduleLoad();
+        scheduleLoad(MediaResource);
         return;
     }
 

@@ -52,7 +52,7 @@ PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* 
     audio->setPreload("auto");
     if (!src.isNull()) {
         audio->setSrc(src);
-        audio->scheduleLoad();
+        audio->scheduleLoad(HTMLMediaElement::MediaResource);
     }
     return audio.release();
 }

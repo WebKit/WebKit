@@ -33,7 +33,9 @@
 
 namespace WebCore {
 
-class HTMLTrackElement : public HTMLElement, private TextTrackLoadingClient {
+class HTMLMediaElement;
+
+class HTMLTrackElement : public HTMLElement, public TextTrackClient {
 public:
     static PassRefPtr<HTMLTrackElement> create(const QualifiedName&, Document*);
 
@@ -48,18 +50,16 @@ public:
     void setSrclang(const String&);
     void setLabel(const String&);
     void setIsDefault(bool);
-    TextTrack* track() const;
+    TextTrack* track();
     
-    void load(ScriptExecutionContext*, TextTrackClient*);
+    void scheduleLoad();
+    virtual bool canLoadUrl(LoadableTextTrack*, const KURL&);
+    virtual void didCompleteLoad(LoadableTextTrack*, bool /* loadingFailed */);
 
 private:
-
-    // TextTrackLoadingClient
-    virtual void textTrackLoadingCompleted(LoadableTextTrack*, bool);
-
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
-    
+
     virtual void parseMappedAttribute(Attribute*);
     virtual void attributeChanged(Attribute*, bool preserveDecls);
 
@@ -71,6 +71,18 @@ private:
     virtual String itemValueText() const OVERRIDE;
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
+
+    HTMLMediaElement* mediaElement() const;
+
+    // TextTrackClient
+    virtual void textTrackReadyStateChanged(TextTrack*);
+    virtual void textTrackModeChanged(TextTrack*);
+    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
+    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
+    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
+
+    LoadableTextTrack* ensureTrack();
 
     RefPtr<LoadableTextTrack> m_track;
 };

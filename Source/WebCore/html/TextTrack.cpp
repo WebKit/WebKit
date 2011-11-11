@@ -55,7 +55,7 @@ TextTrack::~TextTrack()
 {
     if (m_client)
         m_client->textTrackRemoveCues(this, m_cues.get());
-    setClient(0);
+    clearClient();
 }
 
 String TextTrack::kind() const

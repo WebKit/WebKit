@@ -62,6 +62,7 @@ public:
     virtual ~TextTrackLoader();
     
     bool load(const KURL&);
+    void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
     
 private:

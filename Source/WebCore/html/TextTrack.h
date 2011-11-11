@@ -46,7 +46,6 @@ public:
     virtual ~TextTrackClient() { }
     virtual void textTrackReadyStateChanged(TextTrack*) = 0;
     virtual void textTrackModeChanged(TextTrack*) = 0;
-    virtual void textTrackCreated(TextTrack*) = 0;
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) = 0;
     virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
@@ -78,14 +77,14 @@ public:
     void readyStateChanged();
     void modeChanged();
 
+    virtual void clearClient() { m_client = 0; }
     TextTrackClient* client() { return m_client; }
-    void setClient(TextTrackClient* client) { m_client = client; }
 
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     void removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     
-    virtual void newCuesLoaded();
-    virtual void fetchNewestCues(Vector<TextTrackCue*>&);
+    void newCuesLoaded();
+    void fetchNewestCues(Vector<TextTrackCue*>&);
 
 protected:
     TextTrack(TextTrackClient*, const String& kind, const String& label, const String& language);

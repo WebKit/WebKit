@@ -1893,6 +1893,7 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
+    html/track/TextTrackList.h \
     html/track/TrackBase.h \
     html/track/TrackEvent.h \
     html/track/WebVTTParser.h \
@@ -3570,6 +3571,7 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
             bindings/js/JSTrackCustom.cpp \
             bindings/js/JSTrackCustom.h \
             bindings/js/JSTrackEventCustom.cpp
+            bindings/js/JSTextTrackListCustom.cpp
     }
 }
 

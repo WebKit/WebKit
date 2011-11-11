@@ -1,0 +1,14 @@
+Ensure that a TrackList won't be collected if it has custom properties.
+
+** Add a custom property to a track.
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.textTracks.myProperty = 'chicken salad!')
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks.myProperty == 'chicken salad!') OK
+
+** Force garbage collection.
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks.myProperty == 'chicken salad!') OK
+
+END OF TEST
+

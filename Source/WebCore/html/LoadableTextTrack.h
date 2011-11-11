@@ -37,25 +37,26 @@ namespace WebCore {
 
 class HTMLTrackElement;
 class LoadableTextTrack;
-class ScriptExecutionContext;
 
-class TextTrackLoadingClient {
+class LoadableTextTrackClient : public TextTrackClient {
 public:
-    virtual ~TextTrackLoadingClient() { }
+    virtual ~LoadableTextTrackClient() { }
     
-    virtual void textTrackLoadingCompleted(LoadableTextTrack*, bool /* loadingFailed */) = 0;
+    virtual bool canLoadUrl(LoadableTextTrack*, const KURL&) { return false; }
+    virtual void loadingCompleted(LoadableTextTrack*, bool /* loadingFailed */) { }
 };
 
 class LoadableTextTrack : public TextTrack, private TextTrackLoaderClient {
 public:
-    static PassRefPtr<LoadableTextTrack> create(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
+    static PassRefPtr<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language, bool isDefault)
     {
-        return adoptRef(new LoadableTextTrack(trackClient, loadingClient, kind, label, language, isDefault));
+        return adoptRef(new LoadableTextTrack(track, kind, label, language, isDefault));
     }
     virtual ~LoadableTextTrack();
 
-    void load(const KURL&, ScriptExecutionContext*);
-    bool supportsType(const String&);
+    void scheduleLoad(const KURL&);
+
+    virtual void clearClient();
 
 private:
     // TextTrackLoaderClient
@@ -64,10 +65,14 @@ private:
     virtual void cueLoadingStarted(TextTrackLoader*);
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed);
 
-    LoadableTextTrack(TextTrackClient*, TextTrackLoadingClient*, const String& kind, const String& label, const String& language, bool isDefault);
+    LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language, bool isDefault);
 
+    void loadTimerFired(Timer<LoadableTextTrack>*);
+
+    HTMLTrackElement* m_trackElement;
+    Timer<LoadableTextTrack> m_loadTimer;
     OwnPtr<TextTrackLoader> m_loader;
-    TextTrackLoadingClient* m_loadingClient;
+    KURL m_url;
     bool m_isDefault;
 };
 } // namespace WebCore

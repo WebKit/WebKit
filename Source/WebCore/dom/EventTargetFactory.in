@@ -21,6 +21,7 @@ PeerConnection conditional=MEDIA_STREAM
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
 SVGElementInstance conditional=SVG
+TextTrackList conditional=VIDEO_TRACK
 WebSocket conditional=WEB_SOCKETS
 Worker conditional=WORKERS
 XMLHttpRequest

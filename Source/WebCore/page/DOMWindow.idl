@@ -613,6 +613,7 @@ module window {
         attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
         attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
         attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackCueListConstructor TextTrackCueList;
+        attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackListConstructor TextTrackList;
         attribute [EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
 #endif
 

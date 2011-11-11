@@ -113,6 +113,7 @@ module html {
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
     [EnabledAtRuntime=webkitVideoTrack] TextTrack addTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language);
+    readonly attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
 };
 }

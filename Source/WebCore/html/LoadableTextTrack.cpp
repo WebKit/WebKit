@@ -29,13 +29,16 @@
 
 #include "LoadableTextTrack.h"
 
+#include "HTMLTrackElement.h"
+#include "ScriptEventListener.h"
 #include "TextTrackCueList.h"
 
 namespace WebCore {
 
-LoadableTextTrack::LoadableTextTrack(TextTrackClient* trackClient, TextTrackLoadingClient* loadingClient, const String& kind, const String& label, const String& language, bool isDefault)
-    : TextTrack(trackClient, kind, label, language)
-    , m_loadingClient(loadingClient)
+LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language, bool isDefault)
+    : TextTrack(track, kind, label, language)
+    , m_trackElement(track)
+    , m_loadTimer(this, &LoadableTextTrack::loadTimerFired)
     , m_isDefault(isDefault)
 {
 }
@@ -44,11 +47,33 @@ LoadableTextTrack::~LoadableTextTrack()
 {
 }
 
-void LoadableTextTrack::load(const KURL& url, ScriptExecutionContext* context)
+void LoadableTextTrack::clearClient()
 {
-    if (!m_loader)
-        m_loader = TextTrackLoader::create(this, context);
-    m_loader->load(url);
+    m_trackElement = 0;
+    TextTrack::clearClient();
+}
+
+void LoadableTextTrack::scheduleLoad(const KURL& url)
+{
+    m_url = url;
+    if (!m_loadTimer.isActive())
+        m_loadTimer.startOneShot(0);
+}
+
+void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
+{
+    setReadyState(TextTrack::LOADING);
+    
+    if (m_loader)
+        m_loader->cancelLoad();
+
+    if (!m_trackElement || !m_trackElement->canLoadUrl(this, m_url)) {
+        setReadyState(TextTrack::HTML_ERROR);
+        return;
+    }
+
+    m_loader = TextTrackLoader::create(this, static_cast<ScriptExecutionContext*>(m_trackElement->document()));
+    m_loader->load(m_url);
 }
 
 void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
@@ -82,8 +107,8 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
     loadingFailed ? setReadyState(TextTrack::HTML_ERROR) : setReadyState(TextTrack::LOADED);
 
-    if (m_loadingClient)
-        m_loadingClient->textTrackLoadingCompleted(this, loadingFailed);
+    if (m_trackElement)
+        m_trackElement->didCompleteLoad(this, loadingFailed);
 }
 
 } // namespace WebCore

@@ -1,0 +1,25 @@
+Tests that the 'addtrack' event is fired when a TextTrack is created.
+
+** Test a TextTrack created for a <track> element.
+RUN(trackElement = document.createElement('track'))
+RUN(video.appendChild(trackElement))
+RUN(trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt')
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (tracks[0].readyState == '0') OK
+EVENT(addtrack)
+EXPECTED (event.target == '[object TextTrackList]') OK
+EXPECTED (event instanceof window.TrackEvent == 'true') OK
+EXPECTED (event.track == '[object TextTrack]') OK
+
+** Test a TextTrack created with video.addTrack().
+RUN(tracks.push(video.addTrack('captions', 'Caption Track', 'en')))
+EXPECTED (video.textTracks.length == '2') OK
+EXPECTED (tracks[1].readyState == '0') OK
+EVENT(addtrack)
+EXPECTED (event.target == '[object TextTrackList]') OK
+EXPECTED (event instanceof window.TrackEvent == 'true') OK
+EXPECTED (event.track == '[object TextTrack]') OK
+EXPECTED (tracks[1].readyState == '0') OK
+
+END OF TEST
+

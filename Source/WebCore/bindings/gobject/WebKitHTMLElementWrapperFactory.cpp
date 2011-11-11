@@ -161,6 +161,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "webkit/WebKitDOMTextTrackCueListPrivate.h"
 #include "webkit/WebKitDOMTextTrackCuePrivate.h"
+#include "webkit/WebKitDOMTextTrackListPrivate.h"
 #include "webkit/WebKitDOMTextTrackPrivate.h"
 #include "webkit/WebKitDOMTrackEventPrivate.h"
 #endif
