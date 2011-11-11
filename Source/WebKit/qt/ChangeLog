@@ -1,3 +1,19 @@
+2011-11-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Add a way to have experimental features in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=67707
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch is adding a new module for accessing private
+        method and property from the view. It requires an import
+        QtWebKit.private in QML to be used.
+
+        * declarative/private/plugin.cpp: Added.
+        (WebKitQmlPluginPrivate::registerTypes):
+        * declarative/private/private.pro: Added.
+        * declarative/private/qmldir: Added.
+
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Remove QWebNavigationController

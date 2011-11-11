@@ -495,3 +495,4 @@ WKPageRef QQuickWebView::pageRef() const
 }
 
 #include "moc_qquickwebview.cpp"
+#include "moc_qquickwebview_p.cpp"

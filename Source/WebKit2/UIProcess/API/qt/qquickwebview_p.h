@@ -28,6 +28,7 @@
 
 #include "qquickwebview.h"
 
+#include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
 class QWebNavigationController;
@@ -37,7 +38,8 @@ QT_BEGIN_NAMESPACE
 class QFileDialog;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
+class QWEBKIT_EXPORT QQuickWebViewPrivate : public QObject, public WebKit::QtPolicyInterface {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(QQuickWebView)
 public:
     QQuickWebViewPrivate();
@@ -54,7 +56,6 @@ public:
     void scrollPositionRequested(const QPoint& pos);
     void updateViewportSize();
     void updateViewportConstraints();
-    void setUseTraditionalDesktopBehaviour(bool enable);
 
     static QQuickWebViewPrivate* get(QQuickWebView* view)
     {
@@ -76,6 +77,10 @@ public:
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
 
+public slots:
+    void setUseTraditionalDesktopBehaviour(bool enable);
+
+private:
     QScopedPointer<QQuickWebPage> pageView;
     QScopedPointer<WebKit::QtViewInterface> viewInterface;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;

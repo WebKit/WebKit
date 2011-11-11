@@ -1,3 +1,23 @@
+2011-11-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Add a way to have experimental features in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=67707
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new QML extensions for our public view. This extension
+        returns the private object of the view so that the user could
+        use unstable/unreleased APIs. This requires our private class
+        to be exported and QObject subclass.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebviewprivateextension.cpp: Added.
+        (QQuickWebViewPrivateExtension::QQuickWebViewPrivateExtension):
+        (QQuickWebViewPrivateExtension::viewPrivate):
+        * UIProcess/API/qt/qquickwebviewprivateextension_p.h: Added.
+
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Remove QWebNavigationController
