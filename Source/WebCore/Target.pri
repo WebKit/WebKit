@@ -20,10 +20,6 @@ DEFINES += QT_MAKEDLL
 
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
-contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
-    DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
-}
-
 haveQt(5) {
     # Add a QtScript dependency for the time being, in order to pull in the include
     # path for QtScript when it's built as a standalone module
@@ -2206,9 +2202,8 @@ HEADERS += \
     platform/qt/ClipboardQt.h \
     platform/qt/CookieJarQt.h \
     platform/qt/QWebPageClient.h \
-    platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \
-    platform/qt/ScrollbarThemeQt.h \
+    platform/qt/RenderThemeQtMobile.h \
     platform/ScrollableArea.h \
     platform/ScrollAnimator.h \
     platform/Scrollbar.h \
@@ -2774,7 +2769,7 @@ SOURCES += \
     platform/qt/PlatformTouchEventQt.cpp \
     platform/qt/PlatformTouchPointQt.cpp \
     platform/qt/RenderThemeQt.cpp \
-    platform/qt/ScrollbarQt.cpp \
+    platform/qt/RenderThemeQtMobile.cpp \
     platform/qt/ScrollbarThemeQt.cpp \
     platform/qt/ScrollViewQt.cpp \
     platform/qt/SharedTimerQt.cpp \
@@ -2793,9 +2788,12 @@ SOURCES += \
     SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
-contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
-    HEADERS += platform/qt/QtMobileWebStyle.h
-    SOURCES += platform/qt/QtMobileWebStyle.cpp
+contains(DEFINES, HAVE_QSTYLE=1) {
+    HEADERS += platform/qt/QtStyleOptionWebComboBox.h \
+               platform/qt/RenderThemeQStyle.h \
+               platform/qt/ScrollbarThemeQt.h
+    SOURCES += platform/qt/RenderThemeQStyle.cpp \
+               platform/qt/ScrollbarQt.cpp
 }
 
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {

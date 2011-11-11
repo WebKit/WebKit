@@ -1,3 +1,145 @@
+2011-11-11  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Remove the QStyle dependency in Qt's mobile theme
+        https://bugs.webkit.org/show_bug.cgi?id=67773
+
+        This refactoring splits up RenderThemeQt with two
+        subclasses, a QStyle-backed one, and a Mobile version
+        that uses the old mobile theme for now.
+
+        QStyle availability is detected at compile time, and
+        its use is determined by the QT_WEBKIT_USE_MOBILE_THEME
+        environment variable.
+
+        Reviewed by Simon Hausmann.
+
+        Covered by the existing tests.
+
+        * Target.pri:
+        * platform/qt/QtMobileWebStyle.cpp: Removed. The relevant logic
+        now lives within RenderThemeQtMobile.
+        * platform/qt/QtMobileWebStyle.h: Removed. Ditto.
+        * platform/qt/RenderThemeQStyle.cpp: Added.
+        (WebCore::initStyleOption):
+        (WebCore::RenderThemeQStyle::getStylePainter):
+        (WebCore::StylePainterQStyle::StylePainterQStyle):
+        (WebCore::StylePainterQStyle::init):
+        (WebCore::RenderThemeQStyle::create):
+        (WebCore::RenderThemeQStyle::RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::~RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::fallbackStyle):
+        (WebCore::RenderThemeQStyle::qStyle):
+        (WebCore::RenderThemeQStyle::findFrameLineWidth):
+        (WebCore::RenderThemeQStyle::inflateButtonRect):
+        (WebCore::RenderThemeQStyle::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+        (WebCore::RenderThemeQStyle::setButtonPadding):
+        (WebCore::RenderThemeQStyle::paintButton):
+        (WebCore::RenderThemeQStyle::adjustTextFieldStyle):
+        (WebCore::RenderThemeQStyle::paintTextField):
+        (WebCore::RenderThemeQStyle::adjustTextAreaStyle):
+        (WebCore::RenderThemeQStyle::paintTextArea):
+        (WebCore::RenderThemeQStyle::setPopupPadding):
+        (WebCore::RenderThemeQStyle::paintMenuList):
+        (WebCore::RenderThemeQStyle::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQStyle::paintMenuListButton):
+        (WebCore::RenderThemeQStyle::animationDurationForProgressBar):
+        (WebCore::RenderThemeQStyle::paintProgressBar):
+        (WebCore::RenderThemeQStyle::paintSliderTrack):
+        (WebCore::RenderThemeQStyle::adjustSliderTrackStyle):
+        (WebCore::RenderThemeQStyle::paintSliderThumb):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbStyle):
+        (WebCore::RenderThemeQStyle::paintSearchField):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldStyle):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldDecoration):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeQStyle::paintInnerSpinButton):
+        (WebCore::RenderThemeQStyle::initializeCommonQStyleOptions):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQStyle.h: Added.
+        (WebCore::StylePainterQStyle::isValid):
+        (WebCore::StylePainterQStyle::drawPrimitive):
+        (WebCore::StylePainterQStyle::drawControl):
+        (WebCore::StylePainterQStyle::drawComplexControl):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::RenderThemeQt::inflateButtonRect):
+        (WebCore::RenderThemeQt::adjustRepaintRect):
+        (WebCore::RenderThemeQt::minimumMenuListSize):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::adjustMenuListStyle):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQt::adjustProgressBarStyle):
+        (WebCore::RenderThemeQt::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeQt::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeQt::setPaletteFromPageClientIfExists):
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaCurrentTime):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        (WebCore::RenderThemeQt::caretBlinkInterval):
+        (WebCore::RenderThemeQt::fileListNameForWidth):
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::init):
+        (WebCore::StylePainter::~StylePainter):
+        * platform/qt/RenderThemeQt.h:
+        (WebCore::RenderThemeQt::useMobileTheme):
+        (WebCore::StylePainter::isValid):
+        * platform/qt/RenderThemeQtMobile.cpp: Added.
+        (WebCore::drawRectangularControlBackground):
+        (WebCore::RenderThemeQtMobile::getStylePainter):
+        (WebCore::StylePainterMobile::StylePainterMobile):
+        (WebCore::StylePainterMobile::drawChecker):
+        (WebCore::StylePainterMobile::findChecker):
+        (WebCore::StylePainterMobile::drawRadio):
+        (WebCore::StylePainterMobile::findRadio):
+        (WebCore::StylePainterMobile::drawMultipleComboButton):
+        (WebCore::StylePainterMobile::drawSimpleComboButton):
+        (WebCore::StylePainterMobile::getButtonImageSize):
+        (WebCore::StylePainterMobile::findComboButton):
+        (WebCore::StylePainterMobile::drawLineEdit):
+        (WebCore::StylePainterMobile::drawCheckBox):
+        (WebCore::StylePainterMobile::drawRadioButton):
+        (WebCore::StylePainterMobile::drawPushButton):
+        (WebCore::StylePainterMobile::drawComboBox):
+        (WebCore::RenderThemeQtMobile::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeQtMobile::RenderThemeQtMobile):
+        (WebCore::RenderThemeQtMobile::~RenderThemeQtMobile):
+        (WebCore::RenderThemeQtMobile::isControlStyled):
+        (WebCore::RenderThemeQtMobile::popupInternalPaddingBottom):
+        (WebCore::RenderThemeQtMobile::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQtMobile::adjustButtonStyle):
+        (WebCore::RenderThemeQtMobile::setButtonPadding):
+        (WebCore::RenderThemeQtMobile::paintButton):
+        (WebCore::RenderThemeQtMobile::adjustTextFieldStyle):
+        (WebCore::RenderThemeQtMobile::paintTextField):
+        (WebCore::RenderThemeQtMobile::adjustMenuListStyle):
+        (WebCore::RenderThemeQtMobile::setPopupPadding):
+        (WebCore::RenderThemeQtMobile::paintMenuList):
+        (WebCore::RenderThemeQtMobile::paintMenuListButton):
+        (WebCore::RenderThemeQtMobile::animationDurationForProgressBar):
+        (WebCore::RenderThemeQtMobile::paintProgressBar):
+        (WebCore::RenderThemeQtMobile::paintSliderTrack):
+        (WebCore::RenderThemeQtMobile::paintSliderThumb):
+        (WebCore::RenderThemeQtMobile::checkMultiple):
+        (WebCore::RenderThemeQtMobile::setPaletteFromPageClientIfExists):
+        (WebCore::RenderThemeQtMobile::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQtMobile.h: Added.
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeQt::paint):
+        (WebCore::ScrollbarThemeQt::scrollbarThickness):
+        (WebCore::ScrollbarThemeQt::paintScrollCorner):
+
 2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Option to configure indentation of pretty-printed Javascript
