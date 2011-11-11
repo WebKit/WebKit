@@ -303,6 +303,20 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderObject* obj
         shadow->adjustRectForShadow(repaintRect);
 }
 
+bool SVGRenderSupport::filtersForceContainerLayout(RenderObject* object)
+{
+    // If any of this container's children need to be laid out, and a filter is applied
+    // to the container, we need to repaint the entire container.
+    if (!object->normalChildNeedsLayout())
+        return false;
+
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (!resources || !resources->filter())
+        return false;
+
+    return true;
+}
+
 bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoint& point)
 {
     ASSERT(object);

@@ -254,7 +254,7 @@ void RenderSVGRoot::layout()
     } else
         ASSERT(!m_needsSizeNegotiationWithHostDocument);
 
-    SVGRenderSupport::layoutChildren(this, needsLayout);
+    SVGRenderSupport::layoutChildren(this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(this));
     m_isLayoutSizeChanged = false;
 
     // At this point LayoutRepainter already grabbed the old bounds,
