@@ -1,4 +1,4 @@
-<body onload='startTest()'>
+<body>
 <p>Test calling functions from WorkerContext. Should print multiple SUCCESS lines, followed by DONE.</p>
 <div id=result></div>
 <script>
@@ -13,15 +13,13 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-function startTest() {
-    var worker = new Worker("resources/worker-call.js");
-    worker.onmessage = function(event) {
-        log(event.data);
-        if (event.data == "DONE") {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-    };
-}
+var worker = new Worker("resources/worker-call.js");
+worker.onmessage = function(event) {
+    log(event.data);
+    if (event.data == "DONE") {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+};
 </script>
 </body>
