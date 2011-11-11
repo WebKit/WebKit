@@ -1790,9 +1790,6 @@ BUGWK SKIP : http/tests/appcache/origins-with-appcache.html = FAIL
 // LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 BUGWK SKIP : http/tests/appcache/origin-usage.html = FAIL
 
-// Failures introduced by USE_NEW_BUILDER in Skia.
-BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
-
 // Failures from WebKit merge 51711:51724
 BUGCR32003 : fast/js/string-property-deletion.html = TEXT
 
@@ -3565,7 +3562,10 @@ BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
-BUGWK68437 LEOPARD GPU : fast/canvas/set-colors.html = TEXT
+
+BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU GPU-CG CPU-CG : fast/canvas/set-colors.html = TEXT 
+// Failures introduced by USE_NEW_BUILDER in Skia.
+BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
 BUGWK68437 LEOPARD GPU : fast/canvas/arc360.html = IMAGE
@@ -3865,6 +3865,11 @@ BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = CRASH
 
 BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
+
+BUGWK72177 : http/tests/inspector/resource-tree/appcache-iframe-manifests.html = TEXT
+
+// Fixed ES5 bugs during the V8 roll, upstream in progress.
+BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
 BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
