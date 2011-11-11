@@ -959,7 +959,6 @@ inline bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart(ScriptEx
 inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didStartWorkerContextImpl(instrumentingAgents, proxy, url);
 #endif
