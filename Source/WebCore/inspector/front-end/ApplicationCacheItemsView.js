@@ -73,8 +73,6 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
 
     // FIXME: Status bar items don't work well enough yet, so they are being hidden.
     // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
-    // http://webkit.org/b/60590 Application cache status always displayed as UNCACHED at first
-    // http://webkit.org/b/60793 Application cache status indicator gets stuck at DOWNLOADING after a failure
     this.deleteButton.element.style.display = "none";
     this.refreshButton.element.style.display = "none";
     if (Preferences.onlineDetectionEnabled) {
@@ -82,9 +80,6 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
         this.connectivityMessage.style.display = "none";
     }
     this.divider.style.display = "none";
-    this.statusIcon.style.display = "none";
-    this.statusMessage.style.display = "none";
-
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {
@@ -121,18 +116,15 @@ WebInspector.ApplicationCacheItemsView.prototype = {
     updateStatus: function(status)
     {
         var statusInformation = {};
-        statusInformation[applicationCache.UNCACHED]    = { src: "Images/warningOrangeDot.png", text: "UNCACHED"    };
-        statusInformation[applicationCache.IDLE]        = { src: "Images/warningOrangeDot.png", text: "IDLE"        };
-        statusInformation[applicationCache.CHECKING]    = { src: "Images/successGreenDot.png",  text: "CHECKING"    };
-        statusInformation[applicationCache.DOWNLOADING] = { src: "Images/successGreenDot.png",  text: "DOWNLOADING" };
+        // We should never have UNCACHED status, since we remove frames with UNCACHED application cache status from the tree. 
+        statusInformation[applicationCache.UNCACHED]    = { src: "Images/errorRedDot.png", text: "UNCACHED" };
+        statusInformation[applicationCache.IDLE]        = { src: "Images/successGreenDot.png", text: "IDLE" };
+        statusInformation[applicationCache.CHECKING]    = { src: "Images/warningOrangeDot.png",  text: "CHECKING" };
+        statusInformation[applicationCache.DOWNLOADING] = { src: "Images/warningOrangeDot.png",  text: "DOWNLOADING" };
         statusInformation[applicationCache.UPDATEREADY] = { src: "Images/successGreenDot.png",  text: "UPDATEREADY" };
-        statusInformation[applicationCache.OBSOLETE]    = { src: "Images/errorRedDot.png",      text: "OBSOLETE"    };
+        statusInformation[applicationCache.OBSOLETE]    = { src: "Images/errorRedDot.png",      text: "OBSOLETE" };
 
-        var info = statusInformation[status];
-        if (!info) {
-            console.error("Unknown Application Cache Status was Not Handled: %d", status);
-            return;
-        }
+        var info = statusInformation[status] || statusInformation[applicationCache.UNCACHED];
 
         this.statusIcon.src = info.src;
         this.statusMessage.textContent = info.text;

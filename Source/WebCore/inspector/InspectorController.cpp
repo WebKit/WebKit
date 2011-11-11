@@ -106,7 +106,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #endif
     , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
-    , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), m_pageAgent.get())))
+    , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), m_pageAgent.get(), m_state.get())))
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
     , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), page, m_pageAgent.get())))
     , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
@@ -329,6 +329,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_resourceAgent->restore();
     m_timelineAgent->restore();
     m_consoleAgent->restore();
+    m_applicationCacheAgent->restore();
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->restore();
 #endif

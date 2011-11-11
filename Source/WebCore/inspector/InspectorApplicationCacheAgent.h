@@ -41,6 +41,7 @@ class InspectorFrontend;
 class InspectorObject;
 class InspectorPageAgent;
 class InspectorValue;
+class InspectorState;
 class InstrumentingAgents;
 class Page;
 class ResourceResponse;
@@ -50,12 +51,13 @@ typedef String ErrorString;
 class InspectorApplicationCacheAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
+    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
     ~InspectorApplicationCacheAgent() { }
 
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
+    void restore();
 
     // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);
@@ -77,6 +79,7 @@ private:
     InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
     InspectorFrontend::ApplicationCache* m_frontend;
+    InspectorState* m_state;
 };
 
 } // namespace WebCore

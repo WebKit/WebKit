@@ -8,5 +8,8 @@
 
     echo("CACHE MANIFEST\n");
     echo("# " . $manifestId . "\n");
-    echo("page-with-manifest.php?manifestId=" . $manifestId);
+    echo("page-with-manifest.php?manifestId=" . $manifestId . "\n");
+
+    if ($manifestId == "with-non-existing-file")
+        echo("non-existing-file\n");
 ?>

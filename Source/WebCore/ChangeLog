@@ -1,3 +1,24 @@
+2011-11-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Application cache status indicator gets stuck at DOWNLOADING after a failure
+        https://bugs.webkit.org/show_bug.cgi?id=60793
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/resource-tree/appcache-manifest-with-non-existing-file.html
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::restore):
+        (WebCore::InspectorApplicationCacheAgent::enable):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView):
+        (WebInspector.ApplicationCacheItemsView.prototype.updateStatus):
+
 2011-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         Implement TextTrackList and the textTracks attribute of HTMLMediaElement

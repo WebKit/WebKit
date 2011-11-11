@@ -35,6 +35,7 @@
 #include "InspectorAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "NetworkStateNotifier.h"
@@ -43,10 +44,15 @@
 
 namespace WebCore {
 
-InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
+namespace ApplicationCacheAgentState {
+static const char applicationCacheAgentEnabled[] = "applicationCacheAgentEnabled";
+}
+
+InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_frontend(0)
+    , m_state(state)
 {
 }
 
@@ -59,6 +65,20 @@ void InspectorApplicationCacheAgent::clearFrontend()
 {
     m_instrumentingAgents->setInspectorApplicationCacheAgent(0);
     m_frontend = 0;
+}
+
+void InspectorApplicationCacheAgent::restore()
+{
+    if (m_state->getBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled)) {
+        ErrorString error;
+        enable(&error);
+    }
+}
+
+void InspectorApplicationCacheAgent::enable(ErrorString*)
+{
+    m_state->setBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled, true);
+    m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
@@ -79,11 +99,6 @@ void InspectorApplicationCacheAgent::networkStateChanged()
 {
     bool isNowOnline = networkStateNotifier().onLine();
     m_frontend->networkStateUpdated(isNowOnline);
-}
-
-void InspectorApplicationCacheAgent::enable(ErrorString*)
-{
-    m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
 }
 
 void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>* result)

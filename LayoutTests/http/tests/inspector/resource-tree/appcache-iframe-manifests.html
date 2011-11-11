@@ -1,222 +1,103 @@
 <html>
 <head>
 <script src="../inspector-test.js"></script>
+<script src="appcache-test.js"></script>
 <script>
-var framesCount = 0;
-
-function createAndNavigateIFrame(url)
-{
-    iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.name = "frame" + ++framesCount;
-    iframe.id = iframe.name;
-    document.body.appendChild(iframe);
-}
-
-function removeIFrame(name)
-{
-    iframe = document.querySelector("#" + name);
-    iframe.parentElement.removeChild(iframe);
-}
-
-function navigateIFrame(name, url)
-{
-    iframe = document.querySelector("#" + name);
-    iframe.src = url;
-}
-
 function test()
 {
-    function createAndNavigateIFrame(url, callback)
-    {
-        InspectorTest.addSniffer(WebInspector.ResourceTreeModel.prototype, "_frameNavigated", frameNavigated);
-        InspectorTest.evaluateInPage("createAndNavigateIFrame(unescape('" + escape(url) + "'))");
-
-        function frameNavigated(frame)
-        {
-            callback(frame.id);
-        }
-    }
-
-    function navigateIFrame(frameId, url, callback)
-    {
-        var frame = WebInspector.resourceTreeModel.frameForId(frameId)
-        InspectorTest.evaluateInPage("navigateIFrame(unescape('" + escape(frame.name) +"'), unescape('" + escape(url) + "'))");
-        InspectorTest.addSniffer(WebInspector.ResourceTreeModel.prototype, "_frameNavigated", frameNavigated);
-
-        function frameNavigated(frame)
-        {
-            callback(frame.id);
-        }
-    }
-
-    function removeIFrame(frameId, callback)
-    {
-        var frame = WebInspector.resourceTreeModel.frameForId(frameId)
-        InspectorTest.evaluateInPage("removeIFrame(unescape('" + escape(frame.name) +"'))");
-        InspectorTest.addSniffer(WebInspector.ResourceTreeModel.prototype, "_frameDetached", frameDetached);
-
-        function frameDetached(frame)
-        {
-            callback(frame.id);
-        }
-    }
-
-    function dumpApplicationCache()
-    {
-        dumpApplicationCacheTree();
-        dumpApplicationCacheModel();
-        InspectorTest.addResult("");
-    }
-
-    function dumpApplicationCacheTree()
-    {
-        InspectorTest.addResult("Dumping application cache tree:");
-        var applicationCacheTreeElement = WebInspector.panels.resources.applicationCacheListTreeElement;
-        if (!applicationCacheTreeElement.children.length) {
-            InspectorTest.addResult("    (empty)");
-            return;
-        }
-        for (var i = 0; i < applicationCacheTreeElement.children.length; ++i) {
-            var manifestTreeElement = applicationCacheTreeElement.children[i];
-            InspectorTest.addResult("    Manifest URL: " + manifestTreeElement.manifestURL);
-            if (!manifestTreeElement.children.length) {
-                InspectorTest.addResult("    (no frames)");
-                continue;
-            }
-            for (var j = 0; j < manifestTreeElement.children.length; ++j) {
-                var frameTreeElement = manifestTreeElement.children[j];
-                InspectorTest.addResult("        Frame: " + frameTreeElement.displayName);
-            }
-        }
-    }
-
-    function dumpApplicationCacheModel()
-    {
-        InspectorTest.addResult("Dumping application cache model:");
-        var model = WebInspector.panels.resources._applicationCacheModel;
-
-        var frameIds = [];
-        for (var frameId in model._manifestURLsByFrame) {
-            frameIds.push(frameId);
-        }
-
-        function compareFunc(a, b) {
-            var aFrame = WebInspector.resourceTreeModel.frameForId(a);
-            var bFrame = WebInspector.resourceTreeModel.frameForId(b);
-            return aFrame.name.localeCompare(bFrame.name);
-        }
-        frameIds.sort(compareFunc);
-
-        if (!frameIds.length) {
-            InspectorTest.addResult("    (empty)");
-            return;
-        }
-        for (var i = 0; i < frameIds.length; ++i) {
-            var frameId = frameIds[i];
-            var frame = WebInspector.resourceTreeModel.frameForId(frameId);
-            var manifestURL = model._manifestURLsByFrame[frameId];
-            InspectorTest.addResult("    Frame: " + frame.name + " (" + frame.url + ") has manifest url: " + manifestURL);
-        }
-    }
-
-    function waitForFrameManifestURLAndStatus(frameId, manifestURL, status, callback)
-    {
-        var frameManifestStatus = WebInspector.panels.resources._applicationCacheModel.frameManifestStatus(frameId);
-        var frameManifestURL = WebInspector.panels.resources._applicationCacheModel.frameManifestURL(frameId);
-        if (frameManifestStatus === status && frameManifestURL.indexOf(manifestURL) !== -1) {
-            callback();
-            return;
-        }
-
-        InspectorTest.addSniffer(WebInspector.ApplicationCacheModel.prototype, "_frameManifestUpdated", waitForFrameManifestURLAndStatus.bind(this, frameId, manifestURL, status, callback));
-    }
-
     var frameId1;
     var frameId2;
     var frameId3;
 
     WebInspector.showPanel("resources");
-    dumpApplicationCache();
-    createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step1);
+    InspectorTest.startApplicationCacheStatusesRecording();
+    InspectorTest.dumpApplicationCache();
+    InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step1);
 
     function step1(frameId)
     {
         frameId1 = frameId;
-        waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=1", applicationCache.IDLE, step2);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=1", applicationCache.IDLE, step2);
     }
 
     function step2()
     {
-        dumpApplicationCache();
-        navigateIFrame(frameId1, "resources/page-with-manifest.php?manifestId=2", step3);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.navigateIFrame(frameId1, "resources/page-with-manifest.php?manifestId=2", step3);
     }
 
     function step3(frameId)
     {
-        waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=2", applicationCache.IDLE, step4);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=2", applicationCache.IDLE, step4);
     }
 
     function step4()
     {
-        dumpApplicationCache();
-        createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step5);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step5);
     }
 
     function step5(frameId)
     {
         frameId2 = frameId;
-        waitForFrameManifestURLAndStatus(frameId2, "manifest.php?manifestId=1", applicationCache.IDLE, step6);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "manifest.php?manifestId=1", applicationCache.IDLE, step6);
     }
 
     function step6()
     {
-        dumpApplicationCache();
-        createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step7);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step7);
     }
 
     function step7(frameId)
     {
         frameId3 = frameId;
-        waitForFrameManifestURLAndStatus(frameId3, "manifest.php?manifestId=1", applicationCache.IDLE, step8);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "manifest.php?manifestId=1", applicationCache.IDLE, step8);
     }
 
     function step8()
     {
-        dumpApplicationCache();
-        removeIFrame(frameId3, step9);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId3, step9);
     }
 
     function step9(frameId)
     {
-        waitForFrameManifestURLAndStatus(frameId3, "", applicationCache.UNCACHED, step10);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "", applicationCache.UNCACHED, step10);
     }
 
     function step10()
     {
-        dumpApplicationCache();
-        removeIFrame(frameId2, step11);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId2, step11);
     }
 
     function step11(frameId)
     {
-        waitForFrameManifestURLAndStatus(frameId2, "", applicationCache.UNCACHED, step12);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "", applicationCache.UNCACHED, step12);
     }
 
     function step12()
     {
-        dumpApplicationCache();
-        removeIFrame(frameId1, step13);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId1, step13);
     }
 
     function step13(frameId)
     {
-        waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step14);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step14);
     }
 
     function step14()
     {
-        dumpApplicationCache();
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
         InspectorTest.completeTest();
     }
 }
