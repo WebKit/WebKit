@@ -1,3 +1,25 @@
+2011-11-10  Enrica Casucci  <enrica@apple.com>
+
+        ASSERT when outdenting styled line break.
+        https://bugs.webkit.org/show_bug.cgi?id=72069
+        <rdar://problem/10429739>
+
+        Reviewed by Ryosuke Niwa.
+
+        When outdenting a line break that has some inline style, we don't consider
+        the enclosing elements that provide the style.
+        This causes the splitting to occur in the wrong position,
+        triggering the assert.
+         
+        Test: editing/execCommand/outdent-break-with-style.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph): The fix consists
+        in choosing the highest inline ancestor as splitting point.
+        * editing/htmlediting.cpp:
+        (WebCore::isInline): Added.
+        * editing/htmlediting.h: Added isInline.
+
 2011-11-10  Dean Jackson  <dino@apple.com>
 
         Remove effectBoundingBoxMode from CSS Filters

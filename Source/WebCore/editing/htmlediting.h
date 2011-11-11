@@ -96,6 +96,7 @@ inline bool canHaveChildrenForEditing(const Node* node)
 
 bool isAtomicNode(const Node*);
 bool isBlock(const Node*);
+bool isInline(const Node*);
 bool isSpecialElement(const Node*);
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
