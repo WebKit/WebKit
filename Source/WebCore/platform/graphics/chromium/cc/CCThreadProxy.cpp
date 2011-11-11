@@ -412,7 +412,7 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
     ASSERT(!m_currentTextureUpdaterOnImplThread);
     m_currentTextureUpdaterOnImplThread = adoptPtr(new CCTextureUpdater(m_layerTreeHostImpl->contentsTextureAllocator()));
     m_layerTreeHost->updateCompositorResources(m_layerTreeHostImpl->context(), *m_currentTextureUpdaterOnImplThread);
-    CCLayerTreeHostCommon::applyScrollAndScale(m_layerTreeHostImpl->rootLayer(), *scrollInfo);
+    CCLayerTreeHostCommon::applyScrollAndScale(m_layerTreeHostImpl->scrollLayer(), *scrollInfo);
 
     m_schedulerOnImplThread->beginFrameComplete();
 }

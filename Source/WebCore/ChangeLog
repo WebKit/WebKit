@@ -1,3 +1,20 @@
+2011-11-11  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] scrolling is broken with compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=72059
+
+        Reviewed by James Robinson.
+
+        No new test. Existing test CCLayerTreeHostImplTest.scrollDeltaRepeatedScrolls checks scroll deltas are applied
+        on the right layer.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore::CCLayerTreeHostImpl::scrollLayer):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        Instead of calling on the root layer which doesn't have scroll delta applied. Change this to scrollLayer()
+        which actually has scroll delta.
+
 2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99826.
