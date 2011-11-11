@@ -482,9 +482,11 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 // must be relative-path reference
 
                 // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
-                parseBuffer.resize(base.m_pathEnd + 1 + len + 1);
+                const size_t bufferSize = base.m_pathEnd + 1 + len + 1;
+                parseBuffer.resize(bufferSize);
 
                 char* bufferPos = parseBuffer.data();
+                const char* bufferStart = bufferPos;
 
                 // first copy everything before the path from the base
                 unsigned baseLength = base.m_string.length();
@@ -547,7 +549,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
 
                 // all done with the path work, now copy any remainder
                 // of the relative reference; this will also add a null terminator
-                strcpy(bufferPos, relStringPos);
+                strncpy(bufferPos, relStringPos, bufferSize - (bufferPos - bufferStart));
 
                 parse(parseBuffer.data(), 0);
 
