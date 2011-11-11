@@ -54,6 +54,9 @@ class PlatformMouseEvent;
 
         void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
                             int detail, int screenX, int screenY, int clientX, int clientY,
+#if ENABLE(MOUSE_LOCK_API)
+                            int movementX, int movementY,
+#endif
                             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                             unsigned short button, PassRefPtr<EventTarget> relatedTarget);
 
