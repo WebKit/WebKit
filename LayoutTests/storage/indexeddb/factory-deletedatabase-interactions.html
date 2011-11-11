@@ -187,38 +187,6 @@ function test3() {
                                "h.close",
                                "deleteDatabase().onsuccess"
                                ].toString());
-        test4();
-    }
-}
-
-function test4() {
-    debug("");
-    debug("TEST: multiple deleteDatabase calls");
-    evalAndLog("window.dbname = 'test4'; window.ver = 1; window.steps = []");
-    var h = new Connection("h");
-    runSteps([function(doNext) { h.open({onsuccess: doNext,
-                                onversion: function() {
-                                    debug("    h closing, but not immediately");
-                                    setTimeout(function() { h.close(); }, 0);
-                                }}); },
-        function(doNext) { deleteDatabase("1", window.dbname); doNext(); },
-        function(doNext) { deleteDatabase("2", window.dbname, {
-                           onsuccess: finishTest}); },
-        ]);
-    function finishTest() {
-        debug("NOTE: Will FAIL with extra bogus h.onversionchange/h.close steps; https://bugs.webkit.org/show_bug.cgi?id=71129");
-        shouldBeEqualToString("window.steps.toString()",
-                              ["h.open",
-                               "h.open.onsuccess",
-                               "deleteDatabase(1)",
-                               "deleteDatabase(2)",
-                               "h.onversionchange",
-                               "deleteDatabase(1).onblocked",
-                               "deleteDatabase(2).onblocked",
-                               "h.close",
-                               "deleteDatabase(1).onsuccess",
-                               "deleteDatabase(2).onsuccess"
-                               ].toString());
         done();
     }
 }

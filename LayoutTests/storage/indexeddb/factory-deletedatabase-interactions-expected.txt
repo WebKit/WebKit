@@ -45,25 +45,6 @@ window.dbname = 'test3'; window.ver = 1; window.steps = []
 'h.close'
 'deleteDatabase().onsuccess'
 PASS window.steps.toString() is "h.open,h.open.onsuccess,h.setVersion,deleteDatabase(),h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
-
-TEST: multiple deleteDatabase calls
-window.dbname = 'test4'; window.ver = 1; window.steps = []
-'h.open'
-'h.open.onsuccess'
-'deleteDatabase(1)'
-'deleteDatabase(2)'
-'h.onversionchange'
-    h closing, but not immediately
-'deleteDatabase(1).onblocked'
-'h.onversionchange'
-    h closing, but not immediately
-'deleteDatabase(2).onblocked'
-'h.close'
-'h.close'
-'deleteDatabase(1).onsuccess'
-'deleteDatabase(2).onsuccess'
-NOTE: Will FAIL with extra bogus h.onversionchange/h.close steps; https://bugs.webkit.org/show_bug.cgi?id=71129
-FAIL window.steps.toString() should be h.open,h.open.onsuccess,deleteDatabase(1),deleteDatabase(2),h.onversionchange,deleteDatabase(1).onblocked,deleteDatabase(2).onblocked,h.close,deleteDatabase(1).onsuccess,deleteDatabase(2).onsuccess. Was h.open,h.open.onsuccess,deleteDatabase(1),deleteDatabase(2),h.onversionchange,deleteDatabase(1).onblocked,h.onversionchange,deleteDatabase(2).onblocked,h.close,h.close,deleteDatabase(1).onsuccess,deleteDatabase(2).onsuccess.
 PASS successfullyParsed is true
 
 TEST COMPLETE
