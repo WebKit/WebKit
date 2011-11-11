@@ -1,5 +1,13 @@
 2011-11-10  Beth Dakin  <bdakin@apple.com>
 
+        Once more for the QT build.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::setFindIndicator):
+        * UIProcess/qt/QtWebPageProxy.h:
+
+2011-11-10  Beth Dakin  <bdakin@apple.com>
+
         More attempted build fix.
 
         * UIProcess/API/efl/PageClientImpl.cpp:

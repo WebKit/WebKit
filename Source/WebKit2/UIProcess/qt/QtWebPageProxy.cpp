@@ -524,7 +524,7 @@ PassRefPtr<WebContextMenuProxy> QtWebPageProxy::createContextMenuProxy(WebPagePr
     return WebContextMenuProxyQt::create(m_webPageProxy.get(), m_viewInterface);
 }
 
-void QtWebPageProxy::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+void QtWebPageProxy::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate)
 {
 }
 
