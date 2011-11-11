@@ -44,7 +44,7 @@ module window {
         readonly attribute [EnabledAtRuntime] Geolocation geolocation;
 #endif
 
-        void getStorageUpdates();
+        void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 
 #if defined(ENABLE_REGISTER_PROTOCOL_HANDLER) && ENABLE_REGISTER_PROTOCOL_HANDLER
         void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)

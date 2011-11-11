@@ -1,3 +1,29 @@
+2011-11-11  Adam Klein  <adamk@chromium.org>
+
+        Remove no-op StorageNamespace::unlock method
+        https://bugs.webkit.org/show_bug.cgi?id=72181
+
+        Reviewed by Darin Adler.
+
+        The method was meant to support the localStorage mutex,
+        but the approach of using a mutex for localStorage has never been
+        implemented (and almost certainly won't be). Even if it were implemented,
+        it's not being called at the right time, due to bugs in the V8 bindings'
+        use of V8Proxy (see http://webkit.org/b/72063 for details).
+
+        If, in the future, some replacement for a mutex is used to synchronize
+        localStorage access, it can easily be re-added to the (hopefully
+        fixed-by-then) replacement for V8Proxy::didLeaveScriptContext.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::didLeaveScriptContext): Stop calling unlock().
+        * page/Navigator.cpp:
+        (WebCore::Navigator::getStorageUpdates): Remove implementation (a call to unlock), but leave code as it's exposed to the platform.
+        * page/Navigator.idl: Added a FIXME to remove getStorageUpdates from the platform.
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        * storage/StorageNamespaceImpl.h:
+
 2011-11-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Make sure Scrollbars are in their own layer.

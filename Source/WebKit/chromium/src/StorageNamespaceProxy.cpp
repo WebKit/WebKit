@@ -85,11 +85,6 @@ void StorageNamespaceProxy::close()
     m_storageNamespace->close();
 }
 
-void StorageNamespaceProxy::unlock()
-{
-    // FIXME: Implement.
-}
-
 void StorageNamespaceProxy::clearOriginForDeletion(SecurityOrigin* origin)
 {
     ASSERT_NOT_REACHED();

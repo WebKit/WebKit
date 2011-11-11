@@ -172,16 +172,7 @@ Geolocation* Navigator::geolocation() const
 
 void Navigator::getStorageUpdates()
 {
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    StorageNamespace* localStorage = page->group().localStorage();
-    if (localStorage)
-        localStorage->unlock();
+    // FIXME: Remove this method or rename to yieldForStorageUpdates.
 }
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)

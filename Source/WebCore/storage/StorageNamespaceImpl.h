@@ -47,7 +47,6 @@ namespace WebCore {
         virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>);
         virtual PassRefPtr<StorageNamespace> copy();
         virtual void close();
-        virtual void unlock();
 
         // Not removing the origin's StorageArea from m_storageAreaMap because
         // we're just deleting the underlying db file. If an item is added immediately

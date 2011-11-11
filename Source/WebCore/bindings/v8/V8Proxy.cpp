@@ -45,12 +45,10 @@
 #include "IDBPendingTransactionMonitor.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
-#include "PageGroup.h"
 #include "PlatformSupport.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "StorageNamespace.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"
@@ -589,22 +587,15 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
 
 void V8Proxy::didLeaveScriptContext()
 {
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    // If we've just left a top level script context and local storage has been
-    // instantiated, we must ensure that any storage locks have been freed.
-    // Per http://dev.w3.org/html5/spec/Overview.html#storage-mutex
     if (m_recursion)
         return;
+
 #if ENABLE(INDEXED_DATABASE)
     // If we've just left a script context and indexed database has been
     // instantiated, we must let its transaction coordinator know so it can terminate
     // any not-yet-started transactions.
     IDBPendingTransactionMonitor::abortPendingTransactions();
 #endif // ENABLE(INDEXED_DATABASE)
-    if (page->group().hasLocalStorage())
-        page->group().localStorage()->unlock();
 
 #if ENABLE(MUTATION_OBSERVERS)
     WebCore::WebKitMutationObserver::deliverAllMutations();

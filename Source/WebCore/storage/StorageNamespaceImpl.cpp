@@ -139,11 +139,6 @@ void StorageNamespaceImpl::close()
     m_isShutdown = true;
 }
 
-void StorageNamespaceImpl::unlock()
-{
-    // Because there's a single event loop per-process, this is a no-op.
-}
-
 void StorageNamespaceImpl::clearOriginForDeletion(SecurityOrigin* origin)
 {
     ASSERT(isMainThread());

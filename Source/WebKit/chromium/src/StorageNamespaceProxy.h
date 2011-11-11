@@ -40,7 +40,6 @@ public:
     virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>);
     virtual PassRefPtr<StorageNamespace> copy();
     virtual void close();
-    virtual void unlock();
     
     virtual void clearOriginForDeletion(SecurityOrigin*);
     virtual void clearAllOriginsForDeletion();

@@ -1,3 +1,13 @@
+2011-11-11  Adam Klein  <adamk@chromium.org>
+
+        Remove no-op StorageNamespace::unlock method
+        https://bugs.webkit.org/show_bug.cgi?id=72181
+
+        Reviewed by Darin Adler.
+
+        * src/StorageNamespaceProxy.cpp:
+        * src/StorageNamespaceProxy.h:
+
 2011-11-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] DRT does not have LayoutTestController.pageSizeAndMarginsInPixels
