@@ -1,3 +1,10 @@
+2011-11-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r99898.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
 2011-11-10  Dan Bernstein  <mitz@apple.com>
 
         Disabling assertions breaks the debug build
