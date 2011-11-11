@@ -26,8 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
 import StringIO
+import time
+import unittest
 
 from webkitpy.common.system import logtesting
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
@@ -110,10 +111,33 @@ class ChromiumDriverTest(unittest.TestCase):
                 self.driver._proc.poll = lambda: 2
 
         self.driver._port._executive = FakeExecutive()
-        self.driver.KILL_TIMEOUT = 0.01
+        # Override the kill timeout (ms) so the test runs faster.
+        self.driver._port.get_option = lambda name: 1
         self.driver.stop()
         self.assertTrue(self.wait_called)
         self.assertEquals(self.pid, 1)
+
+    def test_two_drivers(self):
+        mock_port = Mock()
+
+        class MockDriver(chromium.ChromiumDriver):
+            def __init__(self):
+                chromium.ChromiumDriver.__init__(self, mock_port, worker_number=0)
+
+            def cmd_line(self):
+                return 'python'
+
+        # get_option is used to get the timeout (ms) for a process before we kill it.
+        mock_port.get_option = lambda name: 60 * 1000
+        driver1 = MockDriver()
+        driver1._start()
+        driver2 = MockDriver()
+        driver2._start()
+        # It's possible for driver1 to timeout when stopping if it's sharing stdin with driver2.
+        start_time = time.time()
+        driver1.stop()
+        driver2.stop()
+        self.assertTrue(time.time() - start_time < 20)
 
 
 class ChromiumPortTest(port_testcase.PortTestCase):

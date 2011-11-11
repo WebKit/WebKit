@@ -1,3 +1,18 @@
+2011-11-11  Tony Chang  <tony@chromium.org>
+
+        allow two chromium drivers to run at the same time in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=72067
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: close_fds=True on
+            posix prevents the subprocesses from sharing the same fd for stdin.
+            Sharing the same fd prevents us from closing the files unless all references
+            to the fd are closed.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py: In addition
+            to adding a test for this, speed up a test (from 3sec to 0) by fixing
+            the timeout override. It looks like it regressed in r95875.
+
 2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99964.

@@ -452,7 +452,8 @@ class ChromiumDriver(Driver):
         assert not self._proc
         # FIXME: This should use ServerProcess like WebKitDriver does.
         # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
-        self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        close_fds = sys.platform not in ('win32', 'cygwin')
+        self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
 
     def poll(self):
         return self._proc.poll()
