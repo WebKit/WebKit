@@ -134,26 +134,6 @@ static Color parseConfigColor(const String& fieldName, InspectorObject* configOb
     return parseColor(&colorObject);
 }
 
-class MatchJob {
-public:
-    virtual void match(ListHashSet<Node*>& resultCollector) = 0;
-    virtual ~MatchJob() { }
-
-protected:
-    MatchJob(Document* document, const String& query)
-        : m_document(document)
-        , m_query(query) { }
-
-    void addNodesToResults(PassRefPtr<NodeList> nodes, ListHashSet<Node*>& resultCollector)
-    {
-        for (unsigned i = 0; nodes && i < nodes->length(); ++i)
-            resultCollector.add(nodes->item(i));
-    }
-
-    Document* m_document;
-    String m_query;
-};
-
 class RevalidateStyleAttributeTask {
 public:
     RevalidateStyleAttributeTask(InspectorDOMAgent*);
@@ -166,105 +146,6 @@ private:
     Timer<RevalidateStyleAttributeTask> m_timer;
     HashSet<RefPtr<Element> > m_elements;
 };
-
-namespace {
-
-class MatchExactIdJob : public WebCore::MatchJob {
-public:
-    MatchExactIdJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
-    virtual ~MatchExactIdJob() { }
-
-protected:
-    virtual void match(ListHashSet<Node*>& resultCollector)
-    {
-        if (m_query.isEmpty())
-            return;
-
-        Element* element = m_document->getElementById(m_query);
-        if (element)
-            resultCollector.add(element);
-    }
-};
-
-class MatchExactClassNamesJob : public WebCore::MatchJob {
-public:
-    MatchExactClassNamesJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
-    virtual ~MatchExactClassNamesJob() { }
-
-    virtual void match(ListHashSet<Node*>& resultCollector)
-    {
-        if (!m_query.isEmpty())
-            addNodesToResults(m_document->getElementsByClassName(m_query), resultCollector);
-    }
-};
-
-class MatchExactTagNamesJob : public WebCore::MatchJob {
-public:
-    MatchExactTagNamesJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
-    virtual ~MatchExactTagNamesJob() { }
-
-    virtual void match(ListHashSet<Node*>& resultCollector)
-    {
-        if (!m_query.isEmpty())
-            addNodesToResults(m_document->getElementsByName(m_query), resultCollector);
-    }
-};
-
-class MatchQuerySelectorAllJob : public WebCore::MatchJob {
-public:
-    MatchQuerySelectorAllJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
-    virtual ~MatchQuerySelectorAllJob() { }
-
-    virtual void match(ListHashSet<Node*>& resultCollector)
-    {
-        if (m_query.isEmpty())
-            return;
-
-        ExceptionCode ec = 0;
-        RefPtr<NodeList> list = m_document->querySelectorAll(m_query, ec);
-        if (!ec)
-            addNodesToResults(list, resultCollector);
-    }
-};
-
-class MatchXPathJob : public WebCore::MatchJob {
-public:
-    MatchXPathJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
-    virtual ~MatchXPathJob() { }
-
-    virtual void match(ListHashSet<Node*>& resultCollector)
-    {
-        if (m_query.isEmpty())
-            return;
-
-        ExceptionCode ec = 0;
-        RefPtr<XPathResult> result = m_document->evaluate(m_query, m_document, 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
-        if (ec || !result)
-            return;
-
-        unsigned long size = result->snapshotLength(ec);
-        for (unsigned long i = 0; !ec && i < size; ++i) {
-            Node* node = result->snapshotItem(i, ec);
-            if (ec)
-                break;
-
-            if (node->nodeType() == Node::ATTRIBUTE_NODE)
-                node = static_cast<Attr*>(node)->ownerElement();
-            resultCollector.add(node);
-        }
-    }
-};
-
-class MatchPlainTextJob : public MatchXPathJob {
-public:
-    MatchPlainTextJob(Document* document, const String& query) : MatchXPathJob(document, query)
-    {
-        m_query = "//text()[contains(., '" + m_query + "')] | //comment()[contains(., '" + m_query + "')]";
-    }
-    virtual ~MatchPlainTextJob() { }
-};
-
-}
 
 RevalidateStyleAttributeTask::RevalidateStyleAttributeTask(InspectorDOMAgent* domAgent)
     : m_domAgent(domAgent)
@@ -658,7 +539,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     unsigned numAttrs = attrMap->length();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute *attribute = attrMap->attributeItem(i);
+        const Attribute* attribute = attrMap->attributeItem(i);
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
         element->setAttribute(attribute->name(), attribute->value(), ec);
         if (ec) {
@@ -911,71 +792,79 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
     bool endTagFound = whitespaceTrimmedQuery.reverseFind('>') + 1 == queryLength;
 
     String tagNameQuery = whitespaceTrimmedQuery;
-    if (startTagFound || endTagFound)
-        tagNameQuery = tagNameQuery.substring(startTagFound ? 1 : 0, endTagFound ? queryLength - 1 : queryLength);
-    if (!Document::isValidName(tagNameQuery))
-        tagNameQuery = "";
+    if (startTagFound)
+        tagNameQuery = tagNameQuery.right(tagNameQuery.length() - 1);
+    if (endTagFound)
+        tagNameQuery = tagNameQuery.left(tagNameQuery.length() - 1);
 
-    String attributeNameQuery = whitespaceTrimmedQuery;
-    if (!Document::isValidName(attributeNameQuery))
-        attributeNameQuery = "";
-
-    String escapedQuery = whitespaceTrimmedQuery;
-    escapedQuery.replace("'", "\\'");
-    String escapedTagNameQuery = tagNameQuery;
-    escapedTagNameQuery.replace("'", "\\'");
-
-    // Find all frames, iframes and object elements to search their documents.
     Vector<Document*> docs = documents();
-    Vector<MatchJob*> matchJobs;
+    ListHashSet<Node*> resultCollector;
+
     for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
         Document* document = *it;
+        Node* node = document->documentElement();
 
-        if (!tagNameQuery.isEmpty() && startTagFound && endTagFound) {
-            matchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
-            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-            continue;
+        // Manual plain text search.
+        while ((node = node->traverseNextNode(document->documentElement()))) {
+            switch (node->nodeType()) {
+            case Node::TEXT_NODE:
+            case Node::COMMENT_NODE:
+            case Node::CDATA_SECTION_NODE: {
+                String text = node->nodeValue();
+                if (text.findIgnoringCase(whitespaceTrimmedQuery) != notFound)
+                    resultCollector.add(node);
+                break;
+            }
+            case Node::ELEMENT_NODE: {
+                if (node->nodeName().findIgnoringCase(tagNameQuery) != notFound) {
+                    resultCollector.add(node);
+                    break;
+                }
+                // Go through all attributes and serialize them.
+                const NamedNodeMap* attrMap = static_cast<Element*>(node)->attributes(true);
+                if (!attrMap)
+                    break;
+
+                unsigned numAttrs = attrMap->length();
+                for (unsigned i = 0; i < numAttrs; ++i) {
+                    // Add attribute pair
+                    const Attribute* attribute = attrMap->attributeItem(i);
+                    if (attribute->localName().find(whitespaceTrimmedQuery) != notFound) {
+                        resultCollector.add(node);
+                        break;
+                    }
+                    if (attribute->value().find(whitespaceTrimmedQuery) != notFound) {
+                        resultCollector.add(node);
+                        break;
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+            }
         }
 
-        if (!tagNameQuery.isEmpty() && startTagFound) {
-            matchJobs.append(new MatchXPathJob(document, "//*[starts-with(name(), '" + escapedTagNameQuery + "')]"));
-            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-            continue;
-        }
+        // XPath evaluation
+        for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
+            Document* document = *it;
+            ExceptionCode ec = 0;
+            RefPtr<XPathResult> result = document->evaluate(whitespaceTrimmedQuery, document, 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
+            if (ec || !result)
+                continue;
 
-        if (!tagNameQuery.isEmpty() && endTagFound) {
-            // FIXME: we should have a matchEndOfTagNames search function if endTagFound is true but not startTagFound.
-            // This requires ends-with() support in XPath, WebKit only supports starts-with() and contains().
-            matchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
-            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-            continue;
-        }
+            unsigned long size = result->snapshotLength(ec);
+            for (unsigned long i = 0; !ec && i < size; ++i) {
+                Node* node = result->snapshotItem(i, ec);
+                if (ec)
+                    break;
 
-        bool matchesEveryNode = whitespaceTrimmedQuery == "//*" || whitespaceTrimmedQuery == "*";
-        if (matchesEveryNode) {
-            // These queries will match every node. Matching everything isn't useful and can be slow for large pages,
-            // so limit the search functions list to plain text and attribute matching for these.
-            matchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
-            matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-            continue;
+                if (node->nodeType() == Node::ATTRIBUTE_NODE)
+                    node = static_cast<Attr*>(node)->ownerElement();
+                resultCollector.add(node);
+            }
         }
-
-        matchJobs.append(new MatchExactIdJob(document, whitespaceTrimmedQuery));
-        matchJobs.append(new MatchExactClassNamesJob(document, whitespaceTrimmedQuery));
-        matchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
-        matchJobs.append(new MatchQuerySelectorAllJob(document, "[" + attributeNameQuery + "]"));
-        matchJobs.append(new MatchQuerySelectorAllJob(document, whitespaceTrimmedQuery));
-        matchJobs.append(new MatchXPathJob(document, "//*[contains(@*, '" + escapedQuery + "')]"));
-        if (!tagNameQuery.isEmpty())
-            matchJobs.append(new MatchXPathJob(document, "//*[contains(name(), '" + escapedTagNameQuery + "')]"));
-        matchJobs.append(new MatchPlainTextJob(document, escapedQuery));
-        matchJobs.append(new MatchXPathJob(document, whitespaceTrimmedQuery));
     }
-
-    ListHashSet<Node*> resultCollector;
-    for (Vector<MatchJob*>::iterator it = matchJobs.begin(); it != matchJobs.end(); ++it)
-        (*it)->match(resultCollector);
-    deleteAllValues(matchJobs);
 
     *searchId = IdentifiersFactory::createIdentifier();
     SearchResults::iterator resultsIt = m_searchResults.add(*searchId, Vector<RefPtr<Node> >()).first;
@@ -1245,26 +1134,26 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
     String nodeValue;
 
     switch (node->nodeType()) {
-        case Node::TEXT_NODE:
-        case Node::COMMENT_NODE:
-        case Node::CDATA_SECTION_NODE:
-            nodeValue = node->nodeValue();
-            if (nodeValue.length() > maxTextSize) {
-                nodeValue = nodeValue.left(maxTextSize);
-                nodeValue.append(ellipsisUChar);
-            }
-            break;
-        case Node::ATTRIBUTE_NODE:
-            localName = node->localName();
-            break;
-        case Node::DOCUMENT_FRAGMENT_NODE:
-            break;
-        case Node::DOCUMENT_NODE:
-        case Node::ELEMENT_NODE:
-        default:
-            nodeName = node->nodeName();
-            localName = node->localName();
-            break;
+    case Node::TEXT_NODE:
+    case Node::COMMENT_NODE:
+    case Node::CDATA_SECTION_NODE:
+        nodeValue = node->nodeValue();
+        if (nodeValue.length() > maxTextSize) {
+            nodeValue = nodeValue.left(maxTextSize);
+            nodeValue.append(ellipsisUChar);
+        }
+        break;
+    case Node::ATTRIBUTE_NODE:
+        localName = node->localName();
+        break;
+    case Node::DOCUMENT_FRAGMENT_NODE:
+        break;
+    case Node::DOCUMENT_NODE:
+    case Node::ELEMENT_NODE:
+    default:
+        nodeName = node->nodeName();
+        localName = node->localName();
+        break;
     }
 
     value->setNumber("nodeId", id);
@@ -1315,7 +1204,7 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForElementAttributes(Ele
     unsigned numAttrs = attrMap->length();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute *attribute = attrMap->attributeItem(i);
+        const Attribute* attribute = attrMap->attributeItem(i);
         attributesValue->pushString(attribute->name().toString());
         attributesValue->pushString(attribute->value());
     }

@@ -60,7 +60,6 @@ class InspectorFrontend;
 class InspectorPageAgent;
 class IntRect;
 class HitTestResult;
-class MatchJob;
 class HTMLElement;
 struct HighlightData;
 class InspectorState;

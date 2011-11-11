@@ -17,9 +17,9 @@ function test()
             node.getOuterHTML(addSearchResult.bind(this, isLastItem));
         }
 
-        function addSearchResult(isLastItem, error, markupValue)
+        function addSearchResult(isLastItem, error, markupVa_lue)
         {
-            InspectorTest.addResult(markupValue.split("").join(" "));
+            InspectorTest.addResult(markupVa_lue.split("").join(" "));
             if (isLastItem) {
                 WebInspector.domAgent.cancelSearch();
                 next();

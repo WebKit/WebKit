@@ -1,3 +1,15 @@
+2011-11-11  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: reimplement DOM search using no XPath.
+        https://bugs.webkit.org/show_bug.cgi?id=72125
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/InspectorDOMAgent.h:
+
 2011-11-11  Gavin Peters  <gavinp@chromium.org>
 
         Protect Document during error responses
