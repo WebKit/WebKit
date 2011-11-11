@@ -83,9 +83,7 @@ public:
 #if ENABLE(MOUSE_LOCK_API)
     static bool webkitMouseLockAPIEnabled() { return isMouseLockAPIEnabled; }
     static void setWebkitMouseLockAPIEnabled(bool isEnabled) { isMouseLockAPIEnabled = isEnabled; }
-    static bool webkitLockMouseEnabled() { return isMouseLockAPIEnabled; }
-    static bool webkitUnlockMouseEnabled() { return isMouseLockAPIEnabled; }
-    static bool webkitMouseLockedEnabled() { return isMouseLockAPIEnabled; }
+    static bool webkitPointerEnabled() { return isMouseLockAPIEnabled; }
 #endif
 
 #if ENABLE(VIDEO)
