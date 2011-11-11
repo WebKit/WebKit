@@ -106,7 +106,8 @@ if (-d "../Internal") {
         rmtree(["WebKit/chromium/Debug", "WebKit/chromium/Release"]);
     }
 
-    my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium");
+    # Temporarily add --force to unstick the commit queue.
+    my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium", "--force");
     push @chromiumUpdateArgs, "--chromium-android" if isChromiumAndroid();
     system(@chromiumUpdateArgs) == 0 or die $!;
 } elsif (isAppleWinWebKit()) {

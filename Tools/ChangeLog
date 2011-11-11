@@ -1,3 +1,10 @@
+2011-11-11  Tony Chang  <tony@chromium.org>
+
+        Add --force to gclient sync. Once the cq bots cycle, we can remove
+        this since it slows down the normal sync.
+
+        * Scripts/update-webkit:
+
 2011-11-11  Marc-Antoine Ruel  <maruel@chromium.org>
 
         When --force is used, also use --reset
