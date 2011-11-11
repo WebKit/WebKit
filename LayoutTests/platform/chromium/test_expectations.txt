@@ -3888,5 +3888,5 @@ BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
 
 BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
-BUGV8_1821 : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
-BUGWK72133 MAC : http/tests/inspector-enabled/dedicated-workers-list.html = TIMEOUT
+BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
+BUGWK72133 MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
