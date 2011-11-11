@@ -63,12 +63,11 @@ bool WebKitMutationObserver::validateOptions(MutationObserverOptions options)
 {
     return (options & (Attributes | CharacterData | ChildList))
         && ((options & Attributes) || !(options & AttributeOldValue))
-        // FIXME: Uncomment the line below once attributeFilter is supported.
-        // && ((options & Attributes) || !(options & AttributeFilter))
+        && ((options & Attributes) || !(options & AttributeFilter))
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options, ExceptionCode& ec)
+void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter, ExceptionCode& ec)
 {
     if (!node) {
         ec = NOT_FOUND_ERR;
@@ -82,7 +81,7 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
     }
 
     MutationObserverRegistration* registration = node->registerMutationObserver(this);
-    registration->resetObservation(options);
+    registration->resetObservation(options, attributeFilter);
 
     if (registration->isSubtree())
         node->document()->addSubtreeMutationObserverTypes(registration->mutationTypes());

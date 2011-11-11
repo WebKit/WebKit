@@ -43,6 +43,10 @@
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
+#include "WebKitMutationObserver.h"
+
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -89,11 +93,14 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
 
     OptionsObject optionsObject(args[1]);
     unsigned options = 0;
+    HashSet<AtomicString> attributeFilter;
     bool option;
     if (optionsObject.get("childList", option) && option)
         options |= WebKitMutationObserver::ChildList;
     if (optionsObject.get("attributes", option) && option)
         options |= WebKitMutationObserver::Attributes;
+    if (optionsObject.get("attributeFilter", attributeFilter))
+        options |= WebKitMutationObserver::AttributeFilter;
     if (optionsObject.get("characterData", option) && option)
         options |= WebKitMutationObserver::CharacterData;
     if (optionsObject.get("subtree", option) && option)
@@ -104,7 +111,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
         options |= WebKitMutationObserver::CharacterDataOldValue;
 
     ExceptionCode ec = 0;
-    imp->observe(target, options, ec);
+    imp->observe(target, options, attributeFilter, ec);
     if (ec)
         V8Proxy::setDOMException(ec);
     return v8::Handle<v8::Value>();

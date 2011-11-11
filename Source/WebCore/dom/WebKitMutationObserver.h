@@ -77,7 +77,7 @@ public:
 
     ~WebKitMutationObserver();
 
-    void observe(Node*, MutationObserverOptions, ExceptionCode&);
+    void observe(Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter, ExceptionCode&);
     void disconnect();
     void observationStarted(MutationObserverRegistration*);
     void observationEnded(MutationObserverRegistration*);

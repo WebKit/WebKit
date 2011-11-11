@@ -30,6 +30,8 @@
 #include "PlatformString.h"
 #include "ScriptValue.h"
 #include <v8.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -61,6 +63,7 @@ public:
 #if ENABLE(VIDEO_TRACK)
     bool get(const String&, RefPtr<TrackBase>&) const;
 #endif
+    bool get(const String&, HashSet<AtomicString>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;
 

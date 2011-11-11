@@ -1,3 +1,38 @@
+2011-11-11  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Support attributeFilter for attribute mutations
+        https://bugs.webkit.org/show_bug.cgi?id=70860
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds an attributeFilter to the MutationObserverRegistration and
+        adds support for only observing attributes whose name are in the provided
+        filter set (array of strings).
+
+        Test: fast/mutation/observe-attributes.html.
+
+        * bindings/js/JSWebKitMutationObserverCustom.cpp:
+        (WebCore::JSWebKitMutationObserver::observe):
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::get):
+        * bindings/v8/OptionsObject.h:
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::observeCallback):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::resetObservation):
+        (WebCore::MutationObserverRegistration::shouldReceiveMutationFrom):
+        (WebCore::MutationObserverRegistration::caseInsensitiveAttributeFilter):
+        * dom/MutationObserverRegistration.h:
+        * dom/Node.cpp:
+        (WebCore::Node::collectMatchingObserversForMutation):
+        (WebCore::Node::getRegisteredMutationObserversOfType):
+        * dom/Node.h:
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe):
+        * dom/WebKitMutationObserver.h:
+
 2011-11-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Application cache status indicator gets stuck at DOWNLOADING after a failure

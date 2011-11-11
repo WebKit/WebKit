@@ -47,13 +47,13 @@ public:
 
     ~MutationObserverRegistration();
 
-    void resetObservation(MutationObserverOptions);
+    void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     void observedSubtreeNodeWillDetach(PassRefPtr<Node>);
     void clearTransientRegistrations();
     void unregister();
 
-    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType);
-    bool isSubtree() const { return m_options & WebKitMutationObserver::Subtree; }
+    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType, const AtomicString& attributeName);
+    bool inline isSubtree() const { return m_options & WebKitMutationObserver::Subtree; }
 
     WebKitMutationObserver* observer() { return m_observer.get(); }
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (WebKitMutationObserver::AttributeOldValue | WebKitMutationObserver::CharacterDataOldValue); }
@@ -62,6 +62,8 @@ public:
 private:
     MutationObserverRegistration(PassRefPtr<WebKitMutationObserver>, Node*);
 
+    const HashSet<AtomicString>& caseInsensitiveAttributeFilter();
+
     RefPtr<WebKitMutationObserver> m_observer;
     Node* m_registrationNode;
     RefPtr<Node> m_registrationNodeKeepAlive;
@@ -69,6 +71,8 @@ private:
     OwnPtr<NodeHashSet> m_transientRegistrationNodes;
 
     MutationObserverOptions m_options;
+    HashSet<AtomicString> m_attributeFilter;
+    OwnPtr<HashSet<AtomicString> > m_caseInsensitiveAttributeFilter;
 };
 
 } // namespace WebCore

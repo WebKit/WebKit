@@ -14,6 +14,7 @@ PASS observer.observe(undefined, {attributes: true}) threw exception Error: NOT_
 PASS observer.observe(document.body, {subtree: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS observer.observe(document.body, {characterData: true, attributeFilter: ["id"]}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS successfullyParsed is true
 
 TEST COMPLETE

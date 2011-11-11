@@ -107,7 +107,7 @@ function testMultipleRegistration() {
 
     function start() {
         debug('Testing that re-observing the same node with the same observer has the effect of resetting the options.');
-    
+
 		calls = 0;
         mutations = null;
         div = document.createElement('div');
@@ -435,6 +435,209 @@ function testIDLAttribute() {
     start();
 }
 
+function testAttributeFilter() {
+    var div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that attributeFilter works as expected and ignores case with HTML elements.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        observer.observe(div, { attributes: true, attributeFilter: ['foo', 'bar', 'booM'] });
+        div.setAttribute('foo', 'foo');
+        div.setAttribute('bar', 'bar');
+        div.setAttribute('baz', 'baz');
+        div.setAttribute('BOOm', 'boom');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...only foo, bar & boom should be received.');
+
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"bar"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"boom"');
+        shouldBe('mutations[2].attributeNamespace', 'null');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testAttributeFilterSubtree() {
+    var div, div2, div3;
+    var observer;
+
+    function start() {
+        debug('Testing the behavior of attributeFilter when the same observer observes at multiple nodes in a subtree with different filter options.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div2 = div.appendChild(document.createElement('div'));
+        div3 = div2.appendChild(document.createElement('div'));
+
+        observer.observe(div, { attributes: true, subtree: true, attributeFilter: ['foo', 'bar'] });
+        observer.observe(div2, { attributes: true, subtree: true, attributeFilter: ['bar', 'bat'] });
+
+        div3.setAttribute('foo', 'foo');
+        div3.setAttribute('bar', 'bar');
+        div3.setAttribute('bat', 'bat');
+        div3.setAttribute('baz', 'baz');
+
+        setTimeout(checkAndObserveAll, 0);
+    }
+
+    function checkAndObserveAll() {
+        debug('...only foo, bar & bat should be received.');
+
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"bar"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"bat"');
+        shouldBe('mutations[2].attributeNamespace', 'null');
+
+        observer.observe(div2, { attributes: true, subtree: true });
+        div3.setAttribute('bar', 'bar');
+        div3.setAttribute('bat', 'bat');
+        div3.setAttribute('baz', 'baz');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...bar, bat & baz should all be received.');
+
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"bar"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"bat"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"baz"');
+        shouldBe('mutations[2].attributeNamespace', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testAttributeFilterNonHTMLElement() {
+    var path;
+    var observer;
+
+    function start() {
+        debug('Testing that attributeFilter respects case with non-HTML elements.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        observer.observe(path, { attributes: true, attributeFilter: ['pathLength'] });
+        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathLength', '200');
+        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathlength', '200');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...pathLength should be received.');
+
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"pathLength"');
+        shouldBe('mutations[0].attributeNamespace', '"http://www.w3.org/2000/svg"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testAttributeFilterNonHTMLDocument() {
+    var svgDoc, div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that attributeFilter respects case with non-HTML elements.');
+
+        svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', 'svg');
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = svgDoc.createElement('div');
+        observer.observe(div, { attributes: true, attributeFilter: ['ID', 'id', 'booM'] });
+        div.setAttribute('ID', 'ID');
+        div.setAttribute('id', 'id');
+        div.setAttribute('baz', 'baz');
+        div.setAttribute('booM', 'boom');
+        div.setAttribute('BOOm', 'boom');
+
+        path = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'path');
+        observer.observe(path, { attributes: true, attributeFilter: ['pathLength'] });
+        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathLength', '200');
+        path.setAttributeNS('http://www.w3.org/2000/svg', 'pathlength', '200');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...only ID, id, booM, pathLength should be received.');
+
+        shouldBe('mutations.length', '4');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"ID"');
+        shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"id"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"booM"');
+        shouldBe('mutations[2].attributeNamespace', 'null');
+        shouldBe('mutations[3].type', '"attributes"');
+        shouldBe('mutations[3].attributeName', '"pathLength"');
+        shouldBe('mutations[3].attributeNamespace', '"http://www.w3.org/2000/svg"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
 var tests = [
     testBasic,
     testWrongType,
@@ -446,7 +649,11 @@ var tests = [
     testOldValue,
     testOldValueAsRequested,
     testOldValueUnionMultipleObservations,
-    testIDLAttribute
+    testIDLAttribute,
+    testAttributeFilter,
+    testAttributeFilterSubtree,
+    testAttributeFilterNonHTMLElement,
+    testAttributeFilterNonHTMLDocument
 ];
 var testIndex = 0;
 

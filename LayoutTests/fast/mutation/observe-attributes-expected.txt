@@ -92,6 +92,66 @@ PASS mutations[1].type is "attributes"
 PASS mutations[1].attributeName is "id"
 PASS mutations[1].oldValue is "foo"
 
+Testing that attributeFilter works as expected and ignores case with HTML elements.
+...only foo, bar & boom should be received.
+PASS mutations.length is 3
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "foo"
+PASS mutations[0].attributeNamespace is null
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "bar"
+PASS mutations[1].attributeNamespace is null
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "boom"
+PASS mutations[2].attributeNamespace is null
+
+Testing the behavior of attributeFilter when the same observer observes at multiple nodes in a subtree with different filter options.
+...only foo, bar & bat should be received.
+PASS mutations.length is 3
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "foo"
+PASS mutations[0].attributeNamespace is null
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "bar"
+PASS mutations[1].attributeNamespace is null
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "bat"
+PASS mutations[2].attributeNamespace is null
+...bar, bat & baz should all be received.
+PASS mutations.length is 3
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "bar"
+PASS mutations[0].attributeNamespace is null
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "bat"
+PASS mutations[1].attributeNamespace is null
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "baz"
+PASS mutations[2].attributeNamespace is null
+
+Testing that attributeFilter respects case with non-HTML elements.
+...pathLength should be received.
+PASS mutations.length is 1
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "pathLength"
+PASS mutations[0].attributeNamespace is "http://www.w3.org/2000/svg"
+
+Testing that attributeFilter respects case with non-HTML elements.
+...only ID, id, booM, pathLength should be received.
+PASS mutations.length is 4
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "ID"
+PASS mutations[0].attributeNamespace is null
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "id"
+PASS mutations[1].attributeNamespace is null
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "booM"
+PASS mutations[2].attributeNamespace is null
+PASS mutations[3].type is "attributes"
+PASS mutations[3].attributeName is "pathLength"
+PASS mutations[3].attributeNamespace is "http://www.w3.org/2000/svg"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
