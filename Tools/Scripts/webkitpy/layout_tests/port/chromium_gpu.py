@@ -78,7 +78,15 @@ def _set_gpu_options(port, graphics_type='gpu'):
 
 def _tests(port, paths):
     if not paths:
-        paths = ['compositing', 'platform/chromium/compositing', 'media', 'animations/3d']
+        paths = ['compositing', 'platform/chromium/compositing', 'animations/3d']
+
+        if not port.name().startswith('chromium-gpu-mac-leopard'):
+            # Only run tests requiring accelerated compositing on platforms that
+            # support it.
+            # FIXME: we should add the above paths here as well but let's test
+            # the waters with media first.
+            paths += ['media']
+
         if not port.name().startswith('chromium-gpu-cg-mac'):
             # Canvas is not yet accelerated on the Mac, so there's no point
             # in running the tests there.
