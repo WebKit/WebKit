@@ -60,7 +60,7 @@
 #include <sys/timeb.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -128,7 +128,7 @@ namespace JSC {
 
 enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
  
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 
 // FIXME: Since this is superior to the strftime-based version, why limit this to PLATFORM(MAC)?
 // Instead we should consider using this whenever USE(CF) is true.
@@ -195,7 +195,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     return jsNontrivialString(exec, UString(buffer, length));
 }
 
-#else // !PLATFORM(MAC)
+#else // !PLATFORM(MAC) && !PLATFORM(IOS)
 
 static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, LocaleDateTimeFormat format)
 {
@@ -282,7 +282,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
     return formatLocaleDate(exec, *gregorianDateTime, format);
 }
 
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(MAC) && !PLATFORM(IOS)
 
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
 // ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.

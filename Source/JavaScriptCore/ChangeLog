@@ -1,3 +1,23 @@
+2011-11-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Update iOS port's configuration setting, particularly in Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=72187
+        
+        Reviewed by David Kilzer.
+
+        * interpreter/Interpreter.h:
+            - Lower the reentry depth.
+        * runtime/DatePrototype.cpp:
+            - iOS also uses CF.
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+            - Update fastmalloc configuration for iOS.
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+            - Added flag.
+        * wtf/Platform.h:
+            - Update platform configuration for iOS.
+
 2011-11-11  David Kilzer  <ddkilzer@apple.com>
 
         Only define BUILDING_ON_* and TARGETING_* macros when building for Mac OS X

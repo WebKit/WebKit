@@ -547,6 +547,10 @@
 #define WTF_USE_WK_SCROLLBAR_PAINTER 1
 #endif
 
+#if PLATFORM(IOS)
+#define DONT_FINALIZE_ON_MAIN_THREAD 1
+#endif
+
 #if PLATFORM(QT) && OS(DARWIN)
 #define WTF_USE_CF 1
 #endif
@@ -562,16 +566,32 @@
 #define ENABLE_FTPDIR 1
 #define ENABLE_GEOLOCATION 1
 #define ENABLE_ICONDATABASE 0
-#define ENABLE_INSPECTOR 0
+#define ENABLE_INSPECTOR 1
 #define ENABLE_JAVA_BRIDGE 0
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #define ENABLE_ORIENTATION_EVENTS 1
 #define ENABLE_REPAINT_THROTTLING 1
-#define HAVE_READLINE 1
-#define WTF_USE_CF 1
-#define WTF_USE_PTHREADS 1
-#define HAVE_PTHREAD_RWLOCK 1
 #define ENABLE_WEB_ARCHIVE 1
+#define HAVE_NETWORK_CFDATA_ARRAY_CALLBACK 1
+#define HAVE_PTHREAD_RWLOCK 1
+#define HAVE_READLINE 1
+#define HAVE_RUNLOOP_TIMER 0
+#define WTF_USE_CF 1
+#define WTF_USE_CFNETWORK 1
+#define WTF_USE_PTHREADS 1
+
+#if PLATFORM(IOS_SIMULATOR)
+    #define ENABLE_INTERPRETER 1
+    #define ENABLE_JIT 0
+    #define ENABLE_YARR 0
+    #define ENABLE_YARR_JIT 0
+#else
+    #define ENABLE_INTERPRETER 1
+    #define ENABLE_JIT 1
+    #define ENABLE_YARR 1
+    #define ENABLE_YARR_JIT 1
+#endif
+
 #endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
@@ -583,7 +603,7 @@
 #define WTF_USE_CFNETWORK 1
 #endif
 
-#if USE(CFNETWORK) || PLATFORM(MAC)
+#if USE(CFNETWORK) || PLATFORM(MAC) || PLATFORM(IOS)
 #define WTF_USE_CFURLCACHE 1
 #define WTF_USE_CFURLSTORAGESESSIONS 1
 #endif
@@ -674,6 +694,7 @@
 
 #if PLATFORM(IOS)
 #define HAVE_MADV_FREE 1
+#define HAVE_PTHREAD_SETNAME_NP 1
 #endif
 
 #elif OS(WINDOWS)
@@ -967,16 +988,11 @@
 #if ENABLE(JIT) || ENABLE(YARR_JIT)
 #define ENABLE_ASSEMBLER 1
 #endif
-/* Setting this flag prevents the assembler from using RWX memory; this may improve
-   security but currectly comes at a significant performance cost. */
-#if PLATFORM(IOS)
-#define ENABLE_ASSEMBLER_WX_EXCLUSIVE 1
-#endif
 
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On x86-64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)
-#if CPU(X86_64)
+#if CPU(X86_64) || PLATFORM(IOS)
 #define ENABLE_EXECUTABLE_ALLOCATOR_FIXED 1
 #else
 #define ENABLE_EXECUTABLE_ALLOCATOR_DEMAND 1
@@ -1040,7 +1056,7 @@
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 

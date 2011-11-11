@@ -100,7 +100,11 @@
 #endif
 
 // Use a background thread to periodically scavenge memory to release back to the system
+#if PLATFORM(IOS)
+#define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 0
+#else
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 1
+#endif
 
 #ifndef NDEBUG
 namespace WTF {
@@ -638,7 +642,11 @@ static const int kMaxFreeListLength = 256;
 
 // Lower and upper bounds on the per-thread cache sizes
 static const size_t kMinThreadCacheSize = kMaxSize * 2;
+#if PLATFORM(IOS)
+static const size_t kMaxThreadCacheSize = 512 * 1024;
+#else
 static const size_t kMaxThreadCacheSize = 2 << 20;
+#endif
 
 // Default bound on the total amount of thread caches
 static const size_t kDefaultOverallThreadCacheSize = 16 << 20;
@@ -1940,9 +1948,13 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
   scavenge_counter_ -= n;
   if (scavenge_counter_ >= 0) return;  // Not yet time to scavenge
 
+#if PLATFORM(IOS)
+  static const size_t kDefaultReleaseDelay = 64;
+#else
   // If there is nothing to release, wait for so many pages before
   // scavenging again.  With 4K pages, this comes to 16MB of memory.
   static const size_t kDefaultReleaseDelay = 1 << 8;
+#endif
 
   // Find index of free list to scavenge
   size_t index = scavenge_index_ + 1;
@@ -1958,7 +1970,11 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
       s->decommitted = true;
       DLL_Prepend(&slist->returned, s);
 
+#if PLATFORM(IOS)
+      scavenge_counter_ = std::max<size_t>(16UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
+#else
       scavenge_counter_ = std::max<size_t>(64UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
+#endif
 
       if (index == kMaxPages && !DLL_IsEmpty(&slist->normal))
         scavenge_index_ = index - 1;
@@ -4647,10 +4663,10 @@ extern "C" {
 malloc_introspection_t jscore_fastmalloc_introspection = { &FastMallocZone::enumerate, &FastMallocZone::goodSize, &FastMallocZone::check, &FastMallocZone::print,
     &FastMallocZone::log, &FastMallocZone::forceLock, &FastMallocZone::forceUnlock, &FastMallocZone::statistics
 
-#ifndef BUILDING_ON_LEOPARD
+#if !defined(BUILDING_ON_LEOPARD) || OS(IOS)
     , 0 // zone_locked will not be called on the zone unless it advertises itself as version five or higher.
 #endif
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) || OS(IOS)
     , 0, 0, 0, 0 // These members will not be used unless the zone advertises itself as version seven or higher.
 #endif
 

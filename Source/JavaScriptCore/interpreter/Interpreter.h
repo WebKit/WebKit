@@ -80,7 +80,13 @@ namespace JSC {
         CallFrame* oldCallFrame;
     };
 
+#if PLATFORM(IOS)
+    // We use a smaller reentrancy limit on iPhone because of the high amount of
+    // stack space required on the web thread.
+    enum { MaxLargeThreadReentryDepth = 93, MaxSmallThreadReentryDepth = 32 };
+#else
     enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 32 };
+#endif // PLATFORM(IOS)
 
     class Interpreter {
         WTF_MAKE_FAST_ALLOCATED;
