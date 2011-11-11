@@ -213,7 +213,6 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 static void webkit_web_src_init(WebKitWebSrc* src)
 {
     GstPadTemplate* padTemplate = gst_static_pad_template_get(&srcTemplate);
-    GstPad* targetpad;
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC_GET_PRIVATE(src);
 
     src->priv = priv;
@@ -232,9 +231,8 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     gst_bin_add(GST_BIN(src), GST_ELEMENT(priv->appsrc));
 
 
-    targetpad = gst_element_get_static_pad(GST_ELEMENT(priv->appsrc), "src");
-    priv->srcpad = gst_ghost_pad_new_from_template("src", targetpad, padTemplate);
-    gst_object_unref(targetpad);
+    GRefPtr<GstPad> targetPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT(priv->appsrc), "src"));
+    priv->srcpad = gst_ghost_pad_new_from_template("src", targetPad.get(), padTemplate);
 
     gst_element_add_pad(GST_ELEMENT(src), priv->srcpad);
     gst_pad_set_query_function(priv->srcpad, webKitWebSrcQuery);
@@ -732,10 +730,9 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
         gint64 icyMetaInt = g_ascii_strtoll(value.utf8().data(), &endptr, 10);
             
         if (endptr && *endptr == '\0' && icyMetaInt > 0) {
-            GstCaps* caps = gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, (gint) icyMetaInt, NULL);
+            GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, (gint) icyMetaInt, NULL));
 
-            gst_app_src_set_caps(priv->appsrc, caps);
-            gst_caps_unref(caps);
+            gst_app_src_set_caps(priv->appsrc, caps.get());
         }
     }
 

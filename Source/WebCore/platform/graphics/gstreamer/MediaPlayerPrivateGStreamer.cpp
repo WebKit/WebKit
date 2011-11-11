@@ -481,12 +481,12 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
-    GstPad* pad = gst_element_get_static_pad(m_webkitVideoSink, "sink");
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink, "sink"));
     if (!pad)
         return IntSize();
 
     guint64 width = 0, height = 0;
-    GstCaps* caps = GST_PAD_CAPS(pad);
+    GstCaps* caps = GST_PAD_CAPS(pad.get());
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator;
     int displayWidth, displayHeight, displayAspectRatioGCD;
     int originalWidth = 0, originalHeight = 0;
@@ -496,17 +496,13 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     // TODO: handle possible transformation matrix. See
     // https://bugzilla.gnome.org/show_bug.cgi?id=596326
 
-    // Get the video PAR and original size.
+    // Get the video PAR and original size, if this fails the
+    // video-sink has likely not yet negotiated its caps.
     if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps)
         || !gst_video_format_parse_caps(caps, 0, &originalWidth, &originalHeight)
         || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
-                                                    &pixelAspectRatioDenominator)) {
-        gst_object_unref(GST_OBJECT(pad));
-        // The video-sink has likely not yet negotiated its caps.
+                                                    &pixelAspectRatioDenominator))
         return IntSize();
-    }
-
-    gst_object_unref(GST_OBJECT(pad));
 
     LOG_VERBOSE(Media, "Original video size: %dx%d", originalWidth, originalHeight);
     LOG_VERBOSE(Media, "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
@@ -939,12 +935,11 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 
         switch (gst_iterator_next(iter, &data)) {
         case GST_ITERATOR_OK: {
-            GstPad* pad = GST_PAD_CAST(data);
+            GRefPtr<GstPad> pad = adoptGRef(GST_PAD_CAST(data));
             gint64 padLength = 0;
-            if (gst_pad_query_duration(pad, &fmt, &padLength)
+            if (gst_pad_query_duration(pad.get(), &fmt, &padLength)
                 && padLength > length)
                 length = padLength;
-            gst_object_unref(pad);
             break;
         }
         case GST_ITERATOR_RESYNC:
@@ -1708,11 +1703,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, NULL);
 
     // Link a new src pad from tee to queue1.
-    GstPad* srcPad = gst_element_get_request_pad(videoTee, "src%d");
-    GstPad* sinkPad = gst_element_get_static_pad(queue, "sink");
-    gst_pad_link(srcPad, sinkPad);
-    gst_object_unref(GST_OBJECT(srcPad));
-    gst_object_unref(GST_OBJECT(sinkPad));
+    GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_request_pad(videoTee, "src%d"));
+    GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(queue, "sink"));
+    gst_pad_link(srcPad.get(), sinkPad.get());
 
     GstElement* actualVideoSink = 0;
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
@@ -1750,19 +1743,15 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     gst_element_link_pads_full(queue, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 
     // Add a ghostpad to the bin so it can proxy to tee.
-    GstPad* pad = gst_element_get_static_pad(videoTee, "sink");
-    gst_element_add_pad(m_videoSinkBin, gst_ghost_pad_new("sink", pad));
-    gst_object_unref(GST_OBJECT(pad));
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(videoTee, "sink"));
+    gst_element_add_pad(m_videoSinkBin, gst_ghost_pad_new("sink", pad.get()));
 
     // Set the bin as video sink of playbin.
     g_object_set(m_playBin, "video-sink", m_videoSinkBin, NULL);
 
-
-    pad = gst_element_get_static_pad(m_webkitVideoSink, "sink");
-    if (pad) {
-        g_signal_connect(pad, "notify::caps", G_CALLBACK(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
-        gst_object_unref(GST_OBJECT(pad));
-    }
+    pad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink, "sink"));
+    if (pad)
+        g_signal_connect(pad.get(), "notify::caps", G_CALLBACK(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
 
 }
 

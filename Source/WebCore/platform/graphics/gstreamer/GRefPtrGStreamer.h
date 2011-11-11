@@ -24,11 +24,19 @@
 #include "GRefPtr.h"
 
 typedef struct _GstElement GstElement;
+typedef struct _GstPad GstPad;
+typedef struct _GstCaps GstCaps;
 
 namespace WTF {
 
 template<> GstElement* refGPtr<GstElement>(GstElement* ptr);
 template<> void derefGPtr<GstElement>(GstElement* ptr);
+
+template<> GstPad* refGPtr<GstPad>(GstPad* ptr);
+template<> void derefGPtr<GstPad>(GstPad* ptr);
+
+template<> GstCaps* refGPtr<GstCaps>(GstCaps* ptr);
+template<> void derefGPtr<GstCaps>(GstCaps* ptr);
 
 }
 
