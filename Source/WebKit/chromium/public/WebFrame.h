@@ -479,6 +479,10 @@ public:
                                             int& marginBottom,
                                             int& marginLeft) = 0;
 
+    // Returns the value for a page property that is only defined when printing.
+    // printBegin must have been called before this method.
+    virtual WebString pageProperty(const WebString& propertyName, int pageIndex) = 0;
+
     // Find-in-page --------------------------------------------------------
 
     // Searches a frame for a given string.

@@ -63,6 +63,7 @@
 #include <clocale>
 #include <cstdlib>
 #include <limits>
+#include <sstream>
 #include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
@@ -122,6 +123,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
+    bindMethod("isPageBoxVisible", &LayoutTestController::isPageBoxVisible);
     bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
     bindMethod("loseCompositorContext", &LayoutTestController::loseCompositorContext);
     bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
@@ -132,6 +134,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("objCIdentityIsEqual", &LayoutTestController::objCIdentityIsEqual);
     bindMethod("overridePreference", &LayoutTestController::overridePreference);
     bindMethod("pageNumberForElementById", &LayoutTestController::pageNumberForElementById);
+    bindMethod("pageProperty", &LayoutTestController::pageProperty);
+    bindMethod("pageSizeAndMarginsInPixels", &LayoutTestController::pageSizeAndMarginsInPixels);
     bindMethod("pathToLocalResource", &LayoutTestController::pathToLocalResource);
     bindMethod("pauseAnimationAtTimeOnElementWithId", &LayoutTestController::pauseAnimationAtTimeOnElementWithId);
     bindMethod("pauseTransitionAtTimeOnElementWithId", &LayoutTestController::pauseTransitionAtTimeOnElementWithId);
@@ -1591,6 +1595,22 @@ void LayoutTestController::counterValueForElementById(const CppArgumentList& arg
     result->set(counterValue.utf8());
 }
 
+// Parse a single argument. The method returns true if there is an argument that
+// is a number or if there is no argument at all. It returns false only if there
+// is some argument that is not a number. The value parameter is filled with the
+// parsed number, or given the default if there is no argument.
+static bool parseCppArgumentInt32(const CppArgumentList& arguments, int argIndex, int* value, int defaultValue)
+{
+    if (static_cast<int>(arguments.size()) > argIndex) {
+        if (!arguments[argIndex].isNumber())
+            return false;
+        *value = arguments[argIndex].toInt32();
+        return true;
+    }
+    *value = defaultValue;
+    return true;
+}
+
 static bool parsePageSizeParameters(const CppArgumentList& arguments,
                                     int argOffset,
                                     int* pageWidthInPixels,
@@ -1598,21 +1618,40 @@ static bool parsePageSizeParameters(const CppArgumentList& arguments,
 {
     // WebKit is using the window width/height of DumpRenderTree as the
     // default value of the page size.
-    // FIXME: share these values with other ports.
-    *pageWidthInPixels = 800;
-    *pageHeightInPixels = 600;
-    switch (arguments.size() - argOffset) {
-    case 2:
-        if (!arguments[argOffset].isNumber() || !arguments[1 + argOffset].isNumber())
-            return false;
-        *pageWidthInPixels = arguments[argOffset].toInt32();
-        *pageHeightInPixels = arguments[1 + argOffset].toInt32();
-        // fall through.
-    case 0:
-        break;
-    default:
+    // FIXME: share the default values with other ports.
+    int argCount = static_cast<int>(arguments.size()) - argOffset;
+    if (argCount && argCount != 2)
         return false;
-    }
+    if (!parseCppArgumentInt32(arguments, argOffset, pageWidthInPixels, 800)
+        || !parseCppArgumentInt32(arguments, argOffset + 1, pageHeightInPixels, 600))
+        return false;
+    return true;
+}
+
+static bool parsePageNumber(const CppArgumentList& arguments, int argOffset, int* pageNumber)
+{
+    if (static_cast<int>(arguments.size()) > argOffset + 1)
+        return false;
+    if (!parseCppArgumentInt32(arguments, argOffset, pageNumber, 0))
+        return false;
+    return true;
+}
+
+static bool parsePageNumberSizeMargins(const CppArgumentList& arguments, int argOffset,
+                                       int* pageNumber, int* width, int* height,
+                                       int* marginTop, int* marginRight, int* marginBottom, int* marginLeft)
+{
+    int argCount = static_cast<int>(arguments.size()) - argOffset;
+    if (argCount && argCount != 7)
+        return false;
+    if (!parseCppArgumentInt32(arguments, argOffset, pageNumber, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 1, width, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 2, height, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 3, marginTop, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 4, marginRight, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 5, marginBottom, 0)
+        || !parseCppArgumentInt32(arguments, argOffset + 6, marginLeft, 0))
+        return false;
     return true;
 }
 
@@ -1638,6 +1677,60 @@ void LayoutTestController::pageNumberForElementById(const CppArgumentList& argum
     result->set(frame->pageNumberForElementById(cppVariantToWebString(arguments[0]),
                                                 static_cast<float>(pageWidthInPixels),
                                                 static_cast<float>(pageHeightInPixels)));
+}
+
+void LayoutTestController::pageSizeAndMarginsInPixels(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->set("");
+    int pageNumber = 0;
+    int width = 0;
+    int height = 0;
+    int marginTop = 0;
+    int marginRight = 0;
+    int marginBottom = 0;
+    int marginLeft = 0;
+    if (!parsePageNumberSizeMargins(arguments, 0, &pageNumber, &width, &height, &marginTop, &marginRight, &marginBottom,
+                                    &marginLeft))
+        return;
+
+    WebFrame* frame = m_shell->webView()->mainFrame();
+    if (!frame)
+        return;
+    WebSize pageSize(width, height);
+    frame->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
+    stringstream resultString;
+    resultString << "(" << pageSize.width << ", " << pageSize.height << ") " << marginTop << " " << marginRight << " "
+                 << marginBottom << " " << marginLeft;
+    result->set(resultString.str());
+}
+
+void LayoutTestController::isPageBoxVisible(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    int pageNumber = 0;
+    if (!parsePageNumber(arguments, 0, &pageNumber))
+        return;
+    WebFrame* frame = m_shell->webView()->mainFrame();
+    if (!frame)
+        return;
+    result->set(frame->isPageBoxVisible(pageNumber));
+}
+
+void LayoutTestController::pageProperty(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->set("");
+    int pageNumber = 0;
+    if (!parsePageNumber(arguments, 1, &pageNumber))
+        return;
+    if (!arguments[0].isString())
+        return;
+    WebFrame* frame = m_shell->webView()->mainFrame();
+    if (!frame)
+        return;
+    WebSize pageSize(800, 800);
+    frame->printBegin(pageSize);
+    result->set(frame->pageProperty(cppVariantToWebString(arguments[0]), pageNumber).utf8());
+    frame->printEnd();
 }
 
 void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVariant* result)

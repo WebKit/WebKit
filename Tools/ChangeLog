@@ -1,3 +1,21 @@
+2011-11-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] DRT does not have LayoutTestController.pageSizeAndMarginsInPixels
+        https://bugs.webkit.org/show_bug.cgi?id=49257
+
+        Adds the remaining missing layout test functionality for printing.
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): Add bindings for new JS methods
+        (parsePageNumber): Method to parse JS arguments for a page number
+        (parsePageNumberSizeMargins): Method to parse JS arguments for page size and margins
+        (LayoutTestController::pageSizeAndMarginsInPixels): Get the page size and margins for a given page.
+        (LayoutTestController::isPageBoxVisible): get the visibility status for printing
+        (LayoutTestController::pageProperty): get a specific CSS property when in printing mode
+        * DumpRenderTree/chromium/LayoutTestController.h: Add declarations for new methods
+
 2011-11-11  Darin Adler  <darin@apple.com>
 
         Remove all releaseRef implementations except for RetainPtr

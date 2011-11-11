@@ -1,3 +1,17 @@
+2011-11-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] DRT does not have LayoutTestController.pageSizeAndMarginsInPixels
+        https://bugs.webkit.org/show_bug.cgi?id=49257
+
+        Add the WebFrame::getPageProperty method for Chromium.
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::getPageProperty):
+        * src/WebFrameImpl.h:
+
 2011-11-11  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Patch that implementing the changes required to allow WebGL

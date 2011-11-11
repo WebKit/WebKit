@@ -334,6 +334,15 @@ public:
     // Gets the number of page where the specified element will be put.
     void pageNumberForElementById(const CppArgumentList&, CppVariant*);
 
+    // Gets the page size and margins for a printed page.
+    void pageSizeAndMarginsInPixels(const CppArgumentList&, CppVariant*);
+
+    // Returns the visibililty status of a page box for printing
+    void isPageBoxVisible(const CppArgumentList&, CppVariant*);
+
+    // Gets the page-related property for printed content
+    void pageProperty(const CppArgumentList&, CppVariant*);
+
     // Gets the number of pages to be printed.
     void numberOfPages(const CppArgumentList&, CppVariant*);
 

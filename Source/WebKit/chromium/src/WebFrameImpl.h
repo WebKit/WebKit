@@ -178,6 +178,7 @@ public:
                                             int& marginRight,
                                             int& marginBottom,
                                             int& marginLeft);
+    virtual WebString pageProperty(const WebString& propertyName, int pageIndex);
     virtual void printPagesWithBoundaries(WebCanvas*, const WebSize&);
     virtual bool find(
         int identifier, const WebString& searchText, const WebFindOptions&,

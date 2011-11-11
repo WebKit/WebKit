@@ -1492,6 +1492,12 @@ void WebFrameImpl::pageSizeAndMarginsInPixels(int pageIndex,
     pageSize = size;
 }
 
+WebString WebFrameImpl::pageProperty(const WebString& propertyName, int pageIndex)
+{
+    ASSERT(m_printContext);
+    return m_printContext->pageProperty(m_frame, propertyName.utf8().data(), pageIndex);
+}
+
 bool WebFrameImpl::find(int identifier,
                         const WebString& searchText,
                         const WebFindOptions& options,

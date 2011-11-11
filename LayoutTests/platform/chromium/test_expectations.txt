@@ -2061,9 +2061,6 @@ BUGCR46603 SLOW RELEASE : fast/frames/lots-of-objects.html = PASS
 BUGCR46603 SKIP DEBUG : fast/frames/lots-of-iframes.html = TIMEOUT
 BUGCR46603 SKIP DEBUG : fast/frames/lots-of-objects.html = TIMEOUT
 
-// LayoutTestController::pageProperty is not implemented for Chromium yet.
-BUGWK35961 : printing/page-rule-selection.html = TEXT
-
 BUGCR47035 WIN DEBUG : fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html = PASS TEXT
 
 // CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
@@ -2078,9 +2075,6 @@ BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // WebKit roll 61547:61629. Still need to investigate.
 BUG_HCLAM : fast/js/script-line-number.html = TEXT
-
-// LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for Chromium.
-BUGWK37538 : printing/page-format-data.html = TEXT
 
 // First noticed on trybots after r61836, now in the tree.
 BUG_MNAGANOV LINUX : fast/js/Object-create.html = CRASH FAIL
@@ -2427,9 +2421,6 @@ WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CR
 
 // Added in WK r71424
 BUGCR62138 : animations/stop-animation-on-suspend.html = PASS CRASH TEXT
-
-// test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
-BUGCR62515 : printing/page-format-data-display-none.html = TEXT
 
 BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = PASS CRASH TEXT
 
