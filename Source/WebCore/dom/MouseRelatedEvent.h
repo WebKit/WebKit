@@ -39,10 +39,6 @@ namespace WebCore {
         const IntPoint& screenLocation() const { return m_screenLocation; }
         int clientX() const { return m_clientLocation.x(); }
         int clientY() const { return m_clientLocation.y(); }
-#if ENABLE(MOUSE_LOCK_API)
-        int movementX() const { return m_movementDelta.x(); }
-        int movementY() const { return m_movementDelta.y(); }
-#endif
         const LayoutPoint& clientLocation() const { return m_clientLocation; }
         int layerX();
         int layerY();
@@ -59,7 +55,7 @@ namespace WebCore {
         // usable with RenderObject::absoluteToLocal).
         const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
         void setAbsoluteLocation(const LayoutPoint& p) { m_absoluteLocation = p; }
-
+    
     protected:
         MouseRelatedEvent();
         MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
@@ -72,13 +68,10 @@ namespace WebCore {
 
         void computePageLocation();
         void computeRelativePosition();
-
+        
         // Expose these so MouseEvent::initMouseEvent can set them.
         IntPoint m_screenLocation;
         LayoutPoint m_clientLocation;
-#if ENABLE(MOUSE_LOCK_API)
-        LayoutPoint m_movementDelta;
-#endif
 
     private:
         LayoutPoint m_pageLocation;

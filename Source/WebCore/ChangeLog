@@ -1,5 +1,20 @@
 2011-11-11  Vincent Scheib  <scheib@chromium.org>
 
+        Unreviewed, rolling out r100024.
+        http://trac.webkit.org/changeset/100024
+        https://bugs.webkit.org/show_bug.cgi?id=72158
+
+        Broke chromium build
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::MouseEventDispatchMediator::dispatchEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.idl:
+        * dom/MouseRelatedEvent.h:
+
+2011-11-11  Vincent Scheib  <scheib@chromium.org>
+
         Mouse Lock: MouseEvent IDL
         https://bugs.webkit.org/show_bug.cgi?id=72158
 

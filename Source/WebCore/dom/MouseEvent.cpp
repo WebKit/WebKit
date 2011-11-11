@@ -69,9 +69,6 @@ MouseEvent::~MouseEvent()
 
 void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
                                 int detail, int screenX, int screenY, int clientX, int clientY,
-#if ENABLE(MOUSE_LOCK_API)
-                                int movementX, int movementY,
-#endif
                                 bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                                 unsigned short button, PassRefPtr<EventTarget> relatedTarget)
 {
@@ -81,9 +78,6 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     initUIEvent(type, canBubble, cancelable, view, detail);
 
     m_screenLocation = IntPoint(screenX, screenY);
-#if ENABLE(MOUSE_LOCK_API)
-    m_movementDelta = IntPoint(movementX, movementY);
-#endif
     m_ctrlKey = ctrlKey;
     m_altKey = altKey;
     m_shiftKey = shiftKey;
@@ -206,9 +200,6 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
         RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
         doubleClickEvent->initMouseEvent(eventNames().dblclickEvent, event()->bubbles(), event()->cancelable(), event()->view(),
                 event()->detail(), event()->screenX(), event()->screenY(), event()->clientX(), event()->clientY(),
-#if ENABLE(MOUSE_LOCK_API)
-                0, 0,
-#endif
                 event()->ctrlKey(), event()->altKey(), event()->shiftKey(), event()->metaKey(),
                 event()->button(), relatedTarget);
         if (event()->defaultHandled())
