@@ -1,5 +1,12 @@
 2011-11-11  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix Snow Leopard build.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+
+2011-11-11  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: make search in DOM panel scale.
         https://bugs.webkit.org/show_bug.cgi?id=72118
 

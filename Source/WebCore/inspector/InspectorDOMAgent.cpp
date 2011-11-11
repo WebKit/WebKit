@@ -899,7 +899,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
     }
 }
 
-void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount)
+void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount)
 {
     // FIXME: Few things are missing here:
     // 1) Search works with node granularity - number of matches within node is not calculated.
