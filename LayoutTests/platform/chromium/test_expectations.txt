@@ -1987,12 +1987,6 @@ BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 BUGWK48288 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.copy.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.destination-in.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.source-in.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.source-out.html = TEXT
-BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.copy.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT

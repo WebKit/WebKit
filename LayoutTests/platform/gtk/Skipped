@@ -1014,13 +1014,6 @@ svg/custom/non-circular-marker-reference.svg
 # results generated that make these tests 'pass'.
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.composite.uncovered.fill.copy.html
-canvas/philip/tests/2d.composite.uncovered.image.copy.html
-canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html
-canvas/philip/tests/2d.composite.uncovered.image.destination-in.html
-canvas/philip/tests/2d.composite.uncovered.image.source-in.html
-canvas/philip/tests/2d.composite.uncovered.image.source-out.html
-canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
 canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
