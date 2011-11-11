@@ -1,3 +1,13 @@
+2011-11-11  Alexey Proskuryakov  <ap@apple.com>
+
+        WebProcess should use AppSandbox style quarantine
+        https://bugs.webkit.org/show_bug.cgi?id=72168
+        <rdar://problem/10434292>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::initializeSandbox): Just enable it.
+
 2011-11-11  Darin Adler  <darin@apple.com>
 
         * WebKit2.xcodeproj/project.pbxproj: Let a newer Xcode update this file.

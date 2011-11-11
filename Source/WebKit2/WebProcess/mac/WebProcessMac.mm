@@ -211,6 +211,13 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     for (size_t i = 0; sandboxParameters[i]; i += 2)
         fastFree(const_cast<char*>(sandboxParameters[i + 1]));
+
+    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
+    OSStatus error = WKEnableSandboxStyleFileQuarantine();
+    if (error) {
+        fprintf(stderr, "WebProcess: couldn't enable sandbox style file quarantine: %d\n", error);
+        exit(EX_NOPERM);
+    }
 #endif
 }
 

@@ -429,6 +429,8 @@ bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
 const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
+OSStatus WKEnableSandboxStyleFileQuarantine(void);
+
 int WKRecommendedScrollerStyle(void);
 
 bool WKExecutableWasLinkedOnOrBeforeSnowLeopard(void);
