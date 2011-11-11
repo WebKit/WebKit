@@ -1,3 +1,16 @@
+2011-11-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove unneeded frame check in FrameView::detachCustomScrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=71980
+
+        Reviewed by Anders Carlsson.
+
+        Change covered by the existing tests in scrollbars/.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::detachCustomScrollbars):
+        Remove the leftover check that was forgotten by the different refactoring.
+
 2011-11-11  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         Access key should work on all elements.

@@ -305,9 +305,6 @@ void FrameView::init()
 
 void FrameView::detachCustomScrollbars()
 {
-    if (!m_frame)
-        return;
-
     Scrollbar* horizontalBar = horizontalScrollbar();
     if (horizontalBar && horizontalBar->isCustomScrollbar())
         setHasHorizontalScrollbar(false);
