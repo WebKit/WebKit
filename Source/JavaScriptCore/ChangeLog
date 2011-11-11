@@ -1,3 +1,13 @@
+2011-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG byte array support sometimes clamps values incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=71975
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+
 2011-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         ValueProfile/PredictedType contains dead code, and doesn't recognize functions
