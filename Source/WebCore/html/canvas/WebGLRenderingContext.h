@@ -27,6 +27,7 @@
 #define WebGLRenderingContext_h
 
 #include "CanvasRenderingContext.h"
+#include "DrawingBuffer.h"
 #include "Float32Array.h"
 #include "GraphicsContext3D.h"
 #include "Int32Array.h"
@@ -293,7 +294,7 @@ public:
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
 #if USE(ACCELERATED_COMPOSITING)
-    virtual PlatformLayer* platformLayer() const { return m_context->platformLayer(); }
+    virtual PlatformLayer* platformLayer() const;
 #endif
 
     void reshape(int width, int height);
@@ -358,6 +359,10 @@ public:
 #endif
 
     RefPtr<GraphicsContext3D> m_context;
+
+    // Optional structure for rendering to a DrawingBuffer, instead of directly
+    // to the back-buffer of m_context.
+    RefPtr<DrawingBuffer> m_drawingBuffer;
 
     class WebGLRenderingContextRestoreTimer : public TimerBase {
     public:

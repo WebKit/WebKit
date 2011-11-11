@@ -1,3 +1,98 @@
+2011-11-11  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] Patch that implementing the changes required to allow WebGL
+        to share its backing store directly with the compositor.
+        WebGL rendering contexts create and render to FBOs managed by a
+        DrawingBuffer instance. All PlatformLayer lifetime management is
+        performed by the DrawingBuffer.
+        Changes are only relevant to Chromium ports. Functionality is
+        unchanged for other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=53201
+
+        Reviewed by Stephen White.
+
+        * html/canvas/WebGLRenderingContext.cpp: Construct a DrawingBuffer
+        during initialization, and forward all framebuffer management calls to
+        it.
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::markContextChanged):
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToImageData):
+        (WebCore::WebGLRenderingContext::reshape):
+        (WebCore::WebGLRenderingContext::drawingBufferWidth):
+        (WebCore::WebGLRenderingContext::drawingBufferHeight):
+        (WebCore::WebGLRenderingContext::bindFramebuffer):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::deleteFramebuffer):
+        (WebCore::WebGLRenderingContext::disable):
+        (WebCore::WebGLRenderingContext::enable):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::platformLayer):
+        (WebCore::WebGLRenderingContext::getBoundFramebufferWidth):
+        (WebCore::WebGLRenderingContext::getBoundFramebufferHeight):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/GraphicsContext3D.h:  WebGLLayerChromium instances
+        are no longer tracked by GraphicsContext3D. Callers can now pass a
+        DrawingBuffer instance to provide access to the WebGLLayerChromium data.
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::generateColorTexture):
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::initialize):
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        (WebCore::DrawingBuffer::platformLayer):
+        (WebCore::DrawingBuffer::platformColorBuffer):
+        (WebCore::DrawingBuffer::framebuffer):
+        (WebCore::DrawingBuffer::markContextChanged):
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::~WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::drawsContent):
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        (WebCore::WebGLLayerChromium::paintRenderedResultsToCanvas):
+        (WebCore::WebGLLayerChromium::contentChanged):
+        (WebCore::WebGLLayerChromium::setDrawingBuffer):
+        (WebCore::WebGLLayerChromium::context):
+        * platform/graphics/chromium/WebGLLayerChromium.h: WebGLLayerChromium instances
+        have a raw reference to their owning DrawingBuffer.  This reference is set to NULL on
+        destruction of the DrawingBuffer.  This follows the old code, which had the WebGLLayerChromium
+        refer rawly to a GraphicsContext3D instance, which was also revoked during tear-down of the
+        GraphicsContext3D.
+        (WebCore::WebGLLayerChromium::drawingBuffer):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        * platform/graphics/gpu/DrawingBuffer.cpp: The DrawingBuffer is now the
+        central point between the GraphicsContext3D, WebGLRenderingContext, and
+        WebGLLayerChromium classes.  GraphicsContext3D, and WebGLLayerChromium only
+        depend on the DrawingBuffer interface.
+        (WebCore::DrawingBuffer::create):
+        (WebCore::DrawingBuffer::clear):
+        (WebCore::DrawingBuffer::clearFramebuffer):
+        (WebCore::DrawingBuffer::reset):
+        (WebCore::DrawingBuffer::commit):
+        (WebCore::DrawingBuffer::multisample):
+        (WebCore::DrawingBuffer::paintRenderingResultsToImageData):
+        (WebCore::DrawingBuffer::discardResources):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        (WebCore::DrawingBuffer::setScissorEnabled):
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+
 2011-11-11  Darin Adler  <darin@apple.com>
 
         Remove all releaseRef implementations except for RetainPtr

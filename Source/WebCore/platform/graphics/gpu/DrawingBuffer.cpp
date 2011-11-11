@@ -35,6 +35,8 @@
 #include "DrawingBuffer.h"
 
 #include "Extensions3D.h"
+#include "GraphicsContext3D.h"
+#include "ImageData.h"
 
 namespace WebCore {
 
@@ -48,7 +50,7 @@ static int s_maximumResourceUsePixels = 0;
 #endif
 static int s_currentResourceUsePixels = 0;
 
-PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
+PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size, bool separateBackingTexture)
 {
     Extensions3D* extensions = context->getExtensions();
     bool multisampleSupported = extensions->supports("GL_ANGLE_framebuffer_blit") && extensions->supports("GL_ANGLE_framebuffer_multisample") && extensions->supports("GL_OES_rgb8_rgba8");
@@ -60,7 +62,7 @@ PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, cons
     bool packedDepthStencilSupported = extensions->supports("GL_OES_packed_depth_stencil");
     if (packedDepthStencilSupported)
         extensions->ensureEnabled("GL_OES_packed_depth_stencil");
-    RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size, multisampleSupported, packedDepthStencilSupported));
+    RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size, multisampleSupported, packedDepthStencilSupported, separateBackingTexture));
     return (drawingBuffer->m_context) ? drawingBuffer.release() : 0;
 }
 
@@ -76,6 +78,11 @@ void DrawingBuffer::clear()
     if (m_colorBuffer) {
         m_context->deleteTexture(m_colorBuffer);
         m_colorBuffer = 0;
+    }
+
+    if (m_backingColorBuffer) {
+        m_context->deleteTexture(m_backingColorBuffer);
+        m_backingColorBuffer = 0;
     }
 
     if (m_multisampleColorBuffer) {
@@ -166,7 +173,7 @@ void DrawingBuffer::clearFramebuffer()
     unsigned char depthMask = false;
     unsigned int stencilMask = 0xffffffff;
     unsigned char isScissorEnabled = false;
-    unsigned long clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    unsigned clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
     if (attributes.depth) {
         m_context->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &clearDepth);
         m_context->clearDepth(1);
@@ -188,6 +195,14 @@ void DrawingBuffer::clearFramebuffer()
     m_context->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, clearColor);
     m_context->clearColor(0, 0, 0, 0);
     m_context->clear(clearMask);
+
+    // The multisample fbo was just cleared, but we also need to clear the non-multisampled buffer too.
+    if (m_multisampleFBO) {
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+        m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+    }
+
     m_context->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 
     if (attributes.depth) {
@@ -233,7 +248,7 @@ bool DrawingBuffer::reset(const IntSize& newSize)
     if (newSize != m_size) {
         m_size = newSize;
 
-        unsigned long internalColorFormat, colorFormat, internalRenderbufferFormat;
+        unsigned internalColorFormat, colorFormat, internalRenderbufferFormat;
         if (attributes.alpha) {
             internalColorFormat = GraphicsContext3D::RGBA;
             colorFormat = GraphicsContext3D::RGBA;
@@ -250,7 +265,7 @@ bool DrawingBuffer::reset(const IntSize& newSize)
             int maxSampleCount = 0;
             
             m_context->getIntegerv(Extensions3D::MAX_SAMPLES, &maxSampleCount);
-            int sampleCount = std::min(8, maxSampleCount);
+            int sampleCount = std::min(4, maxSampleCount);
 
             m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 
@@ -269,10 +284,16 @@ bool DrawingBuffer::reset(const IntSize& newSize)
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
 
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
-        
         m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
 
         m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
+
+        // resize the backing color buffer
+        if (m_separateBackingTexture) {
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_backingColorBuffer);
+            m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
+        }
+
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
 
         if (!multisample())
@@ -293,21 +314,54 @@ void DrawingBuffer::commit(long x, long y, long width, long height)
 {
     if (!m_context)
         return;
-        
+
     if (width < 0)
         width = m_size.width();
     if (height < 0)
         height = m_size.height();
-        
+
     m_context->makeContextCurrent();
-    
+
     if (m_multisampleFBO) {
         m_context->bindFramebuffer(Extensions3D::READ_FRAMEBUFFER, m_multisampleFBO);
         m_context->bindFramebuffer(Extensions3D::DRAW_FRAMEBUFFER, m_fbo);
-        m_context->getExtensions()->blitFramebuffer(x, y, width, height, x, y, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::LINEAR);
+
+        if (m_scissorEnabled)
+            m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+
+        // Use NEAREST, because there is no scale performed during the blit.
+        m_context->getExtensions()->blitFramebuffer(x, y, width, height, x, y, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
+
+        if (m_scissorEnabled)
+            m_context->enable(GraphicsContext3D::SCISSOR_TEST);
     }
-    
+
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+}
+
+bool DrawingBuffer::multisample() const
+{
+    return m_context && m_context->getContextAttributes().antialias && m_multisampleExtensionSupported;
+}
+
+PassRefPtr<ImageData> DrawingBuffer::paintRenderingResultsToImageData()
+{
+    return m_context->paintRenderingResultsToImageData(this);
+}
+
+void DrawingBuffer::discardResources()
+{
+    m_colorBuffer = 0;
+    m_backingColorBuffer = 0;
+    m_multisampleColorBuffer = 0;
+
+    m_depthStencilBuffer = 0;
+    m_depthBuffer = 0;
+
+    m_stencilBuffer = 0;
+
+    m_multisampleFBO = 0;
+    m_fbo = 0;
 }
 
 void DrawingBuffer::bind()

@@ -33,6 +33,7 @@
 
 #include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
+#include "GraphicsTypes3D.h"
 #include "IntSize.h"
 
 #include <wtf/Noncopyable.h>
@@ -43,15 +44,18 @@
 #endif
 
 namespace WebCore {
-
-#if PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING)
-class Canvas2DLayerChromium;
+class CanvasRenderingContext;
+class GraphicsContext3D;
+class ImageData;
+#if PLATFORM(CHROMIUM)
+class WebGLLayerChromium;
 #endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
 // results to a PlatformLayer for compositing.
 class DrawingBuffer : public RefCounted<DrawingBuffer> {
 public:
+    static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&, bool);
     friend class GraphicsContext3D;
 
     ~DrawingBuffer();
@@ -75,22 +79,39 @@ public:
 
     // Copies the multisample color buffer to the normal color buffer and leaves m_fbo bound
     void commit(long x = 0, long y = 0, long width = -1, long height = -1);
-    
-    bool multisample() const { return m_context && m_context->getContextAttributes().antialias && m_multisampleExtensionSupported; }
-    
+
+    // commit should copy the full multisample buffer, and not respect the
+    // current scissor bounds. Track the state of the scissor test so that it
+    // can be disabled during calls to commit.
+    void setScissorEnabled(bool scissorEnabled) { m_scissorEnabled = scissorEnabled; }
+
+    bool multisample() const;
+
     Platform3DObject platformColorBuffer() const;
+    Platform3DObject framebuffer() const;
+
+    PassRefPtr<ImageData> paintRenderingResultsToImageData();
+
+    // Immediately releases ownership of all resources. Call upon loss of the
+    // graphics context to prevent freeing invalid resources.
+    void discardResources();
 
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     void publishToPlatformLayer();
+    void paintCompositedResultsToCanvas(CanvasRenderingContext*);
 #endif
 
     PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }
 
 private:
-    static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
-    
-    DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported, bool packedDepthStencilExtensionSupported);
+    DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported,
+                  bool packedDepthStencilExtensionSupported, bool separateBackingTexture);
+
+    void initialize(const IntSize&);
+
+    bool m_separateBackingTexture;
+    bool m_scissorEnabled;
 
     RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;
@@ -98,6 +119,7 @@ private:
     bool m_packedDepthStencilExtensionSupported;
     Platform3DObject m_fbo;
     Platform3DObject m_colorBuffer;
+    Platform3DObject m_backingColorBuffer;
 
     // This is used when we have OES_packed_depth_stencil.
     Platform3DObject m_depthStencilBuffer;
@@ -109,6 +131,10 @@ private:
     // For multisampling
     Platform3DObject m_multisampleFBO;
     Platform3DObject m_multisampleColorBuffer;
+
+#if PLATFORM(CHROMIUM)
+    RefPtr<WebGLLayerChromium> m_platformLayer;
+#endif
 
 #if PLATFORM(MAC)
     RetainPtr<WebGLLayer> m_platformLayer;

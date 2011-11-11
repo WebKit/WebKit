@@ -46,10 +46,8 @@ class WebViewImpl;
 
 namespace WebCore {
 
+class DrawingBuffer;
 class Extensions3DChromium;
-#if USE(ACCELERATED_COMPOSITING)
-class WebGLLayerChromium;
-#endif
 class GraphicsContextLostCallbackAdapter;
 class GraphicsContext3DSwapBuffersCompleteCallbackAdapter;
 
@@ -95,17 +93,14 @@ public:
     bool layerComposited() const;
     void markLayerComposited();
 
-    void paintRenderingResultsToCanvas(CanvasRenderingContext*);
+    void paintRenderingResultsToCanvas(CanvasRenderingContext*, DrawingBuffer*);
     void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
-    PassRefPtr<ImageData> paintRenderingResultsToImageData();
+    PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
     bool paintsIntoCanvasBuffer() const;
     bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
 
     void prepareTexture();
 
-#if USE(ACCELERATED_COMPOSITING)
-    WebGLLayerChromium* platformLayer();
-#endif
     bool isGLES2Compliant() const;
 
     void releaseShaderCompiler();
@@ -330,9 +325,6 @@ private:
     };
     ResourceSafety m_resourceSafety;
 
-#if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WebGLLayerChromium> m_compositingLayer;
-#endif
 #if USE(SKIA)
     // If the width and height of the Canvas's backing store don't
     // match those that we were given in the most recent call to

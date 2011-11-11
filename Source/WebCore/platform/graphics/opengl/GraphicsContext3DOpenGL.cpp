@@ -128,7 +128,7 @@ bool GraphicsContext3D::isResourceSafe()
 }
 
 #if !PLATFORM(QT)
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer*)
 {
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
@@ -162,7 +162,7 @@ bool GraphicsContext3D::paintCompositedResultsToCanvas(CanvasRenderingContext*)
     return false;
 }
 
-PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer*)
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is
     // lossy

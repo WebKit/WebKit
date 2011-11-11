@@ -35,10 +35,10 @@
 #include "GraphicsContext3D.h"
 
 #include "CachedImage.h"
-#include "WebGLLayerChromium.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "DrawingBuffer.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3DPrivate.h"
 #include "HTMLCanvasElement.h"
@@ -163,6 +163,20 @@ PassRefPtr<GraphicsContext3D> createGraphicsContext(GraphicsContext3D::Attribute
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attrs, hostWindow, renderStyle, threadUsage);
 }
 
+void getDrawingParameters(DrawingBuffer* drawingBuffer, WebKit::WebGraphicsContext3D* graphicsContext3D,
+                          Platform3DObject* frameBufferId, int* width, int* height)
+{
+    if (drawingBuffer) {
+        *frameBufferId = drawingBuffer->framebuffer();
+        *width = drawingBuffer->size().width();
+        *height = drawingBuffer->size().height();
+    } else {
+        *frameBufferId = 0;
+        *width = graphicsContext3D->width();
+        *height = graphicsContext3D->height();
+    }
+}
+
 } // anonymous namespace
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -211,17 +225,6 @@ void GraphicsContext3DPrivate::prepareTexture()
 {
     m_impl->prepareTexture();
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-WebGLLayerChromium* GraphicsContext3DPrivate::platformLayer()
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (!m_compositingLayer)
-        m_compositingLayer = WebGLLayerChromium::create(0);
-#endif
-    return m_compositingLayer.get();
-}
-#endif
 
 void GraphicsContext3DPrivate::markContextChanged()
 {
@@ -305,31 +308,34 @@ void GraphicsContext3DPrivate::paintFramebufferToCanvas(int framebuffer, int wid
 #endif
 }
 
-void GraphicsContext3DPrivate::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+void GraphicsContext3DPrivate::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
 {
     ImageBuffer* imageBuffer = context->canvas()->buffer();
-    paintFramebufferToCanvas(0, m_impl->width(), m_impl->height(), !m_impl->getContextAttributes().premultipliedAlpha, imageBuffer);
+    Platform3DObject framebufferId;
+    int width, height;
+    getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
+    paintFramebufferToCanvas(framebufferId, width, height, !m_impl->getContextAttributes().premultipliedAlpha, imageBuffer);
 }
 
 bool GraphicsContext3DPrivate::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (platformLayer())
-        return platformLayer()->paintRenderedResultsToCanvas(context->canvas()->buffer());
-#endif
     return false;
 }
 
-PassRefPtr<ImageData> GraphicsContext3DPrivate::paintRenderingResultsToImageData()
+PassRefPtr<ImageData> GraphicsContext3DPrivate::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
 {
     if (m_impl->getContextAttributes().premultipliedAlpha)
         return 0;
-    
-    RefPtr<ImageData> imageData = ImageData::create(IntSize(m_impl->width(), m_impl->height()));
-    unsigned char* pixels = imageData->data()->data()->data();
-    size_t bufferSize = 4 * m_impl->width() * m_impl->height();
 
-    m_impl->readBackFramebuffer(pixels, bufferSize, 0, m_impl->width(), m_impl->height());
+    Platform3DObject framebufferId;
+    int width, height;
+    getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
+
+    RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
+    unsigned char* pixels = imageData->data()->data()->data();
+    size_t bufferSize = 4 * width * height;
+
+    m_impl->readBackFramebuffer(pixels, bufferSize, framebufferId, width, height);
 
     for (size_t i = 0; i < bufferSize; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
@@ -1012,9 +1018,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*,
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-    WebGLLayerChromium* canvasLayer = m_private->platformLayer();
-    if (canvasLayer)
-        canvasLayer->setContext(0);
     m_private->setContextLostCallback(nullptr);
     m_private->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
 }
@@ -1059,9 +1062,7 @@ bool GraphicsContext3D::isResourceSafe()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
-    WebGLLayerChromium* canvasLayer = m_private->platformLayer();
-    canvasLayer->setContext(this);
-    return canvasLayer;
+    return 0;
 }
 #endif
 
@@ -1217,8 +1218,16 @@ bool GraphicsContext3D::layerComposited() const
     return m_private->layerComposited();
 }
 
-DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
-DELEGATE_TO_INTERNAL_R(paintRenderingResultsToImageData, PassRefPtr<ImageData>)
+void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
+{
+    return m_private->paintRenderingResultsToCanvas(context, drawingBuffer);
+}
+
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
+{
+    return m_private->paintRenderingResultsToImageData(drawingBuffer);
+}
+
 DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, CanvasRenderingContext*, bool)
 
 bool GraphicsContext3D::paintsIntoCanvasBuffer() const

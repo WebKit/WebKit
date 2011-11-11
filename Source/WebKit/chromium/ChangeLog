@@ -1,3 +1,28 @@
+2011-11-11  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] Patch that implementing the changes required to allow WebGL
+        to share its backing store directly with the compositor.
+        WebGL rendering contexts create and render to FBOs managed by a
+        DrawingBuffer instance. All PlatformLayer lifetime management is
+        performed by the DrawingBuffer.
+        Changes are only relevant to Chromium ports. Functionality is
+        unchanged for other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=53201
+
+        Reviewed by Stephen White.
+
+        * src/GraphicsContext3DChromium.cpp: GraphicsContext3DPrivate no longer caches
+        the WebGLLayerChromium instance.  Instead, it is accessed via DrawingBuffer instances
+        passed as arguments to the necessary routines.
+        (WebCore::GraphicsContext3DPrivate::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformLayer):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        * src/GraphicsContext3DPrivate.h:
+
 2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100010.

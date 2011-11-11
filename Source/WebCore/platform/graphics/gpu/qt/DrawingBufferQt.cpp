@@ -34,8 +34,11 @@ namespace WebCore {
 DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              const IntSize& size,
                              bool multisampleExtensionSupported,
-                             bool packedDepthStencilExtensionSupported)
-    : m_context(context)
+                             bool packedDepthStencilExtensionSupported,
+                             bool separateBackingTexture)
+    : m_separateBackingTexture(separateBackingTexture)
+    , m_scissorEnabled(false)
+    , m_context(context)
     , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)
     , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
@@ -47,6 +50,9 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
 {
+    // Support for a separate backing texture has only been enabled for
+    // the chromium port.
+    ASSERT(!m_separateBackingTexture);
     ASSERT(m_fbo);
     if (!m_fbo) {
         clear();
@@ -82,6 +88,12 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
     return m_colorBuffer;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+{
+}
+#endif
 
 }
 

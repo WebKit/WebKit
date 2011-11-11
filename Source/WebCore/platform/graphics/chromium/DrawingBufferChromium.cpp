@@ -32,7 +32,10 @@
 
 #include "DrawingBuffer.h"
 
+#include "CanvasRenderingContext.h"
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "WebGLLayerChromium.h"
 
 namespace WebCore {
 
@@ -48,7 +51,6 @@ static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& 
     context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
     context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
     context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
-    context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, offscreenColorTexture, 0);
 
     return offscreenColorTexture;
 }
@@ -56,35 +58,52 @@ static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& 
 DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              const IntSize& size,
                              bool multisampleExtensionSupported,
-                             bool packedDepthStencilExtensionSupported)
-    : m_context(context)
+                             bool packedDepthStencilExtensionSupported,
+                             bool separateBackingTexture)
+    : m_separateBackingTexture(separateBackingTexture)
+    , m_scissorEnabled(false)
+    , m_context(context)
     , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)
     , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(0)
     , m_colorBuffer(0)
+    , m_backingColorBuffer(0)
     , m_depthStencilBuffer(0)
     , m_depthBuffer(0)
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
 {
-    m_fbo = context->createFramebuffer();
-    context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    m_colorBuffer = generateColorTexture(context, size);
+    initialize(size);
+}
+
+DrawingBuffer::~DrawingBuffer()
+{
+    if (m_platformLayer)
+        m_platformLayer->setDrawingBuffer(0);
+
+    if (!m_context)
+        return;
+
+    clear();
+}
+
+void DrawingBuffer::initialize(const IntSize& size)
+{
+    m_fbo = m_context->createFramebuffer();
+
+    if (m_separateBackingTexture)
+        m_backingColorBuffer = generateColorTexture(m_context.get(), size);
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    m_colorBuffer = generateColorTexture(m_context.get(), size);
+    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     createSecondaryBuffers();
     if (!reset(size)) {
         m_context.clear();
         return;
     }
-}
-
-DrawingBuffer::~DrawingBuffer()
-{
-    if (!m_context)
-        return;
-
-    clear();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -93,9 +112,20 @@ void DrawingBuffer::publishToPlatformLayer()
     if (!m_context)
         return;
 
+    m_context->makeContextCurrent();
     if (multisample())
         commit();
-    m_context->makeContextCurrent();
+
+    if (m_separateBackingTexture) {
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_backingColorBuffer);
+        unsigned colorFormat = m_context->getContextAttributes().alpha ? GraphicsContext3D::RGBA : GraphicsContext3D::RGB;
+        m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, colorFormat, 0, 0, size().width(), size().height(), 0);
+    }
+
+    if (multisample())
+        bind();
+
     m_context->flush();
 }
 #endif
@@ -103,13 +133,31 @@ void DrawingBuffer::publishToPlatformLayer()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
-    return 0;
+    if (!m_platformLayer) {
+        m_platformLayer = WebGLLayerChromium::create(0);
+        m_platformLayer->setDrawingBuffer(this);
+    }
+
+    return m_platformLayer.get();
 }
 #endif
 
 Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
-    return m_colorBuffer;
+    return m_separateBackingTexture ? m_backingColorBuffer : m_colorBuffer;
 }
+
+Platform3DObject DrawingBuffer::framebuffer() const
+{
+    return m_fbo;
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+{
+    if (m_platformLayer)
+        m_platformLayer->paintRenderedResultsToCanvas(context->canvas()->buffer());
+}
+#endif
 
 }

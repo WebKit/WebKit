@@ -57,12 +57,6 @@ uint8_t convertColor16BigTo8(uint16_t value)
 
 } // anonymous namespace
 
-
-PassRefPtr<DrawingBuffer> GraphicsContext3D::createDrawingBuffer(const IntSize& size)
-{
-    return DrawingBuffer::create(this, size);
-}
-
 bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);

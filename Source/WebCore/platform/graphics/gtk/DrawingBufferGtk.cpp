@@ -76,6 +76,12 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
     return m_colorBuffer;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+{
+}
+#endif
+
 }
 
 #endif

@@ -726,13 +726,17 @@ bool GraphicsContext3D::layerComposited() const
     return false;
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
 {
+    // DrawingBuffer support only implemented in Chromium ports.
+    ASSERT(!drawingBuffer);
     notImplemented();
 }
 
-PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
+PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
 {
+    // DrawingBuffer support only implemented in Chromium ports.
+    ASSERT(!drawingBuffer);
     notImplemented();
     RefPtr<ImageData> imageData = ImageData::create(IntSize(1, 1));
     return imageData.release();
