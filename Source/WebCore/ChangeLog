@@ -1,3 +1,12 @@
+2011-11-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: provide an id to the root inspector element for third party UA styling.
+        https://bugs.webkit.org/show_bug.cgi?id=72094
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.html:
+
 2011-11-10  Andy Estes  <aestes@apple.com>
 
         WebKitCSSShaderValue.h is not a member of the WebCore target

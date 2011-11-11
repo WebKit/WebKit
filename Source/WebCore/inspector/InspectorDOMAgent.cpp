@@ -136,7 +136,7 @@ public:
     virtual ~MatchJob() { }
 
 protected:
-    MatchJob(Document* document, const String& query)
+    MatchJob(PassRefPtr<Document> document, const String& query)
         : m_document(document)
         , m_query(query) { }
 
@@ -167,7 +167,7 @@ namespace {
 
 class MatchExactIdJob : public WebCore::MatchJob {
 public:
-    MatchExactIdJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
+    MatchExactIdJob(PassRefPtr<Document> document, const String& query) : WebCore::MatchJob(document, query) { }
     virtual ~MatchExactIdJob() { }
 
 protected:
@@ -184,7 +184,7 @@ protected:
 
 class MatchExactClassNamesJob : public WebCore::MatchJob {
 public:
-    MatchExactClassNamesJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
+    MatchExactClassNamesJob(PassRefPtr<Document> document, const String& query) : WebCore::MatchJob(document, query) { }
     virtual ~MatchExactClassNamesJob() { }
 
     virtual void match(ListHashSet<Node*>& resultCollector)
@@ -196,7 +196,7 @@ public:
 
 class MatchExactTagNamesJob : public WebCore::MatchJob {
 public:
-    MatchExactTagNamesJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
+    MatchExactTagNamesJob(PassRefPtr<Document> document, const String& query) : WebCore::MatchJob(document, query) { }
     virtual ~MatchExactTagNamesJob() { }
 
     virtual void match(ListHashSet<Node*>& resultCollector)
@@ -208,7 +208,7 @@ public:
 
 class MatchQuerySelectorAllJob : public WebCore::MatchJob {
 public:
-    MatchQuerySelectorAllJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
+    MatchQuerySelectorAllJob(PassRefPtr<Document> document, const String& query) : WebCore::MatchJob(document, query) { }
     virtual ~MatchQuerySelectorAllJob() { }
 
     virtual void match(ListHashSet<Node*>& resultCollector)
@@ -225,7 +225,7 @@ public:
 
 class MatchXPathJob : public WebCore::MatchJob {
 public:
-    MatchXPathJob(Document* document, const String& query) : WebCore::MatchJob(document, query) { }
+    MatchXPathJob(PassRefPtr<Document> document, const String& query) : WebCore::MatchJob(document, query) { }
     virtual ~MatchXPathJob() { }
 
     virtual void match(ListHashSet<Node*>& resultCollector)
@@ -253,7 +253,7 @@ public:
 
 class MatchPlainTextJob : public MatchXPathJob {
 public:
-    MatchPlainTextJob(Document* document, const String& query) : MatchXPathJob(document, query)
+    MatchPlainTextJob(PassRefPtr<Document> document, const String& query) : MatchXPathJob(document, query)
     {
         m_query = "//text()[contains(., '" + m_query + "')] | //comment()[contains(., '" + m_query + "')]";
     }
@@ -1585,10 +1585,12 @@ void InspectorDOMAgent::onMatchJobsTimer(Timer<InspectorDOMAgent>*)
 
     ListHashSet<Node*> resultCollector;
     MatchJob* job = m_pendingMatchJobs.takeFirst();
+fprintf(stderr, "before match job\n");
     job->match(resultCollector);
+fprintf(stderr, "after match job\n");
     delete job;
 
-    reportNodesAsSearchResults(resultCollector);
+//    reportNodesAsSearchResults(resultCollector);
 
     m_matchJobsTimer.startOneShot(0.025);
 }
