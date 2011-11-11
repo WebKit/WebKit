@@ -411,7 +411,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
-{   
+{
     m_document = this;
 
     m_pageGroupUserSheetCacheValid = false;
@@ -4096,59 +4096,50 @@ bool Document::hasSVGRootNode() const
 }
 #endif
 
-const RefPtr<HTMLCollection>& Document::collection(CollectionType type)
-{
-    ASSERT(type < NumCollectionTypes);
-    if (!m_collections[type])
-        m_collections[type] = HTMLCollection::create(this, type);
-    ASSERT(m_collections[type]);
-    return m_collections[type];
-}
-
 PassRefPtr<HTMLCollection> Document::images()
 {
-    return collection(DocImages);
+    return HTMLCollection::create(this, DocImages);
 }
 
 PassRefPtr<HTMLCollection> Document::applets()
 {
-    return collection(DocApplets);
+    return HTMLCollection::create(this, DocApplets);
 }
 
 PassRefPtr<HTMLCollection> Document::embeds()
 {
-    return collection(DocEmbeds);
+    return HTMLCollection::create(this, DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
-    return collection(DocEmbeds);
+    return HTMLCollection::create(this, DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::objects()
 {
-    return collection(DocObjects);
+    return HTMLCollection::create(this, DocObjects);
 }
 
 PassRefPtr<HTMLCollection> Document::scripts()
 {
-    return collection(DocScripts);
+    return HTMLCollection::create(this, DocScripts);
 }
 
 PassRefPtr<HTMLCollection> Document::links()
 {
-    return collection(DocLinks);
+    return HTMLCollection::create(this, DocLinks);
 }
 
 PassRefPtr<HTMLCollection> Document::forms()
 {
-    return collection(DocForms);
+    return HTMLCollection::create(this, DocForms);
 }
 
 PassRefPtr<HTMLCollection> Document::anchors()
 {
-    return collection(DocAnchors);
+    return HTMLCollection::create(this, DocAnchors);
 }
 
 PassRefPtr<HTMLAllCollection> Document::all()

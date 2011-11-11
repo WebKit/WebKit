@@ -1,3 +1,26 @@
+2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99869.
+        http://trac.webkit.org/changeset/99869
+        https://bugs.webkit.org/show_bug.cgi?id=72157
+
+        "Caused a ~400% perf regression on the Chromium intl1 page
+        cyclers" (Requested by ojan on #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        * dom/Document.h:
+        * html/CollectionType.h:
+
 2011-11-11  Vincent Scheib  <scheib@chromium.org>
 
         Mouse Lock Navigator IDL
