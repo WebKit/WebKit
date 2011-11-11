@@ -38,12 +38,6 @@ typedef struct _Ewk_Tiled_Backing_Store_Data Ewk_Tiled_Backing_Store_Data;
 typedef struct _Ewk_Tiled_Backing_Store_Item Ewk_Tiled_Backing_Store_Item;
 typedef struct _Ewk_Tiled_Backing_Store_Pre_Render_Request Ewk_Tiled_Backing_Store_Pre_Render_Request;
 
-enum _Ewk_Tiled_Backing_Store_Pre_Render_Priority {
-    PRE_RENDER_PRIORITY_LOW = 0, /**< Append the request to the list */
-    PRE_RENDER_PRIORITY_HIGH     /**< Prepend the request to the list */
-};
-typedef enum _Ewk_Tiled_Backing_Store_Pre_Render_Priority Ewk_Tiled_Backing_Store_Pre_Render_Priority;
-
 struct _Ewk_Tiled_Backing_Store_Item {
     EINA_INLIST;
     Ewk_Tile* tile;
@@ -248,7 +242,7 @@ static void _ewk_tiled_backing_store_tile_dissociate_all(Ewk_Tiled_Backing_Store
     }
 }
 
-static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tiled_Backing_Store_Data* priv, unsigned long column, unsigned long row, float zoom, Ewk_Tiled_Backing_Store_Pre_Render_Priority priority)
+static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tiled_Backing_Store_Data* priv, unsigned long column, unsigned long row, float zoom)
 {
     Ewk_Tiled_Backing_Store_Pre_Render_Request* request;
 
@@ -256,12 +250,8 @@ static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tile
     if (!request)
         return false;
 
-    if (priority == PRE_RENDER_PRIORITY_HIGH)
-        priv->render.preRenderRequests = eina_inlist_prepend
-                                               (priv->render.preRenderRequests, EINA_INLIST_GET(request));
-    else
-        priv->render.preRenderRequests = eina_inlist_append
-                                               (priv->render.preRenderRequests, EINA_INLIST_GET(request));
+    priv->render.preRenderRequests = eina_inlist_append
+                                           (priv->render.preRenderRequests, EINA_INLIST_GET(request));
 
     request->column = column;
     request->row = row;
@@ -1840,7 +1830,7 @@ Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object* ewkBackingStore
     while (eina_tile_grid_slicer_next(&slicer, &info)) {
         const unsigned long c = info->col;
         const unsigned long r = info->row;
-        if (!_ewk_tiled_backing_store_pre_render_request_add(priv, c, r, zoom, PRE_RENDER_PRIORITY_LOW))
+        if (!_ewk_tiled_backing_store_pre_render_request_add(priv, c, r, zoom))
             break;
     }
 
@@ -1873,7 +1863,7 @@ Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object* ewkBac
 
     for (i = startRow; i <= endRow; i++)
         for (j = startCol; j <= endCol; j++)
-            if (!_ewk_tiled_backing_store_pre_render_request_add(priv, j, i, zoom, PRE_RENDER_PRIORITY_LOW))
+            if (!_ewk_tiled_backing_store_pre_render_request_add(priv, j, i, zoom))
                 goto start_processing;
 
 start_processing:

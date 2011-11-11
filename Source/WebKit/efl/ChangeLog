@@ -1,3 +1,18 @@
+2011-11-11  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Remove unused flags in pre-render implementation
+        https://bugs.webkit.org/show_bug.cgi?id=65504
+
+        The high priority pre-render flag was not used anywhere,
+        so we can get rid of the whole concept and always consider the requests have low priority
+
+        Reviewed by Daniel Bates.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+
 2011-11-09  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Remove unnecessary casts when creating the WebCoreSupport objects in ewk_view.
