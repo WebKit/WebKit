@@ -469,7 +469,7 @@ struct Node {
         return variableAccessData()->local();
     }
 
-#if !ASSERT_DISABLED
+#ifndef NDEBUG
     bool hasIdentifier()
     {
         switch (op) {

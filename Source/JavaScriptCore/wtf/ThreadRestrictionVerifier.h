@@ -94,7 +94,9 @@ public:
     // Indicates that the object may (or may not) be owned by more than one place.
     void setShared(bool shared)
     {
+#if !ASSERT_DISABLED
         bool previouslyShared = m_shared;
+#endif
         m_shared = shared;
 
         if (!m_shared)

@@ -1,3 +1,21 @@
+2011-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Disabling assertions breaks the debug build
+        https://bugs.webkit.org/show_bug.cgi?id=72091
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGNode.h: Made hasIdentifier() available when assertions are
+        disabled. It is used in Graph::dump().
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren): Update m_isCheckingForDefaultMarkViolation
+        only if assertions are enabled.
+        * wtf/Deque.h:
+        (WTF::::checkIndexValidity): Changed ASSERT to ASSERT_UNUSED.
+        * wtf/ThreadRestrictionVerifier.h:
+        (WTF::ThreadRestrictionVerifier::setShared): Guarded the definition of
+        a local variable that is only used in an assertion.
+
 2011-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         JSString forgets to clear m_fibers when resolving ropes

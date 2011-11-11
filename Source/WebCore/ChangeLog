@@ -1,3 +1,26 @@
+2011-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Disabling assertions breaks the debug build
+        https://bugs.webkit.org/show_bug.cgi?id=72091
+
+        Reviewed by Geoff Garen.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::didDecodeProperties): Guarded the definition of local variables that are
+        only used in an assertion correctly.
+        * platform/graphics/gpu/TilingData.h: Changed ASSERT to ASSERT_UNUSED.
+        (WebCore::TilingData::assertTile):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed): Guarded the definition of a local variable that is
+        only used in an assertion correctly.
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource): Changed ASSERT to ASSERT_UNUSED.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource): Changed ASSERT to ASSERT_UNUSED.
+        (WebCore::RenderSVGResourceFilter::postApplyResource): Changed ASSERT to ASSERT_UNUSED.
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource): Changed ASSERT to ASSERT_UNUSED.
+
 2011-11-10  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Add plumbing for JS to write to clipboard in copy/cut events.

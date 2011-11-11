@@ -84,7 +84,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = static_cast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -97,7 +97,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->m_inheritorID)
         visitor.append(&thisObject->m_inheritorID);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }

@@ -77,11 +77,7 @@ public:
 
 private:
     TilingData() : m_maxTextureSize(0), m_totalSizeX(0), m_totalSizeY(0) {}
-#ifndef NDEBUG
-    void assertTile(int tile) const { ASSERT(tile >= 0 && tile < numTiles()); }
-#else
-    void assertTile(int) const {}
-#endif
+    void assertTile(int tile) const { ASSERT_UNUSED(tile, tile >= 0 && tile < numTiles()); }
     void recomputeNumTiles();
 
     int m_maxTextureSize;
