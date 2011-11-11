@@ -1,3 +1,48 @@
+2011-11-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableSection's recalcCell logic is doing too much work
+        https://bugs.webkit.org/show_bug.cgi?id=71986
+
+        Reviewed by Darin Adler.
+
+        No change in behavior expected so no test.
+
+        r98738 and r98980 missed the point that Vector::clear() does not touch
+        the internal buffer. Thus calling clear() would keep the memory and properly
+        reset the size().
+
+        Due to how the code worked, after r98980 the code would end up resetting some
+        of RowStruct field twice: once when growing and the other one when calling
+        fillRowsWithDefaultStartingAtPosition.
+
+        This change make the code use Vector::clear and simplified the recalcCells
+        logic knowing that growing the Vector will properly initialize most of the
+        RowStruct fields (with RowStruct constructor).
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::addCell):
+        Updated after ensureRows signature change.
+
+        (WebCore::RenderTableSection::ensureRows):
+        Removed the overflow check as it was making some assumption as to how the
+        Vector worked. If we want to implement a limit, we may do it differently.
+        Also inlined the part of fillRowsWithDefaultStartingAtPosition that grows
+        the columns to match our current representation. The rest of the function's
+        initialization is handled by the constructor already.
+
+        (WebCore::RenderTableSection::recalcCells):
+        Use clear() as it keeps the buffer and just resets the size. Also shrinkToFit
+        at the end as we may have lost some rows.
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::CellStruct::CellStruct):
+        Fixed the style of the constructor.
+
+        (WebCore::RenderTableSection::RowStruct::RowStruct):
+        Added an explicit constructor (which is equivalent to the default one)
+        but underlines what we expect.
+
 2011-11-10  Enrica Casucci  <enrica@apple.com>
 
         ASSERT when outdenting styled line break.

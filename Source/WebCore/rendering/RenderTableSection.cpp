@@ -150,9 +150,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     ++m_cRow;
     m_cCol = 0;
 
-    // make sure we have enough rows
-    if (!ensureRows(m_cRow))
-        return;
+    ensureRows(m_cRow);
 
     m_grid[insertionRow].rowRenderer = toRenderTableRow(child);
 
@@ -174,19 +172,17 @@ void RenderTableSection::removeChild(RenderObject* oldChild)
     RenderBox::removeChild(oldChild);
 }
 
-bool RenderTableSection::ensureRows(unsigned numRows)
+void RenderTableSection::ensureRows(unsigned numRows)
 {
-    if (numRows > m_grid.size()) {
-        size_t maxSize = numeric_limits<size_t>::max() / sizeof(RowStruct);
-        if (static_cast<size_t>(numRows) > maxSize)
-            return false;
+    if (numRows <= m_grid.size())
+        return;
 
-        unsigned oldSize = m_grid.size();
-        m_grid.grow(numRows);
-        fillRowsWithDefaultStartingAtPosition(oldSize);
-    }
+    unsigned oldSize = m_grid.size();
+    m_grid.grow(numRows);
 
-    return true;
+    unsigned effectiveColumnCount = max(1u, table()->numEffCols());
+    for (unsigned row = oldSize; row < m_grid.size(); ++row)
+        m_grid[row].row.grow(effectiveColumnCount);
 }
 
 void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
@@ -237,9 +233,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
         }
     }
 
-    // make sure we have enough rows
-    if (!ensureRows(insertionRow + rSpan))
-        return;
+    ensureRows(insertionRow + rSpan);
 
     m_grid[insertionRow].rowRenderer = row;
 
@@ -1130,25 +1124,20 @@ void RenderTableSection::recalcCells()
 {
     ASSERT(m_needsCellRecalc);
     // We reset the flag here to ensure that |addCell| works. This is safe to do as
-    // fillRowsWithDefaultStartingAtPosition makes sure we match the table's columns
-    // representation.
+    // we clear the grid and properly rebuild it during |addCell|.
     m_needsCellRecalc = false;
 
     m_cCol = 0;
     m_cRow = 0;
-    fillRowsWithDefaultStartingAtPosition(0);
+    m_grid.clear();
 
-    // The grid size is at least as big as the number of rows in the markup but can grow bigger
-    // if we have a cell protruding because it uses a rowspan spannig out of the table.
-    unsigned gridSize = 0;
     for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
         if (row->isTableRow()) {
             unsigned insertionRow = m_cRow;
             m_cRow++;
             m_cCol = 0;
-            if (!ensureRows(m_cRow))
-                break;
-            
+            ensureRows(m_cRow);
+
             RenderTableRow* tableRow = toRenderTableRow(row);
             m_grid[insertionRow].rowRenderer = tableRow;
             setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
@@ -1158,14 +1147,12 @@ void RenderTableSection::recalcCells()
                     continue;
 
                 RenderTableCell* tableCell = toRenderTableCell(cell);
-                gridSize = max(gridSize, insertionRow + tableCell->rowSpan());
                 addCell(tableCell, tableRow);
             }
         }
     }
 
-    gridSize = max(gridSize, m_cRow);
-    m_grid.shrink(gridSize);
+    m_grid.shrinkToFit();
     setNeedsLayout(true);
 }
 
@@ -1179,21 +1166,6 @@ void RenderTableSection::setNeedsCellRecalc()
     m_needsCellRecalc = true;
     if (RenderTable* t = table())
         t->setNeedsSectionRecalc();
-}
-
-void RenderTableSection::fillRowsWithDefaultStartingAtPosition(unsigned startingRow)
-{
-    unsigned effectiveColumnCount = max(1u, table()->numEffCols());
-    for (unsigned row = startingRow; row < m_grid.size(); ++row) {
-        // It may be more efficient to reset the CellStruct individually instead of reallocating
-        // the whole buffer in each Row, for now this is good enough and will properly shrink
-        // the rows if effectiveColumnCount was decreased.
-        m_grid[row].row.clear();
-        m_grid[row].row.grow(effectiveColumnCount);
-        m_grid[row].rowRenderer = 0;
-        m_grid[row].baseline = 0;
-        m_grid[row].logicalHeight = Length();
-    }
 }
 
 unsigned RenderTableSection::numColumns() const

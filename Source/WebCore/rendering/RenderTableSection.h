@@ -57,9 +57,11 @@ public:
         Vector<RenderTableCell*, 1> cells; 
         bool inColSpan; // true for columns after the first in a colspan
 
-        CellStruct():
-          inColSpan(false) {}
-        
+        CellStruct()
+            : inColSpan(false)
+        {
+        }
+
         RenderTableCell* primaryCell()
         {
             return hasCells() ? cells[cells.size() - 1] : 0;
@@ -76,6 +78,12 @@ public:
     typedef Vector<CellStruct> Row;
 
     struct RowStruct {
+        RowStruct()
+            : rowRenderer(0)
+            , baseline(0)
+        {
+        }
+
         Row row;
         RenderTableRow* rowRenderer;
         LayoutUnit baseline;
@@ -147,8 +155,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    bool ensureRows(unsigned);
-    void fillRowsWithDefaultStartingAtPosition(unsigned);
+    void ensureRows(unsigned);
 
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
 
