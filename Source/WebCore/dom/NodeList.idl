@@ -23,8 +23,7 @@ module core {
     interface [
         CustomIsReachable,
         HasIndexGetter,
-        HasNameGetter,
-        V8CustomCall
+        HasNameGetter
     ] NodeList {
 
         Node item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);

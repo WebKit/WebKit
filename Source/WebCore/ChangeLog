@@ -1,3 +1,24 @@
+2011-11-10  Andreas Kling  <kling@webkit.org>
+
+        Remove ability to call HTMLCollections in V8 bindings as well.
+        <http://webkit.org/b/72045>
+
+        Reviewed by Anders Carlsson.
+
+        Follow the JSC bindings and remove the ability to call HTMLCollections
+        in the V8 bindings (excluding HTMLAllCollection.)
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeaderCustomCall):
+        (GenerateImplementationCustomCall):
+        * dom/NodeList.idl:
+        * html/HTMLCollection.idl:
+
+            Remove the V8CustomCall attribute as it's no longer needed.
+
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+
 2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Interactive color box for gradients in CSS property values

@@ -59,22 +59,4 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     return toV8(result.release());
 }
 
-// Need to support call so that list(0) works.
-v8::Handle<v8::Value> V8NodeList::callAsFunctionCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.NodeList.callAsFunction()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    NodeList* list = V8NodeList::toNative(args.Holder());
-
-    // The first argument must be a number.
-    v8::Local<v8::Uint32> index = args[0]->ToArrayIndex();
-    if (index.IsEmpty())
-        return v8::Undefined();
-
-    RefPtr<Node> result = list->item(index->Uint32Value());
-    return toV8(result.release());
-}
-
 } // namespace WebCore

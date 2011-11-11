@@ -648,7 +648,7 @@ sub GenerateHeaderCustomCall
 {
     my $dataNode = shift;
 
-    if ($dataNode->extendedAttributes->{"CustomCall"} || $dataNode->extendedAttributes->{"V8CustomCall"}) {
+    if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@headerContent, "    static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
     }
     if ($dataNode->name eq "Event") {
@@ -2115,7 +2115,7 @@ sub GenerateImplementationCustomCall
 {
     my $dataNode = shift;
     my $interfaceName = $dataNode->name;
-    my $hasCustomCall = $dataNode->extendedAttributes->{"CustomCall"} || $dataNode->extendedAttributes->{"V8CustomCall"};
+    my $hasCustomCall = $dataNode->extendedAttributes->{"CustomCall"};
 
     # FIXME: Remove hard-coded HTMLOptionsCollection reference.
     if ($interfaceName eq "HTMLOptionsCollection") {

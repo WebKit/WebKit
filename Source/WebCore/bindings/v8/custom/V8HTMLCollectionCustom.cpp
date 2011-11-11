@@ -106,36 +106,6 @@ v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& a
     return result;
 }
 
-v8::Handle<v8::Value> V8HTMLCollection::callAsFunctionCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.HTMLCollection.callAsFunction()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    HTMLCollection* imp = V8HTMLCollection::toNative(args.Holder());
-
-    if (args.Length() == 1)
-        return getItem(imp, args[0]);
-
-    // If there is a second argument it is the index of the item we want.
-    String name = toWebCoreString(args[0]);
-    v8::Local<v8::Uint32> index = args[1]->ToArrayIndex();
-    if (index.IsEmpty())
-        return v8::Undefined();
-
-    unsigned current = index->Uint32Value();
-    Node* node = imp->namedItem(name);
-    while (node) {
-        if (!current)
-            return toV8(node);
-
-        node = imp->nextNamedItem(name);
-        current--;
-    }
-
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> toV8(HTMLCollection* impl)
 {
     if (impl->type() == DocAll)
