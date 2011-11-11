@@ -3890,3 +3890,5 @@ BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.ht
 
 BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
 BUGWK72133 MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
+
+BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
