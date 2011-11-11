@@ -102,10 +102,13 @@ void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
     UNUSED_PARAM(exec);
 
     UChar* position = buffer + m_length; // We will be working backwards over the rope.
-    Vector<JSString*, 32> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
+    Vector<JSString*, 32> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
     
-    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
+    for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         workQueue.append(m_fibers[i].get());
+        // Clearing here works only because there are no GC points in this method.
+        m_fibers[i].clear();
+    }
 
     while (!workQueue.isEmpty()) {
         JSString* currentFiber = workQueue.last();

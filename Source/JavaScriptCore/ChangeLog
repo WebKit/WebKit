@@ -1,3 +1,13 @@
+2011-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSString forgets to clear m_fibers when resolving ropes
+        https://bugs.webkit.org/show_bug.cgi?id=72089
+
+        Reviewed by Geoff Garen.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRopeSlowCase):
+
 2011-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG byte array support sometimes clamps values incorrectly
