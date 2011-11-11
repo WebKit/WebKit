@@ -56,6 +56,8 @@ public:
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
+    virtual bool usesOverlayScrollbars() const { return true; }
+
     QStyle* style() const;
 };
 
