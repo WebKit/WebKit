@@ -2117,12 +2117,6 @@ sub GenerateImplementationCustomCall
     my $interfaceName = $dataNode->name;
     my $hasCustomCall = $dataNode->extendedAttributes->{"CustomCall"};
 
-    # FIXME: Remove hard-coded HTMLOptionsCollection reference.
-    if ($interfaceName eq "HTMLOptionsCollection") {
-        $interfaceName = "HTMLCollection";
-        $hasCustomCall = 1;
-    }
-
     if ($hasCustomCall) {
         push(@implContent, "    desc->InstanceTemplate()->SetCallAsFunctionHandler(V8${interfaceName}::callAsFunctionCallback);\n");
     }
