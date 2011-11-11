@@ -1,3 +1,25 @@
+2011-11-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix incremental builds on Windows after buildsystem refactor
+
+        The qmake rules to ensure that we run make on the derived sources
+        before running qmake on the target were inside a unix-scope, which
+        resulted in flakey builds on Windows.
+
+        We now generate a rule on all platforms that ensures that "make qmake"
+        will always run make on the derived sources. In addition, on platforms
+        that have GNU make (where "make incremental" does not run "make qmake",
+        but only "make"), we add a similar rule that ensures that any time the
+        target makefile is regenerated we first run qmake and make on the derived
+        sources. This rule relies on GNU make's order-only-prerequisites to
+        not trigger a qmake-run of the target every time we run make.
+
+        https://bugs.webkit.org/show_bug.cgi?id=71778
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Remove QWebNavigationController
