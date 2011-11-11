@@ -317,6 +317,7 @@ protected:
             FAIL() << "Test timed out";
             return;
         }
+        m_rootLayer->setLayerTreeHost(0);
         afterTest();
     }
 
@@ -329,6 +330,7 @@ private:
     bool m_endWhenBeginReturns;
     bool m_timedOut;
 
+    RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<WebThread> m_webThread;
     RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
     TimeoutTask* m_timeoutTask;
@@ -339,10 +341,10 @@ void CCLayerTreeHostTest::doBeginTest()
     ASSERT(isMainThread());
     m_client = MockLayerTreeHostClient::create(this);
 
-    RefPtr<LayerChromium> rootLayer = LayerChromium::create(0);
-    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
+    m_rootLayer = LayerChromium::create(0);
+    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), m_rootLayer, m_settings);
     ASSERT(m_layerTreeHost);
-    rootLayer->setLayerTreeHost(m_layerTreeHost.get());
+    m_rootLayer->setLayerTreeHost(m_layerTreeHost.get());
 
     m_beginning = true;
     beginTest();
