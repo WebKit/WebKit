@@ -2454,7 +2454,6 @@ inspector/extensions/extensions-console.html
 
 # [Qt] 4 new tests fail introduced in r98852
 # https://bugs.webkit.org/show_bug.cgi?id=71253
-svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 fast/backgrounds/size/contain-and-cover-zoomed.html
 
 # REGRESSION(r99195)

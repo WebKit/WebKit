@@ -1,5 +1,56 @@
 2011-11-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Zooming in SVGs in <object> is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=71673
+
+        Reviewed by Zoltan Herczeg.
+
+        It turns out zooming in SVGs in <object> wasn't flakey in Safari at all, only in DRT/Mac. In Safari it failed 100% reproducable.
+        Scrollbars would always appear when zooming in a HTML document, containing an embedded SVG by <object>/<embed>/<iframe>, even
+        though the content would visually fit perfectly, also it zoomed properly. Reloading would make the scrollbars disappear again.
+
+        If scrollbars should be created for a FrameView or not, is determined by ScrollView::updateScrollbars(), by comparing the 
+        visible size of the scroll view against the contents size. The contents size is propagated to the ScrollView, by
+        FrameView::adjustViewSize(), which is called during FrameView::layout(). The size thats propagated is RenderView::documentRect().
+        RenderView::documentRect() returns a writing-mode aware layoutOverflowRect(), computed by RenderBox::layoutOverflowRectForPropagation.
+
+        If overflow is "visible", layoutOverflowRect() will return a union of the borderBoxRect() and the layoutOverflowRect(), which
+        may exceed the visible size of the RenderView. For standalone SVG documents, the default value for the outermost <svg> renderer is
+        "visible". When embedding SVGs through <object>s into a host document, the same code path is taken, and RenderView::documentRect()
+        of the embedded SVG document will always return a union of the borderBoxREct() and the layoutOverflowRect().
+
+        If that happens while zooming in a HTML document containing a SVG by <object>, scrollbars are created.
+        By ensuring that overflow is treated as hidden, which is what Opera does (and makes sense!) this can't happen.
+
+        The fix is to treat embedded SVGs as they would carry overflow="hidden" on the outermost <svg> renderer. That also makes
+        sense as the embedded SVG cant paint outside an external "frame rect" thats given by the FrameView, effectively rendering
+        as overflow "hidden" already.
+
+        The fix is realized, by altering the overflow x/y values that are used in FrameView::applyOverflowToViewport(). Previously
+        we never called that method for SVG, which was fine. Now we always call applyOverflowToViewport(), but only do something
+        if the FrameView of the SVG is embedded in another document. If so, we force overflow to hidden.
+
+        That fixes all zooming+<object> related flakiness seen on the chromium bots, most noticeable, without other side effects.
+        All svg/overflow tests, still work as expected.
+
+        Test: svg/zoom/page/zoom-svg-as-object.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors): Remove unnecessary setNeedsLayout() call in SVG builds.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport): Always enforce overflow=hidden, when embedding SVGs through object/embed/iframe.
+                                                       Otherwise scrollbars will appear, even though the contents would fit without them.
+        (WebCore::FrameView::calculateScrollbarModesForLayout): Always call applyOverflowToViewport, even for RenderSVGRoot. It only has
+                                                                an effect though, when the FrameView of the SVG is embedded through <object>/etc.
+        (WebCore::FrameView::layout): Remove unnecessary setChildNeedsLayout() call.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument): Fix this function, its meaning was reversed before!
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): Fix logical error, by negating the result of isEmbeddedThroughFrameContainingSVGDocument.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Ditto.
+        * rendering/svg/RenderSVGRoot.h: Expose isEmbeddedThroughFrameContainingSVGDocument.
+
+2011-11-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Unbreak my 32bit SL build.
 
         * rendering/RenderLayer.cpp:

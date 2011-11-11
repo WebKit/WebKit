@@ -540,7 +540,20 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
 
     bool overrideHidden = m_frame->page() && m_frame->page()->mainFrame() == m_frame && m_frame->frameScaleFactor() > 1;
 
-    switch (o->style()->overflowX()) {
+    EOverflow overflowX = o->style()->overflowX();
+    EOverflow overflowY = o->style()->overflowY();
+
+#if ENABLE(SVG)
+    if (o->isSVGRoot()) {
+        // overflow is ignored in stand-alone SVG documents.
+        if (!toRenderSVGRoot(o)->isEmbeddedThroughFrameContainingSVGDocument())
+            return;
+        overflowX = OHIDDEN;
+        overflowY = OHIDDEN;
+    }
+#endif
+
+    switch (overflowX) {
         case OHIDDEN:
             if (overrideHidden)
                 hMode = ScrollbarAuto;
@@ -558,7 +571,7 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
             ;
     }
     
-     switch (o->style()->overflowY()) {
+     switch (overflowY) {
         case OHIDDEN:
             if (overrideHidden)
                 vMode = ScrollbarAuto;
@@ -613,14 +626,8 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
                 RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
                 applyOverflowToViewport(o, hMode, vMode);
             }
-        } else if (rootRenderer) {
-#if ENABLE(SVG)
-            if (!documentElement->isSVGElement())
-                applyOverflowToViewport(rootRenderer, hMode, vMode);
-#else
+        } else if (rootRenderer)
             applyOverflowToViewport(rootRenderer, hMode, vMode);
-#endif
-        }
     }    
 }
 
@@ -1006,8 +1013,6 @@ void FrameView::layout(bool allowSubtree)
 
     if (!m_layoutRoot) {
         Document* document = m_frame->document();
-        Node* documentElement = document->documentElement();
-        RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
         Node* body = document->body();
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
@@ -1016,13 +1021,6 @@ void FrameView::layout(bool allowSubtree)
                 if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
                     body->renderer()->setChildNeedsLayout(true);
             }
-        } else if (rootRenderer) {
-#if ENABLE(SVG)
-            if (documentElement->isSVGElement()) {
-                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
-                    rootRenderer->setChildNeedsLayout(true);
-            }
-#endif
         }
         
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING

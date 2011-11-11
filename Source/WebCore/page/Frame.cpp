@@ -999,8 +999,6 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (document->isSVGDocument()) {
         if (!static_cast<SVGDocument*>(document)->zoomAndPanEnabled())
             return;
-        if (document->renderer())
-            document->renderer()->setNeedsLayout(true);
     }
 #endif
 
