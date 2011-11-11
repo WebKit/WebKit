@@ -1,3 +1,15 @@
+2011-11-11  David Kilzer  <ddkilzer@apple.com>
+
+        Only define BUILDING_ON_* and TARGETING_* macros when building for Mac OS X
+        <http://webkit.org/b/72175>
+
+        Reviewed by Joseph Pecoraro.
+
+        * wtf/Platform.h: Move the definition of the BUILDING_ON_* and
+        TARGETING_* macros to where the WTF_OS_MAC_OS_X macro is defined
+        so that they're only defined on Mac OS X builds.  Also include
+        Availability.h, which is needed on iOS builds.
+
 2011-11-11  Darin Adler  <darin@apple.com>
 
         Remove all releaseRef implementations except for RetainPtr

@@ -316,8 +316,20 @@
 #ifdef __APPLE__
 #define WTF_OS_DARWIN 1
 
-/* FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system */
+#include <Availability.h>
 #include <AvailabilityMacros.h>
+#include <TargetConditionals.h>
+#endif
+
+/* OS(IOS) - iOS */
+/* OS(MAC_OS_X) - Mac OS X (not including iOS) */
+#if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
+    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                 \
+    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+#define WTF_OS_IOS 1
+#elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#define WTF_OS_MAC_OS_X 1
+/* FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system */
 #if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define BUILDING_ON_LEOPARD 1
 #elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
@@ -332,18 +344,6 @@
 #elif !defined(MAC_OS_X_VERSION_10_8) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
 #define TARGETING_LION 1
 #endif
-#include <TargetConditionals.h>
-
-#endif
-
-/* OS(IOS) - iOS */
-/* OS(MAC_OS_X) - Mac OS X (not including iOS) */
-#if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED)  \
-    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                   \
-    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
-#define WTF_OS_IOS 1
-#elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
-#define WTF_OS_MAC_OS_X 1
 #endif
 
 /* OS(FREEBSD) - FreeBSD */
