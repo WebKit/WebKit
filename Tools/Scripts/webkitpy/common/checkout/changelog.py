@@ -79,7 +79,16 @@ class ChangeLogEntry(object):
 
     # e.g. Reviewed by Darin Adler.
     # (Discard everything after the first period to match more invalid lines.)
-    reviewed_by_regexp = r'Reviewed by (?P<reviewer>.*?)[\.,]?\s*$'
+    reviewed_by_regexp = r'^\s*((\w+\s+)+and\s+)?(Review|Rubber(\s*|-)stamp)(s|ed)?\s+([a-z]+\s+)*?by\s+(?P<reviewer>.*?)[\.,]?\s*$'
+
+    reviewed_byless_regexp = r'^\s*((Review|Rubber(\s*|-)stamp)(s|ed)?|RS)(\s+|\s*=\s*)(?P<reviewer>([A-Z]\w+\s*)+)[\.,]?\s*$'
+
+    contributor_name_noise_regexp = re.compile(r"""
+    (\s+(landed|committed|)\s+by.+) # landed by, commented by, etc...
+    |\..+ # text afetr the first period (inclusive)
+    |([(<]\s*[\w_\-\.]+@[\w_\-\.]+[>)]) # email addresses
+    |((?<=and)\s+([a-z\-]+\s+)+by) # phrases like "given a glance-over by" and "looked over by" (no capital letters)
+    """, re.IGNORECASE | re.VERBOSE)
 
     # e.g. == Rolled over to ChangeLog-2011-02-16 ==
     rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
@@ -92,6 +101,31 @@ class ChangeLogEntry(object):
         self._committer_list = committer_list
         self._parse_entry()
 
+    @staticmethod
+    def _parse_reviewer_text(text):
+        match = re.search(ChangeLogEntry.reviewed_by_regexp, text, re.MULTILINE | re.IGNORECASE)
+        if not match:
+            # There are cases where people omit "by". We match it only if reviewer part looked nice
+            # in order to avoid matching random lines that start with Reviewed
+            match = re.search(ChangeLogEntry.reviewed_byless_regexp, text, re.MULTILINE | re.IGNORECASE)
+        if not match:
+            return None, None
+
+        reviewer_text = match.group("reviewer")
+
+        reviewer_text = ChangeLogEntry.contributor_name_noise_regexp.sub('', reviewer_text)
+        reviewer_text = re.sub(r'\s\s+|[,.]\s*$', ' ', reviewer_text).strip()
+
+        # FIXME: Canonicalize reviewer names; e.g. Andy "First Time Reviewer" Estes
+        # FIXME: Ignore NOBODY (\w+) and "a spell checker"
+        reviewer_list = re.split(r'\s*(?:(?:,(?:\s+and\s+|&)?)|(?:and\s+|&))\s*', reviewer_text)
+
+        # Get rid of "reviewers" like "even though this is just a..." in "Reviewed by Sam Weinig, even though this is just a..."
+        reviewer_list = [reviewer for reviewer in reviewer_list if len(reviewer.split()) <= 5]
+
+        return reviewer_text, reviewer_list
+
+
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
         if not match:
@@ -101,10 +135,8 @@ class ChangeLogEntry(object):
         self._author_name = match.group("name") if match else None
         self._author_email = match.group("email") if match else None
 
-        match = re.search(self.reviewed_by_regexp, self._contents, re.MULTILINE)
-        self._reviewer_text = match.group("reviewer") if match else None
-
-        self._reviewer = self._committer_list.committer_by_name(self._reviewer_text)
+        self._reviewer_text, self._reviewer_list = ChangeLogEntry._parse_reviewer_text(self._contents)
+        self._reviewer = self._committer_list.committer_by_name(self._reviewer_list[0]) if self._reviewer_list else None
         self._author = self._committer_list.contributor_by_email(self._author_email) or self._committer_list.contributor_by_name(self._author_name)
 
         self._touched_files = re.findall(self.touched_files_regexp, self._contents, re.MULTILINE)

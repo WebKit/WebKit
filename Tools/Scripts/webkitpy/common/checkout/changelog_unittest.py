@@ -113,6 +113,62 @@ class ChangeLogTest(unittest.TestCase):
         * ewk/ewk_private.h:
         * ewk/ewk_view.cpp:
 
+2011-03-02  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt  <hyatt@apple.com>
+
+        content property doesn't support quotes
+        https://bugs.webkit.org/show_bug.cgi?id=6503
+
+        Added full support for quotes as defined by CSS 2.1.
+
+        Tests: fast/css/content/content-quotes-01.html
+               fast/css/content/content-quotes-02.html
+               fast/css/content/content-quotes-03.html
+               fast/css/content/content-quotes-04.html
+               fast/css/content/content-quotes-05.html
+               fast/css/content/content-quotes-06.html
+
+2011-03-31  Brent Fulgham  <bfulgham@webkit.org>
+
+       Reviewed Adam Roben.
+
+       [WinCairo] Implement Missing drawWindowsBitmap method.
+       https://bugs.webkit.org/show_bug.cgi?id=57409
+
+2011-03-28  Dirk Pranke  <dpranke@chromium.org>
+
+       RS=Tony Chang.
+
+       r81977 moved FontPlatformData.h from
+       WebCore/platform/graphics/cocoa to platform/graphics. This
+       change updates the chromium build accordingly.
+
+       https://bugs.webkit.org/show_bug.cgi?id=57281
+
+       * platform/graphics/chromium/CrossProcessFontLoading.mm:
+
+2011-05-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+       Unreviewed warning fix.
+
+       The variable is just used in the ASSERT macro. Let's use ASSERT_UNUSED to avoid
+       a warning in Release build.
+
+       * accessibility/AccessibilityRenderObject.cpp:
+       (WebCore::lastChildConsideringContinuation):
+
+2011-10-11  Antti Koivisto  <antti@apple.com>
+
+       Resolve regular and visited link style in a single pass
+       https://bugs.webkit.org/show_bug.cgi?id=69838
+
+       Reviewed by Darin Adler
+
+       We can simplify and speed up selector matching by removing the recursive matching done
+       to generate the style for the :visited pseudo selector. Both regular and visited link style
+       can be generated in a single pass through the style selector.
+
 == Rolled over to ChangeLog-2009-06-16 ==
 """
 
@@ -181,13 +237,91 @@ class ChangeLogTest(unittest.TestCase):
     def test_parse_log_entries_from_changelog(self):
         changelog_file = StringIO(self._example_changelog)
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
-        self.assertEquals(len(parsed_entries), 4)
+        self.assertEquals(len(parsed_entries), 9)
         self.assertEquals(parsed_entries[0].reviewer_text(), "David Levin")
         self.assertEquals(parsed_entries[1].author_email(), "ddkilzer@apple.com")
+        self.assertEquals(parsed_entries[2].reviewer_text(), "Mark Rowe")
         self.assertEquals(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
         self.assertEquals(parsed_entries[3].author_name(), "Benjamin Poulain")
         self.assertEquals(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
             "WebCoreSupport/ChromeClientEfl.cpp", "ewk/ewk_private.h", "ewk/ewk_view.cpp"])
+        self.assertEquals(parsed_entries[4].reviewer_text(), "David Hyatt")
+        self.assertEquals(parsed_entries[5].reviewer_text(), "Adam Roben")
+        self.assertEquals(parsed_entries[6].reviewer_text(), "Tony Chang")
+        self.assertEquals(parsed_entries[7].reviewer_text(), None)
+        self.assertEquals(parsed_entries[8].reviewer_text(), 'Darin Adler')
+
+    def test_parse_reviewer_text(self):
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('  reviewed  by Ryosuke Niwa,   Oliver Hunt, and  Dimitri Glazkov')
+        self.assertEquals(reviewer_text, 'Ryosuke Niwa, Oliver Hunt, and Dimitri Glazkov')
+        self.assertEquals(reviewer_list, ['Ryosuke Niwa', 'Oliver Hunt', 'Dimitri Glazkov'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Brady Eidson and David Levin, landed by Brady Eidson')
+        self.assertEquals(reviewer_text, 'Brady Eidson and David Levin')
+        self.assertEquals(reviewer_list, ['Brady Eidson', 'David Levin'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Simon Fraser. Committed by Beth Dakin.')
+        self.assertEquals(reviewer_text, 'Simon Fraser')
+        self.assertEquals(reviewer_list, ['Simon Fraser'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Geoff Garen. V8 fixes courtesy of Dmitry Titov.')
+        self.assertEquals(reviewer_text, 'Geoff Garen')
+        self.assertEquals(reviewer_list, ['Geoff Garen'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Adam Roben&Dirk Schulze')
+        self.assertEquals(reviewer_text, 'Adam Roben&Dirk Schulze')
+        self.assertEquals(reviewer_list, ['Adam Roben', 'Dirk Schulze'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by adam,andy and andy adam, andy smith')
+        self.assertEquals(reviewer_text, 'adam,andy and andy adam, andy smith')
+        self.assertEquals(reviewer_list, ['adam', 'andy', 'andy adam', 'andy smith'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('rubber stamped by Oliver Hunt (oliver@apple.com) and Darin Adler (darin@apple.com)')
+        self.assertEquals(reviewer_text, 'Oliver Hunt and Darin Adler')
+        self.assertEquals(reviewer_list, ['Oliver Hunt', 'Darin Adler'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('rubber  Stamped by David Hyatt  <hyatt@apple.com>')
+        self.assertEquals(reviewer_text, 'David Hyatt')
+        self.assertEquals(reviewer_list, ['David Hyatt'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber-stamped by Antti Koivisto.')
+        self.assertEquals(reviewer_text, 'Antti Koivisto')
+        self.assertEquals(reviewer_list, ['Antti Koivisto'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubberstamped by Dan Bernstein.')
+        self.assertEquals(reviewer_text, 'Dan Bernstein')
+        self.assertEquals(reviewer_list, ['Dan Bernstein'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber stamps by Darin Adler & Sam Weinig.')
+        self.assertEquals(reviewer_text, 'Darin Adler & Sam Weinig')
+        self.assertEquals(reviewer_list, ['Darin Adler', 'Sam Weinig'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviews by Ryosuke Niwa')
+        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
+        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviews Ryosuke Niwa')
+        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
+        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubberstamp Ryosuke Niwa')
+        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
+        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Typed and reviewed by Alexey Proskuryakov.')
+        self.assertEquals(reviewer_text, 'Alexey Proskuryakov')
+        self.assertEquals(reviewer_list, ['Alexey Proskuryakov'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig, and given a good once-over by Jeff Miller.')
+        self.assertEquals(reviewer_text, 'Sam Weinig, and Jeff Miller')
+        self.assertEquals(reviewer_list, ['Sam Weinig', 'Jeff Miller'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed and landed by Brady Eidson')
+        self.assertEquals(reviewer_text, 'Brady Eidson')
+        self.assertEquals(reviewer_list, ['Brady Eidson'])
+
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text(' Reviewed by Sam Weinig, even though this is just a...')
+        self.assertEquals(reviewer_list, ['Sam Weinig'])
 
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
