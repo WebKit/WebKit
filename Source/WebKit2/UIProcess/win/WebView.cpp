@@ -1429,8 +1429,10 @@ PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* pa
     return WebContextMenuProxyWin::create(m_window, page);
 }
 
-void WebView::setFindIndicator(PassRefPtr<FindIndicator> prpFindIndicator, bool fadeOut)
+void WebView::setFindIndicator(PassRefPtr<FindIndicator> prpFindIndicator, bool fadeOut, bool animate)
 {
+    UNUSED_PARAM(animate);
+
     if (!m_findIndicatorCallback)
         return;
 

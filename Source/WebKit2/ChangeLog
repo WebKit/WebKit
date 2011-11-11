@@ -1,5 +1,13 @@
 2011-11-10  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setFindIndicator):
+        * UIProcess/win/WebView.h:
+
+2011-11-10  Beth Dakin  <bdakin@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=66584
         WebKit2's find bouncy looks blurry after dragging window onto >1.0 scale factor 
         display
