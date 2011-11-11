@@ -55,6 +55,17 @@ namespace JSC {
 
     typedef Vector<ExecState*, 16> ExecStateStack;
     
+    struct GlobalObjectMethodTable {
+        typedef bool (*SupportsProfilingFunctionPtr)(const JSGlobalObject*); 
+        SupportsProfilingFunctionPtr supportsProfiling;
+
+        typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
+        SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
+
+        typedef bool (*ShouldInterruptScriptFunctionPtr)(const JSGlobalObject*);
+        ShouldInterruptScriptFunctionPtr shouldInterruptScript;
+    };
+
     class JSGlobalObject : public JSVariableObject {
     private:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
@@ -133,6 +144,9 @@ namespace JSC {
 
         bool m_evalEnabled;
 
+        static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
+        const GlobalObjectMethodTable* m_globalObjectMethodTable;
+
         void createRareDataIfNeeded()
         {
             if (m_rareData)
@@ -154,12 +168,13 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
-        explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
+        explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable = 0)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             , m_evalEnabled(true)
+            , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
         {
         }
 
@@ -262,14 +277,16 @@ namespace JSC {
         Debugger* debugger() const { return m_debugger; }
         void setDebugger(Debugger* debugger) { m_debugger = debugger; }
 
-        virtual bool supportsProfiling() const { return false; }
-        virtual bool supportsRichSourceInfo() const { return true; }
+        const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
+
+        static bool supportsProfiling(const JSGlobalObject*) { return false; }
+        static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
         ScopeChainNode* globalScopeChain() { return m_globalScopeChain.get(); }
 
         ExecState* globalExec();
 
-        virtual bool shouldInterruptScript() const { return true; }
+        static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
 
         bool isDynamicScope(bool& requiresDynamicChecks) const;
 

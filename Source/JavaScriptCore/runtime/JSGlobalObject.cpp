@@ -78,6 +78,8 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &JSVariableObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
+const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
+
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
   parseInt              globalFuncParseInt              DontEnum|Function 2

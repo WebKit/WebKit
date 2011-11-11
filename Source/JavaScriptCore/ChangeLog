@@ -1,5 +1,30 @@
 2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        De-virtualize supportsProfiling, supportsRichSourceInfo, shouldInterruptScript in JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=72035
+
+        Reviewed by Geoffrey Garen.
+
+        De-virtualized the methods through the use of a new method table just for JSGlobalObject and subclasses.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecompiler/BytecodeGenerator.cpp: Changed call sites to use the new GlobalObjectMethodTable.
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * interpreter/Interpreter.cpp: Ditto.
+        (JSC::Interpreter::execute):
+        * runtime/JSGlobalObject.cpp: Added a static const GlobalObjectMethodTable with the correct function pointers.
+        * runtime/JSGlobalObject.h: Added a field in JSGlobalObject to keep track of the current method table.
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::globalObjectMethodTable): The new struct to contain the function pointers.
+        (JSC::JSGlobalObject::supportsProfiling): Made static to put in the method table.
+        (JSC::JSGlobalObject::supportsRichSourceInfo): Ditto.
+        (JSC::JSGlobalObject::shouldInterruptScript): Ditto.
+        * runtime/TimeoutChecker.cpp: Changed call sites to use the new GlobalObjectMethodTable for lookup.
+        (JSC::TimeoutChecker::didTimeOut):
+
+2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         De-virtualize JSGlobalObject::allowsAccessFrom
         https://bugs.webkit.org/show_bug.cgi?id=71969
 

@@ -130,7 +130,7 @@ bool TimeoutChecker::didTimeOut(ExecState* exec)
         m_ticksUntilNextCheck = ticksUntilFirstCheck;
     
     if (m_timeoutInterval && m_timeExecuting > m_timeoutInterval) {
-        if (exec->dynamicGlobalObject()->shouldInterruptScript())
+        if (exec->dynamicGlobalObject()->globalObjectMethodTable()->shouldInterruptScript(exec->dynamicGlobalObject()))
             return true;
         
         reset();

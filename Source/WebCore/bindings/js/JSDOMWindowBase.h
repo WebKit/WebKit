@@ -56,9 +56,11 @@ namespace WebCore {
             return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
         }
 
-        virtual bool supportsProfiling() const;
-        virtual bool supportsRichSourceInfo() const;
-        virtual bool shouldInterruptScript() const;
+        static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
+
+        static bool supportsProfiling(const JSC::JSGlobalObject*);
+        static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+        static bool shouldInterruptScript(const JSC::JSGlobalObject*);
 
         bool allowsAccessFrom(JSC::ExecState*) const;
         bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
