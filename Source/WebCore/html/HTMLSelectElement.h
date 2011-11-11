@@ -29,9 +29,6 @@
 #include "CollectionCache.h"
 #include "Event.h"
 #include "HTMLFormControlElement.h"
-#if PLATFORM(QT)
-#include "RenderThemeQt.h"
-#endif
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -202,14 +199,10 @@ private:
 inline bool HTMLSelectElement::usesMenuList() const
 {
 #if ENABLE(NO_LISTBOX_RENDERING)
-#if PLATFORM(QT)
-    if (RenderThemeQt::useMobileTheme())
-        return true;
-#else
     return true;
-#endif
-#endif
+#else
     return !m_multiple && m_size <= 1;
+#endif
 }
 
 HTMLSelectElement* toHTMLSelectElement(Node*);

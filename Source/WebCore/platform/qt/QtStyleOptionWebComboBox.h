@@ -23,7 +23,6 @@
 
 #include "HTMLSelectElement.h"
 #include "RenderObject.h"
-#include "RenderThemeQt.h"
 
 #include <QStyleOption>
 
@@ -35,7 +34,11 @@ class QtStyleOptionWebComboBox : public QStyleOptionComboBox {
 public:
     QtStyleOptionWebComboBox(RenderObject* o)
         : QStyleOptionComboBox()
+    #if ENABLE(NO_LISTBOX_RENDERING)
         , m_multiple(checkMultiple(o))
+    #else
+        , m_multiple(false)
+    #endif
     {
     }
 
@@ -46,8 +49,6 @@ private:
 
     bool checkMultiple(RenderObject* o)
     {
-        if (RenderThemeQt::useMobileTheme())
-            return false;
         HTMLSelectElement* select = o ? static_cast<HTMLSelectElement*>(o->node()) : 0;
         return select ? select->multiple() : false;
     }

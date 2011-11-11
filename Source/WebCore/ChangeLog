@@ -1,3 +1,95 @@
+2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r99964.
+        http://trac.webkit.org/changeset/99964
+        https://bugs.webkit.org/show_bug.cgi?id=72124
+
+        Broke too many Qt tests (Requested by tronical_ on #webkit).
+
+        * Target.pri:
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::usesMenuList):
+        * platform/qt/QtMobileWebStyle.cpp: Added.
+        (QtMobileWebStyle::QtMobileWebStyle):
+        (drawRectangularControlBackground):
+        (QtMobileWebStyle::drawChecker):
+        (QtMobileWebStyle::findChecker):
+        (QtMobileWebStyle::drawRadio):
+        (QtMobileWebStyle::findRadio):
+        (QtMobileWebStyle::drawControl):
+        (QtMobileWebStyle::drawPrimitive):
+        (QtMobileWebStyle::drawMultipleComboButton):
+        (QtMobileWebStyle::drawSimpleComboButton):
+        (QtMobileWebStyle::getButtonImageSize):
+        (QtMobileWebStyle::findComboButton):
+        (QtMobileWebStyle::drawComplexControl):
+        * platform/qt/QtMobileWebStyle.h: Added.
+        * platform/qt/QtStyleOptionWebComboBox.h:
+        (WebCore::QtStyleOptionWebComboBox::QtStyleOptionWebComboBox):
+        (WebCore::QtStyleOptionWebComboBox::checkMultiple):
+        * platform/qt/RenderThemeQStyle.cpp: Removed.
+        * platform/qt/RenderThemeQStyle.h: Removed.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::initStyleOption):
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::init):
+        (WebCore::StylePainter::~StylePainter):
+        (WebCore::RenderThemeQt::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::~RenderThemeQt):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::RenderThemeQt::popupInternalPaddingBottom):
+        (WebCore::RenderThemeQt::fallbackStyle):
+        (WebCore::RenderThemeQt::qStyle):
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+        (WebCore::RenderThemeQt::findFrameLineWidth):
+        (WebCore::inflateButtonRect):
+        (WebCore::RenderThemeQt::adjustRepaintRect):
+        (WebCore::RenderThemeQt::minimumMenuListSize):
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+        (WebCore::RenderThemeQt::setButtonPadding):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::adjustMenuListStyle):
+        (WebCore::RenderThemeQt::setPopupPadding):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQt::paintMenuListButton):
+        (WebCore::RenderThemeQt::animationDurationForProgressBar):
+        (WebCore::RenderThemeQt::paintProgressBar):
+        (WebCore::RenderThemeQt::paintSliderTrack):
+        (WebCore::RenderThemeQt::paintSliderThumb):
+        (WebCore::RenderThemeQt::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeQt::paintInnerSpinButton):
+        (WebCore::RenderThemeQt::setPaletteFromPageClientIfExists):
+        (WebCore::RenderThemeQt::initializeCommonQStyleOptions):
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaCurrentTime):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        (WebCore::RenderThemeQt::caretBlinkInterval):
+        (WebCore::RenderThemeQt::fileListNameForWidth):
+        * platform/qt/RenderThemeQt.h:
+        (WebCore::StylePainter::isValid):
+        (WebCore::StylePainter::drawPrimitive):
+        (WebCore::StylePainter::drawControl):
+        (WebCore::StylePainter::drawComplexControl):
+        * platform/qt/RenderThemeQtMobile.cpp: Removed.
+        * platform/qt/RenderThemeQtMobile.h: Removed.
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeQt::paint):
+        (WebCore::ScrollbarThemeQt::scrollbarThickness):
+        (WebCore::ScrollbarThemeQt::paintScrollCorner):
+
 2011-11-11  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fix Snow Leopard build.

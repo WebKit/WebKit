@@ -102,7 +102,6 @@
 #include "QtPlatformPlugin.h"
 #include "RefPtr.h"
 #include "RenderTextControl.h"
-#include "RenderThemeQt.h"
 #include "SchemeRegistry.h"
 #include "Scrollbar.h"
 #include "SecurityOrigin.h"
@@ -3273,15 +3272,11 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 {
     d->page->contextMenuController()->clearContextMenu();
 
-#if HAVE(QSTYLE)
-    if (!RenderThemeQt::useMobileTheme()) {
-        if (QWebFrame* webFrame = frameAt(event->pos())) {
-            Frame* frame = QWebFramePrivate::core(webFrame);
-            if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).pos()))
-                return scrollbar->contextMenu(PlatformMouseEvent(event, 1));
-        }
+    if (QWebFrame* webFrame = frameAt(event->pos())) {
+        Frame* frame = QWebFramePrivate::core(webFrame);
+        if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).pos()))
+            return scrollbar->contextMenu(PlatformMouseEvent(event, 1));
     }
-#endif
 
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
     focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, 1));

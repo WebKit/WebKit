@@ -89,9 +89,7 @@ void activateFonts()
 #endif
 
     QApplication::setGraphicsSystem(QLatin1String("raster"));
-#if HAVE(QSTYLE)
     QApplication::setStyle(new QWindowsStyle);
-#endif
 
 #if defined(Q_WS_X11)
     QX11Info::setAppDpiX(0, 96);
