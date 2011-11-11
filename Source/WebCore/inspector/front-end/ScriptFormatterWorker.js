@@ -29,23 +29,26 @@
  */
 
 onmessage = function(event) {
+    // Default to a 4-space indent.
+    var indentString = event.data.indentString || "    ";
     var result = {};
+
     if (event.data.mimeType === "text/html") {
-        var formatter = new HTMLScriptFormatter();
+        var formatter = new HTMLScriptFormatter(indentString);
         result = formatter.format(event.data.content);
     } else {
         result.mapping = { original: [0], formatted: [0] };
-        result.content = formatScript(event.data.content, result.mapping, 0, 0);
+        result.content = formatScript(event.data.content, result.mapping, 0, 0, indentString);
     }
     postMessage(result);
 };
 
-function formatScript(content, mapping, offset, formattedOffset)
+function formatScript(content, mapping, offset, formattedOffset, indentString)
 {
     var formattedContent;
     try {
         var tokenizer = new Tokenizer(content);
-        var builder = new FormattedContentBuilder(tokenizer.content(), mapping, offset, formattedOffset);
+        var builder = new FormattedContentBuilder(tokenizer.content(), mapping, offset, formattedOffset, indentString);
         var formatter = new JavaScriptFormatter(tokenizer, builder);
         formatter.format();
         formattedContent = builder.content();
@@ -59,9 +62,10 @@ WebInspector = {};
 importScripts("SourceTokenizer.js");
 importScripts("SourceHTMLTokenizer.js");
 
-HTMLScriptFormatter = function()
+HTMLScriptFormatter = function(indentString)
 {
     WebInspector.SourceHTMLTokenizer.call(this);
+    this._indentString = indentString;
 }
 
 HTMLScriptFormatter.prototype = {
@@ -96,7 +100,7 @@ HTMLScriptFormatter.prototype = {
         var scriptContent = this._content.substring(this._position, cursor);
         this._mapping.original.push(this._position);
         this._mapping.formatted.push(this._formattedContent.length);
-        var formattedScriptContent = formatScript(scriptContent, this._mapping, this._position, this._formattedContent.length);
+        var formattedScriptContent = formatScript(scriptContent, this._mapping, this._position, this._formattedContent.length, this._indentString);
 
         this._formattedContent += formattedScriptContent;
         this._position = cursor;

@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function FormattedContentBuilder(content, mapping, originalOffset, formattedOffset)
+function FormattedContentBuilder(content, mapping, originalOffset, formattedOffset, indentString)
 {
     this._originalContent = content;
     this._originalOffset = originalOffset;
@@ -42,7 +42,9 @@ function FormattedContentBuilder(content, mapping, originalOffset, formattedOffs
     this._mapping = mapping;
 
     this._lineNumber = 0;
-    this._nestingLevelLevel = 0;
+    this._nestingLevel = 0;
+    this._indentString = indentString;
+    this._cachedIndents = {};
 }
 
 FormattedContentBuilder.prototype = {
@@ -81,12 +83,12 @@ FormattedContentBuilder.prototype = {
 
     increaseNestingLevel: function()
     {
-        this._nestingLevelLevel += 1;
+        this._nestingLevel += 1;
     },
 
     decreaseNestingLevel: function()
     {
-        this._nestingLevelLevel -= 1;
+        this._nestingLevel -= 1;
     },
 
     content: function()
@@ -101,8 +103,19 @@ FormattedContentBuilder.prototype = {
 
     _addIndent: function()
     {
-        for (var i = 0; i < this._nestingLevelLevel * 4; ++i)
-            this.addSpace();
+        if (this._cachedIndents[this._nestingLevel]) {
+            this._addText(this._cachedIndents[this._nestingLevel]);
+            return;
+        }
+
+        var fullIndent = "";
+        for (var i = 0; i < this._nestingLevel; ++i)
+            fullIndent += this._indentString;
+        this._addText(fullIndent);
+
+        // Cache a maximum of 20 nesting level indents.
+        if (this._nestingLevel <= 20)
+            this._cachedIndents[this._nestingLevel] = fullIndent;
     },
 
     _addComment: function(comment)

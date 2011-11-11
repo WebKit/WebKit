@@ -88,8 +88,8 @@ var test = function()
                 next();
             };
 
-            var content = "<html><body><script>function f(){}<" + "/script><script>function g(){}<" + "/script></body></html>";
-            worker.postMessage({ mimeType: "text/html", content: content });
+            var content = "<html><body><script>function f(){}<" + "/script><script>function g(){var a;if (a) return;}<" + "/script></body></html>";
+            worker.postMessage({ mimeType: "text/html", content: content, indentString: "**" });
         }
     ]);
 }

@@ -12,6 +12,9 @@ function f() {
 }
 </script><script>
 function g() {
+**var a;
+**if (a)
+****return;
 }
 </script></body></html>
 Debugger was disabled.

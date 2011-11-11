@@ -1,3 +1,24 @@
+2011-11-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Option to configure indentation of pretty-printed Javascript
+        https://bugs.webkit.org/show_bug.cgi?id=72119
+
+        Reviewed by Pavel Feldman.
+
+        Drive-by fix for field names and added indent caching, as suggested by Pavel Podivilov.
+
+        * inspector/front-end/JavaScriptFormatter.js:
+        (FormattedContentBuilder):
+        (FormattedContentBuilder.prototype.increaseNestingLevel):
+        (FormattedContentBuilder.prototype.decreaseNestingLevel):
+        (FormattedContentBuilder.prototype._addIndent):
+        * inspector/front-end/ScriptFormatter.js:
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        (formatScript):
+        (HTMLScriptFormatter):
+        (HTMLScriptFormatter.prototype.scriptEnded):
+
 2011-11-11  Andreas Kling  <kling@webkit.org>
 
         Unreviewed Chromium build fix after r99958.
