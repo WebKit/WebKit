@@ -1,3 +1,25 @@
+2011-11-11  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Access key should work on all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=71854
+
+        Reviewed by Adam Barth.
+
+        As per specification http://dev.w3.org/html5/spec/Overview.html#elements-in-the-dom
+        says All HTML elements can have the accesskey content attribute set. Adding "accessKey"
+        attribute idl file as [Reflect].
+
+        Test: fast/forms/access-key-for-all-elements.html
+
+        * html/HTMLAnchorElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLAreaElement.idl: Ditto. 
+        * html/HTMLButtonElement.idl: Ditto.
+        * html/HTMLElement.idl: Added accessKey IDL attribute.
+        * html/HTMLInputElement.idl: Ditto.
+        * html/HTMLLabelElement.idl: Ditto.
+        * html/HTMLLegendElement.idl: Ditto.
+        * html/HTMLTextAreaElement.idl: Ditto.
+
 2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add jsCast to replace static_cast

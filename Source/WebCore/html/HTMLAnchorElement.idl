@@ -21,7 +21,6 @@
 module html {
 
     interface HTMLAnchorElement : HTMLElement {
-        attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString charset;
         attribute [Reflect] DOMString coords;
         attribute [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] DOMString download;

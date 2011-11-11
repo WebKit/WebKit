@@ -31,7 +31,6 @@ module html {
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
         attribute [Reflect] DOMString accept;
-        attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString align;
         attribute [Reflect] DOMString alt;
         attribute boolean checked;
