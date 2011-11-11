@@ -50,7 +50,7 @@ namespace WebCore {
 
 void JSCSSRule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSCSSRule* thisObject = static_cast<JSCSSRule*>(cell);
+    JSCSSRule* thisObject = jsCast<JSCSSRule*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

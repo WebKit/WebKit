@@ -247,7 +247,7 @@ JSArray::~JSArray()
 
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     ArrayStorage* storage = thisObject->m_storage;
     
     if (i >= storage->m_length) {
@@ -277,7 +277,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
 
 bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
         slot.setValue(jsNumber(thisObject->length()));
         return true;
@@ -293,7 +293,7 @@ bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier
 
 bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSArray* thisObject = static_cast<JSArray*>(object);
+    JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         descriptor.setDescriptor(jsNumber(thisObject->length()), DontDelete | DontEnum);
         return true;
@@ -328,7 +328,7 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
 // ECMA 15.4.5.1
 void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
@@ -351,7 +351,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
 
 void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
 
     ArrayStorage* storage = thisObject->m_storage;
@@ -490,7 +490,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
@@ -504,7 +504,7 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& pr
 
 bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
 
     ArrayStorage* storage = thisObject->m_storage;
@@ -542,7 +542,7 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 
 void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSArray* thisObject = static_cast<JSArray*>(object);
+    JSArray* thisObject = jsCast<JSArray*>(object);
     // FIXME: Filling PropertyNameArray with an identifier for every integer
     // is incredibly inefficient for large arrays. We need a different approach,
     // which almost certainly means a different structure for PropertyNameArray.
@@ -881,7 +881,7 @@ void JSArray::unshiftCount(ExecState* exec, int count)
 
 void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

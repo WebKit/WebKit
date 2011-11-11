@@ -73,7 +73,7 @@ int ScopeChainNode::localDepth()
 
 void ScopeChainNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ScopeChainNode* thisObject = static_cast<ScopeChainNode*>(cell);
+    ScopeChainNode* thisObject = jsCast<ScopeChainNode*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -40,7 +40,7 @@ const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0, CREATE_METHOD_
 
 void ExecutableBase::clearCode(JSCell* cell)
 {
-    static_cast<ExecutableBase*>(cell)->clearCodeVirtual();
+    jsCast<ExecutableBase*>(cell)->clearCodeVirtual();
 }
 
 void ExecutableBase::clearCodeVirtual()
@@ -237,7 +237,7 @@ void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    EvalExecutable* thisObject = static_cast<EvalExecutable*>(cell);
+    EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -386,7 +386,7 @@ void ProgramExecutable::unlinkCalls()
 
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ProgramExecutable* thisObject = static_cast<ProgramExecutable*>(cell);
+    ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -629,7 +629,7 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalD
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    FunctionExecutable* thisObject = static_cast<FunctionExecutable*>(cell);
+    FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

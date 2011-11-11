@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSNodeFilter* thisObject = static_cast<JSNodeFilter*>(cell);
+    JSNodeFilter* thisObject = jsCast<JSNodeFilter*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

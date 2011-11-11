@@ -77,7 +77,7 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 
 void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
+    ObjectPrototype* thisObject = jsCast<ObjectPrototype*>(cell);
     JSNonFinalObject::put(cell, exec, propertyName, value, slot);
 
     if (thisObject->m_hasNoPropertiesWithUInt32Names) {
@@ -89,7 +89,7 @@ void ObjectPrototype::put(JSCell* cell, ExecState* exec, const Identifier& prope
 
 bool ObjectPrototype::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    ObjectPrototype* thisObject = static_cast<ObjectPrototype*>(cell);
+    ObjectPrototype* thisObject = jsCast<ObjectPrototype*>(cell);
     if (thisObject->m_hasNoPropertiesWithUInt32Names)
         return false;
     return JSNonFinalObject::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
@@ -97,12 +97,12 @@ bool ObjectPrototype::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, u
 
 bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), static_cast<ObjectPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), jsCast<ObjectPrototype*>(cell), propertyName, slot);
 }
 
 bool ObjectPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), static_cast<ObjectPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), jsCast<ObjectPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------

@@ -300,13 +300,13 @@ JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject
 
 bool JSTestObjPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestObjPrototype* thisObject = static_cast<JSTestObjPrototype*>(cell);
+    JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(cell);
     return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
 bool JSTestObjPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestObjPrototype* thisObject = static_cast<JSTestObjPrototype*>(object);
+    JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(object);
     return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, descriptor);
 }
 
@@ -331,14 +331,14 @@ JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObje
 
 bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
 }
 
 bool JSTestObj::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestObj* thisObject = static_cast<JSTestObj*>(object);
+    JSTestObj* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, descriptor);
 }
@@ -759,7 +759,7 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
 
 void JSTestObj::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, thisObject, slot);
 }
@@ -1917,7 +1917,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
 
 void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -126,13 +126,13 @@ JSObject* JSTestMediaQueryListListenerPrototype::self(ExecState* exec, JSGlobalO
 
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestMediaQueryListListenerPrototype* thisObject = static_cast<JSTestMediaQueryListListenerPrototype*>(cell);
+    JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(cell);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
 }
 
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestMediaQueryListListenerPrototype* thisObject = static_cast<JSTestMediaQueryListListenerPrototype*>(object);
+    JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(object);
     return getStaticFunctionDescriptor<JSObject>(exec, &JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, descriptor);
 }
 
@@ -157,14 +157,14 @@ JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGloba
 
 bool JSTestMediaQueryListListener::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestMediaQueryListListener* thisObject = static_cast<JSTestMediaQueryListListener*>(cell);
+    JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
 }
 
 bool JSTestMediaQueryListListener::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestMediaQueryListListener* thisObject = static_cast<JSTestMediaQueryListListener*>(object);
+    JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, descriptor);
 }

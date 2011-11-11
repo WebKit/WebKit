@@ -140,7 +140,7 @@ void JSGlobalObject::init(JSObject* thisValue)
 
 void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
@@ -150,7 +150,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& proper
 
 void JSGlobalObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
@@ -168,7 +168,7 @@ void JSGlobalObject::putWithAttributes(JSObject* object, ExecState* exec, const 
 
 void JSGlobalObject::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     PropertySlot slot;
     if (!thisObject->symbolTableGet(propertyName, slot))
         JSVariableObject::defineGetter(thisObject, exec, propertyName, getterFunc, attributes);
@@ -176,7 +176,7 @@ void JSGlobalObject::defineGetter(JSObject* object, ExecState* exec, const Ident
 
 void JSGlobalObject::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     PropertySlot slot;
     if (!thisObject->symbolTableGet(propertyName, slot))
         JSVariableObject::defineSetter(thisObject, exec, propertyName, setterFunc, attributes);
@@ -328,7 +328,7 @@ void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
 
 void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 { 
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -431,7 +431,7 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 
 bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     if (getStaticFunctionSlot<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, slot))
         return true;
     return thisObject->symbolTableGet(propertyName, slot);
@@ -439,7 +439,7 @@ bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ide
 
 bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(object);
+    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     if (getStaticFunctionDescriptor<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, descriptor))
         return true;
     return thisObject->symbolTableGet(propertyName, descriptor);
@@ -447,7 +447,7 @@ bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
 
 void JSGlobalObject::clearRareData(JSCell* cell)
 {
-    static_cast<JSGlobalObject*>(cell)->m_rareData.clear();
+    jsCast<JSGlobalObject*>(cell)->m_rareData.clear();
 }
 
 DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSGlobalObject* dynamicGlobalObject)

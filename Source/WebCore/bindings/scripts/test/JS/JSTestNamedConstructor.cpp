@@ -140,14 +140,14 @@ JSObject* JSTestNamedConstructor::createPrototype(ExecState* exec, JSGlobalObjec
 
 bool JSTestNamedConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestNamedConstructor* thisObject = static_cast<JSTestNamedConstructor*>(cell);
+    JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
 
 bool JSTestNamedConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestNamedConstructor* thisObject = static_cast<JSTestNamedConstructor*>(object);
+    JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, descriptor);
 }

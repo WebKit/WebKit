@@ -445,12 +445,12 @@ void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool DatePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(cell), propertyName, slot);
 }
 
 bool DatePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, descriptor);
 }
 
 // Functions

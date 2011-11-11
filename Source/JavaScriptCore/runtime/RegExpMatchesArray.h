@@ -52,7 +52,7 @@ namespace JSC {
     private:
         static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::getOwnPropertySlot(thisObject, exec, propertyName, slot);
@@ -60,7 +60,7 @@ namespace JSC {
 
         static bool getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
@@ -68,7 +68,7 @@ namespace JSC {
 
         static bool getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(object);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
@@ -76,7 +76,7 @@ namespace JSC {
 
         static void put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             JSArray::put(thisObject, exec, propertyName, v, slot);
@@ -84,7 +84,7 @@ namespace JSC {
         
         static void putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             JSArray::putByIndex(thisObject, exec, propertyName, v);
@@ -92,7 +92,7 @@ namespace JSC {
 
         static bool deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::deleteProperty(thisObject, exec, propertyName);
@@ -100,7 +100,7 @@ namespace JSC {
 
         static bool deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             return JSArray::deletePropertyByIndex(thisObject, exec, propertyName);
@@ -108,7 +108,7 @@ namespace JSC {
 
         static void getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)
         {
-            RegExpMatchesArray* thisObject = static_cast<RegExpMatchesArray*>(object);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             if (thisObject->subclassData())
                 thisObject->fillArrayInstance(exec);
             JSArray::getOwnPropertyNames(thisObject, exec, arr, mode);

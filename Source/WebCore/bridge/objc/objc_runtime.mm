@@ -257,7 +257,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
 
 CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
 {
-    ObjcFallbackObjectImp* thisObject = static_cast<ObjcFallbackObjectImp*>(cell);
+    ObjcFallbackObjectImp* thisObject = jsCast<ObjcFallbackObjectImp*>(cell);
     id targetObject = thisObject->_instance->getObject();
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return CallTypeNone;
@@ -272,7 +272,7 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, const Identifier
 
 JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType)
 {
-    const ObjcFallbackObjectImp* thisObject = static_cast<const ObjcFallbackObjectImp*>(object);
+    const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
     return thisObject->_instance->getValueOfUndefinedField(exec, thisObject->_item);
 }
 

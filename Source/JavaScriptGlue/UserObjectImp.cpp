@@ -48,7 +48,7 @@ UserObjectImp::~UserObjectImp()
 
 CallType UserObjectImp::getCallData(JSCell* cell, CallData& callData)
 {
-    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    UserObjectImp* thisObject = jsCast<UserObjectImp*>(cell);
     return thisObject->fJSUserObject ? thisObject->fJSUserObject->getCallData(callData) : CallTypeNone;
 }
 
@@ -92,7 +92,7 @@ JSValue UserObjectImp::callAsFunction(ExecState *exec)
 
 void UserObjectImp::getOwnPropertyNames(JSObject* object, ExecState *exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    UserObjectImp* thisObject = static_cast<UserObjectImp*>(object);
+    UserObjectImp* thisObject = jsCast<UserObjectImp*>(object);
     JSUserObject* ptr = thisObject->GetJSUserObject();
     if (ptr) {
         CFArrayRef cfPropertyNames = ptr->CopyPropertyNames();
@@ -126,7 +126,7 @@ JSValue UserObjectImp::userObjectGetter(ExecState*, JSValue slotBase, const Iden
 
 bool UserObjectImp::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    UserObjectImp* thisObject = jsCast<UserObjectImp*>(cell);
     if (!thisObject->fJSUserObject)
         return false;
 
@@ -150,7 +150,7 @@ bool UserObjectImp::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Iden
 
 void UserObjectImp::put(JSCell* cell, ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&)
 {
-    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    UserObjectImp* thisObject = jsCast<UserObjectImp*>(cell);
     if (!thisObject->fJSUserObject)
         return;
     
@@ -287,7 +287,7 @@ bool UserObjectImp::toBoolean(ExecState *exec) const
 
 void UserObjectImp::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    UserObjectImp* thisObject = jsCast<UserObjectImp*>(cell);
     JSObject::visitChildren(thisObject, visitor);
     if (thisObject->fJSUserObject)
         thisObject->fJSUserObject->Mark();

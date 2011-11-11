@@ -65,7 +65,7 @@ JSActivation::~JSActivation()
 
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSActivation* thisObject = static_cast<JSActivation*>(cell);
+    JSActivation* thisObject = jsCast<JSActivation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -112,7 +112,7 @@ inline bool JSActivation::symbolTablePut(JSGlobalData& globalData, const Identif
 
 void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSActivation* thisObject = static_cast<JSActivation*>(object);
+    JSActivation* thisObject = jsCast<JSActivation*>(object);
     SymbolTable::const_iterator end = thisObject->symbolTable().end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
         if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
@@ -144,7 +144,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
 
 bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSActivation* thisObject = static_cast<JSActivation*>(cell);
+    JSActivation* thisObject = jsCast<JSActivation*>(cell);
     if (propertyName == exec->propertyNames().arguments) {
         slot.setCustom(thisObject, thisObject->getArgumentsGetter());
         return true;
@@ -167,7 +167,7 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
 
 void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSActivation* thisObject = static_cast<JSActivation*>(cell);
+    JSActivation* thisObject = jsCast<JSActivation*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
@@ -183,7 +183,7 @@ void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& property
 // FIXME: Make this function honor ReadOnly (const) and DontEnum
 void JSActivation::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    JSActivation* thisObject = static_cast<JSActivation*>(object);
+    JSActivation* thisObject = jsCast<JSActivation*>(object);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))

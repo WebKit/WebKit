@@ -600,12 +600,12 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, Exe
 
 bool JSONObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(cell), propertyName, slot);
 }
 
 bool JSONObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(object), propertyName, descriptor);
 }
 
 class Walker {

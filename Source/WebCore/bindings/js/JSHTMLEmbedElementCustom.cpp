@@ -50,7 +50,7 @@ bool JSHTMLEmbedElement::putDelegate(ExecState* exec, const Identifier& property
 
 CallType JSHTMLEmbedElement::getCallData(JSCell* cell, CallData& callData)
 {
-    return runtimeObjectGetCallData(static_cast<JSHTMLEmbedElement*>(cell), callData);
+    return runtimeObjectGetCallData(jsCast<JSHTMLEmbedElement*>(cell), callData);
 }
 
 } // namespace WebCore

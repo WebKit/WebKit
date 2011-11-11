@@ -48,7 +48,7 @@ JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, const Iden
 
 void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSDOMStringMap* thisObject = static_cast<JSDOMStringMap*>(object);
+    JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(object);
     Vector<String> names;
     thisObject->m_impl->getNames(names);
     size_t length = names.size();
@@ -60,7 +60,7 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
 
 bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSDOMStringMap* thisObject = static_cast<JSDOMStringMap*>(cell);
+    JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(cell);
     AtomicString stringName = identifierToAtomicString(propertyName);
     if (!thisObject->m_impl->contains(stringName))
         return false;

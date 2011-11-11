@@ -457,7 +457,7 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
     {
         if (!cell->inherits(&FunctionExecutable::s_info))
             return;
-        FunctionExecutable* executable = static_cast<FunctionExecutable*>(cell);
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         if (currentlyExecutingFunctions.contains(executable))
             return;
         executable->discardCode();

@@ -148,7 +148,7 @@ bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutProp
 
 bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSHistory* thisObject = static_cast<JSHistory*>(cell);
+    JSHistory* thisObject = jsCast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return false;
@@ -157,7 +157,7 @@ bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
 
 void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSHistory* thisObject = static_cast<JSHistory*>(object);
+    JSHistory* thisObject = jsCast<JSHistory*>(object);
     // Only allow the history object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return;

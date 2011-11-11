@@ -1,3 +1,156 @@
+2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add jsCast to replace static_cast
+        https://bugs.webkit.org/show_bug.cgi?id=72071
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests. 
+
+        Added new jsCast and changed all of the static_cast sites in functions that 
+        are in the MethodTable to use jsCast instead.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitChildren):
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContext::visitChildren):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRule::visitChildren):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::visitChildren):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::JSCanvasRenderingContext::visitChildren):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertyNames):
+        (WebCore::JSDOMStringMap::deleteProperty):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::toThisObject):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitChildren):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::deleteProperty):
+        (WebCore::JSDOMWindow::getPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        (WebCore::JSDOMWindow::defineGetter):
+        (WebCore::JSDOMWindow::defineSetter):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::className):
+        (WebCore::JSDOMWindowShell::getOwnPropertySlot):
+        (WebCore::JSDOMWindowShell::getOwnPropertyDescriptor):
+        (WebCore::JSDOMWindowShell::put):
+        (WebCore::JSDOMWindowShell::putWithAttributes):
+        (WebCore::JSDOMWindowShell::defineOwnProperty):
+        (WebCore::JSDOMWindowShell::deleteProperty):
+        (WebCore::JSDOMWindowShell::getPropertyNames):
+        (WebCore::JSDOMWindowShell::getOwnPropertyNames):
+        (WebCore::JSDOMWindowShell::defineGetter):
+        (WebCore::JSDOMWindowShell::defineSetter):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::getCallData):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::getCallData):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::getCallData):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::deleteProperty):
+        (WebCore::JSHistory::getOwnPropertyNames):
+        * bindings/js/JSJavaScriptAudioNodeCustom.cpp:
+        (WebCore::JSJavaScriptAudioNode::visitChildren):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::deleteProperty):
+        (WebCore::JSLocation::getOwnPropertyNames):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitChildren):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::visitChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::visitChildren):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::visitChildren):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitChildren):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitChildren):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitChildren):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::getOwnPropertyNames):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::visitChildren):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitChildren):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::visitChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::getOwnPropertySlot):
+        (WebCore::JSTestInterface::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerPrototype::getOwnPropertySlot):
+        (WebCore::JSTestMediaQueryListListenerPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertySlot):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNamedConstructor::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::getOwnPropertySlot):
+        (WebCore::JSTestObjPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertyDescriptor):
+        (WebCore::JSTestObj::put):
+        (WebCore::JSTestObj::visitChildren):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertySlot):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertyDescriptor):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getCallData):
+        (JSC::Bindings::ObjcFallbackObjectImp::defaultValue):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::visitChildren):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::visitChildren):
+        (JSC::Bindings::QtRuntimeMetaMethod::getOwnPropertySlot):
+        (JSC::Bindings::QtRuntimeMetaMethod::getOwnPropertyDescriptor):
+        (JSC::Bindings::QtRuntimeConnectionMethod::getOwnPropertySlot):
+        (JSC::Bindings::QtRuntimeConnectionMethod::getOwnPropertyDescriptor):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertyNames):
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        (JSC::RuntimeArray::put):
+        (JSC::RuntimeArray::putByIndex):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        (JSC::RuntimeMethod::getOwnPropertyDescriptor):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        (JSC::Bindings::RuntimeObject::getOwnPropertyDescriptor):
+        (JSC::Bindings::RuntimeObject::put):
+        (JSC::Bindings::RuntimeObject::defaultValue):
+        (JSC::Bindings::RuntimeObject::getCallData):
+        (JSC::Bindings::RuntimeObject::getConstructData):
+        (JSC::Bindings::RuntimeObject::getOwnPropertyNames):
+
 2011-11-11  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r99994.

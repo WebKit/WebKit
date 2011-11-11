@@ -116,7 +116,7 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
 template <class Parent>
 UString JSCallbackObject<Parent>::className(const JSObject* object)
 {
-    const JSCallbackObject* thisObject = static_cast<const JSCallbackObject*>(object);
+    const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
     UString thisClassName = thisObject->classRef()->className();
     if (!thisClassName.isEmpty())
         return thisClassName;
@@ -127,7 +127,7 @@ UString JSCallbackObject<Parent>::className(const JSObject* object)
 template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -186,7 +186,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
 template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     PropertySlot slot;
     if (thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
         // Ideally we should return an access descriptor, but returning a value descriptor is better than nothing.
@@ -206,7 +206,7 @@ bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecSt
 template <class Parent>
 void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -265,7 +265,7 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, const Identifi
 template <class Parent>
 bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -309,14 +309,14 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, con
 template <class Parent>
 bool JSCallbackObject<Parent>::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
 }
 
 template <class Parent>
 ConstructType JSCallbackObject<Parent>::getConstructData(JSCell* cell, ConstructData& constructData)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.native.function = construct;
@@ -358,7 +358,7 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
 template <class Parent>
 bool JSCallbackObject<Parent>::hasInstance(JSObject* object, ExecState* exec, JSValue value, JSValue)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     
@@ -382,7 +382,7 @@ bool JSCallbackObject<Parent>::hasInstance(JSObject* object, ExecState* exec, JS
 template <class Parent>
 CallType JSCallbackObject<Parent>::getCallData(JSCell* cell, CallData& callData)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
             callData.native.function = call;
@@ -424,7 +424,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
 template <class Parent>
 void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     

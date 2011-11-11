@@ -79,7 +79,7 @@ namespace WebCore {
 
 void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -123,7 +123,7 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifi
 
 bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
     // are not affected by properties changed on the Window or anything in its prototype chain.
     // This is consistent with the behavior of Firefox.
@@ -269,7 +269,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
 
 bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Never allow cross-domain getOwnPropertyDescriptor
     if (!thisObject->allowsAccessFrom(exec))
         return false;
@@ -342,7 +342,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
 
 void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->impl()->frame())
         return;
 
@@ -362,7 +362,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
 
 bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
     if (!thisObject->allowsAccessFrom(exec))
         return false;
@@ -371,7 +371,7 @@ bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, const Identifier
 
 void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow the window to enumerated by frames in the same origin.
     if (!thisObject->allowsAccessFrom(exec))
         return;
@@ -380,7 +380,7 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 
 void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow the window to enumerated by frames in the same origin.
     if (!thisObject->allowsAccessFrom(exec))
         return;
@@ -389,7 +389,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 
 void JSDOMWindow::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining getters by frames in the same origin.
     if (!thisObject->allowsAccessFrom(exec))
         return;
@@ -403,7 +403,7 @@ void JSDOMWindow::defineGetter(JSObject* object, ExecState* exec, const Identifi
 
 void JSDOMWindow::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining setters by frames in the same origin.
     if (!thisObject->allowsAccessFrom(exec))
         return;
@@ -412,7 +412,7 @@ void JSDOMWindow::defineSetter(JSObject* object, ExecState* exec, const Identifi
 
 bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(object);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
     if (!thisObject->allowsAccessFrom(exec))
         return false;

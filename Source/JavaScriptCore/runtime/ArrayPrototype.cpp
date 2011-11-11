@@ -127,12 +127,12 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
 
 bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), static_cast<ArrayPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(cell), propertyName, slot);
 }
 
 bool ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayPrototypeTable(exec), static_cast<ArrayPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Array Functions ----------------------------

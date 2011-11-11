@@ -1,3 +1,37 @@
+2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add jsCast to replace static_cast
+        https://bugs.webkit.org/show_bug.cgi?id=72071
+
+        Reviewed by Geoffrey Garen.
+
+        Added new jsCast and changed all of the static_cast sites in functions that 
+        are in the MethodTable to use jsCast instead.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::getCallData):
+        (UserObjectImp::getOwnPropertyNames):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::visitChildren):
+
+2011-11-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add jsCast to replace static_cast
+        https://bugs.webkit.org/show_bug.cgi?id=72071
+
+        Reviewed by Geoffrey Garen.
+
+        Added new jsCast and changed all of the static_cast sites in functions that 
+        are in the MethodTable to use jsCast instead.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::getCallData):
+        (UserObjectImp::getOwnPropertyNames):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::visitChildren):
+
 2011-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be able to sample itself in a more flexible way than just sampling flags

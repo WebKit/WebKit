@@ -45,7 +45,7 @@ void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* acti
 
 void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -57,55 +57,55 @@ void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 UString DebuggerActivation::className(const JSObject* object)
 {
-    const DebuggerActivation* thisObject = static_cast<const DebuggerActivation*>(object);
+    const DebuggerActivation* thisObject = jsCast<const DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());
 }
 
 bool DebuggerActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     return thisObject->m_activation->methodTable()->getOwnPropertySlot(thisObject->m_activation.get(), exec, propertyName, slot);
 }
 
 void DebuggerActivation::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     thisObject->m_activation->methodTable()->put(thisObject->m_activation.get(), exec, propertyName, value, slot);
 }
 
 void DebuggerActivation::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     thisObject->m_activation->methodTable()->putWithAttributes(thisObject->m_activation.get(), exec, propertyName, value, attributes);
 }
 
 bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     return thisObject->m_activation->methodTable()->deleteProperty(thisObject->m_activation.get(), exec, propertyName);
 }
 
 void DebuggerActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     thisObject->m_activation->methodTable()->getPropertyNames(thisObject->m_activation.get(), exec, propertyNames, mode);
 }
 
 bool DebuggerActivation::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->getOwnPropertyDescriptor(thisObject->m_activation.get(), exec, propertyName, descriptor);
 }
 
 void DebuggerActivation::defineGetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     thisObject->m_activation->methodTable()->defineGetter(thisObject->m_activation.get(), exec, propertyName, getterFunction, attributes);
 }
 
 void DebuggerActivation::defineSetter(JSObject* object, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
-    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     thisObject->m_activation->methodTable()->defineSetter(thisObject->m_activation.get(), exec, propertyName, setterFunction, attributes);
 }
 

@@ -67,7 +67,7 @@ void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalThis* t
 
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSDOMGlobalObject* thisObject = static_cast<JSDOMGlobalObject*>(cell);
+    JSDOMGlobalObject* thisObject = jsCast<JSDOMGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

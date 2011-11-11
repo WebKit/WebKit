@@ -32,7 +32,7 @@ JSWrapperObject::~JSWrapperObject()
 
 void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSWrapperObject* thisObject = static_cast<JSWrapperObject*>(cell);
+    JSWrapperObject* thisObject = jsCast<JSWrapperObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

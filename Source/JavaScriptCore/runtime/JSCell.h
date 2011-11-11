@@ -199,8 +199,7 @@ namespace JSC {
 
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        JSCell* thisObject = static_cast<JSCell*>(cell);
-        visitor.append(&thisObject->m_structure);
+        visitor.append(&cell->m_structure);
     }
 
     // --- JSValue inlines ----------------------------
@@ -329,6 +328,13 @@ namespace JSC {
     inline bool isZapped(const JSCell* cell)
     {
         return cell->isZapped();
+    }
+
+    template<typename To, typename From>
+    inline To jsCast(From* from)
+    {
+        ASSERT(from->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        return static_cast<To>(from);
     }
 
 } // namespace JSC

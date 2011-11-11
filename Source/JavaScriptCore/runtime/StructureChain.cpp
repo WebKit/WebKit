@@ -45,7 +45,7 @@ StructureChain::~StructureChain()
 
 void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    StructureChain* thisObject = static_cast<StructureChain*>(cell);
+    StructureChain* thisObject = jsCast<StructureChain*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     size_t i = 0;

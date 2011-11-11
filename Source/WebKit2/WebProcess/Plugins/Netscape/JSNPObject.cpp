@@ -219,7 +219,7 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
 
 JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject || !thisObject->m_npObject->_class->invokeDefault)
         return CallTypeNone;
@@ -238,7 +238,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
 
 ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject || !thisObject->m_npObject->_class->construct)
         return ConstructTypeNone;
@@ -249,7 +249,7 @@ ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& construc
 
 bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
@@ -275,7 +275,7 @@ bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
 
 bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(object);
+    JSNPObject* thisObject = jsCast<JSNPObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
@@ -305,7 +305,7 @@ bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
 
 void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
@@ -344,12 +344,12 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
 
 bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    return static_cast<JSNPObject*>(cell)->deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
+    return jsCast<JSNPObject*>(cell)->deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
 }
 
 bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return static_cast<JSNPObject*>(cell)->deleteProperty(exec, static_cast<NPIdentifier>(IdentifierRep::get(propertyName)));
+    return jsCast<JSNPObject*>(cell)->deleteProperty(exec, static_cast<NPIdentifier>(IdentifierRep::get(propertyName)));
 }
 
 bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
@@ -385,7 +385,7 @@ bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
 
 void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
 {
-    JSNPObject* thisObject = static_cast<JSNPObject*>(object);
+    JSNPObject* thisObject = jsCast<JSNPObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);

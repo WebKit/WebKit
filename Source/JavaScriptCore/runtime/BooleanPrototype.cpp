@@ -64,12 +64,12 @@ void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool BooleanPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<BooleanObject>(exec, ExecState::booleanPrototypeTable(exec), static_cast<BooleanPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<BooleanObject>(exec, ExecState::booleanPrototypeTable(exec), jsCast<BooleanPrototype*>(cell), propertyName, slot);
 }
 
 bool BooleanPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<BooleanObject>(exec, ExecState::booleanPrototypeTable(exec), static_cast<BooleanPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<BooleanObject>(exec, ExecState::booleanPrototypeTable(exec), jsCast<BooleanPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

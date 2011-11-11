@@ -85,12 +85,12 @@ void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool NumberPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(cell), propertyName, slot);
 }
 
 bool NumberPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

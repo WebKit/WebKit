@@ -36,7 +36,7 @@ const ClassInfo JSStaticScopeObject::s_info = { "Object", &Base::s_info, 0, 0, C
 
 void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);
+    JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -51,7 +51,7 @@ JSObject* JSStaticScopeObject::toThisObject(JSCell*, ExecState* exec)
 
 void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);
+    JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(cell);
     if (slot.isStrictMode()) {
         // Double lookup in strict mode, but this only occurs when
         // a) indirectly writing to an exception slot
@@ -75,7 +75,7 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& p
 
 void JSStaticScopeObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(object);
+    JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(object);
     if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
     
@@ -84,7 +84,7 @@ void JSStaticScopeObject::putWithAttributes(JSObject* object, ExecState* exec, c
 
 bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, const Identifier& propertyName, PropertySlot& slot)
 {
-    return static_cast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);
+    return jsCast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);
 }
 
 }

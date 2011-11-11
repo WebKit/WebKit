@@ -80,7 +80,7 @@ RegExpObject::~RegExpObject()
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    RegExpObject* thisObject = static_cast<RegExpObject*>(cell);
+    RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -93,12 +93,12 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), propertyName, slot);
 }
 
 bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(object), propertyName, descriptor);
+    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, descriptor);
 }
 
 JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, const Identifier&)
@@ -162,7 +162,7 @@ JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
 
 void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), slot);
+    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), slot);
 }
 
 void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue value)

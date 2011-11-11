@@ -194,7 +194,7 @@ private:
 
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+        JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
         ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), &JSCallbackObject<Parent>::s_info);
         COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
         ASSERT(thisObject->Parent::structure()->typeInfo().overridesVisitChildren());

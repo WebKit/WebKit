@@ -1443,7 +1443,7 @@ void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const Identifier& iden
 
 void QtRuntimeMetaMethod::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
+    QtRuntimeMetaMethod* thisObject = jsCast<QtRuntimeMetaMethod*>(cell);
     QtRuntimeMethod::visitChildren(thisObject, visitor);
     QtRuntimeMetaMethodData* d = thisObject->d_func();
     if (d->m_connect)
@@ -1496,7 +1496,7 @@ CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
 
 bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
+    QtRuntimeMetaMethod* thisObject = jsCast<QtRuntimeMetaMethod*>(cell);
     if (propertyName == "connect") {
         slot.setCustom(thisObject, thisObject->connectGetter);
         return true;
@@ -1513,7 +1513,7 @@ bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, cons
 
 bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(object);
+    QtRuntimeMetaMethod* thisObject = jsCast<QtRuntimeMetaMethod*>(object);
     if (propertyName == "connect") {
         PropertySlot slot;
         slot.setCustom(thisObject, connectGetter);
@@ -1739,7 +1739,7 @@ CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
 
 bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    QtRuntimeConnectionMethod* thisObject = static_cast<QtRuntimeConnectionMethod*>(cell);
+    QtRuntimeConnectionMethod* thisObject = jsCast<QtRuntimeConnectionMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
         slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
@@ -1750,7 +1750,7 @@ bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec
 
 bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    QtRuntimeConnectionMethod* thisObject = static_cast<QtRuntimeConnectionMethod*>(object);
+    QtRuntimeConnectionMethod* thisObject = jsCast<QtRuntimeConnectionMethod*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
         slot.setCustom(thisObject, lengthGetter);

@@ -41,7 +41,7 @@ using namespace HTMLNames;
 
 void JSAttr::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSAttr* thisObject = static_cast<JSAttr*>(cell);
+    JSAttr* thisObject = jsCast<JSAttr*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

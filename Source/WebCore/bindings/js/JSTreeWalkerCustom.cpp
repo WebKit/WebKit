@@ -31,7 +31,7 @@ namespace WebCore {
 
 void JSTreeWalker::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSTreeWalker* thisObject = static_cast<JSTreeWalker*>(cell);
+    JSTreeWalker* thisObject = jsCast<JSTreeWalker*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

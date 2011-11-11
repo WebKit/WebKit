@@ -36,7 +36,7 @@ const ClassInfo JSGlobalThis::s_info = { "JSGlobalThis", &Base::s_info, 0, 0, CR
 
 void JSGlobalThis::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSGlobalThis* thisObject = static_cast<JSGlobalThis*>(cell);
+    JSGlobalThis* thisObject = jsCast<JSGlobalThis*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
 
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);

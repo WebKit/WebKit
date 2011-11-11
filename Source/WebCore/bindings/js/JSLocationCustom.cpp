@@ -154,7 +154,7 @@ bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JS
 
 bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSLocation* thisObject = static_cast<JSLocation*>(cell);
+    JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return false;
@@ -163,7 +163,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
 
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSLocation* thisObject = static_cast<JSLocation*>(object);
+    JSLocation* thisObject = jsCast<JSLocation*>(object);
     // Only allow the location object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return;

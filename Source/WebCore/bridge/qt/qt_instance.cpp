@@ -64,7 +64,7 @@ public:
 
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        QtRuntimeObject* thisObject = static_cast<QtRuntimeObject*>(cell);
+        QtRuntimeObject* thisObject = jsCast<QtRuntimeObject*>(cell);
         RuntimeObject::visitChildren(thisObject, visitor);
         QtInstance* instance = static_cast<QtInstance*>(thisObject->getInternalInstance());
         if (instance)

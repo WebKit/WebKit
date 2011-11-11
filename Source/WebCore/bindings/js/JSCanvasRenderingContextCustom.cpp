@@ -41,7 +41,7 @@ namespace WebCore {
 
 void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSCanvasRenderingContext* thisObject = static_cast<JSCanvasRenderingContext*>(cell);
+    JSCanvasRenderingContext* thisObject = jsCast<JSCanvasRenderingContext*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

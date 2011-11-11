@@ -87,12 +87,12 @@ void DateConstructor::finishCreation(ExecState* exec, DatePrototype* datePrototy
 
 bool DateConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), static_cast<DateConstructor*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(cell), propertyName, slot);
 }
 
 bool DateConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::dateConstructorTable(exec), static_cast<DateConstructor*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(object), propertyName, descriptor);
 }
 
 // ECMA 15.9.3

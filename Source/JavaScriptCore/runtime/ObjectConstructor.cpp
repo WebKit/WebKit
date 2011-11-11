@@ -91,12 +91,12 @@ void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectP
 
 bool ObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), static_cast<ObjectConstructor*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(cell), propertyName, slot);
 }
 
 bool ObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), static_cast<ObjectConstructor*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, descriptor);
 }
 
 // ECMA 15.2.2

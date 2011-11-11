@@ -89,7 +89,7 @@ JSBoundFunction* JSBoundFunction::create(ExecState* exec, JSGlobalObject* global
 
 bool JSBoundFunction::hasInstance(JSObject* object, ExecState* exec, JSValue value, JSValue)
 {
-    JSBoundFunction* thisObject = static_cast<JSBoundFunction*>(object);
+    JSBoundFunction* thisObject = jsCast<JSBoundFunction*>(object);
     // FIXME: our instanceof implementation will have already (incorrectly) performed
     // a [[Get]] of .prototype from the bound function object, which is incorrect!
     // https://bugs.webkit.org/show_bug.cgi?id=68656
@@ -116,7 +116,7 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSBoundFunction* thisObject = static_cast<JSBoundFunction*>(cell);
+    JSBoundFunction* thisObject = jsCast<JSBoundFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -967,13 +967,13 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSCell* cell, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+        push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(cell);\n");
         push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    ${className}* thisObject = static_cast<${className}*>(object);\n");
+        push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
         push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
         push(@headerContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
@@ -1435,7 +1435,7 @@ sub GenerateImplementation
     if ($numConstants > 0 || $numFunctions > 0 || $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
         push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}Prototype* thisObject = static_cast<${className}Prototype*>(cell);\n");
+        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(cell);\n");
 
         if ($dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
             push(@implContent, "    if (thisObject->getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
@@ -1455,7 +1455,7 @@ sub GenerateImplementation
 
         push(@implContent, "bool ${className}Prototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}Prototype* thisObject = static_cast<${className}Prototype*>(object);\n");
+        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
 
         if ($dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
             push(@implContent, "    if (thisObject->getOwnPropertyDescriptorDelegate(exec, propertyName, descriptor))\n");
@@ -1477,7 +1477,7 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@implContent, "void ${className}Prototype::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}Prototype* thisObject = static_cast<${className}Prototype*>(cell);\n");
+        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(cell);\n");
         push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
         push(@implContent, "        return;\n");
         push(@implContent, "    Base::put(thisObject, exec, propertyName, value, slot);\n");
@@ -1571,13 +1571,13 @@ sub GenerateImplementation
         if (!$dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
             push(@implContent, "bool ${className}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(object);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
@@ -1587,7 +1587,7 @@ sub GenerateImplementation
                 && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, "    if (propertyName < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
@@ -1744,7 +1744,7 @@ sub GenerateImplementation
             if (!$dataNode->extendedAttributes->{"CustomPutFunction"}) {
                 push(@implContent, "void ${className}::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+                push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
                 if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                     push(@implContent, "    bool ok;\n");
@@ -1770,7 +1770,7 @@ sub GenerateImplementation
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "void ${className}::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+                push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
                 push(@implContent, "    thisObject->indexSetter(exec, propertyName, value);\n");
                 push(@implContent, "    return;\n");
@@ -1931,7 +1931,7 @@ sub GenerateImplementation
     if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(object);\n");
+        push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
         if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(thisObject->impl())->length(); ++i)\n");
@@ -2052,7 +2052,7 @@ sub GenerateImplementation
         if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
             push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
             push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");

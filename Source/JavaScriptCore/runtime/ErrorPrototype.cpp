@@ -64,12 +64,12 @@ void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool ErrorPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), static_cast<ErrorPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(cell), propertyName, slot);
 }
 
 bool ErrorPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), static_cast<ErrorPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------

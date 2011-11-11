@@ -1,3 +1,23 @@
+2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add jsCast to replace static_cast
+        https://bugs.webkit.org/show_bug.cgi?id=72071
+
+        Reviewed by Geoffrey Garen.
+
+        Added new jsCast and changed all of the static_cast sites in functions that 
+        are in the MethodTable to use jsCast instead.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getCallData):
+        (WebKit::JSNPObject::getConstructData):
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        (WebKit::JSNPObject::getOwnPropertyDescriptor):
+        (WebKit::JSNPObject::put):
+        (WebKit::JSNPObject::deleteProperty):
+        (WebKit::JSNPObject::deletePropertyByIndex):
+        (WebKit::JSNPObject::getOwnPropertyNames):
+
 2011-11-11  Timothy Hatcher  <timothy@apple.com>
 
         Only use the textured window style mask when there is no override inspector page.

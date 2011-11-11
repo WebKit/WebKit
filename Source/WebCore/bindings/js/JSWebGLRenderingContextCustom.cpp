@@ -200,7 +200,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
 
 void JSWebGLRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSWebGLRenderingContext* thisObject = static_cast<JSWebGLRenderingContext*>(cell);
+    JSWebGLRenderingContext* thisObject = jsCast<JSWebGLRenderingContext*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

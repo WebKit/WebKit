@@ -118,7 +118,7 @@ JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, const Ide
 
 bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return false;
@@ -164,7 +164,7 @@ bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, const Iden
 
 bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(object);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return false;
@@ -214,7 +214,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, 
 
 void RuntimeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return;
@@ -241,7 +241,7 @@ bool RuntimeObject::deleteProperty(JSCell*, ExecState*, const Identifier&)
 
 JSValue RuntimeObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
-    const RuntimeObject* thisObject = static_cast<const RuntimeObject*>(object);
+    const RuntimeObject* thisObject = jsCast<const RuntimeObject*>(object);
     if (!thisObject->m_instance)
         return throwInvalidAccessError(exec);
     
@@ -265,7 +265,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeObject(ExecState* exec)
 
 CallType RuntimeObject::getCallData(JSCell* cell, CallData& callData)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance)
         return CallTypeNone;
     
@@ -293,7 +293,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(ExecState* exec)
 
 ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& constructData)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance)
         return ConstructTypeNone;
     
@@ -307,7 +307,7 @@ ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& const
 
 void RuntimeObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode)
 {
-    RuntimeObject* thisObject = static_cast<RuntimeObject*>(object);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return;

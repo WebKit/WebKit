@@ -47,7 +47,7 @@ JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, const Identifie
 
 bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSStorage* thisObject = static_cast<JSStorage*>(cell);
+    JSStorage* thisObject = jsCast<JSStorage*>(cell);
     // Only perform the custom delete if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
@@ -65,7 +65,7 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
 
 void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSStorage* thisObject = static_cast<JSStorage*>(object);
+    JSStorage* thisObject = jsCast<JSStorage*>(object);
     unsigned length = thisObject->m_impl->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier(exec, stringToUString(thisObject->m_impl->key(i))));

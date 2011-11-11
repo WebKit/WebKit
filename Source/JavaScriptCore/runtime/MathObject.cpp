@@ -106,12 +106,12 @@ void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
 
 bool MathObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::mathTable(exec), static_cast<MathObject*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::mathTable(exec), jsCast<MathObject*>(cell), propertyName, slot);
 }
 
 bool MathObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::mathTable(exec), static_cast<MathObject*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::mathTable(exec), jsCast<MathObject*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------

@@ -45,7 +45,7 @@ Arguments::~Arguments()
 
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -147,7 +147,7 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 
 bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
         if (i < thisObject->d->numParameters) {
             slot.setValue(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get());
@@ -185,7 +185,7 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
 
 bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
@@ -217,7 +217,7 @@ bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifi
 
 bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    Arguments* thisObject = static_cast<Arguments*>(object);
+    Arguments* thisObject = jsCast<Arguments*>(object);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
@@ -249,7 +249,7 @@ bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, cons
 
 void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    Arguments* thisObject = static_cast<Arguments*>(object);
+    Arguments* thisObject = jsCast<Arguments*>(object);
     for (unsigned i = 0; i < thisObject->d->numArguments; ++i) {
         if (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])
             propertyNames.add(Identifier(exec, UString::number(i)));
@@ -263,7 +263,7 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 
 void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
         if (i < thisObject->d->numParameters)
             thisObject->d->registers[thisObject->d->firstParameterIndex + i].set(exec->globalData(), thisObject->d->activation ? static_cast<JSCell*>(thisObject->d->activation.get()) : cell, value);
@@ -278,7 +278,7 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
 
 void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
@@ -312,7 +312,7 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
 
 bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i) 
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < thisObject->d->numArguments) {
         if (!thisObject->d->deletedArguments) {
             thisObject->d->deletedArguments = adoptArrayPtr(new bool[thisObject->d->numArguments]);
@@ -329,7 +329,7 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 
 bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName) 
 {
-    Arguments* thisObject = static_cast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments) {
