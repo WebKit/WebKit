@@ -939,7 +939,8 @@ InspectorBackendStub = function()
     this._callbacks = {};
     this._domainDispatchers = {};
     this._eventArgs = {};
-$delegates$eventArgs$domainDispatchers    }
+    this._replyArgs = {};
+$delegates$eventArgs$replyArgs$domainDispatchers}
 
 InspectorBackendStub.prototype = {
     dumpInspectorTimeStats: 0,
@@ -1020,11 +1021,11 @@ InspectorBackendStub.prototype = {
     {
         messageObject.id = this._wrap(callback);
 
-        if (this.dumpInspectorTimeStats) {
-            var wrappedCallback = this._callbacks[messageObject.id];
-            wrappedCallback.methodName = messageObject.method;
+        var wrappedCallback = this._callbacks[messageObject.id];
+        wrappedCallback.methodName = messageObject.method;
+
+        if (this.dumpInspectorTimeStats)
             wrappedCallback.sendRequestTime = Date.now();
-        }
 
         if (this.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(messageObject));
@@ -1083,13 +1084,17 @@ InspectorBackendStub.prototype = {
                     this.reportProtocolError(messageObject);
             }
 
+            var callback = this._callbacks[messageObject.id];
+
             var arguments = [];
             if (messageObject.result) {
-                for (var key in messageObject.result)
-                    arguments.push(messageObject.result[key]);
+                var paramNames = this._replyArgs[callback.methodName];
+                if (paramNames) {
+                    for (var i = 0; i < paramNames.length; ++i)
+                        arguments.push(messageObject.result[paramNames[i]]);
+                }
             }
 
-            var callback = this._callbacks[messageObject.id];
             if (callback) {
                 var processingStartTime;
                 if (this.dumpInspectorTimeStats && callback.methodName)
@@ -1191,6 +1196,7 @@ class Generator:
     frontend_method_list = []
     backend_js_initializer_list = []
     backend_js_event_list = []
+    backend_js_reply_list = []
     backend_js_domain_dispatcher_list = []
 
     backend_constructor_param_list = []
@@ -1306,6 +1312,7 @@ class Generator:
         method_out_code = ""
         agent_call_param_list = []
         response_cook_list = []
+        backend_js_reply_param_list = []
         request_message_param = ""
         js_parameters_text = ""
         if "parameters" in json_command:
@@ -1364,6 +1371,12 @@ class Generator:
                 method_out_code += code
                 agent_call_param_list.append(param)
                 response_cook_list.append(cook)
+
+                backend_js_reply_param_list.append("\"%s\"" % json_return_name)
+
+            Generator.backend_js_reply_list.append("    this._replyArgs[\"%s.%s\"] = [%s];\n" % (
+                domain_name, json_command_name, join(backend_js_reply_param_list, ", ")))
+
             response_cook_text = "    if (!protocolErrors->length() && !error.length()) {\n%s    }\n" % join(response_cook_list, "")
 
         Generator.backend_method_implementation_list.append(Templates.backend_method.substitute(None,
@@ -1376,7 +1389,7 @@ class Generator:
             responseCook=response_cook_text))
         Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
 
-        Generator.backend_js_initializer_list.append("        this._registerDelegate('{\"method\": \"%s.%s\"%s, \"id\": 0}');\n" % (domain_name, json_command_name, js_parameters_text))
+        Generator.backend_js_initializer_list.append("    this._registerDelegate('{\"method\": \"%s.%s\"%s, \"id\": 0}');\n" % (domain_name, json_command_name, js_parameters_text))
 
 
 Generator.go()
@@ -1414,6 +1427,7 @@ backend_cpp_file.write(Templates.backend_cpp.substitute(None,
 
 backend_js_file.write(Templates.backend_js.substitute(None,
     delegates=join(Generator.backend_js_initializer_list, ""),
+    replyArgs=join(Generator.backend_js_reply_list, ""),
     eventArgs=join(Generator.backend_js_event_list, ""),
     domainDispatchers=join(Generator.backend_js_domain_dispatcher_list, "")))
 

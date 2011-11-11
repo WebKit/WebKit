@@ -1,3 +1,15 @@
+2011-11-11  Mike Lewis <mikelikespie@gmail.com>
+
+        Web Inspector: DevTools InspectorStubs.js incorrectly converting responses to arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=72096
+
+        JSON.parse doesn't garantee the order of keys.
+        We have to explicitly order the results according to Inspector.json spec.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/CodeGeneratorInspector.py:
+
 2011-11-10  Andreas Kling  <kling@webkit.org>
 
         Remove ability to call HTMLCollections in V8 bindings as well.
