@@ -1,5 +1,16 @@
 2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Build system tweak
+
+        Reviewed by Tor Arne Vestbø.
+
+        Be a good qmake citizen, return true from our linkStaticLibrary
+        "test" function.
+
+        * qmake/mkspecs/features/functions.prf:
+
+2011-11-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Add support for QT += webkit-private
 
         Reviewed by Tor Arne Vestbø.

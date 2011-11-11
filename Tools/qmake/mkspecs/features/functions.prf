@@ -258,4 +258,5 @@ defineTest(linkStaticLibrary) {
     export(QMAKE_LIBDIR)
     export(POST_TARGETDEPS)
     export(CONFIG)
+    return(true)
 }
