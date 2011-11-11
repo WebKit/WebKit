@@ -58,7 +58,10 @@ public:
     static unsigned numberOfAzimuths() { return HRTFElevation::NumberOfTotalAzimuths; }
 
     float sampleRate() const { return m_sampleRate; }
-    
+
+    // Number of elevations loaded from resource.
+    static const unsigned NumberOfRawElevations;
+
 private:
     explicit HRTFDatabase(float sampleRate);
 
@@ -66,9 +69,6 @@ private:
     static const int MinElevation;
     static const int MaxElevation;
     static const unsigned RawElevationAngleSpacing;
-    
-    // Number of elevations loaded from resource.
-    static const unsigned NumberOfRawElevations;
 
     // Interpolates by this factor to get the total number of elevations from every elevation loaded from resource.
     static const unsigned InterpolationFactor;

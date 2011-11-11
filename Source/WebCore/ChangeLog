@@ -1,3 +1,22 @@
+2011-10-28  Philippe Normand  <pnormand@igalia.com>
+
+        HRTF Database consolidation
+        https://bugs.webkit.org/show_bug.cgi?id=69703
+
+        Reviewed by Kenneth Russell.
+
+        Access to the consolidated parts of the HRTF database by segmented
+        chunks. A concatenated Composite HRTF database is provided in
+        Composite.wav. Additionnally a new build step that concatenates
+        the platform/audio/resources/ files into one (sox can be used for
+        this) can be configured for specific ports.
+
+        * platform/audio/HRTFDatabase.h:
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::getConcatenatedImpulseResponsesForSubject):
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        * platform/audio/resources/Composite.wav: Added.
+
 2011-11-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: provide an id to the root inspector element for third party UA styling.
