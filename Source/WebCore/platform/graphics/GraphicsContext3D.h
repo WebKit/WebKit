@@ -498,7 +498,7 @@ public:
     PlatformLayer* platformLayer() const { return 0; }
 #endif
 #endif
-    void makeContextCurrent();
+    bool makeContextCurrent();
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM) || PLATFORM(GTK) || PLATFORM(QT)
     // With multisampling on, blit from multisampleFBO to regular FBO.

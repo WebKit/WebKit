@@ -65,9 +65,10 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 }
 #endif
 
-void GraphicsContext3D::makeContextCurrent()
+bool GraphicsContext3D::makeContextCurrent()
 {
     m_internal->makeContextCurrent();
+    return true;
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const

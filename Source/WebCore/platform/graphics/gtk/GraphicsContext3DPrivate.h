@@ -36,7 +36,7 @@ class GraphicsContext3DPrivate {
     public:
     static PassOwnPtr<GraphicsContext3DPrivate> create();
     ~GraphicsContext3DPrivate();
-    void makeContextCurrent();
+    bool makeContextCurrent();
 
     private:
     friend class GraphicsContext3D;

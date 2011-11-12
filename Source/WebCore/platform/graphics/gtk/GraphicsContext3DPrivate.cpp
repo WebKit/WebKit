@@ -234,7 +234,7 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
     }
 }
 
-void GraphicsContext3DPrivate::makeContextCurrent()
+bool GraphicsContext3DPrivate::makeContextCurrent()
 {
     if (::glXGetCurrentContext() == m_context)
         return;

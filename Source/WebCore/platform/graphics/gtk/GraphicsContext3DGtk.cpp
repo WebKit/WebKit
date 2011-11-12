@@ -135,11 +135,11 @@ GraphicsContext3D::~GraphicsContext3D()
     ::glDeleteFramebuffersEXT(1, &m_fbo);
 }
 
-void GraphicsContext3D::makeContextCurrent()
+bool GraphicsContext3D::makeContextCurrent()
 {
     if (!m_private)
         return;
-    m_private->makeContextCurrent();
+    return m_private->makeContextCurrent();
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()

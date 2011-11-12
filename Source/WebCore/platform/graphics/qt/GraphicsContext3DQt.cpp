@@ -415,9 +415,10 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 }
 #endif
 
-void GraphicsContext3D::makeContextCurrent()
+bool GraphicsContext3D::makeContextCurrent()
 {
     m_private->m_glWidget->makeCurrent();
+    return true;
 }
 
 void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer*)

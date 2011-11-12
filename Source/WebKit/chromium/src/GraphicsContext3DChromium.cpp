@@ -1066,7 +1066,7 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 }
 #endif
 
-DELEGATE_TO_INTERNAL(makeContextCurrent)
+DELEGATE_TO_INTERNAL_R(makeContextCurrent, bool)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
 
 DELEGATE_TO_INTERNAL_1(activeTexture, GC3Denum)

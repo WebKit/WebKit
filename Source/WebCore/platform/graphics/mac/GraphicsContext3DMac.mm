@@ -258,14 +258,15 @@ GraphicsContext3D::~GraphicsContext3D()
     }
 }
 
-void GraphicsContext3D::makeContextCurrent()
+bool GraphicsContext3D::makeContextCurrent()
 {
     if (!m_contextObj)
-        return;
+        return false;
 
     CGLContextObj currentContext = CGLGetCurrentContext();
     if (currentContext != m_contextObj)
         CGLSetCurrentContext(m_contextObj);
+    return true;
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const
