@@ -567,4 +567,24 @@ unsigned Internals::lengthFromRange(Element* scope, const Range* range, Exceptio
     return length;
 }
 
+void Internals::setUnifiedTextCheckingEnabled(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->frame() || !document->frame()->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->frame()->settings()->setUnifiedTextCheckerEnabled(enabled);
+}
+
+bool Internals::unifiedTextCheckingEnabled(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame() || !document->frame()->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return document->frame()->settings()->unifiedTextCheckerEnabled();
+}
+
 }

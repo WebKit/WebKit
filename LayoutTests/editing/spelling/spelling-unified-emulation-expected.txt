@@ -1,0 +1,31 @@
+The spellchecker should work correctly if unified spellcheck path is used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS numMarked is length
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS str is markedStr
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS str is markedStr
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS numMarked is length
+PASS str is markedStr
+PASS numMarked is length
+PASS numMarked is length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I would like to sleep, zzz.

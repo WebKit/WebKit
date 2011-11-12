@@ -1,3 +1,29 @@
+2011-11-11  Shinya Kawanaka  <shinyak@google.com>
+
+        Implement legacy text check emulation in unified text check interface.
+        https://bugs.webkit.org/show_bug.cgi?id=70299
+
+        Reviewed by Hajime Morita.
+
+        When UNIFIED_TEXT_CHECKING is off, WebCore::checkTextOfParagraph() emulates
+        TextCheckerClient::checkTextOfParagraph() using checkSpellingOfString and checkGrammarOfString.
+
+        This emulation can be used by setting the flag on.
+        This can be done by WebCore::Internals::setUnifiedTextCheckingEnabled.
+
+        Test: editing/spelling/spelling-unified-emulation.html
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findBadGrammars): Added.
+        (WebCore::findMisspellings): Added.
+        (WebCore::checkTextOfParagraph):
+          Emulates TextCheckerClients::checkTextOfParagraph if UNIFIED_TEXT_CHECKING is off.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setUnifiedTextCheckingEnabled): flag setter.
+        (WebCore::Internals::unifiedTextCheckingEnabled): flag getter.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Add a missing file to PlatformEfl.cmake for curl network backend.

@@ -103,6 +103,9 @@ public:
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
 
+    void setUnifiedTextCheckingEnabled(Document*, bool, ExceptionCode&);
+    bool unifiedTextCheckingEnabled(Document*, ExceptionCode&);
+
     static const char* internalsId;
 
 private:
