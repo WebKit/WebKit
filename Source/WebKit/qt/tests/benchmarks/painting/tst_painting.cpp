@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QNetworkConfigurationManager>
+
 #include <QtTest/QtTest>
 
 #include <qwebelement.h>
@@ -63,6 +65,7 @@ private Q_SLOTS:
     void textAreas();
 
 private:
+    QNetworkConfigurationManager m_manager;
     QWebView* m_view;
     QWebPage* m_page;
 };
@@ -91,6 +94,9 @@ void tst_Painting::paint_data()
 void tst_Painting::paint()
 {
     QFETCH(QUrl, url);
+
+    if (!m_manager.isOnline())
+        QSKIP("This test requires an active network connection", SkipSingle);
 
     m_view->load(url);
     ::waitForSignal(m_view, SIGNAL(loadFinished(bool)));

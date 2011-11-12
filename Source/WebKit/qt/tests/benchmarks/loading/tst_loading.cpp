@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QNetworkConfigurationManager>
+
 #include <QtTest/QtTest>
 
 #include <qwebframe.h>
@@ -61,6 +63,7 @@ private Q_SLOTS:
     void load();
 
 private:
+    QNetworkConfigurationManager m_manager;
     QWebView* m_view;
     QWebPage* m_page;
 };
@@ -92,6 +95,8 @@ void tst_Loading::load()
 {
     QFETCH(QUrl, url);
 
+    if (!m_manager.isOnline())
+        QSKIP("This test requires an active network connection", SkipSingle);
 
     QBENCHMARK {
         m_view->load(url);

@@ -1,3 +1,19 @@
+2011-11-11  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Skip tests when no network is present
+        https://bugs.webkit.org/show_bug.cgi?id=72031
+
+        Reviewed by Simon Hausmann.
+
+        Some benchmark tests requires network connection (they fetch data from
+        external URL's) and so they fail if no network is present. These tests
+        should be skipped instead.
+
+        * tests/benchmarks/loading/tst_loading.cpp:
+        (tst_Loading::load): Skip test if no network is present.
+        * tests/benchmarks/painting/tst_painting.cpp:
+        (tst_Painting::paint): Skip test if no network is present.
+
 2011-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r99964.
