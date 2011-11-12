@@ -54,11 +54,13 @@ private:
     virtual void addChildren();
     virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const;
     virtual void updateChildrenIfNecessary();
+    virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
     void updateScrollbars();
     
     virtual FrameView* documentFrameView() const;
     virtual LayoutRect elementRect() const;
     virtual AccessibilityObject* parentObject() const;
+    virtual AccessibilityObject* parentObjectIfExists() const;
     
     AccessibilityObject* webAreaObject() const;
     virtual AccessibilityObject* firstChild() const { return webAreaObject(); }
@@ -68,6 +70,7 @@ private:
     RefPtr<ScrollView> m_scrollView;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
+    bool m_childrenDirty;
 };
 
 inline AccessibilityScrollView* toAccessibilityScrollView(AccessibilityObject* object)

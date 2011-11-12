@@ -1,3 +1,36 @@
+2011-11-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        New iframe content may not be reflected in the ax tree.
+        https://bugs.webkit.org/show_bug.cgi?id=72100
+
+        Reviewed by Chris Fleizach.
+
+        The core issue was that when childrenChanged was called on a
+        web area from an iframe that was just detached, it wasn't calling
+        childrenChanged on its parent scroll area, or that scroll area's
+        parent iframe element. To fix this, now AccessibilityScrollView
+        implements setNeedsToUpdateChildren and parentObjectIfExists,
+        and childrenChanged calls setNeedsToUpdateChildren on every object
+        in the parent chain, not just AccessibilityRenderObjects.
+
+        Test: accessibility/loading-iframe-updates-axtree.html
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::setNeedsToUpdateChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::setNeedsToUpdateChildren):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::AccessibilityScrollView):
+        (WebCore::AccessibilityScrollView::updateChildrenIfNecessary):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        * accessibility/AccessibilityScrollView.h:
+        (WebCore::AccessibilityScrollView::setNeedsToUpdateChildren):
+
 2011-11-11  Iain Merrick  <husky@google.com>
 
         [chromium] Fix CCThreadProxy::setVisible

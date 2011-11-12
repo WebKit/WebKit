@@ -435,6 +435,10 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     
 AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
 {
+    // WebArea's parent should be the scroll view containing it.
+    if (isWebArea())
+        return axObjectCache()->get(m_renderer->frame()->view());
+
     return axObjectCache()->get(renderParentObject());
 }
     
@@ -3402,36 +3406,25 @@ void AccessibilityRenderObject::childrenChanged()
     if (!m_renderer)
         return;
 
-    bool sentChildrenChanged = false;
-    
+    axObjectCache()->postNotification(this, document(), AXObjectCache::AXChildrenChanged, true);
+
     // Go up the accessibility parent chain, but only if the element already exists. This method is
     // called during render layouts, minimal work should be done. 
     // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
     // At the same time, process ARIA live region changes.
     for (AccessibilityObject* parent = this; parent; parent = parent->parentObjectIfExists()) {
-        if (!parent->isAccessibilityRenderObject())
-            continue;
-        
-        AccessibilityRenderObject* axParent = toAccessibilityRenderObject(parent);
-        
-        // Send the children changed notification on the first accessibility render object ancestor.
-        if (!sentChildrenChanged) {
-            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXChildrenChanged, true);
-            sentChildrenChanged = true;
-        }
-        
-        axParent->setNeedsToUpdateChildren();
-        
+        parent->setNeedsToUpdateChildren();
+
         // These notifications always need to be sent because screenreaders are reliant on them to perform. 
         // In other words, they need to be sent even when the screen reader has not accessed this live region since the last update.
 
         // If this element supports ARIA live regions, then notify the AT of changes.
-        if (axParent->supportsARIALiveRegion())
-            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXLiveRegionChanged, true);
+        if (parent->supportsARIALiveRegion())
+            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXLiveRegionChanged, true);
         
         // If this element is an ARIA text control, notify the AT of changes.
-        if (axParent->isARIATextControl() && !axParent->isNativeTextControl() && !axParent->node()->isContentEditable())
-            axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXValueChanged, true);
+        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->isContentEditable())
+            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged, true);
     }
 }
     

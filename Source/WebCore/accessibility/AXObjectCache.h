@@ -76,6 +76,7 @@ public:
     
     // will only return the AccessibilityObject if it already exists
     AccessibilityObject* get(RenderObject*);
+    AccessibilityObject* get(Widget*);
     
     void remove(RenderObject*);
     void remove(Widget*);
@@ -171,7 +172,6 @@ private:
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     
     AXID getAXID(AccessibilityObject*);
-    AccessibilityObject* get(Widget*);
 };
 
 bool nodeHasRole(Node*, const String& role);
