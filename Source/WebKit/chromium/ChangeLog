@@ -1,3 +1,10 @@
+2011-11-11  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Rolled DEPS.
+        https://bugs.webkit.org/show_bug.cgi?id=72174
+
+        * DEPS:
+
 2011-11-11  James Robinson  <jamesr@chromium.org>
 
         Rollout http://trac.webkit.org/changeset/99844
