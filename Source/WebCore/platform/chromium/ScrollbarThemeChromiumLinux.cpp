@@ -39,7 +39,7 @@ namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    static ScrollbarThemeChromiumLinux theme;
+    DEFINE_STATIC_LOCAL(ScrollbarThemeChromiumLinux, theme, ());
     return &theme;
 }
 

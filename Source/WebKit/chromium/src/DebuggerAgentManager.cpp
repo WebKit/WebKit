@@ -49,9 +49,9 @@ WebDevToolsAgent::MessageLoopDispatchHandler DebuggerAgentManager::s_messageLoop
 
 bool DebuggerAgentManager::s_inHostDispatchHandler = false;
 
-DebuggerAgentManager::DeferrersMap DebuggerAgentManager::s_pageDeferrers;
-
 bool DebuggerAgentManager::s_exposeV8DebuggerProtocol = false;
+
+typedef HashMap<WebViewImpl*, WebCore::PageGroupLoadDeferrer*> DeferrersMap;
 
 namespace {
 
@@ -70,6 +70,12 @@ private:
     int m_callerId;
 };
 
+DeferrersMap& pageDeferrers()
+{
+    DEFINE_STATIC_LOCAL(DeferrersMap, deferrers, ());
+    return deferrers;
+}
+
 } // namespace
 
 
@@ -87,7 +93,7 @@ void DebuggerAgentManager::debugHostDispatchHandler()
     // 1. Disable active objects and input events.
     for (AttachedAgentsMap::iterator it = s_attachedAgentsMap->begin(); it != s_attachedAgentsMap->end(); ++it) {
         DebuggerAgentImpl* agent = it->second;
-        s_pageDeferrers.set(agent->webView(), new WebCore::PageGroupLoadDeferrer(agent->page(), true));
+        pageDeferrers().set(agent->webView(), new WebCore::PageGroupLoadDeferrer(agent->page(), true));
         views.append(agent->webView());
         agent->webView()->setIgnoreInputEvents(true);
     }
@@ -97,13 +103,13 @@ void DebuggerAgentManager::debugHostDispatchHandler()
 
     // 3. Bring things back.
     for (Vector<WebViewImpl*>::iterator it = views.begin(); it != views.end(); ++it) {
-        if (s_pageDeferrers.contains(*it)) {
+        if (pageDeferrers().contains(*it)) {
             // The view was not closed during the dispatch.
             (*it)->setIgnoreInputEvents(false);
         }
     }
-    deleteAllValues(s_pageDeferrers);
-    s_pageDeferrers.clear();
+    deleteAllValues(pageDeferrers());
+    pageDeferrers().clear();
 
     s_inHostDispatchHandler = false;
     if (!s_attachedAgentsMap) {
@@ -260,9 +266,9 @@ void DebuggerAgentManager::setHostId(WebFrameImpl* webframe, int hostId)
 
 void DebuggerAgentManager::onWebViewClosed(WebViewImpl* webview)
 {
-    if (s_pageDeferrers.contains(webview)) {
-        delete s_pageDeferrers.get(webview);
-        s_pageDeferrers.remove(webview);
+    if (pageDeferrers().contains(webview)) {
+        delete pageDeferrers().get(webview);
+        pageDeferrers().remove(webview);
     }
 }
 

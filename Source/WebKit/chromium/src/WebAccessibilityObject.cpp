@@ -551,7 +551,7 @@ WebString WebAccessibilityObject::keyboardShortcut() const
     if (accessKey.isNull())
         return WebString();
 
-    static String modifierString;
+    DEFINE_STATIC_LOCAL(String, modifierString, ());
     if (modifierString.isNull()) {
         unsigned modifiers = EventHandler::accessKeyModifiers();
         // Follow the same order as Mozilla MSAA implementation:

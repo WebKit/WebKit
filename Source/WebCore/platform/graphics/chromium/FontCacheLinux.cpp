@@ -74,9 +74,9 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
 {
-    static const AtomicString sansStr("Sans");
-    static const AtomicString serifStr("Serif");
-    static const AtomicString monospaceStr("Monospace");
+    DEFINE_STATIC_LOCAL(const AtomicString, sansStr, ("Sans"));
+    DEFINE_STATIC_LOCAL(const AtomicString, serifStr, ("Serif"));
+    DEFINE_STATIC_LOCAL(const AtomicString, monospaceStr, ("Monospace"));
 
     FontPlatformData* fontPlatformData = 0;
     switch (description.genericFamily()) {

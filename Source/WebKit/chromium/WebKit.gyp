@@ -66,6 +66,7 @@
         {
             'target_name': 'webkit',
             'type': 'static_library',
+            'variables': { 'enable_wexit_time_destructors': 1, },
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',

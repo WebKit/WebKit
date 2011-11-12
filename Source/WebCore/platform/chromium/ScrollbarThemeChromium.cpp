@@ -114,7 +114,7 @@ void ScrollbarThemeChromium::paintTickmarks(GraphicsContext* context, Scrollbar*
         return;
 
     // Get the image for the tickmarks.
-    static RefPtr<Image> dash = Image::loadPlatformResource("tickmarkDash");
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, dash, (Image::loadPlatformResource("tickmarkDash")));
     if (dash->isNull()) {
         ASSERT_NOT_REACHED();
         return;

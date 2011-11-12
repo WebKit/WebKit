@@ -209,7 +209,11 @@ const char* pageGroupName = "default";
 
 // Used to defer all page activity in cases where the embedder wishes to run
 // a nested event loop. Using a stack enables nesting of message loop invocations.
-static Vector<PageGroupLoadDeferrer*> pageGroupLoadDeferrerStack;
+static Vector<PageGroupLoadDeferrer*>& pageGroupLoadDeferrerStack()
+{
+    DEFINE_STATIC_LOCAL(Vector<PageGroupLoadDeferrer*>, deferrerStack, ());
+    return deferrerStack;
+}
 
 // Ensure that the WebDragOperation enum values stay in sync with the original
 // DragOperation constants.
@@ -266,19 +270,19 @@ void WebView::willEnterModalLoop()
     ASSERT(pageGroup);
 
     if (pageGroup->pages().isEmpty())
-        pageGroupLoadDeferrerStack.append(static_cast<PageGroupLoadDeferrer*>(0));
+        pageGroupLoadDeferrerStack().append(static_cast<PageGroupLoadDeferrer*>(0));
     else {
         // Pick any page in the page group since we are deferring all pages.
-        pageGroupLoadDeferrerStack.append(new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true));
+        pageGroupLoadDeferrerStack().append(new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true));
     }
 }
 
 void WebView::didExitModalLoop()
 {
-    ASSERT(pageGroupLoadDeferrerStack.size());
+    ASSERT(pageGroupLoadDeferrerStack().size());
 
-    delete pageGroupLoadDeferrerStack.last();
-    pageGroupLoadDeferrerStack.removeLast();
+    delete pageGroupLoadDeferrerStack().last();
+    pageGroupLoadDeferrerStack().removeLast();
 }
 
 void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)

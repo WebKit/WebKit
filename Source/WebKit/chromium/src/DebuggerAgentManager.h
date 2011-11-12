@@ -99,8 +99,6 @@ private:
 
     static WebDevToolsAgent::MessageLoopDispatchHandler s_messageLoopDispatchHandler;
     static bool s_inHostDispatchHandler;
-    typedef HashMap<WebViewImpl*, WebCore::PageGroupLoadDeferrer*> DeferrersMap;
-    static DeferrersMap s_pageDeferrers;
 
     static bool s_exposeV8DebuggerProtocol;
 };
