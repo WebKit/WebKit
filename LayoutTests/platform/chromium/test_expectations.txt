@@ -3548,7 +3548,7 @@ BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PAS
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
-BUGWK68436 MAC CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
+BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
@@ -3585,14 +3585,27 @@ BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-7.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/toDataURL-alpha.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 
-// Tests that are known to exhibit IMAGE and/or TEXT failures on Mac10.5 with CPU-Skia graphics.
-BUGWK68437 LEOPARD CPU : fast/css/focus-ring-multiline-writingmode-vertical.html = TEXT
-BUGWK68437 LEOPARD CPU : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
-BUGWK68437 LEOPARD CPU : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
+// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
 BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
 
-BUGEPOGER LEOPARD CPU CPU-CG : http/tests/websocket/tests/hixie76/simple-stress.html = TIMEOUT
-BUGEPOGER LEOPARD CPU : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = IMAGE
+// Temporarily allowing many failures for Mac10.5 with Skia graphics.
+// epoger promises to remove these expectations by 27 October 2011.
+BUGWK68270 LEOPARD CPU GPU : animations = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : css1 = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : css2.1 = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : css3 = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : editing = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : fast = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : fonts = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : http = PASS FAIL
+BUGWK68270 LEOPARD CPU : media = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : platform = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : plugins = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : scrollbars = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : svg = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : tables = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : transforms = PASS FAIL
+BUGWK68270 LEOPARD CPU GPU : transitions = PASS FAIL
 
 // These should fall under BUGWK68270, but they were listed as flaky elsewhere
 // in the file. Once BUGWK68270 is fixed, these should return to being flaky as
