@@ -24,6 +24,7 @@
 
 #include "Font.h"
 #include "RenderObject.h"
+#include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include "SVGTextMetrics.h"
 #include "UnicodeRange.h"
@@ -35,13 +36,14 @@ SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const Font& font)
 {
 }
 
-float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle* style, SVGElement* lengthContext) const
+float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle* style, SVGElement* contextElement) const
 {
     if (style->baselineShift() == BS_LENGTH) {
         SVGLength baselineShiftValueLength = style->baselineShiftValue();
         if (baselineShiftValueLength.unitType() == LengthTypePercentage)
             return baselineShiftValueLength.valueAsPercentage() * m_font.pixelSize();
 
+        SVGLengthContext lengthContext(contextElement);
         return baselineShiftValueLength.value(lengthContext);
     }
 

@@ -97,7 +97,8 @@ FloatPoint RenderSVGResourceMarker::referencePoint() const
     SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(node());
     ASSERT(marker);
 
-    return FloatPoint(marker->refX().value(marker), marker->refY().value(marker));
+    SVGLengthContext lengthContext(marker);
+    return FloatPoint(marker->refX().value(lengthContext), marker->refY().value(lengthContext));
 }
 
 float RenderSVGResourceMarker::angle() const
@@ -163,9 +164,10 @@ void RenderSVGResourceMarker::calcViewport()
 
     SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(node());
     ASSERT(marker);
-
-    float w = marker->markerWidth().value(marker);
-    float h = marker->markerHeight().value(marker);
+    
+    SVGLengthContext lengthContext(marker);
+    float w = marker->markerWidth().value(lengthContext);
+    float h = marker->markerHeight().value(lengthContext);
     m_viewport = FloatRect(0, 0, w, h);
 }
 

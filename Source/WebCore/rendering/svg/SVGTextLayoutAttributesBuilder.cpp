@@ -60,15 +60,16 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
     propagateLayoutAttributes(textRoot, allAttributes, atCharacter, lastCharacter);
 }
 
-static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, const SVGLengthList& list, Vector<float>& floatValues, unsigned textContentLength)
+static inline void extractFloatValuesFromSVGLengthList(SVGElement* contextElement, const SVGLengthList& list, Vector<float>& floatValues, unsigned textContentLength)
 {
-    ASSERT(lengthContext);
+    ASSERT(contextElement);
 
     unsigned length = list.size();
     if (length > textContentLength)
         length = textContentLength;
     floatValues.reserveCapacity(length);
 
+    SVGLengthContext lengthContext(contextElement);
     for (unsigned i = 0; i < length; ++i) {
         const SVGLength& length = list.at(i);
         floatValues.append(length.value(lengthContext));

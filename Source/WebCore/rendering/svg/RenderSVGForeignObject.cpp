@@ -134,8 +134,9 @@ void RenderSVGForeignObject::layout()
     FloatRect oldViewport = m_viewport;
 
     // Cache viewport boundaries
-    FloatPoint viewportLocation(foreign->x().value(foreign), foreign->y().value(foreign));
-    m_viewport = FloatRect(viewportLocation, FloatSize(foreign->width().value(foreign), foreign->height().value(foreign)));
+    SVGLengthContext lengthContext(foreign);
+    FloatPoint viewportLocation(foreign->x().value(lengthContext), foreign->y().value(lengthContext));
+    m_viewport = FloatRect(viewportLocation, FloatSize(foreign->width().value(lengthContext), foreign->height().value(lengthContext)));
     if (!updateCachedBoundariesInParents)
         updateCachedBoundariesInParents = oldViewport != m_viewport;
 

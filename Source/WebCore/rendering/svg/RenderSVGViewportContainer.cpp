@@ -45,19 +45,17 @@ void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void RenderSVGViewportContainer::calcViewport()
 {
-     SVGElement* element = static_cast<SVGElement*>(node());
-     if (element->hasTagName(SVGNames::svgTag)) {
-         SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+    SVGElement* element = static_cast<SVGElement*>(node());
+    if (!element->hasTagName(SVGNames::svgTag))
+        return;
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+    FloatRect oldViewport = m_viewport;
 
-         FloatRect oldViewport = m_viewport;
-         m_viewport = FloatRect(svg->x().value(svg)
-                                , svg->y().value(svg)
-                                , svg->width().value(svg)
-                                , svg->height().value(svg));
+    SVGLengthContext lengthContext(element);
+    m_viewport = FloatRect(svg->x().value(lengthContext), svg->y().value(lengthContext), svg->width().value(lengthContext), svg->height().value(lengthContext));
 
-        if (oldViewport != m_viewport)
-            setNeedsBoundariesUpdate();
-    }
+    if (oldViewport != m_viewport)
+        setNeedsBoundariesUpdate();
 }
 
 AffineTransform RenderSVGViewportContainer::viewportTransform() const

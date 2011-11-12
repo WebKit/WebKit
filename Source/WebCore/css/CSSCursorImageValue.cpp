@@ -30,6 +30,7 @@
 
 #if ENABLE(SVG)
 #include "SVGCursorElement.h"
+#include "SVGLengthContext.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #endif
@@ -92,10 +93,11 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
 
     if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
-        float x = roundf(cursorElement->x().value(0));
+        SVGLengthContext lengthContext(0);
+        float x = roundf(cursorElement->x().value(lengthContext));
         m_hotSpot.setX(static_cast<int>(x));
 
-        float y = roundf(cursorElement->y().value(0));
+        float y = roundf(cursorElement->y().value(lengthContext));
         m_hotSpot.setY(static_cast<int>(y));
 
         if (cachedImageURL() != element->document()->completeURL(cursorElement->href()))

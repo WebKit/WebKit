@@ -53,7 +53,8 @@ void SVGShadowTreeContainerElement::setContainerOffset(const SVGLength& x, const
 
 FloatSize SVGShadowTreeContainerElement::containerTranslation() const
 {
-    return FloatSize(m_xOffset.value(this), m_yOffset.value(this));
+    SVGLengthContext lengthContext(this);
+    return FloatSize(m_xOffset.value(lengthContext), m_yOffset.value(lengthContext));
 }
 
 PassRefPtr<Element> SVGShadowTreeContainerElement::cloneElementWithoutAttributesAndChildren()

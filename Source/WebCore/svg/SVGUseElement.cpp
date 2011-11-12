@@ -39,6 +39,7 @@
 #include "SVGElementRareData.h"
 #include "SVGElementInstanceList.h"
 #include "SVGGElement.h"
+#include "SVGLengthContext.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
@@ -678,7 +679,9 @@ void SVGUseElement::toClipPath(Path& path)
             document()->accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
         else {
             static_cast<SVGStyledTransformableElement*>(n)->toClipPath(path);
-            path.translate(FloatSize(x().value(this), y().value(this)));
+            // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
+            SVGLengthContext lengthContext(this);
+            path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));
             path.transform(animatedLocalTransform());
         }
     }

@@ -23,6 +23,7 @@
 #include "SVGTextLayoutEngineSpacing.h"
 
 #include "Font.h"
+#include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 
 #if ENABLE(SVG_FONTS)
@@ -82,14 +83,16 @@ float SVGTextLayoutEngineSpacing::calculateSVGKerning(bool isVerticalText, const
 #endif
 }
 
-float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderStyle* style, SVGElement* lengthContext, const UChar* currentCharacter)
+float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderStyle* style, SVGElement* contextElement, const UChar* currentCharacter)
 {
     float kerning = 0;
     SVGLength kerningLength = style->kerning();
     if (kerningLength.unitType() == LengthTypePercentage)
         kerning = kerningLength.valueAsPercentage() * m_font.pixelSize();
-    else
+    else {
+        SVGLengthContext lengthContext(contextElement);
         kerning = kerningLength.value(lengthContext);
+    }
 
     const UChar* lastCharacter = m_lastCharacter;
     m_lastCharacter = currentCharacter;

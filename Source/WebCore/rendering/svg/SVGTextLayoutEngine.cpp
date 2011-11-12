@@ -26,6 +26,7 @@
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
 #include "SVGInlineTextBox.h"
+#include "SVGLengthContext.h"
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
 
@@ -155,7 +156,8 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
     RenderObject* currentParent = parent;
     while (currentParent) {
         if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(currentParent)) {
-            if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing && textContentElement->specifiedTextLength().value(textContentElement) > 0)
+            SVGLengthContext lengthContext(textContentElement);
+            if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing && textContentElement->specifiedTextLength().value(lengthContext) > 0)
                 return true;
         }
 
@@ -210,8 +212,9 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     float desiredTextLength = 0;
 
     if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textPath)) {
+        SVGLengthContext lengthContext(textContentElement);
         lengthAdjust = textContentElement->lengthAdjust();
-        desiredTextLength = textContentElement->specifiedTextLength().value(textContentElement);
+        desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
     }
 
     if (!desiredTextLength)

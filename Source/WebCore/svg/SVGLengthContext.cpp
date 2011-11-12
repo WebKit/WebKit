@@ -311,8 +311,9 @@ bool SVGLengthContext::determineViewport(float& width, float& height) const
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
         FloatRect viewBox = svg->currentViewBoxRect();
         if (viewBox.isEmpty()) {
-            width = svg->width().value(svg);
-            height = svg->height().value(svg);
+            SVGLengthContext viewportContext(svg);
+            width = svg->width().value(viewportContext);
+            height = svg->height().value(viewportContext);
         } else {
             width = viewBox.width();
             height = viewBox.height();

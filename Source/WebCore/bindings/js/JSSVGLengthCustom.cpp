@@ -25,6 +25,7 @@
 #include "ExceptionCode.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGException.h"
+#include "SVGLengthContext.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -35,7 +36,8 @@ JSValue JSSVGLength::value(ExecState* exec) const
 {
     SVGLength& podImp = impl()->propertyReference();
     ExceptionCode ec = 0;
-    float value = podImp.value(impl()->contextElement(), ec);
+    SVGLengthContext lengthContext(impl()->contextElement());
+    float value = podImp.value(lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -59,7 +61,8 @@ void JSSVGLength::setValue(ExecState* exec, JSValue value)
     SVGLength& podImp = impl()->propertyReference();
 
     ExceptionCode ec = 0;
-    podImp.setValue(value.toFloat(exec), impl()->contextElement(), ec);
+    SVGLengthContext lengthContext(impl()->contextElement());
+    podImp.setValue(value.toFloat(exec), lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
         return;
@@ -86,7 +89,8 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    podImp.convertToSpecifiedUnits(unitType, impl()->contextElement(), ec);
+    SVGLengthContext lengthContext(impl()->contextElement());
+    podImp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

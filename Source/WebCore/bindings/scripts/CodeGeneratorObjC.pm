@@ -1204,7 +1204,7 @@ sub GenerateImplementation
 
                 # TODO: Handle special case for DOMSVGLength. We do need Custom code support for this.
                 if ($svgPropertyType eq "WebCore::SVGLength" and $attributeName eq "value") {
-                    $getterContentHead = "value(IMPL->contextElement(), ";
+                    $getterContentHead = "value(WebCore::SVGLengthContext(IMPL->contextElement()), ";
                 }
             }
 
@@ -1406,7 +1406,7 @@ sub GenerateImplementation
                     } else {
                         # FIXME: Special case for DOMSVGLength. We do need Custom code support for this.
                         if ($svgPropertyType eq "WebCore::SVGLength" and $attributeName eq "value") {
-                            push(@implContent, "    podImpl.$coreSetterName($arg, IMPL->contextElement()$ec);\n");
+                            push(@implContent, "    podImpl.$coreSetterName($arg, WebCore::SVGLengthContext(IMPL->contextElement())$ec);\n");
                         } else {
                             push(@implContent, "    podImpl.$coreSetterName($arg$ec);\n");
                         }
@@ -1540,7 +1540,7 @@ sub GenerateImplementation
             # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
             my $svgLengthConvertToSpecifiedUnits = ($svgPropertyType and $svgPropertyType eq "WebCore::SVGLength" and $functionName eq "convertToSpecifiedUnits");
 
-            push(@parameterNames, "IMPL->contextElement()") if $svgLengthConvertToSpecifiedUnits; 
+            push(@parameterNames, "WebCore::SVGLengthContext(IMPL->contextElement())") if $svgLengthConvertToSpecifiedUnits; 
             push(@parameterNames, "ec") if $raisesExceptions;
 
             # Handle arguments that are 'SVGProperty' based (SVGAngle/SVGLength). We need to convert from SVGPropertyTearOff<Type>* to Type,

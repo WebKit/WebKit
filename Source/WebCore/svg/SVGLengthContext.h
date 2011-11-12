@@ -53,7 +53,7 @@ enum SVGLengthMode {
 
 class SVGLengthContext {
 public:
-    SVGLengthContext(const SVGElement*);
+    explicit SVGLengthContext(const SVGElement*);
 
     template<typename T>
     static FloatRect resolveRectangle(const T* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport)

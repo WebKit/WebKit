@@ -163,7 +163,8 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
 FloatRect RenderSVGPath::zeroLengthSubpathRect() const
 {
     SVGElement* svgElement = static_cast<SVGElement*>(node());
-    float strokeWidth = style()->svgStyle()->strokeWidth().value(svgElement);
+    SVGLengthContext lengthContext(svgElement);
+    float strokeWidth = style()->svgStyle()->strokeWidth().value(lengthContext);
     return FloatRect(m_fillBoundingBox.x() - strokeWidth / 2, m_fillBoundingBox.y() - strokeWidth / 2, strokeWidth, strokeWidth);
 }
 
@@ -345,7 +346,8 @@ FloatRect RenderSVGPath::calculateMarkerBoundsIfNeeded()
     if (!markerStart && !markerMid && !markerEnd)
         return FloatRect();
 
-    return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, svgStyle->strokeWidth().value(svgElement), m_path);
+    SVGLengthContext lengthContext(svgElement);
+    return m_markerLayoutInfo.calculateBoundaries(markerStart, markerMid, markerEnd, svgStyle->strokeWidth().value(lengthContext), m_path);
 }
 
 void RenderSVGPath::updateCachedBoundaries()

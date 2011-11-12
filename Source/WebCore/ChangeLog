@@ -1,3 +1,72 @@
+2011-11-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Finish SVGLengthContext conversion in svg/
+        https://bugs.webkit.org/show_bug.cgi?id=72105
+
+        Reviewed by Antti Koivisto.
+
+        Make SVGLengthContext(const SVGElement*) explicit, adapt all remaining call sites.
+        Now that this process is finished, SVGLengthContext can be shared across renders,
+        so that its possible to override the length context in a single place. This will
+        be done in future patches.
+
+        Doesn't affect any tests yet.
+
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::value):
+        (WebCore::JSSVGLength::setValue):
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::valueAccessorGetter):
+        (WebCore::V8SVGLength::valueAccessorSetter):
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::layout):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::updateFromElement):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::zeroLengthSubpathRect):
+        (WebCore::RenderSVGPath::calculateMarkerBoundsIfNeeded):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::referencePoint):
+        (WebCore::RenderSVGResourceMarker::calcViewport):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::operator<<):
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::containerTranslation):
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::addTextChunk):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::extractFloatValuesFromSVGLengthList):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::parentDefinesTextLength):
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout):
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        (WebCore::SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing):
+        * svg/SVGElement.h:
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport):
+        * svg/SVGLengthContext.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        (WebCore::SVGSVGElement::currentViewBoxRect):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::toClipPath):
+
 2011-11-12  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(FILTERS) after r100036.
