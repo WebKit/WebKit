@@ -219,15 +219,15 @@ public:
     void addWidgetToUpdate(RenderEmbeddedObject*);
     void removeWidgetToUpdate(RenderEmbeddedObject*);
 
-    virtual void paintContents(GraphicsContext*, const LayoutRect& damageRect);
+    virtual void paintContents(GraphicsContext*, const IntRect& damageRect);
     void setPaintBehavior(PaintBehavior);
     PaintBehavior paintBehavior() const;
     bool isPainting() const;
     bool hasEverPainted() const { return m_lastPaintTime; }
     void setNodeToDraw(Node*);
 
-    virtual void paintOverhangAreas(GraphicsContext*, const LayoutRect& horizontalOverhangArea, const LayoutRect& verticalOverhangArea, const LayoutRect& dirtyRect);
-    virtual void paintScrollCorner(GraphicsContext*, const LayoutRect& cornerRect);
+    virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     Color documentBackgroundColor() const;
 
@@ -336,7 +336,7 @@ private:
     void forceLayoutParentViewIfNeeded();
     void performPostLayoutTasks();
 
-    virtual void repaintContentRectangle(const LayoutRect&, bool immediate);
+    virtual void repaintContentRectangle(const IntRect&, bool immediate);
     virtual void contentsResized();
     virtual void visibleContentsResized();
 

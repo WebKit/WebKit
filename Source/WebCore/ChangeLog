@@ -1,3 +1,50 @@
+2011-11-11  Levi Weintraub  <leviw@chromium.org>
+
+        Revert Page to operate on integers
+        https://bugs.webkit.org/show_bug.cgi?id=72185
+
+        Reviewed by Eric Seidel.
+
+        Reverting the page classes to integers from LayoutUnits. It's not necessary to expose
+        LayoutUnits in these classes, so we'll avoid doing so.
+
+        No new tests, no change in behavior.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::documentAtPoint):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::invalidateScrollbarRect):
+        (WebCore::FrameView::getTickmarks):
+        (WebCore::FrameView::windowResizerRect):
+        (WebCore::FrameView::setVisibleScrollerThumbRect):
+        (WebCore::FrameView::updateScrollCorner):
+        (WebCore::FrameView::paintScrollCorner):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::paintOverhangAreas):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        (WebCore::FrameView::convertToContainingView):
+        (WebCore::FrameView::convertFromContainingView):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * page/Page.h:
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollInDirection):
+
 2011-11-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         New iframe content may not be reflected in the ax tree.

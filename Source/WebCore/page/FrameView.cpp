@@ -170,7 +170,7 @@ PassRefPtr<FrameView> FrameView::create(Frame* frame)
 PassRefPtr<FrameView> FrameView::create(Frame* frame, const IntSize& initialSize)
 {
     RefPtr<FrameView> view = adoptRef(new FrameView(frame));
-    view->Widget::setFrameRect(LayoutRect(view->location(), initialSize));
+    view->Widget::setFrameRect(IntRect(view->location(), initialSize));
     view->show();
     return view.release();
 }
@@ -373,7 +373,7 @@ bool FrameView::didFirstLayout() const
     return !m_firstLayout;
 }
 
-void FrameView::invalidateRect(const LayoutRect& rect)
+void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
         if (hostWindow())
@@ -388,15 +388,15 @@ void FrameView::invalidateRect(const LayoutRect& rect)
     if (!renderer)
         return;
 
-    LayoutRect repaintRect = rect;
+    IntRect repaintRect = rect;
     repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(),
                      renderer->borderTop() + renderer->paddingTop());
     renderer->repaintRectangle(repaintRect);
 }
 
-void FrameView::setFrameRect(const LayoutRect& newRect)
+void FrameView::setFrameRect(const IntRect& newRect)
 {
-    LayoutRect oldRect = frameRect();
+    IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
 
@@ -488,7 +488,7 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     return ScrollView::createScrollbar(orientation);
 }
 
-void FrameView::setContentsSize(const LayoutSize& size)
+void FrameView::setContentsSize(const IntSize& size)
 {
     if (size == contentsSize())
         return;
@@ -518,9 +518,9 @@ void FrameView::adjustViewSize()
 
     ASSERT(m_frame->view() == this);
 
-    const LayoutRect& rect = root->documentRect();
-    const LayoutSize& size = rect.size();
-    ScrollView::setScrollOrigin(LayoutPoint(-rect.x(), -rect.y()), !m_frame->document()->printing(), size == contentsSize());
+    const IntRect rect = root->documentRect();
+    const IntSize& size = rect.size();
+    ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !m_frame->document()->printing(), size == contentsSize());
     
     setContentsSize(size);
 }
@@ -1731,25 +1731,25 @@ HostWindow* FrameView::hostWindow() const
 
 const unsigned cRepaintRectUnionThreshold = 25;
 
-void FrameView::repaintContentRectangle(const LayoutRect& r, bool immediate)
+void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!m_frame->ownerElement());
     
     if (m_isTrackingRepaints) {
-        LayoutRect repaintRect = r;
+        IntRect repaintRect = r;
         repaintRect.move(-scrollOffset());
         m_trackedRepaintRects.append(repaintRect);
     }
 
     double delay = m_deferringRepaints ? 0 : adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
-        LayoutRect paintRect = r;
+        IntRect paintRect = r;
         if (clipsRepaints() && !paintsEntireContents())
             paintRect.intersect(visibleContentRect());
         if (paintRect.isEmpty())
             return;
         if (m_repaintCount == cRepaintRectUnionThreshold) {
-            LayoutRect unionedRect;
+            IntRect unionedRect;
             for (unsigned i = 0; i < cRepaintRectUnionThreshold; ++i)
                 unionedRect.unite(m_repaintRects[i]);
             m_repaintRects.clear();
@@ -2359,15 +2359,15 @@ void FrameView::scrollTo(const IntSize& newOffset)
     frame()->loader()->client()->didChangeScrollOffset();
 }
 
-void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const LayoutRect& rect)
+void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     // Add in our offset within the FrameView.
-    LayoutRect dirtyRect = rect;
+    IntRect dirtyRect = rect;
     dirtyRect.moveBy(scrollbar->location());
     invalidateRect(dirtyRect);
 }
 
-void FrameView::getTickmarks(Vector<LayoutRect>& tickmarks) const
+void FrameView::getTickmarks(Vector<IntRect>& tickmarks) const
 {
     tickmarks = frame()->document()->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
 }
@@ -2376,7 +2376,7 @@ IntRect FrameView::windowResizerRect() const
 {
     Page* page = frame() ? frame()->page() : 0;
     if (!page)
-        return LayoutRect();
+        return IntRect();
     return page->chrome()->windowResizerRect();
 }
 
@@ -2412,7 +2412,7 @@ void FrameView::didCompleteAnimatedScroll() const
     return page->chrome()->client()->didCompleteAnimatedScroll();
 }
 
-void FrameView::setVisibleScrollerThumbRect(const LayoutRect& scrollerThumb)
+void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     Page* page = m_frame->page();
     if (!page)
@@ -2508,7 +2508,7 @@ void FrameView::updateScrollCorner()
 {
     RenderObject* renderer = 0;
     RefPtr<RenderStyle> cornerStyle;
-    LayoutRect cornerRect = scrollCornerRect();
+    IntRect cornerRect = scrollCornerRect();
     
     if (!cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
@@ -2548,7 +2548,7 @@ void FrameView::updateScrollCorner()
     ScrollView::updateScrollCorner();
 }
 
-void FrameView::paintScrollCorner(GraphicsContext* context, const LayoutRect& cornerRect)
+void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
 {
     if (context->updatingControlTints()) {
         updateScrollCorner();
@@ -2690,7 +2690,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     m_wasScrolledByUser = wasScrolledByUser;
 }
 
-void FrameView::paintContents(GraphicsContext* p, const LayoutRect& rect)
+void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 {
     if (!frame())
         return;
@@ -2809,7 +2809,7 @@ void FrameView::setNodeToDraw(Node* node)
     m_nodeToDraw = node;
 }
 
-void FrameView::paintOverhangAreas(GraphicsContext* context, const LayoutRect& horizontalOverhangArea, const LayoutRect& verticalOverhangArea, const LayoutRect& dirtyRect)
+void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
 {
     if (context->paintingDisabled())
         return;
@@ -2943,9 +2943,9 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
         *newBottom = oldBottom;
 }
 
-LayoutRect FrameView::convertFromRenderer(const RenderObject* renderer, const LayoutRect& rendererRect) const
+IntRect FrameView::convertFromRenderer(const RenderObject* renderer, const IntRect& rendererRect) const
 {
-    LayoutRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
+    IntRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
 
     // Convert from page ("absolute") to FrameView coordinates.
     rect.moveBy(-scrollPosition());
@@ -2953,31 +2953,31 @@ LayoutRect FrameView::convertFromRenderer(const RenderObject* renderer, const La
     return rect;
 }
 
-LayoutRect FrameView::convertToRenderer(const RenderObject* renderer, const LayoutRect& viewRect) const
+IntRect FrameView::convertToRenderer(const RenderObject* renderer, const IntRect& viewRect) const
 {
-    LayoutRect rect = viewRect;
+    IntRect rect = viewRect;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
     rect.moveBy(scrollPosition());
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.
-    rect.setLocation(roundedLayoutPoint(renderer->absoluteToLocal(rect.location(), false, true /* use transforms */)));
+    rect.setLocation(roundedIntPoint(renderer->absoluteToLocal(rect.location(), false, true /* use transforms */)));
     return rect;
 }
 
-LayoutPoint FrameView::convertFromRenderer(const RenderObject* renderer, const LayoutPoint& rendererPoint) const
+IntPoint FrameView::convertFromRenderer(const RenderObject* renderer, const IntPoint& rendererPoint) const
 {
-    LayoutPoint point = roundedLayoutPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
+    IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
 
     // Convert from page ("absolute") to FrameView coordinates.
     point.moveBy(-scrollPosition());
     return point;
 }
 
-LayoutPoint FrameView::convertToRenderer(const RenderObject* renderer, const LayoutPoint& viewPoint) const
+IntPoint FrameView::convertToRenderer(const RenderObject* renderer, const IntPoint& viewPoint) const
 {
-    LayoutPoint point = viewPoint;
+    IntPoint point = viewPoint;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
     point += IntSize(scrollX(), scrollY());
@@ -2985,7 +2985,7 @@ LayoutPoint FrameView::convertToRenderer(const RenderObject* renderer, const Lay
     return roundedIntPoint(renderer->absoluteToLocal(point, false, true /* use transforms */));
 }
 
-LayoutRect FrameView::convertToContainingView(const LayoutRect& localRect) const
+IntRect FrameView::convertToContainingView(const IntRect& localRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -2995,7 +2995,7 @@ LayoutRect FrameView::convertToContainingView(const LayoutRect& localRect) const
             if (!renderer)
                 return localRect;
                 
-            LayoutRect rect(localRect);
+            IntRect rect(localRect);
             // Add borders and padding??
             rect.move(renderer->borderLeft() + renderer->paddingLeft(),
                       renderer->borderTop() + renderer->paddingTop());
@@ -3008,7 +3008,7 @@ LayoutRect FrameView::convertToContainingView(const LayoutRect& localRect) const
     return localRect;
 }
 
-LayoutRect FrameView::convertFromContainingView(const LayoutRect& parentRect) const
+IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -3019,7 +3019,7 @@ LayoutRect FrameView::convertFromContainingView(const LayoutRect& parentRect) co
             if (!renderer)
                 return parentRect;
 
-            LayoutRect rect = parentView->convertToRenderer(renderer, parentRect);
+            IntRect rect = parentView->convertToRenderer(renderer, parentRect);
             // Subtract borders and padding
             rect.move(-renderer->borderLeft() - renderer->paddingLeft(),
                       -renderer->borderTop() - renderer->paddingTop());
@@ -3032,7 +3032,7 @@ LayoutRect FrameView::convertFromContainingView(const LayoutRect& parentRect) co
     return parentRect;
 }
 
-LayoutPoint FrameView::convertToContainingView(const LayoutPoint& localPoint) const
+IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -3043,7 +3043,7 @@ LayoutPoint FrameView::convertToContainingView(const LayoutPoint& localPoint) co
             if (!renderer)
                 return localPoint;
                 
-            LayoutPoint point(localPoint);
+            IntPoint point(localPoint);
 
             // Add borders and padding
             point.move(renderer->borderLeft() + renderer->paddingLeft(),
@@ -3057,7 +3057,7 @@ LayoutPoint FrameView::convertToContainingView(const LayoutPoint& localPoint) co
     return localPoint;
 }
 
-LayoutPoint FrameView::convertFromContainingView(const LayoutPoint& parentPoint) const
+IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -3068,7 +3068,7 @@ LayoutPoint FrameView::convertFromContainingView(const LayoutPoint& parentPoint)
             if (!renderer)
                 return parentPoint;
 
-            LayoutPoint point = parentView->convertToRenderer(renderer, parentPoint);
+            IntPoint point = parentView->convertToRenderer(renderer, parentPoint);
             // Subtract borders and padding
             point.move(-renderer->borderLeft() - renderer->paddingLeft(),
                        -renderer->borderTop() - renderer->paddingTop());

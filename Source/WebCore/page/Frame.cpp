@@ -815,7 +815,7 @@ VisiblePosition Frame::visiblePositionForPoint(const LayoutPoint& framePoint)
     return visiblePos;
 }
 
-Document* Frame::documentAtPoint(const LayoutPoint& point)
+Document* Frame::documentAtPoint(const IntPoint& point)
 {
     if (!view())
         return 0;

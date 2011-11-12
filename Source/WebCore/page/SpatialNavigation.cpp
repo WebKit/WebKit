@@ -361,7 +361,7 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
             return false;
         }
 
-        frame->view()->scrollBy(LayoutSize(dx, dy));
+        frame->view()->scrollBy(IntSize(dx, dy));
         return true;
     }
     return false;

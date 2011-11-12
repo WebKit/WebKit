@@ -1398,7 +1398,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     HitTestRequest request(HitTestRequest::Active);
     // Save the document point we generate in case the window coordinate is invalidated by what happens 
     // when we dispatch the event.
-    LayoutPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
+    IntPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
     MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
 
     if (!targetNode(mev)) {
@@ -1445,7 +1445,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     if (FrameView* view = m_frame->view()) {
         RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : 0;
-        LayoutPoint p = view->windowToContents(mouseEvent.pos());
+        IntPoint p = view->windowToContents(mouseEvent.pos());
         if (layer && layer->isPointInResizeControl(p)) {
             layer->setInResizeMode(true);
             m_resizeLayer = layer;
@@ -2308,7 +2308,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     int rightAligned = 0;
 #endif
-    LayoutPoint location;
+    IntPoint location;
 
     Node* focusedNode = doc->focusedNode();
     FrameSelection* selection = m_frame->selection();
@@ -2316,26 +2316,26 @@ bool EventHandler::sendContextMenuEventForKey()
 
     if (start.deprecatedNode() && (selection->rootEditableElement() || selection->isRange())) {
         RefPtr<Range> selectionRange = selection->toNormalizedRange();
-        LayoutRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
+        IntRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
 
-        LayoutUnit x = rightAligned ? firstRect.maxX() : firstRect.x();
-        location = LayoutPoint(x, firstRect.maxY());
+        int x = rightAligned ? firstRect.maxX() : firstRect.x();
+        location = IntPoint(x, firstRect.maxY());
     } else if (focusedNode) {
         RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
         if (!box)
             return false;
-        LayoutRect clippedRect = box->absoluteClippedOverflowRect();
-        location = LayoutPoint(clippedRect.x(), clippedRect.maxY() - 1);
+        IntRect clippedRect = box->absoluteClippedOverflowRect();
+        location = IntPoint(clippedRect.x(), clippedRect.maxY() - 1);
     } else {
-        location = LayoutPoint(
+        location = IntPoint(
             rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,
             kContextMenuMargin);
     }
 
     m_frame->view()->setCursor(pointerCursor());
 
-    LayoutPoint position = view->contentsToWindow(location);
-    LayoutPoint globalPosition = view->contentsToScreen(LayoutRect(location, LayoutSize())).location();
+    IntPoint position = view->contentsToWindow(location);
+    IntPoint globalPosition = view->contentsToScreen(IntRect(location, IntSize())).location();
 
     Node* targetNode = doc->focusedNode();
     if (!targetNode)
@@ -2720,8 +2720,8 @@ bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation
     FrameView* view = m_frame->view();
     if (!view)
         return false;
-    LayoutPoint dragLocation = view->windowToContents(flooredLayoutPoint(dragViewportLocation));
-    LayoutSize delta = dragLocation - m_mouseDownPos;
+    IntPoint dragLocation = view->windowToContents(flooredIntPoint(dragViewportLocation));
+    IntSize delta = dragLocation - m_mouseDownPos;
     
     int threshold = GeneralDragHysteresis;
     switch (dragState().m_dragType) {
@@ -2873,7 +2873,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
             if (RenderObject* renderer = dragState().m_dragSrc->renderer()) {
                 // FIXME: This doesn't work correctly with transforms.
                 FloatPoint absPos = renderer->localToAbsolute();
-                LayoutSize delta = m_mouseDownPos - roundedLayoutPoint(absPos);
+                IntSize delta = m_mouseDownPos - roundedIntPoint(absPos);
                 dragState().m_dragClipboard->setDragImageElement(dragState().m_dragSrc.get(), toPoint(delta));
             } else {
                 // The renderer has disappeared, this can happen if the onStartDrag handler has hidden

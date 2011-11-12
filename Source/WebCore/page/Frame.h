@@ -187,7 +187,7 @@ namespace WebCore {
         DragImageRef dragImageForSelection();
 
         VisiblePosition visiblePositionForPoint(const LayoutPoint& framePoint);
-        Document* documentAtPoint(const LayoutPoint& windowPoint);
+        Document* documentAtPoint(const IntPoint& windowPoint);
         PassRefPtr<Range> rangeForPoint(const LayoutPoint& framePoint);
 
         String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);

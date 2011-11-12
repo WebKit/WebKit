@@ -245,7 +245,7 @@ namespace WebCore {
         float mediaVolume() const { return m_mediaVolume; }
         void setMediaVolume(float volume);
 
-        void setPageScaleFactor(float scale, const LayoutPoint& origin);
+        void setPageScaleFactor(float scale, const IntPoint& origin);
         float pageScaleFactor() const { return m_pageScaleFactor; }
 
         float deviceScaleFactor() const { return m_deviceScaleFactor; }

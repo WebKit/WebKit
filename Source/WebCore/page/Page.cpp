@@ -619,7 +619,7 @@ void Page::setMediaVolume(float volume)
     }
 }
 
-void Page::setPageScaleFactor(float scale, const LayoutPoint& origin)
+void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 {
     if (scale == m_pageScaleFactor)
         return;
