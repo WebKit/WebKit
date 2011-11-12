@@ -1,3 +1,20 @@
+2011-11-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r98542): Rendering error on Google maps
+        https://bugs.webkit.org/show_bug.cgi?id=71996
+
+        Reviewed by Andreas Kling.
+        
+        r98542 exposed that StyleBoxData copy constructor and operator== are missing a field.
+        
+        Test reduction by David Barr.
+
+        Test: fast/css/vertical-align-length-copy-bug.html
+
+        * rendering/style/StyleBoxData.cpp:
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleBoxData::operator==):
+
 2011-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100013.

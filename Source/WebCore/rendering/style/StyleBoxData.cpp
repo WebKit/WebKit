@@ -46,6 +46,7 @@ StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_maxWidth(o.m_maxWidth)
     , m_minHeight(o.m_minHeight)
     , m_maxHeight(o.m_maxHeight)
+    , m_verticalAlign(o.m_verticalAlign)
     , m_zIndex(o.m_zIndex)
     , m_hasAutoZIndex(o.m_hasAutoZIndex)
     , m_boxSizing(o.m_boxSizing)
@@ -60,6 +61,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
            && m_maxWidth == o.m_maxWidth
            && m_minHeight == o.m_minHeight
            && m_maxHeight == o.m_maxHeight
+           && m_verticalAlign == o.m_verticalAlign
            && m_zIndex == o.m_zIndex
            && m_hasAutoZIndex == o.m_hasAutoZIndex
            && m_boxSizing == o.m_boxSizing;
