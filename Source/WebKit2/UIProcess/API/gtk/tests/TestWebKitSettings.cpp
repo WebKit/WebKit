@@ -102,6 +102,61 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_hyperlink_auditing(settings, TRUE);
     g_assert(webkit_settings_get_enable_hyperlink_auditing(settings));
 
+    // Default font family is "sans-serif".
+    g_assert_cmpstr(webkit_settings_get_default_font_family(settings), ==, "sans-serif");
+    webkit_settings_set_default_font_family(settings, "monospace");
+    g_assert_cmpstr(webkit_settings_get_default_font_family(settings), ==, "monospace");
+
+    // Default monospace font family font family is "monospace".
+    g_assert_cmpstr(webkit_settings_get_monospace_font_family(settings), ==, "monospace");
+    webkit_settings_set_monospace_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_monospace_font_family(settings), ==, "sans-serif");
+
+    // Default serif font family is "serif".
+    g_assert_cmpstr(webkit_settings_get_serif_font_family(settings), ==, "serif");
+    webkit_settings_set_serif_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_serif_font_family(settings), ==, "sans-serif");
+
+    // Default sans serif font family is "sans-serif".
+    g_assert_cmpstr(webkit_settings_get_sans_serif_font_family(settings), ==, "sans-serif");
+    webkit_settings_set_sans_serif_font_family(settings, "serif");
+    g_assert_cmpstr(webkit_settings_get_sans_serif_font_family(settings), ==, "serif");
+
+    // Default cursive font family "serif".
+    g_assert_cmpstr(webkit_settings_get_cursive_font_family(settings), ==, "serif");
+    webkit_settings_set_cursive_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_cursive_font_family(settings), ==, "sans-serif");
+
+    // Default fantasy font family is "serif".
+    g_assert_cmpstr(webkit_settings_get_fantasy_font_family(settings), ==, "serif");
+    webkit_settings_set_fantasy_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_fantasy_font_family(settings), ==, "sans-serif");
+
+    // Default pictograph font family is "serif".
+    g_assert_cmpstr(webkit_settings_get_pictograph_font_family(settings), ==, "serif");
+    webkit_settings_set_pictograph_font_family(settings, "sans-serif");
+    g_assert_cmpstr(webkit_settings_get_pictograph_font_family(settings), ==, "sans-serif");
+
+    // Default font size is 12.
+    g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 12);
+    webkit_settings_set_default_font_size(settings, 14);
+    g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 14);
+
+    // Default monospace font size is 10.
+    g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 10);
+    webkit_settings_set_default_monospace_font_size(settings, 12);
+    g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 12);
+
+    // Default minimum font size is 5.
+    g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 5);
+    webkit_settings_set_minimum_font_size(settings, 7);
+    g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 7);
+
+    // Default charset is "iso-8859-1".
+    g_assert_cmpstr(webkit_settings_get_default_charset(settings), ==, "iso-8859-1");
+    webkit_settings_set_default_charset(settings, "utf8");
+    g_assert_cmpstr(webkit_settings_get_default_charset(settings), ==, "utf8");
+
     g_object_unref(G_OBJECT(settings));
 #endif
 }

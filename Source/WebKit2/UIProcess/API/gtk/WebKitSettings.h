@@ -160,6 +160,83 @@ WEBKIT_API void
 webkit_settings_set_enable_hyperlink_auditing                  (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+WEBKIT_API const gchar *
+webkit_settings_get_default_font_family                        (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_default_font_family                        (WebKitSettings* settings,
+                                                                const gchar* default_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_monospace_font_family                      (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_monospace_font_family                      (WebKitSettings* settings,
+                                                                const gchar* monospace_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_serif_font_family                          (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_serif_font_family                          (WebKitSettings* settings,
+                                                                const gchar* serif_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_sans_serif_font_family                     (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_sans_serif_font_family                     (WebKitSettings* settings,
+                                                                const gchar* sans_serif_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_cursive_font_family                        (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_cursive_font_family                        (WebKitSettings* settings,
+                                                                const gchar* cursive_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_fantasy_font_family                        (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_fantasy_font_family                        (WebKitSettings* settings,
+                                                                const gchar* fantasy_font_family);
+
+WEBKIT_API const gchar *
+webkit_settings_get_pictograph_font_family                     (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_pictograph_font_family                     (WebKitSettings* settings,
+                                                                const gchar* pictograph_font_family);
+
+WEBKIT_API guint32
+webkit_settings_get_default_font_size                          (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_default_font_size                          (WebKitSettings* settings,
+                                                                guint32 font_size);
+
+WEBKIT_API guint32
+webkit_settings_get_default_monospace_font_size                (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_default_monospace_font_size                (WebKitSettings* settings,
+                                                                guint32 font_size);
+
+WEBKIT_API guint32
+webkit_settings_get_minimum_font_size                          (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_minimum_font_size                          (WebKitSettings* settings,
+                                                                guint32 font_size);
+
+WEBKIT_API const gchar *
+webkit_settings_get_default_charset                            (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_default_charset                            (WebKitSettings* settings,
+                                                                const gchar* default_charset);
+
 G_END_DECLS
 
 #endif /* webkitwebsettings_h */

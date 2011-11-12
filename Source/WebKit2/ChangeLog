@@ -1,3 +1,46 @@
+2011-11-11  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK][WEBKIT2] Add font and charset properties to WebKitWebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=68996
+
+        Reviewed by Martin Robinson.
+
+        Provision to query and set the font related properties (such as
+        font-family, font-size) and charset properties (such as default-
+        charset) is added.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp: Added font and encoding properties.
+        (webKitSettingsSetProperty): GObject set property function.
+        (webKitSettingsGetProperty): GObject get property function.
+        (webkit_settings_class_init): Few more signals installed.
+        (webkit_settings_init): Initialization of instance variables.
+        (webkit_web_settings_get_default_font_family): Get 'default-font-family'.
+        (webkit_web_settings_set_default_font_family): Set 'default-font-family'.
+        (webkit_web_settings_get_monospace_font_family): Get 'monospace-font-family'.
+        (webkit_web_settings_set_monospace_font_family): Set 'monospace-font-family'.
+        (webkit_web_settings_get_serif_font_family): Get 'serif-font-family'.
+        (webkit_web_settings_set_serif_font_family): Set 'serif-font-family'.
+        (webkit_web_settings_get_sans_serif_font_family): Get 'sans-serif-font-family'.
+        (webkit_web_settings_set_sans_serif_font_family): Get 'sans-serif-font-family'.
+        (webkit_web_settings_get_cursive_font_family): Get 'cursive-font-family'.
+        (webkit_web_settings_set_cursive_font_family): Set 'cursive-font-family'.
+        (webkit_web_settings_get_fantasy_font_family): Get 'fantasy-font-family'.
+        (webkit_web_settings_set_fantasy_font_family): Set 'fantasy-font-family'.
+        (webkit_web_settings_get_pictograph_font_family): Get 'pictograph-font-family'.
+        (webkit_web_settings_set_pictograph_font_family): Set 'pictograph-font-family'.
+        (webkit_web_settings_get_default_font_size): Get 'default-font-size'.
+        (webkit_web_settings_set_default_font_size): Set 'default-font-size'.
+        (webkit_web_settings_get_default_monospace_font_size): Get 'default-monospace-font-size'.
+        (webkit_web_settings_set_default_monospace_font_size): Set 'default-monospace-font-size'.
+        (webkit_web_settings_get_minimum_font_size): Get 'minimum-font-size'.
+        (webkit_web_settings_set_minimum_font_size): Set 'minimum-font-size'.
+        (webkit_web_settings_get_default_charset): Get 'default-charset'.
+        (webkit_web_settings_set_default_charset): Set 'default-charset'.
+        * UIProcess/API/gtk/WebKitSettings.h: Add new sections for gtk-doc generation.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Expose new public APIs.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Add new tests.
+
 2011-11-11  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.
