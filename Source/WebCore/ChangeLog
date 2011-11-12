@@ -1,3 +1,32 @@
+2011-11-11  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add translation/scaling to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=72087
+
+        Reviewed by James Robinson.
+
+        Covered by WebLayerTest.
+
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::PluginLayerChromium):
+        (WebCore::PluginLayerChromium::setUVRect):
+        (WebCore::PluginLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::uvRect):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTexStretch::VertexShaderPosTexStretch):
+        (WebCore::VertexShaderPosTexStretch::init):
+        (WebCore::VertexShaderPosTexStretch::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::VertexShaderPosTexStretch::matrixLocation):
+        (WebCore::VertexShaderPosTexStretch::offsetLocation):
+        (WebCore::VertexShaderPosTexStretch::scaleLocation):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (WebCore::CCPluginLayerImpl::setUVRect):
+
 2011-11-11  Stephen Chenney  <schenney@chromium.org>
 
         Null deref when no use element exists for SVG element instance

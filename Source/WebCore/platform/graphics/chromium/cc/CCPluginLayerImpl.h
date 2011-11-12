@@ -26,6 +26,7 @@
 #ifndef CCPluginLayerImpl_h
 #define CCPluginLayerImpl_h
 
+#include "FloatRect.h"
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
 #include "cc/CCLayerImpl.h"
@@ -40,8 +41,8 @@ public:
     }
     virtual ~CCPluginLayerImpl();
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
+    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
 
     virtual void draw(LayerRendererChromium*);
 
@@ -49,6 +50,7 @@ public:
 
     void setTextureId(unsigned id) { m_textureId = id; }
     void setFlipped(bool flipped) { m_flipped = flipped; }
+    void setUVRect(const FloatRect& rect) { m_uvRect = rect; }
 
 private:
     explicit CCPluginLayerImpl(int);
@@ -57,6 +59,7 @@ private:
 
     unsigned m_textureId;
     bool m_flipped;
+    FloatRect m_uvRect;
 };
 
 }

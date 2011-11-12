@@ -56,6 +56,16 @@ bool WebExternalTextureLayer::flipped() const
     return constUnwrap<WebExternalTextureLayerImpl>()->flipped();
 }
 
+void WebExternalTextureLayer::setUVRect(const WebFloatRect& rect)
+{
+    unwrap<WebExternalTextureLayerImpl>()->setUVRect(rect);
+}
+
+WebFloatRect WebExternalTextureLayer::uvRect() const
+{
+    return WebFloatRect(constUnwrap<WebExternalTextureLayerImpl>()->uvRect());
+}
+
 WebExternalTextureLayer::WebExternalTextureLayer(const PassRefPtr<WebExternalTextureLayerImpl>& node)
     : WebLayer(node)
 {

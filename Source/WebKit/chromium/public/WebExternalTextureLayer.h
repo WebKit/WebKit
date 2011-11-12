@@ -27,6 +27,7 @@
 #define WebExternalTextureLayer_h
 
 #include "WebCommon.h"
+#include "WebFloatRect.h"
 #include "WebLayer.h"
 
 namespace WebKit {
@@ -61,6 +62,11 @@ public:
     // rendered.
     WEBKIT_EXPORT void setFlipped(bool);
     WEBKIT_EXPORT bool flipped() const;
+
+    // Sets the rect in UV space of the texture that is mapped to the layer
+    // bounds.
+    WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
+    WEBKIT_EXPORT WebFloatRect uvRect() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebExternalTextureLayer(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);

@@ -45,6 +45,7 @@ PluginLayerChromium::PluginLayerChromium(CCLayerDelegate* delegate)
     : LayerChromium(delegate)
     , m_textureId(0)
     , m_flipped(true)
+    , m_uvRect(0, 0, 1, 1)
 {
 }
 
@@ -65,6 +66,12 @@ void PluginLayerChromium::setFlipped(bool flipped)
     setNeedsCommit();
 }
 
+void PluginLayerChromium::setUVRect(const FloatRect& rect)
+{
+    m_uvRect = rect;
+    setNeedsCommit();
+}
+
 void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     LayerChromium::pushPropertiesTo(layer);
@@ -72,6 +79,7 @@ void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
     pluginLayer->setTextureId(m_textureId);
     pluginLayer->setFlipped(m_flipped);
+    pluginLayer->setUVRect(m_uvRect);
 }
 
 }

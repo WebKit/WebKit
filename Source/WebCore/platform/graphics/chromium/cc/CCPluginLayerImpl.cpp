@@ -43,11 +43,15 @@ struct PluginProgramBinding {
         programId = program->program();
         samplerLocation = program->fragmentShader().samplerLocation();
         matrixLocation = program->vertexShader().matrixLocation();
+        offsetLocation = program->vertexShader().offsetLocation();
+        scaleLocation = program->vertexShader().scaleLocation();
         alphaLocation = program->fragmentShader().alphaLocation();
     }
     int programId;
     int samplerLocation;
     int matrixLocation;
+    int offsetLocation;
+    int scaleLocation;
     int alphaLocation;
 };
 
@@ -59,6 +63,7 @@ CCPluginLayerImpl::CCPluginLayerImpl(int id)
     : CCLayerImpl(id)
     , m_textureId(0)
     , m_flipped(true)
+    , m_uvRect(0, 0, 1, 1)
 {
 }
 
@@ -88,6 +93,8 @@ void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
 
     GLC(context, context->useProgram(binding.programId));
     GLC(context, context->uniform1i(binding.samplerLocation, 0));
+    GLC(context, context->uniform2f(binding.offsetLocation, m_uvRect.x(), m_uvRect.y()));
+    GLC(context, context->uniform2f(binding.scaleLocation, m_uvRect.width(), m_uvRect.height()));
     layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
                                     binding.matrixLocation,
                                     binding.alphaLocation,

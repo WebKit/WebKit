@@ -29,6 +29,7 @@
 #include "WebContentLayerClient.h"
 #include "WebExternalTextureLayer.h"
 #include "WebFloatPoint.h"
+#include "WebFloatRect.h"
 #include "WebLayerClient.h"
 #include "WebRect.h"
 #include "WebSize.h"
@@ -124,6 +125,12 @@ TEST_F(WebLayerTest, Client)
 
     EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     textureLayer.setFlipped(true);
+    Mock::VerifyAndClearExpectations(&client);
+    EXPECT_TRUE(textureLayer.flipped());
+
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
+    WebFloatRect uvRect(0.1, 0.1, 0.9, 0.9);
+    textureLayer.setUVRect(uvRect);
     Mock::VerifyAndClearExpectations(&client);
     EXPECT_TRUE(textureLayer.flipped());
 

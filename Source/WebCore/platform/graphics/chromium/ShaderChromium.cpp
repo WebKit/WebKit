@@ -63,6 +63,38 @@ String VertexShaderPosTex::getShaderString() const
     );
 }
 
+VertexShaderPosTexStretch::VertexShaderPosTexStretch()
+    : m_matrixLocation(-1)
+    , m_offsetLocation(-1)
+    , m_scaleLocation(-1)
+{
+}
+
+void VertexShaderPosTexStretch::init(GraphicsContext3D* context, unsigned program)
+{
+    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    m_offsetLocation = context->getUniformLocation(program, "offset");
+    m_scaleLocation = context->getUniformLocation(program, "scale");
+    ASSERT(m_matrixLocation != -1 && m_offsetLocation != -1 && m_scaleLocation != -1);
+}
+
+String VertexShaderPosTexStretch::getShaderString() const
+{
+    return SHADER(
+        attribute vec4 a_position;
+        attribute vec2 a_texCoord;
+        uniform mat4 matrix;
+        uniform vec2 offset;
+        uniform vec2 scale;
+        varying vec2 v_texCoord;
+        void main()
+        {
+            gl_Position = matrix * a_position;
+            v_texCoord = scale * a_texCoord + offset;
+        }
+    );
+}
+
 VertexShaderPosTexYUVStretch::VertexShaderPosTexYUVStretch()
     : m_matrixLocation(-1)
     , m_yWidthScaleFactorLocation(-1)

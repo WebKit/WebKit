@@ -1,3 +1,15 @@
+2011-11-11  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add translation/scaling to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=72087
+
+        Reviewed by James Robinson.
+
+        * public/WebExternalTextureLayer.h:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::setUVRect):
+        (WebKit::WebExternalTextureLayer::uvRect):
+
 2011-11-11  Adam Klein  <adamk@chromium.org>
 
         Remove no-op StorageNamespace::unlock method

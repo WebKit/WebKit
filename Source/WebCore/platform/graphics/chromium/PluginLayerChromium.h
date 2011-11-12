@@ -45,6 +45,8 @@ public:
     unsigned textureId() const { return m_textureId; }
     void setFlipped(bool);
     bool flipped() const { return m_flipped; }
+    void setUVRect(const FloatRect&);
+    const FloatRect& uvRect() const { return m_uvRect; }
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
@@ -54,6 +56,7 @@ protected:
 private:
     unsigned m_textureId;
     bool m_flipped;
+    FloatRect m_uvRect;
 };
 
 }

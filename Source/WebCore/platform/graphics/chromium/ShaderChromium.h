@@ -51,6 +51,23 @@ private:
     int m_matrixLocation;
 };
 
+class VertexShaderPosTexStretch {
+public:
+    VertexShaderPosTexStretch();
+
+    void init(GraphicsContext3D*, unsigned program);
+    String getShaderString() const;
+
+    int matrixLocation() const { return m_matrixLocation; }
+    int offsetLocation() const { return m_offsetLocation; }
+    int scaleLocation() const { return m_scaleLocation; }
+
+private:
+    int m_matrixLocation;
+    int m_offsetLocation;
+    int m_scaleLocation;
+};
+
 class VertexShaderPosTexYUVStretch {
 public:
     VertexShaderPosTexYUVStretch();
