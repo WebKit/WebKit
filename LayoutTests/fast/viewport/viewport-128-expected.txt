@@ -1,2 +1,2 @@
-viewport size 160x176 scale 2.000000 with limits [2.000000, 5.000000]
+viewport size 160x176 scale 2.000000 with limits [2.000000, 5.000000] and userScalable -1.000000
 
