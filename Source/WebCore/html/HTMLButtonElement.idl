@@ -30,6 +30,7 @@ module html {
         attribute [Reflect] DOMString formTarget;
         readonly attribute ValidityState validity;
 
+        attribute [Reflect] DOMString accessKey;
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute [Reflect] DOMString name;

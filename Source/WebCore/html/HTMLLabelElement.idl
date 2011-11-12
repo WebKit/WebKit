@@ -22,6 +22,7 @@ module html {
 
     interface HTMLLabelElement : HTMLElement {
         readonly attribute HTMLFormElement form;
+        attribute [Reflect] DOMString accessKey;
         attribute [Reflect=for] DOMString htmlFor;
         readonly attribute HTMLElement control;
     };

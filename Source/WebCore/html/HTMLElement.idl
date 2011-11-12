@@ -37,7 +37,6 @@ module html {
                  attribute boolean           draggable;
                  attribute [Reflect] DOMString webkitdropzone;
                  attribute [Reflect] boolean hidden;
-                 attribute [Reflect] DOMString accessKey;
 
         // Extensions
                  attribute [ConvertNullToNullString] DOMString innerHTML

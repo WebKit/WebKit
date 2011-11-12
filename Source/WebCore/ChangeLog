@@ -1,3 +1,20 @@
+2011-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100013.
+        http://trac.webkit.org/changeset/100013
+        https://bugs.webkit.org/show_bug.cgi?id=72210
+
+        It breaks all mac builds (Requested by WildFox on #webkit).
+
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLTextAreaElement.idl:
+
 2011-11-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Finish SVGLengthContext conversion in svg/

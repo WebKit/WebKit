@@ -21,6 +21,7 @@
 module html {
 
     interface HTMLAreaElement : HTMLElement {
+        attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString alt;
         attribute [Reflect] DOMString coords;
         attribute [Reflect, URL] DOMString href;
