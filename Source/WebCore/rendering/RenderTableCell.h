@@ -71,9 +71,10 @@ public:
         m_row = row;
     }
 
+    bool rowWasSet() const { return m_row != unsetRowIndex; }
     unsigned row() const
     {
-        ASSERT(m_row != unsetRowIndex);
+        ASSERT(rowWasSet());
         return m_row;
     }
 

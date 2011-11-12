@@ -317,7 +317,7 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
     RenderBlock::styleDidChange(diff, oldStyle);
     setHasBoxDecorations(true);
 
-    if (parent() && section() && oldStyle && style()->height() != oldStyle->height())
+    if (parent() && section() && oldStyle && style()->height() != oldStyle->height() && rowWasSet())
         section()->rowLogicalHeightChanged(row());
 
     // If border was changed, notify table.

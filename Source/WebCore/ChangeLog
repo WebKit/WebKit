@@ -1,3 +1,34 @@
+2011-11-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in styleDidChange when changing a table cell's height.
+        <http://webkit.org/b/72004>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/table/crash-table-cell-change-height.html
+               fast/table/table-cell-change-height-with-needsCellRecalc-section.html
+               fast/table/table-cell-change-last-row-with-needsCellRecalc-section.html
+               fast/table/table-row-change-height-with-needsCellRecalc-section.html
+
+        r99212 removed our call to recalcCells when the logical height changed. This
+        means that we could end up with a cells without having set its row() properly
+        which would crash.
+
+        The change exposes the was-the-row-properly-set information so that we don't
+        try to access a bogus index. This should work properly even if the section
+        needs a cell recalc as the current section's row structure would still be
+        accurate in this case.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange): Check that our row index
+        was properly set before calling
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::rowWasSet): Helper function to detect
+        if we have set up our a row.
+        (WebCore::RenderTableCell::row): Use the previous function in the
+        ASSERT.
+
 2011-11-11  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.
