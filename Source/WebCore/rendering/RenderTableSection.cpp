@@ -187,12 +187,6 @@ void RenderTableSection::ensureRows(unsigned numRows)
 
 void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 {
-    // We don't insert the cell if we need cell recalc as our internal columns' representation
-    // will have drifted from the table's representation. Also recalcCells will call addCell
-    // at a later time after sync'ing our columns' with the table's.
-    if (needsCellRecalc())
-        return;
-
     int rSpan = cell->rowSpan();
     int cSpan = cell->colSpan();
     Vector<RenderTable::ColumnStruct>& columns = table()->columns();
@@ -1122,11 +1116,6 @@ void RenderTableSection::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderTableSection::recalcCells()
 {
-    ASSERT(m_needsCellRecalc);
-    // We reset the flag here to ensure that |addCell| works. This is safe to do as
-    // we clear the grid and properly rebuild it during |addCell|.
-    m_needsCellRecalc = false;
-
     m_cCol = 0;
     m_cRow = 0;
     m_grid.clear();
@@ -1153,6 +1142,7 @@ void RenderTableSection::recalcCells()
     }
 
     m_grid.shrinkToFit();
+    m_needsCellRecalc = false;
     setNeedsLayout(true);
 }
 
@@ -1185,8 +1175,6 @@ unsigned RenderTableSection::numColumns() const
 
 void RenderTableSection::appendColumn(int pos)
 {
-    ASSERT(!m_needsCellRecalc);
-
     for (unsigned row = 0; row < m_grid.size(); ++row)
         m_grid[row].row.resize(pos + 1);
 }

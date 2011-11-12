@@ -1,3 +1,17 @@
+2011-11-11  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Rollout http://trac.webkit.org/changeset/99744.
+        https://bugs.webkit.org/show_bug.cgi?id=72203
+        r99744 causes crash in Chromium's dom_perf test.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::appendColumn):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::recalcCells):
+        (WebCore::RenderTableSection::appendColumn):
+
 2011-11-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Removed unused local from CCThreadProxy::scheduledActionCommit
