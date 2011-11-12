@@ -1,3 +1,24 @@
+2011-11-11  Stephen Chenney  <schenney@chromium.org>
+
+        Null deref when no use element exists for SVG element instance
+        https://bugs.webkit.org/show_bug.cgi?id=59136
+
+        Second attempt, with a fix to handle JS garbage collection.
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: svg/custom/element-instance-held-by-js-crash.svg
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::~SVGElementInstance): Added call to detach() to clear
+          anything not yet cleared.
+        (WebCore::SVGElementInstance::detach): New method to replace old clear methods. This one
+          clears all the pointers it can, and removes the instance from the corresponding elements
+          instance list.
+        * svg/SVGElementInstance.h: Removed clear methods and replaced with detach.
+        * svg/SVGUseElement.cpp: 
+        (WebCore::SVGUseElement::detachInstance): Modified calls to clean up an SVGElementInstance.
+
 2011-11-11  Florin Malita  <fmalita@google.com>
 
         clipPath does not work on foreignObject

@@ -60,12 +60,8 @@ public:
     SVGUseElement* correspondingUseElement() const { return m_correspondingUseElement; }
     SVGUseElement* directUseElement() const { return m_directUseElement; }
     SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
-    void clearChildren();
-    void clearUseElements()
-    {
-        m_directUseElement = 0;
-        m_correspondingUseElement = 0;
-    }
+
+    void detach();
 
     SVGElementInstance* parentNode() const { return parent(); }
     PassRefPtr<SVGElementInstanceList> childNodes();
