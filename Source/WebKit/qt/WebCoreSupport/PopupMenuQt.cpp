@@ -29,7 +29,6 @@
 #include "ChromeClientQt.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
-#include "QtFallbackWebPopup.h"
 
 #include "qwebkitplatformplugin.h"
 
@@ -97,7 +96,6 @@ void PopupMenuQt::disconnectClient()
 
 void PopupMenuQt::show(const IntRect& rect, FrameView* view, int index)
 {
-#ifndef QT_NO_COMBOBOX
     if (!m_popupClient)
         return;
 
@@ -114,7 +112,6 @@ void PopupMenuQt::show(const IntRect& rect, FrameView* view, int index)
 
     m_selectData = adoptPtr(new SelectData(m_popupClient));
     m_popup->show(*m_selectData.get());
-#endif
 }
 
 void PopupMenuQt::didHide()

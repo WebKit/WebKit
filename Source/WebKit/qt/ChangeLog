@@ -1,3 +1,16 @@
+2011-11-11  Luiz Agostini  <luiz.agostini@palm.com>
+
+        [Qt] Removing unneeded #ifdef from PopupMenuQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=72193
+
+        Reviewed by Noam Rosenthal.
+
+        Part of PopupMenuQt.cpp code is guarded by #ifndef QT_NO_COMBOBOX although that
+        code is not related to the class QComboBox.
+
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::show):
+
 2011-11-11  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Skip tests when no network is present
