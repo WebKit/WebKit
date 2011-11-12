@@ -305,6 +305,7 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderObject* obj
 
 bool SVGRenderSupport::filtersForceContainerLayout(RenderObject* object)
 {
+#if ENABLE(FILTERS)
     // If any of this container's children need to be laid out, and a filter is applied
     // to the container, we need to repaint the entire container.
     if (!object->normalChildNeedsLayout())
@@ -315,6 +316,9 @@ bool SVGRenderSupport::filtersForceContainerLayout(RenderObject* object)
         return false;
 
     return true;
+#else
+    return false;
+#endif
 }
 
 bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoint& point)

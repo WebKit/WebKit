@@ -1,3 +1,10 @@
+2011-11-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(FILTERS) after r100036.
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::filtersForceContainerLayout):
+
 2011-11-11  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix build without precompiled header.
