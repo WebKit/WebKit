@@ -3874,6 +3874,8 @@ BUGWK72177 : http/tests/inspector/resource-tree/appcache-iframe-manifests.html =
 
 BUGWK72189 WIN : accessibility/adjacent-continuations-cause-assertion-failure.html = TEXT
 
+BUGWK72204 : inspector/debugger/script-formatter.html = TEXT
+
 // Fixed ES5 bugs during the V8 roll, upstream in progress.
 BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
