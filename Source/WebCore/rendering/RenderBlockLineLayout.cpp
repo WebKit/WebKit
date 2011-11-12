@@ -226,20 +226,20 @@ private:
     LayoutUnit m_floatPaginationStrut;
 };
 
-static inline int borderPaddingMarginStart(RenderInline* child)
+static inline LayoutUnit borderPaddingMarginStart(RenderInline* child)
 {
     return child->marginStart() + child->paddingStart() + child->borderStart();
 }
 
-static inline int borderPaddingMarginEnd(RenderInline* child)
+static inline LayoutUnit borderPaddingMarginEnd(RenderInline* child)
 {
     return child->marginEnd() + child->paddingEnd() + child->borderEnd();
 }
 
-static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
+static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
 {
     unsigned lineDepth = 1;
-    int extraWidth = 0;
+    LayoutUnit extraWidth = 0;
     RenderObject* parent = child->parent();
     while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
         RenderInline* parentAsRenderInline = toRenderInline(parent);
@@ -857,7 +857,7 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
     // FIXME: The math here is actually not really right. It's a best-guess approximation that
     // will work for the common cases
     RenderObject* containerBlock = child->container();
-    int blockHeight = block->logicalHeight();
+    LayoutUnit blockHeight = block->logicalHeight();
     if (containerBlock->isRenderInline()) {
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
@@ -1040,7 +1040,7 @@ RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bi
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
 class LineLayoutState {
 public:
-    LineLayoutState(bool fullLayout, int& repaintLogicalTop, int& repaintLogicalBottom)
+    LineLayoutState(bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
         : m_lastFloat(0)
         , m_endLine(0)
         , m_floatIndex(0)
@@ -1058,13 +1058,13 @@ public:
 
     bool usesRepaintBounds() const { return m_usesRepaintBounds; }
 
-    void setRepaintRange(int logicalHeight)
+    void setRepaintRange(LayoutUnit logicalHeight)
     { 
         m_usesRepaintBounds = true;
         m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight; 
     }
     
-    void updateRepaintRangeFromBox(RootInlineBox* box, int paginationDelta = 0)
+    void updateRepaintRangeFromBox(RootInlineBox* box, LayoutUnit paginationDelta = 0)
     {
         m_usesRepaintBounds = true;
         m_repaintLogicalTop = min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + min(paginationDelta, 0));
@@ -1107,9 +1107,9 @@ private:
     bool m_isFullLayout;
 
     // FIXME: Should this be a range object instead of two ints?
-    int& m_repaintLogicalTop;
-    int& m_repaintLogicalBottom;
-    
+    LayoutUnit& m_repaintLogicalTop;
+    LayoutUnit& m_repaintLogicalBottom;
+
     bool m_usesRepaintBounds;
 };
 
@@ -1257,7 +1257,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             // At the same time we figure out where border/padding/margin should be applied for
             // inline flow boxes.
 
-            int oldLogicalHeight = logicalHeight();
+            LayoutUnit oldLogicalHeight = logicalHeight();
             RootInlineBox* lineBox = createLineBoxesFromBidiRuns(bidiRuns, end, layoutState.lineInfo(), verticalPositionCache, trailingSpaceRun);
 
             bidiRuns.deleteRuns();
@@ -1269,10 +1269,10 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                     layoutState.updateRepaintRangeFromBox(lineBox);
 
                 if (paginated) {
-                    int adjustment = 0;
+                    LayoutUnit adjustment = 0;
                     adjustLinePositionForPagination(lineBox, adjustment);
                     if (adjustment) {
-                        int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, layoutState.lineInfo().isFirstLine());
+                        LayoutUnit oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, layoutState.lineInfo().isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
                         if (layoutState.usesRepaintBounds())
                             layoutState.updateRepaintRangeFromBox(lineBox);
@@ -1332,7 +1332,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.endLineMatched()) {
             bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
             // Attach all the remaining lines, and then adjust their y-positions as needed.
-            int delta = logicalHeight() - layoutState.endLineLogicalTop();
+            LayoutUnit delta = logicalHeight() - layoutState.endLineLogicalTop();
             for (RootInlineBox* line = layoutState.endLine(); line; line = line->nextRootBox()) {
                 line->attachLine();
                 if (paginated) {
@@ -1412,7 +1412,7 @@ void RenderBlock::repaintDirtyFloats(Vector<FloatWithRect>& floats)
     }
 }
 
-void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
+void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     m_overflow.clear();
 
@@ -1508,7 +1508,7 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
     for (Vector<RenderBox*>::iterator it = cleanLineFloats->begin(); it != end; ++it) {
         RenderBox* floatingBox = *it;
         floatingBox->layoutIfNeeded();
-        IntSize newSize(floatingBox->width() + floatingBox->marginLeft() + floatingBox->marginRight(), floatingBox->height() + floatingBox->marginTop() + floatingBox->marginBottom());
+        LayoutSize newSize(floatingBox->width() + floatingBox->marginLeft() + floatingBox->marginRight(), floatingBox->height() + floatingBox->marginTop() + floatingBox->marginBottom());
         ASSERT(floatIndex < floats.size());
         if (floats[floatIndex].object != floatingBox) {
             encounteredNewFloat = true;
@@ -1516,10 +1516,10 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
         }
 
         if (floats[floatIndex].rect.size() != newSize) {
-            int floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
-            int floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height())
+            LayoutUnit floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
+            LayoutUnit floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height())
                                                                  : max(floats[floatIndex].rect.width(), newSize.width());
-            floatHeight = min(floatHeight, numeric_limits<int>::max() - floatTop);
+            floatHeight = min(floatHeight, numeric_limits<LayoutUnit>::max() - floatTop);
             line->markDirty();
             markLinesDirtyInBlockRange(line->lineBottomWithLeading(), floatTop + floatHeight, line);
             floats[floatIndex].rect.setSize(newSize);
@@ -1539,7 +1539,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
     if (!layoutState.isFullLayout()) {
         // Paginate all of the clean lines.
         bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
-        int paginationDelta = 0;
+        LayoutUnit paginationDelta = 0;
         size_t floatIndex = 0;
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox()) {
             if (paginated) {
@@ -1610,7 +1610,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
 
     unsigned numCleanFloats = 0;
     if (!layoutState.floats().isEmpty()) {
-        int savedLogicalHeight = logicalHeight();
+        LayoutUnit savedLogicalHeight = logicalHeight();
         // Restore floats from clean lines.
         RootInlineBox* line = firstRootBox();
         while (line != curr) {
@@ -1714,13 +1714,13 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
         return true;
     
     // See if any floats end in the range along which we want to shift the lines vertically.
-    int logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
+    LayoutUnit logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
 
     RootInlineBox* lastLine = layoutState.endLine();
     while (RootInlineBox* nextLine = lastLine->nextRootBox())
         lastLine = nextLine;
 
-    int logicalBottom = lastLine->lineBottomWithLeading() + abs(lineDelta);
+    LayoutUnit logicalBottom = lastLine->lineBottomWithLeading() + abs(lineDelta);
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
@@ -2218,7 +2218,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
             // Optimize for a common case. If we can't find whitespace after the list
             // item, then this is all moot.
-            int replacedLogicalWidth = m_block->logicalWidthForChild(replacedBox) + m_block->marginStartForChild(replacedBox) + m_block->marginEndForChild(replacedBox) + inlineLogicalWidth(current.m_obj);
+            LayoutUnit replacedLogicalWidth = m_block->logicalWidthForChild(replacedBox) + m_block->marginStartForChild(replacedBox) + m_block->marginEndForChild(replacedBox) + inlineLogicalWidth(current.m_obj);
             if (current.m_obj->isListMarker()) {
                 if (m_block->style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, current.m_obj, lineMidpointState)) {
                     // Like with inline flows, we start ignoring spaces to make sure that any
@@ -2597,7 +2597,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
 void RenderBlock::addOverflowFromInlineChildren()
 {
-    int endPadding = hasOverflowClip() ? paddingEnd() : 0;
+    LayoutUnit endPadding = hasOverflowClip() ? paddingEnd() : 0;
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
     if (hasOverflowClip() && !endPadding && node() && node()->rendererIsEditable() && node() == node()->rootEditableElement() && style()->isLeftToRightDirection())
         endPadding = 1;
@@ -2621,8 +2621,8 @@ void RenderBlock::checkLinesForTextOverflow()
     const Font& font = style()->font();
     DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
     const Font& firstLineFont = firstLineStyle()->font();
-    int firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
-    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
+    LayoutUnit firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
+    LayoutUnit ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and
@@ -2630,16 +2630,16 @@ void RenderBlock::checkLinesForTextOverflow()
     // Include the scrollbar for overflow blocks, which means we want to use "contentWidth()"
     bool ltr = style()->isLeftToRightDirection();
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        int blockRightEdge = logicalRightOffsetForLine(curr->y(), curr == firstRootBox());
-        int blockLeftEdge = logicalLeftOffsetForLine(curr->y(), curr == firstRootBox());
-        int lineBoxEdge = ltr ? curr->x() + curr->logicalWidth() : curr->x();
+        LayoutUnit blockRightEdge = logicalRightOffsetForLine(curr->y(), curr == firstRootBox());
+        LayoutUnit blockLeftEdge = logicalLeftOffsetForLine(curr->y(), curr == firstRootBox());
+        LayoutUnit lineBoxEdge = ltr ? curr->x() + curr->logicalWidth() : curr->x();
         if ((ltr && lineBoxEdge > blockRightEdge) || (!ltr && lineBoxEdge < blockLeftEdge)) {
             // This line spills out of our box in the appropriate direction.  Now we need to see if the line
             // can be truncated.  In order for truncation to be possible, the line must have sufficient space to
             // accommodate our truncation string, and no replaced elements (images, tables) can overlap the ellipsis
             // space.
-            int width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
-            int blockEdge = ltr ? blockRightEdge : blockLeftEdge;
+            LayoutUnit width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
+            LayoutUnit blockEdge = ltr ? blockRightEdge : blockLeftEdge;
             if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width))
                 curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
         }
@@ -2662,7 +2662,7 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     ASSERT(floatingObjectSet.last() == newFloat);
 
-    int floatLogicalTop = logicalTopForFloat(newFloat);
+    LayoutUnit floatLogicalTop = logicalTopForFloat(newFloat);
     int paginationStrut = newFloat->m_paginationStrut;
 
     if (floatLogicalTop - paginationStrut != logicalHeight() + lineInfo.floatPaginationStrut())

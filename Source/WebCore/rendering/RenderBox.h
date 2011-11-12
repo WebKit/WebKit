@@ -234,10 +234,10 @@ public:
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
     
-    IntRect reflectionBox() const;
+    LayoutRect reflectionBox() const;
     int reflectionOffset() const;
     // Given a rect in the object's coordinate space, returns the corresponding rect in the reflection.
     LayoutRect reflectedRect(const LayoutRect&) const;
@@ -268,7 +268,7 @@ public:
 
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
-    void computeInlineDirectionMargins(RenderBlock* containingBlock, int containerWidth, int childWidth);
+    void computeInlineDirectionMargins(RenderBlock* containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth);
 
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(RenderBlock* containingBlock);
@@ -377,7 +377,7 @@ public:
     // that just updates the object's position. If the size does change, the object remains dirty.
     bool tryLayoutDoingPositionedMovementOnly()
     {
-        int oldWidth = width();
+        LayoutUnit oldWidth = width();
         computeLogicalWidth();
         // If we shrink to fit our width may have changed, so we still need full layout.
         if (oldWidth != width())
@@ -468,9 +468,9 @@ private:
     // Returns true if we did a full repaint
     bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);
    
-    int containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* = 0,
+    LayoutUnit containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* = 0,
         LayoutUnit offsetFromLogicalTopOfFirstPage = 0, bool checkForPerpendicularWritingMode = true) const;
-    int containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
+    LayoutUnit containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode = true) const;
 
     void computePositionedLogicalHeight();
     void computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,

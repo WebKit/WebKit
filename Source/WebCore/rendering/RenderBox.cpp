@@ -1297,7 +1297,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
     RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     if (!boxInfo)
         return result;
-    return max(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
+    return max<LayoutUnit>(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
 }
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
@@ -1425,8 +1425,8 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
             LayoutRect columnRect(frameRect());
             block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
             offset += toSize(columnRect.location());
-            IntPoint columnPoint = block->flipForWritingModeIncludingColumns(point + offset);
-            offset = toSize(block->flipForWritingModeIncludingColumns(LayoutPoint(offset)));
+            LayoutPoint columnPoint = block->flipForWritingModeIncludingColumns(point + offset);
+            offset = toLayoutSize(block->flipForWritingModeIncludingColumns(toLayoutPoint(offset)));
             o->adjustForColumns(offset, columnPoint);
             offset = block->flipForWritingMode(offset);
         } else
@@ -1485,7 +1485,7 @@ void RenderBox::positionLineBox(InlineBox* box)
         box->remove();
         box->destroy(renderArena());
     } else if (isReplaced()) {
-        setLocation(roundedLayoutPoint(FloatPoint(box->x(), box->y())));
+        setLocation(roundedLayoutPoint(box->topLeft()));
         ASSERT(!m_inlineBoxWrapper);
         m_inlineBoxWrapper = box;
     }
@@ -1823,7 +1823,7 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     return false;
 }
 
-void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, int containerWidth, int childWidth)
+void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth)
 {
     const RenderStyle* containingBlockStyle = containingBlock->style();
     Length marginStartLength = style()->marginStartUsing(containingBlockStyle);
@@ -2322,7 +2322,7 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
     containingBlock->setMarginAfterForChild(this, style()->marginAfterUsing(containingBlockStyle).calcMinValue(cw));
 }
 
-int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region,
+LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region,
     LayoutUnit offsetFromLogicalTopOfFirstPage, bool checkForPerpendicularWritingMode) const
 {
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
@@ -2347,7 +2347,7 @@ int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObje
                 boxInfo = cb->renderBoxRegionInfo(containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
             }
             if (boxInfo)
-                return max(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
+                return max<LayoutUnit>(0, result - (cb->logicalWidth() - boxInfo->logicalWidth()));
         }
         return result;
     }
@@ -2375,7 +2375,7 @@ int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObje
     return max<LayoutUnit>(0, fromRight - fromLeft);
 }
 
-int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
+LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, 0, 0, false);

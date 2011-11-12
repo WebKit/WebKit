@@ -1,3 +1,42 @@
+2011-11-11  Emil A Eklund  <eae@chromium.org>
+
+        Switch remaining RenderBlock/Box methods to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=72075
+
+        Reviewed by Eric Seidel.
+
+        Move margins, floats and line layout block logic to layout abstraction.
+
+        No new tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::borderPaddingMarginStart):
+        (WebCore::borderPaddingMarginEnd):
+        (WebCore::inlineLogicalWidth):
+        (WebCore::setStaticPositions):
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::setRepaintRange):
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::checkFloatsInCleanLine):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::checkPaginationAndFloatsAtEndLine):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::tryLayoutDoingPositionedMovementOnly):
+
 2011-11-11  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add translation/scaling to WebExternalTextureLayer
