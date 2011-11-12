@@ -1,3 +1,15 @@
+2011-11-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Removed unused local from CCThreadProxy::scheduledActionCommit
+        https://bugs.webkit.org/show_bug.cgi?id=72200
+
+        Reviewed by Kenneth Russell.
+
+        How did I get here I am not good with computers.
+
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionCommit):
+
 2011-11-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         Fix a crash when an anonymous render block is in a continuation.

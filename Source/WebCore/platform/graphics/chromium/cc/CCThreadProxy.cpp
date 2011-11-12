@@ -444,7 +444,6 @@ void CCThreadProxy::scheduledActionCommit()
     m_layerTreeHostImpl->beginCommit();
 
     m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
-    CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
     m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 
     m_layerTreeHostImpl->commitComplete();
