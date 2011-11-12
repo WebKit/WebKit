@@ -1,3 +1,15 @@
+2011-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Add a missing file to PlatformEfl.cmake for curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=72092
+
+        Unreviewed. Fix build break when using curl.
+
+        ProxyServerCurl.cpp file is not included in PlatformEfl.cmake. So, the file is not built
+        when EFL port uses curl as network backend.
+
+        * PlatformEfl.cmake: Add missing ProxyServerCurl.cpp.
+
 2011-11-11  Emil A Eklund  <eae@chromium.org>
 
         Switch remaining RenderBlock/Box methods to to new layout types
