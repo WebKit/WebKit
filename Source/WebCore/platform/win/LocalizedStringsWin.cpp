@@ -27,6 +27,7 @@
 #include "LocalizedStrings.h"
 
 #include "WebCoreInstanceHandle.h"
+#include <windows.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>

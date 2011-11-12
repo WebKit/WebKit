@@ -35,6 +35,8 @@
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(QT)
 #include <QMenu>
+#elif PLATFORM(WIN)
+#include <windows.h>
 #endif
 
 namespace WebCore {

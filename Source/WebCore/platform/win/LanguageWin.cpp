@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Language.h"
 
+#include <windows.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

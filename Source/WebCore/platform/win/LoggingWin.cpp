@@ -27,6 +27,7 @@
 #include "Logging.h"
 
 #include "PlatformString.h"
+#include <windows.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {

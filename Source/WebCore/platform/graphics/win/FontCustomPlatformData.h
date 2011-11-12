@@ -26,6 +26,7 @@
 #include "FontWidthVariant.h"
 #include "PlatformString.h"
 #include "TextOrientation.h"
+#include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

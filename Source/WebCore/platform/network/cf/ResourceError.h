@@ -32,6 +32,10 @@
 #if USE(CFNETWORK)
 #include <CoreFoundation/CFStream.h>
 #endif
+#if PLATFORM(WIN)
+#include <windows.h>
+#include <wincrypt.h> // windows.h must be included before wincrypt.h.
+#endif
 
 #ifdef __OBJC__
 @class NSError;

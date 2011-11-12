@@ -1,3 +1,18 @@
+2011-11-11  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Fix build without precompiled header.
+        https://bugs.webkit.org/show_bug.cgi?id=72115
+
+        Unreviewed. Add missing includes to fix build without precompiled header.
+
+        * platform/ContextMenu.h:
+        * platform/graphics/win/DIBPixelData.h:
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/network/cf/ResourceError.h:
+        * platform/win/LanguageWin.cpp:
+        * platform/win/LocalizedStringsWin.cpp:
+        * platform/win/LoggingWin.cpp:
+
 2011-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Duplicate Symbol Exports
