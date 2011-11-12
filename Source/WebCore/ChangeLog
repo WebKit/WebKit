@@ -1,3 +1,15 @@
+2011-11-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Fix a crash when an anonymous render block is in a continuation.
+        https://bugs.webkit.org/show_bug.cgi?id=70994
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/anonymous-render-block-in-continuation-causes-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+
 2011-11-11  Anna Cavender  <annacc@chromium.org>
 
         Storage and retrieval of TextTrackCues during video playback, including

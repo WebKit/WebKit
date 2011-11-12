@@ -426,6 +426,8 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
             if (firstChild == parent->firstChild())
                 break;
             firstChild = parent->firstChild();
+            if (!firstChild->node())
+                break;
             nodeRenderFirstChild = firstChild->node()->renderer();
         }
     }
